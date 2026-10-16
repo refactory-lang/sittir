@@ -329,18 +329,6 @@ export function getEnrichTextTokens(grammar: unknown): ReadonlyMap<string, reado
 	);
 }
 
-export const TEXT_TOKENS_KEY = '__textTokens__' as const;
-
-export function attachTextTokens(grammar: object, names: readonly string[]): void {
-	Object.defineProperty(grammar, TEXT_TOKENS_KEY, { value: names, enumerable: false, writable: false, configurable: true });
-}
-
-export function getTextTokens(grammar: unknown): readonly string[] {
-	if (!grammar || typeof grammar !== 'object') return [];
-	const names = (grammar as Record<string, unknown>)[TEXT_TOKENS_KEY];
-	return Array.isArray(names) ? (names as readonly string[]) : [];
-}
-
 export function getEnrichMints(grammar: unknown): ReadonlySet<string> {
 	return enrichRuleNamesOf(grammar, isMintOrigin);
 }
@@ -1130,7 +1118,7 @@ export function nativeRuleFn<F>(...names: string[]): F {
 		if (typeof g[name] === 'function') return g[name] as F;
 	}
 	throw new Error(
-		`enrich: no global ${names.join('()/')}() — enrich must run inside a DSL runtime ` +
+		`no global ${names.join('()/')}() — a DSL function runs only inside a DSL runtime ` +
 			`(sittir evaluate.ts or tree-sitter CLI; tests inject via _test-helpers.ts)`
 	);
 }

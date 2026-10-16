@@ -1,3 +1,4 @@
+import { nativeRuleFn } from './enrich.ts';
 import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts';
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
@@ -61,6 +62,15 @@ interface AuthoringRefine {
 }
 export const refine = refineImpl as unknown as AuthoringRefine;
 
+type DslFn = (...args: readonly unknown[]) => unknown;
+
+function runtimeDsl(name: string, member?: string): DslFn {
+	return (...args) => {
+		const owner = nativeRuleFn<DslFn & Readonly<Record<string, DslFn>>>(name);
+		return member === undefined ? owner(...args) : owner[member]!(...args);
+	};
+}
+
 interface AuthoringPrec {
 	<R extends AuthoringRule>(value: number | string, rule: R): PrecRule<ToGrammarRule<R>>;
 	left<R extends AuthoringRule>(rule: R): PrecLeftRule<ToGrammarRule<R>>;
@@ -69,15 +79,19 @@ interface AuthoringPrec {
 	right<R extends AuthoringRule>(value: number | string, rule: R): PrecRightRule<ToGrammarRule<R>>;
 	dynamic<R extends AuthoringRule>(value: number, rule: R): PrecDynamicRule<ToGrammarRule<R>>;
 }
-export const prec = (globalThis as unknown as { prec: unknown }).prec as unknown as AuthoringPrec;
+export const prec = Object.assign(runtimeDsl('prec'), {
+	left: runtimeDsl('prec', 'left'),
+	right: runtimeDsl('prec', 'right'),
+	dynamic: runtimeDsl('prec', 'dynamic')
+}) as unknown as AuthoringPrec;
 
 interface AuthoringReserved {
 	<R extends AuthoringRule>(contextName: string, rule: R): ReservedRule<ToGrammarRule<R>>;
 }
-export const reserved = (globalThis as unknown as { reserved: unknown }).reserved as unknown as AuthoringReserved;
+export const reserved = runtimeDsl('reserved') as unknown as AuthoringReserved;
 
 interface AuthoringToken {
 	<R extends AuthoringRule>(rule: R): TokenRule<ToGrammarRule<R>>;
 	immediate<R extends AuthoringRule>(rule: R): ImmediateTokenRule<ToGrammarRule<R>>;
 }
-export const token = (globalThis as unknown as { token: unknown }).token as unknown as AuthoringToken;
+export const token = Object.assign(runtimeDsl('token'), { immediate: runtimeDsl('token', 'immediate') }) as unknown as AuthoringToken;

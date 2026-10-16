@@ -1,15 +1,3 @@
-### `packages/codegen/src/dsl/bind.ts::LeadRefusal`
-
-A lead the bindings edit cannot make. `reason` says why. Built with the lead, the message names it, `bind: lead '<list>.<field>': <reason>`. `leadGrammar` throws it in place of the lead verb's `verbs/copy.ts::VerbRefusal`, and `leadIssue` turns it into the reason the derivation reports.
-
-### `packages/codegen/src/dsl/bind.ts::leadGrammar`
-
-Applies the bindings' leads to the grammar through the lead verb (`verbs/lead.ts::applyLead`), over a verb context of its own (`verbs/copy.ts::verbCtxOf`), as a pure edit of the grammar record. A verb's refusal is thrown as a `LeadRefusal` naming the lead. After the leads, their groups follow every lead copy (`verbs/lead.ts::appendLeadGroups`). The grammar's `supertypes` and `inline` lists come back with the copies enlisted, and `leadFrom` and the lead entries of `bindingEffects` are projected from the copy effects (`verbs/effects.ts::provenanceOf`), after any the grammar already carries. A grammar given no leads comes back as it is. The derivation (`bindings/leads.ts::deriveLeads`) reports the same refusals through `leadIssue` before a lead reaches the edit, so here they are assertions.
-
-### `packages/codegen/src/dsl/bind.ts::leadIssue`
-
-Why `leadGrammar` would refuse the last of `leads`, applied in order, or `undefined` when it would make them all: the one check the derivation and the edit share. The derivation passes the leads it has accepted before the one it checks, so a lead that conflicts with an earlier one (two narrowings minting one variant) is refused too.
-
 # `packages/codegen/src/dsl` — Function Glossary
 
 Per-function reference for `packages/codegen/src/dsl/`, mechanically relocated from source
@@ -30,18 +18,6 @@ The rule-origin map `enrich()` attaches to its result under `ENRICH_RULE_ORIGINS
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichTextTokens`
 
 The text tokens enrich minted, each with the rules that reference it (the `text` origins).
-
-### `packages/codegen/src/dsl/enrich.ts::TEXT_TOKENS_KEY`
-
-The non-enumerable key under which `attachTextTokens` attaches the live text-token names to a grammar, so they never reach grammar.json.
-
-### `packages/codegen/src/dsl/enrich.ts::attachTextTokens`
-
-Attaches the text-token names to a grammar under `TEXT_TOKENS_KEY`.
-
-### `packages/codegen/src/dsl/enrich.ts::getTextTokens`
-
-The text-token names attached to a grammar; empty when none were attached. Evaluate reads them into `RawGrammar.textTokens`.
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichMints`
 
@@ -120,8 +96,9 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
  *  tree-sitter's uppercase ones during CLI generation. Calling the injected fn
  *  directly produces a rule in the active runtime's case with no hand-rolled
  *  detection, and inherits the runtime's construction semantics (content
- *  normalization). A missing global means enrich
- *  was called outside any runtime — a unit test that forgot `installFakeDsl()`.
+ *  normalization). A missing global means a DSL
+ *  function was called outside any runtime — a unit test that forgot `installFakeDsl()`, or
+ *  the authoring surface (`dsl-authoring.ts::runtimeDsl`) called outside an evaluation.
  *
  *  Accepts alternate names because the two runtimes don't agree on every
  *  constructor's name: the symbol constructor is `symbol` under sittir but
@@ -2357,6 +2334,22 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
 ```text
 /** 1-arg string → transform placeholder; 1/2-arg rule → a grammar-shapes `AliasRule`. */
 ```
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::runtimeDsl`
+
+A function that calls the DSL runtime's `name`, or its `member` on it, when it is called, fetching it then (`enrich.ts::nativeRuleFn`). The authoring `prec`, `token` and `reserved` are built from it, so they call whichever runtime is installed when a grammar's rules are evaluated: tree-sitter's under its CLI, sittir's inside `compiler/evaluate.ts::withDslGlobals`. Importing the authoring surface outside a runtime therefore binds nothing, and a call made outside one throws `nativeRuleFn`'s error.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::prec`
+
+The runtime's `prec`, with `left`, `right` and `dynamic`, typed for authoring (`AuthoringPrec`); each calls the runtime installed at the call (`runtimeDsl`).
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::reserved`
+
+The runtime's `reserved`, typed for authoring (`AuthoringReserved`), calling the runtime installed at the call (`runtimeDsl`).
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::token`
+
+The runtime's `token`, with `immediate`, typed for authoring (`AuthoringToken`); each calls the runtime installed at the call (`runtimeDsl`).
 
 ### `packages/codegen/src/dsl/enrich.ts::EnrichedGrammar`
 
@@ -7310,7 +7303,7 @@ The conflict sets the `conflicts` callback returns. The first layer's are its se
 
 ### `packages/codegen/src/dsl/layer.ts::completeLayer`
 
-Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, the records the layer inherits (its base's, `verbs/effects.ts::recordsOf`) rewritten through the effects (`rewriteInherited`), the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
+Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, the records the layer inherits (its base's, `verbs/effects.ts::recordsOf`) rewritten through the effects (`rewriteInherited`), the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
 
 Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags). The rules the verbs created follow every body wire evaluated, in creation order, so the runtime appends them last.
 
@@ -7337,15 +7330,6 @@ The file name under a package's `.sittir/` that holds the derived resolutions, a
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::EMPTY_CONFLICT_RESOLUTIONS`
 
 The resolutions of a grammar nothing has been derived for, both sections empty and carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
-
-### `packages/codegen/src/dsl/conflict-resolutions.ts::applyConflictResolutions`
-
-Sets the grammar's `conflicts` to the base resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived.
-
-### `packages/codegen/src/dsl/conflict-resolutions.ts::applyBoundConflictResolutions`
-
-Appends the `bound` section's sets to the bound grammar's `conflicts`, after the renamed base sets. It runs after `bindGrammar`, so the sets name bound rules: a split clone, or a rule under its renamed name. A split clone gets its sets this way, by derivation on the bound grammar, and never by copying its origin's sets: a set that names a rule and its clone together, or a clone beside a rule its origin never met, exists only in the bound grammar's tables, so only generating the bound grammar finds it.
-
 
 ### `packages/codegen/src/dsl/enrich.ts::applyElidedListField`
 
@@ -7501,33 +7485,9 @@ The precedence wrapper types, which carry no slot topology.
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
 
-### `packages/codegen/src/dsl/bind.ts::Rename`
-
-A kind-level rename in a grammar's bindings: the base rule or external `from` takes the name `to`.
-
-### `packages/codegen/src/dsl/bind.ts::Bindings`
-
-The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds ordinary patch sets addressing the completed authored grammar. The bindings layer checks that enrich leaves that grammar unchanged, then applies its own wire patches. `splits` and `leads` reshape the bound parser after those patches. `renames` names the bindings surface and does not rename parser kinds. `hash` identifies the bindings and vocabulary sources checked by `assertBindingsFresh`.
-
-### `packages/codegen/src/dsl/bind.ts::bindings`
-
-Declares grammar bindings and returns them unchanged; the call exists to type them.
-
-### `packages/codegen/src/dsl/bind.ts::rename`
-
-The `Rename` primitive: `rename('function_item', 'function_declaration')`.
-
 ### `packages/codegen/src/dsl/bind.ts::split`
 
 The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from `kind` where it sits under the placement `within` (innermost first, the placement's owner last), with a container rule per intermediate ancestor named and fielded as `containers` gives.
-
-### `packages/codegen/src/dsl/bind.ts::rewriteBindingOptions`
-
-Carries the authored options block through the binding patches. The block is authored in base names, so each `segment` effect rewrites that segment in its owner's option paths (`rewriteOwnedSegments`), and each `alias` effect renames the kind wherever an option path names it (`renameOptions`), as a kind rename would.
-
-### `packages/codegen/src/dsl/bind.ts::bindGrammar`
-
-Completes grammar bindings after their wire patches: authored options take the canonical patch effects, placement splits apply in upstream parser names, then leads create their receiver forms. Kind renames do not apply to the parser. The returned grammar carries the same readonly `bindingEffects` array wire recorded, for consumers that map binding field routes. Hidden facts survive each grammar rewrite.
 
 ### `packages/codegen/src/dsl/bind.ts::Split`
 
@@ -7556,10 +7516,6 @@ The grammar's top-level fields whose entries are rules or lists of rules and nam
 ### `packages/codegen/src/dsl/bind.ts::mappedName`
 
 A name through a rename record: the mapped name where the record has one of its own, else the name unchanged. `Object.hasOwn` keeps a kind named like an object property (`constructor`) from reading a prototype member.
-
-### `packages/codegen/src/dsl/bind.ts::renameOptions`
-
-The grammar's options block under a rename, with the grammar's field names, so a slot segment that names a field is not mistaken for a kind.
 
 ### `packages/codegen/src/dsl/bind.ts::carryHiddenFacts`
 
@@ -7668,10 +7624,6 @@ The three sidecars an enrich result holds, as a plain record that a layer record
 ### `packages/codegen/src/dsl/enrich.ts::withEnrichSidecarsOf`
 
 A shallow copy of a grammar carrying the three sidecars an enrich result holds (whitespace, rule origins, automatic variants), read from `enriched`. `grammar()` does not carry them, so a later enrich over a wired grammar needs them to recognise its own earlier work: without them it re-mints the layout supertype over the body wire decorated and re-aliases visible groups.
-
-### `packages/codegen/src/dsl/wire/wire.ts::wireBindings`
-
-The internal binding-layer entry to canonical wire construction. It accepts a completed grammar result and binding patch sets without imposing the public authored grammar literal shape on that runtime result. The checked enriched grammar is both the wire base and its source.
 
 ### `packages/codegen/src/dsl/automatic-groups.ts::AutomaticGroupContext`
 

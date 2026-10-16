@@ -231,10 +231,6 @@ export function wireRecordBindingEffect(effect: BindingEffect): void {
 	currentContext?.bindingEffects.push(effect);
 }
 
-export function wireBindingEffects(opts: unknown): readonly BindingEffect[] {
-	return (opts as { __wireContext__?: WireContext }).__wireContext__?.bindingEffects ?? [];
-}
-
 export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T): T {
 	const context = currentContext;
 	if (!context) return fn();
@@ -542,10 +538,6 @@ export function wire<B extends GrammarJson = any, const P = EditsConfig<B>, cons
 
 export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts {
 	return wireImpl({ name }, base, base);
-}
-
-export function wireBindings(name: string, base: GrammarResult, edits: EditsConfig): WiredOpts {
-	return wireImpl({ name, edits }, base, base);
 }
 
 export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, layer?: WireLayer): WiredOpts {

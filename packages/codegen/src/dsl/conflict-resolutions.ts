@@ -55,13 +55,3 @@ export function sourceChain(name: string, edges: Readonly<Record<string, string>
 export function upstreamSourcesOf(sourceChains: readonly (readonly string[])[]): readonly string[] {
 	return [...new Set(sourceChains.map((chain) => chain[chain.length - 1]!))];
 }
-
-const conflictSetsOf = (resolutions: readonly ConflictResolutionRecord[]): string[][] => resolutions.map((entry) => [...entry.resolution.symbols]);
-
-export function applyConflictResolutions(grammar: Record<string, unknown>, input: ConflictResolutionsInput): void {
-	grammar.conflicts = conflictSetsOf(input.resolutions);
-}
-
-export function applyBoundConflictResolutions(grammar: Record<string, unknown>, input: ConflictResolutionsInput): void {
-	grammar.conflicts = [...(grammar.conflicts as readonly string[][]), ...conflictSetsOf(input.bound.resolutions)];
-}

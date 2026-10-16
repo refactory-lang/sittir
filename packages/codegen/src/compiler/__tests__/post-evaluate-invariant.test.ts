@@ -145,7 +145,6 @@ describe('post-evaluate invariant', () => {
 				'externalRoles',
 				// Nested-alias polymorph metadata — populated by alias() in transform.
 				'polymorphVariants',
-				// Binding transformations record their minted rules and canonical edits.
 				'splitFrom',
 				'leadFrom',
 				'bindingEffects',

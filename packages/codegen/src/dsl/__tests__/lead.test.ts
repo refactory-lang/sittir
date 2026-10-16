@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
-import { lead as leadRecord, leadGrammar, LeadRefusal } from '../bind.ts';
 import { lead } from '../primitives/lead.ts';
 import { match } from '../primitives/narrow.ts';
 import type { GrammarRecord } from '../rule-patterns.ts';
@@ -557,34 +556,5 @@ describe("a lead entry's refusals carry the verb's code and today's reason, and 
 			expect.objectContaining({ code: 'edit-entry-invalid', severity: 'fail', grammar: 'rusty', ownerKind: 'parameters', details: { kind: 'parameters', path: '1' } })
 		]);
 		expect(applied.rules).toEqual(rulesOf(rust()));
-	});
-});
-
-describe('leadGrammar, the bindings adapter over the lead verb', () => {
-	const RUST_LEAD = leadRecord(
-		'parameters_elements',
-		'item',
-		'receiver',
-		match('attributed_parameter', [match('self_parameter'), match('parameter', { name: [match('self')] }, 'typed_self_parameter')])
-	);
-
-	it('gives the rules, rule order and provenance the entry gives', () => {
-		const bound = leadGrammar(rust(), [RUST_LEAD]);
-		const entries = viaEdits(rust(), RUST);
-		expect(JSON.stringify(bound.rules)).toBe(JSON.stringify(entries.rules));
-		const provenance = provenanceOf(entries.effects, entries.rules);
-		expect(bound.leadFrom).toEqual(provenance.leadFrom);
-		expect(bound.bindingEffects).toEqual(provenance.bindingEffects);
-	});
-
-	it('leaves a grammar with no leads as it is', () => {
-		const grammar = rust();
-		expect(leadGrammar(grammar, [])).toBe(grammar);
-	});
-
-	it('throws a refusal naming the lead and the reason, which leadIssue returns', () => {
-		const unfielded = withRules(rust(), { parameters: seq(str('('), sym('parameters_elements'), str(')')) });
-		expect(() => leadGrammar(unfielded, [RUST_LEAD])).toThrow(new LeadRefusal("'parameters' holds the list other than as a field's content", RUST_LEAD));
-		expect(() => leadGrammar(unfielded, [RUST_LEAD])).toThrow("bind: lead 'parameters_elements.receiver': 'parameters' holds the list other than as a field's content");
 	});
 });

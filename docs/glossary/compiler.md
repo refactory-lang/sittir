@@ -2799,7 +2799,7 @@ boundary; a caller that wants the DSL's own shape calls it directly.
 
 Imports a grammar layer's file and extracts the grammar from the module's default or named export, as its top-level `grammar()` call produced it. A layer's file evaluates to the same grammar wherever it is imported from, so which file is imported is the whole choice of layer (`grammars.ts::layerPath`).
 
-The dead enrich mints, the conflict-derivation records and the text-token names arrive on the top layer's record (`dsl/layer-record.ts::layerRecordOf`), with the diagnostics the layer passes recorded, which become `layerDiagnostics`. A grammar no layer pass completed carries the first three as non-enumerable sidecars on the grammar instead (`getDeadEnrichMints`, `getDerivationRecords`, `dsl/enrich.ts::getTextTokens`). The dead mints become `orphanedSyntheticGroups`, the records `derivationRecords` and the names `textTokens`, here, after the module's `grammar()` call has returned, since they are computed from that call's result. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all. An inheriting layer's projections (`splitFrom`, `leadFrom`, `renamedFrom` and `bindingEffects`, the record's `projections`) are spread onto the grammar here too, since the runtime's result holds only the keys it builds.
+The dead enrich mints, the conflict-derivation records and the text-token names arrive on the top layer's record (`dsl/layer-record.ts::layerRecordOf`), with the diagnostics the layer passes recorded, which become `layerDiagnostics`. A grammar no layer pass completed (an upstream `grammar.js`) carries none of them, and comes back as a copy of what its `grammar()` call produced. The dead mints become `orphanedSyntheticGroups`, the records `derivationRecords` and the names `textTokens`, here, after the module's `grammar()` call has returned, since they are computed from that call's result. The returned grammar is a spread copy, so whatever a caller adds never reaches the imported module's grammar, which the module cache keeps. An inheriting layer's projections (`splitFrom`, `leadFrom`, `renamedFrom` and `bindingEffects`, the record's `projections`) are spread onto the grammar here too, since the runtime's result holds only the keys it builds.
 
 ### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
@@ -6326,7 +6326,7 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 
 ### `packages/codegen/src/compiler/types.ts::orphanedSyntheticGroups`
 
-The rules enrich added that the wired grammar never reaches: the dead set `blankDeadEnrichMints` computed and blanked (`getDeadEnrichMints`). The canonical prune removes the rules themselves; `withoutOrphanedGroups` drops any diagnostic owned by one, since the kind can never occur in a parse.
+The rules enrich added that the wired grammar never reaches: the dead mints the layer passes blanked (`dsl/layer.ts::completeLayer`), read from the top layer's record. The canonical prune removes the rules themselves; `withoutOrphanedGroups` drops any diagnostic owned by one, since the kind can never occur in a parse.
 
 ### `packages/codegen/src/compiler/types.ts::textTokens`
 
@@ -6648,9 +6648,9 @@ grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
 
-Where a kind came from: `renamedFrom` maps a kind the grammar bindings renamed to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). `bindGrammar` writes the first two maps onto the evaluated grammar and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+Where a kind came from: `renamedFrom` maps a kind a layer renamed to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). An inheriting layer projects the first two from its effects (`dsl/verbs/effects.ts::provenanceOf`), evaluate spreads them onto the evaluated grammar (`evaluate.ts::importAndExtractGrammar`), and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
 
-A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
+A `splitFrom` value names the source as the layer that copied it named it, and link renames the values with the keys, so the base name of a copy of a renamed kind is one more step through `renamedFrom`.
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
 

@@ -11,15 +11,10 @@ import {
 	unwrapPrec,
 	type GrammarRecord
 } from './rule-patterns.ts';
-import { mintLists, VerbRefusal, verbCtxOf } from './verbs/copy.ts';
+import { mintLists } from './verbs/copy.ts';
 import {
-	bindMatch,
-	boundFieldNameOf,
-	effectsForOwners,
 	inheritSplitOptions,
-	provenanceOf,
 	renameKeys,
-	renameOptionPaths,
 	renameRecords,
 	renameValue,
 	rewriteOwnedSegments,
@@ -27,13 +22,6 @@ import {
 	type Lead,
 	type LeadMatch
 } from './verbs/effects.ts';
-import { appendLeadGroups, applyLead } from './verbs/lead.ts';
-import type { EditsConfig } from './wire/wire.ts';
-
-export interface Rename {
-	readonly from: string;
-	readonly to: string;
-}
 
 export interface Split {
 	readonly kind: string;
@@ -55,22 +43,6 @@ export interface FieldWrap {
 	readonly target: FieldWrapTarget;
 }
 
-export interface Bindings {
-	readonly hash?: string;
-	readonly patches?: EditsConfig;
-	readonly renames?: readonly Rename[];
-	readonly leads?: readonly Lead[];
-	readonly splits?: readonly Split[];
-}
-
-export function bindings<const B extends Bindings>(grammarBindings: B): B {
-	return grammarBindings;
-}
-
-export function rename(from: string, to: string): Rename {
-	return { from, to };
-}
-
 export function lead(list: string, item: string, field: string, ...admits: LeadMatch[]): Lead {
 	return { list, item, field, admits };
 }
@@ -84,10 +56,6 @@ const RULE_FIELDS = ['extras', 'externals', 'precedences', 'reserved', 'conflict
 
 export function mappedName(record: Readonly<Record<string, string>> | undefined, name: string): string {
 	return record !== undefined && Object.hasOwn(record, name) ? record[name]! : name;
-}
-
-function renameOptions(grammar: GrammarRecord, rename: (name: string) => string, kindHead: boolean): unknown {
-	return renameOptionPaths(grammar.options, rename, kindHead, fieldNames(grammar.rules));
 }
 
 function carryHiddenFacts(from: GrammarRecord, to: GrammarRecord, rename: (name: string) => string): void {
@@ -362,76 +330,6 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 	out.splitFrom = { ...(isRecord(grammar.splitFrom) ? grammar.splitFrom : {}), ...splitFrom };
 	if ('options' in grammar) out.options = inheritSplitOptions(grammar, splitFrom);
 	return out;
-}
-
-export class LeadRefusal extends Error {
-	readonly reason: string;
-	constructor(reason: string, lead?: Lead) {
-		super(lead === undefined ? reason : `bind: lead '${lead.list}.${lead.field}': ${reason}`);
-		this.reason = reason;
-	}
-}
-
-export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): GrammarRecord {
-	if (leads.length === 0) return grammar;
-	const ctx = verbCtxOf(grammar);
-	for (const l of leads) {
-		try {
-			applyLead(l, ctx);
-		} catch (error) {
-			throw error instanceof VerbRefusal ? new LeadRefusal(error.reason, l) : error;
-		}
-	}
-	appendLeadGroups(ctx);
-	const out: GrammarRecord = { ...grammar, rules: ctx.rules, supertypes: ctx.lists.supertypes, inline: ctx.lists.inline };
-	carryHiddenFacts(grammar, out, (name) => name);
-	const provenance = provenanceOf(ctx.effects, ctx.rules);
-	out.leadFrom = { ...(isRecord(grammar.leadFrom) ? grammar.leadFrom : {}), ...provenance.leadFrom };
-	out.bindingEffects = [...(Array.isArray(grammar.bindingEffects) ? grammar.bindingEffects : []), ...provenance.bindingEffects];
-	return out;
-}
-
-export function leadIssue(grammar: GrammarRecord, leads: readonly Lead[]): string | undefined {
-	try {
-		leadGrammar(grammar, leads);
-		return undefined;
-	} catch (error) {
-		if (error instanceof LeadRefusal) return error.reason;
-		throw error;
-	}
-}
-
-export function rewriteBindingOptions(grammar: GrammarRecord, effects: readonly BindingEffect[]): GrammarRecord {
-	if (!('options' in grammar) || effects.length === 0) return grammar;
-	const segments = effects.flatMap((e) => (e.kind === 'segment' ? [{ owner: e.owner, from: e.from, to: e.to }] : []));
-	const aliases = new Map(effects.flatMap((e) => (e.kind === 'alias' ? [[e.from, e.to] as const] : [])));
-	const out: GrammarRecord = { ...grammar, options: rewriteOwnedSegments(grammar.options, segments, grammar) };
-	if (aliases.size > 0) out.options = renameOptions(out, (name) => aliases.get(name) ?? name, false);
-	carryHiddenFacts(grammar, out, (name) => name);
-	return out;
-}
-
-export function bindGrammar(
-	grammar: GrammarRecord,
-	grammarBindings: Bindings,
-	effects: readonly BindingEffect[] = []
-): GrammarRecord {
-	const ownedEffects = effectsForOwners(grammar, effects);
-	const split = splitGrammar(rewriteBindingOptions(grammar, ownedEffects), grammarBindings.splits ?? []);
-	const fieldNameOf = boundFieldNameOf(ownedEffects.filter((effect) => effect.kind === 'segment'));
-	const leads = (grammarBindings.leads ?? []).map((entry) => ({
-		...entry,
-		item: fieldNameOf(entry.list, entry.item),
-		admits: entry.admits.map((admit) => bindMatch(admit, (kind) => kind, fieldNameOf))
-	}));
-	const bound = leadGrammar(split, leads);
-	bound.bindingEffects = [
-		...ownedEffects,
-		...(Array.isArray(bound.bindingEffects)
-			? bound.bindingEffects.filter((effect: BindingEffect) => effect.kind === 'lead')
-			: [])
-	];
-	return bound;
 }
 
 export function baseNamesOf(

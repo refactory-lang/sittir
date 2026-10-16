@@ -133,7 +133,7 @@ function renamePath(path: string, rename: (name: string) => string, kindHead: bo
 	return [kindHead ? rename(head) : renameSegment(head, rename, fields), ...rest.map((s) => renameSegment(s, rename, fields))].join('/');
 }
 
-export function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>): unknown {
+function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>): unknown {
 	if (!isRecord(record) || isPreference(record)) return record;
 	const out: GrammarRecord = {};
 	for (const [key, value] of Object.entries(record)) {

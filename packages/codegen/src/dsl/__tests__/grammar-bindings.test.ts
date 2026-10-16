@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar, writeSittirGrammarPackage } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
-import { baseNamesOf, bindGrammar, boundNameOf, lead } from '../bind.ts';
+import { baseNamesOf, boundNameOf, lead } from '../bind.ts';
 import { match } from '../primitives/narrow.ts';
 import { boundFieldNameOf } from '../verbs/effects.ts';
 
@@ -64,38 +64,6 @@ describe('lead and match', () => {
 		expect(() => match('required_parameter', { pattern: [match('this')], type: [match('type_annotation')] })).toThrow(
 			/restricts one field, not 2/
 		);
-	});
-
-	it('applies leads after binding patches and placement splits', () => {
-		const sym = (name: string) => ({ type: 'SYMBOL', name });
-		const item = { type: 'FIELD', name: 'item', content: { type: 'CHOICE', members: [sym('x'), sym('y')] } };
-		const grammar = {
-			name: 'g',
-			rules: {
-				owner: { type: 'FIELD', name: 'elements', content: sym('list') },
-				list: {
-					type: 'SEQ',
-					members: [item, { type: 'REPEAT', content: { type: 'SEQ', members: [{ type: 'STRING', value: ',' }, item] } }]
-				},
-				x: { type: 'STRING', value: 'x' },
-				y: { type: 'STRING', value: 'y' }
-			}
-		};
-		const bound = bindGrammar(grammar, { leads: [lead('list', 'item', 'receiver', match('x'))] });
-		expect(bound.leadFrom).toEqual({ _list_receiver: 'list' });
-		expect(bound.bindingEffects).toContainEqual({
-			kind: 'lead',
-			list: 'list',
-			item: 'item',
-			field: 'receiver',
-			receiver: 'list_receiver',
-			group: 'list_receiver_group',
-			restField: 'elements',
-			variants: {},
-			admits: [{ kind: 'x' }]
-		});
-		expect(JSON.stringify(bound.rules)).toContain('"name":"receiver"');
-		expect(JSON.stringify(bound.rules)).toContain('"value":"list_receiver"');
 	});
 });
 

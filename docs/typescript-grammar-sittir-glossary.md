@@ -83,7 +83,7 @@ polymorph helpers need to appear explicitly.
 				// alias content with the properly-split polymorph body (transform.ts's
 				// ALIAS-rename deposit + repoint), the ORIGINAL raw mint becomes a
 				// provably-unreachable orphan. the layer pass's dead-mint pass
-				// (`blankDeadEnrichMints`) blanks every enrich mint the final
+				// (`dsl/layer.ts::completeLayer`) blanks every enrich mint the final
 				// grammar does not reach, so the orphan is pruned before codegen.
 				// Folding the ENTIRE `_export_statement_default`
 				// cascade into ONE patches entry with deep, multi-level string

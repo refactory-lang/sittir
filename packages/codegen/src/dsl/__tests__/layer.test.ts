@@ -1,18 +1,23 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
+import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
 import { parserRulesOf } from '../../compiler/canonical-rules.ts';
 import { diagnoseGrammar } from '../../compiler/compile.ts';
 import { evaluate, evaluateDsl, withDslGlobals } from '../../compiler/evaluate.ts';
+import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import type { EvaluatedGrammar } from '../../compiler/types.ts';
+import { grammarPackage } from '../../grammars.ts';
 import { canonical } from '../../transpile/evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing, treeSitterCliVersion } from '../../transpile/tree-sitter-cli.ts';
 import { alias, field, match, narrow, preference } from '../dsl-authoring.ts';
 import type { GrammarResult } from '../enrich.ts';
 import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
-import { layerOptions, pendingBase } from '../layer.ts';
+import { enrichFixpoint, layerOptions, pendingBase } from '../layer.ts';
 import { layerRecordOf } from '../layer-record.ts';
 import { lead } from '../primitives/lead.ts';
 import { SENTINEL } from './fixtures/layer-chain/sentinel.ts';
@@ -20,6 +25,21 @@ import { SENTINEL } from './fixtures/layer-chain/sentinel.ts';
 const here = fileURLToPath(new URL('.', import.meta.url));
 const chain = (name: string): string => resolve(here, 'fixtures/layer-chain', name);
 const layerRecordModule = pathToFileURL(resolve(here, '../layer-record.ts')).href;
+const packages = resolve(here, '../../../..');
+const require = createRequire(import.meta.url);
+const checks = vi.hoisted(() => ({ count: 0, bases: [] as string[] }));
+
+vi.mock('../enrich.ts', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('../enrich.ts')>();
+	return {
+		...actual,
+		withEnrichSidecarsOf: <G extends object>(grammar: G, enriched: unknown): G => {
+			checks.count++;
+			checks.bases.push(JSON.stringify(grammar));
+			return actual.withEnrichSidecarsOf(grammar, enriched);
+		}
+	};
+});
 
 type RuntimeGrammar = (base: unknown, options?: unknown) => GrammarResult;
 type Symbols = Readonly<Record<string, SymbolRule<string>>>;
@@ -248,7 +268,17 @@ describe('a lead entry in a layer', () => {
 			const projections = layerRecordOf(result)?.projections;
 			expect(projections?.leadFrom).toEqual({ _params_receiver: 'params' });
 			expect(projections?.bindingEffects.map((effect) => effect.kind)).toEqual(['segment', 'lead']);
-			expect(projections?.bindingEffects.at(-1)).toMatchObject({ kind: 'lead', list: 'params', item: 'item', field: 'receiver', receiver: 'params_receiver', group: 'params_receiver_group' });
+			expect(projections?.bindingEffects.at(-1)).toEqual({
+				kind: 'lead',
+				list: 'params',
+				item: 'item',
+				field: 'receiver',
+				receiver: 'params_receiver',
+				group: 'params_receiver_group',
+				restField: 'parameter_list',
+				variants: {},
+				admits: [{ kind: 'self_param' }]
+			});
 		});
 	});
 
@@ -498,4 +528,90 @@ describe('the fixture chain', () => {
 			expect('contexts' in options).toBe(false);
 		});
 	});
+});
+
+describe('the grammar bindings layer', () => {
+	it('enriches the completed authored layer before any binding edit', async () => {
+		checks.bases.length = 0;
+		const raw = await evaluateTempGrammar({ extras: '', rules: "holder: $ => seq('(', $.word, ')')" }, "edits: { holder: { 1: field('authored') } }", {
+			bindings: "edits: { holder: { 1: field('portable') } }"
+		});
+		expect(checks.bases).toHaveLength(1);
+		expect(checks.bases[0]).toContain('"name":"authored"');
+		expect(checks.bases[0]).not.toContain('"name":"portable"');
+		expect(JSON.stringify(raw.rules.holder)).toContain('"name":"portable"');
+	});
+
+	it('applies a lead to the field produced by the binding patch', async () => {
+		const raw = await evaluateTempGrammar(
+			{
+				extras: '',
+				rules: `holder: $ => seq('(', field('elements', $.entries), ')'),
+				entries: $ => seq(field('item', choice($.head, $.tail)), repeat(seq(',', field('item', choice($.head, $.tail))))),
+				head: _ => 'self', tail: _ => 'value'`
+			},
+			'',
+			{ bindings: "edits: { entries: [{ 0: field('entry'), '1/0/1': field('entry') }, { '.': lead('entry', 'receiver', match('head')) }] }" }
+		);
+		expect(raw.leadFrom).toEqual({ _entries_receiver: 'entries' });
+		expect(JSON.stringify(raw.rules._entries_receiver)).toContain('"name":"receiver"');
+		expect(JSON.stringify(raw.rules.holder)).toContain('"value":"entries_receiver"');
+		expect(JSON.stringify(raw.rules.entries)).toContain('"name":"entry"');
+		expect(raw.rules).toHaveProperty('entries_receiver_group');
+		expect(JSON.stringify(raw.rules._entries_receiver)).toContain('"name":"entries_receiver_group"');
+	});
+
+	it('records a hidden helper field rename against its owners before a lead narrows their helper references', async () => {
+		const raw = await evaluateTempGrammar(
+			{
+				extras: '',
+				rules: `holder: $ => seq('(', field('elements', $.entries), ')'),
+			entries: $ => seq(field('item', $.parameter), repeat(seq(',', field('item', $.parameter)))),
+			parameter: $ => seq($._name, ':', $.word),
+			_name: $ => seq(field('pattern', choice($.head, $.tail)), '!'), head: _ => 'self', tail: _ => 'value'`
+			},
+			'',
+			{
+				bindings:
+					"edits: { _name: { 0: field('name') }, entries: { '.': lead('item', 'receiver', match('parameter', { pattern: [match('head')] }, 'receiver_parameter')) } }"
+			}
+		);
+		expect(raw.bindingEffects).toContainEqual({ kind: 'segment', owner: 'parameter', from: 'pattern:', to: 'name:' });
+	});
+
+	it.each(['rust', 'typescript', 'python'])(
+		"takes %s's layer 1 as a base enrich leaves unchanged",
+		async (grammar) => {
+			checks.count = 0;
+			const raw = await evaluatePackage(grammarPackage(grammar));
+			expect(checks.count).toBeGreaterThan(0);
+			expect(raw.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
+		},
+		240_000
+	);
+
+	it.each(['regex', 'scm'])(
+		"completes %s's layer as a base enrich leaves unchanged",
+		async (grammar) => {
+			const evaluated = await evaluateDsl(join(packages, grammar, 'grammar.sittir.ts'));
+			const record = layerRecordOf({ grammar: evaluated });
+			expect(record?.depth).toBe(1);
+			const { changed } = await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!.sidecars));
+			expect(changed).toEqual([]);
+		},
+		240_000
+	);
+
+	it('reports a layer whose base enrich would reshape, as a blocking diagnostic of that layer', async () => {
+		checks.count = 0;
+		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-c/grammar.js'), 'c', '', undefined, { bindings: '' });
+		expect(raw.layerDiagnostics).toContainEqual(
+			expect.objectContaining({
+				code: 'layer-not-enrich-fixpoint',
+				canProceed: false,
+				message: expect.stringMatching(/enrich changes _type_declarator, generic_expression, sized_type_specifier, sized_type_specifier_arm in the layer below 'c'/)
+			})
+		);
+		expect(checks.count).toBeGreaterThan(0);
+	}, 120_000);
 });

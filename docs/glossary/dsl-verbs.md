@@ -214,7 +214,7 @@ The blocking codes a verb refuses with: `edit-site-missing` (an entry names no r
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal`
 
-A refusal a verb throws: its `code` and its `reason`. The caller words it for its own surface: the layer's lead driver records it as a diagnostic naming the entry (`verbs/lead.ts::applyLeads`), and the bindings adapter rethrows it as a `bind.ts::LeadRefusal`.
+A refusal a verb throws: its `code` and its `reason`. The caller words it for its own surface: the layer's lead driver records it as a diagnostic naming the entry (`verbs/lead.ts::applyLeads`), and the lead derivation reports its reason on the claims (`bindings/leads.ts::deriveLeads`).
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::MintLists`
 

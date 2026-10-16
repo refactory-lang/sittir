@@ -1,14 +1,9 @@
 import { RuleWalker } from '../rule-walker.ts';
 import type { AnyRule } from '../../types/rule.ts';
-import type { GrammarResult } from '../enrich.ts';
-import { upstreamConflictSets, upstreamSymbolNames, type WiredOpts } from './wire.ts';
+import { upstreamConflictSets, upstreamSymbolNames } from './wire.ts';
 import { liftRenames, type LiftName } from './lift-names.ts';
 import type { ConflictResolutionRecord } from '../conflict-resolutions.ts';
 import { baseRulesOf } from '../shared.ts';
-
-type WiredGrammar = GrammarResult['grammar'];
-
-export const DERIVATION_RECORDS_KEY = '__derivationRecords__' as const;
 
 export interface DerivationRecords {
 	readonly upstreamConflicts: readonly (readonly string[])[];
@@ -70,14 +65,4 @@ export function derivationRecordsOf(rules: Readonly<Record<string, AnyRule>>, ct
 		upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf<AnyRule>(ctx.upstream) ?? {}),
 		dynamicPrecedence: dynamicPrecedenceOf(rules)
 	};
-}
-
-export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts, conflicts: ConflictConfig): void {
-	const records = derivationRecordsOf(grammar.rules, { upstream: base, liftNames: opts.__wireContext__?.liftNames, conflicts });
-	Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
-}
-
-export function getDerivationRecords(grammar: unknown): DerivationRecords | undefined {
-	if (!grammar || typeof grammar !== 'object') return undefined;
-	return (grammar as Record<string, unknown>)[DERIVATION_RECORDS_KEY] as DerivationRecords | undefined;
 }

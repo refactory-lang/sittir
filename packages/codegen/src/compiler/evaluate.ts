@@ -33,9 +33,6 @@ import { isComplexBody, isRecord, onlyAliasedSymbols, optionalContentOf, ruleLis
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
 import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
-import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
-import { getDerivationRecords } from '../dsl/wire/derivation-records.ts';
-import { getTextTokens } from '../dsl/enrich.ts';
 import { layerRecordOf } from '../dsl/layer-record.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
@@ -935,17 +932,15 @@ async function importAndExtractGrammar(entryPath: string): Promise<EvaluatedGram
 	const result = (mod.default ?? mod) as { grammar?: unknown };
 	const grammarObj = (result.grammar ?? result) as EvaluatedGrammar;
 	const record = layerRecordOf(result);
-	const deadMints = record?.deadMints ?? getDeadEnrichMints(grammarObj);
-	const derivationRecords = record?.derivationRecords ?? getDerivationRecords(grammarObj);
-	const textTokens = record?.textTokens ?? getTextTokens(grammarObj);
-	const layerDiagnostics = record?.diagnostics ?? [];
+	if (record === undefined) return { ...grammarObj };
+	const { deadMints, derivationRecords, textTokens, diagnostics } = record;
 	return {
 		...grammarObj,
-		...record?.projections,
+		...record.projections,
 		...(deadMints.size === 0 ? {} : { orphanedSyntheticGroups: [...deadMints] }),
-		...(derivationRecords === undefined ? {} : { derivationRecords }),
+		derivationRecords,
 		...(textTokens.length === 0 ? {} : { textTokens }),
-		...(layerDiagnostics.length === 0 ? {} : { layerDiagnostics })
+		...(diagnostics.length === 0 ? {} : { layerDiagnostics: diagnostics })
 	};
 }
 

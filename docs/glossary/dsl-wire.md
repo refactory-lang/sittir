@@ -273,10 +273,6 @@ The names the upstream grammar defines: its rules and its externals, read the wa
 
 The upstream grammar's own `conflicts`, as rule-name sets. The upstream `grammar()` has already run the conflicts callback, so each entry is names or symbols.
 
-### `packages/codegen/src/dsl/wire/dead-mints.ts::DEAD_ENRICH_MINTS_KEY`
-
-The non-enumerable key under which `blankDeadEnrichMints` attaches the dead set to `result.grammar`. tree-sitter's loader serializes the grammar with an object spread, which copies only enumerable properties, so the key never reaches grammar.json.
-
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::ruleListEntries`
 
 The rule-list entries of an `extras` value in either runtime's shape; an entry that is not a symbol, string or pattern contributes nothing.
@@ -295,31 +291,11 @@ What the dead-mint check reads beside the grammar: the rules enrich minted and t
 
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::deadEnrichMints`
 
-The rules enrich minted that a grammar has and does not reach (`reachableRuleNames`). It changes nothing: `blankDeadEnrichMints` applies it to a `grammar()` result, and the layer pass applies it through its callbacks.
+The rules enrich minted that a grammar has and does not reach (`reachableRuleNames`). It changes nothing: the layer pass blanks what it names (`layer.ts::completeLayer`).
 
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::withoutDeadNames`
 
 A rule-name list (`inline`, `supertypes`) without the entries that name a dead rule. A value that is not a list is returned as is.
-
-### `packages/codegen/src/dsl/wire/dead-mints.ts::withoutDeadConflicts`
-
-A `conflicts` list without the groups that name a dead rule.
-
-### `packages/codegen/src/dsl/wire/dead-mints.ts::blankDeadEnrichMints`
-
-The dead-mint pass over a `grammar()` result. The dead set is the rules enrich adds (`getEnrichMints`) that the final grammar does not reach (`reachableRuleNames`). The pass covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite.
-
-Each dead rule's map entry is reassigned to the runtime's own `blank()`, and no rule object is changed, so a body another rule shares (a rename copies the body object) is untouched. Reassigning an existing key keeps the key order, which fixes parser symbol ids; the pass asserts the order is unchanged. The dead names are then dropped from `inline`, `supertypes` and `conflicts`, so tree-sitter never sees a list entry that names a blank rule. tree-sitter's generate drops the unreachable blank rule, `pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar.
-
-The dead set is attached to the grammar under `DEAD_ENRICH_MINTS_KEY` and becomes `orphanedSyntheticGroups`. It never reads `annotations.hoisted`.
-
-### `packages/codegen/src/dsl/wire/dead-mints.ts::getDeadEnrichMints`
-
-The dead set `blankDeadEnrichMints` attached to a grammar; empty when it attached none.
-
-### `packages/codegen/src/dsl/wire/derivation-records.ts::DERIVATION_RECORDS_KEY`
-
-The non-enumerable key under which `attachDerivationRecords` puts the conflict-derivation records on `result.grammar`. Like the dead-mint key, it never reaches grammar.json.
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::DerivationRecords`
 
@@ -349,14 +325,6 @@ A name the upstream grammar defines (a rule or an external) never gets an edge; 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::DerivationCtx`
 
 What the records are derived from beside the final rules: the upstream grammar, the lift names and the conflict config.
-
-### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
-
-Puts `derivationRecordsOf` on a `grammar()` result under `DERIVATION_RECORDS_KEY`. The layer pass carries the same records on its layer record.
-
-### `packages/codegen/src/dsl/wire/derivation-records.ts::getDerivationRecords`
-
-The records `attachDerivationRecords` put on a grammar; undefined for a grammar it did not run on.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 
@@ -1738,7 +1706,7 @@ The base grammar's `word`, when it declares one.
 ### `packages/codegen/src/dsl/wire/wire.ts::wireImpl`
 
 The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` is its typed facade, whose
-generic base type only checks the authored config's keys; `wireWithoutConfig`, `wireBindings` and the layer pass
+generic base type only checks the authored config's keys; `wireWithoutConfig` and the layer pass
 (`layer.ts::runLayerPass`) call it directly. The runtime's call to its `externals` callback is where wire evaluates
 the config (`evaluatingExternals`); the rule callbacks and the `extras`, `supertypes` and `precedences` callbacks
 return what that call computed. The layer pass also passes its handle (`WireLayer`), which wire's refusals and the lead entries it queues join
@@ -2103,10 +2071,6 @@ The field and alias effects the layer's patch sets had, in the order they applie
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRecordBindingEffect`
 
 Records one effect on the current wire context, in every layer.
-
-### `packages/codegen/src/dsl/wire/wire.ts::wireBindingEffects`
-
-The effects recorded on the wire context that `wire()` attached to `opts`.
 
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 
