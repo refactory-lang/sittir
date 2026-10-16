@@ -582,8 +582,12 @@ Whether a rule can produce a sequence of literal tokens and symbols. A string
 matches its literal; a symbol matches an item naming it, and a symbol the caller
 expands is also followed into its own body. By default only hidden symbols
 (leading underscore) expand, since they leave no node of its own. Sequences, choices, optionals and repeats are followed; fields,
-aliases and tokens are transparent. A hidden rule re-entered at the same
-position derives nothing new and is cut, so left recursion terminates.
+aliases and tokens are transparent. Recursion is solved as a least fixed
+point. A rule re-entered at the same position yields what it has reached so
+far, and passes repeat until no rule reaches a new end. So a left-recursive rule
+is recognised in full, and the answer is exact in both directions. That matters
+for the checks that need a form not to be derived. Each rule-and-position entry
+only grows, up to the form's length, so the passes terminate.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::GrammarRules`
 

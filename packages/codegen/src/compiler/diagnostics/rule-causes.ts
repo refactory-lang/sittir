@@ -134,7 +134,9 @@ function derivesForm(
 	form: readonly WitnessFormItem[],
 	expands: (name: string) => boolean = expandsHidden
 ): boolean {
-	const expanding = new Set<string>();
+	const reached = new Map<string, Set<number>>();
+	let visited = new Set<string>();
+	let grew = false;
 	const ends = (node: Rule<'evaluate'>, at: number): number[] => {
 		const item = form[at];
 		switch (node.type) {
@@ -143,12 +145,18 @@ function derivesForm(
 			case SYMBOL: {
 				if (typeof item === 'object' && item.symbol === node.name) return [at + 1];
 				const body = expands(node.name) ? rules[node.name] : undefined;
+				if (body === undefined) return [];
 				const key = `${node.name}@${at}`;
-				if (body === undefined || expanding.has(key)) return [];
-				expanding.add(key);
-				const reached = ends(body, at);
-				expanding.delete(key);
-				return reached;
+				const known = reached.get(key) ?? new Set<number>();
+				reached.set(key, known);
+				if (visited.has(key)) return [...known];
+				visited.add(key);
+				for (const end of ends(body, at)) {
+					if (known.has(end)) continue;
+					known.add(end);
+					grew = true;
+				}
+				return [...known];
 			}
 			case SEQ:
 				return node.members.reduce<number[]>(
@@ -190,7 +198,13 @@ function derivesForm(
 				return assertNever(node);
 		}
 	};
-	return ends(rule, 0).includes(form.length);
+	let result: number[];
+	do {
+		grew = false;
+		visited = new Set();
+		result = ends(rule, 0);
+	} while (grew);
+	return result.includes(form.length);
 }
 
 function judgeWitnesses<W extends OtherKindWitness>(

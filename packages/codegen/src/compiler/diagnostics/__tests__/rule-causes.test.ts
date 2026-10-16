@@ -332,6 +332,20 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 		expect(ds[0]!.message).toContain('the authored rule still derives');
 	});
 
+	it('is a mismatch when the authored rule still derives the form through a left-recursive rule sittir minted', () => {
+		const upstream = { getter: seq(str('x'), str('x')) };
+		const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
+		const doubled = { text: 'x x', form: ['x', 'x'], kind: 'getter', production: 'p' };
+		const ds = diagnose({
+			ruleCauses: { getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: [doubled] } },
+			enriched: enriched({ ruleNames: new Set(['getter']) }),
+			upstreamRules: upstream,
+			authoredRules: { getter: sym('variant'), variant: choice(seq(sym('variant'), str('x')), str('x')) }
+		});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain('the authored rule still derives');
+	});
+
 	it('reads a symbol upstream also declares as a witness item, not as its body', () => {
 		const withName = { ...upstreamRules, name: str('x') };
 		const ds = diagnose({
