@@ -20,7 +20,7 @@ use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
 use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
-use crate::types::KindId;
+use crate::types::{KindId, TreeId};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -382,7 +382,7 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// Identity this tree stamps into every handle it mints. Distinct per
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
-    tree_id: u32,
+    tree_id: TreeId,
     /// The source's row starts, built on the first snapshot and shared by
     /// every later one.
     lines: std::sync::OnceLock<crate::points::LineTable>,
@@ -454,8 +454,8 @@ static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32
 /// with its own copy of this counter; the napi engine therefore claims from
 /// the JavaScript process instead (`claim_tree_id_from`), and this counter
 /// serves engines built in Rust alone.
-pub fn claim_tree_id() -> Option<u32> {
-    claim_tree_id_from_counter(&NEXT_TREE_ID)
+pub fn claim_tree_id() -> Option<TreeId> {
+    claim_tree_id_from_counter(&NEXT_TREE_ID).map(TreeId)
 }
 
 fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<u32> {
@@ -477,31 +477,31 @@ fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<
 /// claim); the id and the value to record come back together, or nothing
 /// once `MAX_TREE_ID` has been claimed — the owner then records nothing, so
 /// the counter stays put and no id is ever reused.
-pub fn claim_tree_id_from(next: Option<f64>) -> Option<(u32, f64)> {
+pub fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeId, f64)> {
     let next = next.unwrap_or(0.0);
     if !(0.0..=MAX_TREE_ID as f64).contains(&next) || next.fract() != 0.0 {
         return None;
     }
     let id = next as u32;
-    Some((id, f64::from(id) + 1.0))
+    Some((TreeId(id), f64::from(id) + 1.0))
 }
 
 /// Pack a tree id and a node index into one self-identifying handle.
-pub fn encode_handle(tree_id: u32, index: u32) -> u64 {
-    ((tree_id as u64) << HANDLE_INDEX_BITS) | index as u64
+pub fn encode_handle(tree_id: TreeId, index: u32) -> u64 {
+    (u64::from(tree_id.get()) << HANDLE_INDEX_BITS) | u64::from(index)
 }
 
 /// Split a handle back into the tree that minted it and the index within it.
-pub fn decode_handle(handle: u64) -> (u32, u32) {
+pub fn decode_handle(handle: u64) -> (TreeId, u32) {
     (
-        (handle >> HANDLE_INDEX_BITS) as u32,
+        TreeId((handle >> HANDLE_INDEX_BITS) as u32),
         (handle & HANDLE_INDEX_MASK) as u32,
     )
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {
     /// This tree's identity — the tag carried by every handle it mints.
-    pub fn tree_id(&self) -> u32 {
+    pub fn tree_id(&self) -> TreeId {
         self.tree_id
     }
 
@@ -1272,7 +1272,7 @@ impl<G: EngineGrammar> crate::read::SideLookup for WithoutLayout<'_, G> {
 /// The tree as the source table of its own record: a sliced child's sides
 /// come without their layout runs or writes, as a read child's do.
 impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
-    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
         self.0.source_of(tree_id)
     }
 
@@ -1284,7 +1284,7 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         self.0.line_starts_inside_tokens(coord)
     }
 
-    fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         self.0.last_list_child_kind(tree, span, kind)
     }
 
@@ -1306,7 +1306,7 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         self.0.seat_through(coord, wrappers, seat)
     }
 
-    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
         let tree = self.0.own(tree)?;
         Some((&tree.tree, tree.read_ctx().with_sides(self)))
     }
@@ -1355,7 +1355,7 @@ impl<G: EngineGrammar> Engine<G> {
     /// The caller owns id assignment because it owns the set of live trees;
     /// ids must be distinct across every tree a caller can still reach, or
     /// handles stop being unambiguous.
-    pub fn parse(&mut self, source: String, tree_id: u32) -> Result<ParsedTree<G>, String> {
+    pub fn parse(&mut self, source: String, tree_id: TreeId) -> Result<ParsedTree<G>, String> {
         let tree = self.parser.parse(&source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
@@ -1495,7 +1495,7 @@ fn align(items: &[SourceItem], written: &[crate::baseline::Item]) -> Vec<Option<
 /// One tree as a render's source table: its own coordinates resolve, any
 /// other tree's do not.
 impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
-    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
         (tree_id == self.tree_id).then_some(&self.source)
     }
 
@@ -1508,7 +1508,7 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         node_at_index(&tree.tree, coord.index).map_or_else(Vec::new, |node| line_starts_inside_tokens(node, coord.index, &tree.source))
     }
 
-    fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         last_list_child(&self.own(tree)?.tree, span.start as usize, span.end as usize, kind).map(|child| crate::read::grammar_id(&child))
     }
 
@@ -1565,7 +1565,7 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         }
     }
 
-    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
         let tree = self.own(tree)?;
         Some((&tree.tree, tree.seating_ctx()))
     }
@@ -1594,15 +1594,15 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
 
 impl<G: EngineGrammar> ParsedTree<G> {
     /// This tree, when it is tree `tree`.
-    fn own(&self, tree: u32) -> Option<&Self> {
+    fn own(&self, tree: crate::types::TreeId) -> Option<&Self> {
         (tree == self.tree_id).then_some(self)
     }
 }
 
 /// The engine's live trees as the render context's source table: a handle's
 /// tag names the tree, and the tree owns the source its spans index into.
-impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
-    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+impl<G: EngineGrammar> SourceTable for HashMap<crate::types::TreeId, ParsedTree<G>> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
         self.get(&tree_id)?.source_of(tree_id)
     }
 
@@ -1614,7 +1614,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         self.get(&coord.tree).map_or_else(Vec::new, |tree| tree.line_starts_inside_tokens(coord))
     }
 
-    fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         self.get(&tree)?.last_list_child_kind(tree, span, kind)
     }
 
@@ -1642,7 +1642,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         self.get(&coord.tree)?.seat_through(coord, wrappers, seat)
     }
 
-    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
         SourceTable::read_ctx(self.get(&tree)?, tree)
     }
 
@@ -1865,8 +1865,8 @@ mod tests {
 
     fn parsed(source: &str) -> (ParsedTree<TestGrammar>, u64) {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
-        let tree = engine.parse(source.to_string(), 1).expect("parse");
-        (tree, encode_handle(1, 0))
+        let tree = engine.parse(source.to_string(), crate::types::TreeId(1)).expect("parse");
+        (tree, encode_handle(crate::types::TreeId(1), 0))
     }
 
     #[test]
@@ -1876,7 +1876,7 @@ mod tests {
         let error = tree.read_error(index).expect("an ERROR reads");
         let crate::read::Origin::Tree(at) = &error.at else { panic!("a live read names a coordinate") };
         assert_eq!((error.text.as_str(), at.span.start, at.span.end), ("@@", 10, 12));
-        assert_eq!((error.kind, at.kind, at.tree), (Some(KindId(u16::MAX)), Some(KindId(u16::MAX)), 1));
+        assert_eq!((error.kind, at.kind, at.tree), (Some(KindId(u16::MAX)), Some(KindId(u16::MAX)), TreeId(1)));
         assert_eq!(tree.read_error(0), None);
         let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots");
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 2 } };
@@ -2033,7 +2033,7 @@ mod tests {
         let addresses: Vec<crate::query::Address> = found.iter().map(|coord| crate::query::Address::Own { handle: coord.handle }).collect();
         let private = plan(&format!(r#"{{ "op": "match", {}, "pattern": "^_" }}"#, slots(&[("function_item", 0)])));
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
-        let elsewhere = crate::query::Address::Own { handle: encode_handle(9, 0) };
+        let elsewhere = crate::query::Address::Own { handle: encode_handle(crate::types::TreeId(9), 0) };
         assert!(tree.plan_holds(&[elsewhere], &private).is_err());
         let past_end = crate::query::Address::Own { handle: encode_handle(decode_handle(root).0, u32::MAX >> 1) };
         assert!(tree.plan_holds(&[past_end], &private).is_err());
@@ -2088,7 +2088,7 @@ mod tests {
         let comment = index_of_kind(&tree, "line_comment", 0);
         let leading = tree.trivia_side(f, TriviaSide::Leading);
         let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
-        assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (1, comment, 0, 4));
+        assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (TreeId(1), comment, 0, 4));
         let newline = TriviaEntry::new(SlotValue::Transport(TestTrivia::Newline));
         assert_eq!(leading[1..], *std::slice::from_ref(&newline));
         assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), []);
@@ -2157,13 +2157,13 @@ mod tests {
         assert!(tree.edited_within(block, false));
     }
 
-    fn table(tree: ParsedTree<TestGrammar>) -> HashMap<u32, ParsedTree<TestGrammar>> {
-        HashMap::from([(1, tree)])
+    fn table(tree: ParsedTree<TestGrammar>) -> HashMap<crate::types::TreeId, ParsedTree<TestGrammar>> {
+        HashMap::from([(crate::types::TreeId(1), tree)])
     }
 
     fn coordinate(tree: &ParsedTree<TestGrammar>, index: u32) -> NodeCoordinate {
         let node = node_at_index(tree.tree(), index).expect("a node");
-        NodeCoordinate::new(1, index, index + node.descendant_count() as u32, crate::types::Span { start: node.start_byte() as u32, end: node.end_byte() as u32 })
+        NodeCoordinate::new(crate::types::TreeId(1), index, index + node.descendant_count() as u32, crate::types::Span { start: node.start_byte() as u32, end: node.end_byte() as u32 })
     }
 
     #[test]
@@ -2200,17 +2200,17 @@ mod tests {
     fn the_tree_table_hands_out_a_tree_and_its_read_context() {
         let (tree, _) = parsed("fn f() {}\n");
         let sources = table(tree);
-        let (tree, ctx) = sources.read_ctx(1).expect("tree 1 is live");
+        let (tree, ctx) = sources.read_ctx(crate::types::TreeId(1)).expect("tree 1 is live");
         assert_eq!(tree.root_node().kind(), "source_file");
         assert_eq!(ctx.text(&tree.root_node()), "fn f() {}\n");
-        assert!(sources.read_ctx(2).is_none());
+        assert!(sources.read_ctx(crate::types::TreeId(2)).is_none());
     }
 
     #[test]
     fn a_value_with_no_read_reads_no_coordinate() {
         let (tree, _) = parsed("fn f() {}\n");
         let sources = table(tree);
-        let (tree, ctx) = sources.read_ctx(1).expect("tree 1 is live");
+        let (tree, ctx) = sources.read_ctx(crate::types::TreeId(1)).expect("tree 1 is live");
         assert!(<TestTrivia as crate::prepare::Prepare>::read_coordinate(tree, &ctx, 0).is_none());
     }
 }

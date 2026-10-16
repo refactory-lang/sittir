@@ -174,7 +174,12 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
         })
         .collect();
     let reads = field_reads(&owner, &others)?;
-    let fixed_text = fixed.map_or_else(|| quote!(""), |text| quote!(#text));
+    let text_of_object = match fixed {
+        Some(text) => quote!(.unwrap_or_else(|| ::std::string::ToString::to_string(#text))),
+        None => quote! {
+            .ok_or_else(|| #napi::Error::from_reason(::std::format!("{}: an object carries no `{}`, and the kind has no fixed text", #owner, #text_key.to_string_lossy())))?
+        },
+    };
     let number = match fixed {
         Some(text) => quote! {
             #napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(#text), #(#defaults)* }),
@@ -183,10 +188,10 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
             let names = kind_module(ident, kind)?;
             quote! {
                 #napi::ValueType::Number => {
-                    let id = unsafe { <u32 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                    let id = unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
                     ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
                         "kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id",
-                        u16::try_from(id).map_or("<unknown>", |id| #names::kind_name_from_id(::sittir_core::types::KindId(id))),
+                        #names::kind_name_from_id(id),
                         #owner
                     )))
                 }
@@ -204,14 +209,19 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
                         #(#defaults)*
                     }),
                     #number
-                    _ => {
+                    #napi::ValueType::Object => {
                         let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };
                         ::core::result::Result::Ok(Self {
                             text: unsafe { ::sittir_core::boundary::optional::<::std::string::String>(env, obj, #text_key, #owner)? }
-                                .unwrap_or_else(|| ::std::string::ToString::to_string(#fixed_text)),
+                                #text_of_object,
                             #(#reads)*
                         })
                     }
+                    _ => ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
+                        "{}: expected a string, a kind id or an object, not a {}",
+                        #owner,
+                        unsafe { ::sittir_core::slot::js_type_name(env, napi_val)? }
+                    ))),
                 }
             }
         }
@@ -413,8 +423,10 @@ mod tests {
         });
         assert!(has(
             &out,
-            r#"::std::format!("kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id", u16::try_from(id).map_or("<unknown>", |id| kind::kind_name_from_id(::sittir_core::types::KindId(id))), "IdentifierTransport")"#
+            r#"::std::format!("kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id", kind::kind_name_from_id(id), "IdentifierTransport")"#
         ));
+        assert!(has(&out, r#""{}: expected a string, a kind id or an object, not a {}", "IdentifierTransport", unsafe { ::sittir_core::slot::js_type_name(env, napi_val)? }"#));
+        assert!(has(&out, r#"an object carries no `{}`, and the kind has no fixed text"#));
     }
 
     #[test]

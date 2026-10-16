@@ -137,6 +137,18 @@ id_newtype! {
     SlotId(u16)
 }
 
+id_newtype! {
+    /// A parsed tree's id in the process-wide tree table: every handle and
+    /// coordinate names its tree by it.
+    TreeId(u32)
+}
+
+id_newtype! {
+    /// A node of a tree: its position in the tree's preorder, the
+    /// `TreeCursor::descendant_index` of the node from the root.
+    NodeIndex(u32)
+}
+
 /// Where a node originated. `Ts` = read from a tree-sitter tree; `Sg` =
 /// ast-grep path; `Factory` = constructed on the TS side.
 ///

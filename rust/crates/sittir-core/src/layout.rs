@@ -690,15 +690,15 @@ mod tests {
     fn a_coordinate_renders_between_its_sides_as_a_node_does() {
         struct Sources(std::sync::Arc<str>);
         impl crate::render::SourceTable for Sources {
-            fn source_of(&self, tree_id: u32) -> Option<&std::sync::Arc<str>> {
-                (tree_id == 1).then_some(&self.0)
+            fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
+                (tree_id == crate::types::TreeId(1)).then_some(&self.0)
             }
             fn sides(&self, _: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
                 Some(Box::new(TransportTrivia { leading: leading(&["// top"]), trailing: trailing(&["// bottom"], false), inner: None }))
             }
         }
         let sources = Sources(std::sync::Arc::from("CONTENT"));
-        let framed: SlotValue<MockTrivia> = SlotValue::Coord(crate::slot::NodeCoordinate::new(1, 0, 1, crate::types::Span { start: 0, end: 7 }));
+        let framed: SlotValue<MockTrivia> = SlotValue::Coord(crate::slot::NodeCoordinate::new(crate::types::TreeId(1), 0, 1, crate::types::Span { start: 0, end: 7 }));
         let mut out = String::new();
         let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident()).with_sources(&sources);
         framed.render(&mut w).unwrap();

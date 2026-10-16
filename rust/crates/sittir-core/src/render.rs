@@ -77,7 +77,7 @@ impl WhitespaceTable {
 
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
-    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>>;
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
 
     /// The kind of the node a coordinate names, when the table still holds
     /// its tree. A table of bare sources cannot answer and says so.
@@ -99,7 +99,7 @@ pub trait SourceTable {
     /// `span` in `tree`, the list's own kind being `kind`
     /// (`engine::last_list_child`). A table of bare sources cannot
     /// answer and says so.
-    fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         let _ = (tree, span, kind);
         None
     }
@@ -166,7 +166,7 @@ pub trait SourceTable {
 
     /// The live tree `tree` and the context its reads share. A table of bare
     /// sources holds no trees.
-    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
         let _ = tree;
         None
     }
@@ -181,7 +181,7 @@ pub enum CoordinateError {
     /// thread: never parsed here, or already released.
     UnknownTree {
         handle: u64,
-        tree_id: u32,
+        tree_id: crate::types::TreeId,
     },
     BadSpan {
         handle: u64,

@@ -73,7 +73,7 @@ pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::TransportLayo
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum EdgeItem<'a> {
     Coord(&'a crate::NodeCoordinate),
-    Bytes { tree: u32, span: crate::types::Span },
+    Bytes { tree: crate::types::TreeId, span: crate::types::Span },
     Snapshot(SnapshotEdge),
     Rebuilt,
 }
@@ -176,7 +176,7 @@ pub fn root_flanks(
     ctx: &RenderContext<'_>,
 ) -> Edges {
     let flank = |item: Option<EdgeItem<'_>>, side: Side, allowed: &[KindId]| {
-        let source_bytes = |tree: u32, span: crate::types::Span| {
+        let source_bytes = |tree: crate::types::TreeId, span: crate::types::Span| {
             let source = ctx.sources.source_of(tree)?;
             let bytes = match side {
                 Side::Before => source.get(..span.start as usize)?,
@@ -559,9 +559,9 @@ mod tests {
     use std::collections::HashMap;
     use std::sync::Arc;
 
-    struct Sources(HashMap<u32, Arc<str>>);
+    struct Sources(HashMap<crate::types::TreeId, Arc<str>>);
     impl SourceTable for Sources {
-        fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+        fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
             self.0.get(&tree_id)
         }
     }
@@ -584,11 +584,11 @@ mod tests {
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate::new(3, 0, 1, Span { start, end })
+        NodeCoordinate::new(crate::types::TreeId(3), 0, 1, Span { start, end })
     }
 
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<KindId> {
-        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
+        let sources = Sources(HashMap::from([(crate::types::TreeId(3), Arc::from(source))]));
         let options = ResolvedOptions::default();
         let ctx = RenderContext {
             options: &options,
@@ -611,10 +611,10 @@ mod tests {
     /// A table that holds trees: the list a flank names ends in a child of kind `last`, or the table cannot answer.
     struct ListTrees(Option<KindId>);
     impl SourceTable for ListTrees {
-        fn source_of(&self, _: u32) -> Option<&Arc<str>> {
+        fn source_of(&self, _: crate::types::TreeId) -> Option<&Arc<str>> {
             None
         }
-        fn last_list_child_kind(&self, _: u32, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {
+        fn last_list_child_kind(&self, _: crate::types::TreeId, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {
             self.0
         }
     }

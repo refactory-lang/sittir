@@ -11,17 +11,17 @@ import { parseNativeFixture, tryLoadNativeEngine } from './helpers.ts';
  * itself instead of relying on a later lookup to fail.
  */
 const invalidTreeIds = [
-	{ label: 'NaN tree id', treeId: Number.NaN, expected: /treeId must be a finite number/ },
-	{ label: 'infinite tree id', treeId: Number.POSITIVE_INFINITY, expected: /treeId must be a finite number/ },
-	{ label: 'negative tree id', treeId: -1, expected: /treeId must not be negative/ },
-	{ label: 'fractional tree id', treeId: 1.5, expected: /treeId must be a whole number/ },
+	{ label: 'NaN tree id', treeId: Number.NaN, expected: /TreeId must be a finite number/ },
+	{ label: 'infinite tree id', treeId: Number.POSITIVE_INFINITY, expected: /TreeId must be a finite number/ },
+	{ label: 'negative tree id', treeId: -1, expected: /TreeId must not be negative/ },
+	{ label: 'fractional tree id', treeId: 1.5, expected: /TreeId must be a whole number/ },
 	{ label: 'tree id past exact-integer range', treeId: 2 ** 53, expected: /beyond the exact-integer range/ }
 ] as const;
 
 const invalidIndexes = [
-	{ label: 'NaN index', index: Number.NaN, expected: /index must be a finite number/ },
-	{ label: 'negative index', index: -1, expected: /index must not be negative/ },
-	{ label: 'fractional index', index: 2.5, expected: /index must be a whole number/ }
+	{ label: 'NaN index', index: Number.NaN, expected: /NodeIndex must be a finite number/ },
+	{ label: 'negative index', index: -1, expected: /NodeIndex must not be negative/ },
+	{ label: 'fractional index', index: 2.5, expected: /NodeIndex must be a whole number/ }
 ] as const;
 
 /** A kind id crosses the same way, as the `$type` of a coordinate in a slot. */

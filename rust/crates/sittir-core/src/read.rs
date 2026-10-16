@@ -107,7 +107,7 @@ impl Depth {
 #[derive(Clone, Copy)]
 pub struct ReadCtx<'s> {
     pub source: &'s str,
-    pub tree_id: u32,
+    pub tree_id: crate::types::TreeId,
     pub shows: fn(KindId) -> bool,
     /// Whether a node with these grammar and display ids is a relaxed keyword:
     /// the grammar aliases the keyword token to its word rule, so the node
@@ -220,7 +220,7 @@ pub enum Origin {
 }
 
 impl<'s> ReadCtx<'s> {
-    pub fn new(source: &'s str, tree_id: u32, shows: fn(KindId) -> bool) -> Self {
+    pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
         Self { source, tree_id, shows, relaxes: |_, _| false, snapshot: None, sides: None, changed: None, inline_units: false }
     }
 
@@ -1195,7 +1195,7 @@ mod tests {
     fn a_relaxed_keyword_stamps_its_display_and_a_plain_token_stamps_its_grammar_id() {
         const WORD: KindId = KindId(1);
         const RELAXED: KindId = KindId(40);
-        let ctx = ReadCtx::new("", 1, |_| false).with_relaxes(|grammar, display| display == WORD && grammar == RELAXED);
+        let ctx = ReadCtx::new("", crate::types::TreeId(1), |_| false).with_relaxes(|grammar, display| display == WORD && grammar == RELAXED);
         assert_eq!(ctx.stamped_kind(RELAXED, WORD), WORD, "the relaxed keyword reads as the word rule");
         assert_eq!(ctx.stamped_kind(RELAXED, RELAXED), RELAXED, "the same token undisplayed reads as itself");
         assert_eq!(ctx.stamped_kind(KindId(41), WORD), KindId(41), "another token displayed as the word rule is not relaxed");
@@ -1210,7 +1210,7 @@ mod tests {
         let tree = parser.parse(source, None).unwrap();
         let lines = LineTable::new(source);
         let measure = SnapshotCtx::new(&lines, None, 0);
-        let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure);
+        let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure);
         let root = tree.walk();
         let item_span = Origin::Snapshot(PointSpan { start: Point { row: 2, column: 0 }, end: Point { row: 4, column: 1 } });
         assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(source.len()).unwrap() }));
@@ -1239,7 +1239,7 @@ mod tests {
             let text = |text: &str| TriviaEntry::new(SlotValue::Transport(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading if !edge_changed => vec![
-                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(1, 3, 4, Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
+                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), 3, 4, Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
                     SideEntry::Layout(text("\n")),
                     SideEntry::Written(text("// w")),
                 ],
@@ -1272,7 +1272,7 @@ mod tests {
         let at = Origin::Snapshot(PointSpan { start: Point::ZERO, end: Point::ZERO });
         let leading = |root: u32| {
             let measure = SnapshotCtx::new(&lines, None, root);
-            let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure).with_sides(&EdgeRun);
+            let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure).with_sides(&EdgeRun);
             let side = ctx.layout::<crate::trivia::TriviaText>(3, at.clone(), false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
             side.into_iter().map(|entry| entry.value.transport().map(|text| text.text.to_string()).expect("a snapshot entry is text")).collect::<Vec<_>>()
         };
@@ -1286,7 +1286,7 @@ mod tests {
         let source = "a\n  // x\nb";
         let lines = LineTable::new(source);
         let measure = SnapshotCtx::new(&lines, Some(2), 0);
-        let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure).with_sides(&OneOfEach);
+        let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure).with_sides(&OneOfEach);
         let at = Origin::Snapshot(PointSpan { start: Point::ZERO, end: Point::ZERO });
         let leading = ctx.layout::<crate::trivia::TriviaText>(3, at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
         let texts: Vec<_> = leading.into_iter().map(|entry| entry.value.transport().cloned().expect("a snapshot entry is text")).collect();
@@ -1299,13 +1299,13 @@ mod tests {
 
     #[test]
     fn a_live_read_seats_a_side_as_the_lookup_gives_it_and_drops_a_changed_edges_runs_through_it() {
-        let ctx = ReadCtx::new("", 1, |_| false).with_sides(&OneOfEach);
-        let at = || Origin::Tree(NodeCoordinate::new(1, 3, 4, Span { start: 0, end: 0 }));
+        let ctx = ReadCtx::new("", crate::types::TreeId(1), |_| false).with_sides(&OneOfEach);
+        let at = || Origin::Tree(NodeCoordinate::new(crate::types::TreeId(1), 3, 4, Span { start: 0, end: 0 }));
         let leading = ctx.layout::<crate::trivia::TriviaText>(3, at(), false).trivia.and_then(|trivia| trivia.leading);
         assert_eq!(leading.map(|entries| entries.len()), Some(3));
         let changed = ctx.with_changed(3, ChangedEdges { leading: true, trailing: false });
         assert!(changed.layout::<crate::trivia::TriviaText>(3, at(), false).trivia.is_none(), "the lookup is asked for the changed edge");
-        assert!(ReadCtx::new("", 1, |_| false).layout::<crate::trivia::TriviaText>(3, at(), false).trivia.is_none(), "a read with no lookup seats nothing");
+        assert!(ReadCtx::new("", crate::types::TreeId(1), |_| false).layout::<crate::trivia::TriviaText>(3, at(), false).trivia.is_none(), "a read with no lookup seats nothing");
     }
 
     #[test]
@@ -1314,7 +1314,7 @@ mod tests {
         let mut parser = tree_sitter::Parser::new();
         parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
         let tree = parser.parse(source, None).unwrap();
-        let ctx = ReadCtx::new(source, 1, |_| false);
+        let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false);
         let mut cursor = tree.walk();
         for index in 0..tree.root_node().descendant_count() {
             cursor.goto_descendant(index);

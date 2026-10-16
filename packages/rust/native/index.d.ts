@@ -41,28 +41,28 @@ export declare class SittirEngine {
    * and a node the model has no route for, naming the kind, the
    * child and the index.
    */
-  read(treeId: number, index: number, depth?: number | undefined | null): object
+  read(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): object
   /**
    * The sides of the unit children of the node at `index` of the
    * live tree `treeId`, which their slots store as bare kinds: each
    * `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
    * key and its item in that slot. Refuses as `triviaSide` does.
    */
-  unitSides(treeId: number, index: number): object[]
+  unitSides(treeId: TreeId, index: NodeIndex): object[]
   /**
    * The stored layout of each list slot of the node at `index` of
    * the live tree `treeId` that stores any: each `{ slot, before?,
    * after?, separator? }`, by its slot's wire key. Refuses as
    * `triviaSide` does.
    */
-  slotLayouts(treeId: number, index: number): object[]
+  slotLayouts(treeId: TreeId, index: NodeIndex): object[]
   /**
    * The separator before the node at `index` of the live tree
    * `treeId` as an item of its parent's list slot, as a grammar id,
    * where its source spells another than the one the slot renders.
    * Refuses as `triviaSide` does.
    */
-  separatorBefore(treeId: number, index: number): import('../src/types.ts').TSKindId | null
+  separatorBefore(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
   /**
    * A snapshot of the node at `index` of the live tree `treeId`: the
    * node read at every depth into plain data with no tree, each
@@ -71,7 +71,7 @@ export declare class SittirEngine {
    * measured from the byte `holderByte`, or from its own start when
    * absent. Refuses as `read` does.
    */
-  snapshot(treeId: number, index: number, holderByte?: number | undefined | null): object
+  snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): object
   /**
    * The entries of `side` (`leading`, `trailing` or `inner`) of the
    * node at `index` of the live tree `treeId`: the ones a write gave
@@ -79,19 +79,19 @@ export declare class SittirEngine {
    * tree that is not live, an index naming no node of it, and any
    * other side.
    */
-  triviaSide(treeId: number, index: number, side: string): object[]
+  triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
   /**
    * Replace `side` of the node at `index` of the live tree `treeId`
    * with `entries`. Refuses as `triviaSide` does.
    */
-  writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
+  writeTriviaSide(treeId: TreeId, index: NodeIndex, side: string, entries: object[]): void
   /**
    * Whether a write replaced a side of a node under the node at
    * `index` of the live tree `treeId`, its own `inner` included, and
    * its own leading and trailing too when `ownSides` is set. Refuses
    * a tree that is not live and an index naming no node of it.
    */
-  editedWithin(treeId: number, index: number, ownSides: boolean): boolean
+  editedWithin(treeId: TreeId, index: NodeIndex, ownSides: boolean): boolean
   /**
    * The siblings that hold sides beside the node at `index` of the
    * live tree `treeId`, as JSON `{ previous, next }`: the `{ start,
@@ -99,13 +99,13 @@ export declare class SittirEngine {
    * the node's bytes, `null` when that node starts (ends) its parent.
    * Refuses a tree that is not live and an index naming no node of it.
    */
-  siblings(treeId: number, index: number): string
+  siblings(treeId: TreeId, index: NodeIndex): string
   /**
    * Whether the node at `index` of the live tree `treeId` is empty:
    * no child of it has width. Refuses a tree that is not live and an
    * index naming no node of it.
    */
-  isEmpty(treeId: number, index: number): boolean
+  isEmpty(treeId: TreeId, index: NodeIndex): boolean
   /**
    * Every run of whitespace a side of the live tree `treeId` takes
    * (`TriviaTable::runs`), each with the line breaks the options in
@@ -116,20 +116,20 @@ export declare class SittirEngine {
    * Refuses a tree that is not live and a record whose read or
    * render refused.
    */
-  layoutBaseline(treeId: number, whole?: boolean | undefined | null): Array<BaselineRun>
+  layoutBaseline(treeId: TreeId, whole?: boolean | undefined | null): Array<BaselineRun>
   /**
    * How much of its layout the live tree `treeId` stores apart from
    * its read-time options (`ParsedTree::stored_layout`): `{
    * deviations, slots, separators }`. A diagnostic. Refuses a tree
    * that is not live.
    */
-storedLayout(treeId: number): { deviations: number; slots: number; separators: number }
+storedLayout(treeId: TreeId): { deviations: number; slots: number; separators: number }
 /**
  * The work the live tree `treeId`'s layout reads have done so far
  * (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
  * diagnostic. Refuses a tree that is not live.
  */
-layoutWork(treeId: number): { regionNodes: number; siblingItems: number }
+layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
 /**
  * One batch of a pre-order walk of the named descendants under
  * the node `from` names (JSON, see `query::Address`), filtered to
@@ -140,7 +140,7 @@ layoutWork(treeId: number): { regionNodes: number; siblingItems: number }
  * a tree that is not live and a plan whose pattern the native
  * matcher cannot compile.
  */
-descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
+descendants(from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
 /**
  * The byte offsets of the lines under the node at `index` of the
  * live tree `treeId` (its root when absent) that begin inside a
@@ -148,7 +148,7 @@ descendants(from: string, kinds: Array<number> | undefined | null, resume: Array
  * re-indents the tree's text leaves where it is. Refuses a tree
  * that is not live and an index naming no node of it.
  */
-lineStartsInsideTokens(treeId: number, index?: number | undefined | null): Array<number>
+lineStartsInsideTokens(treeId: TreeId, index?: NodeIndex | undefined | null): Array<number>
 /**
  * Whether each node `addresses` names (a JSON array of
  * `query::Address`, all in one tree) satisfies the `where` plan
@@ -199,3 +199,11 @@ export interface EngineOptions {
  * observe that trees are actually being released.
  */
 export declare function liveTreeCount(): number
+
+/** A node index as JavaScript holds it: a whole number. */
+export type NodeIndex =
+  number
+
+/** A tree id as JavaScript holds it: a whole number. */
+export type TreeId =
+  number
