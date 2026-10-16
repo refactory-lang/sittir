@@ -9,6 +9,15 @@ describe('rule-cause declarations', () => {
 		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', cause: 'ambiguity' });
 	});
 
+	it('reauthored records every witness it is given', () => {
+		const witnesses = [
+			{ text: 'get x(a)', form: ['get', { symbol: 'name' }, '(', { symbol: 'parameter' }, ')'], kind: 'getter', production: 'p' },
+			{ text: 'set x()', form: ['set', { symbol: 'name' }, '(', ')'], kind: 'getter', production: 'q' }
+		] as const;
+		const tagged = reauthored('accepts-invalid-syntax', witnesses, () => 1);
+		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses });
+	});
+
 	it('vocabulary tags without a cause', () => {
 		expect(ruleCauseOf(vocabulary(() => 1))).toEqual({ kind: 'vocabulary' });
 	});
