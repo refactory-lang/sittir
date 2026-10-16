@@ -474,6 +474,16 @@ Detailed against master `591b07885`, where 3a has merged (the trivia table, dept
 
 **Order.** Keyword presence as a plain `bool` lands in master first, as its own PR, and `feat/records` is cut after it, because Task 7 stamps each presence slot as one bit. Then Task 6 → Task 7 → Task 8 → Task 9 → Task 10. Task 6 selects and profiles a viable wrapper form; even if its numbers trail objects, proceed with the layout, codec and engine comparisons while investigating the regression.
 
+**Selecting node storage (the maintainer, 2026-10-16).** Until the cutover, arena storage is opt-in beside the object wire, and both derive from the one stamped layout.
+
+1. **The cargo feature `records` is additive.** It adds the record codec and its napi entry points (Interfaces) beside the object codec, and never removes or switches the object wire, since cargo features unify across the workspace. The derive's record items expand inside a `records_codec!` wrapper, which keeps them only when `sittir-core` is built with the feature, as `napi_codec!` does for the object codec.
+2. **One runtime switch: the engine option `nodeStorage: 'object' | 'arena'`,** default `'object'`. `rust.createEngine({ nodeStorage: 'arena' })` gives an engine whose reads and renders cross as records. The engine reads which storage the addon supports, and asking for `'arena'` from an addon built without the feature throws, naming it: "arena node storage needs an addon built with the `records` feature".
+3. **`@sittir/<lang>/arena` is shorthand for it.** Its descriptor is the default descriptor whose `createEngine` sets `nodeStorage: 'arena'`. The descriptor codegen is shared; `is`, `kinds` and the types are the same objects. There is one mechanism, and the export only sets a default.
+4. **One addon.** Published prebuilds are built with `records`, so one binary per platform carries both codecs. The feature still gates local and CI builds.
+5. **Both readers are emitted** from the one layout: `records.ts` with the record-backed wrap, and the wrap's object path. The engine picks by `nodeStorage`.
+6. **CI runs the parity job under both settings,** with identical validation rows, while the option lives.
+7. **At the cutover** (3b-ii), `'arena'` becomes the default. `nodeStorage` and `/arena` are deprecated, then removed with the object codec and the feature.
+
 ### Prior art reused
 
 Each record prototype and measuring tool the arena steps already hold, with its disposition for 3b. 3a's own uses are listed under 3a.
@@ -592,12 +602,12 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
   - `render_record(address, tree, options) -> string`;
   - `chunk(arena, n) -> ArrayBuffer`.
 
-  The existing `read` and `render` are unchanged.
+  The existing `read` and `render` are unchanged. The new methods exist only under the `records` feature (§ Selecting node storage).
 
 **Terms.** A *record* is a kind's fixed words in an arena. A *cell* is one slot's words within it. A *view* is the parsed node's literal over a record: its members, and the record's address in place of the transport's fields. The *object wire* is today's napi objects.
 
 **Gates for every task.**
-- Untouched renders and every render fixture, dogfood render and byte-exact read case are unchanged. The object wire is the only wire the public engine uses until 3b-ii.
+- Untouched renders and every render fixture, dogfood render and byte-exact read case are unchanged. The object wire stays the default (`nodeStorage: 'object'`) until 3b-ii, and every gate below holds under both settings.
 - Validation rows are unchanged, compared by number (`validate:history`).
 - `cargo test --workspace --no-default-features`, clippy (`--workspace --all-targets --no-default-features -D warnings`), the full vitest suite, type-check, lint and `scripts/comment-slop-check.sh --working`.
 
@@ -681,7 +691,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/wrap.ts`, which emits a record-backed wrap per kind beside today's, in Task 6's form, V2 (accessors as methods over the record's address).
-- Modify: `packages/common/src/engine.ts`: an internal switch, never part of the public API, that picks the wire for the measurement scripts; and the tree handle's source bytes (`bytes()`, `text(span)`) in place of `source`.
+- Modify: `packages/common/src/engine.ts`: the `nodeStorage` option (§ Selecting node storage), which picks the wire, and the tree handle's source bytes (`bytes()`, `text(span)`) in place of `source`; and the descriptor emitter (`packages/codegen/src/emitters/index-file.ts`) for the `/arena` export.
 - Modify: `packages/common/src/read.ts` (`TreeHandle`) and `packages/tools/src/validate/common.ts` (`readNodeText`).
 - Generated: `packages/<lang>/src/wrap.ts`.
 
