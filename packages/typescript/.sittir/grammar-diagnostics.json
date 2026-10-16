@@ -2397,6 +2397,167 @@
   },
   {
     "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, _parameter_name, _parameter_name_formal_parameter on '(' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name",
+          "_parameter_name_formal_parameter"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name"
+        ],
+        [
+          "_parameter_name_formal_parameter"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "'readonly'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name",
+          "_parameter_name_formal_parameter"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, _parameter_name_receiver on ',' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "this"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_type, _parameter_name_receiver on ')' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_type"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "this"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, primary_type, _parameter_name_receiver on ')' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "primary_type"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "'('",
+          "this"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_expression",
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "conflict-unnecessary-upstream",
     "severity": "info",
     "grammar": "typescript",
@@ -2562,6 +2723,21 @@
       "bucket": "choice-with-structured-arms",
       "shape": "choice[4]",
       "ruleId": "rule:public_field_definition:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "export_statement_default_declaration",
+    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "declaration"
+      ]
     }
   }
 ]

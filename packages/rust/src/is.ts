@@ -610,6 +610,12 @@ export interface IsGuards {
 	structItemUnit<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemUnit };
+	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
+	parametersElementsReceiver<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParametersElementsReceiver };
 	typeIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeIdentifier };
@@ -1218,19 +1224,6 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Tab
-		| TSKindId.Newline
-		| TSKindId.Blankline
-		| TSKindId.DoubleBlankline
-		| TSKindId.Indent
-		| TSKindId.Dedent
-	>;
 	readonly charLiteralEscaped: {
 		<T extends { readonly $type: string | number } | number>(
 			v: T
@@ -1254,6 +1247,19 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedHex };
 	};
+	layout<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -1286,7 +1292,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	468, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 341
+	473, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 341
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
@@ -1315,8 +1321,8 @@ const _supertype_integerLiteral_ids = new Set<number>([141, 142, 143, 144]);
 const _supertype_charLiteral_ids = new Set<number>([147, 148, 149, 150, 145, 146]);
 const _supertype_escapeSequence_ids = new Set<number>([151, 152, 153, 154]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
-const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
+const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[177, _supertype_statement_ids],
@@ -1681,6 +1687,8 @@ export const is = Object.freeze({
 	structItemBrace: _g(TSKindId.StructItemBrace),
 	structItemTuple: _g(TSKindId.StructItemTuple),
 	structItemUnit: _g(TSKindId.StructItemUnit),
+	receiverParameterDeclaration: _g(TSKindId.ReceiverParameterDeclaration),
+	parametersElementsReceiver: _g(TSKindId.ParametersElementsReceiver),
 	typeIdentifier: _g(TSKindId.TypeIdentifier),
 	fieldIdentifier: _g(TSKindId.FieldIdentifier),
 	shorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),
@@ -1713,6 +1721,6 @@ export const is = Object.freeze({
 	charLiteral: _supertype_charLiteral_guard,
 	escapeSequence: _supertype_escapeSequence_guard,
 	comment: _supertype_comment_guard,
-	layout: _sg(_supertype_layout_ids),
-	charLiteralEscaped: _supertype_charLiteralEscaped_guard
+	charLiteralEscaped: _supertype_charLiteralEscaped_guard,
+	layout: _sg(_supertype_layout_ids)
 }) as unknown as IsGuards;

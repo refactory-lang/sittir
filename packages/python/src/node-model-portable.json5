@@ -188,22 +188,22 @@
         {
           "name": "name",
           "route": "slot",
-          "slot": "left",
+          "slot": "name",
           "path": [
             {
               "owner": "assignment_eq",
-              "slot": "left"
+              "slot": "name"
             }
           ]
         },
         {
           "name": "value",
           "route": "slot",
-          "slot": "right",
+          "slot": "value",
           "path": [
             {
               "owner": "assignment_eq",
-              "slot": "right"
+              "slot": "value"
             }
           ]
         }
@@ -256,11 +256,11 @@
         {
           "name": "name",
           "route": "slot",
-          "slot": "left",
+          "slot": "name",
           "path": [
             {
               "owner": "assignment_type",
-              "slot": "left"
+              "slot": "name"
             }
           ]
         },
@@ -324,11 +324,11 @@
         {
           "name": "name",
           "route": "slot",
-          "slot": "left",
+          "slot": "name",
           "path": [
             {
               "owner": "assignment_typed",
-              "slot": "left"
+              "slot": "name"
             }
           ]
         },
@@ -346,11 +346,11 @@
         {
           "name": "value",
           "route": "slot",
-          "slot": "right",
+          "slot": "value",
           "path": [
             {
               "owner": "assignment_typed",
-              "slot": "right"
+              "slot": "value"
             }
           ]
         }
@@ -382,11 +382,11 @@
         {
           "name": "property",
           "route": "slot",
-          "slot": "attribute",
+          "slot": "property",
           "path": [
             {
               "owner": "attribute",
-              "slot": "attribute"
+              "slot": "property"
             }
           ]
         }
@@ -1593,11 +1593,11 @@
         {
           "name": "bases",
           "route": "slot",
-          "slot": "superclasses",
+          "slot": "bases",
           "path": [
             {
               "owner": "class_definition",
-              "slot": "superclasses"
+              "slot": "bases"
             }
           ]
         },
@@ -2550,11 +2550,11 @@
         {
           "name": "consequence",
           "route": "slot",
-          "slot": "body",
+          "slot": "consequence",
           "path": [
             {
               "owner": "conditional_expression",
-              "slot": "body"
+              "slot": "consequence"
             }
           ]
         },
@@ -2699,11 +2699,11 @@
         {
           "name": "default",
           "route": "slot",
-          "slot": "value",
+          "slot": "default",
           "path": [
             {
               "owner": "default_parameter",
-              "slot": "value"
+              "slot": "default"
             }
           ]
         }
@@ -2909,11 +2909,11 @@
         {
           "name": "pattern",
           "route": "slot",
-          "slot": "target",
+          "slot": "pattern",
           "path": [
             {
               "owner": "dictionary_splat_pattern",
-              "slot": "target"
+              "slot": "pattern"
             }
           ]
         }
@@ -3513,11 +3513,11 @@
         {
           "name": "body",
           "route": "slot",
-          "slot": "block",
+          "slot": "body",
           "path": [
             {
               "owner": "finally_clause",
-              "slot": "block"
+              "slot": "body"
             }
           ]
         }
@@ -4740,7 +4740,7 @@
         }
       ]
     },
-    "lambda": {
+    "lambda_expression": {
       "vocab": "expression.lambda",
       "read": [
         {
@@ -4749,32 +4749,16 @@
           "within": [],
           "pins": [],
           "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "lambda",
-              "slot": "parameters"
-            }
-          ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "lambda",
-              "slot": "body"
-            }
-          ]
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
-      ]
+      ],
+      "members": []
     },
     "lambda_parameters": {
       "container": {
@@ -4788,6 +4772,13 @@
     "lambda_within_for_in_clause": {
       "vocab": "expression.lambda",
       "read": [
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
         {
           "vocab": "expression.lambda",
           "toplevel": true,
@@ -4836,11 +4827,11 @@
         {
           "name": "elements",
           "route": "slot",
-          "slot": "collection_elements",
+          "slot": "elements",
           "path": [
             {
               "owner": "list",
-              "slot": "collection_elements"
+              "slot": "elements"
             }
           ]
         }
@@ -4904,11 +4895,11 @@
         {
           "name": "elements",
           "route": "slot",
-          "slot": "patterns",
+          "slot": "elements",
           "path": [
             {
               "owner": "list_pattern",
-              "slot": "patterns"
+              "slot": "elements"
             }
           ]
         }
@@ -4977,11 +4968,11 @@
         {
           "name": "pattern",
           "route": "slot",
-          "slot": "target",
+          "slot": "pattern",
           "path": [
             {
               "owner": "list_splat_pattern",
-              "slot": "target"
+              "slot": "pattern"
             }
           ]
         }
@@ -5148,22 +5139,22 @@
         {
           "name": "left",
           "route": "slot",
-          "slot": "name",
+          "slot": "left",
           "path": [
             {
               "owner": "named_expression",
-              "slot": "name"
+              "slot": "left"
             }
           ]
         },
         {
           "name": "right",
           "route": "slot",
-          "slot": "value",
+          "slot": "right",
           "path": [
             {
               "owner": "named_expression",
-              "slot": "value"
+              "slot": "right"
             }
           ]
         }
@@ -5649,11 +5640,11 @@
         {
           "name": "elements",
           "route": "slot",
-          "slot": "collection_elements",
+          "slot": "elements",
           "path": [
             {
               "owner": "set",
-              "slot": "collection_elements"
+              "slot": "elements"
             }
           ]
         }
@@ -5843,11 +5834,11 @@
         {
           "name": "type",
           "route": "slot",
-          "slot": "name",
+          "slot": "type",
           "path": [
             {
               "owner": "splat_type",
-              "slot": "name"
+              "slot": "type"
             }
           ]
         }
@@ -6235,11 +6226,11 @@
         {
           "name": "object",
           "route": "slot",
-          "slot": "value",
+          "slot": "object",
           "path": [
             {
               "owner": "subscript",
-              "slot": "value"
+              "slot": "object"
             }
           ]
         },
@@ -6346,33 +6337,33 @@
         {
           "name": "handlers",
           "route": "slot",
-          "slot": "except_clauses",
+          "slot": "handlers",
           "path": [
             {
               "owner": "try_statement",
-              "slot": "except_clauses"
+              "slot": "handlers"
             }
           ]
         },
         {
           "name": "alternative",
           "route": "slot",
-          "slot": "else_clause",
+          "slot": "alternative",
           "path": [
             {
               "owner": "try_statement",
-              "slot": "else_clause"
+              "slot": "alternative"
             }
           ]
         },
         {
           "name": "finalizer",
           "route": "slot",
-          "slot": "finally_clause",
+          "slot": "finalizer",
           "path": [
             {
               "owner": "try_statement",
-              "slot": "finally_clause"
+              "slot": "finalizer"
             }
           ]
         }
@@ -6618,11 +6609,11 @@
         {
           "name": "default",
           "route": "slot",
-          "slot": "value",
+          "slot": "default",
           "path": [
             {
               "owner": "typed_default_parameter",
-              "slot": "value"
+              "slot": "default"
             }
           ]
         }

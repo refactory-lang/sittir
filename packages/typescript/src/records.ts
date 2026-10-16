@@ -12,13 +12,13 @@ export const records = {
 	ExportClauseTransport: { words: 7, export_specifiers: { word: 2, width: 5 } },
 	ExportSpecifierTransport: {
 		words: 17,
-		export_kind: { word: 2, width: 5 },
+		type_only: { word: 2, width: 5 },
 		name: { word: 7, width: 5 },
 		alias: { word: 12, width: 5 }
 	},
 	ImportStatementTransport: {
 		words: 22,
-		import_clause: { word: 2, width: 5 },
+		type_only: { word: 2, width: 5 },
 		from_clause: { word: 7, width: 5 },
 		import_attribute: { word: 12, width: 5 },
 		terminator: { word: 17, width: 5 }
@@ -57,7 +57,7 @@ export const records = {
 	},
 	ForInStatementTransport: {
 		words: 13,
-		await_: { word: 2, bit: 0 },
+		async_: { word: 2, bit: 0 },
 		header: { word: 3, width: 5 },
 		body: { word: 8, width: 5 }
 	},
@@ -71,7 +71,7 @@ export const records = {
 	TryStatementTransport: {
 		words: 17,
 		body: { word: 2, width: 5 },
-		handler: { word: 7, width: 5 },
+		handlers: { word: 7, width: 5 },
 		finalizer: { word: 12, width: 5 }
 	},
 	WithStatementTransport: { words: 12, object: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
@@ -158,7 +158,7 @@ export const records = {
 	},
 	NewExpressionTransport: {
 		words: 17,
-		constructor: { word: 2, width: 5 },
+		function: { word: 2, width: 5 },
 		type_arguments: { word: 7, width: 5 },
 		arguments: { word: 12, width: 5 }
 	},
@@ -166,7 +166,7 @@ export const records = {
 	MemberExpressionTransport: {
 		words: 17,
 		object: { word: 2, width: 5 },
-		separator: { word: 7, width: 5 },
+		optional_chain: { word: 7, width: 5 },
 		property: { word: 12, width: 5 }
 	},
 	SubscriptExpressionTransport: {
@@ -178,7 +178,7 @@ export const records = {
 	LhsExpressionTransport: { words: 7, content: { word: 2, width: 5 } },
 	AssignmentExpressionTransport: {
 		words: 13,
-		using: { word: 2, bit: 0 },
+		disposable: { word: 2, bit: 0 },
 		left: { word: 3, width: 5 },
 		right: { word: 8, width: 5 }
 	},
@@ -215,7 +215,7 @@ export const records = {
 	IdentifierTransport: { words: 2 },
 	PrivatePropertyIdentifierTransport: { words: 6, content: { word: 2, width: 4 } },
 	ArgumentsTransport: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	DecoratorTransport: { words: 7, expression: { word: 2, width: 5 } },
+	DecoratorTransport: { words: 7, content: { word: 2, width: 5 } },
 	DecoratorMemberExpressionTransport: { words: 12, object: { word: 2, width: 5 }, property: { word: 7, width: 5 } },
 	DecoratorCallExpressionTransport: {
 		words: 17,
@@ -234,7 +234,7 @@ export const records = {
 		override_: { word: 2, bit: 1 },
 		readonly: { word: 2, bit: 2 },
 		async_: { word: 2, bit: 3 },
-		accessor_kind: { word: 8, width: 5 },
+		generator: { word: 8, width: 5 },
 		name: { word: 13, width: 5 },
 		optional: { word: 2, bit: 4 },
 		type_parameters: { word: 18, width: 5 },
@@ -268,7 +268,7 @@ export const records = {
 		override_: { word: 2, bit: 1 },
 		readonly: { word: 2, bit: 2 },
 		async_: { word: 2, bit: 3 },
-		accessor_kind: { word: 8, width: 5 },
+		generator: { word: 8, width: 5 },
 		name: { word: 13, width: 5 },
 		optional: { word: 2, bit: 4 },
 		type_parameters: { word: 18, width: 5 },
@@ -279,7 +279,7 @@ export const records = {
 		words: 33,
 		accessibility_modifier: { word: 3, width: 5 },
 		override_: { word: 2, bit: 0 },
-		accessor_kind: { word: 8, width: 5 },
+		generator: { word: 8, width: 5 },
 		name: { word: 13, width: 5 },
 		optional: { word: 2, bit: 1 },
 		type_parameters: { word: 18, width: 5 },
@@ -297,12 +297,8 @@ export const records = {
 	},
 	DecoratorParenthesizedExpressionTransport: { words: 7, expression: { word: 2, width: 5 } },
 	TypeAssertionTransport: { words: 12, type_arguments: { word: 2, width: 5 }, expression: { word: 7, width: 5 } },
-	AsExpressionTransport: { words: 12, expression: { word: 2, width: 5 }, type_annotation: { word: 7, width: 5 } },
-	SatisfiesExpressionTransport: {
-		words: 12,
-		expression: { word: 2, width: 5 },
-		type_annotation: { word: 7, width: 5 }
-	},
+	AsExpressionTransport: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	SatisfiesExpressionTransport: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	InstantiationExpressionTransport: {
 		words: 12,
 		expression: { word: 2, width: 5 },
@@ -359,7 +355,7 @@ export const records = {
 		accessibility_modifier: { word: 5, width: 5 },
 		override_: { word: 2, bit: 0 },
 		readonly: { word: 2, bit: 1 },
-		pattern: { word: 10, width: 5 },
+		name: { word: 10, width: 5 },
 		type_: { word: 15, width: 5 },
 		value: { word: 20, width: 5 }
 	},
@@ -369,7 +365,7 @@ export const records = {
 		accessibility_modifier: { word: 5, width: 5 },
 		override_: { word: 2, bit: 0 },
 		readonly: { word: 2, bit: 1 },
-		pattern: { word: 10, width: 5 },
+		name: { word: 10, width: 5 },
 		type_: { word: 15, width: 5 },
 		value: { word: 20, width: 5 }
 	},
@@ -472,10 +468,10 @@ export const records = {
 		const_: { word: 2, bit: 0 },
 		name: { word: 3, width: 5 },
 		constraint: { word: 8, width: 5 },
-		value: { word: 13, width: 5 }
+		default: { word: 13, width: 5 }
 	},
 	DefaultTypeTransport: { words: 7, type_: { word: 2, width: 5 } },
-	ConstraintTransport: { words: 12, content: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	ConstraintTransport: { words: 12, content: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
 	ConstructSignatureTransport: {
 		words: 18,
 		abstract_: { word: 2, bit: 0 },
@@ -517,14 +513,10 @@ export const records = {
 		name: { word: 2, width: 5 },
 		terminator: { word: 7, width: 5 }
 	},
-	ExportStatementEqualsExportTransport: {
-		words: 12,
-		expression: { word: 2, width: 5 },
-		terminator: { word: 7, width: 5 }
-	},
+	ExportStatementEqualsExportTransport: { words: 12, value: { word: 2, width: 5 }, terminator: { word: 7, width: 5 } },
 	CommentLineTransport: { words: 6, content: { word: 2, width: 4 } },
 	CommentBlockTransport: { words: 6, content: { word: 2, width: 4 } },
-	LiteralTypeNegativeNumberTransport: { words: 7, argument: { word: 2, width: 5 } },
+	LiteralTypeNegativeNumberTransport: { words: 7, value: { word: 2, width: 5 } },
 	NumberHexTransport: { words: 10, prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
 	NumberFloatPointTransport: {
 		words: 22,
@@ -589,10 +581,10 @@ export const records = {
 		source: { word: 7, width: 5 }
 	},
 	YieldExpressionDelegateTransport: { words: 7, expression: { word: 2, width: 5 } },
-	ImportSpecifierNameTransport: { words: 12, import_kind: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
+	ImportSpecifierNameTransport: { words: 12, type_only: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	ImportSpecifierAsTransport: {
 		words: 17,
-		import_kind: { word: 2, width: 5 },
+		type_only: { word: 2, width: 5 },
 		name: { word: 7, width: 5 },
 		alias: { word: 12, width: 5 }
 	},
@@ -628,7 +620,7 @@ export const records = {
 	},
 	ExportStatementDefaultFromTransport: {
 		words: 13,
-		type_: { word: 2, bit: 0 },
+		type_only: { word: 2, bit: 0 },
 		content: { word: 3, width: 5 },
 		terminator: { word: 8, width: 5 }
 	},
@@ -685,6 +677,21 @@ export const records = {
 	HtmlCommentTransport: { words: 2 },
 	JsxTextTransport: { words: 2 },
 	TemplateCharsTransport: { words: 2 },
+	ReceiverParameterDeclarationTransport: {
+		words: 20,
+		decorator: { word: 3, width: 2, run: 5 },
+		accessibility_modifier: { word: 5, width: 5 },
+		override_: { word: 2, bit: 0 },
+		readonly: { word: 2, bit: 1 },
+		type_: { word: 10, width: 5 },
+		value: { word: 15, width: 5 }
+	},
+	FormalParametersElementsReceiverTransport: {
+		words: 12,
+		receiver: { word: 2, width: 5 },
+		formal_parameters_elements_receiver_group: { word: 7, width: 5 }
+	},
+	FormalParametersElementsReceiverGroupTransport: { words: 7, elements: { word: 2, width: 5 } },
 	TernaryQmarkTransport: { words: 2 },
 	ErrorRecoveryTransport: { words: 2 },
 	StatementIdentifierTransport: { words: 7, content: { word: 2, width: 5 } },

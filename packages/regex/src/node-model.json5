@@ -91,6 +91,40 @@
     }
   },
   "fieldAliasMap": {},
+  "displayUnions": {
+    "class_character": [
+      {
+        "storage": "-",
+        "literal": true
+      },
+      {
+        "storage": "class_character",
+        "literal": false
+      }
+    ],
+    "identity_escape": [
+      {
+        "storage": "\\-",
+        "literal": true
+      },
+      {
+        "storage": "identity_escape",
+        "literal": false
+      }
+    ],
+    "lazy": [
+      {
+        "storage": "?",
+        "literal": true
+      }
+    ],
+    "unicode_property_name": [
+      {
+        "storage": "unicode_property_value",
+        "literal": false
+      }
+    ]
+  },
   "factorySlots": {
     "pattern": {
       "content": {

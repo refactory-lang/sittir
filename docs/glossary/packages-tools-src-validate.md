@@ -1762,6 +1762,13 @@ group's call arguments as the slot's value.
 
 The reparse hosts a grammar's corpus supports beyond its declared ones, derived at validation time and never stored. A kind is hostable when a parent kind whose slots admit it (through hidden wrapper kinds and supertypes) is hostable. Admission compares kind ids: each model kind in a slot (or, for a list kind, among its element kinds) resolves to every symbol the generated `KIND_NAMES` table names with it, and a tree node is matched on its display symbol at an alias envelope and its grammar symbol elsewhere, so a display alias such as `simple_pattern` meets the model's `_simple_pattern` and a name that owns several symbols (a keyword and the alias of it) is not reduced to one. A list, alias or envelope kind holds its content as the node itself, so admission looks through it whether or not the corpus shows it elsewhere; a hidden supertype with no stamp is compared by its model name. The derivation's host lookups pass the adopted variant kinds and the kind itself as target, so a gated parent host serves the variants it gates. Its template is the parent's host with a corpus occurrence of the parent around the kind: the kind's span is replaced by the hole, and the kind's layout lead (the whitespace its text starts with, else the whitespace before its first child) stays in the template so a node that starts at a line break is hosted with that break and text-leaf kinds are not given padding. Samples are the kind's texts in the form a render has: shifted left by the indentation of the line the first character sat on, and left out when that shift is lossy (a continuation line indented less than the first, or a token spanning lines). Breadth first from the declared hosts: each round considers only parents hostable at the round's start, candidates order by shortest context then parent name, and the first template that verifies takes the kind. A template verifies when every distinct non-empty source text of the kind in the corpus (a zero-width instance has no text to place), placed in it, reparses without an error and yields at the hole a node of the kind that is structurally the source node (`astStructuralDiff` is clean), so a host that reads the source differently from its own parent — a raw string's content under an escape-parsing string, a keyword property name read as an identifier — never takes the kind. Declared hosts always win; a kind no verified template reaches stays hostless.
 
+Corpus occurrences and their parents are also indexed under the canonical
+model names of their grammar and display ids. Two physical parser symbols can
+share a display alias while needing different hosts (Python's ordinary and
+for-in-clause lambdas). Their storage-name buckets preserve that distinction;
+the existing exact grammar-id lookup and structural comparison still verify
+every candidate host.
+
 ### `packages/tools/src/validate/common.ts::setDerivedReparseHosts`
 
 Merges a grammar's derived hosts under its declared ones in the per-grammar host cache, so `wrapForReparse` sees one table in which declared entries override derived ones.
@@ -1801,3 +1808,12 @@ How much of its layout the source's tree stores apart from its read-time options
 ### `packages/tools/src/validate/layout-runs.ts::runLayoutRuns`
 
 The layout rows of a grammar's corpus: how many runs, which no region's record reaches, which entries' region render was refused, and what the corpus stores (`stored`, summed over `storedLayoutOf`). The stored counts are small against the runs because the baseline is the read-time options, the tree's inferred layer over the engine's: a source's own conventions are inferred once and store nothing per gap.
+
+
+### `packages/tools/src/validate/display-families.ts::sharedDisplayStorageKinds`
+
+Projects the serialized canonical `DisplayUnions` members for a shared parser display. Only families with multiple nonliteral storage members expand the validation universe; ordinary single-source aliases retain their display identity. Template coverage checks each physical member's own render body against the shared parser field declaration.
+
+### `packages/tools/src/validate/display-families.ts::physicalDisplayKind`
+
+Selects a shared display's exact physical storage member using the canonical kind name for its parser grammar id. Unknown ids keep the display identity rather than crediting every member. From validation uses the same projection for corpus selection and native-coordinate lookup, so Python's ordinary and for-in-clause lambda factories each receive their own read node.

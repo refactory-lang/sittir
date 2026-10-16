@@ -24,6 +24,58 @@ function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<Ra
 }
 
 describe('link builds one display union per alias target', () => {
+	it('keeps a catalog default alias beside the other storage of the same display', () => {
+		const raw = makeRaw({
+			source: {
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'first' },
+					{ type: 'ALIAS', named: true, value: 'shown', content: { type: 'SYMBOL', name: 'second' } }
+				]
+			} as Rule<'evaluate'>,
+			first: {
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: 'a' },
+					{ type: 'SYMBOL', name: 'identifier' }
+				]
+			} as Rule<'evaluate'>,
+			second: {
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: 'b' },
+					{ type: 'SYMBOL', name: 'identifier' }
+				]
+			} as Rule<'evaluate'>,
+			identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
+		});
+		const parser = (kind: string, symbolName = kind) => ({
+			cSymbol: `sym_${kind}`,
+			parserName: kind,
+			symbolName,
+			anon: false,
+			aux: false,
+			alias: false,
+			hidden: false
+		});
+		const linked = link(raw, {
+			generatedIdTables: {
+				sourceArtifact: 'fixture',
+				kindIds: {
+					source: { id: 1, parser: parser('source') },
+					identifier: { id: 2, parser: parser('identifier') },
+					first: { id: 3, parser: parser('first', 'shown') },
+					second: { id: 4, parser: parser('second', 'shown') },
+					_shown: { id: 5, parser: { ...parser('shown'), cSymbol: 'alias_sym_shown', alias: true } }
+				}
+			}
+		});
+		expect([...(linked.displayUnions?.get('shown') ?? [])].sort((a, b) => a.storage.localeCompare(b.storage))).toEqual([
+			{ storage: 'first', literal: false },
+			{ storage: 'second', literal: false }
+		]);
+	});
+
 	it('collects every storage kind that displays under a name', () => {
 		const linked = link(
 			makeRaw({
@@ -56,9 +108,17 @@ describe('link builds one display union per alias target', () => {
 				generic_type: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'identifier' }] } as Rule<'evaluate'>,
 				generic_type_with_turbofish: {
 					type: 'SEQ',
-					members: [{ type: 'SYMBOL', name: 'identifier' }, { type: 'STRING', value: '::' }]
+					members: [
+						{ type: 'SYMBOL', name: 'identifier' },
+						{ type: 'STRING', value: '::' }
+					]
 				} as Rule<'evaluate'>,
-				use: { type: 'ALIAS', named: true, value: 'generic_type', content: { type: 'SYMBOL', name: 'generic_type_with_turbofish' } } as Rule<'evaluate'>,
+				use: {
+					type: 'ALIAS',
+					named: true,
+					value: 'generic_type',
+					content: { type: 'SYMBOL', name: 'generic_type_with_turbofish' }
+				} as Rule<'evaluate'>,
 				identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
 			})
 		);

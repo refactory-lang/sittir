@@ -532,6 +532,10 @@ export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts 
 	return wireImpl({ name }, base, base);
 }
 
+export function wireBindings(name: string, base: GrammarResult, patches: PatchesConfig): WiredOpts {
+	return wireImpl({ name, patches }, base, base);
+}
+
 function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
@@ -709,7 +713,6 @@ function renamingCallback<F extends (...args: never[]) => unknown>(
 	} as unknown as DollarFn<unknown>;
 }
 
-
 function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
 	const baseRules = baseRulesOf<unknown>(base) ?? {};
 	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
@@ -718,11 +721,10 @@ function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 /// A top-level gap, seam or flank spelling, retired from patches.
 function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
 	if (rules.has(key) || rules.has(`_${key}`)) return false;
-	return parseSpacingLabel(key) !== undefined || parseSeamLabel(key) !== undefined || parseFlankAddress(key) !== undefined;
+	return (
+		parseSpacingLabel(key) !== undefined || parseSeamLabel(key) !== undefined || parseFlankAddress(key) !== undefined
+	);
 }
-
-
-
 
 function assertNoSpacingAddressPatches(patches: PatchesConfig, rules: ReadonlySet<string>): void {
 	for (const key of Object.keys(patches)) {
@@ -1316,7 +1318,10 @@ function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyM
 function withEnrichedWhitespace(
 	config: VisibleExternalsConfig | undefined,
 	base: unknown
-): { readonly visibleExternals: VisibleExternalsConfig | undefined; readonly whitespaceCollisions: readonly WhitespaceCollision[] } {
+): {
+	readonly visibleExternals: VisibleExternalsConfig | undefined;
+	readonly whitespaceCollisions: readonly WhitespaceCollision[];
+} {
 	const { bodies, collisions } = getEnrichWhitespace(base);
 	const declared = config === undefined ? [] : Object.keys(withStringGlobalShim(() => config(makeSimpleDollarProxy())) ?? {});
 	const whitespaceCollisions = [
@@ -1366,7 +1371,9 @@ export function applyWirePatternReplacement(
 	const evaluationOrder = [...authored.filter((name) => name.startsWith('_')), ...authored.filter((name) => !name.startsWith('_'))];
 	const declaredNames = new Set(declared.map((c) => c.name));
 	const bodies = new Map<string, unknown>();
-	let folding: { readonly names: ReadonlySet<string>; readonly candidates: readonly WirePatternCandidate[] } | undefined;
+	let folding:
+		| { readonly names: ReadonlySet<string>; readonly candidates: readonly WirePatternCandidate[] }
+		| undefined;
 	const fold = (runtime$: Parameters<RuleFn>[0]): NonNullable<typeof folding> => {
 		if (folding === undefined) {
 			const detected: WirePatternCandidate[] = [];

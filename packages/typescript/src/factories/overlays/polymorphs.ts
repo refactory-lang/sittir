@@ -29,12 +29,14 @@ const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 
 const importStatement$clauseFrom =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'fromClause'> & { fromClause: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { fromClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, fromClause: _c(child)(seated) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'fromClause'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'importClause' || key === 'source') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, fromClause: _c(child)(inner) } as never, options as never);
 	};
 const importStatement$clauseFrom$strict = importStatement$clauseFrom(
 	F.buildImportStatement,
@@ -53,15 +55,13 @@ export const importStatement = Object.freeze({
 }) as unknown as typeof B.importStatement & {
 	clauseFrom: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportStatement>[0], 'fromClause'> & {
-				fromClause: ArgsOf<typeof F.buildImportStatementClauseFrom>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildImportStatement>[0], 'fromClause'> &
+				ArgsOf<typeof F.buildImportStatementClauseFrom>[0],
 			options?: OptionsArg<typeof F.buildImportStatement>
 		) => ReturnType<typeof F.buildImportStatement>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportStatement>[0], 'fromClause'> & {
-				fromClause: ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToImportStatement>[0], 'fromClause'> &
+				ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0],
 			options?: OptionsArg<typeof C.coerceToImportStatement>
 		) => ReturnType<typeof C.coerceToImportStatement>;
 	};
@@ -1026,47 +1026,6 @@ export const constraint = Object.freeze({
 			config: OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>,
 			options?: OptionsArg<typeof C.coerceToConstraint>
 		) => ReturnType<typeof C.coerceToConstraint>;
-	};
-};
-
-const indexSignatureMappedTypeClause$mappedTypeClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'mappedTypeClause'> & { mappedTypeClause: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { mappedTypeClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, mappedTypeClause: _c(child)(seated) } as never, options as never);
-	};
-const indexSignatureMappedTypeClause$mappedTypeClause$strict = indexSignatureMappedTypeClause$mappedTypeClause(
-	F.buildIndexSignatureMappedTypeClause,
-	F.buildMappedTypeClause
-);
-const indexSignatureMappedTypeClause$mappedTypeClause$coerce = indexSignatureMappedTypeClause$mappedTypeClause(
-	C.coerceToIndexSignatureMappedTypeClause,
-	C.coerceToMappedTypeClause
-);
-export const indexSignatureMappedTypeClause = Object.freeze({
-	...B.indexSignatureMappedTypeClause,
-	mappedTypeClause: bundle(
-		indexSignatureMappedTypeClause$mappedTypeClause$strict,
-		indexSignatureMappedTypeClause$mappedTypeClause$coerce,
-		{ key: 'indexSignatureMappedTypeClause.mappedTypeClause', max: 2 }
-	)
-}) as unknown as typeof B.indexSignatureMappedTypeClause & {
-	mappedTypeClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIndexSignatureMappedTypeClause>[0], 'mappedTypeClause'> & {
-				mappedTypeClause: ArgsOf<typeof F.buildMappedTypeClause>[0];
-			},
-			options?: OptionsArg<typeof F.buildIndexSignatureMappedTypeClause>
-		) => ReturnType<typeof F.buildIndexSignatureMappedTypeClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIndexSignatureMappedTypeClause>[0], 'mappedTypeClause'> & {
-				mappedTypeClause: ArgsOf<typeof C.coerceToMappedTypeClause>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToIndexSignatureMappedTypeClause>
-		) => ReturnType<typeof C.coerceToIndexSignatureMappedTypeClause>;
 	};
 };
 
@@ -2097,6 +2056,23 @@ const exportStatementDefaultDeclarationDefaultKw: {
 	}
 });
 
+const exportStatementDefaultDeclaration$defaultKw =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$strict = exportStatementDefaultDeclaration$defaultKw(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildExportStatementDefaultDeclarationDefaultKw
+);
+const exportStatementDefaultDeclaration$defaultKw$coerce = exportStatementDefaultDeclaration$defaultKw(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToExportStatementDefaultDeclarationDefaultKw
+);
 const exportStatementDefaultDeclaration$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2378,229 +2354,6 @@ const exportStatementDefaultDeclaration$ambient$strict = exportStatementDefaultD
 const exportStatementDefaultDeclaration$ambient$coerce = exportStatementDefaultDeclaration$ambient(
 	C.coerceToExportStatementDefaultDeclaration,
 	C.coerceToAmbientDeclaration
-);
-const exportStatementDefaultDeclaration$defaultKw =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$defaultKw$strict = exportStatementDefaultDeclaration$defaultKw(
-	F.buildExportStatementDefaultDeclaration,
-	F.buildExportStatementDefaultDeclarationDefaultKw
-);
-const exportStatementDefaultDeclaration$defaultKw$coerce = exportStatementDefaultDeclaration$defaultKw(
-	C.coerceToExportStatementDefaultDeclaration,
-	C.coerceToExportStatementDefaultDeclarationDefaultKw
-);
-const exportStatementDefaultDeclaration$ambient$function =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$function$strict = exportStatementDefaultDeclaration$ambient$function(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.function.strict
-);
-const exportStatementDefaultDeclaration$ambient$function$coerce = exportStatementDefaultDeclaration$ambient$function(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.function.coerce
-);
-const exportStatementDefaultDeclaration$ambient$generatorFunction =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$generatorFunction$strict =
-	exportStatementDefaultDeclaration$ambient$generatorFunction(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.generatorFunction.strict
-	);
-const exportStatementDefaultDeclaration$ambient$generatorFunction$coerce =
-	exportStatementDefaultDeclaration$ambient$generatorFunction(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.generatorFunction.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$class =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$class$strict = exportStatementDefaultDeclaration$ambient$class(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.class.strict
-);
-const exportStatementDefaultDeclaration$ambient$class$coerce = exportStatementDefaultDeclaration$ambient$class(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.class.coerce
-);
-const exportStatementDefaultDeclaration$ambient$lexical =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$lexical$strict = exportStatementDefaultDeclaration$ambient$lexical(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.lexical.strict
-);
-const exportStatementDefaultDeclaration$ambient$lexical$coerce = exportStatementDefaultDeclaration$ambient$lexical(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.lexical.coerce
-);
-const exportStatementDefaultDeclaration$ambient$variable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$variable$strict = exportStatementDefaultDeclaration$ambient$variable(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.variable.strict
-);
-const exportStatementDefaultDeclaration$ambient$variable$coerce = exportStatementDefaultDeclaration$ambient$variable(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.variable.coerce
-);
-const exportStatementDefaultDeclaration$ambient$functionSignature =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$functionSignature$strict =
-	exportStatementDefaultDeclaration$ambient$functionSignature(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.functionSignature.strict
-	);
-const exportStatementDefaultDeclaration$ambient$functionSignature$coerce =
-	exportStatementDefaultDeclaration$ambient$functionSignature(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.functionSignature.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$abstractClass =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$abstractClass$strict =
-	exportStatementDefaultDeclaration$ambient$abstractClass(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.abstractClass.strict
-	);
-const exportStatementDefaultDeclaration$ambient$abstractClass$coerce =
-	exportStatementDefaultDeclaration$ambient$abstractClass(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.abstractClass.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$internalModule =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$internalModule$strict =
-	exportStatementDefaultDeclaration$ambient$internalModule(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.internalModule.strict
-	);
-const exportStatementDefaultDeclaration$ambient$internalModule$coerce =
-	exportStatementDefaultDeclaration$ambient$internalModule(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.internalModule.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$typeAlias =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$typeAlias$strict = exportStatementDefaultDeclaration$ambient$typeAlias(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.typeAlias.strict
-);
-const exportStatementDefaultDeclaration$ambient$typeAlias$coerce = exportStatementDefaultDeclaration$ambient$typeAlias(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.typeAlias.coerce
-);
-const exportStatementDefaultDeclaration$ambient$enum =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$enum$strict = exportStatementDefaultDeclaration$ambient$enum(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.enum.strict
-);
-const exportStatementDefaultDeclaration$ambient$enum$coerce = exportStatementDefaultDeclaration$ambient$enum(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.enum.coerce
-);
-const exportStatementDefaultDeclaration$ambient$interface =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$interface$strict = exportStatementDefaultDeclaration$ambient$interface(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.interface.strict
-);
-const exportStatementDefaultDeclaration$ambient$interface$coerce = exportStatementDefaultDeclaration$ambient$interface(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.interface.coerce
-);
-const exportStatementDefaultDeclaration$ambient$importAlias =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$importAlias$strict =
-	exportStatementDefaultDeclaration$ambient$importAlias(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.importAlias.strict
-	);
-const exportStatementDefaultDeclaration$ambient$importAlias$coerce =
-	exportStatementDefaultDeclaration$ambient$importAlias(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.importAlias.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$ambient =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$ambient$strict = exportStatementDefaultDeclaration$ambient$ambient(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.ambient.strict
-);
-const exportStatementDefaultDeclaration$ambient$ambient$coerce = exportStatementDefaultDeclaration$ambient$ambient(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.ambient.coerce
-);
-const exportStatementDefaultDeclaration$ambient$global =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$global$strict = exportStatementDefaultDeclaration$ambient$global(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.global.strict
-);
-const exportStatementDefaultDeclaration$ambient$global$coerce = exportStatementDefaultDeclaration$ambient$global(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.global.coerce
 );
 const exportStatementDefaultDeclaration$defaultKw$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3086,145 +2839,214 @@ const exportStatementDefaultDeclaration$defaultKw$value$semi$coerce =
 		C.coerceToExportStatementDefaultDeclaration,
 		exportStatementDefaultDeclarationDefaultKw.value.semi.coerce
 	);
+const exportStatementDefaultDeclaration$ambient$function =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$function$strict = exportStatementDefaultDeclaration$ambient$function(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.function.strict
+);
+const exportStatementDefaultDeclaration$ambient$function$coerce = exportStatementDefaultDeclaration$ambient$function(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.function.coerce
+);
+const exportStatementDefaultDeclaration$ambient$generatorFunction =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$generatorFunction$strict =
+	exportStatementDefaultDeclaration$ambient$generatorFunction(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.generatorFunction.strict
+	);
+const exportStatementDefaultDeclaration$ambient$generatorFunction$coerce =
+	exportStatementDefaultDeclaration$ambient$generatorFunction(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.generatorFunction.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$class =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$class$strict = exportStatementDefaultDeclaration$ambient$class(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.class.strict
+);
+const exportStatementDefaultDeclaration$ambient$class$coerce = exportStatementDefaultDeclaration$ambient$class(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.class.coerce
+);
+const exportStatementDefaultDeclaration$ambient$lexical =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$lexical$strict = exportStatementDefaultDeclaration$ambient$lexical(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.lexical.strict
+);
+const exportStatementDefaultDeclaration$ambient$lexical$coerce = exportStatementDefaultDeclaration$ambient$lexical(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.lexical.coerce
+);
+const exportStatementDefaultDeclaration$ambient$variable =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$variable$strict = exportStatementDefaultDeclaration$ambient$variable(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.variable.strict
+);
+const exportStatementDefaultDeclaration$ambient$variable$coerce = exportStatementDefaultDeclaration$ambient$variable(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.variable.coerce
+);
+const exportStatementDefaultDeclaration$ambient$functionSignature =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$functionSignature$strict =
+	exportStatementDefaultDeclaration$ambient$functionSignature(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.functionSignature.strict
+	);
+const exportStatementDefaultDeclaration$ambient$functionSignature$coerce =
+	exportStatementDefaultDeclaration$ambient$functionSignature(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.functionSignature.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$abstractClass =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$abstractClass$strict =
+	exportStatementDefaultDeclaration$ambient$abstractClass(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.abstractClass.strict
+	);
+const exportStatementDefaultDeclaration$ambient$abstractClass$coerce =
+	exportStatementDefaultDeclaration$ambient$abstractClass(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.abstractClass.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$internalModule =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$internalModule$strict =
+	exportStatementDefaultDeclaration$ambient$internalModule(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.internalModule.strict
+	);
+const exportStatementDefaultDeclaration$ambient$internalModule$coerce =
+	exportStatementDefaultDeclaration$ambient$internalModule(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.internalModule.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$typeAlias =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$typeAlias$strict = exportStatementDefaultDeclaration$ambient$typeAlias(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.typeAlias.strict
+);
+const exportStatementDefaultDeclaration$ambient$typeAlias$coerce = exportStatementDefaultDeclaration$ambient$typeAlias(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.typeAlias.coerce
+);
+const exportStatementDefaultDeclaration$ambient$enum =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$enum$strict = exportStatementDefaultDeclaration$ambient$enum(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.enum.strict
+);
+const exportStatementDefaultDeclaration$ambient$enum$coerce = exportStatementDefaultDeclaration$ambient$enum(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.enum.coerce
+);
+const exportStatementDefaultDeclaration$ambient$interface =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$interface$strict = exportStatementDefaultDeclaration$ambient$interface(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.interface.strict
+);
+const exportStatementDefaultDeclaration$ambient$interface$coerce = exportStatementDefaultDeclaration$ambient$interface(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.interface.coerce
+);
+const exportStatementDefaultDeclaration$ambient$importAlias =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$importAlias$strict =
+	exportStatementDefaultDeclaration$ambient$importAlias(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.importAlias.strict
+	);
+const exportStatementDefaultDeclaration$ambient$importAlias$coerce =
+	exportStatementDefaultDeclaration$ambient$importAlias(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.importAlias.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$ambient =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$ambient$strict = exportStatementDefaultDeclaration$ambient$ambient(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.ambient.strict
+);
+const exportStatementDefaultDeclaration$ambient$ambient$coerce = exportStatementDefaultDeclaration$ambient$ambient(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.ambient.coerce
+);
+const exportStatementDefaultDeclaration$ambient$global =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$global$strict = exportStatementDefaultDeclaration$ambient$global(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.global.strict
+);
+const exportStatementDefaultDeclaration$ambient$global$coerce = exportStatementDefaultDeclaration$ambient$global(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.global.coerce
+);
 export const exportStatementDefaultDeclaration = Object.freeze({
 	...B.exportStatementDefaultDeclaration,
-	function: bundle(
-		exportStatementDefaultDeclaration$function$strict,
-		exportStatementDefaultDeclaration$function$coerce,
-		{ key: 'exportStatementDefaultDeclaration.function', max: 2 }
-	),
-	generatorFunction: bundle(
-		exportStatementDefaultDeclaration$generatorFunction$strict,
-		exportStatementDefaultDeclaration$generatorFunction$coerce,
-		{ key: 'exportStatementDefaultDeclaration.generatorFunction', max: 2 }
-	),
-	class: bundle(exportStatementDefaultDeclaration$class$strict, exportStatementDefaultDeclaration$class$coerce, {
-		key: 'exportStatementDefaultDeclaration.class',
-		max: 2
-	}),
-	lexical: bundle(exportStatementDefaultDeclaration$lexical$strict, exportStatementDefaultDeclaration$lexical$coerce, {
-		key: 'exportStatementDefaultDeclaration.lexical',
-		max: 2
-	}),
-	variable: bundle(
-		exportStatementDefaultDeclaration$variable$strict,
-		exportStatementDefaultDeclaration$variable$coerce,
-		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
-	),
-	functionSignature: bundle(
-		exportStatementDefaultDeclaration$functionSignature$strict,
-		exportStatementDefaultDeclaration$functionSignature$coerce,
-		{ key: 'exportStatementDefaultDeclaration.functionSignature', max: 2 }
-	),
-	abstractClass: bundle(
-		exportStatementDefaultDeclaration$abstractClass$strict,
-		exportStatementDefaultDeclaration$abstractClass$coerce,
-		{ key: 'exportStatementDefaultDeclaration.abstractClass', max: 2 }
-	),
-	module: bundle(exportStatementDefaultDeclaration$module$strict, exportStatementDefaultDeclaration$module$coerce, {
-		key: 'exportStatementDefaultDeclaration.module',
-		max: 2
-	}),
-	internalModule: bundle(
-		exportStatementDefaultDeclaration$internalModule$strict,
-		exportStatementDefaultDeclaration$internalModule$coerce,
-		{ key: 'exportStatementDefaultDeclaration.internalModule', max: 2 }
-	),
-	typeAlias: bundle(
-		exportStatementDefaultDeclaration$typeAlias$strict,
-		exportStatementDefaultDeclaration$typeAlias$coerce,
-		{ key: 'exportStatementDefaultDeclaration.typeAlias', max: 2 }
-	),
-	enum: bundle(exportStatementDefaultDeclaration$enum$strict, exportStatementDefaultDeclaration$enum$coerce, {
-		key: 'exportStatementDefaultDeclaration.enum',
-		max: 2
-	}),
-	interface: bundle(
-		exportStatementDefaultDeclaration$interface$strict,
-		exportStatementDefaultDeclaration$interface$coerce,
-		{ key: 'exportStatementDefaultDeclaration.interface', max: 2 }
-	),
-	importAlias: bundle(
-		exportStatementDefaultDeclaration$importAlias$strict,
-		exportStatementDefaultDeclaration$importAlias$coerce,
-		{ key: 'exportStatementDefaultDeclaration.importAlias', max: 2 }
-	),
-	ambient: {
-		...bundle(exportStatementDefaultDeclaration$ambient$strict, exportStatementDefaultDeclaration$ambient$coerce, {
-			key: 'exportStatementDefaultDeclaration.ambient',
-			max: 2
-		}),
-		function: bundle(
-			exportStatementDefaultDeclaration$ambient$function$strict,
-			exportStatementDefaultDeclaration$ambient$function$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.function', max: 2 }
-		),
-		generatorFunction: bundle(
-			exportStatementDefaultDeclaration$ambient$generatorFunction$strict,
-			exportStatementDefaultDeclaration$ambient$generatorFunction$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.generatorFunction', max: 2 }
-		),
-		class: bundle(
-			exportStatementDefaultDeclaration$ambient$class$strict,
-			exportStatementDefaultDeclaration$ambient$class$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.class', max: 2 }
-		),
-		lexical: bundle(
-			exportStatementDefaultDeclaration$ambient$lexical$strict,
-			exportStatementDefaultDeclaration$ambient$lexical$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.lexical', max: 2 }
-		),
-		variable: bundle(
-			exportStatementDefaultDeclaration$ambient$variable$strict,
-			exportStatementDefaultDeclaration$ambient$variable$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
-		),
-		functionSignature: bundle(
-			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
-			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.functionSignature', max: 2 }
-		),
-		abstractClass: bundle(
-			exportStatementDefaultDeclaration$ambient$abstractClass$strict,
-			exportStatementDefaultDeclaration$ambient$abstractClass$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.abstractClass', max: 2 }
-		),
-		internalModule: bundle(
-			exportStatementDefaultDeclaration$ambient$internalModule$strict,
-			exportStatementDefaultDeclaration$ambient$internalModule$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.internalModule', max: 2 }
-		),
-		typeAlias: bundle(
-			exportStatementDefaultDeclaration$ambient$typeAlias$strict,
-			exportStatementDefaultDeclaration$ambient$typeAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.typeAlias', max: 2 }
-		),
-		enum: bundle(
-			exportStatementDefaultDeclaration$ambient$enum$strict,
-			exportStatementDefaultDeclaration$ambient$enum$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.enum', max: 2 }
-		),
-		interface: bundle(
-			exportStatementDefaultDeclaration$ambient$interface$strict,
-			exportStatementDefaultDeclaration$ambient$interface$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.interface', max: 2 }
-		),
-		importAlias: bundle(
-			exportStatementDefaultDeclaration$ambient$importAlias$strict,
-			exportStatementDefaultDeclaration$ambient$importAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.importAlias', max: 2 }
-		),
-		ambient: bundle(
-			exportStatementDefaultDeclaration$ambient$ambient$strict,
-			exportStatementDefaultDeclaration$ambient$ambient$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.ambient', max: 2 }
-		),
-		global: bundle(
-			exportStatementDefaultDeclaration$ambient$global$strict,
-			exportStatementDefaultDeclaration$ambient$global$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
-		)
-	},
 	defaultKw: {
 		...bundle(exportStatementDefaultDeclaration$defaultKw$strict, exportStatementDefaultDeclaration$defaultKw$coerce, {
 			key: 'exportStatementDefaultDeclaration.defaultKw',
@@ -3389,380 +3211,145 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.semi', max: 2 }
 			)
 		}
+	},
+	function: bundle(
+		exportStatementDefaultDeclaration$function$strict,
+		exportStatementDefaultDeclaration$function$coerce,
+		{ key: 'exportStatementDefaultDeclaration.function', max: 2 }
+	),
+	generatorFunction: bundle(
+		exportStatementDefaultDeclaration$generatorFunction$strict,
+		exportStatementDefaultDeclaration$generatorFunction$coerce,
+		{ key: 'exportStatementDefaultDeclaration.generatorFunction', max: 2 }
+	),
+	class: bundle(exportStatementDefaultDeclaration$class$strict, exportStatementDefaultDeclaration$class$coerce, {
+		key: 'exportStatementDefaultDeclaration.class',
+		max: 2
+	}),
+	lexical: bundle(exportStatementDefaultDeclaration$lexical$strict, exportStatementDefaultDeclaration$lexical$coerce, {
+		key: 'exportStatementDefaultDeclaration.lexical',
+		max: 2
+	}),
+	variable: bundle(
+		exportStatementDefaultDeclaration$variable$strict,
+		exportStatementDefaultDeclaration$variable$coerce,
+		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
+	),
+	functionSignature: bundle(
+		exportStatementDefaultDeclaration$functionSignature$strict,
+		exportStatementDefaultDeclaration$functionSignature$coerce,
+		{ key: 'exportStatementDefaultDeclaration.functionSignature', max: 2 }
+	),
+	abstractClass: bundle(
+		exportStatementDefaultDeclaration$abstractClass$strict,
+		exportStatementDefaultDeclaration$abstractClass$coerce,
+		{ key: 'exportStatementDefaultDeclaration.abstractClass', max: 2 }
+	),
+	module: bundle(exportStatementDefaultDeclaration$module$strict, exportStatementDefaultDeclaration$module$coerce, {
+		key: 'exportStatementDefaultDeclaration.module',
+		max: 2
+	}),
+	internalModule: bundle(
+		exportStatementDefaultDeclaration$internalModule$strict,
+		exportStatementDefaultDeclaration$internalModule$coerce,
+		{ key: 'exportStatementDefaultDeclaration.internalModule', max: 2 }
+	),
+	typeAlias: bundle(
+		exportStatementDefaultDeclaration$typeAlias$strict,
+		exportStatementDefaultDeclaration$typeAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.typeAlias', max: 2 }
+	),
+	enum: bundle(exportStatementDefaultDeclaration$enum$strict, exportStatementDefaultDeclaration$enum$coerce, {
+		key: 'exportStatementDefaultDeclaration.enum',
+		max: 2
+	}),
+	interface: bundle(
+		exportStatementDefaultDeclaration$interface$strict,
+		exportStatementDefaultDeclaration$interface$coerce,
+		{ key: 'exportStatementDefaultDeclaration.interface', max: 2 }
+	),
+	importAlias: bundle(
+		exportStatementDefaultDeclaration$importAlias$strict,
+		exportStatementDefaultDeclaration$importAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.importAlias', max: 2 }
+	),
+	ambient: {
+		...bundle(exportStatementDefaultDeclaration$ambient$strict, exportStatementDefaultDeclaration$ambient$coerce, {
+			key: 'exportStatementDefaultDeclaration.ambient',
+			max: 2
+		}),
+		function: bundle(
+			exportStatementDefaultDeclaration$ambient$function$strict,
+			exportStatementDefaultDeclaration$ambient$function$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.function', max: 2 }
+		),
+		generatorFunction: bundle(
+			exportStatementDefaultDeclaration$ambient$generatorFunction$strict,
+			exportStatementDefaultDeclaration$ambient$generatorFunction$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.generatorFunction', max: 2 }
+		),
+		class: bundle(
+			exportStatementDefaultDeclaration$ambient$class$strict,
+			exportStatementDefaultDeclaration$ambient$class$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.class', max: 2 }
+		),
+		lexical: bundle(
+			exportStatementDefaultDeclaration$ambient$lexical$strict,
+			exportStatementDefaultDeclaration$ambient$lexical$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.lexical', max: 2 }
+		),
+		variable: bundle(
+			exportStatementDefaultDeclaration$ambient$variable$strict,
+			exportStatementDefaultDeclaration$ambient$variable$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
+		),
+		functionSignature: bundle(
+			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
+			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.functionSignature', max: 2 }
+		),
+		abstractClass: bundle(
+			exportStatementDefaultDeclaration$ambient$abstractClass$strict,
+			exportStatementDefaultDeclaration$ambient$abstractClass$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.abstractClass', max: 2 }
+		),
+		internalModule: bundle(
+			exportStatementDefaultDeclaration$ambient$internalModule$strict,
+			exportStatementDefaultDeclaration$ambient$internalModule$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.internalModule', max: 2 }
+		),
+		typeAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$typeAlias$strict,
+			exportStatementDefaultDeclaration$ambient$typeAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.typeAlias', max: 2 }
+		),
+		enum: bundle(
+			exportStatementDefaultDeclaration$ambient$enum$strict,
+			exportStatementDefaultDeclaration$ambient$enum$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.enum', max: 2 }
+		),
+		interface: bundle(
+			exportStatementDefaultDeclaration$ambient$interface$strict,
+			exportStatementDefaultDeclaration$ambient$interface$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.interface', max: 2 }
+		),
+		importAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$importAlias$strict,
+			exportStatementDefaultDeclaration$ambient$importAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.importAlias', max: 2 }
+		),
+		ambient: bundle(
+			exportStatementDefaultDeclaration$ambient$ambient$strict,
+			exportStatementDefaultDeclaration$ambient$ambient$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.ambient', max: 2 }
+		),
+		global: bundle(
+			exportStatementDefaultDeclaration$ambient$global$strict,
+			exportStatementDefaultDeclaration$ambient$global$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
+		)
 	}
 }) as unknown as typeof B.exportStatementDefaultDeclaration & {
-	function: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildFunctionDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToFunctionDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	generatorFunction: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	class: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	lexical: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildLexicalDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToLexicalDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	variable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildVariableDeclaration>;
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToVariableDeclaration>;
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	functionSignature: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildFunctionSignature>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToFunctionSignature>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	abstractClass: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildAbstractClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToAbstractClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	module: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildModule>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToModule>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	internalModule: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildInternalModule>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInternalModule>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	typeAlias: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildTypeAliasDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	enum: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildEnumDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToEnumDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	interface: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildInterfaceDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInterfaceDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	importAlias: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildImportAlias>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToImportAlias>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	ambient: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildAmbientDeclaration>[0];
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToAmbientDeclaration>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		function: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.function.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.function.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		generatorFunction: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.generatorFunction.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		class: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.class.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.class.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		lexical: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.lexical.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.lexical.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		variable: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.variable.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.variable.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		functionSignature: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.functionSignature.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.functionSignature.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		abstractClass: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.abstractClass.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.abstractClass.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		internalModule: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.internalModule.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.internalModule.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		typeAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.typeAlias.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.typeAlias.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		enum: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.enum.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.enum.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		interface: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.interface.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.interface.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		importAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.importAlias.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.importAlias.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		ambient: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.ambient.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.ambient.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		global: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.global.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.global.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-	};
 	defaultKw: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
@@ -4211,6 +3798,421 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 			};
 		};
 	};
+	function: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildFunctionDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFunctionDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	generatorFunction: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	class: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	lexical: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildLexicalDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToLexicalDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	variable: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildVariableDeclaration>;
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToVariableDeclaration>;
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	functionSignature: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildFunctionSignature>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFunctionSignature>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	abstractClass: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildAbstractClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToAbstractClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	module: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildModule>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToModule>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	internalModule: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildInternalModule>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInternalModule>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	typeAlias: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildTypeAliasDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	enum: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildEnumDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToEnumDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	interface: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildInterfaceDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInterfaceDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	importAlias: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildImportAlias>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToImportAlias>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	ambient: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildAmbientDeclaration>[0];
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToAmbientDeclaration>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		function: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.function.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.function.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		generatorFunction: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.generatorFunction.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		class: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.class.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.class.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		lexical: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.lexical.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.lexical.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		variable: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.variable.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.variable.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		functionSignature: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.functionSignature.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.functionSignature.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		abstractClass: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.abstractClass.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.abstractClass.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		internalModule: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.internalModule.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.internalModule.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		typeAlias: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.typeAlias.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.typeAlias.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		enum: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.enum.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.enum.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		interface: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.interface.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.interface.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		importAlias: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.importAlias.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.importAlias.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		ambient: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.ambient.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.ambient.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		global: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.global.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.global.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+	};
+};
+
+const formalParametersElementsReceiver$formalParametersElementsReceiverGroup = <
+	PF extends (config: never) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['formalParametersElementsReceiverGroup'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(
+			parent,
+			{ ..._o(config), formalParametersElementsReceiverGroup: _c(child)(...seat) },
+			options
+		);
+	};
+};
+const formalParametersElementsReceiver$seated: (
+	...args: T.FormalParametersElementsReceiver.BuildArgs
+) => ReturnType<typeof F.buildFormalParametersElementsReceiver> =
+	formalParametersElementsReceiver$formalParametersElementsReceiverGroup(
+		F.buildFormalParametersElementsReceiver,
+		F.buildFormalParametersElementsReceiverGroup
+	);
+const formalParametersElementsReceiver$seatedCoerce: (
+	...args: T.FormalParametersElementsReceiver.LooseArgs
+) => ReturnType<typeof C.coerceToFormalParametersElementsReceiver> =
+	formalParametersElementsReceiver$formalParametersElementsReceiverGroup(
+		C.coerceToFormalParametersElementsReceiver,
+		C.coerceToFormalParametersElementsReceiverGroup
+	);
+export const formalParametersElementsReceiver = Object.freeze({
+	...B.formalParametersElementsReceiver,
+	...bundle(formalParametersElementsReceiver$seated, formalParametersElementsReceiver$seatedCoerce, {
+		key: 'formalParametersElementsReceiver',
+		max: 1
+	})
+}) as unknown as Omit<typeof B.formalParametersElementsReceiver, 'strict' | 'coerce'> & {
+	strict: typeof formalParametersElementsReceiver$seated;
+	coerce: typeof formalParametersElementsReceiver$seatedCoerce;
 };
 
 export const declaration: {
@@ -4269,6 +4271,14 @@ export const forHeader: {
 	lhs: B.forHeaderLhs,
 	varKind: B.forHeaderVarKind,
 	letConstKind: B.forHeaderLetConstKind
+});
+
+export const parenthesizedExpression: {
+	readonly typed: typeof B.parenthesizedExpressionTyped;
+	readonly sequence: typeof parenthesizedExpressionSequence;
+} = Object.freeze({
+	typed: B.parenthesizedExpressionTyped,
+	sequence: parenthesizedExpressionSequence
 });
 
 export const callExpression: {
@@ -5096,1298 +5106,6 @@ export const yieldExpression = Object.freeze({
 	};
 };
 
-const parenthesizedExpressionTyped$as =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'expression' || key === 'typeAnnotation') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$as$strict = parenthesizedExpressionTyped$as(
-	F.buildParenthesizedExpressionTyped,
-	F.buildAsExpression
-);
-const parenthesizedExpressionTyped$as$coerce = parenthesizedExpressionTyped$as(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToAsExpression
-);
-const parenthesizedExpressionTyped$satisfies =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'expression' || key === 'typeAnnotation') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$satisfies$strict = parenthesizedExpressionTyped$satisfies(
-	F.buildParenthesizedExpressionTyped,
-	F.buildSatisfiesExpression
-);
-const parenthesizedExpressionTyped$satisfies$coerce = parenthesizedExpressionTyped$satisfies(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToSatisfiesExpression
-);
-const parenthesizedExpressionTyped$instantiation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'expression' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$instantiation$strict = parenthesizedExpressionTyped$instantiation(
-	F.buildParenthesizedExpressionTyped,
-	F.buildInstantiationExpression
-);
-const parenthesizedExpressionTyped$instantiation$coerce = parenthesizedExpressionTyped$instantiation(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToInstantiationExpression
-);
-const parenthesizedExpressionTyped$internalModule =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'name' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$internalModule$strict = parenthesizedExpressionTyped$internalModule(
-	F.buildParenthesizedExpressionTyped,
-	F.buildInternalModule
-);
-const parenthesizedExpressionTyped$internalModule$coerce = parenthesizedExpressionTyped$internalModule(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToInternalModule
-);
-const parenthesizedExpressionTyped$typeAssertion =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'typeArguments' || key === 'expression') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$typeAssertion$strict = parenthesizedExpressionTyped$typeAssertion(
-	F.buildParenthesizedExpressionTyped,
-	F.buildTypeAssertion
-);
-const parenthesizedExpressionTyped$typeAssertion$coerce = parenthesizedExpressionTyped$typeAssertion(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToTypeAssertion
-);
-const parenthesizedExpressionTyped$assignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'using' || key === 'left' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$assignment$strict = parenthesizedExpressionTyped$assignment(
-	F.buildParenthesizedExpressionTyped,
-	F.buildAssignmentExpression
-);
-const parenthesizedExpressionTyped$assignment$coerce = parenthesizedExpressionTyped$assignment(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToAssignmentExpression
-);
-const parenthesizedExpressionTyped$augmentedAssignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$augmentedAssignment$strict = parenthesizedExpressionTyped$augmentedAssignment(
-	F.buildParenthesizedExpressionTyped,
-	F.buildAugmentedAssignmentExpression
-);
-const parenthesizedExpressionTyped$augmentedAssignment$coerce = parenthesizedExpressionTyped$augmentedAssignment(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToAugmentedAssignmentExpression
-);
-const parenthesizedExpressionTyped$await =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$await$strict = parenthesizedExpressionTyped$await(
-	F.buildParenthesizedExpressionTyped,
-	F.buildAwaitExpression
-);
-const parenthesizedExpressionTyped$await$coerce = parenthesizedExpressionTyped$await(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToAwaitExpression
-);
-const parenthesizedExpressionTyped$unary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'operator' || key === 'argument') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$unary$strict = parenthesizedExpressionTyped$unary(
-	F.buildParenthesizedExpressionTyped,
-	F.buildUnaryExpression
-);
-const parenthesizedExpressionTyped$unary$coerce = parenthesizedExpressionTyped$unary(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToUnaryExpression
-);
-const parenthesizedExpressionTyped$binary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right' || key === 'binaryExpressionIn') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$binary$strict = parenthesizedExpressionTyped$binary(
-	F.buildParenthesizedExpressionTyped,
-	F.buildBinaryExpression
-);
-const parenthesizedExpressionTyped$binary$coerce = parenthesizedExpressionTyped$binary(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToBinaryExpression
-);
-const parenthesizedExpressionTyped$ternary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'condition' || key === 'consequence' || key === 'alternative') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$ternary$strict = parenthesizedExpressionTyped$ternary(
-	F.buildParenthesizedExpressionTyped,
-	F.buildTernaryExpression
-);
-const parenthesizedExpressionTyped$ternary$coerce = parenthesizedExpressionTyped$ternary(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToTernaryExpression
-);
-const parenthesizedExpressionTyped$update =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$update$strict = parenthesizedExpressionTyped$update(
-	F.buildParenthesizedExpressionTyped,
-	updateExpression.strict
-);
-const parenthesizedExpressionTyped$update$coerce = parenthesizedExpressionTyped$update(
-	C.coerceToParenthesizedExpressionTyped,
-	updateExpression.coerce
-);
-const parenthesizedExpressionTyped$new =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'constructor_' || key === 'typeArguments' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$new$strict = parenthesizedExpressionTyped$new(
-	F.buildParenthesizedExpressionTyped,
-	F.buildNewExpression
-);
-const parenthesizedExpressionTyped$new$coerce = parenthesizedExpressionTyped$new(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToNewExpression
-);
-const parenthesizedExpressionTyped$yield =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$strict = parenthesizedExpressionTyped$yield(
-	F.buildParenthesizedExpressionTyped,
-	F.buildYieldExpression
-);
-const parenthesizedExpressionTyped$yield$coerce = parenthesizedExpressionTyped$yield(
-	C.coerceToParenthesizedExpressionTyped,
-	C.coerceToYieldExpression
-);
-const parenthesizedExpressionTyped$binary$in =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$binary$in$strict = parenthesizedExpressionTyped$binary$in(
-	F.buildParenthesizedExpressionTyped,
-	binaryExpression.in.strict
-);
-const parenthesizedExpressionTyped$binary$in$coerce = parenthesizedExpressionTyped$binary$in(
-	C.coerceToParenthesizedExpressionTyped,
-	binaryExpression.in.coerce
-);
-const parenthesizedExpressionTyped$update$postfix =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$update$postfix$strict = parenthesizedExpressionTyped$update$postfix(
-	F.buildParenthesizedExpressionTyped,
-	updateExpression.postfix.strict
-);
-const parenthesizedExpressionTyped$update$postfix$coerce = parenthesizedExpressionTyped$update$postfix(
-	C.coerceToParenthesizedExpressionTyped,
-	updateExpression.postfix.coerce
-);
-const parenthesizedExpressionTyped$update$prefix =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$update$prefix$strict = parenthesizedExpressionTyped$update$prefix(
-	F.buildParenthesizedExpressionTyped,
-	updateExpression.prefix.strict
-);
-const parenthesizedExpressionTyped$update$prefix$coerce = parenthesizedExpressionTyped$update$prefix(
-	C.coerceToParenthesizedExpressionTyped,
-	updateExpression.prefix.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$strict = parenthesizedExpressionTyped$yield$delegate(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$coerce = parenthesizedExpressionTyped$yield$delegate(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$as =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$as$strict = parenthesizedExpressionTyped$yield$delegate$as(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.as.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$as$coerce = parenthesizedExpressionTyped$yield$delegate$as(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.as.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$satisfies =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$satisfies$strict =
-	parenthesizedExpressionTyped$yield$delegate$satisfies(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.satisfies.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$satisfies$coerce =
-	parenthesizedExpressionTyped$yield$delegate$satisfies(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.satisfies.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$instantiation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$instantiation$strict =
-	parenthesizedExpressionTyped$yield$delegate$instantiation(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.instantiation.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$instantiation$coerce =
-	parenthesizedExpressionTyped$yield$delegate$instantiation(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.instantiation.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$internalModule =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$internalModule$strict =
-	parenthesizedExpressionTyped$yield$delegate$internalModule(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.internalModule.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$internalModule$coerce =
-	parenthesizedExpressionTyped$yield$delegate$internalModule(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.internalModule.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$typeAssertion =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict =
-	parenthesizedExpressionTyped$yield$delegate$typeAssertion(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.typeAssertion.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce =
-	parenthesizedExpressionTyped$yield$delegate$typeAssertion(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.typeAssertion.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$assignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$assignment$strict =
-	parenthesizedExpressionTyped$yield$delegate$assignment(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.assignment.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$assignment$coerce =
-	parenthesizedExpressionTyped$yield$delegate$assignment(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.assignment.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict =
-	parenthesizedExpressionTyped$yield$delegate$augmentedAssignment(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.augmentedAssignment.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce =
-	parenthesizedExpressionTyped$yield$delegate$augmentedAssignment(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.augmentedAssignment.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$await =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$await$strict = parenthesizedExpressionTyped$yield$delegate$await(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.await.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$await$coerce = parenthesizedExpressionTyped$yield$delegate$await(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.await.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$unary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$unary$strict = parenthesizedExpressionTyped$yield$delegate$unary(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.unary.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$unary$coerce = parenthesizedExpressionTyped$yield$delegate$unary(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.unary.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$binary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$binary$strict = parenthesizedExpressionTyped$yield$delegate$binary(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.binary.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$binary$coerce = parenthesizedExpressionTyped$yield$delegate$binary(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.binary.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$ternary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$ternary$strict = parenthesizedExpressionTyped$yield$delegate$ternary(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.ternary.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$ternary$coerce = parenthesizedExpressionTyped$yield$delegate$ternary(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.ternary.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$update =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$update$strict = parenthesizedExpressionTyped$yield$delegate$update(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.update.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$update$coerce = parenthesizedExpressionTyped$yield$delegate$update(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.update.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$new =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$new$strict = parenthesizedExpressionTyped$yield$delegate$new(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.new.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$new$coerce = parenthesizedExpressionTyped$yield$delegate$new(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.new.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$yield =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$yield$strict = parenthesizedExpressionTyped$yield$delegate$yield(
-	F.buildParenthesizedExpressionTyped,
-	yieldExpression.delegate.yield.strict
-);
-const parenthesizedExpressionTyped$yield$delegate$yield$coerce = parenthesizedExpressionTyped$yield$delegate$yield(
-	C.coerceToParenthesizedExpressionTyped,
-	yieldExpression.delegate.yield.coerce
-);
-const parenthesizedExpressionTyped$yield$delegate$binary$in =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$binary$in$strict =
-	parenthesizedExpressionTyped$yield$delegate$binary$in(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.binary.in.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$binary$in$coerce =
-	parenthesizedExpressionTyped$yield$delegate$binary$in(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.binary.in.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$update$postfix =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$update$postfix$strict =
-	parenthesizedExpressionTyped$yield$delegate$update$postfix(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.update.postfix.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce =
-	parenthesizedExpressionTyped$yield$delegate$update$postfix(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.update.postfix.coerce
-	);
-const parenthesizedExpressionTyped$yield$delegate$update$prefix =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { expression: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
-	};
-const parenthesizedExpressionTyped$yield$delegate$update$prefix$strict =
-	parenthesizedExpressionTyped$yield$delegate$update$prefix(
-		F.buildParenthesizedExpressionTyped,
-		yieldExpression.delegate.update.prefix.strict
-	);
-const parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce =
-	parenthesizedExpressionTyped$yield$delegate$update$prefix(
-		C.coerceToParenthesizedExpressionTyped,
-		yieldExpression.delegate.update.prefix.coerce
-	);
-export const parenthesizedExpressionTyped = Object.freeze({
-	...B.parenthesizedExpressionTyped,
-	as: bundle(parenthesizedExpressionTyped$as$strict, parenthesizedExpressionTyped$as$coerce, {
-		key: 'parenthesizedExpressionTyped.as',
-		max: 2
-	}),
-	satisfies: bundle(parenthesizedExpressionTyped$satisfies$strict, parenthesizedExpressionTyped$satisfies$coerce, {
-		key: 'parenthesizedExpressionTyped.satisfies',
-		max: 2
-	}),
-	instantiation: bundle(
-		parenthesizedExpressionTyped$instantiation$strict,
-		parenthesizedExpressionTyped$instantiation$coerce,
-		{ key: 'parenthesizedExpressionTyped.instantiation', max: 2 }
-	),
-	internalModule: bundle(
-		parenthesizedExpressionTyped$internalModule$strict,
-		parenthesizedExpressionTyped$internalModule$coerce,
-		{ key: 'parenthesizedExpressionTyped.internalModule', max: 2 }
-	),
-	typeAssertion: bundle(
-		parenthesizedExpressionTyped$typeAssertion$strict,
-		parenthesizedExpressionTyped$typeAssertion$coerce,
-		{ key: 'parenthesizedExpressionTyped.typeAssertion', max: 2 }
-	),
-	assignment: bundle(parenthesizedExpressionTyped$assignment$strict, parenthesizedExpressionTyped$assignment$coerce, {
-		key: 'parenthesizedExpressionTyped.assignment',
-		max: 2
-	}),
-	augmentedAssignment: bundle(
-		parenthesizedExpressionTyped$augmentedAssignment$strict,
-		parenthesizedExpressionTyped$augmentedAssignment$coerce,
-		{ key: 'parenthesizedExpressionTyped.augmentedAssignment', max: 2 }
-	),
-	await: bundle(parenthesizedExpressionTyped$await$strict, parenthesizedExpressionTyped$await$coerce, {
-		key: 'parenthesizedExpressionTyped.await',
-		max: 2
-	}),
-	unary: bundle(parenthesizedExpressionTyped$unary$strict, parenthesizedExpressionTyped$unary$coerce, {
-		key: 'parenthesizedExpressionTyped.unary',
-		max: 2
-	}),
-	binary: {
-		...bundle(parenthesizedExpressionTyped$binary$strict, parenthesizedExpressionTyped$binary$coerce, {
-			key: 'parenthesizedExpressionTyped.binary',
-			max: 2
-		}),
-		in: bundle(parenthesizedExpressionTyped$binary$in$strict, parenthesizedExpressionTyped$binary$in$coerce, {
-			key: 'parenthesizedExpressionTyped.binary.in',
-			max: 2
-		})
-	},
-	ternary: bundle(parenthesizedExpressionTyped$ternary$strict, parenthesizedExpressionTyped$ternary$coerce, {
-		key: 'parenthesizedExpressionTyped.ternary',
-		max: 2
-	}),
-	update: {
-		...bundle(parenthesizedExpressionTyped$update$strict, parenthesizedExpressionTyped$update$coerce, {
-			key: 'parenthesizedExpressionTyped.update',
-			max: 2
-		}),
-		postfix: bundle(
-			parenthesizedExpressionTyped$update$postfix$strict,
-			parenthesizedExpressionTyped$update$postfix$coerce,
-			{ key: 'parenthesizedExpressionTyped.update.postfix', max: 2 }
-		),
-		prefix: bundle(
-			parenthesizedExpressionTyped$update$prefix$strict,
-			parenthesizedExpressionTyped$update$prefix$coerce,
-			{ key: 'parenthesizedExpressionTyped.update.prefix', max: 2 }
-		)
-	},
-	new: bundle(parenthesizedExpressionTyped$new$strict, parenthesizedExpressionTyped$new$coerce, {
-		key: 'parenthesizedExpressionTyped.new',
-		max: 2
-	}),
-	yield: {
-		...bundle(parenthesizedExpressionTyped$yield$strict, parenthesizedExpressionTyped$yield$coerce, {
-			key: 'parenthesizedExpressionTyped.yield',
-			max: 2
-		}),
-		delegate: {
-			...bundle(
-				parenthesizedExpressionTyped$yield$delegate$strict,
-				parenthesizedExpressionTyped$yield$delegate$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate', max: 2 }
-			),
-			as: bundle(
-				parenthesizedExpressionTyped$yield$delegate$as$strict,
-				parenthesizedExpressionTyped$yield$delegate$as$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.as', max: 2 }
-			),
-			satisfies: bundle(
-				parenthesizedExpressionTyped$yield$delegate$satisfies$strict,
-				parenthesizedExpressionTyped$yield$delegate$satisfies$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.satisfies', max: 2 }
-			),
-			instantiation: bundle(
-				parenthesizedExpressionTyped$yield$delegate$instantiation$strict,
-				parenthesizedExpressionTyped$yield$delegate$instantiation$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.instantiation', max: 2 }
-			),
-			internalModule: bundle(
-				parenthesizedExpressionTyped$yield$delegate$internalModule$strict,
-				parenthesizedExpressionTyped$yield$delegate$internalModule$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.internalModule', max: 2 }
-			),
-			typeAssertion: bundle(
-				parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict,
-				parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.typeAssertion', max: 2 }
-			),
-			assignment: bundle(
-				parenthesizedExpressionTyped$yield$delegate$assignment$strict,
-				parenthesizedExpressionTyped$yield$delegate$assignment$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.assignment', max: 2 }
-			),
-			augmentedAssignment: bundle(
-				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict,
-				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.augmentedAssignment', max: 2 }
-			),
-			await: bundle(
-				parenthesizedExpressionTyped$yield$delegate$await$strict,
-				parenthesizedExpressionTyped$yield$delegate$await$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.await', max: 2 }
-			),
-			unary: bundle(
-				parenthesizedExpressionTyped$yield$delegate$unary$strict,
-				parenthesizedExpressionTyped$yield$delegate$unary$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.unary', max: 2 }
-			),
-			binary: {
-				...bundle(
-					parenthesizedExpressionTyped$yield$delegate$binary$strict,
-					parenthesizedExpressionTyped$yield$delegate$binary$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary', max: 2 }
-				),
-				in: bundle(
-					parenthesizedExpressionTyped$yield$delegate$binary$in$strict,
-					parenthesizedExpressionTyped$yield$delegate$binary$in$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary.in', max: 2 }
-				)
-			},
-			ternary: bundle(
-				parenthesizedExpressionTyped$yield$delegate$ternary$strict,
-				parenthesizedExpressionTyped$yield$delegate$ternary$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.ternary', max: 2 }
-			),
-			update: {
-				...bundle(
-					parenthesizedExpressionTyped$yield$delegate$update$strict,
-					parenthesizedExpressionTyped$yield$delegate$update$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.update', max: 2 }
-				),
-				postfix: bundle(
-					parenthesizedExpressionTyped$yield$delegate$update$postfix$strict,
-					parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.postfix', max: 2 }
-				),
-				prefix: bundle(
-					parenthesizedExpressionTyped$yield$delegate$update$prefix$strict,
-					parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce,
-					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.prefix', max: 2 }
-				)
-			},
-			new: bundle(
-				parenthesizedExpressionTyped$yield$delegate$new$strict,
-				parenthesizedExpressionTyped$yield$delegate$new$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.new', max: 2 }
-			),
-			yield: bundle(
-				parenthesizedExpressionTyped$yield$delegate$yield$strict,
-				parenthesizedExpressionTyped$yield$delegate$yield$coerce,
-				{ key: 'parenthesizedExpressionTyped.yield.delegate.yield', max: 2 }
-			)
-		}
-	}
-}) as unknown as typeof B.parenthesizedExpressionTyped & {
-	as: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildAsExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToAsExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	satisfies: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildSatisfiesExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToSatisfiesExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	instantiation: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildInstantiationExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToInstantiationExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	internalModule: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildInternalModule>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToInternalModule>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	typeAssertion: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildTypeAssertion>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToTypeAssertion>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	assignment: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildAssignmentExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToAssignmentExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	augmentedAssignment: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildAugmentedAssignmentExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	await: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof F.buildAwaitExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof C.coerceToAwaitExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	unary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildUnaryExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToUnaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	binary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildBinaryExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToBinaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		in: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof binaryExpression.in.strict>;
-				},
-				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof binaryExpression.in.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		};
-	};
-	ternary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildTernaryExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToTernaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	update: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof updateExpression.strict>;
-			},
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof updateExpression.coerce>;
-			},
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		postfix: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof updateExpression.postfix.strict>;
-				},
-				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof updateExpression.postfix.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		};
-		prefix: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof updateExpression.prefix.strict>;
-				},
-				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof updateExpression.prefix.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		};
-	};
-	new: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof F.buildNewExpression>[0],
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> &
-				ArgsOf<typeof C.coerceToNewExpression>[0],
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-	};
-	yield: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof F.buildYieldExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-		) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-				expression: ArgsOf<typeof C.coerceToYieldExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-		delegate: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof yieldExpression.delegate.strict>;
-				},
-				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-					expression: ArgsOf<typeof yieldExpression.delegate.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			as: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.as.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.as.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			satisfies: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.satisfies.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.satisfies.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			instantiation: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.instantiation.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.instantiation.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			internalModule: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.internalModule.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.internalModule.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			typeAssertion: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.typeAssertion.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.typeAssertion.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			assignment: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.assignment.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.assignment.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			augmentedAssignment: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.augmentedAssignment.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.augmentedAssignment.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			await: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.await.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.await.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			unary: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.unary.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.unary.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			binary: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.binary.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.binary.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-				in: {
-					strict: (
-						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-							expression: ArgsOf<typeof yieldExpression.delegate.binary.in.strict>;
-						},
-						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-					coerce: (
-						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-							expression: ArgsOf<typeof yieldExpression.delegate.binary.in.coerce>;
-						},
-						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-				};
-			};
-			ternary: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.ternary.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.ternary.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			update: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.update.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.update.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-				postfix: {
-					strict: (
-						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-							expression: ArgsOf<typeof yieldExpression.delegate.update.postfix.strict>;
-						},
-						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-					coerce: (
-						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-							expression: ArgsOf<typeof yieldExpression.delegate.update.postfix.coerce>;
-						},
-						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-				};
-				prefix: {
-					strict: (
-						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-							expression: ArgsOf<typeof yieldExpression.delegate.update.prefix.strict>;
-						},
-						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-					coerce: (
-						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-							expression: ArgsOf<typeof yieldExpression.delegate.update.prefix.coerce>;
-						},
-						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-				};
-			};
-			new: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.new.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.new.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-			yield: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.yield.strict>;
-					},
-					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
-				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
-						expression: ArgsOf<typeof yieldExpression.delegate.yield.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
-				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
-			};
-		};
-	};
-};
-
-export const parenthesizedExpression: {
-	readonly typed: typeof parenthesizedExpressionTyped;
-	readonly sequence: typeof parenthesizedExpressionSequence;
-} = Object.freeze({
-	typed: parenthesizedExpressionTyped,
-	sequence: parenthesizedExpressionSequence
-});
-
 export const string: {
 	readonly double: typeof B.stringDouble;
 	readonly single: typeof B.stringSingle;
@@ -6424,10 +5142,10 @@ export const pattern: {
 
 export const indexSignature: {
 	readonly colon: typeof B.indexSignatureColon;
-	readonly mappedTypeClause: typeof indexSignatureMappedTypeClause;
+	readonly mappedTypeClause: typeof B.indexSignatureMappedTypeClause;
 } = Object.freeze({
 	colon: B.indexSignatureColon,
-	mappedTypeClause: indexSignatureMappedTypeClause
+	mappedTypeClause: B.indexSignatureMappedTypeClause
 });
 
 export const classBodyMember: {

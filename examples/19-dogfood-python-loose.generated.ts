@@ -24,17 +24,17 @@ export function rebuildPython4spaceLoose() {
 			})],
 			returnType: py.kinds.None,
 			body: py.build.suiteBlock(py.build.simpleStatements(py.build.assignmentEq({
-				left: py.build.attribute({
+				name: py.build.attribute({
 					object: "self",
-					attribute: "user_id",
+					property: "user_id",
 				}),
-				right: "user_id",
+				value: "user_id",
 			})), py.build.simpleStatements(py.build.assignmentEq({
-				left: py.build.attribute({
+				name: py.build.attribute({
 					object: "self",
-					attribute: "name",
+					property: "name",
 				}),
-				right: "name",
+				value: "name",
 			}))),
 		}), py.build.functionDefinition({
 			name: "greet",
@@ -45,7 +45,7 @@ export function rebuildPython4spaceLoose() {
 				content: [py.build.stringContent("Hello, "), py.build.interpolation({
 					expression: py.build.attribute({
 						object: "self",
-						attribute: "name",
+						property: "name",
 					}),
 				}), py.build.stringContent("!")],
 				stringEnd: "\"",
@@ -71,7 +71,7 @@ export function rebuildPython4spaceLoose() {
 				condition: py.build.comparisonOperator({
 					left: py.build.attribute({
 						object: "user",
-						attribute: "user_id",
+						property: "user_id",
 					}),
 					comparators: [{
 						operators: py.kinds.EqEq,

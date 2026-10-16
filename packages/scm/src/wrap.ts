@@ -664,13 +664,16 @@ export function wrapNamedNodeGroupChildren(
 		$with: {
 			anchor: (v: NonNullable<T.NamedNodeGroupChildren['_anchor']>) =>
 				rebuilt(node, handle, () => wrapNamedNodeGroupChildren({ ...$edited(data), _anchor: v }, tree)),
-			namedNodeExpressions: (
-				...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>
-			) =>
+			namedNodeExpressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapNamedNodeGroupChildren(
-						{ ...$edited(data), _named_node_expressions: restItems('namedNodeExpressions', v) },
-						tree
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: RAW.buildNamedNodeExpressionArm },
+						(...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>) =>
+							wrapNamedNodeGroupChildren(
+								{ ...$edited(data), _named_node_expressions: restItems('namedNodeExpressions', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -710,11 +713,16 @@ export function wrapNamedNodeGroupAnchoredLast(
 		$with: {
 			anchor: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_anchor']>) =>
 				rebuilt(node, handle, () => wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _anchor: v }, tree)),
-			namedNodeExpressions: (...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
+			namedNodeExpressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapNamedNodeGroupAnchoredLast(
-						{ ...$edited(data), _named_node_expressions: restItems('namedNodeExpressions', v) },
-						tree
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: RAW.buildNamedNodeExpressionArm },
+						(...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
+							wrapNamedNodeGroupAnchoredLast(
+								{ ...$edited(data), _named_node_expressions: restItems('namedNodeExpressions', v) },
+								tree
+							)
 					)
 				),
 			last: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_last']>) =>

@@ -713,10 +713,10 @@ export interface IsGuards {
 			v: T
 		): v is NarrowTo<
 			T,
+			| TSKindId.Lambda
 			| TSKindId.ComparisonOperator
 			| TSKindId.NotOperator
 			| TSKindId.BooleanOperator
-			| TSKindId.Lambda
 			| TSKindId.Await
 			| TSKindId.BinaryOperator
 			| TSKindId.Identifier
@@ -983,12 +983,6 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNul };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		TSKindId.Tight | TSKindId.Space | TSKindId.Tab | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline
-	>;
 	readonly integerDecimal: {
 		<T extends { readonly $type: string | number } | number>(
 			v: T
@@ -1003,6 +997,12 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalPlain };
 	};
+	layout<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.Tight | TSKindId.Space | TSKindId.Tab | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline
+	>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -1029,7 +1029,7 @@ const _supertype_suite_ids = new Set<number>([294, 295, 296]);
 const _supertype_parameter_ids = new Set<number>([1, 224, 198, 199, 200, 196, 258, 257, 201]);
 const _supertype_pattern_ids = new Set<number>([1, 221, 220, 200, 196, 197]);
 const _supertype_expression_ids = new Set<number>([
-	212, 206, 207, 213, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223, 232,
+	213, 212, 206, 207, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223, 232,
 	237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
@@ -1041,8 +1041,8 @@ const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 1
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95]);
 const _supertype_float_ids = new Set<number>([96, 97, 98]);
 const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
-const _supertype_layout_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
+const _supertype_layout_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[128, _supertype_statement_ids],
@@ -1367,6 +1367,6 @@ export const is = Object.freeze({
 	integer: _supertype_integer_guard,
 	float: _supertype_float_guard,
 	lineContinuation: _supertype_lineContinuation_guard,
-	layout: _sg(_supertype_layout_ids),
-	integerDecimal: _supertype_integerDecimal_guard
+	integerDecimal: _supertype_integerDecimal_guard,
+	layout: _sg(_supertype_layout_ids)
 }) as unknown as IsGuards;

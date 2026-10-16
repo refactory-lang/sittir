@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
-import { baseNamesOf, bindGrammar, lead, match } from '../bind.ts';
+import { baseNamesOf, bindGrammar, boundFieldNameOf, boundNameOf, lead, match } from '../bind.ts';
 
 const DSL = JSON.stringify(join(__dirname, '../index.ts'));
 
@@ -69,42 +69,105 @@ describe('lead and match', () => {
 	});
 
 	it('refuse a restriction of two fields', () => {
-		expect(() => match('required_parameter', { pattern: [match('this')], type: [match('type_annotation')] })).toThrow(/restricts one field, not 2/);
+		expect(() => match('required_parameter', { pattern: [match('this')], type: [match('type_annotation')] })).toThrow(
+			/restricts one field, not 2/
+		);
 	});
 
-	it('leave the grammar unapplied by bindGrammar', () => {
-		const grammar = { name: 'g', rules: { list: { type: 'SEQ', members: [] } } };
-		expect(bindGrammar(grammar, { leads: [lead('list', 'item', 'receiver', match('x'))] })).toEqual(bindGrammar(grammar, {}));
+	it('applies leads after binding patches and placement splits', () => {
+		const sym = (name: string) => ({ type: 'SYMBOL', name });
+		const item = { type: 'FIELD', name: 'item', content: { type: 'CHOICE', members: [sym('x'), sym('y')] } };
+		const grammar = {
+			name: 'g',
+			rules: {
+				owner: { type: 'FIELD', name: 'elements', content: sym('list') },
+				list: {
+					type: 'SEQ',
+					members: [item, { type: 'REPEAT', content: { type: 'SEQ', members: [{ type: 'STRING', value: ',' }, item] } }]
+				},
+				x: { type: 'STRING', value: 'x' },
+				y: { type: 'STRING', value: 'y' }
+			}
+		};
+		const bound = bindGrammar(grammar, { leads: [lead('list', 'item', 'receiver', match('x'))] });
+		expect(bound.leadFrom).toEqual({ _list_receiver: 'list' });
+		expect(bound.bindingEffects).toContainEqual({
+			kind: 'lead',
+			list: 'list',
+			item: 'item',
+			field: 'receiver',
+			receiver: 'list_receiver',
+			group: 'list_receiver_group',
+			restField: 'elements',
+			variants: {},
+			admits: [{ kind: 'x' }]
+		});
+		expect(JSON.stringify(bound.rules)).toContain('"name":"receiver"');
+		expect(JSON.stringify(bound.rules)).toContain('"value":"list_receiver"');
+	});
+});
+
+describe('boundFieldNameOf', () => {
+	it('maps a field renamed in a hidden rule through the visible owner that holds it', () => {
+		const grammar = {
+			rules: {
+				parameter: { type: 'SYMBOL', name: '_parameter_name' },
+				_parameter_name: { type: 'FIELD', name: 'name', content: { type: 'SYMBOL', name: 'identifier' } },
+				other: { type: 'SYMBOL', name: 'identifier' }
+			}
+		};
+		const nameOf = boundFieldNameOf([{ owner: '_parameter_name', from: 'pattern:', to: 'name:' }], grammar);
+		expect(nameOf('parameter', 'pattern')).toBe('name');
+		expect(nameOf('other', 'pattern')).toBe('pattern');
+	});
+
+	it('reads canonical field segments and scopes the rename to its owner', () => {
+		const nameOf = boundFieldNameOf([{ owner: 'binding', from: 'left:', to: 'name:' }]);
+		expect(nameOf('binding', 'left')).toBe('name');
+		expect(nameOf('call', 'left')).toBe('left');
 	});
 });
 
 describe('baseNamesOf', () => {
+	it('maps an explicitly recorded binding alias without renaming unrelated source kinds', () => {
+		const nameOf = boundNameOf({}, [{ kind: 'alias', from: 'line_comment_regular', to: 'text_comment' }]);
+		expect(nameOf('line_comment_regular')).toBe('text_comment');
+		expect(nameOf('identifier')).toBe('identifier');
+	});
 	it('maps a renamed rule and a clone of it to the base name', () => {
 		expect(baseNamesOf({ binding: 'let_item' }, { binding_x: 'binding' })).toEqual({ binding: 'let_item', binding_x: 'let_item' });
 	});
 
-	it('maps a clone that reuses a renamed rule\'s base name to that name, and leaves it out', () => {
-		expect(baseNamesOf({ value_parameter: 'parameter' }, { parameter: 'value_parameter' })).toEqual({ value_parameter: 'parameter' });
+	it("maps a clone that reuses a renamed rule's base name to that name, and leaves it out", () => {
+		expect(baseNamesOf({ value_parameter: 'parameter' }, { parameter: 'value_parameter' })).toEqual({
+			value_parameter: 'parameter'
+		});
 	});
 });
 
 describe('grammar bindings on sittirGrammar', () => {
-	it('applies its patches at the patch stage and its renames after grammar()', async () => {
+	it('applies binding patches while preserving upstream parser kind names', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS);
-		expect(Object.keys(raw.rules)).toContain('binding');
-		expect(Object.keys(raw.rules)).not.toContain('let_item');
-		const text = JSON.stringify(raw.rules.binding);
+		expect(Object.keys(raw.rules)).toContain('let_item');
+		expect(Object.keys(raw.rules)).not.toContain('binding');
+		const text = JSON.stringify(raw.rules.let_item);
 		expect(text).toContain('"name":"name"');
 		expect(text).not.toContain('"name":"left"');
 		expect(JSON.stringify(raw.rules)).toContain('"name":"annotation"');
-		expect(JSON.stringify(raw.rules.call)).toMatch(/"type":"FIELD","name":"identifier","content":\{"type":"ALIAS".*"named":true,"value":"callee"/);
-		expect(raw.renamedFrom).toEqual({ binding: 'let_item' });
+		expect(JSON.stringify(raw.rules.call)).toMatch(
+			/"type":"FIELD","name":"identifier","content":\{"type":"ALIAS".*"named":true,"value":"callee"/
+		);
+		expect(raw.renamedFrom).toBeUndefined();
 	}, 120_000);
 
-	it('names each reparse host, priority entry and gated host by its bound kind', async () => {
+	it('preserves parser names in each reparse host, priority entry and gated host', async () => {
 		const hosts = `reparseHosts: { hosts: { let_item: '$r', call: '$r' }, priority: ['_item', 'let_item'], gated: ['let_item'] }`;
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', `${hosts}, ${BINDINGS}`);
-		expect(raw.reparseHosts).toEqual({ hosts: { binding: '$r', call: '$r' }, priority: ['_item', 'binding'], gated: ['binding'] });
+		expect(raw.reparseHosts).toEqual({
+			hosts: { let_item: '$r', call: '$r' },
+			priority: ['_item', 'let_item'],
+			gated: ['let_item']
+		});
 	}, 120_000);
 
 	it('evaluates unbound to the grammar without its grammar bindings', async () => {
@@ -132,25 +195,31 @@ describe('grammar bindings on sittirGrammar', () => {
 		const unbound = evaluateForDerivation(grammarPackageWith(''));
 		expect(unbound.bound.grammarHash).toBe(unbound.base.grammarHash);
 		expect(bound.bound.grammarHash).not.toBe(unbound.bound.grammarHash);
-		expect(bound.bound.baseNames).toEqual({ binding: 'let_item' });
+		expect(bound.bound.baseNames).toEqual({});
 		expect(bound.bound.sourceEdges).toEqual(bound.base.sourceEdges);
 		expect(bound.base.baseNames).toEqual({});
 	}, 120_000);
 
-	it('applies the bound sets after the bindings, behind the renamed base sets', async () => {
+	it('applies bound conflicts after bindings while preserving upstream base names', async () => {
 		const set = (symbols: string[]) => ({
 			resolution: { kind: 'AddConflict' as const, symbols },
 			step: 'default' as const,
 			sourceChains: symbols.map((name) => [name]),
 			conflict: { symbolSequence: [], lookahead: '', interpretations: symbols }
 		});
-		const resolutions = { grammarHash: '', resolutions: [set(['let_item', 'call'])], bound: { grammarHash: '', resolutions: [set(['binding', 'identifier'])] } };
+		const resolutions = {
+			grammarHash: '',
+			resolutions: [set(['let_item', 'call'])],
+			bound: { grammarHash: '', resolutions: [set(['let_item', 'identifier'])] }
+		};
 		const bound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions);
 		expect(bound.conflicts).toEqual([
-			['binding', 'call'],
-			['binding', 'identifier']
+			['let_item', 'call'],
+			['let_item', 'identifier']
 		]);
-		expect(bound.derivationRecords?.boundResolutions.map((entry) => entry.resolution.symbols)).toEqual([['binding', 'identifier']]);
+		expect(bound.derivationRecords?.boundResolutions.map((entry) => entry.resolution.symbols)).toEqual([
+			['let_item', 'identifier']
+		]);
 		const unbound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions, { unbound: true });
 		expect(unbound.conflicts).toEqual([['let_item', 'call']]);
 		expect(unbound.derivationRecords?.boundResolutions).toEqual([]);
@@ -167,7 +236,7 @@ describe('grammar bindings on sittirGrammar', () => {
 	})`;
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', `${options}, ${bindingsOption}`);
 		const block = raw.options as Record<string, Record<string, unknown>>;
-		expect(Object.keys(block.binding ?? {}).sort()).toEqual(['name:/before', 'terminator:/before']);
+		expect(Object.keys(block.let_item ?? {}).sort()).toEqual(['name:/before', 'terminator:/before']);
 		expect(Object.keys(block._labels ?? {})).toEqual(['callee/x:/separator']);
 	}, 120_000);
 });

@@ -23,8 +23,8 @@ export const records = {
 		operator: { word: 9, width: 5 }
 	},
 	NonSpecialTokenTransport: { words: 7, content: { word: 2, width: 5 } },
-	AttributeItemTransport: { words: 7, attribute: { word: 2, width: 5 } },
-	InnerAttributeItemTransport: { words: 7, attribute: { word: 2, width: 5 } },
+	AttributeItemTransport: { words: 7, content: { word: 2, width: 5 } },
+	InnerAttributeItemTransport: { words: 7, content: { word: 2, width: 5 } },
 	AttributeTransport: { words: 12, path: { word: 2, width: 5 }, input: { word: 7, width: 5 } },
 	DeclarationListTransport: { words: 4, declarations: { word: 2, width: 2, run: 5 } },
 	UnionItemTransport: {
@@ -75,7 +75,7 @@ export const records = {
 	StaticItemTransport: {
 		words: 23,
 		visibility_modifier: { word: 3, width: 5 },
-		ref_: { word: 2, bit: 0 },
+		by_reference: { word: 2, bit: 0 },
 		mutable: { word: 2, bit: 1 },
 		name: { word: 8, width: 5 },
 		type_: { word: 13, width: 5 },
@@ -87,7 +87,7 @@ export const records = {
 		name: { word: 7, width: 5 },
 		type_parameters: { word: 12, width: 5 },
 		where_clause: { word: 17, width: 5 },
-		type_: { word: 22, width: 5 },
+		value: { word: 22, width: 5 },
 		trailing_where_clause: { word: 27, width: 5 }
 	},
 	FunctionItemTransport: {
@@ -139,19 +139,19 @@ export const records = {
 		words: 17,
 		name: { word: 2, width: 5 },
 		type_: { word: 7, width: 5 },
-		value: { word: 12, width: 5 }
+		default: { word: 12, width: 5 }
 	},
 	TypeParameterTransport: {
 		words: 17,
 		name: { word: 2, width: 5 },
 		bounds: { word: 7, width: 5 },
-		default_type: { word: 12, width: 5 }
+		default: { word: 12, width: 5 }
 	},
 	LifetimeParameterTransport: { words: 12, name: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
 	LetDeclarationTransport: {
 		words: 23,
 		mutable: { word: 2, bit: 0 },
-		pattern: { word: 3, width: 5 },
+		name: { word: 3, width: 5 },
 		type_: { word: 8, width: 5 },
 		value: { word: 13, width: 5 },
 		alternative: { word: 18, width: 5 }
@@ -159,7 +159,7 @@ export const records = {
 	UseDeclarationTransport: { words: 12, visibility_modifier: { word: 2, width: 5 }, argument: { word: 7, width: 5 } },
 	ScopedUseListTransport: { words: 12, path: { word: 2, width: 5 }, list: { word: 7, width: 5 } },
 	UseListTransport: { words: 7, use_clauses: { word: 2, width: 5 } },
-	UseAsClauseTransport: { words: 12, path: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
+	UseAsClauseTransport: { words: 12, name: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
 	UseWildcardTransport: { words: 7, use_wildcard_group: { word: 2, width: 5 } },
 	ParametersTransport: { words: 7, elements: { word: 2, width: 5 } },
 	SelfParameterTransport: {
@@ -205,12 +205,12 @@ export const records = {
 	ReferenceTypeTransport: {
 		words: 13,
 		lifetime: { word: 3, width: 5 },
-		mutable: { word: 2, bit: 0 },
+		exclusive: { word: 2, bit: 0 },
 		type_: { word: 8, width: 5 }
 	},
 	AbstractTypeTransport: { words: 12, type_parameters: { word: 2, width: 5 }, trait_: { word: 7, width: 5 } },
 	DynamicTypeTransport: { words: 7, trait_: { word: 2, width: 5 } },
-	MacroInvocationTransport: { words: 12, macro_: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
+	MacroInvocationTransport: { words: 12, function: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
 	ScopedIdentifierTransport: { words: 12, path: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	ScopedTypeIdentifierInExpressionPositionTransport: {
 		words: 12,
@@ -218,8 +218,8 @@ export const records = {
 		name: { word: 7, width: 5 }
 	},
 	ScopedTypeIdentifierTransport: { words: 12, path: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
-	UnaryExpressionTransport: { words: 12, operator: { word: 2, width: 5 }, operand: { word: 7, width: 5 } },
-	TryExpressionTransport: { words: 7, value: { word: 2, width: 5 } },
+	UnaryExpressionTransport: { words: 12, operator: { word: 2, width: 5 }, argument: { word: 7, width: 5 } },
+	TryExpressionTransport: { words: 7, argument: { word: 2, width: 5 } },
 	BinaryExpressionTransport: {
 		words: 17,
 		left: { word: 2, width: 5 },
@@ -233,23 +233,23 @@ export const records = {
 		operator: { word: 7, width: 5 },
 		right: { word: 12, width: 5 }
 	},
-	TypeCastExpressionTransport: { words: 12, value: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	TypeCastExpressionTransport: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	ReturnExpressionTransport: { words: 7, expression: { word: 2, width: 5 } },
 	YieldExpressionTransport: { words: 7, expression: { word: 2, width: 5 } },
 	CallExpressionTransport: { words: 12, function: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
 	ArgumentsTransport: { words: 7, elements: { word: 2, width: 5 } },
 	ParenthesizedExpressionTransport: { words: 7, expression: { word: 2, width: 5 } },
-	TupleExpressionTransport: { words: 9, attributes: { word: 2, width: 2, run: 5 }, expressions: { word: 4, width: 5 } },
+	TupleExpressionTransport: { words: 9, attributes: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 5 } },
 	StructExpressionTransport: { words: 12, name: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	FieldInitializerListTransport: { words: 7, initializers: { word: 2, width: 5 } },
 	ShorthandFieldInitializerTransport: {
 		words: 9,
 		attributes: { word: 2, width: 2, run: 5 },
-		name: { word: 4, width: 5 }
+		field: { word: 4, width: 5 }
 	},
 	FieldInitializerTransport: {
 		words: 14,
-		attribute_item: { word: 2, width: 2, run: 5 },
+		attributes: { word: 2, width: 2, run: 5 },
 		field: { word: 4, width: 5 },
 		value: { word: 9, width: 5 }
 	},
@@ -263,7 +263,7 @@ export const records = {
 	LetConditionTransport: { words: 12, pattern: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
 	LetChainTransport: { words: 9, left: { word: 2, width: 5 }, right: { word: 7, width: 2, run: 5 } },
 	ElseClauseTransport: { words: 7, body: { word: 2, width: 5 } },
-	MatchExpressionTransport: { words: 12, value: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
+	MatchExpressionTransport: { words: 12, subject: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	MatchBlockTransport: { words: 7, match_block_arms: { word: 2, width: 5 } },
 	LastMatchArmTransport: {
 		words: 15,
@@ -283,8 +283,8 @@ export const records = {
 	ForExpressionTransport: {
 		words: 22,
 		label: { word: 2, width: 5 },
-		pattern: { word: 7, width: 5 },
-		value: { word: 12, width: 5 },
+		left: { word: 7, width: 5 },
+		right: { word: 12, width: 5 },
 		body: { word: 17, width: 5 }
 	},
 	ConstBlockTransport: { words: 7, body: { word: 2, width: 5 } },
@@ -294,7 +294,7 @@ export const records = {
 	ContinueExpressionTransport: { words: 7, label: { word: 2, width: 5 } },
 	IndexExpressionTransport: { words: 12, object: { word: 2, width: 5 }, index: { word: 7, width: 5 } },
 	AwaitExpressionTransport: { words: 7, expression: { word: 2, width: 5 } },
-	FieldExpressionTransport: { words: 12, value: { word: 2, width: 5 }, field: { word: 7, width: 5 } },
+	FieldExpressionTransport: { words: 12, object: { word: 2, width: 5 }, property: { word: 7, width: 5 } },
 	UnsafeBlockTransport: { words: 7, body: { word: 2, width: 5 } },
 	AsyncBlockTransport: { words: 8, move_: { word: 2, bit: 0 }, body: { word: 3, width: 5 } },
 	GenBlockTransport: { words: 8, move_: { word: 2, bit: 0 }, body: { word: 3, width: 5 } },
@@ -307,13 +307,13 @@ export const records = {
 	},
 	GenericPatternTransport: { words: 12, name: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
 	TuplePatternTransport: { words: 7, elements: { word: 2, width: 5 } },
-	SlicePatternTransport: { words: 7, patterns: { word: 2, width: 5 } },
+	SlicePatternTransport: { words: 7, elements: { word: 2, width: 5 } },
 	TupleStructPatternTransport: { words: 12, type_: { word: 2, width: 5 }, patterns: { word: 7, width: 5 } },
 	StructPatternTransport: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	MutPatternTransport: { words: 7, pattern: { word: 2, width: 5 } },
 	RefPatternTransport: { words: 7, pattern: { word: 2, width: 5 } },
 	CapturedPatternTransport: { words: 12, name: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
-	ReferencePatternTransport: { words: 8, mutable: { word: 2, bit: 0 }, pattern: { word: 3, width: 5 } },
+	ReferencePatternTransport: { words: 8, exclusive: { word: 2, bit: 0 }, pattern: { word: 3, width: 5 } },
 	NegativeLiteralTransport: { words: 7, value: { word: 2, width: 5 } },
 	StringLiteralTransport: { words: 9, string_open: { word: 2, width: 5 }, elements: { word: 7, width: 2, run: 5 } },
 	RawStringLiteralTransport: {
@@ -556,6 +556,18 @@ export const records = {
 	RawStringLiteralEndTransport: { words: 2 },
 	DocCommentTransport: { words: 2 },
 	BlockCommentContentTransport: { words: 2 },
+	ReceiverParameterDeclarationTransport: { words: 8, mutable: { word: 2, bit: 0 }, type_: { word: 3, width: 5 } },
+	AttributedParameterReceiverTransport: {
+		words: 12,
+		attribute_item: { word: 2, width: 5 },
+		content: { word: 7, width: 5 }
+	},
+	ParametersElementsReceiverTransport: {
+		words: 12,
+		receiver: { word: 2, width: 5 },
+		parameters_elements_receiver_group: { word: 7, width: 5 }
+	},
+	ParametersElementsReceiverGroupTransport: { words: 7, elements: { word: 2, width: 5 } },
 	ErrorSentinelTransport: { words: 2 },
 	TypeIdentifierTransport: { words: 7, content: { word: 2, width: 5 } },
 	FieldIdentifierTransport: { words: 7, content: { word: 2, width: 5 } },

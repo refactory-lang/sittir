@@ -29,7 +29,8 @@
 (trait_item (declaration_list (function_signature_item (visibility_modifier (crate))) @declaration.method.signature.public.internal))
 (trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.signature.public.internal))
 (trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.signature.public.restricted))
-(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @_receiver)))) @declaration.method) (#kind-eq? @_receiver "self_parameter"))
+(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))) @declaration.method))
+(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))) @declaration.method))
 (impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.private))
 (impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.public))
 (impl_item_body (declaration_list (function_item (visibility_modifier (crate))) @declaration.method.public.internal))
@@ -168,6 +169,7 @@
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
 (self_parameter) @declaration.parameter.receiver
+(parameter name: (self)) @declaration.parameter.receiver
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
@@ -178,6 +180,17 @@
 (lifetime_parameter) @declaration.type_parameter.lifetime
 (lifetime_parameter bounds: (trait_bounds bounds: (_) @bounds))
 (attributed_type_parameter (attribute_item)* @attributes (_) @element)
+
+
+; Each owner keeps the ordinary list after receiver extraction.
+(function_item (parameters (parameters_elements item: (_)* @parameters)?))
+(function_signature_item (parameters (parameters_elements item: (_)* @parameters)?))
+(function_type (parameters (parameters_elements item: (_)* @parameters)?))
+(function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver)))
+(function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver)))
+(function_signature_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver)))
+(function_signature_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver)))
+((function_type (parameters (parameters_elements . (attributed_parameter (self_parameter)) @dropped))) (#set! reason "a function pointer type does not declare a receiver"))
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block

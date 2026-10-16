@@ -1,12 +1,11 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
-import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
+import { bindings, field, lead, match, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "0cd2687f1389794ff3b76d971281eda8f2532aeb088ce701f7ff630e786d99cd",
+	hash: "48c307b7af51a2ee125db1dd5468927e1d9bbed923be6e617a132734a5b8d098",
 	patches: {
 		attribute_item: { "2": field("content") },
-		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
 		const_parameter: { "4/0/1": field("default") },
 		field_expression: { "0": field("object"), "2": field("property") },
 		field_initializer: { "0/0": field("attributes") },
@@ -14,7 +13,6 @@ export default bindings({
 		for_lifetimes: { "2": field("lifetimes") },
 		inner_attribute_item: { "3": field("content") },
 		let_declaration: { "2": field("name") },
-		line_comment: { "1/0": alias(sym("line_comment_extra_slashes"), sym("text_comment")), "1/3": alias(sym("line_comment_regular"), sym("text_comment")) },
 		macro_invocation: { "0": field("function") },
 		match_expression: { "1": field("subject") },
 		pointer_type_mut: { "1": field("writable") },
@@ -149,11 +147,16 @@ export default bindings({
 		rename("visibility_modifier_pub", "public_visibility_modifier"),
 		rename("attribute_item", "attribute"),
 		rename("inner_attribute_item", "inner_attribute"),
-		rename("attribute", "content_attribute")
+		rename("attribute", "content_attribute"),
+		rename("line_comment_regular", "text_comment")
 	],
-	leads: [],
+	leads: [
+		lead("parameters_elements", "attributed_parameter", "receiver", match("attributed_parameter", [match("self_parameter"), match("parameter", { "name": [match("self")] }, "receiver_parameter_declaration")]))
+	],
 	splits: [
 		split("function_signature_item", "signature_method_declaration", { within: ["declaration_list", "trait_item"], containers: [{ name: "trait_interface_declaration_body", field: "body" }] }),
+		split("function_item", "method_declaration", { within: ["declaration_list", "impl_item_body"], containers: [{ name: "extension_declaration_body", field: "body" }] }),
+		split("function_item", "method_declaration", { within: ["declaration_list", "impl_item_body"], containers: [{ name: "extension_declaration_body", field: "body" }] }),
 		split("function_item", "method_declaration", { within: ["declaration_list", "trait_item"], containers: [{ name: "trait_interface_declaration_body", field: "body" }] })
 	]
 });

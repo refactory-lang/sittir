@@ -184,7 +184,10 @@ export const decoratorCallExpression = bundle(F.buildDecoratorCallExpression, C.
 	max: 1
 });
 export const classBody = bundle(F.buildClassBody, C.coerceToClassBody);
-export const formalParameters = bundle(F.buildFormalParameters, C.coerceToFormalParameters);
+export const formalParameters = bundle(F.buildFormalParameters, C.coerceToFormalParameters, {
+	key: 'formalParameters',
+	max: 1
+});
 export const classStaticBlock = bundle(F.buildClassStaticBlock, C.coerceToClassStaticBlock, {
 	key: 'classStaticBlock',
 	max: 2
@@ -537,3 +540,13 @@ export const forHeaderLetConstKind = bundle(F.buildForHeaderLetConstKind, C.coer
 	key: 'forHeaderLetConstKind',
 	max: 2
 });
+export const receiverParameterDeclaration = bundle(
+	F.buildReceiverParameterDeclaration,
+	C.coerceToReceiverParameterDeclaration,
+	{ key: 'receiverParameterDeclaration', max: 1 }
+);
+export const formalParametersElementsReceiver = bundle(
+	F.buildFormalParametersElementsReceiver,
+	C.coerceToFormalParametersElementsReceiver,
+	{ key: 'formalParametersElementsReceiver', max: 1 }
+);

@@ -100,8 +100,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	140: [['expressions', 0]],
 	141: [['content', 0]],
 	142: [
-		['name', 0],
-		['value', 1]
+		['left', 0],
+		['right', 1]
 	],
 	143: [['identifier', 0]],
 	144: [['expressions', 0]],
@@ -144,16 +144,16 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	158: [
 		['body', 0],
-		['exceptClauses', 1],
-		['elseClause', 2],
-		['finallyClause', 3]
+		['handlers', 1],
+		['alternative', 2],
+		['finalizer', 3]
 	],
 	159: [
 		['group', 0, '*'],
 		['exception', 1],
 		['body', 2]
 	],
-	160: [['block', 0]],
+	160: [['body', 0]],
 	161: [
 		['async', 0, 'async'],
 		['withClause', 1],
@@ -185,7 +185,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	173: [
 		['name', 0],
 		['typeParameters', 1],
-		['superclasses', 2],
+		['bases', 2],
 		['body', 3]
 	],
 	174: [['types', 0]],
@@ -232,18 +232,18 @@ export const querySlots: QuerySlots = Object.freeze({
 	192: [['items', 0]],
 	193: [['items', 0]],
 	196: [['elements', 0]],
-	197: [['patterns', 0]],
+	197: [['elements', 0]],
 	198: [
 		['name', 0],
-		['value', 1]
+		['default', 1]
 	],
 	199: [
 		['name', 0],
 		['type', 1],
-		['value', 2]
+		['default', 2]
 	],
-	200: [['target', 0]],
-	201: [['target', 0]],
+	200: [['pattern', 0]],
+	201: [['pattern', 0]],
 	202: [
 		['expression', 0],
 		['alias', 1]
@@ -284,10 +284,10 @@ export const querySlots: QuerySlots = Object.freeze({
 	219: [['content', 0]],
 	220: [
 		['object', 0],
-		['attribute', 1]
+		['property', 1]
 	],
 	221: [
-		['value', 0],
+		['object', 0],
 		['subscripts', 1]
 	],
 	222: [
@@ -306,7 +306,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	225: [['content', 0]],
 	226: [
 		['operator', 0],
-		['name', 1]
+		['type', 1]
 	],
 	227: [
 		['name', 0],
@@ -328,8 +328,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['name', 0],
 		['value', 1]
 	],
-	232: [['collectionElements', 0]],
-	233: [['collectionElements', 0]],
+	232: [['elements', 0]],
+	233: [['elements', 0]],
 	234: [['elements', 0]],
 	235: [['elements', 0]],
 	236: [
@@ -362,7 +362,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	244: [['condition', 0]],
 	245: [
-		['body', 0],
+		['consequence', 0],
 		['condition', 1],
 		['alternative', 2]
 	],
@@ -416,17 +416,17 @@ export const querySlots: QuerySlots = Object.freeze({
 	284: [['values', 0]],
 	285: [['content', 0]],
 	286: [
-		['left', 0],
-		['right', 1]
+		['name', 0],
+		['value', 1]
 	],
 	287: [
-		['left', 0],
+		['name', 0],
 		['type', 1]
 	],
 	288: [
-		['left', 0],
+		['name', 0],
 		['type', 1],
-		['right', 2]
+		['value', 2]
 	],
 	289: [['items', 0]],
 	290: [['items', 0]],

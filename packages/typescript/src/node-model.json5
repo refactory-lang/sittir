@@ -1,7 +1,7 @@
 {
   "name": "typescript",
   "root": "program",
-  "nodeCount": 432,
+  "nodeCount": 435,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -250,10 +250,10 @@
     "pair_pattern.value": {
       "lhs_expression": "_lhs_expression"
     },
-    "required_parameter.pattern": {
+    "required_parameter.name": {
       "lhs_expression": "_lhs_expression"
     },
-    "optional_parameter.pattern": {
+    "optional_parameter.name": {
       "lhs_expression": "_lhs_expression"
     },
     "template_type.type": {
@@ -285,6 +285,428 @@
     "for_header_lhs.left": {
       "lhs_expression": "_lhs_expression"
     }
+  },
+  "displayUnions": {
+    "automatic_semicolon": [
+      {
+        "storage": "_automatic_semicolon",
+        "literal": false
+      }
+    ],
+    "statement_identifier": [
+      {
+        "storage": "identifier",
+        "literal": false
+      },
+      {
+        "storage": "declare",
+        "literal": true
+      },
+      {
+        "storage": "namespace",
+        "literal": true
+      },
+      {
+        "storage": "type",
+        "literal": true
+      },
+      {
+        "storage": "public",
+        "literal": true
+      },
+      {
+        "storage": "private",
+        "literal": true
+      },
+      {
+        "storage": "protected",
+        "literal": true
+      },
+      {
+        "storage": "override",
+        "literal": true
+      },
+      {
+        "storage": "readonly",
+        "literal": true
+      },
+      {
+        "storage": "module",
+        "literal": true
+      },
+      {
+        "storage": "any",
+        "literal": true
+      },
+      {
+        "storage": "number",
+        "literal": true
+      },
+      {
+        "storage": "boolean",
+        "literal": true
+      },
+      {
+        "storage": "string",
+        "literal": true
+      },
+      {
+        "storage": "symbol",
+        "literal": true
+      },
+      {
+        "storage": "export",
+        "literal": true
+      },
+      {
+        "storage": "object",
+        "literal": true
+      },
+      {
+        "storage": "new",
+        "literal": true
+      },
+      {
+        "storage": "get",
+        "literal": true
+      },
+      {
+        "storage": "set",
+        "literal": true
+      },
+      {
+        "storage": "async",
+        "literal": true
+      },
+      {
+        "storage": "static",
+        "literal": true
+      },
+      {
+        "storage": "let",
+        "literal": true
+      }
+    ],
+    "shorthand_property_identifier": [
+      {
+        "storage": "identifier",
+        "literal": false
+      },
+      {
+        "storage": "declare",
+        "literal": true
+      },
+      {
+        "storage": "namespace",
+        "literal": true
+      },
+      {
+        "storage": "type",
+        "literal": true
+      },
+      {
+        "storage": "public",
+        "literal": true
+      },
+      {
+        "storage": "private",
+        "literal": true
+      },
+      {
+        "storage": "protected",
+        "literal": true
+      },
+      {
+        "storage": "override",
+        "literal": true
+      },
+      {
+        "storage": "readonly",
+        "literal": true
+      },
+      {
+        "storage": "module",
+        "literal": true
+      },
+      {
+        "storage": "any",
+        "literal": true
+      },
+      {
+        "storage": "number",
+        "literal": true
+      },
+      {
+        "storage": "boolean",
+        "literal": true
+      },
+      {
+        "storage": "string",
+        "literal": true
+      },
+      {
+        "storage": "symbol",
+        "literal": true
+      },
+      {
+        "storage": "export",
+        "literal": true
+      },
+      {
+        "storage": "object",
+        "literal": true
+      },
+      {
+        "storage": "new",
+        "literal": true
+      },
+      {
+        "storage": "get",
+        "literal": true
+      },
+      {
+        "storage": "set",
+        "literal": true
+      },
+      {
+        "storage": "async",
+        "literal": true
+      },
+      {
+        "storage": "static",
+        "literal": true
+      },
+      {
+        "storage": "let",
+        "literal": true
+      }
+    ],
+    "shorthand_property_identifier_pattern": [
+      {
+        "storage": "identifier",
+        "literal": false
+      },
+      {
+        "storage": "declare",
+        "literal": true
+      },
+      {
+        "storage": "namespace",
+        "literal": true
+      },
+      {
+        "storage": "type",
+        "literal": true
+      },
+      {
+        "storage": "public",
+        "literal": true
+      },
+      {
+        "storage": "private",
+        "literal": true
+      },
+      {
+        "storage": "protected",
+        "literal": true
+      },
+      {
+        "storage": "override",
+        "literal": true
+      },
+      {
+        "storage": "readonly",
+        "literal": true
+      },
+      {
+        "storage": "module",
+        "literal": true
+      },
+      {
+        "storage": "any",
+        "literal": true
+      },
+      {
+        "storage": "number",
+        "literal": true
+      },
+      {
+        "storage": "boolean",
+        "literal": true
+      },
+      {
+        "storage": "string",
+        "literal": true
+      },
+      {
+        "storage": "symbol",
+        "literal": true
+      },
+      {
+        "storage": "export",
+        "literal": true
+      },
+      {
+        "storage": "object",
+        "literal": true
+      },
+      {
+        "storage": "new",
+        "literal": true
+      },
+      {
+        "storage": "get",
+        "literal": true
+      },
+      {
+        "storage": "set",
+        "literal": true
+      },
+      {
+        "storage": "async",
+        "literal": true
+      },
+      {
+        "storage": "static",
+        "literal": true
+      },
+      {
+        "storage": "let",
+        "literal": true
+      }
+    ],
+    "property_identifier": [
+      {
+        "storage": "identifier",
+        "literal": false
+      },
+      {
+        "storage": "declare",
+        "literal": true
+      },
+      {
+        "storage": "namespace",
+        "literal": true
+      },
+      {
+        "storage": "type",
+        "literal": true
+      },
+      {
+        "storage": "public",
+        "literal": true
+      },
+      {
+        "storage": "private",
+        "literal": true
+      },
+      {
+        "storage": "protected",
+        "literal": true
+      },
+      {
+        "storage": "override",
+        "literal": true
+      },
+      {
+        "storage": "readonly",
+        "literal": true
+      },
+      {
+        "storage": "module",
+        "literal": true
+      },
+      {
+        "storage": "any",
+        "literal": true
+      },
+      {
+        "storage": "number",
+        "literal": true
+      },
+      {
+        "storage": "boolean",
+        "literal": true
+      },
+      {
+        "storage": "string",
+        "literal": true
+      },
+      {
+        "storage": "symbol",
+        "literal": true
+      },
+      {
+        "storage": "export",
+        "literal": true
+      },
+      {
+        "storage": "object",
+        "literal": true
+      },
+      {
+        "storage": "new",
+        "literal": true
+      },
+      {
+        "storage": "get",
+        "literal": true
+      },
+      {
+        "storage": "set",
+        "literal": true
+      },
+      {
+        "storage": "async",
+        "literal": true
+      },
+      {
+        "storage": "static",
+        "literal": true
+      },
+      {
+        "storage": "let",
+        "literal": true
+      }
+    ],
+    "type_identifier": [
+      {
+        "storage": "identifier",
+        "literal": false
+      }
+    ],
+    "lhs_expression": [
+      {
+        "storage": "_lhs_expression",
+        "literal": false
+      }
+    ],
+    "string_fragment": [
+      {
+        "storage": "_template_chars",
+        "literal": false
+      },
+      {
+        "storage": "unescaped_double_string_fragment",
+        "literal": false
+      },
+      {
+        "storage": "unescaped_single_string_fragment",
+        "literal": false
+      }
+    ],
+    "function_signature_automatic_semicolon": [
+      {
+        "storage": "_function_signature_automatic_semicolon",
+        "literal": false
+      }
+    ],
+    "interface_body": [
+      {
+        "storage": "object_type",
+        "literal": false
+      }
+    ]
   },
   "factorySlots": {
     "program": {
@@ -331,7 +753,7 @@
       }
     },
     "export_specifier": {
-      "export_kind": {
+      "type_only": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -354,7 +776,7 @@
       }
     },
     "import_statement": {
-      "import_clause": {
+      "type_only": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -586,7 +1008,7 @@
       }
     },
     "for_in_statement": {
-      "await": {
+      "async": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -657,7 +1079,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "handler": {
+      "handlers": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1247,7 +1669,7 @@
       }
     },
     "new_expression": {
-      "constructor": {
+      "function": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1286,7 +1708,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "separator": {
+      "optional_chain": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1334,7 +1756,7 @@
       }
     },
     "assignment_expression": {
-      "using": {
+      "disposable": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1528,7 +1950,7 @@
       }
     },
     "decorator": {
-      "expression": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1656,7 +2078,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "accessor_kind": {
+      "generator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1878,7 +2300,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "accessor_kind": {
+      "generator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1936,7 +2358,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "accessor_kind": {
+      "generator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2058,7 +2480,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "type_annotation": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2074,7 +2496,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "type_annotation": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2415,7 +2837,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "pattern": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2466,7 +2888,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "pattern": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3058,7 +3480,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "value": {
+      "default": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3083,7 +3505,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "type": {
+      "bounds": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3362,7 +3784,7 @@
       }
     },
     "export_statement_equals_export": {
-      "expression": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3398,7 +3820,7 @@
       }
     },
     "literal_type_negative_number": {
-      "argument": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3767,7 +4189,7 @@
       }
     },
     "import_specifier_name": {
-      "import_kind": {
+      "type_only": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3783,7 +4205,7 @@
       }
     },
     "import_specifier_as": {
-      "import_kind": {
+      "type_only": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3984,7 +4406,7 @@
       }
     },
     "export_statement_default_from": {
-      "type": {
+      "type_only": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4219,6 +4641,75 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "receiver_parameter_declaration": {
+      "decorator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "accessibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "override": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "readonly": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "formal_parameters_elements_receiver": {
+      "receiver": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "formal_parameters_elements_receiver_group": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "formal_parameters_elements_receiver_group": {
+      "elements": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5018,9 +5509,9 @@
           ]
         },
         {
-          "name": "accessor_kind",
-          "propertyName": "accessorKind",
-          "paramName": "accessorKind",
+          "name": "generator",
+          "propertyName": "generator",
+          "paramName": "generator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5324,7 +5815,7 @@
       "factoryFields": [
         "accessibility_modifier",
         "override",
-        "accessor_kind",
+        "generator",
         "name",
         "optional",
         "type_parameters",
@@ -6184,9 +6675,9 @@
           ]
         },
         {
-          "name": "type_annotation",
-          "propertyName": "typeAnnotation",
-          "paramName": "typeAnnotation",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6213,7 +6704,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "type_annotation"
+        "type"
       ]
     },
     {
@@ -6365,9 +6856,9 @@
       "variantOf": "expression",
       "slots": [
         {
-          "name": "using",
-          "propertyName": "using",
-          "paramName": "using",
+          "name": "disposable",
+          "propertyName": "disposable",
+          "paramName": "disposable",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6432,7 +6923,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "using",
+        "disposable",
         "left",
         "right"
       ]
@@ -9081,9 +9572,9 @@
           ]
         },
         {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
+          "name": "bounds",
+          "propertyName": "bounds",
+          "paramName": "bounds",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9104,7 +9595,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "content",
-        "type"
+        "bounds"
       ]
     },
     {
@@ -9549,9 +10040,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9592,7 +10083,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "expression"
+        "content"
       ],
       "bareAccepts": [
         "decorator_call_expression",
@@ -11250,9 +11741,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "export_kind",
-          "propertyName": "exportKind",
-          "paramName": "exportKind",
+          "name": "type_only",
+          "propertyName": "typeOnly",
+          "paramName": "typeOnly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11330,7 +11821,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "export_kind",
+        "type_only",
         "name",
         "alias"
       ]
@@ -11504,16 +11995,10 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "declaration",
-            "export_statement_default_declaration_default_kw"
+            "export_statement_default_declaration_default_kw",
+            "declaration"
           ],
           "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "declaration",
-              "parseKind": "declaration"
-            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -11525,6 +12010,12 @@
                 "mount": "defaultKw",
                 "seated": true
               }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "parseKind": "declaration"
             }
           ]
         }
@@ -11870,9 +12361,9 @@
       "variantOf": "export_statement_default",
       "slots": [
         {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
+          "name": "type_only",
+          "propertyName": "typeOnly",
+          "paramName": "typeOnly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11967,7 +12458,7 @@
       "name": "export_statement_default_from",
       "factoryShape": "config",
       "factoryFields": [
-        "type",
+        "type_only",
         "content"
       ]
     },
@@ -12234,9 +12725,9 @@
       "variantOf": "export_statement",
       "slots": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12283,7 +12774,7 @@
       "name": "export_statement_equals_export",
       "factoryShape": "direct",
       "factoryFields": [
-        "expression"
+        "value"
       ],
       "bareAccepts": [
         "array",
@@ -13353,9 +13844,9 @@
       "variantOf": "statement",
       "slots": [
         {
-          "name": "await",
-          "propertyName": "await",
-          "paramName": "await_",
+          "name": "async",
+          "propertyName": "async",
+          "paramName": "async",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13413,7 +13904,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "await",
+        "async",
         "header",
         "body"
       ]
@@ -13586,7 +14077,7 @@
     },
     {
       "kind": "formal_parameters",
-      "modelType": "envelope",
+      "modelType": "branch",
       "typeName": "FormalParameters",
       "factoryName": "formalParameters",
       "irKey": "formalParameters",
@@ -13604,7 +14095,8 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "formal_parameters_elements"
+            "formal_parameters_elements",
+            "formal_parameters_elements_receiver"
           ],
           "values": [
             {
@@ -13612,17 +14104,23 @@
               "multiplicity": "optional",
               "name": "formal_parameters_elements",
               "parseKind": "formal_parameters_elements"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "formal_parameters_elements_receiver",
+              "parseKind": "formal_parameters_elements_receiver"
             }
           ]
         }
       ],
-      "factoryShape": "forwarded",
-      "forwardsTo": "formal_parameters_elements",
+      "factoryShape": "direct",
       "factoryFields": [
         "elements"
       ],
       "bareAccepts": [
         "formal_parameters_elements",
+        "formal_parameters_elements_receiver",
         "optional_parameter",
         "required_parameter"
       ]
@@ -13684,6 +14182,112 @@
         "item"
       ],
       "bareAccepts": [
+        "optional_parameter",
+        "required_parameter"
+      ]
+    },
+    {
+      "kind": "formal_parameters_elements_receiver",
+      "modelType": "branch",
+      "typeName": "FormalParametersElementsReceiver",
+      "factoryName": "formalParametersElementsReceiver",
+      "irKey": "formalParametersElementsReceiver",
+      "builderPath": [
+        "formalParametersElementsReceiver"
+      ],
+      "hidden": false,
+      "slots": [
+        {
+          "name": "receiver",
+          "propertyName": "receiver",
+          "paramName": "receiver",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "receiver_parameter_declaration"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "receiver_parameter_declaration",
+              "parseKind": "receiver_parameter_declaration"
+            }
+          ]
+        },
+        {
+          "name": "formal_parameters_elements_receiver_group",
+          "propertyName": "formalParametersElementsReceiverGroup",
+          "paramName": "formalParametersElementsReceiverGroup",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "formal_parameters_elements_receiver_group"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "formal_parameters_elements_receiver_group",
+              "parseKind": "formal_parameters_elements_receiver_group",
+              "seat": {
+                "kind": "formal_parameters_elements_receiver_group",
+                "shape": "tuple"
+              }
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "receiver",
+        "formal_parameters_elements_receiver_group"
+      ]
+    },
+    {
+      "kind": "formal_parameters_elements_receiver_group",
+      "modelType": "envelope",
+      "typeName": "FormalParametersElementsReceiverGroup",
+      "factoryName": "formalParametersElementsReceiverGroup",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
+      "slots": [
+        {
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "formal_parameters_elements"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "formal_parameters_elements",
+              "parseKind": "formal_parameters_elements"
+            }
+          ]
+        }
+      ],
+      "name": "formal_parameters_elements_receiver_group",
+      "factoryShape": "forwarded",
+      "forwardsTo": "formal_parameters_elements",
+      "factoryFields": [
+        "elements"
+      ],
+      "bareAccepts": [
+        "formal_parameters_elements",
         "optional_parameter",
         "required_parameter"
       ]
@@ -15548,9 +16152,9 @@
       "variantOf": "import_specifier",
       "slots": [
         {
-          "name": "import_kind",
-          "propertyName": "importKind",
-          "paramName": "importKind",
+          "name": "type_only",
+          "propertyName": "typeOnly",
+          "paramName": "typeOnly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15622,7 +16226,7 @@
       "name": "import_specifier_as",
       "factoryShape": "config",
       "factoryFields": [
-        "import_kind",
+        "type_only",
         "name",
         "alias"
       ]
@@ -15650,9 +16254,9 @@
       "variantOf": "import_specifier",
       "slots": [
         {
-          "name": "import_kind",
-          "propertyName": "importKind",
-          "paramName": "importKind",
+          "name": "type_only",
+          "propertyName": "typeOnly",
+          "paramName": "typeOnly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15697,7 +16301,7 @@
       "name": "import_specifier_name",
       "factoryShape": "config",
       "factoryFields": [
-        "import_kind",
+        "type_only",
         "name"
       ]
     },
@@ -15773,9 +16377,9 @@
       "variantOf": "statement",
       "slots": [
         {
-          "name": "import_clause",
-          "propertyName": "importClause",
-          "paramName": "importClause",
+          "name": "type_only",
+          "propertyName": "typeOnly",
+          "paramName": "typeOnly",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15818,8 +16422,7 @@
               "seat": {
                 "kind": "import_statement_clause_from",
                 "shape": "arm",
-                "mount": "clauseFrom",
-                "seated": true
+                "mount": "clauseFrom"
               }
             },
             {
@@ -15885,7 +16488,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "import_clause",
+        "type_only",
         "from_clause",
         "import_attribute"
       ]
@@ -17349,9 +17952,9 @@
       "variantOf": "literal_type",
       "slots": [
         {
-          "name": "argument",
-          "propertyName": "argument",
-          "paramName": "argument",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17372,7 +17975,7 @@
       "name": "literal_type_negative_number",
       "factoryShape": "direct",
       "factoryFields": [
-        "argument"
+        "value"
       ],
       "bareAccepts": [
         "number_bigint_binary",
@@ -17629,9 +18232,9 @@
           ]
         },
         {
-          "name": "separator",
-          "propertyName": "separator",
-          "paramName": "separator",
+          "name": "optional_chain",
+          "propertyName": "optionalChain",
+          "paramName": "optionalChain",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17685,7 +18288,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "object",
-        "separator",
+        "optional_chain",
         "property"
       ]
     },
@@ -17891,9 +18494,9 @@
           ]
         },
         {
-          "name": "accessor_kind",
-          "propertyName": "accessorKind",
-          "paramName": "accessorKind",
+          "name": "generator",
+          "propertyName": "generator",
+          "paramName": "generator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18220,7 +18823,7 @@
         "override",
         "readonly",
         "async",
-        "accessor_kind",
+        "generator",
         "name",
         "optional",
         "type_parameters",
@@ -18335,9 +18938,9 @@
           ]
         },
         {
-          "name": "accessor_kind",
-          "propertyName": "accessorKind",
-          "paramName": "accessorKind",
+          "name": "generator",
+          "propertyName": "generator",
+          "paramName": "generator",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -18644,7 +19247,7 @@
         "override",
         "readonly",
         "async",
-        "accessor_kind",
+        "generator",
         "name",
         "optional",
         "type_parameters",
@@ -19053,9 +19656,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "constructor",
-          "propertyName": "constructor_",
-          "paramName": "constructor_",
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -19115,7 +19718,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "constructor",
+        "function",
         "type_arguments",
         "arguments"
       ]
@@ -21744,9 +22347,9 @@
           ]
         },
         {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -21817,7 +22420,7 @@
         "accessibility_modifier",
         "override",
         "readonly",
-        "pattern",
+        "name",
         "type",
         "value"
       ]
@@ -24190,6 +24793,146 @@
       ]
     },
     {
+      "kind": "receiver_parameter_declaration",
+      "modelType": "branch",
+      "typeName": "ReceiverParameterDeclaration",
+      "factoryName": "receiverParameterDeclaration",
+      "irKey": "receiverParameterDeclaration",
+      "builderPath": [
+        "receiverParameterDeclaration"
+      ],
+      "hidden": false,
+      "slots": [
+        {
+          "name": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "decorator"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "decorator",
+              "parseKind": "decorator"
+            }
+          ]
+        },
+        {
+          "name": "accessibility_modifier",
+          "propertyName": "accessibilityModifier",
+          "paramName": "accessibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [
+            "accessibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "accessibility_modifier",
+              "parseKind": "accessibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "override",
+          "propertyName": "override",
+          "paramName": "override",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "override_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "parseKind": "override_modifier"
+            }
+          ]
+        },
+        {
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "type_annotation"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_annotation",
+              "parseKind": "type_annotation"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "decorator",
+        "accessibility_modifier",
+        "override",
+        "readonly",
+        "type",
+        "value"
+      ]
+    },
+    {
       "kind": "regex",
       "modelType": "branch",
       "typeName": "Regex",
@@ -24384,16 +25127,15 @@
           ]
         },
         {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "pattern",
-            "this"
+            "pattern"
           ],
           "values": [
             {
@@ -24401,12 +25143,6 @@
               "multiplicity": "single",
               "name": "pattern",
               "parseKind": "pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "this",
-              "parseKind": "this"
             }
           ]
         },
@@ -24457,7 +25193,7 @@
         "accessibility_modifier",
         "override",
         "readonly",
-        "pattern",
+        "name",
         "type",
         "value"
       ]
@@ -24901,9 +25637,9 @@
           ]
         },
         {
-          "name": "type_annotation",
-          "propertyName": "typeAnnotation",
-          "paramName": "typeAnnotation",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -24924,7 +25660,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "type_annotation"
+        "type"
       ]
     },
     {
@@ -26930,9 +27666,9 @@
           ]
         },
         {
-          "name": "handler",
-          "propertyName": "handler",
-          "paramName": "handler",
+          "name": "handlers",
+          "propertyName": "handlers",
+          "paramName": "handlers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -26973,7 +27709,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "handler",
+        "handlers",
         "finalizer"
       ]
     },
@@ -27823,9 +28559,9 @@
           ]
         },
         {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "name": "default",
+          "propertyName": "default",
+          "paramName": "default_",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -27848,7 +28584,7 @@
         "const",
         "name",
         "constraint",
-        "value"
+        "default"
       ]
     },
     {

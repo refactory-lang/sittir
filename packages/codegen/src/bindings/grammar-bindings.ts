@@ -6,9 +6,12 @@ import { type BindingFacts, type MemberFact, type RefinedClaim, type SlotModel, 
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
-import { isParserHiddenName } from '../dsl/rule-patterns.ts';
+import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
+import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
 
-export type GrammarBindingsEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
+export type GrammarBindingsEdit =
+	| { readonly field: string }
+	| { readonly alias: { readonly from: string; readonly to: string } };
 
 export interface GrammarBindingsPatch {
 	readonly path: string;
@@ -75,7 +78,12 @@ const targetKey = (r: FieldRequest): string =>
 	'from' in r ? `${r.owner}\u0000field:${r.from}` : `${r.owner}\u0000${'token' in r.target ? `token:${r.target.token}` : `symbol:${r.target.symbol}`}`;
 const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r.to : r.field}`;
 
-function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], routed: ReadonlyMap<string, readonly MemberRoute[]>): readonly string[] {
+function sameShapeAs(
+	kinds: readonly string[],
+	members: readonly MemberFact[],
+	routed: ReadonlyMap<string, readonly MemberRoute[]>,
+	symbols: SymbolSource
+): readonly string[] {
 	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
 	const supplied = (kind: string): string =>
 		(routed.get(kind) ?? [])
@@ -84,7 +92,11 @@ function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], r
 			.join('\0');
 	const [first, ...rest] = kinds;
 	if (first === undefined) return [];
-	const same = (kind: string): boolean => !readAsKind.has(first) && !readAsKind.has(kind) && supplied(kind) === supplied(first);
+	const same = (kind: string): boolean =>
+		!readAsKind.has(first) &&
+		!readAsKind.has(kind) &&
+		symbols.isTerminal(kind) === symbols.isTerminal(first) &&
+		supplied(kind) === supplied(first);
 	return [first, ...rest.filter(same)];
 }
 
@@ -94,6 +106,10 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	diagnostics: readonly GrammarDiagnostic[];
 } {
 	const { facts, base, vocabMembers, routes } = input;
+	const symbols = renameAwareSymbolSource({
+		...symbolFactsOf(base),
+		kindEntries: predictedEntriesOf(base.predictedKinds)
+	});
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
 	const residue: GrammarBindingsResidue[] = [];
@@ -103,10 +119,36 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const claims = refineClaims(facts.claims, (kind) => formsOf(input.model, kind));
 	const placed = (c: RefinedClaim): boolean => c.within.length > 0;
 	const naming = new Map<string, RefinedClaim>();
-	for (const c of claims) if (c.refinement === null && c.kind !== null && c.kind !== WILDCARD && c.toplevel && !placed(c) && !naming.has(c.kind)) naming.set(c.kind, c);
-	const kindsOfPath = new Map<string, Set<string>>();
-	for (const [kind, c] of naming) (kindsOfPath.get(c.vocab) ?? kindsOfPath.set(c.vocab, new Set()).get(c.vocab)!).add(kind);
-	const mergedOfPath = new Map([...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs([...kinds], facts.members, routes.members)]));
+	for (const c of claims)
+		if (
+			c.refinement === null &&
+			c.kind !== null &&
+			c.kind !== WILDCARD &&
+			c.toplevel &&
+			!placed(c) &&
+			!naming.has(c.kind)
+		)
+			naming.set(c.kind, c);
+	const kindsOfPath = new Map<string, string[]>();
+	const unpatchableOfPath = new Map<string, string[]>();
+	for (const [kind, c] of naming) {
+		const into = ruleNames.has(kind) ? kindsOfPath : unpatchableOfPath;
+		(into.get(c.vocab) ?? into.set(c.vocab, []).get(c.vocab)!).push(kind);
+	}
+	const mergedOfPath = new Map(
+		[...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs(kinds, facts.members, routes.members, symbols)])
+	);
+	for (const path of new Set([...kindsOfPath.keys(), ...unpatchableOfPath.keys()])) {
+		const kinds = kindsOfPath.get(path) ?? [];
+		const merged = mergedOfPath.get(path) ?? [];
+		const unpatchable = unpatchableOfPath.get(path) ?? [];
+		if (kinds.length + unpatchable.length < 2 || (merged.length === kinds.length && unpatchable.length === 0)) continue;
+		const groups = [merged.join(' + '), ...kinds.filter((kind) => !merged.includes(kind))].filter((g) => g !== '');
+		left(
+			'claimed kinds not merged',
+			`${path}: ${groups.join(' | ')}${unpatchable.length > 0 ? `; not a base rule: ${unpatchable.join(', ')}` : ''}`
+		);
+	}
 
 	const renames: Record<string, string> = {};
 	const aliases: Record<string, string> = {};

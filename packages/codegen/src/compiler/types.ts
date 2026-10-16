@@ -1,3 +1,4 @@
+import type { BindingEffect } from '../dsl/bind.ts';
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { IrSurface } from './model/ir-surface.ts';
 import type { WhitespaceCollision } from '../dsl/whitespace.ts';
@@ -147,6 +148,8 @@ export interface RawGrammar {
 	readonly derivationRecords?: DerivationRecords;
 	readonly renamedFrom?: Readonly<Record<string, string>>;
 	readonly splitFrom?: Readonly<Record<string, string>>;
+	readonly bindingEffects?: readonly BindingEffect[];
+	readonly leadFrom?: Readonly<Record<string, string>>;
 }
 
 export interface StageEvaluation<G = RawGrammar> {

@@ -33,7 +33,7 @@ function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 	copyRelativeScannerIncludes(baseScanner, sittirScanner);
 }
 
-function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string): void {
+export function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string): void {
 	const src = readFileSync(baseScanner, 'utf8');
 	const includeRe = /#include\s+"([^"]+)"/g;
 	for (const match of src.matchAll(includeRe)) {

@@ -82,3 +82,11 @@ Whether the committed flags module is the one the vocabulary's `Flag` declaratio
 The flags module as text, asked of the pinned build's child (`runPinned('flagsModule', flagMembers(names))`): an `enum Flags` whose members come from `flagMembers`, each `Name = 1 << bit`, under the generated-file header comment. The module is built as nodes with the factories of the pinned `@sittir/typescript` and rendered by its engine with a tab indent, so the bytes are the engine's (`flagsModuleInProcess`). The writer therefore needs the pinned build: it is the first place sittir writes its own TypeScript with itself, and a missing build fails the write rather than falling back to a template. It is async, as `flagsCurrent` is.
 
 The enum body is built as `enumBody.strict(enumBodyElements.strict({ delimiter: Delimiter.None }, first, ...rest))`, with the empty list taking the zero-argument `enumBody.strict()`. The strict `enumBody` surface drops the `(options, ...elements)` overload and requires a non-empty variadic list, though `enum E {}` is valid TypeScript, so the writer goes through `enumBodyElements.strict` until the strict surface carries both.
+
+### `packages/tools/src/inventory/bindings.ts::sourceLanguage`
+
+Caches the loaded completed grammar.sittir parser per grammar for authored query
+compilation and reference checks. A failed load is evicted so a retry can recover.
+`loadSourceLanguage` loads the temporary source parser's bytes through the canonical
+web-tree-sitter initializer. Both inventory checks use this source stage because
+bindings.scm names fields and kinds before grammar.bindings applies its edits.

@@ -1005,7 +1005,7 @@ the list would be split across two nodes.
 // Collision guard: if base.grammar.rules already has this name, skip.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::visibleGroupSynthName`
+### `packages/codegen/src/dsl/automatic-groups.ts::visibleGroupSynthName`
 
 ```text
 /**
@@ -1689,7 +1689,10 @@ No class for a hoisted rule or a rule whose root is not a CHOICE (a
 member is a literal (`isEnumMember`), `'named-arms'` when `namedArms` says so,
 `'supertype'` when every member of the flattened choice
 (`flattenChoiceMembers`) is supertype-compatible (`isSupertypeMember`), else
-no class. `storageBodyOf` resolves a named alias's storage rule for the
+no class. The flattening reads each member through its precedence wrappers:
+the stamp sees the DSL rule, where a lifted arm keeps its `prec.left`, and link
+sees the resolved rule, where it is gone, so both must classify the core alike
+(scm's `_group_expression`). `storageBodyOf` resolves a named alias's storage rule for the
 literal test; `namedArms` is supplied because link reads that fact from the
 raw rules. A declared supertype is link's own override and not part of this
 test.
@@ -4756,7 +4759,7 @@ lexes (`effectiveExtras`).
 
 `fieldSites` maps each kind to the sites its authored patches mark with `field()` (`authoredFieldSites`): index path and field name. The token-form hoist leaves a choice at one of those paths unsplit, and an element choice under a fielded repeat takes the site's name as its slot (`elementChoiceSlots`).
 
-### `packages/codegen/src/dsl/enrich.ts::coveredByAuthoredGroup`
+### `packages/codegen/src/dsl/automatic-groups.ts::coveredByAuthoredGroup`
 
 Whether an authored group pattern covers a would-be visible group's whole
 body, compared with `rulesEqual` after `unwrapPrec`, since enrich registers
@@ -4768,25 +4771,7 @@ minted group.
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::sittirGrammar`
 
-The one composition of a sittir grammar: `enrich(base, { groupBodies, extras })`
-with the config's authored group patterns and `extras:` callback, then `wire(config, enriched, base)`, which keeps the pre-enrich
-base as the raw stage,
-then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
-sittir's `grammarFn` under evaluate) over the enriched base and wired options,
-then `stampWiredVariants`, which labels the rules wire created or changed in both pipelines,
-then `blankDeadEnrichMints`, which blanks the rules enrich
-added that the wired grammar never reaches, `attachDerivationRecords`,
-which records the upstream conflicts and each reshaped rule's upstream source
-for the conflict loop, and the imported resolutions and whether the config
-authors `conflicts` for the diagnostics, then `applyConflictResolutions`, which sets the
-grammar's conflicts to the base resolutions the config passes as
-`resolutions` (each grammar imports its own `.sittir/resolutions.json`).
-When a bindings layer is configured and the evaluation is bound, the wired
-grammar must then be a base enrich leaves unchanged (`assertEnrichFixpoint`), since the grammar bindings are a layer
-over it. Its grammar bindings (`bindings`) are applied after that (`bindGrammar`), and
-last `applyBoundConflictResolutions` appends the bound section's sets.
-Every `grammar.sittir.ts` and the bootstrap template call it as
-`export default sittirGrammar(base, { … })`.
+Completes the authored grammar through enrich and wire. An absent or unbound bindings layer returns that result. A configured bindings layer enriches that completed result exactly once and refuses every rule change, then wires its own marked patches and applies splits and leads. Both layers share automatic-variant stamping, dead-mint handling and text-token completion. Kind renames stay outside the parser. The final derivation records remain tied to the original upstream base, and the bound conflict resolutions follow the binding edits.
 
 `B` infers from the upstream `base`, and the config is contextually typed as
 `WireConfig<EnrichedGrammar<B>>`, so rule callbacks get the grammar-shaped
@@ -4999,9 +4984,6 @@ in place, right after its unalias pass — not at the merge, because
 a stamp made there would be lost. The stamp is the declaration link collects
 `hoistedKinds` from; enrich is one of its minting routes.
 
-
-A config may carry grammar bindings as `bindings` (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). The base resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. The bound sets, in bound names, are appended to the bound grammar after `bindGrammar`, with or without bindings, and the derivation records carry them as `boundResolutions`. Under an unbound evaluation (`UNBOUND_ENV`) the grammar bindings and the bound sets are both skipped, and the records carry no bound resolutions.
-
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
 #### body
@@ -5199,7 +5181,7 @@ A config may carry grammar bindings as `bindings` (`bind.ts::Bindings`). `checkB
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::pluralizeFieldName`
+### `packages/codegen/src/dsl/automatic-groups.ts::pluralizeFieldName`
 
 ```text
 /**
@@ -5310,7 +5292,7 @@ A config may carry grammar bindings as `bindings` (`bind.ts::Bindings`). `checkB
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::peelTransparentElementWrappers`
+### `packages/codegen/src/dsl/automatic-groups.ts::peelTransparentElementWrappers`
 
 ```text
 /** Field name for a separated list's element pair (see
@@ -6287,7 +6269,7 @@ Each enum rule it adds is recorded in `ruleOrigins` as a `field-enum` mint.
 ```
 
 
-### `packages/codegen/src/dsl/enrich.ts::withContent`
+### `packages/codegen/src/dsl/automatic-groups.ts::withContent`
 
 The one place enrich rebuilds a wrapper around new content. Every rebuild
 site used to spread-and-assert inline; the assertion needs a rule shape that
@@ -6986,9 +6968,12 @@ and the node for `seated`, so all three read the same fact.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::supertypeArmsOf`
 
-The kinds a parser-declared supertype's rule names directly: a `SUPERTYPE`
+The kinds a supertype's rule names directly: a `SUPERTYPE`
 rule's subtypes, or a `CHOICE` rule's members, kept where they are symbols.
-Assemble derives it once from the normalized rules and hands it to every node
+Assemble passes every supertype the model has, those the grammar declares and
+the hidden choices link stamps `SUPERTYPE` (the stamp `classifyNode` reads), so
+an arm of either kind of supertype is treated alike. It derives the set once
+from the normalized rules and hands it to every node
 construction (`KindFacts.supertypeArms`), where it decides `ownSurface`. Seating
 does not read it: an arm seats on its parent like any hoisted kind.
 
@@ -7365,7 +7350,7 @@ Registers an element choice, with its lifted arms already replaced by references
 
 The supertype is not hoisted and not inlined. Enrich appends it to the grammar's `supertypes` and passes it to `stampAutomaticVariants` as a supertype owner, so every arm (lifted or already a kind) is labelled a variant of the supertype and none of the list's owner.
 
-### `packages/codegen/src/dsl/enrich.ts::elementSupertypeOrigin`
+### `packages/codegen/src/dsl/automatic-groups.ts::elementSupertypeOrigin`
 
 The `element-supertype` origin of a list element that is a reference to an element supertype (through the transparent element wrappers), or `undefined`.
 
@@ -7377,7 +7362,7 @@ The one slot-name function for a list element, by where the element sits. In a l
 
 The seqs that hold a list kind's elements, given a seq: the seq itself and a seq directly inside it (the head run written as its own seq, beside the trailing separator) when the whole seq is a separated list whose separator varies per instance (`separatedListBodyInfo(...).flankCarrying`), and none otherwise. That is the condition under which the model classifies a kind as a list, and a seq of that shape always ends as its own kind: it is a rule's body, or enrich splits it out of its owner as a hoisted list or a choice arm. A separated run with a fixed separator and no optional flank is a slot of an owner that is not a list.
 
-### `packages/codegen/src/dsl/enrich.ts::listKindElementPlural`
+### `packages/codegen/src/dsl/automatic-groups.ts::listKindElementPlural`
 
 The pluralized element name a separated list's kind is named from, or `null` when the element has no name of its own. An element supertype is a choice, so it has none and the list keeps the `<owner>_elements` name.
 
@@ -7421,7 +7406,7 @@ A kind-level rename in a grammar's bindings: the base rule or external `from` ta
 
 ### `packages/codegen/src/dsl/bind.ts::Bindings`
 
-The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds ordinary patch sets in base names and enriched paths; `sittirGrammar` appends them after the authored sets of the same kind. `renames` and `splits` are kind-level edits that `bindGrammar` applies to the grammar `grammar()` returned. `leads` are typed and printed, but `bindGrammar` does not apply them: a lead creates rules, which need enrich's second pass, so they stay unapplied until that pass exists. `hash` is the hash of the `bindings.scm` and vocabulary sources they were derived from (`bindings/hash.ts::bindingsSourceHash`); `bindings/hash.ts::assertBindingsFresh` compares it with the sources on disk.
+The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds ordinary patch sets addressing the completed authored grammar. The bindings layer checks that enrich leaves that grammar unchanged, then applies its own wire patches. `splits` and `leads` reshape the bound parser after those patches. `renames` names the bindings surface and does not rename parser kinds. `hash` identifies the bindings and vocabulary sources checked by `assertBindingsFresh`.
 
 ### `packages/codegen/src/dsl/bind.ts::bindings`
 
@@ -7438,6 +7423,11 @@ The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from
 ### `packages/codegen/src/dsl/bind.ts::BindingEffect`
 
 What one binding patch did, as wire records it while the patch applies: a `segment` effect is an option-path segment of the patched kind that the patch renamed (a field `from:` to `to:`, or a wrapped child or token to the new field), and an `alias` effect is a kind the patch aliased to a new name.
+
+A `lead` effect records the actual receiver alias, rest group reference, rest
+field and visible variants created by `leadGrammar`. Group names are read after
+the canonical singleton-ordinal collapse. Portable binding facts consume this
+realization; they do not derive the minted names independently.
 
 ### `packages/codegen/src/dsl/bind.ts::BINDING_SET`
 
@@ -7465,7 +7455,7 @@ Carries the authored options block through the binding patches. The block is aut
 
 ### `packages/codegen/src/dsl/bind.ts::bindGrammar`
 
-The kind-level half of grammar bindings, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames. It leaves `leads` unapplied. Throughout bind.ts a rule is hidden, and so transparent to its owner (its fields and references sit on the referrer's behalf), by tree-sitter's name convention (`rule-patterns.ts::isParserHiddenName`): the bind functions run on the raw grammar, before any model stamps a fact, and a rename or split that flips that hiddenness is refused.
+Completes grammar bindings after their wire patches: authored options take the canonical patch effects, placement splits apply in upstream parser names, then leads create their receiver forms. Kind renames do not apply to the parser. The returned grammar carries the same readonly `bindingEffects` array wire recorded, for consumers that map binding field routes. Hidden facts survive each grammar rewrite.
 
 ### `packages/codegen/src/dsl/bind.ts::renameReparseHosts`
 
@@ -7671,9 +7661,9 @@ Whether `UNBOUND_ENV` is `1`.
 
 A patches entry as its list of sets: one map, an array of maps, or none.
 
-### `packages/codegen/src/dsl/sittir-grammar.ts::withBindingPatches`
+### `packages/codegen/src/dsl/sittir-grammar.ts::markedBindingPatches`
 
-The authored patches with each grammar-bindings kind's sets appended after the kind's authored sets, each marked by `markBindingSet`. A binding patch therefore sees the rule the authored patches produced, and its paths address that shape.
+Marks each binding patch set for canonical effect recording. Authored patch sets belong to the completed first layer and are never combined with these sets.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 
@@ -7709,4 +7699,44 @@ A shallow copy of a grammar carrying the three sidecars an enrich result holds (
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::assertEnrichFixpoint`
 
-The configured grammar bindings layer's gate: enrich over the wired grammar, carrying the sittir layer's enrich sidecars (`withEnrichSidecarsOf`), changes no rule. It throws naming every rule it would change, added or removed. Wire leaves a field, label or alias enrich would add only where an authored entry or wire stamps it first, so a change here means the wired grammar is not yet a base the bindings layer can build on: the fix is on the sittir side (author the field, stamp the label), never in the gate.
+The configured bindings layer's gate: enrich the completed authored grammar exactly once with its enrich sidecars, compare all rule names and trees, and return that enriched result for the binding wire pass. Every added, removed or changed rule fails with its name; configured empty bindings are checked too. Absent bindings and unbound evaluation skip the second layer.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::completeLayer`
+
+Evaluates one wire layer, carries non-enumerable grammar facts from the prior layer, and applies its binding edits when present. Shared completion then stamps the final rules, unions dead-mint facts and attaches live text tokens. Evaluation-specific metadata inheritance is handled by the canonical evaluator.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireBindings`
+
+The internal binding-layer entry to canonical wire construction. It accepts a completed grammar result and binding patch sets without imposing the public authored grammar literal shape on that runtime result. The checked enriched grammar is both the wire base and its source.
+
+### `packages/codegen/src/dsl/bind.ts::boundSegmentOf`
+
+One owner-scoped lookup of a segment rewrite, including rewrites on hidden helper rules reached by the canonical transparent-rule traversal. Conflicting reachable destinations are refused. Both options rewriting and field-name projection use this lookup.
+
+### `packages/codegen/src/dsl/bind.ts::boundFieldNameOf`
+
+Projects a field name through canonical segment effects, optionally resolving hidden helper owners through the supplied grammar: the preference-path formatter and parser preserve the segment syntax, and an effect that does not leave a field segment is refused. Field routes and options therefore read the same recorded binding edit.
+
+### `packages/codegen/src/dsl/bind.ts::bindMatch`
+
+Maps a lead match tree through kind and owner-scoped field renames, retaining variant names. Both binding facts and the post-patch lead application use this derivation.
+
+### `packages/codegen/src/dsl/bind.ts::bindingEffectsForOwners`
+
+Projects recorded field effects onto every owning rule through the shared segment lookup before lead narrowing can replace hidden helper references. The resulting sidecar is the canonical owner-scoped record consumed by binding facts after transformation.
+
+### `packages/codegen/src/dsl/automatic-groups.ts::AutomaticGroupContext`
+
+The minimal existing automatic-group context: rule and group bags, canonical deduplication/origin records, symbol source, authored group bodies, and optional list-hoist facts. Enrich supplies its context directly; lead minting adapts those same facts without running enrich again. Group naming, registration, and singleton ordinal collapse have one implementation.
+
+
+`boundNameOf` also consumes explicit alias effects recorded by the bindings wire. The same mapper projects authored claims and member routes to a wire-created leaf alias such as `line_comment_regular` → `text_comment`; it does not infer aliases or alter unrelated kind identities.
+
+
+### `packages/codegen/src/dsl/bind.ts::ownerOptions`
+
+Selects an authored owner's render preferences and owned label addresses as input to the existing canonical option-path renamer. Values and label targets keep their authored meaning.
+
+### `packages/codegen/src/dsl/bind.ts::inheritSplitOptions`
+
+Projects source-owner preferences and labels onto each realized parser split using the canonical split provenance and option-path mapper. The original policy remains in place; an explicitly authored target policy wins. `splitGrammar` applies this alongside its realized `splitFrom` metadata so contextual bodies retain indentation, boundary breaks and end-of-list preferences.

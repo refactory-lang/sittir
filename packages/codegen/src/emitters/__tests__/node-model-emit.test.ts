@@ -10,13 +10,28 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel } from '../node-model.ts';
+
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
+it('serializes the canonical display family without deriving aliases again', () => {
+	const nodeMap = makeNodeMapWith(new Map());
+	const family = [
+		{ storage: 'lambda', literal: false },
+		{ storage: 'lambda_within_for_in_clause', literal: false }
+	];
+	const withFamily = { ...nodeMap, displayUnions: new Map([['lambda_expression', family]]) };
+	expect(buildNodeModel(withFamily)).toHaveProperty('displayUnions', { lambda_expression: family });
+});
 describe('node-model emitter', () => {
-	it('serializes a list\'s item slot beside its element kinds', () => {
-		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
+	it("serializes a list's item slot beside its element kinds", () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'array',
+			separator: { value: { type: STRING, value: ',' } }
+		};
 		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 		const nodes = new Map<string, AssembledNode>([

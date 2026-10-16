@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual } from '../rule-patterns.ts';
+import { hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 
 const symbols = predictedSymbolSourceOf({
@@ -289,5 +289,16 @@ describe('separatedListBodyInfo: what a consumer builds the list from', () => {
 		const fieldedRun = { type: 'REPEAT', content: seq(str(','), field(sym('item'))) };
 		expect(read(seq(field(sym('other')), fieldedRun))).toBeNull();
 		expect(read(seq(sym('item'), fieldedRun))).toMatchObject({ form: 'head' });
+	});
+});
+
+describe('hiddenChoiceClass', () => {
+	it('reads a precedence-wrapped arm by its core, so the DSL rule and the resolved rule get one class', () => {
+		const sym = (name: string) => ({ type: 'SYMBOL', name });
+		const wrapped = { type: 'CHOICE', members: [sym('definition'), { type: 'PREC_LEFT', value: 1, content: sym('group_arm') }] };
+		const resolved = { type: 'CHOICE', members: [sym('definition'), sym('group_arm')] };
+		const none = (): undefined => undefined;
+		expect(hiddenChoiceClass(resolved, none, false)).toBe('supertype');
+		expect(hiddenChoiceClass(wrapped, none, false)).toBe('supertype');
 	});
 });

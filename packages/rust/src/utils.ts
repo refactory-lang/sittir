@@ -27,7 +27,7 @@ export const triviaFacts = Object.freeze({
 		352, 353, 354, 355, 356, 357, 358, 359, 360, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379,
 		380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 400, 401, 402, 403,
 		405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 422, 423, 424, 425, 427, 428, 429,
-		430, 431, 432, 433, 434, 465, 467, 468
+		430, 431, 432, 433, 434, 436, 438, 470, 472, 473
 	]),
 	listKinds: new Set<number>([
 		342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359
@@ -106,8 +106,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['operator', 2]
 	],
 	189: [['content', 0]],
-	190: [['attribute', 0]],
-	191: [['attribute', 0]],
+	190: [['content', 0]],
+	191: [['content', 0]],
 	192: [
 		['path', 0],
 		['input', 1]
@@ -154,7 +154,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	206: [
 		['visibilityModifier', 0],
-		['ref', 1, 'ref'],
+		['byReference', 1, 'ref'],
 		['mutable', 2, 'mut'],
 		['name', 3],
 		['type', 4],
@@ -165,7 +165,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['name', 1],
 		['typeParameters', 2],
 		['whereClause', 3],
-		['type', 4],
+		['value', 4],
 		['trailingWhereClause', 5]
 	],
 	208: [
@@ -218,12 +218,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	220: [
 		['name', 0],
 		['type', 1],
-		['value', 2]
+		['default', 2]
 	],
 	221: [
 		['name', 0],
 		['bounds', 1],
-		['defaultType', 2]
+		['default', 2]
 	],
 	222: [
 		['name', 0],
@@ -231,7 +231,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	223: [
 		['mutable', 0, 'mut'],
-		['pattern', 1],
+		['name', 1],
 		['type', 2],
 		['value', 3],
 		['alternative', 4]
@@ -246,7 +246,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	227: [['useClauses', 0]],
 	228: [
-		['path', 0],
+		['name', 0],
 		['alias', 1]
 	],
 	229: [['useWildcardGroup', 0]],
@@ -310,7 +310,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	252: [
 		['lifetime', 0],
-		['mutable', 1, 'mut'],
+		['exclusive', 1, 'mut'],
 		['type', 2]
 	],
 	255: [
@@ -319,7 +319,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	256: [['trait', 0]],
 	259: [
-		['macro', 0],
+		['function', 0],
 		['arguments', 1]
 	],
 	263: [
@@ -336,9 +336,9 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	267: [
 		['operator', 0],
-		['operand', 1]
+		['argument', 1]
 	],
-	268: [['value', 0]],
+	268: [['argument', 0]],
 	270: [
 		['left', 0],
 		['operator', 1],
@@ -354,7 +354,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['right', 2]
 	],
 	273: [
-		['value', 0],
+		['expression', 0],
 		['type', 1]
 	],
 	274: [['expression', 0]],
@@ -367,7 +367,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	279: [['expression', 0]],
 	280: [
 		['attributes', 0],
-		['expressions', 1]
+		['elements', 1]
 	],
 	282: [
 		['name', 0],
@@ -376,10 +376,10 @@ export const querySlots: QuerySlots = Object.freeze({
 	283: [['initializers', 0]],
 	284: [
 		['attributes', 0],
-		['name', 1]
+		['field', 1]
 	],
 	285: [
-		['attributeItems', 0],
+		['attributes', 0],
 		['field', 1],
 		['value', 2]
 	],
@@ -399,7 +399,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	291: [['body', 0]],
 	292: [
-		['value', 0],
+		['subject', 0],
 		['body', 1]
 	],
 	293: [['matchBlockArms', 0]],
@@ -424,8 +424,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	299: [
 		['label', 0],
-		['pattern', 1],
-		['value', 2],
+		['left', 1],
+		['right', 2],
 		['body', 3]
 	],
 	300: [['body', 0]],
@@ -442,8 +442,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	307: [['expression', 0]],
 	308: [
-		['value', 0],
-		['field', 1]
+		['object', 0],
+		['property', 1]
 	],
 	309: [['body', 0]],
 	310: [
@@ -465,7 +465,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['typeArguments', 1]
 	],
 	316: [['elements', 0]],
-	317: [['patterns', 0]],
+	317: [['elements', 0]],
 	318: [
 		['type', 0],
 		['patterns', 1]
@@ -481,7 +481,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', 1]
 	],
 	326: [
-		['mutable', 0, 'mut'],
+		['exclusive', 0, 'mut'],
 		['pattern', 1]
 	],
 	330: [['value', 0]],
@@ -713,9 +713,22 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arms', 0],
 		['lastArm', 1]
 	],
-	465: [['content', 0]],
-	467: [['content', 0]],
-	468: [['content', 0]]
+	435: [
+		['mutable', 0, 'mut'],
+		['type', 1]
+	],
+	436: [
+		['attributeItem', 0],
+		['content', 1]
+	],
+	437: [
+		['receiver', 0],
+		['parametersElementsReceiverGroup', 1]
+	],
+	438: [['elements', 0]],
+	470: [['content', 0]],
+	472: [['content', 0]],
+	473: [['content', 0]]
 });
 
 export const { isNode } = bindRuntime<RustTypeMap>();

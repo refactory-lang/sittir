@@ -39,16 +39,14 @@ const ann = (type: string) => engine.build.typeAnnotation.strict(id(type));
 /** `import type { FormatRecord, FormatTrivia } from '@sittir/types';` */
 export function importTypesStrict() {
 	return engine.build.importStatement.clauseFrom.strict({
-		importClause: engine.kinds.TypeKeyword,
-		fromClause: {
-			importClause: engine.build.importClause.namedImports(
+		typeOnly: engine.kinds.TypeKeyword,
+		importClause: engine.build.importClause.namedImports(
 				engine.build.namedImports.strict(
 					engine.build.importSpecifier.name({ name: 'FormatRecord' }),
 					engine.build.importSpecifier.name({ name: 'FormatTrivia' })
 				)
 			),
 			source: engine.build.string.single.strict(engine.build.unescapedSingleStringFragment('@sittir/types')),
-		},
 	});
 }
 
@@ -60,7 +58,7 @@ export function applyFormatDocStrict() {
 }
 
 function param(name: string, type: string) {
-	return engine.build.requiredParameter.strict({ pattern: engine.build.lhsExpression.strict(id(name)), type: ann(type) });
+	return engine.build.requiredParameter.strict({ name: engine.build.lhsExpression.strict(id(name)), type: ann(type) });
 }
 
 /** `let <name> = <value>;` — the `;` is the terminator option's default. */
@@ -75,7 +73,7 @@ function letStrict(name: string, value: string) {
 export function applyFormatStrict() {
 	return engine.build.declaration.function.strict({
 		name: id('applyFormat'),
-		parameters: engine.build.formalParameters.strict(param('canonicalRender', 'string'), param('format', 'FormatRecord')),
+		parameters: engine.build.formalParameters.strict(engine.build.formalParametersElements.strict(param('canonicalRender', 'string'), param('format', 'FormatRecord'))),
 		returnType: ann('string'),
 		body: engine.build.statementBlock.strict(letStrict('result', 'canonicalRender'), returnResultStrict()),
 	});
@@ -85,7 +83,7 @@ export function applyFormatStrict() {
 export function applyBoundaryStrict() {
 	return engine.build.declaration.function.strict({
 		name: id('applyBoundary'),
-		parameters: engine.build.formalParameters.strict(param('s', 'string'), param('format', 'FormatRecord')),
+		parameters: engine.build.formalParameters.strict(engine.build.formalParametersElements.strict(param('s', 'string'), param('format', 'FormatRecord'))),
 		returnType: ann('string'),
 		body: engine.build.statementBlock.strict(letStrict('result', 's'), returnResultStrict()),
 	});
@@ -98,7 +96,7 @@ export function returnResultStrict() {
 
 /** `format.boundary` */
 export function formatBoundaryStrict() {
-	return engine.build.memberExpression.strict({ object: id('format'), separator: engine.kinds.Dot, property: id('boundary') });
+	return engine.build.memberExpression.strict({ object: id('format'), optionalChain: engine.kinds.Dot, property: id('boundary') });
 }
 
 export function rebuildFormatStrict() {

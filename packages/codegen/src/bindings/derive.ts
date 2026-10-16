@@ -383,7 +383,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						list ||= resolved.list;
 						scalar ||= resolved.scalar;
 					}
-					f.optional = true;
+					f.optional ||= route.route !== 'nested' || !route.multiple;
 					f.multiple ||= list;
 					f.scalar ||= !multiple && (scalar || !list);
 					f.grammars.add(input.grammar);

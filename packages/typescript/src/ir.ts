@@ -448,6 +448,8 @@ export const ir: {
 	readonly forHeaderLhs: typeof F.forHeaderLhs;
 	readonly forHeaderVarKind: typeof F.forHeaderVarKind;
 	readonly forHeaderLetConstKind: typeof F.forHeaderLetConstKind;
+	readonly receiverParameterDeclaration: typeof F.receiverParameterDeclaration;
+	readonly formalParametersElementsReceiver: typeof F.formalParametersElementsReceiver;
 	readonly declaration: typeof F.declaration;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
@@ -701,6 +703,8 @@ export const ir: {
 	forHeaderLhs: F.forHeaderLhs,
 	forHeaderVarKind: F.forHeaderVarKind,
 	forHeaderLetConstKind: F.forHeaderLetConstKind,
+	receiverParameterDeclaration: F.receiverParameterDeclaration,
+	formalParametersElementsReceiver: F.formalParametersElementsReceiver,
 	declaration: F.declaration,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,

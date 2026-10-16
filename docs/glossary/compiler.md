@@ -10023,6 +10023,12 @@ literal member (a STRING arm, or a SYMBOL's `.literal`) carries its text and
 never share a key, so a keyword arm `'type'` and a rule `type` stay distinct
 members, and no reader has to guess which a string was.
 
+An existing display family also admits its canonical catalog default storage:
+a named, visible, non-alias rule whose parser `symbolName` is that display.
+Tree-sitter can fold that default alias out of the rule reference, so the
+catalog supplies its identity beside the explicit aliases. This preserves both
+physical option sites instead of choosing one parser identity for the family.
+
 #### body
 
 ```text
@@ -10190,3 +10196,23 @@ Imports a grammar entry with `sittir-grammar.ts::UNBOUND_ENV` set (the prior val
 ### `packages/codegen/src/compiler/evaluate.ts::withDslGlobals`
 
 Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar entry inside it; `bindings/module.ts::loadBindingsModule` imports a `grammar.bindings.ts`, whose authoring helpers call the globals.
+
+### `packages/codegen/src/compiler/evaluate.ts::LayerCtx`
+
+The base layer's value of one metadata entry (`previous`), the context the `inherited*` helpers merge the current layer's value over.
+
+### `packages/codegen/src/compiler/evaluate.ts::inheritedRecord`
+
+Carries an optional metadata record through grammar extension, with explicit entries of the current layer replacing the same base entries.
+
+### `packages/codegen/src/compiler/evaluate.ts::inheritedMap`
+
+Carries optional keyed metadata through grammar extension, preserving base keys absent from the current layer.
+
+### `packages/codegen/src/compiler/evaluate.ts::inheritedPatchSites`
+
+Carries patch-site provenance through grammar extension; a current site at the same owner and path replaces the older site.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::canonicalChoiceRule`
+
+Canonicalizes a choice: a blank arm is the existing optional representation, a singleton is peeled, and common fields are factored when safe. Optional detection uses the shared `optionalContentOf` derivation, so a tree-sitter `CHOICE` with `BLANK` is accepted at the compiler boundary without adding blank to the compiler Rule union.

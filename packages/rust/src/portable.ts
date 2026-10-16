@@ -126,6 +126,7 @@ export interface PortableIds {
 		| TSKindId.RangePatternPrefix
 		| TSKindId.RangePatternWithLeft
 		| TSKindId.RawStringLiteral
+		| TSKindId.ReceiverParameterDeclaration
 		| TSKindId.RefPattern
 		| TSKindId.ReferencePattern
 		| TSKindId.RemainingFieldPattern
@@ -269,6 +270,7 @@ export interface PortableIds {
 		| TSKindId.RangePatternPrefix
 		| TSKindId.RangePatternWithLeft
 		| TSKindId.RawStringLiteral
+		| TSKindId.ReceiverParameterDeclaration
 		| TSKindId.RefPattern
 		| TSKindId.ReferencePattern
 		| TSKindId.RemainingFieldPattern
@@ -282,7 +284,7 @@ export interface PortableIds {
 		| TSKindId.TupleStructPattern
 		| TSKindId.VariadicParameter
 		| TSKindId.WildcardPattern;
-	'declaration.parameter.receiver': TSKindId.SelfParameter;
+	'declaration.parameter.receiver': TSKindId.Parameter | TSKindId.ReceiverParameterDeclaration | TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
 	'declaration.struct':
 		| TSKindId.EnumVariant
@@ -2834,6 +2836,7 @@ const table: PortableTable = {
 				TSKindId.RangePatternPrefix,
 				TSKindId.RangePatternWithLeft,
 				TSKindId.RawStringLiteral,
+				TSKindId.ReceiverParameterDeclaration,
 				TSKindId.RefPattern,
 				TSKindId.ReferencePattern,
 				TSKindId.RemainingFieldPattern,
@@ -3018,6 +3021,7 @@ const table: PortableTable = {
 				TSKindId.RangePatternPrefix,
 				TSKindId.RangePatternWithLeft,
 				TSKindId.RawStringLiteral,
+				TSKindId.ReceiverParameterDeclaration,
 				TSKindId.RefPattern,
 				TSKindId.ReferencePattern,
 				TSKindId.RemainingFieldPattern,
@@ -3034,7 +3038,10 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'declaration.parameter.receiver': { ids: [TSKindId.SelfParameter], exact: true },
+		'declaration.parameter.receiver': {
+			ids: [TSKindId.Parameter, TSKindId.ReceiverParameterDeclaration, TSKindId.SelfParameter],
+			exact: false
+		},
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
 		'declaration.struct': {
 			ids: [
@@ -4735,20 +4742,32 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '349': 0 }, anchor: 'first' }],
-						plan: { op: 'is', types: [231], slots: { '429': 1 } }
-					},
-					{ up: 0, via: [{ slots: { '208': 4 } }], plan: { op: 'is', types: [349], slots: { '230': 0 } } }
+						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '349': 0 } }],
+						plan: { op: 'not', of: { op: 'is', types: [231], slots: { '429': 1 } } }
+					}
 				]
 			},
 			{
 				path: 'declaration.method',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
+					{ up: 0, via: [{ slots: { '208': 4 } }], plan: { op: 'is', types: [437], slots: { '230': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '349': 0 } }],
-						plan: { op: 'not', of: { op: 'is', types: [231], slots: { '429': 1 } } }
+						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '437': 0 } }],
+						plan: { op: 'is', types: [231], slots: { '436': 1 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [{ slots: { '208': 4 } }], plan: { op: 'is', types: [437], slots: { '230': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '437': 0 } }],
+						plan: { op: 'is', types: [435], slots: { '436': 1 } }
 					}
 				]
 			},
@@ -5347,7 +5366,14 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.or', within: [], test: [] }
 		],
-		[TSKindId.Parameter]: [{ path: 'declaration.parameter', within: [], test: [] }],
+		[TSKindId.Parameter]: [
+			{
+				path: 'declaration.parameter.receiver',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [125], slots: { '233': 1 } } }]
+			},
+			{ path: 'declaration.parameter', within: [], test: [] }
+		],
 		[TSKindId.ParenthesizedExpression]: [{ path: 'expression.parenthesized', within: [], test: [] }],
 		[TSKindId.PatKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.PatParamKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -5440,6 +5466,10 @@ const table: PortableTable = {
 			{ path: 'literal.string.raw', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
+		[TSKindId.ReceiverParameterDeclaration]: [
+			{ path: 'declaration.parameter', within: [], test: [] },
+			{ path: 'declaration.parameter.receiver', within: [], test: [] }
+		],
 		[TSKindId.RefPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.reference', within: [], test: [] }
@@ -5881,7 +5911,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '468': 0 } }],
+						via: [{ slots: { '473': 0 } }],
 						plan: { op: 'match', pattern: '^(Option|Result|String|Vec|Box)$', self: true }
 					}
 				]
@@ -6389,6 +6419,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.LetDeclaration]: { mutable: { op: 'present', slots: { '223': 0 } } },
 	[TSKindId.Parameter]: { mutable: { op: 'is', types: [57], slots: { '233': 0 } } },
 	[TSKindId.PointerTypeMut]: { writable: { op: 'and', of: [] } },
+	[TSKindId.ReceiverParameterDeclaration]: { mutable: { op: 'is', types: [57], slots: { '435': 0 } } },
 	[TSKindId.ReferenceExpressionMut]: { exclusive: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawConst]: { raw: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawMut]: { writable: { op: 'and', of: [] }, raw: { op: 'and', of: [] } },
@@ -6463,6 +6494,9 @@ declare module './types.js' {
 	}
 	interface PointerTypeMut {
 		readonly __flags__?: 'writable';
+	}
+	interface ReceiverParameterDeclaration {
+		readonly __flags__?: 'mutable';
 	}
 	interface ReferenceExpressionMut {
 		readonly __flags__?: 'exclusive';

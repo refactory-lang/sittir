@@ -38,11 +38,11 @@ pub enum AnyTransport {
     #[kind(kind::_NON_SPECIAL_TOKEN)]
     NonSpecialToken(NonSpecialTokenTransport),
     #[kind(kind::ATTRIBUTE_ITEM)]
-    AttributeItem(Box<AttributeItemTransport>),
+    AttributeItem(AttributeItemTransport),
     #[kind(kind::INNER_ATTRIBUTE_ITEM)]
-    InnerAttributeItem(Box<InnerAttributeItemTransport>),
+    InnerAttributeItem(InnerAttributeItemTransport),
     #[kind(kind::ATTRIBUTE)]
-    Attribute(Box<AttributeTransport>),
+    Attribute(AttributeTransport),
     #[kind(kind::DECLARATION_LIST)]
     DeclarationList(DeclarationListTransport),
     #[kind(kind::UNION_ITEM)]
@@ -480,7 +480,7 @@ pub enum AnyTransport {
     #[kind(kind::_ATTRIBUTED_ENUM_VARIANT)]
     AttributedEnumVariant(Box<AttributedEnumVariantTransport>),
     #[kind(kind::_ATTRIBUTED_PARAMETER)]
-    AttributedParameter(Box<AttributedParameterTransport>),
+    AttributedParameter(AttributedParameterTransport),
     #[kind(kind::_ATTRIBUTED_TYPE_PARAMETER)]
     AttributedTypeParameter(AttributedTypeParameterTransport),
     #[kind(kind::_ATTRIBUTED_ARGUMENT)]
@@ -505,6 +505,14 @@ pub enum AnyTransport {
     DocComment(DocCommentTransport),
     #[kind(kind::_BLOCK_COMMENT_CONTENT)]
     BlockCommentContent(BlockCommentContentTransport),
+    #[kind(kind::_RECEIVER_PARAMETER_DECLARATION)]
+    ReceiverParameterDeclaration(ReceiverParameterDeclarationTransport),
+    #[kind(kind::_ATTRIBUTED_PARAMETER_RECEIVER)]
+    AttributedParameterReceiver(AttributedParameterReceiverTransport),
+    #[kind(kind::_PARAMETERS_ELEMENTS_RECEIVER)]
+    ParametersElementsReceiver(ParametersElementsReceiverTransport),
+    #[kind(kind::PARAMETERS_ELEMENTS_RECEIVER_GROUP)]
+    ParametersElementsReceiverGroup(ParametersElementsReceiverGroupTransport),
     #[kind(kind::_ERROR_SENTINEL)]
     ErrorSentinel(ErrorSentinelTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
@@ -1077,6 +1085,10 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::RawStringLiteralEnd(t) => t.prepare(ctx),
             AnyTransport::DocComment(t) => t.prepare(ctx),
             AnyTransport::BlockCommentContent(t) => t.prepare(ctx),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.prepare(ctx),
+            AnyTransport::AttributedParameterReceiver(t) => t.prepare(ctx),
+            AnyTransport::ParametersElementsReceiver(t) => t.prepare(ctx),
+            AnyTransport::ParametersElementsReceiverGroup(t) => t.prepare(ctx),
             AnyTransport::ErrorSentinel(t) => t.prepare(ctx),
             AnyTransport::TypeIdentifier(t) => t.prepare(ctx),
             AnyTransport::FieldIdentifier(t) => t.prepare(ctx),
@@ -1481,6 +1493,10 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::RawStringLiteralEnd(t) => t.gap_edges(),
             AnyTransport::DocComment(t) => t.gap_edges(),
             AnyTransport::BlockCommentContent(t) => t.gap_edges(),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.gap_edges(),
+            AnyTransport::AttributedParameterReceiver(t) => t.gap_edges(),
+            AnyTransport::ParametersElementsReceiver(t) => t.gap_edges(),
+            AnyTransport::ParametersElementsReceiverGroup(t) => t.gap_edges(),
             AnyTransport::ErrorSentinel(t) => t.gap_edges(),
             AnyTransport::TypeIdentifier(t) => t.gap_edges(),
             AnyTransport::FieldIdentifier(t) => t.gap_edges(),
@@ -1885,6 +1901,10 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::RawStringLiteralEnd(t) => t.snapshot_edge(),
             AnyTransport::DocComment(t) => t.snapshot_edge(),
             AnyTransport::BlockCommentContent(t) => t.snapshot_edge(),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.snapshot_edge(),
+            AnyTransport::AttributedParameterReceiver(t) => t.snapshot_edge(),
+            AnyTransport::ParametersElementsReceiver(t) => t.snapshot_edge(),
+            AnyTransport::ParametersElementsReceiverGroup(t) => t.snapshot_edge(),
             AnyTransport::ErrorSentinel(t) => t.snapshot_edge(),
             AnyTransport::TypeIdentifier(t) => t.snapshot_edge(),
             AnyTransport::FieldIdentifier(t) => t.snapshot_edge(),
@@ -2289,6 +2309,10 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::RawStringLiteralEnd(t) => t.source_separator(ctx),
             AnyTransport::DocComment(t) => t.source_separator(ctx),
             AnyTransport::BlockCommentContent(t) => t.source_separator(ctx),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.source_separator(ctx),
+            AnyTransport::AttributedParameterReceiver(t) => t.source_separator(ctx),
+            AnyTransport::ParametersElementsReceiver(t) => t.source_separator(ctx),
+            AnyTransport::ParametersElementsReceiverGroup(t) => t.source_separator(ctx),
             AnyTransport::ErrorSentinel(t) => t.source_separator(ctx),
             AnyTransport::TypeIdentifier(t) => t.source_separator(ctx),
             AnyTransport::FieldIdentifier(t) => t.source_separator(ctx),
@@ -2635,8 +2659,8 @@ pub enum StatementTransport {
     #[kind(kind::EMPTY_STATEMENT)]
     #[transport(edged)]
     EmptyStatement(::sittir_core::options::Edges),
-    AttributeItem(Box<AttributeItemTransport>),
-    InnerAttributeItem(Box<InnerAttributeItemTransport>),
+    AttributeItem(AttributeItemTransport),
+    InnerAttributeItem(InnerAttributeItemTransport),
     ModItem(ModItemTransport),
     ForeignModItem(ForeignModItemTransport),
     StructItem(StructItemTransport),
@@ -2817,9 +2841,9 @@ pub enum DeclarationStatementTransport {
     #[transport(edged)]
     EmptyStatement(::sittir_core::options::Edges),
     #[kind(kind::ATTRIBUTE_ITEM)]
-    AttributeItem(Box<AttributeItemTransport>),
+    AttributeItem(AttributeItemTransport),
     #[kind(kind::INNER_ATTRIBUTE_ITEM)]
-    InnerAttributeItem(Box<InnerAttributeItemTransport>),
+    InnerAttributeItem(InnerAttributeItemTransport),
     #[kind(kind::MOD_ITEM_EXTERNAL, kind::MOD_ITEM_INLINE, kind::MOD_ITEM)]
     ModItem(ModItemTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI, kind::FOREIGN_MOD_ITEM_BODY, kind::FOREIGN_MOD_ITEM)]
@@ -6382,7 +6406,7 @@ impl ::sittir_core::render::Render for TraitBoundsBoundsTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum ConstParameterValueTransportSlot {
+pub enum ConstParameterDefaultTransportSlot {
     #[kind(kind::BLOCK)]
     Block(BlockTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
@@ -6421,93 +6445,93 @@ pub enum ConstParameterValueTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for ConstParameterValueTransportSlot {
+impl ::sittir_core::prepare::Prepare for ConstParameterDefaultTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ConstParameterValueTransportSlot::Block(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::Identifier(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::StringLiteral(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::RawStringLiteral(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::CharLiteralPlain(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEmpty(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::BooleanLiteral(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralHex(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::FloatLiteral(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::NegativeLiteral(t) => t.prepare(ctx),
-            ConstParameterValueTransportSlot::Verbatim(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::Block(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::Identifier(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::StringLiteral(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::RawStringLiteral(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralPlain(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEmpty(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::BooleanLiteral(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralHex(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::FloatLiteral(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::NegativeLiteral(t) => t.prepare(ctx),
+            ConstParameterDefaultTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ConstParameterValueTransportSlot::Block(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::Identifier(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::StringLiteral(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::RawStringLiteral(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedSimple(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedHex(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::CharLiteralPlain(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::CharLiteralEmpty(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::BooleanLiteral(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::IntegerLiteralHex(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::IntegerLiteralBinary(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::IntegerLiteralOctal(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::FloatLiteral(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::NegativeLiteral(t) => t.gap_edges(),
-            ConstParameterValueTransportSlot::Verbatim(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::Block(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::Identifier(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::StringLiteral(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::RawStringLiteral(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedSimple(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedHex(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::CharLiteralPlain(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::CharLiteralEmpty(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::BooleanLiteral(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralHex(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralBinary(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralOctal(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::FloatLiteral(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::NegativeLiteral(t) => t.gap_edges(),
+            ConstParameterDefaultTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ConstParameterValueTransportSlot::Block(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::Identifier(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::StringLiteral(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
-            ConstParameterValueTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::Block(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
+            ConstParameterDefaultTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
-            ConstParameterValueTransportSlot::Block(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::Identifier(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::StringLiteral(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::RawStringLiteral(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedSimple(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEscapedHex(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::CharLiteralPlain(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::CharLiteralEmpty(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::BooleanLiteral(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::FloatLiteral(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::NegativeLiteral(t) => t.source_separator(ctx),
-            ConstParameterValueTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::Block(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::StringLiteral(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::RawStringLiteral(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedSimple(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedHex(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralPlain(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::CharLiteralEmpty(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::BooleanLiteral(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::FloatLiteral(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::NegativeLiteral(t) => t.source_separator(ctx),
+            ConstParameterDefaultTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -6515,7 +6539,7 @@ impl ::sittir_core::prepare::Prepare for ConstParameterValueTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for ConstParameterValueTransportSlot {
+impl ::sittir_core::view::KindOf for ConstParameterDefaultTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Block(inner) => inner.kind_in(kinds),
@@ -6540,27 +6564,27 @@ impl ::sittir_core::view::KindOf for ConstParameterValueTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ConstParameterValueTransportSlot {
+impl ::sittir_core::render::Render for ConstParameterDefaultTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ConstParameterValueTransportSlot::Block(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::Identifier(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::StringLiteral(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::RawStringLiteral(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::CharLiteralEscapedHex(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::CharLiteralPlain(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::CharLiteralEmpty(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::BooleanLiteral(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::IntegerLiteralDecimal(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::IntegerLiteralHex(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::FloatLiteral(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::NegativeLiteral(inner) => inner.render(w),
-            ConstParameterValueTransportSlot::Verbatim(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::Block(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::Identifier(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::StringLiteral(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::RawStringLiteral(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::CharLiteralEscapedHex(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::CharLiteralPlain(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::CharLiteralEmpty(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::BooleanLiteral(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::IntegerLiteralDecimal(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::IntegerLiteralHex(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::FloatLiteral(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::NegativeLiteral(inner) => inner.render(w),
+            ConstParameterDefaultTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -6699,243 +6723,36 @@ impl ::sittir_core::render::Render for UseDeclarationArgumentTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum ParameterNameTransportSlot {
-    #[kind(kind::STRING_LITERAL)]
-    StringLiteral(StringLiteralTransport),
-    #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(RawStringLiteralTransport),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
-    CharLiteralEscapedSimple(CharLiteralEscapedSimpleTransport),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
-    CharLiteralEscapedUnicodeFixed(CharLiteralEscapedUnicodeFixedTransport),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED)]
-    CharLiteralEscapedUnicodeBraced(CharLiteralEscapedUnicodeBracedTransport),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_HEX)]
-    CharLiteralEscapedHex(CharLiteralEscapedHexTransport),
-    #[kind(kind::CHAR_LITERAL_PLAIN)]
-    CharLiteralPlain(CharLiteralPlainTransport),
-    #[kind(kind::CHAR_LITERAL_EMPTY)]
-    CharLiteralEmpty(CharLiteralEmptyTransport),
-    #[kind(kind::BOOLEAN_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
-    BooleanLiteral(BooleanLiteralEnum),
-    #[kind(kind::INTEGER_LITERAL_DECIMAL)]
-    IntegerLiteralDecimal(IntegerLiteralDecimalTransport),
-    #[kind(kind::INTEGER_LITERAL_HEX)]
-    IntegerLiteralHex(IntegerLiteralHexTransport),
-    #[kind(kind::INTEGER_LITERAL_BINARY)]
-    IntegerLiteralBinary(IntegerLiteralBinaryTransport),
-    #[kind(kind::INTEGER_LITERAL_OCTAL)]
-    IntegerLiteralOctal(IntegerLiteralOctalTransport),
-    #[kind(kind::FLOAT_LITERAL)]
-    FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(NegativeLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
-    Identifier(IdentifierTransport),
-    #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(ScopedIdentifierTransport),
-    #[kind(kind::GENERIC_PATTERN)]
-    GenericPattern(GenericPatternTransport),
-    #[kind(kind::TUPLE_PATTERN)]
-    TuplePattern(TuplePatternTransport),
-    #[kind(kind::TUPLE_STRUCT_PATTERN)]
-    TupleStructPattern(TupleStructPatternTransport),
-    #[kind(kind::STRUCT_PATTERN)]
-    StructPattern(StructPatternTransport),
-    #[kind(kind::REF_PATTERN)]
-    RefPattern(RefPatternTransport),
-    #[kind(kind::SLICE_PATTERN)]
-    SlicePattern(SlicePatternTransport),
-    #[kind(kind::CAPTURED_PATTERN)]
-    CapturedPattern(CapturedPatternTransport),
-    #[kind(kind::REFERENCE_PATTERN)]
-    ReferencePattern(ReferencePatternTransport),
-    #[kind(kind::MUT_PATTERN)]
-    MutPattern(MutPatternTransport),
-    #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
-    RangePatternWithLeft(RangePatternWithLeftTransport),
-    #[kind(kind::RANGE_PATTERN_PREFIX)]
-    RangePatternPrefix(RangePatternPrefixTransport),
-    #[kind(kind::OR_PATTERN_BINARY)]
-    OrPatternBinary(OrPatternBinaryTransport),
-    #[kind(kind::OR_PATTERN_PREFIX)]
-    OrPatternPrefix(OrPatternPrefixTransport),
-    #[kind(kind::CONST_BLOCK)]
-    ConstBlock(ConstBlockTransport),
-    #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(MacroInvocationTransport),
-    #[kind(kind::REMAINING_FIELD_PATTERN)]
-    #[transport(edged)]
-    RemainingFieldPattern(::sittir_core::options::Edges),
-    #[kind(kind::_WILDCARD_PATTERN)]
-    #[transport(edged)]
-    WildcardPattern(::sittir_core::options::Edges),
-    #[kind(kind::SELF)]
-    #[transport(edged)]
-    Self_(::sittir_core::options::Edges),
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
+pub enum ParametersElementsTransportSlot {
+    #[kind(kind::PARAMETERS_ELEMENTS)]
+    ParametersElements(ParametersElementsTransport),
+    #[kind(kind::_PARAMETERS_ELEMENTS_RECEIVER)]
+    ParametersElementsReceiver(ParametersElementsReceiverTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
+impl ::sittir_core::prepare::Prepare for ParametersElementsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ParameterNameTransportSlot::StringLiteral(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::RawStringLiteral(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::CharLiteralPlain(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::CharLiteralEmpty(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::BooleanLiteral(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::IntegerLiteralHex(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::FloatLiteral(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::NegativeLiteral(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::GenericPattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::TuplePattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::TupleStructPattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::StructPattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::RefPattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::SlicePattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::CapturedPattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::ReferencePattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::MutPattern(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::RangePatternWithLeft(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::RangePatternPrefix(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::OrPatternBinary(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::OrPatternPrefix(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::ConstBlock(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::MacroInvocation(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::RemainingFieldPattern(_) => Ok(()),
-            ParameterNameTransportSlot::WildcardPattern(_) => Ok(()),
-            ParameterNameTransportSlot::Self_(_) => Ok(()),
-            ParameterNameTransportSlot::Verbatim(t) => t.prepare(ctx),
+            ParametersElementsTransportSlot::ParametersElements(t) => t.prepare(ctx),
+            ParametersElementsTransportSlot::ParametersElementsReceiver(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ParameterNameTransportSlot::StringLiteral(t) => t.gap_edges(),
-            ParameterNameTransportSlot::RawStringLiteral(t) => t.gap_edges(),
-            ParameterNameTransportSlot::CharLiteralEscapedSimple(t) => t.gap_edges(),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.gap_edges(),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.gap_edges(),
-            ParameterNameTransportSlot::CharLiteralEscapedHex(t) => t.gap_edges(),
-            ParameterNameTransportSlot::CharLiteralPlain(t) => t.gap_edges(),
-            ParameterNameTransportSlot::CharLiteralEmpty(t) => t.gap_edges(),
-            ParameterNameTransportSlot::BooleanLiteral(t) => t.gap_edges(),
-            ParameterNameTransportSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
-            ParameterNameTransportSlot::IntegerLiteralHex(t) => t.gap_edges(),
-            ParameterNameTransportSlot::IntegerLiteralBinary(t) => t.gap_edges(),
-            ParameterNameTransportSlot::IntegerLiteralOctal(t) => t.gap_edges(),
-            ParameterNameTransportSlot::FloatLiteral(t) => t.gap_edges(),
-            ParameterNameTransportSlot::NegativeLiteral(t) => t.gap_edges(),
-            ParameterNameTransportSlot::Identifier(t) => t.gap_edges(),
-            ParameterNameTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
-            ParameterNameTransportSlot::GenericPattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::TuplePattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::TupleStructPattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::StructPattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::RefPattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::SlicePattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::CapturedPattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::ReferencePattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::MutPattern(t) => t.gap_edges(),
-            ParameterNameTransportSlot::RangePatternWithLeft(t) => t.gap_edges(),
-            ParameterNameTransportSlot::RangePatternPrefix(t) => t.gap_edges(),
-            ParameterNameTransportSlot::OrPatternBinary(t) => t.gap_edges(),
-            ParameterNameTransportSlot::OrPatternPrefix(t) => t.gap_edges(),
-            ParameterNameTransportSlot::ConstBlock(t) => t.gap_edges(),
-            ParameterNameTransportSlot::MacroInvocation(t) => t.gap_edges(),
-            ParameterNameTransportSlot::RemainingFieldPattern(edges) => Some(edges),
-            ParameterNameTransportSlot::WildcardPattern(edges) => Some(edges),
-            ParameterNameTransportSlot::Self_(edges) => Some(edges),
-            ParameterNameTransportSlot::Verbatim(t) => t.gap_edges(),
+            ParametersElementsTransportSlot::ParametersElements(t) => t.gap_edges(),
+            ParametersElementsTransportSlot::ParametersElementsReceiver(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ParameterNameTransportSlot::StringLiteral(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::Identifier(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::GenericPattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::TuplePattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::TupleStructPattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::StructPattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::RefPattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::SlicePattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::CapturedPattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::ReferencePattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::MutPattern(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::RangePatternWithLeft(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::RangePatternPrefix(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::OrPatternBinary(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::OrPatternPrefix(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::ConstBlock(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::RemainingFieldPattern(_) => None,
-            ParameterNameTransportSlot::WildcardPattern(_) => None,
-            ParameterNameTransportSlot::Self_(_) => None,
-            ParameterNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            ParametersElementsTransportSlot::ParametersElements(t) => t.snapshot_edge(),
+            ParametersElementsTransportSlot::ParametersElementsReceiver(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
-            ParameterNameTransportSlot::StringLiteral(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::RawStringLiteral(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedSimple(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::CharLiteralEscapedHex(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::CharLiteralPlain(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::CharLiteralEmpty(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::BooleanLiteral(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::FloatLiteral(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::NegativeLiteral(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::Identifier(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::ScopedIdentifier(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::GenericPattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::TuplePattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::TupleStructPattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::StructPattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::RefPattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::SlicePattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::CapturedPattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::ReferencePattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::MutPattern(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::RangePatternWithLeft(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::RangePatternPrefix(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::OrPatternBinary(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::OrPatternPrefix(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::ConstBlock(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::MacroInvocation(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::RemainingFieldPattern(_) => None,
-            ParameterNameTransportSlot::WildcardPattern(_) => None,
-            ParameterNameTransportSlot::Self_(_) => None,
-            ParameterNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            ParametersElementsTransportSlot::ParametersElements(t) => t.source_separator(ctx),
+            ParametersElementsTransportSlot::ParametersElementsReceiver(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -6943,88 +6760,20 @@ impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for ParameterNameTransportSlot {
+impl ::sittir_core::view::KindOf for ParametersElementsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::StringLiteral(inner) => inner.kind_in(kinds),
-            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
-            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
-            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
-            Self::FloatLiteral(inner) => inner.kind_in(kinds),
-            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
-            Self::GenericPattern(inner) => inner.kind_in(kinds),
-            Self::TuplePattern(inner) => inner.kind_in(kinds),
-            Self::TupleStructPattern(inner) => inner.kind_in(kinds),
-            Self::StructPattern(inner) => inner.kind_in(kinds),
-            Self::RefPattern(inner) => inner.kind_in(kinds),
-            Self::SlicePattern(inner) => inner.kind_in(kinds),
-            Self::CapturedPattern(inner) => inner.kind_in(kinds),
-            Self::ReferencePattern(inner) => inner.kind_in(kinds),
-            Self::MutPattern(inner) => inner.kind_in(kinds),
-            Self::RangePatternWithLeft(inner) => inner.kind_in(kinds),
-            Self::RangePatternPrefix(inner) => inner.kind_in(kinds),
-            Self::OrPatternBinary(inner) => inner.kind_in(kinds),
-            Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
-            Self::ConstBlock(inner) => inner.kind_in(kinds),
-            Self::MacroInvocation(inner) => inner.kind_in(kinds),
-            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+            Self::ParametersElements(inner) => inner.kind_in(kinds),
+            Self::ParametersElementsReceiver(inner) => inner.kind_in(kinds),
         }
     }
 }
 
-impl ::sittir_core::render::Render for ParameterNameTransportSlot {
+impl ::sittir_core::render::Render for ParametersElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParameterNameTransportSlot::StringLiteral(inner) => inner.render(w),
-            ParameterNameTransportSlot::RawStringLiteral(inner) => inner.render(w),
-            ParameterNameTransportSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
-            ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
-            ParameterNameTransportSlot::CharLiteralEscapedHex(inner) => inner.render(w),
-            ParameterNameTransportSlot::CharLiteralPlain(inner) => inner.render(w),
-            ParameterNameTransportSlot::CharLiteralEmpty(inner) => inner.render(w),
-            ParameterNameTransportSlot::BooleanLiteral(inner) => inner.render(w),
-            ParameterNameTransportSlot::IntegerLiteralDecimal(inner) => inner.render(w),
-            ParameterNameTransportSlot::IntegerLiteralHex(inner) => inner.render(w),
-            ParameterNameTransportSlot::IntegerLiteralBinary(inner) => inner.render(w),
-            ParameterNameTransportSlot::IntegerLiteralOctal(inner) => inner.render(w),
-            ParameterNameTransportSlot::FloatLiteral(inner) => inner.render(w),
-            ParameterNameTransportSlot::NegativeLiteral(inner) => inner.render(w),
-            ParameterNameTransportSlot::Identifier(inner) => inner.render(w),
-            ParameterNameTransportSlot::ScopedIdentifier(inner) => inner.render(w),
-            ParameterNameTransportSlot::GenericPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::TuplePattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::TupleStructPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::StructPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::RefPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::SlicePattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::CapturedPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::ReferencePattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::MutPattern(inner) => inner.render(w),
-            ParameterNameTransportSlot::RangePatternWithLeft(inner) => inner.render(w),
-            ParameterNameTransportSlot::RangePatternPrefix(inner) => inner.render(w),
-            ParameterNameTransportSlot::OrPatternBinary(inner) => inner.render(w),
-            ParameterNameTransportSlot::OrPatternPrefix(inner) => inner.render(w),
-            ParameterNameTransportSlot::ConstBlock(inner) => inner.render(w),
-            ParameterNameTransportSlot::MacroInvocation(inner) => inner.render(w),
-            ParameterNameTransportSlot::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
-            ParameterNameTransportSlot::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
-            ParameterNameTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ParameterNameTransportSlot::Verbatim(inner) => inner.render(w),
+            ParametersElementsTransportSlot::ParametersElements(inner) => inner.render(w),
+            ParametersElementsTransportSlot::ParametersElementsReceiver(inner) => inner.render(w),
         }
     }
 }
@@ -7933,7 +7682,7 @@ impl ::sittir_core::render::Render for DynamicTypeTraitTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum MacroInvocationMacroTransportSlot {
+pub enum MacroInvocationFunctionTransportSlot {
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
@@ -7942,33 +7691,33 @@ pub enum MacroInvocationMacroTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
+impl ::sittir_core::prepare::Prepare for MacroInvocationFunctionTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            MacroInvocationMacroTransportSlot::Identifier(t) => t.prepare(ctx),
-            MacroInvocationMacroTransportSlot::Verbatim(t) => t.prepare(ctx),
+            MacroInvocationFunctionTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            MacroInvocationFunctionTransportSlot::Identifier(t) => t.prepare(ctx),
+            MacroInvocationFunctionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
-            MacroInvocationMacroTransportSlot::Identifier(t) => t.gap_edges(),
-            MacroInvocationMacroTransportSlot::Verbatim(t) => t.gap_edges(),
+            MacroInvocationFunctionTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
+            MacroInvocationFunctionTransportSlot::Identifier(t) => t.gap_edges(),
+            MacroInvocationFunctionTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
-            MacroInvocationMacroTransportSlot::Identifier(t) => t.snapshot_edge(),
-            MacroInvocationMacroTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            MacroInvocationFunctionTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            MacroInvocationFunctionTransportSlot::Identifier(t) => t.snapshot_edge(),
+            MacroInvocationFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
-            MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.source_separator(ctx),
-            MacroInvocationMacroTransportSlot::Identifier(t) => t.source_separator(ctx),
-            MacroInvocationMacroTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            MacroInvocationFunctionTransportSlot::ScopedIdentifier(t) => t.source_separator(ctx),
+            MacroInvocationFunctionTransportSlot::Identifier(t) => t.source_separator(ctx),
+            MacroInvocationFunctionTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -7976,7 +7725,7 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for MacroInvocationMacroTransportSlot {
+impl ::sittir_core::view::KindOf for MacroInvocationFunctionTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
@@ -7986,12 +7735,12 @@ impl ::sittir_core::view::KindOf for MacroInvocationMacroTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for MacroInvocationMacroTransportSlot {
+impl ::sittir_core::render::Render for MacroInvocationFunctionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MacroInvocationMacroTransportSlot::ScopedIdentifier(inner) => inner.render(w),
-            MacroInvocationMacroTransportSlot::Identifier(inner) => inner.render(w),
-            MacroInvocationMacroTransportSlot::Verbatim(inner) => inner.render(w),
+            MacroInvocationFunctionTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            MacroInvocationFunctionTransportSlot::Identifier(inner) => inner.render(w),
+            MacroInvocationFunctionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -11038,9 +10787,9 @@ impl ::sittir_core::render::Render for ElseClauseBodyTransportSlot {
 #[transport(choice)]
 pub enum LastMatchArmAttributesTransportSlot {
     #[kind(kind::ATTRIBUTE_ITEM)]
-    AttributeItem(Box<AttributeItemTransport>),
+    AttributeItem(AttributeItemTransport),
     #[kind(kind::INNER_ATTRIBUTE_ITEM)]
-    InnerAttributeItem(Box<InnerAttributeItemTransport>),
+    InnerAttributeItem(InnerAttributeItemTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for LastMatchArmAttributesTransportSlot {
@@ -11085,8 +10834,8 @@ impl ::sittir_core::view::KindOf for LastMatchArmAttributesTransportSlot {
 impl ::sittir_core::render::Render for LastMatchArmAttributesTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LastMatchArmAttributesTransportSlot::AttributeItem(inner) => inner.as_ref().render(w),
-            LastMatchArmAttributesTransportSlot::InnerAttributeItem(inner) => inner.as_ref().render(w),
+            LastMatchArmAttributesTransportSlot::AttributeItem(inner) => inner.render(w),
+            LastMatchArmAttributesTransportSlot::InnerAttributeItem(inner) => inner.render(w),
         }
     }
 }
@@ -11859,7 +11608,7 @@ impl ::sittir_core::view::KindOf for LineCommentContentTransportSlot {
             Self::LineCommentDocOuter(inner) => inner.kind_in(kinds),
             Self::LineCommentDocInner(inner) => inner.kind_in(kinds),
             Self::LineCommentRegular(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(156), ::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(155), ::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -13880,8 +13629,6 @@ impl ::sittir_core::render::Render for RangePatternWithLeftContentTransportSlot 
 pub enum AttributedParameterContentTransportSlot {
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterTransport>),
-    #[kind(kind::SELF_PARAMETER)]
-    SelfParameter(SelfParameterTransport),
     #[kind(kind::VARIADIC_PARAMETER)]
     VariadicParameter(VariadicParameterTransport),
     #[kind(kind::ABSTRACT_TYPE)]
@@ -13930,7 +13677,6 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentTransportSlot
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             AttributedParameterContentTransportSlot::Parameter(t) => t.prepare(ctx),
-            AttributedParameterContentTransportSlot::SelfParameter(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::VariadicParameter(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::AbstractType(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::ReferenceType(t) => t.prepare(ctx),
@@ -13956,7 +13702,6 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentTransportSlot
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             AttributedParameterContentTransportSlot::Parameter(t) => t.gap_edges(),
-            AttributedParameterContentTransportSlot::SelfParameter(t) => t.gap_edges(),
             AttributedParameterContentTransportSlot::VariadicParameter(t) => t.gap_edges(),
             AttributedParameterContentTransportSlot::AbstractType(t) => t.gap_edges(),
             AttributedParameterContentTransportSlot::ReferenceType(t) => t.gap_edges(),
@@ -13982,7 +13727,6 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentTransportSlot
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             AttributedParameterContentTransportSlot::Parameter(t) => t.snapshot_edge(),
-            AttributedParameterContentTransportSlot::SelfParameter(t) => t.snapshot_edge(),
             AttributedParameterContentTransportSlot::VariadicParameter(t) => t.snapshot_edge(),
             AttributedParameterContentTransportSlot::AbstractType(t) => t.snapshot_edge(),
             AttributedParameterContentTransportSlot::ReferenceType(t) => t.snapshot_edge(),
@@ -14008,7 +13752,6 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentTransportSlot
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             AttributedParameterContentTransportSlot::Parameter(t) => t.source_separator(ctx),
-            AttributedParameterContentTransportSlot::SelfParameter(t) => t.source_separator(ctx),
             AttributedParameterContentTransportSlot::VariadicParameter(t) => t.source_separator(ctx),
             AttributedParameterContentTransportSlot::AbstractType(t) => t.source_separator(ctx),
             AttributedParameterContentTransportSlot::ReferenceType(t) => t.source_separator(ctx),
@@ -14040,7 +13783,6 @@ impl ::sittir_core::view::KindOf for AttributedParameterContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Parameter(inner) => inner.kind_in(kinds),
-            Self::SelfParameter(inner) => inner.kind_in(kinds),
             Self::VariadicParameter(inner) => inner.kind_in(kinds),
             Self::AbstractType(inner) => inner.kind_in(kinds),
             Self::ReferenceType(inner) => inner.kind_in(kinds),
@@ -14069,7 +13811,6 @@ impl ::sittir_core::render::Render for AttributedParameterContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             AttributedParameterContentTransportSlot::Parameter(inner) => inner.as_ref().render(w),
-            AttributedParameterContentTransportSlot::SelfParameter(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::VariadicParameter(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::AbstractType(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::ReferenceType(inner) => inner.render(w),
@@ -14499,6 +14240,63 @@ impl ::sittir_core::render::Render for TypeArgumentContentTransportSlot {
             TypeArgumentContentTransportSlot::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
             TypeArgumentContentTransportSlot::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
             TypeArgumentContentTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum AttributedParameterReceiverContentTransportSlot {
+    #[kind(kind::_RECEIVER_PARAMETER_DECLARATION)]
+    ReceiverParameterDeclaration(ReceiverParameterDeclarationTransport),
+    #[kind(kind::SELF_PARAMETER)]
+    SelfParameter(SelfParameterTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for AttributedParameterReceiverContentTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            AttributedParameterReceiverContentTransportSlot::ReceiverParameterDeclaration(t) => t.prepare(ctx),
+            AttributedParameterReceiverContentTransportSlot::SelfParameter(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            AttributedParameterReceiverContentTransportSlot::ReceiverParameterDeclaration(t) => t.gap_edges(),
+            AttributedParameterReceiverContentTransportSlot::SelfParameter(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AttributedParameterReceiverContentTransportSlot::ReceiverParameterDeclaration(t) => t.snapshot_edge(),
+            AttributedParameterReceiverContentTransportSlot::SelfParameter(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            AttributedParameterReceiverContentTransportSlot::ReceiverParameterDeclaration(t) => t.source_separator(ctx),
+            AttributedParameterReceiverContentTransportSlot::SelfParameter(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for AttributedParameterReceiverContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ReceiverParameterDeclaration(inner) => inner.kind_in(kinds),
+            Self::SelfParameter(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedParameterReceiverContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AttributedParameterReceiverContentTransportSlot::ReceiverParameterDeclaration(inner) => inner.render(w),
+            AttributedParameterReceiverContentTransportSlot::SelfParameter(inner) => inner.render(w),
         }
     }
 }
@@ -15043,9 +14841,9 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenTransport {
 pub struct AttributeItemTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_attribute")]
-    #[slot(field = field::ATTRIBUTE, word = 2, width = 5)]
-    pub attribute: ::sittir_core::SlotValue<AttributeTransport>,
+    #[wire(key = "_content")]
+    #[slot(field = field::CONTENT, word = 2, width = 5)]
+    pub content: ::sittir_core::SlotValue<Box<AttributeTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for AttributeItemTransport {
@@ -15070,7 +14868,7 @@ impl ::sittir_core::prepare::Prepare for AttributeItemTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.attribute.prepare(ctx)?;
+        self.content.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15092,9 +14890,9 @@ impl ::sittir_core::prepare::Prepare for AttributeItemTransport {
 pub struct InnerAttributeItemTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_attribute")]
-    #[slot(field = field::ATTRIBUTE, word = 2, width = 5)]
-    pub attribute: ::sittir_core::SlotValue<AttributeTransport>,
+    #[wire(key = "_content")]
+    #[slot(field = field::CONTENT, word = 2, width = 5)]
+    pub content: ::sittir_core::SlotValue<AttributeTransport>,
 }
 
 impl ::sittir_core::view::KindOf for InnerAttributeItemTransport {
@@ -15119,7 +14917,7 @@ impl ::sittir_core::prepare::Prepare for InnerAttributeItemTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.attribute.prepare(ctx)?;
+        self.content.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15143,10 +14941,10 @@ pub struct AttributeTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_path")]
     #[slot(field = field::PATH, word = 2, width = 5)]
-    pub path: ::sittir_core::SlotValue<AttributePathTransportSlot>,
+    pub path: ::sittir_core::SlotValue<Box<AttributePathTransportSlot>>,
     #[wire(key = "_input")]
     #[slot(field = field::INPUT, word = 7, width = 5)]
-    pub input: Option<::sittir_core::SlotValue<AttributeInputTransport>>,
+    pub input: Option<::sittir_core::SlotValue<Box<AttributeInputTransport>>>,
 }
 
 impl ::sittir_core::view::KindOf for AttributeTransport {
@@ -15764,9 +15562,9 @@ pub struct StaticItemTransport {
     #[wire(key = "_visibility_modifier")]
     #[slot(field = field::VISIBILITY_MODIFIER, word = 3, width = 5)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
-    #[wire(key = "_ref")]
-    #[slot(field = field::REF, presence = kind::REF_KEYWORD, word = 2, bit = 0)]
-    pub ref_: bool,
+    #[wire(key = "_by_reference")]
+    #[slot(field = field::BY_REFERENCE, presence = kind::REF_KEYWORD, word = 2, bit = 0)]
+    pub by_reference: bool,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
     pub mutable: bool,
@@ -15804,7 +15602,7 @@ impl ::sittir_core::prepare::Prepare for StaticItemTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.visibility_modifier.prepare(ctx)?;
-        self.ref_.prepare(ctx)?;
+        self.by_reference.prepare(ctx)?;
         self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -15842,9 +15640,9 @@ pub struct TypeItemTransport {
     #[wire(key = "_where_clause")]
     #[slot(field = field::WHERE_CLAUSE, word = 17, width = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
-    #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 22, width = 5)]
-    pub type_: ::sittir_core::SlotValue<TypeTransport>,
+    #[wire(key = "_value")]
+    #[slot(field = field::VALUE, word = 22, width = 5)]
+    pub value: ::sittir_core::SlotValue<TypeTransport>,
     #[wire(key = "_trailing_where_clause")]
     #[slot(field = field::TRAILING_WHERE_CLAUSE, word = 27, width = 5)]
     pub trailing_where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
@@ -15876,7 +15674,7 @@ impl ::sittir_core::prepare::Prepare for TypeItemTransport {
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
         self.where_clause.prepare(ctx)?;
-        self.type_.prepare(ctx)?;
+        self.value.prepare(ctx)?;
         self.trailing_where_clause.prepare(ctx)?;
         Ok(())
     }
@@ -16104,7 +15902,7 @@ pub struct WhereClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_where_predicates")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::WHERE_PREDICATES, word = 2, width = 5)]
     pub where_predicates: Option<::sittir_core::SlotValue<WherePredicatesTransport>>,
 }
 
@@ -16553,9 +16351,9 @@ pub struct ConstParameterTransport {
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 12, width = 5)]
-    pub value: Option<::sittir_core::SlotValue<ConstParameterValueTransportSlot>>,
+    #[wire(key = "_default")]
+    #[slot(field = field::DEFAULT, word = 12, width = 5)]
+    pub default: Option<::sittir_core::SlotValue<ConstParameterDefaultTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ConstParameterTransport {
@@ -16582,7 +16380,7 @@ impl ::sittir_core::prepare::Prepare for ConstParameterTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.default.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16610,9 +16408,9 @@ pub struct TypeParameterTransport {
     #[wire(key = "_bounds")]
     #[slot(field = field::BOUNDS, word = 7, width = 5)]
     pub bounds: Option<::sittir_core::SlotValue<TraitBoundsTransport>>,
-    #[wire(key = "_default_type")]
-    #[slot(field = field::DEFAULT_TYPE, word = 12, width = 5)]
-    pub default_type: Option<::sittir_core::SlotValue<TypeTransport>>,
+    #[wire(key = "_default")]
+    #[slot(field = field::DEFAULT, word = 12, width = 5)]
+    pub default: Option<::sittir_core::SlotValue<TypeTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for TypeParameterTransport {
@@ -16639,7 +16437,7 @@ impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.bounds.prepare(ctx)?;
-        self.default_type.prepare(ctx)?;
+        self.default.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16717,9 +16515,9 @@ pub struct LetDeclarationTransport {
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
     pub mutable: bool,
-    #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 3, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<PatternTransport>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 3, width = 5)]
+    pub name: ::sittir_core::SlotValue<PatternTransport>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 8, width = 5)]
     pub type_: Option<::sittir_core::SlotValue<TypeTransport>>,
@@ -16754,7 +16552,7 @@ impl ::sittir_core::prepare::Prepare for LetDeclarationTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.mutable.prepare(ctx)?;
-        self.pattern.prepare(ctx)?;
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
@@ -16886,7 +16684,7 @@ pub struct UseListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_use_clauses")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::USE_CLAUSES, word = 2, width = 5)]
     pub use_clauses: Option<::sittir_core::SlotValue<UseClausesTransport>>,
 }
 
@@ -16934,9 +16732,9 @@ impl ::sittir_core::prepare::Prepare for UseListTransport {
 pub struct UseAsClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_path")]
-    #[slot(field = field::PATH, word = 2, width = 5)]
-    pub path: ::sittir_core::SlotValue<AttributePathTransportSlot>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 5)]
+    pub name: ::sittir_core::SlotValue<AttributePathTransportSlot>,
     #[wire(key = "_alias")]
     #[slot(field = field::ALIAS, word = 7, width = 5)]
     pub alias: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -16964,7 +16762,7 @@ impl ::sittir_core::prepare::Prepare for UseAsClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.path.prepare(ctx)?;
+        self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
     }
@@ -16988,7 +16786,7 @@ pub struct UseWildcardTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_use_wildcard_group")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::USE_WILDCARD_GROUP, word = 2, width = 5)]
     pub use_wildcard_group: Option<::sittir_core::SlotValue<UseWildcardGroupTransport>>,
 }
 
@@ -17032,13 +16830,13 @@ impl ::sittir_core::prepare::Prepare for UseWildcardTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct ParametersTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 5)]
-    pub elements: Option<::sittir_core::SlotValue<ParametersElementsTransport>>,
+    pub elements: Option<::sittir_core::SlotValue<Box<ParametersElementsTransportSlot>>>,
 }
 
 impl ::sittir_core::view::KindOf for ParametersTransport {
@@ -17200,7 +16998,7 @@ pub struct ParameterTransport {
     pub mutable: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 3, width = 5)]
-    pub name: ::sittir_core::SlotValue<ParameterNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<PatternTransport>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 8, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
@@ -17554,7 +17352,7 @@ pub struct ForLifetimesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lifetimes")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::LIFETIMES, word = 2, width = 5)]
     pub lifetimes: ::sittir_core::SlotValue<LifetimesTransport>,
 }
 
@@ -17610,7 +17408,7 @@ pub struct FunctionTypeTransport {
     pub content: ::sittir_core::SlotValue<Box<FunctionTypeContentTransportSlot>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 12, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<ParametersTransport>,
+    pub parameters: ::sittir_core::SlotValue<Box<ParametersTransport>>,
     #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE, word = 17, width = 5)]
     pub return_type: Option<::sittir_core::SlotValue<Box<TypeTransport>>>,
@@ -17664,7 +17462,7 @@ pub struct TupleTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_types")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::TYPES, word = 2, width = 5)]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
 }
 
@@ -18130,9 +17928,9 @@ pub struct ReferenceTypeTransport {
     #[wire(key = "_lifetime")]
     #[slot(field = field::LIFETIME, word = 3, width = 5)]
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeTransport>>,
-    #[wire(key = "_mutable")]
-    #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
-    pub mutable: bool,
+    #[wire(key = "_exclusive")]
+    #[slot(field = field::EXCLUSIVE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
+    pub exclusive: bool,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 8, width = 5)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -18161,7 +17959,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceTypeTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.lifetime.prepare(ctx)?;
-        self.mutable.prepare(ctx)?;
+        self.exclusive.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
     }
@@ -18362,9 +18160,9 @@ impl ::sittir_core::render::Render for MutableSpecifierTransport {
 pub struct MacroInvocationTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_macro")]
-    #[slot(field = field::MACRO, word = 2, width = 5)]
-    pub macro_: ::sittir_core::SlotValue<Box<MacroInvocationMacroTransportSlot>>,
+    #[wire(key = "_function")]
+    #[slot(field = field::FUNCTION, word = 2, width = 5)]
+    pub function: ::sittir_core::SlotValue<Box<MacroInvocationFunctionTransportSlot>>,
     #[wire(key = "_arguments")]
     #[slot(field = field::ARGUMENTS, word = 7, width = 5)]
     pub arguments: ::sittir_core::SlotValue<DelimTokenTreeTransport>,
@@ -18392,7 +18190,7 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.macro_.prepare(ctx)?;
+        self.function.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
         Ok(())
     }
@@ -18577,9 +18375,9 @@ pub struct UnaryExpressionTransport {
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR, word = 2, width = 5)]
     pub operator: ::sittir_core::SlotValue<UnaryExpressionOperatorTransportSlot>,
-    #[wire(key = "_operand")]
-    #[slot(field = field::OPERAND, word = 7, width = 5)]
-    pub operand: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[wire(key = "_argument")]
+    #[slot(field = field::ARGUMENT, word = 7, width = 5)]
+    pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for UnaryExpressionTransport {
@@ -18609,7 +18407,7 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
-        self.operand.prepare(ctx)?;
+        self.argument.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18631,9 +18429,9 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionTransport {
 pub struct TryExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[wire(key = "_argument")]
+    #[slot(field = field::ARGUMENT, word = 2, width = 5)]
+    pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for TryExpressionTransport {
@@ -18658,7 +18456,7 @@ impl ::sittir_core::prepare::Prepare for TryExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.argument.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18847,9 +18645,9 @@ impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprTransport {
 pub struct TypeCastExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[wire(key = "_expression")]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
+    pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -18877,7 +18675,7 @@ impl ::sittir_core::prepare::Prepare for TypeCastExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.expression.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
     }
@@ -19152,9 +18950,9 @@ pub struct TupleExpressionTransport {
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES, word = 2, width = 2, run = 5)]
     pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
-    #[wire(key = "_expressions")]
-    #[slot(word = 4, width = 5)]
-    pub expressions: ::sittir_core::SlotValue<ExpressionsTransport>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, word = 4, width = 5)]
+    pub elements: ::sittir_core::SlotValue<ExpressionsTransport>,
     #[wire(key = "_attributes_separator_space")]
     pub attributes_separator_space: Option<u16>,
 }
@@ -19185,7 +18983,7 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionTransport {
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_TUPLE_EXPRESSION_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
-        self.expressions.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19360,9 +19158,9 @@ pub struct ShorthandFieldInitializerTransport {
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES, word = 2, width = 2, run = 5)]
     pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
-    #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 4, width = 5)]
-    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
+    #[wire(key = "_field")]
+    #[slot(field = field::FIELD, word = 4, width = 5)]
+    pub field: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_attributes_separator_space")]
     pub attributes_separator_space: Option<u16>,
 }
@@ -19393,7 +19191,7 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
-        self.name.prepare(ctx)?;
+        self.field.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19415,17 +19213,17 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
 pub struct FieldInitializerTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_attribute_item")]
-    #[slot(word = 2, width = 2, run = 5)]
-    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
+    #[wire(key = "_attributes")]
+    #[slot(field = field::ATTRIBUTES, word = 2, width = 2, run = 5)]
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_field")]
     #[slot(field = field::FIELD, word = 4, width = 5)]
     pub field: ::sittir_core::SlotValue<FieldInitializerFieldTransportSlot>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 9, width = 5)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[wire(key = "_attribute_item_separator_space")]
-    pub attribute_item_separator_space: Option<u16>,
+    #[wire(key = "_attributes_separator_space")]
+    pub attributes_separator_space: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for FieldInitializerTransport {
@@ -19450,10 +19248,10 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_slot_gaps(self.attribute_item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_attribute_item"));
-        self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_ATTRIBUTE_ITEM, ctx);
-        self.attribute_item.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.attributes.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_attributes"));
+        self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_ATTRIBUTES, ctx);
+        self.attributes.prepare(ctx)?;
         self.field.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -19745,9 +19543,9 @@ impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
 pub struct MatchExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[wire(key = "_subject")]
+    #[slot(field = field::SUBJECT, word = 2, width = 5)]
+    pub subject: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 7, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<MatchBlockTransport>>,
@@ -19775,7 +19573,7 @@ impl ::sittir_core::prepare::Prepare for MatchExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.subject.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
@@ -20079,12 +19877,12 @@ pub struct ForExpressionTransport {
     #[wire(key = "_label")]
     #[slot(field = field::LABEL, word = 2, width = 5)]
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
-    #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 7, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 12, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[wire(key = "_left")]
+    #[slot(field = field::LEFT, word = 7, width = 5)]
+    pub left: ::sittir_core::SlotValue<Box<PatternTransport>>,
+    #[wire(key = "_right")]
+    #[slot(field = field::RIGHT, word = 12, width = 5)]
+    pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 17, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
@@ -20113,8 +19911,8 @@ impl ::sittir_core::prepare::Prepare for ForExpressionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.label.prepare(ctx)?;
-        self.pattern.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.left.prepare(ctx)?;
+        self.right.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
@@ -20496,12 +20294,12 @@ impl ::sittir_core::prepare::Prepare for AwaitExpressionTransport {
 pub struct FieldExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_field")]
-    #[slot(field = field::FIELD, word = 7, width = 5)]
-    pub field: ::sittir_core::SlotValue<FieldInitializerFieldTransportSlot>,
+    #[wire(key = "_object")]
+    #[slot(field = field::OBJECT, word = 2, width = 5)]
+    pub object: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    #[wire(key = "_property")]
+    #[slot(field = field::PROPERTY, word = 7, width = 5)]
+    pub property: ::sittir_core::SlotValue<FieldInitializerFieldTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for FieldExpressionTransport {
@@ -20526,8 +20324,8 @@ impl ::sittir_core::prepare::Prepare for FieldExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
-        self.field.prepare(ctx)?;
+        self.object.prepare(ctx)?;
+        self.property.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20917,9 +20715,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
 pub struct SlicePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_patterns")]
-    #[slot(word = 2, width = 5)]
-    pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
+    pub elements: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for SlicePatternTransport {
@@ -20944,7 +20742,7 @@ impl ::sittir_core::prepare::Prepare for SlicePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20970,7 +20768,7 @@ pub struct TupleStructPatternTransport {
     #[slot(field = field::TYPE, word = 2, width = 5)]
     pub type_: ::sittir_core::SlotValue<Box<TupleStructPatternTypeTransportSlot>>,
     #[wire(key = "_patterns")]
-    #[slot(word = 7, width = 5)]
+    #[slot(field = field::PATTERNS, word = 7, width = 5)]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
 
@@ -21271,9 +21069,9 @@ impl ::sittir_core::prepare::Prepare for CapturedPatternTransport {
 pub struct ReferencePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_mutable")]
-    #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
-    pub mutable: bool,
+    #[wire(key = "_exclusive")]
+    #[slot(field = field::EXCLUSIVE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
+    pub exclusive: bool,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 3, width = 5)]
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -21301,7 +21099,7 @@ impl ::sittir_core::prepare::Prepare for ReferencePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.mutable.prepare(ctx)?;
+        self.exclusive.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         Ok(())
     }
@@ -24527,7 +24325,7 @@ pub struct AttributeInputTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub value: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
     #[wire(key = "_arguments")]
     #[slot(field = field::ARGUMENTS, word = 7, width = 5)]
     pub arguments: Option<::sittir_core::SlotValue<DelimTokenTreeTransport>>,
@@ -26327,19 +26125,19 @@ pub struct LineCommentRegularTransport {
 
 impl ::sittir_core::view::KindOf for LineCommentRegularTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for LineCommentRegularTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(156) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(155) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for LineCommentRegularTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(156)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(156)); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(155)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(155)); w.text(&self.text) })
     }
 }
 
@@ -27477,7 +27275,7 @@ pub struct StructItemBraceTransport {
     #[slot(field = field::TYPE_PARAMETERS, word = 12, width = 5)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[wire(key = "_where_clause")]
-    #[slot(word = 17, width = 5)]
+    #[slot(field = field::WHERE_CLAUSE, word = 17, width = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 22, width = 5)]
@@ -27545,7 +27343,7 @@ pub struct StructItemTupleTransport {
     #[slot(field = field::BODY, word = 17, width = 5)]
     pub body: ::sittir_core::SlotValue<OrderedFieldDeclarationListTransport>,
     #[wire(key = "_where_clause")]
-    #[slot(word = 22, width = 5)]
+    #[slot(field = field::WHERE_CLAUSE, word = 22, width = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
 }
 
@@ -28758,6 +28556,214 @@ impl ::sittir_core::render::Render for DedentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_RECEIVER_PARAMETER_DECLARATION, layout = [kind::SELF, kind::COLON], words = 8)]
+pub struct ReceiverParameterDeclarationTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_mutable")]
+    #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
+    pub mutable: bool,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE, word = 3, width = 5)]
+    pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
+}
+
+impl ::sittir_core::view::KindOf for ReceiverParameterDeclarationTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(435)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for ReceiverParameterDeclarationTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(435) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for ReceiverParameterDeclarationTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(435)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_receiver_parameter_declaration(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ReceiverParameterDeclarationTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.mutable.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_ATTRIBUTED_PARAMETER_RECEIVER, words = 12)]
+pub struct AttributedParameterReceiverTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_attribute_item")]
+    #[slot(word = 2, width = 5)]
+    pub attribute_item: Option<::sittir_core::SlotValue<Box<AttributeItemTransport>>>,
+    #[wire(key = "_content")]
+    #[slot(word = 7, width = 5)]
+    pub content: ::sittir_core::SlotValue<Box<AttributedParameterReceiverContentTransportSlot>>,
+}
+
+impl ::sittir_core::view::KindOf for AttributedParameterReceiverTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(436)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for AttributedParameterReceiverTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(436) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for AttributedParameterReceiverTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(436)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_parameter_receiver(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AttributedParameterReceiverTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.attribute_item.prepare(ctx)?;
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_PARAMETERS_ELEMENTS_RECEIVER, words = 12)]
+pub struct ParametersElementsReceiverTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_receiver")]
+    #[slot(field = field::RECEIVER, word = 2, width = 5)]
+    pub receiver: ::sittir_core::SlotValue<Box<AttributedParameterReceiverTransport>>,
+    #[wire(key = "_parameters_elements_receiver_group")]
+    #[slot(word = 7, width = 5)]
+    pub parameters_elements_receiver_group: Option<::sittir_core::SlotValue<ParametersElementsReceiverGroupTransport>>,
+}
+
+impl ::sittir_core::view::KindOf for ParametersElementsReceiverTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(437)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for ParametersElementsReceiverTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(437) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for ParametersElementsReceiverTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(437)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements_receiver(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ParametersElementsReceiverTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.receiver.prepare(ctx)?;
+        self.parameters_elements_receiver_group.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::PARAMETERS_ELEMENTS_RECEIVER_GROUP, min_depth = 2, layout = [kind::COMMA], words = 7)]
+pub struct ParametersElementsReceiverGroupTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
+    pub elements: Option<::sittir_core::SlotValue<ParametersElementsTransport>>,
+}
+
+impl ::sittir_core::view::KindOf for ParametersElementsReceiverGroupTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(438)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for ParametersElementsReceiverGroupTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(438) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for ParametersElementsReceiverGroupTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(438)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements_receiver_group(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ParametersElementsReceiverGroupTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.elements.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_ERROR_SENTINEL, text, words = 2)]
 pub struct ErrorSentinelTransport {
     #[wire(key = "$_layout")]
@@ -28815,19 +28821,19 @@ pub struct TypeIdentifierTransport {
 
 impl ::sittir_core::view::KindOf for TypeIdentifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(468)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(468) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(473) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(468)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(473)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
 }
 
@@ -28863,19 +28869,19 @@ pub struct FieldIdentifierTransport {
 
 impl ::sittir_core::view::KindOf for FieldIdentifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(465)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(470)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FieldIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(465) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(470) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FieldIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(465)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(470)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
     }
 }
 
@@ -28911,19 +28917,19 @@ pub struct ShorthandFieldIdentifierTransport {
 
 impl ::sittir_core::view::KindOf for ShorthandFieldIdentifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(467)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(472)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShorthandFieldIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(467) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(472) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShorthandFieldIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(467)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(472)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
     }
 }
 
@@ -32484,7 +32490,7 @@ pub enum RawKeywordTransport {
 
 impl ::sittir_core::view::KindOf for RawKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32512,7 +32518,7 @@ pub enum MacroRulesBangTransport {
 
 impl ::sittir_core::view::KindOf for MacroRulesBangTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34385,7 +34391,7 @@ impl ::sittir_core::prepare::SeatTarget for TraitBoundsBoundsTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ConstParameterValueTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for ConstParameterDefaultTransportSlot {
     fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Block(t) => t.seat_target(table, ctx),
@@ -34409,37 +34415,6 @@ impl ::sittir_core::prepare::SeatTarget for UseDeclarationArgumentTransportSlot 
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for ParameterNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::StringLiteral(t) => t.seat_target(table, ctx),
-            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
-            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
-            Self::GenericPattern(t) => t.seat_target(table, ctx),
-            Self::TuplePattern(t) => t.seat_target(table, ctx),
-            Self::TupleStructPattern(t) => t.seat_target(table, ctx),
-            Self::StructPattern(t) => t.seat_target(table, ctx),
-            Self::RefPattern(t) => t.seat_target(table, ctx),
-            Self::SlicePattern(t) => t.seat_target(table, ctx),
-            Self::CapturedPattern(t) => t.seat_target(table, ctx),
-            Self::ReferencePattern(t) => t.seat_target(table, ctx),
-            Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
-            Self::MutPattern(t) => t.seat_target(table, ctx),
-            Self::RangePatternWithLeft(t) => t.seat_target(table, ctx),
-            Self::RangePatternPrefix(t) => t.seat_target(table, ctx),
-            Self::OrPatternBinary(t) => t.seat_target(table, ctx),
-            Self::OrPatternPrefix(t) => t.seat_target(table, ctx),
-            Self::ConstBlock(t) => t.seat_target(table, ctx),
-            Self::MacroInvocation(t) => t.seat_target(table, ctx),
-            Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -34565,7 +34540,7 @@ impl ::sittir_core::prepare::SeatTarget for DynamicTypeTraitTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for MacroInvocationMacroTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for MacroInvocationFunctionTransportSlot {
     fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
@@ -35468,14 +35443,14 @@ fn render_non_special_token(node: &NonSpecialTokenTransport, w: &mut dyn ::sitti
 }
 
 fn render_attribute_item(node: &AttributeItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let attribute = &node.attribute;
+    let content = &node.content;
     w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("#")?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_POUND_AFTER);
     w.site_at(options::SITE_ATTRIBUTE_ITEM_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_LBRACK_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_attribute", 0, w, |w| attribute.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     w.site_at(options::SITE_ATTRIBUTE_ITEM_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -35483,7 +35458,7 @@ fn render_attribute_item(node: &AttributeItemTransport, w: &mut dyn ::sittir_cor
 }
 
 fn render_inner_attribute_item(node: &InnerAttributeItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let attribute = &node.attribute;
+    let content = &node.content;
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("#")?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_POUND_AFTER);
@@ -35493,7 +35468,7 @@ fn render_inner_attribute_item(node: &InnerAttributeItemTransport, w: &mut dyn :
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_LBRACK_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_attribute", 0, w, |w| attribute.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     w.site_at(options::SITE_INNER_ATTRIBUTE_ITEM_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -35699,9 +35674,9 @@ fn render_const_item(node: &ConstItemTransport, w: &mut dyn ::sittir_core::rende
 }
 
 fn render_static_item(node: &StaticItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let by_reference = View::new(&node.by_reference, "ref");
     let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");
     let name = &node.name;
-    let ref_ = View::new(&node.ref_, "ref");
     let type_ = &node.type_;
     let value = View::new(&node.value, "{}");
     let visibility_modifier = View::new(&node.visibility_modifier, "{}");
@@ -35710,10 +35685,10 @@ fn render_static_item(node: &StaticItemTransport, w: &mut dyn ::sittir_core::ren
     w.site_at(options::SITE_STATIC_ITEM_STATIC_KEYWORD_BEFORE);
     w.text("static")?;
     w.site_at(options::SITE_STATIC_ITEM_STATIC_KEYWORD_AFTER);
-    if ref_.is_present() {
-        w.site_at(options::SITE_STATIC_ITEM_REF_BEFORE);
-        ref_.render(w)?;
-        w.site_at(options::SITE_STATIC_ITEM_REF_AFTER);
+    if by_reference.is_present() {
+        w.site_at(options::SITE_STATIC_ITEM_BY_REFERENCE_BEFORE);
+        by_reference.render(w)?;
+        w.site_at(options::SITE_STATIC_ITEM_BY_REFERENCE_AFTER);
     }
     if mutable.is_present() {
         w.site_at(options::SITE_STATIC_ITEM_MUTABLE_BEFORE);
@@ -35740,8 +35715,8 @@ fn render_static_item(node: &StaticItemTransport, w: &mut dyn ::sittir_core::ren
 fn render_type_item(node: &TypeItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let trailing_where_clause = View::new(&node.trailing_where_clause, "{}");
-    let type_ = &node.type_;
     let type_parameters = View::new(&node.type_parameters, "{}");
+    let value = &node.value;
     let visibility_modifier = View::new(&node.visibility_modifier, "{}");
     let where_clause = View::new(&node.where_clause, "{}");
     w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -35755,7 +35730,7 @@ fn render_type_item(node: &TypeItemTransport, w: &mut dyn ::sittir_core::render:
     w.site_at(options::SITE_TYPE_ITEM_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_TYPE_ITEM_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_trailing_where_clause", 0, w, |w| trailing_where_clause.render(w))?;
     w.site_at(options::SITE_TYPE_ITEM_SEMI_BEFORE);
     w.text(";")?;
@@ -35965,9 +35940,9 @@ fn render_type_parameters(node: &TypeParametersTransport, w: &mut dyn ::sittir_c
 }
 
 fn render_const_parameter(node: &ConstParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let default = View::new(&node.default, "{}");
     let name = &node.name;
     let type_ = &node.type_;
-    let value = View::new(&node.value, "{}");
     w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("const")?;
     w.site_at(options::SITE_CONST_PARAMETER_CONST_KEYWORD_AFTER);
@@ -35976,11 +35951,11 @@ fn render_const_parameter(node: &ConstParameterTransport, w: &mut dyn ::sittir_c
     w.text(":")?;
     w.site_at(options::SITE_CONST_PARAMETER_COLON_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
-    if value.is_present() {
+    if default.is_present() {
         w.site_at(options::SITE_CONST_PARAMETER_EQ_BEFORE);
         w.text("=")?;
         w.site_at(options::SITE_CONST_PARAMETER_EQ_AFTER);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_default", 0, w, |w| default.render(w))?;
     }
     w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -35988,16 +35963,16 @@ fn render_const_parameter(node: &ConstParameterTransport, w: &mut dyn ::sittir_c
 
 fn render_type_parameter(node: &TypeParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let bounds = View::new(&node.bounds, "{}");
-    let default_type = View::new(&node.default_type, "{}");
+    let default = View::new(&node.default, "{}");
     let name = &node.name;
     w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_bounds", 0, w, |w| bounds.render(w))?;
-    if default_type.is_present() {
+    if default.is_present() {
         w.site_at(options::SITE_TYPE_PARAMETER_EQ_BEFORE);
         w.text("=")?;
         w.site_at(options::SITE_TYPE_PARAMETER_EQ_AFTER);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_default_type", 0, w, |w| default_type.render(w))?;
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_default", 0, w, |w| default.render(w))?;
     }
     w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -36016,7 +35991,7 @@ fn render_lifetime_parameter(node: &LifetimeParameterTransport, w: &mut dyn ::si
 fn render_let_declaration(node: &LetDeclarationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = View::new(&node.alternative, "{}");
     let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");
-    let pattern = &node.pattern;
+    let name = &node.name;
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
     w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -36027,7 +36002,7 @@ fn render_let_declaration(node: &LetDeclarationTransport, w: &mut dyn ::sittir_c
         mutable.render(w)?;
         w.site_at(options::SITE_LET_DECLARATION_MUTABLE_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     if type_.is_present() {
         w.site_at(options::SITE_LET_DECLARATION_COLON_BEFORE);
         w.text(":")?;
@@ -36095,9 +36070,9 @@ fn render_use_list(node: &UseListTransport, w: &mut dyn ::sittir_core::render::R
 
 fn render_use_as_clause(node: &UseAsClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
-    let path = &node.path;
+    let name = &node.name;
     w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_path", 0, w, |w| path.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     w.site_at(options::SITE_USE_AS_CLAUSE_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_USE_AS_CLAUSE_AS_KEYWORD_AFTER);
@@ -36397,17 +36372,17 @@ fn render_type_binding(node: &TypeBindingTransport, w: &mut dyn ::sittir_core::r
 }
 
 fn render_reference_type(node: &ReferenceTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let exclusive = View::new(::sittir_core::view::Presence::new(node.exclusive, MutableSpecifierTransport::MutableSpecifier), "{}");
     let lifetime = View::new(&node.lifetime, "{}");
-    let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_TYPE_AMP_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_lifetime", 0, w, |w| lifetime.render(w))?;
-    if mutable.is_present() {
-        w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_BEFORE);
-        mutable.render(w)?;
-        w.site_at(options::SITE_REFERENCE_TYPE_MUTABLE_AFTER);
+    if exclusive.is_present() {
+        w.site_at(options::SITE_REFERENCE_TYPE_EXCLUSIVE_BEFORE);
+        exclusive.render(w)?;
+        w.site_at(options::SITE_REFERENCE_TYPE_EXCLUSIVE_AFTER);
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -36443,9 +36418,9 @@ fn render_dynamic_type(node: &DynamicTypeTransport, w: &mut dyn ::sittir_core::r
 
 fn render_macro_invocation(node: &MacroInvocationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = &node.arguments;
-    let macro_ = &node.macro_;
+    let function = &node.function;
     w.edge(::sittir_core::types::KindId(259), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_macro", 0, w, |w| macro_.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_function", 0, w, |w| function.render(w))?;
     w.site_at(options::SITE_MACRO_INVOCATION_BANG_BEFORE);
     w.text("!")?;
     w.site_at(options::SITE_MACRO_INVOCATION_BANG_AFTER);
@@ -36494,20 +36469,20 @@ fn render_scoped_type_identifier(node: &ScopedTypeIdentifierTransport, w: &mut d
 }
 
 fn render_unary_expression(node: &UnaryExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let operand = &node.operand;
+    let argument = &node.argument;
     let operator = &node.operator;
     w.edge(::sittir_core::types::KindId(267), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", 0, w, |w| operator.render(w))?;
     w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operand", 0, w, |w| operand.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", 0, w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(267), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_try_expression(node: &TryExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let value = &node.value;
+    let argument = &node.argument;
     w.edge(::sittir_core::types::KindId(268), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", 0, w, |w| argument.render(w))?;
     w.site_at(options::SITE_TRY_EXPRESSION_QMARK_BEFORE);
     w.text("?")?;
     w.edge(::sittir_core::types::KindId(268), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -36556,10 +36531,10 @@ fn render_compound_assignment_expr(node: &CompoundAssignmentExprTransport, w: &m
 }
 
 fn render_type_cast_expression(node: &TypeCastExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = &node.expression;
     let type_ = &node.type_;
-    let value = &node.value;
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", 0, w, |w| expression.render(w))?;
     w.site_at(options::SITE_TYPE_CAST_EXPRESSION_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_TYPE_CAST_EXPRESSION_AS_KEYWORD_AFTER);
@@ -36637,12 +36612,12 @@ fn render_tuple_expression(node: &TupleExpressionTransport, w: &mut dyn ::sittir
         tail: Some(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
-    let expressions = &node.expressions;
+    let elements = &node.elements;
     w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_EXPRESSION_LPAREN_AFTER);
     attributes.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expressions", 0, w, |w| expressions.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_TUPLE_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -36688,32 +36663,32 @@ fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport,
         tail: Some(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
-    let name = &node.name;
+    let field = &node.field;
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_field", 0, w, |w| field.render(w))?;
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_field_initializer(node: &FieldInitializerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let attribute_item = ListView {
-        items: &node.attribute_item,
+    let attributes = ListView {
+        items: &node.attributes,
         template: "{}",
         token: "",
         separators: None,
         before: 0,
-        after: node.attribute_item_separator_space.unwrap_or(0),
+        after: node.attributes_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_START),
-        tail: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_END),
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attribute_item"),
+        head: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTES_START),
+        tail: Some(options::SITE_FIELD_INITIALIZER_ATTRIBUTES_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
     let field = &node.field;
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    attribute_item.render(w)?;
+    attributes.render(w)?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_field", 0, w, |w| field.render(w))?;
     w.site_at(options::SITE_FIELD_INITIALIZER_COLON_BEFORE);
     w.text(":")?;
@@ -36797,11 +36772,11 @@ fn render_else_clause(node: &ElseClauseTransport, w: &mut dyn ::sittir_core::ren
 
 fn render_match_expression(node: &MatchExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let value = &node.value;
+    let subject = &node.subject;
     w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("match")?;
     w.site_at(options::SITE_MATCH_EXPRESSION_MATCH_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_subject", 0, w, |w| subject.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -36908,8 +36883,8 @@ fn render_loop_expression(node: &LoopExpressionTransport, w: &mut dyn ::sittir_c
 fn render_for_expression(node: &ForExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let label = View::new(&node.label, "{}");
-    let pattern = &node.pattern;
-    let value = &node.value;
+    let left = &node.left;
+    let right = &node.right;
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if label.is_present() {
         ::sittir_core::layout::render_unit(node.layout.as_deref(), "_label", 0, w, |w| label.render(w))?;
@@ -36920,11 +36895,11 @@ fn render_for_expression(node: &ForExpressionTransport, w: &mut dyn ::sittir_cor
     w.site_at(options::SITE_FOR_EXPRESSION_FOR_KEYWORD_BEFORE);
     w.text("for")?;
     w.site_at(options::SITE_FOR_EXPRESSION_FOR_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", 0, w, |w| left.render(w))?;
     w.site_at(options::SITE_FOR_EXPRESSION_IN_KEYWORD_BEFORE);
     w.text("in")?;
     w.site_at(options::SITE_FOR_EXPRESSION_IN_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", 0, w, |w| right.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -37026,14 +37001,14 @@ fn render_await_expression(node: &AwaitExpressionTransport, w: &mut dyn ::sittir
 }
 
 fn render_field_expression(node: &FieldExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let field = &node.field;
-    let value = &node.value;
+    let object = &node.object;
+    let property = &node.property;
     w.edge(::sittir_core::types::KindId(308), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_object", 0, w, |w| object.render(w))?;
     w.site_at(options::SITE_FIELD_EXPRESSION_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_FIELD_EXPRESSION_DOT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_field", 0, w, |w| field.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_property", 0, w, |w| property.render(w))?;
     w.edge(::sittir_core::types::KindId(308), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -37152,12 +37127,12 @@ fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_slice_pattern(node: &SlicePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let patterns = View::new(&node.patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(317), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_SLICE_PATTERN_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_patterns", 0, w, |w| patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_SLICE_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(317), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -37228,15 +37203,15 @@ fn render_captured_pattern(node: &CapturedPatternTransport, w: &mut dyn ::sittir
 }
 
 fn render_reference_pattern(node: &ReferencePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");
+    let exclusive = View::new(::sittir_core::view::Presence::new(node.exclusive, MutableSpecifierTransport::MutableSpecifier), "{}");
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(326), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_PATTERN_AMP_AFTER);
-    if mutable.is_present() {
-        w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_BEFORE);
-        mutable.render(w)?;
-        w.site_at(options::SITE_REFERENCE_PATTERN_MUTABLE_AFTER);
+    if exclusive.is_present() {
+        w.site_at(options::SITE_REFERENCE_PATTERN_EXCLUSIVE_BEFORE);
+        exclusive.render(w)?;
+        w.site_at(options::SITE_REFERENCE_PATTERN_EXCLUSIVE_AFTER);
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(326), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -38014,9 +37989,9 @@ fn render_reference_expression_raw_const(node: &ReferenceExpressionRawConstTrans
     w.edge(::sittir_core::types::KindId(371), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_AMP_AFTER);
-    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_RAW_KEYWORD_BEFORE);
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_RAW_BEFORE);
     w.text("raw")?;
-    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_RAW_KEYWORD_AFTER);
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_RAW_AFTER);
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_CONST_KEYWORD_BEFORE);
     w.text("const")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_CONST_KEYWORD_AFTER);
@@ -38030,10 +38005,12 @@ fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutTransport
     w.edge(::sittir_core::types::KindId(372), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_AMP_AFTER);
-    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_KEYWORD_BEFORE);
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_BEFORE);
     w.text("raw")?;
-    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_KEYWORD_AFTER);
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_AFTER);
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_WRITABLE_BEFORE);
     w.text("mut")?;
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_WRITABLE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(372), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -38044,7 +38021,9 @@ fn render_reference_expression_mut(node: &ReferenceExpressionMutTransport, w: &m
     w.edge(::sittir_core::types::KindId(373), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_AMP_AFTER);
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_EXCLUSIVE_BEFORE);
     w.text("mut")?;
+    w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_EXCLUSIVE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(373), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -38249,7 +38228,9 @@ fn render_pointer_type_mut(node: &PointerTypeMutTransport, w: &mut dyn ::sittir_
     w.edge(::sittir_core::types::KindId(389), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("*")?;
     w.site_at(options::SITE_POINTER_TYPE_MUT_STAR_AFTER);
+    w.site_at(options::SITE_POINTER_TYPE_MUT_WRITABLE_BEFORE);
     w.text("mut")?;
+    w.site_at(options::SITE_POINTER_TYPE_MUT_WRITABLE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(389), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -38404,7 +38385,7 @@ fn render_line_comment_doc_inner(node: &LineCommentDocInnerTransport, w: &mut dy
 }
 
 fn render_line_comment_regular(t: &LineCommentRegularTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.leaf_kind(::sittir_core::types::KindId(156));
+    w.leaf_kind(::sittir_core::types::KindId(155));
     w.text(&t.text)
 }
 
@@ -39024,6 +39005,55 @@ fn render_doc_comment(t: &DocCommentTransport, w: &mut dyn ::sittir_core::render
 fn render_block_comment_content(t: &BlockCommentContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(165));
     w.text(&t.text)
+}
+
+fn render_receiver_parameter_declaration(node: &ReceiverParameterDeclarationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");
+    let type_ = &node.type_;
+    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    if mutable.is_present() {
+        mutable.render(w)?;
+        w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_MUTABLE_AFTER);
+    }
+    w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_NAME_BEFORE);
+    w.text("self")?;
+    w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_NAME_AFTER);
+    w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_COLON_BEFORE);
+    w.text(":")?;
+    w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_COLON_AFTER);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
+    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_attributed_parameter_receiver(node: &AttributedParameterReceiverTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let attribute_item = View::new(&node.attribute_item, "{}");
+    let content = &node.content;
+    w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_attribute_item", 0, w, |w| attribute_item.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
+    w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_parameters_elements_receiver(node: &ParametersElementsReceiverTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let parameters_elements_receiver_group = View::new(&node.parameters_elements_receiver_group, "{}");
+    let receiver = &node.receiver;
+    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_receiver", 0, w, |w| receiver.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters_elements_receiver_group", 0, w, |w| parameters_elements_receiver_group.render(w))?;
+    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_parameters_elements_receiver_group(node: &ParametersElementsReceiverGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(&node.elements, "{}");
+    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.text(",")?;
+    w.site_at(options::SITE_PARAMETERS_ELEMENTS_RECEIVER_GROUP_COMMA_AFTER);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
+    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
 }
 
 fn render_error_sentinel(t: &ErrorSentinelTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39653,11 +39683,11 @@ fn render_struct_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
 }
 
 fn render_raw_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(155)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("raw"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(157)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("raw"))
 }
 
 fn render_macro_rules_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(157)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("macro_rules!"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(156)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("macro_rules!"))
 }
 
 fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39668,8 +39698,8 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::MacroInvocation(inner) => inner.render(w),
         StatementTransport::MacroDefinition(inner) => inner.render(w),
         StatementTransport::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
-        StatementTransport::AttributeItem(inner) => inner.as_ref().render(w),
-        StatementTransport::InnerAttributeItem(inner) => inner.as_ref().render(w),
+        StatementTransport::AttributeItem(inner) => inner.render(w),
+        StatementTransport::InnerAttributeItem(inner) => inner.render(w),
         StatementTransport::ModItem(inner) => inner.render(w),
         StatementTransport::ForeignModItem(inner) => inner.render(w),
         StatementTransport::StructItem(inner) => inner.render(w),
@@ -39694,8 +39724,8 @@ fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn :
         DeclarationStatementTransport::MacroInvocation(inner) => inner.render(w),
         DeclarationStatementTransport::MacroDefinition(inner) => inner.render(w),
         DeclarationStatementTransport::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
-        DeclarationStatementTransport::AttributeItem(inner) => inner.as_ref().render(w),
-        DeclarationStatementTransport::InnerAttributeItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementTransport::AttributeItem(inner) => inner.render(w),
+        DeclarationStatementTransport::InnerAttributeItem(inner) => inner.render(w),
         DeclarationStatementTransport::ModItem(inner) => inner.render(w),
         DeclarationStatementTransport::ForeignModItem(inner) => inner.render(w),
         DeclarationStatementTransport::StructItem(inner) => inner.render(w),
@@ -40239,6 +40269,10 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::RawStringLiteralEnd(inner) => inner.kind_in(kinds),
             Self::DocComment(inner) => inner.kind_in(kinds),
             Self::BlockCommentContent(inner) => inner.kind_in(kinds),
+            Self::ReceiverParameterDeclaration(inner) => inner.kind_in(kinds),
+            Self::AttributedParameterReceiver(inner) => inner.kind_in(kinds),
+            Self::ParametersElementsReceiver(inner) => inner.kind_in(kinds),
+            Self::ParametersElementsReceiverGroup(inner) => inner.kind_in(kinds),
             Self::ErrorSentinel(inner) => inner.kind_in(kinds),
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
@@ -40394,8 +40428,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ModKeyword => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
             Self::PubKeyword => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
             Self::StructKeyword => [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k)),
-            Self::RawKeyword => [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k)),
-            Self::MacroRulesBang => [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k)),
+            Self::RawKeyword => [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k)),
+            Self::MacroRulesBang => [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k)),
             _ => false,
         }
     }
@@ -40646,6 +40680,10 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::RawStringLiteralEnd(t) => t.render(w),
             AnyTransport::DocComment(t) => t.render(w),
             AnyTransport::BlockCommentContent(t) => t.render(w),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.render(w),
+            AnyTransport::AttributedParameterReceiver(t) => t.render(w),
+            AnyTransport::ParametersElementsReceiver(t) => t.render(w),
+            AnyTransport::ParametersElementsReceiverGroup(t) => t.render(w),
             AnyTransport::ErrorSentinel(t) => t.render(w),
             AnyTransport::TypeIdentifier(t) => t.render(w),
             AnyTransport::FieldIdentifier(t) => t.render(w),
@@ -40836,13 +40874,14 @@ const _: () = assert!(::core::mem::size_of::<AssignmentExpressionTransport>() <=
 const _: () = assert!(::core::mem::size_of::<AssociatedTypeTransport>() <= 256, "AssociatedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AsyncBlockTransport>() <= 256, "AsyncBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() <= 256, "AttributeInputTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeItemTransport>() > 256, "AttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeTransport>() > 256, "AttributeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributeItemTransport>() <= 256, "AttributeItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributeTransport>() <= 256, "AttributeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() <= 256, "AttributedArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedEnumVariantTransport>() > 256, "AttributedEnumVariantTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedFieldDeclarationTransport>() > 256, "AttributedFieldDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedOrderedFieldTransport>() > 256, "AttributedOrderedFieldTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedParameterTransport>() > 256, "AttributedParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributedParameterReceiverTransport>() <= 256, "AttributedParameterReceiverTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributedParameterTransport>() <= 256, "AttributedParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedTypeParameterTransport>() <= 256, "AttributedTypeParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AwaitExpressionTransport>() <= 256, "AwaitExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<BaseFieldInitializerTransport>() <= 256, "BaseFieldInitializerTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -40935,7 +40974,7 @@ const _: () = assert!(::core::mem::size_of::<ImplItemPositiveClauseTransport>() 
 const _: () = assert!(::core::mem::size_of::<ImplItemSemiTransport>() > 256, "ImplItemSemiTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ImplItemTransport>() <= 256, "ImplItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IndexExpressionTransport>() <= 256, "IndexExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InnerAttributeItemTransport>() > 256, "InnerAttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InnerAttributeItemTransport>() <= 256, "InnerAttributeItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralBinaryTransport>() <= 256, "IntegerLiteralBinaryTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralDecimalTransport>() <= 256, "IntegerLiteralDecimalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IntegerLiteralHexTransport>() <= 256, "IntegerLiteralHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -40982,6 +41021,8 @@ const _: () = assert!(::core::mem::size_of::<OrPatternTransport>() <= 256, "OrPa
 const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListElementsTransport>() <= 256, "OrderedFieldDeclarationListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListTransport>() <= 256, "OrderedFieldDeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParameterTransport>() > 256, "ParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ParametersElementsReceiverGroupTransport>() <= 256, "ParametersElementsReceiverGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ParametersElementsReceiverTransport>() <= 256, "ParametersElementsReceiverTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParametersElementsTransport>() <= 256, "ParametersElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParametersTransport>() <= 256, "ParametersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionTransport>() <= 256, "ParenthesizedExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41004,6 +41045,7 @@ const _: () = assert!(::core::mem::size_of::<RawStringLiteralContentTransport>()
 const _: () = assert!(::core::mem::size_of::<RawStringLiteralEndTransport>() <= 256, "RawStringLiteralEndTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RawStringLiteralStartTransport>() <= 256, "RawStringLiteralStartTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RawStringLiteralTransport>() <= 256, "RawStringLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ReceiverParameterDeclarationTransport>() <= 256, "ReceiverParameterDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RefPatternTransport>() <= 256, "RefPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionBareTransport>() <= 256, "ReferenceExpressionBareTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReferenceExpressionMutTransport>() <= 256, "ReferenceExpressionMutTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41089,4 +41131,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() <= 256, "WhileExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterValueTransportSlot, UseDeclarationArgumentTransportSlot, ParameterNameTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationMacroTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, LbraceTransport, RbraceTransport, UnionKeywordTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, DefaultKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, GenKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterDefaultTransportSlot, UseDeclarationArgumentTransportSlot, ParametersElementsTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationFunctionTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, AttributedParameterReceiverContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ReceiverParameterDeclarationTransport, AttributedParameterReceiverTransport, ParametersElementsReceiverTransport, ParametersElementsReceiverGroupTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, LbraceTransport, RbraceTransport, UnionKeywordTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, DefaultKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, GenKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);

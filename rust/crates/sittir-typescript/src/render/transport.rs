@@ -86,7 +86,7 @@ pub enum AnyTransport {
     #[kind(kind::SWITCH_DEFAULT)]
     SwitchDefault(SwitchDefaultTransport),
     #[kind(kind::CATCH_CLAUSE)]
-    CatchClause(Box<CatchClauseTransport>),
+    CatchClause(CatchClauseTransport),
     #[kind(kind::FINALLY_CLAUSE)]
     FinallyClause(FinallyClauseTransport),
     #[kind(kind::YIELD_EXPRESSION)]
@@ -120,7 +120,7 @@ pub enum AnyTransport {
     #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
     GeneratorFunctionDeclaration(Box<GeneratorFunctionDeclarationTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
     #[kind(kind::AWAIT_EXPRESSION)]
@@ -198,15 +198,15 @@ pub enum AnyTransport {
     #[kind(kind::ABSTRACT_METHOD_SIGNATURE)]
     AbstractMethodSignature(Box<AbstractMethodSignatureTransport>),
     #[kind(kind::FUNCTION_SIGNATURE)]
-    FunctionSignature(Box<FunctionSignatureTransport>),
+    FunctionSignature(FunctionSignatureTransport),
     #[kind(kind::DECORATOR_PARENTHESIZED_EXPRESSION)]
     DecoratorParenthesizedExpression(DecoratorParenthesizedExpressionTransport),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::IMPORT_REQUIRE_CLAUSE)]
@@ -254,7 +254,7 @@ pub enum AnyTransport {
     #[kind(kind::OPTING_TYPE_ANNOTATION)]
     OptingTypeAnnotation(Box<OptingTypeAnnotationTransport>),
     #[kind(kind::TYPE_ANNOTATION)]
-    TypeAnnotation(Box<TypeAnnotationTransport>),
+    TypeAnnotation(TypeAnnotationTransport),
     #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
     #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
@@ -264,9 +264,9 @@ pub enum AnyTransport {
     #[kind(kind::ASSERTS_ANNOTATION)]
     AssertsAnnotation(AssertsAnnotationTransport),
     #[kind(kind::TUPLE_PARAMETER)]
-    TupleParameter(Box<TupleParameterTransport>),
+    TupleParameter(TupleParameterTransport),
     #[kind(kind::OPTIONAL_TUPLE_PARAMETER)]
-    OptionalTupleParameter(Box<OptionalTupleParameterTransport>),
+    OptionalTupleParameter(OptionalTupleParameterTransport),
     #[kind(kind::OPTIONAL_TYPE)]
     OptionalType(Box<OptionalTypeTransport>),
     #[kind(kind::REST_TYPE)]
@@ -328,7 +328,7 @@ pub enum AnyTransport {
     #[kind(kind::CONSTRAINT)]
     Constraint(Box<ConstraintTransport>),
     #[kind(kind::CONSTRUCT_SIGNATURE)]
-    ConstructSignature(Box<ConstructSignatureTransport>),
+    ConstructSignature(ConstructSignatureTransport),
     #[kind(kind::ARRAY_TYPE)]
     ArrayType(ArrayTypeTransport),
     #[kind(kind::TUPLE_TYPE)]
@@ -360,7 +360,7 @@ pub enum AnyTransport {
     #[kind(kind::IMPORT_CLAUSE_GROUP)]
     ImportClauseGroup(ImportClauseGroupTransport),
     #[kind(kind::CATCH_CLAUSE_GROUP)]
-    CatchClauseGroup(Box<CatchClauseGroupTransport>),
+    CatchClauseGroup(CatchClauseGroupTransport),
     #[kind(kind::AMBIENT_DECLARATION_GLOBAL)]
     AmbientDeclarationGlobal(AmbientDeclarationGlobalTransport),
     #[kind(kind::AMBIENT_DECLARATION_MODULE)]
@@ -420,7 +420,7 @@ pub enum AnyTransport {
     #[kind(kind::IMPORT_SPECIFIER_AS)]
     ImportSpecifierAs(ImportSpecifierAsTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::CALL_EXPRESSION_CALL)]
@@ -454,13 +454,13 @@ pub enum AnyTransport {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM)]
     ExportStatementDefaultFromClauseFrom(ExportStatementDefaultFromClauseFromTransport),
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
-    ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
+    ExportStatementDefaultDeclarationDefaultKw(Box<ExportStatementDefaultDeclarationDefaultKwTransport>),
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE)]
     ExportStatementDefaultDeclarationDefaultKwValue(ExportStatementDefaultDeclarationDefaultKwValueTransport),
     #[kind(kind::VARIABLE_DECLARATOR_PLAIN)]
     VariableDeclaratorPlain(Box<VariableDeclaratorPlainTransport>),
     #[kind(kind::VARIABLE_DECLARATOR_DEFINITE)]
-    VariableDeclaratorDefinite(Box<VariableDeclaratorDefiniteTransport>),
+    VariableDeclaratorDefinite(VariableDeclaratorDefiniteTransport),
     #[kind(kind::FOR_HEADER_LHS)]
     ForHeaderLhs(Box<ForHeaderLhsTransport>),
     #[kind(kind::FOR_HEADER_VAR_KIND)]
@@ -473,6 +473,12 @@ pub enum AnyTransport {
     JsxText(JsxTextTransport),
     #[kind(kind::_TEMPLATE_CHARS)]
     TemplateChars(TemplateCharsTransport),
+    #[kind(kind::_RECEIVER_PARAMETER_DECLARATION)]
+    ReceiverParameterDeclaration(ReceiverParameterDeclarationTransport),
+    #[kind(kind::_FORMAL_PARAMETERS_ELEMENTS_RECEIVER)]
+    FormalParametersElementsReceiver(FormalParametersElementsReceiverTransport),
+    #[kind(kind::FORMAL_PARAMETERS_ELEMENTS_RECEIVER_GROUP)]
+    FormalParametersElementsReceiverGroup(FormalParametersElementsReceiverGroupTransport),
     #[kind(kind::_TERNARY_QMARK)]
     TernaryQmark(TernaryQmarkTransport),
     #[kind(kind::__ERROR_RECOVERY)]
@@ -1065,6 +1071,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::HtmlComment(t) => t.prepare(ctx),
             AnyTransport::JsxText(t) => t.prepare(ctx),
             AnyTransport::TemplateChars(t) => t.prepare(ctx),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.prepare(ctx),
+            AnyTransport::FormalParametersElementsReceiver(t) => t.prepare(ctx),
+            AnyTransport::FormalParametersElementsReceiverGroup(t) => t.prepare(ctx),
             AnyTransport::TernaryQmark(t) => t.prepare(ctx),
             AnyTransport::ErrorRecovery(t) => t.prepare(ctx),
             AnyTransport::StatementIdentifier(t) => t.prepare(ctx),
@@ -1470,6 +1479,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::HtmlComment(t) => t.gap_edges(),
             AnyTransport::JsxText(t) => t.gap_edges(),
             AnyTransport::TemplateChars(t) => t.gap_edges(),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.gap_edges(),
+            AnyTransport::FormalParametersElementsReceiver(t) => t.gap_edges(),
+            AnyTransport::FormalParametersElementsReceiverGroup(t) => t.gap_edges(),
             AnyTransport::TernaryQmark(t) => t.gap_edges(),
             AnyTransport::ErrorRecovery(t) => t.gap_edges(),
             AnyTransport::StatementIdentifier(t) => t.gap_edges(),
@@ -1875,6 +1887,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::HtmlComment(t) => t.snapshot_edge(),
             AnyTransport::JsxText(t) => t.snapshot_edge(),
             AnyTransport::TemplateChars(t) => t.snapshot_edge(),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.snapshot_edge(),
+            AnyTransport::FormalParametersElementsReceiver(t) => t.snapshot_edge(),
+            AnyTransport::FormalParametersElementsReceiverGroup(t) => t.snapshot_edge(),
             AnyTransport::TernaryQmark(t) => t.snapshot_edge(),
             AnyTransport::ErrorRecovery(t) => t.snapshot_edge(),
             AnyTransport::StatementIdentifier(t) => t.snapshot_edge(),
@@ -2280,6 +2295,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::HtmlComment(t) => t.source_separator(ctx),
             AnyTransport::JsxText(t) => t.source_separator(ctx),
             AnyTransport::TemplateChars(t) => t.source_separator(ctx),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.source_separator(ctx),
+            AnyTransport::FormalParametersElementsReceiver(t) => t.source_separator(ctx),
+            AnyTransport::FormalParametersElementsReceiverGroup(t) => t.source_separator(ctx),
             AnyTransport::TernaryQmark(t) => t.source_separator(ctx),
             AnyTransport::ErrorRecovery(t) => t.source_separator(ctx),
             AnyTransport::StatementIdentifier(t) => t.source_separator(ctx),
@@ -2720,7 +2738,7 @@ pub enum DeclarationTransport {
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
     #[kind(kind::FUNCTION_SIGNATURE)]
-    FunctionSignature(Box<FunctionSignatureTransport>),
+    FunctionSignature(FunctionSignatureTransport),
     #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(Box<AbstractClassDeclarationTransport>),
     #[kind(kind::MODULE)]
@@ -3104,7 +3122,7 @@ pub enum VariableDeclaratorTransport {
     #[kind(kind::VARIABLE_DECLARATOR_PLAIN)]
     VariableDeclaratorPlain(Box<VariableDeclaratorPlainTransport>),
     #[kind(kind::VARIABLE_DECLARATOR_DEFINITE)]
-    VariableDeclaratorDefinite(Box<VariableDeclaratorDefiniteTransport>),
+    VariableDeclaratorDefinite(VariableDeclaratorDefiniteTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for VariableDeclaratorTransport {
@@ -3217,7 +3235,7 @@ impl ::sittir_core::render::Render for ForHeaderTransport {
 #[transport(choice)]
 pub enum ParenthesizedExpressionTransport {
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
 }
@@ -3278,9 +3296,9 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
 #[transport(choice)]
 pub enum ExpressionTransport {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -3470,7 +3488,7 @@ pub enum PrimaryExpressionTransport {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -4726,18 +4744,18 @@ impl ::sittir_core::render::Render for NamespaceExportModuleExportNameTransportS
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum ExportSpecifierExportKindTransportSlot {
+pub enum ExportSpecifierTypeOnlyTransportSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
-impl ::sittir_core::prepare::Prepare for ExportSpecifierExportKindTransportSlot {
+impl ::sittir_core::prepare::Prepare for ExportSpecifierTypeOnlyTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ExportSpecifierExportKindTransportSlot::TypeKeyword => Ok(()),
-            ExportSpecifierExportKindTransportSlot::TypeofKeyword => Ok(()),
+            ExportSpecifierTypeOnlyTransportSlot::TypeKeyword => Ok(()),
+            ExportSpecifierTypeOnlyTransportSlot::TypeofKeyword => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4745,7 +4763,7 @@ impl ::sittir_core::prepare::Prepare for ExportSpecifierExportKindTransportSlot 
     }
 }
 
-impl ::sittir_core::view::KindOf for ExportSpecifierExportKindTransportSlot {
+impl ::sittir_core::view::KindOf for ExportSpecifierTypeOnlyTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -4754,16 +4772,16 @@ impl ::sittir_core::view::KindOf for ExportSpecifierExportKindTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ExportSpecifierExportKindTransportSlot {
+impl ::sittir_core::render::Render for ExportSpecifierTypeOnlyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportSpecifierExportKindTransportSlot::TypeKeyword => {
+            ExportSpecifierTypeOnlyTransportSlot::TypeKeyword => {
                 let written = render_type_keyword(w);
                 written?;
                 w.site_at(options::SITE_EXPORT_SPECIFIER_TYPE_KEYWORD_AFTER);
                 Ok(())
             }
-            ExportSpecifierExportKindTransportSlot::TypeofKeyword => {
+            ExportSpecifierTypeOnlyTransportSlot::TypeofKeyword => {
                 let written = render_typeof_keyword(w);
                 written?;
                 w.site_at(options::SITE_EXPORT_SPECIFIER_TYPEOF_KEYWORD_AFTER);
@@ -4775,18 +4793,18 @@ impl ::sittir_core::render::Render for ExportSpecifierExportKindTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum ImportStatementImportClauseTransportSlot {
+pub enum ImportStatementTypeOnlyTransportSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
-impl ::sittir_core::prepare::Prepare for ImportStatementImportClauseTransportSlot {
+impl ::sittir_core::prepare::Prepare for ImportStatementTypeOnlyTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ImportStatementImportClauseTransportSlot::TypeKeyword => Ok(()),
-            ImportStatementImportClauseTransportSlot::TypeofKeyword => Ok(()),
+            ImportStatementTypeOnlyTransportSlot::TypeKeyword => Ok(()),
+            ImportStatementTypeOnlyTransportSlot::TypeofKeyword => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4794,7 +4812,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementImportClauseTransportSlo
     }
 }
 
-impl ::sittir_core::view::KindOf for ImportStatementImportClauseTransportSlot {
+impl ::sittir_core::view::KindOf for ImportStatementTypeOnlyTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -4803,17 +4821,17 @@ impl ::sittir_core::view::KindOf for ImportStatementImportClauseTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ImportStatementImportClauseTransportSlot {
+impl ::sittir_core::render::Render for ImportStatementTypeOnlyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportStatementImportClauseTransportSlot::TypeKeyword => {
+            ImportStatementTypeOnlyTransportSlot::TypeKeyword => {
                 w.site_at(options::SITE_IMPORT_STATEMENT_TYPE_KEYWORD_BEFORE);
                 let written = render_type_keyword(w);
                 written?;
                 w.site_at(options::SITE_IMPORT_STATEMENT_TYPE_KEYWORD_AFTER);
                 Ok(())
             }
-            ImportStatementImportClauseTransportSlot::TypeofKeyword => {
+            ImportStatementTypeOnlyTransportSlot::TypeofKeyword => {
                 w.site_at(options::SITE_IMPORT_STATEMENT_TYPEOF_KEYWORD_BEFORE);
                 let written = render_typeof_keyword(w);
                 written?;
@@ -5059,9 +5077,9 @@ impl ::sittir_core::render::Render for ImportAttributeAttributeKindTransportSlot
 #[transport(choice)]
 pub enum ExpressionStatementExpressionTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -5073,7 +5091,7 @@ pub enum ExpressionStatementExpressionTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -5115,7 +5133,7 @@ pub enum ExpressionStatementExpressionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -5485,14 +5503,14 @@ impl ::sittir_core::view::KindOf for ExpressionStatementExpressionTransportSlot 
 impl ::sittir_core::render::Render for ExpressionStatementExpressionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExpressionStatementExpressionTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            ExpressionStatementExpressionTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            ExpressionStatementExpressionTransportSlot::AsExpression(inner) => inner.render(w),
+            ExpressionStatementExpressionTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::InstantiationExpression(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::InternalModule(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::TypeAssertion(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::SubscriptExpression(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::MemberExpression(inner) => inner.render(w),
-            ExpressionStatementExpressionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            ExpressionStatementExpressionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::Identifier(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::NumberHex(inner) => inner.render(w),
@@ -5513,7 +5531,7 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionTransportSlo
             ExpressionStatementExpressionTransportSlot::Object(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::Array(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ExpressionStatementExpressionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            ExpressionStatementExpressionTransportSlot::ArrowFunction(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ExpressionStatementExpressionTransportSlot::Class(inner) => inner.as_ref().render(w),
             ExpressionStatementExpressionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -5772,9 +5790,9 @@ pub enum ForStatementInitializerTransportSlot {
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -5786,7 +5804,7 @@ pub enum ForStatementInitializerTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -5828,7 +5846,7 @@ pub enum ForStatementInitializerTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -6218,14 +6236,14 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
         match self {
             ForStatementInitializerTransportSlot::LexicalDeclaration(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::VariableDeclaration(inner) => inner.render(w),
-            ForStatementInitializerTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            ForStatementInitializerTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            ForStatementInitializerTransportSlot::AsExpression(inner) => inner.render(w),
+            ForStatementInitializerTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::InstantiationExpression(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::InternalModule(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::TypeAssertion(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::SubscriptExpression(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::MemberExpression(inner) => inner.render(w),
-            ForStatementInitializerTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            ForStatementInitializerTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::Identifier(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::NumberHex(inner) => inner.render(w),
@@ -6246,7 +6264,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::Object(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::Array(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ForStatementInitializerTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            ForStatementInitializerTransportSlot::ArrowFunction(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ForStatementInitializerTransportSlot::Class(inner) => inner.as_ref().render(w),
             ForStatementInitializerTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -6288,9 +6306,9 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
 #[transport(choice)]
 pub enum ForStatementConditionTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -6302,7 +6320,7 @@ pub enum ForStatementConditionTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -6344,7 +6362,7 @@ pub enum ForStatementConditionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -6722,14 +6740,14 @@ impl ::sittir_core::view::KindOf for ForStatementConditionTransportSlot {
 impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForStatementConditionTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            ForStatementConditionTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            ForStatementConditionTransportSlot::AsExpression(inner) => inner.render(w),
+            ForStatementConditionTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             ForStatementConditionTransportSlot::InstantiationExpression(inner) => inner.render(w),
             ForStatementConditionTransportSlot::InternalModule(inner) => inner.render(w),
             ForStatementConditionTransportSlot::TypeAssertion(inner) => inner.render(w),
             ForStatementConditionTransportSlot::SubscriptExpression(inner) => inner.render(w),
             ForStatementConditionTransportSlot::MemberExpression(inner) => inner.render(w),
-            ForStatementConditionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            ForStatementConditionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             ForStatementConditionTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             ForStatementConditionTransportSlot::Identifier(inner) => inner.render(w),
             ForStatementConditionTransportSlot::NumberHex(inner) => inner.render(w),
@@ -6750,7 +6768,7 @@ impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::Object(inner) => inner.render(w),
             ForStatementConditionTransportSlot::Array(inner) => inner.render(w),
             ForStatementConditionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ForStatementConditionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            ForStatementConditionTransportSlot::ArrowFunction(inner) => inner.render(w),
             ForStatementConditionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ForStatementConditionTransportSlot::Class(inner) => inner.as_ref().render(w),
             ForStatementConditionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -7345,9 +7363,9 @@ pub enum YieldExpressionExpressionTransportSlot {
     #[kind(kind::YIELD_EXPRESSION_DELEGATE)]
     YieldExpressionDelegate(YieldExpressionDelegateTransport),
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -7359,7 +7377,7 @@ pub enum YieldExpressionExpressionTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -7401,7 +7419,7 @@ pub enum YieldExpressionExpressionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -7770,14 +7788,14 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             YieldExpressionExpressionTransportSlot::YieldExpressionDelegate(inner) => inner.render(w),
-            YieldExpressionExpressionTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            YieldExpressionExpressionTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            YieldExpressionExpressionTransportSlot::AsExpression(inner) => inner.render(w),
+            YieldExpressionExpressionTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::InstantiationExpression(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::InternalModule(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::TypeAssertion(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::SubscriptExpression(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::MemberExpression(inner) => inner.render(w),
-            YieldExpressionExpressionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            YieldExpressionExpressionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::Identifier(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::NumberHex(inner) => inner.render(w),
@@ -7798,7 +7816,7 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionTransportSlot {
             YieldExpressionExpressionTransportSlot::Object(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::Array(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            YieldExpressionExpressionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            YieldExpressionExpressionTransportSlot::ArrowFunction(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             YieldExpressionExpressionTransportSlot::Class(inner) => inner.as_ref().render(w),
             YieldExpressionExpressionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -8571,9 +8589,9 @@ impl ::sittir_core::render::Render for ObjectAssignmentPatternLeftTransportSlot 
 #[transport(choice)]
 pub enum ArrayElementsTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -8585,7 +8603,7 @@ pub enum ArrayElementsTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -8627,7 +8645,7 @@ pub enum ArrayElementsTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -8997,14 +9015,14 @@ impl ::sittir_core::view::KindOf for ArrayElementsTransportSlot {
 impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ArrayElementsTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            ArrayElementsTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            ArrayElementsTransportSlot::AsExpression(inner) => inner.render(w),
+            ArrayElementsTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             ArrayElementsTransportSlot::InstantiationExpression(inner) => inner.render(w),
             ArrayElementsTransportSlot::InternalModule(inner) => inner.render(w),
             ArrayElementsTransportSlot::TypeAssertion(inner) => inner.render(w),
             ArrayElementsTransportSlot::SubscriptExpression(inner) => inner.render(w),
             ArrayElementsTransportSlot::MemberExpression(inner) => inner.render(w),
-            ArrayElementsTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            ArrayElementsTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             ArrayElementsTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             ArrayElementsTransportSlot::Identifier(inner) => inner.render(w),
             ArrayElementsTransportSlot::NumberHex(inner) => inner.render(w),
@@ -9025,7 +9043,7 @@ impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::Object(inner) => inner.render(w),
             ArrayElementsTransportSlot::Array(inner) => inner.render(w),
             ArrayElementsTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ArrayElementsTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            ArrayElementsTransportSlot::ArrowFunction(inner) => inner.render(w),
             ArrayElementsTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ArrayElementsTransportSlot::Class(inner) => inner.as_ref().render(w),
             ArrayElementsTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -9247,7 +9265,7 @@ impl ::sittir_core::render::Render for ClassHeritageContentTransportSlot {
 #[transport(choice)]
 pub enum FunctionExpressionReturnTypeTransportSlot {
     #[kind(kind::TYPE_ANNOTATION)]
-    TypeAnnotation(Box<TypeAnnotationTransport>),
+    TypeAnnotation(TypeAnnotationTransport),
     #[kind(kind::ASSERTS_ANNOTATION)]
     AssertsAnnotation(AssertsAnnotationTransport),
     #[kind(kind::TYPE_PREDICATE_ANNOTATION)]
@@ -9301,7 +9319,7 @@ impl ::sittir_core::view::KindOf for FunctionExpressionReturnTypeTransportSlot {
 impl ::sittir_core::render::Render for FunctionExpressionReturnTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionExpressionReturnTypeTransportSlot::TypeAnnotation(inner) => inner.as_ref().render(w),
+            FunctionExpressionReturnTypeTransportSlot::TypeAnnotation(inner) => inner.render(w),
             FunctionExpressionReturnTypeTransportSlot::AssertsAnnotation(inner) => inner.render(w),
             FunctionExpressionReturnTypeTransportSlot::TypePredicateAnnotation(inner) => inner.render(w),
         }
@@ -9312,9 +9330,9 @@ impl ::sittir_core::render::Render for FunctionExpressionReturnTypeTransportSlot
 #[transport(choice)]
 pub enum ArrowFunctionBodyTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -9326,7 +9344,7 @@ pub enum ArrowFunctionBodyTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -9368,7 +9386,7 @@ pub enum ArrowFunctionBodyTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -9738,14 +9756,14 @@ impl ::sittir_core::view::KindOf for ArrowFunctionBodyTransportSlot {
 impl ::sittir_core::render::Render for ArrowFunctionBodyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ArrowFunctionBodyTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            ArrowFunctionBodyTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            ArrowFunctionBodyTransportSlot::AsExpression(inner) => inner.render(w),
+            ArrowFunctionBodyTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::InstantiationExpression(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::InternalModule(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::TypeAssertion(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::SubscriptExpression(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::MemberExpression(inner) => inner.render(w),
-            ArrowFunctionBodyTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            ArrowFunctionBodyTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::Identifier(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::NumberHex(inner) => inner.render(w),
@@ -9766,7 +9784,7 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::Object(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::Array(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            ArrowFunctionBodyTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            ArrowFunctionBodyTransportSlot::ArrowFunction(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             ArrowFunctionBodyTransportSlot::Class(inner) => inner.as_ref().render(w),
             ArrowFunctionBodyTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -9858,9 +9876,9 @@ impl ::sittir_core::render::Render for ArrowFunctionContentTransportSlot {
 #[transport(choice)]
 pub enum MemberExpressionObjectTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -9872,7 +9890,7 @@ pub enum MemberExpressionObjectTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -9914,7 +9932,7 @@ pub enum MemberExpressionObjectTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -10284,14 +10302,14 @@ impl ::sittir_core::view::KindOf for MemberExpressionObjectTransportSlot {
 impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MemberExpressionObjectTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            MemberExpressionObjectTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            MemberExpressionObjectTransportSlot::AsExpression(inner) => inner.render(w),
+            MemberExpressionObjectTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::InstantiationExpression(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::InternalModule(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::TypeAssertion(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::SubscriptExpression(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::MemberExpression(inner) => inner.render(w),
-            MemberExpressionObjectTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            MemberExpressionObjectTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::Identifier(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::NumberHex(inner) => inner.render(w),
@@ -10312,7 +10330,7 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::Object(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::Array(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            MemberExpressionObjectTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            MemberExpressionObjectTransportSlot::ArrowFunction(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             MemberExpressionObjectTransportSlot::Class(inner) => inner.as_ref().render(w),
             MemberExpressionObjectTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -10345,18 +10363,18 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum MemberExpressionSeparatorTransportSlot {
+pub enum MemberExpressionOptionalChainTransportSlot {
     #[kind(kind::DOT)]
     Dot,
     #[kind(kind::OPTIONAL_CHAIN, kind::QMARK_DOT)]
     OptionalChain,
 }
 
-impl ::sittir_core::prepare::Prepare for MemberExpressionSeparatorTransportSlot {
+impl ::sittir_core::prepare::Prepare for MemberExpressionOptionalChainTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            MemberExpressionSeparatorTransportSlot::Dot => Ok(()),
-            MemberExpressionSeparatorTransportSlot::OptionalChain => Ok(()),
+            MemberExpressionOptionalChainTransportSlot::Dot => Ok(()),
+            MemberExpressionOptionalChainTransportSlot::OptionalChain => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10364,7 +10382,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionSeparatorTransportSlot 
     }
 }
 
-impl ::sittir_core::view::KindOf for MemberExpressionSeparatorTransportSlot {
+impl ::sittir_core::view::KindOf for MemberExpressionOptionalChainTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Dot => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
@@ -10373,17 +10391,17 @@ impl ::sittir_core::view::KindOf for MemberExpressionSeparatorTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for MemberExpressionSeparatorTransportSlot {
+impl ::sittir_core::render::Render for MemberExpressionOptionalChainTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MemberExpressionSeparatorTransportSlot::Dot => {
+            MemberExpressionOptionalChainTransportSlot::Dot => {
                 w.site_at(options::SITE_MEMBER_EXPRESSION_DOT_BEFORE);
                 let written = render_dot(w);
                 written?;
                 w.site_at(options::SITE_MEMBER_EXPRESSION_DOT_AFTER);
                 Ok(())
             }
-            MemberExpressionSeparatorTransportSlot::OptionalChain => {
+            MemberExpressionOptionalChainTransportSlot::OptionalChain => {
                 w.site_at(options::SITE_MEMBER_EXPRESSION_QMARK_DOT_BEFORE);
                 let written = render_optional_chain(w);
                 written?;
@@ -10455,9 +10473,9 @@ impl ::sittir_core::render::Render for MemberExpressionPropertyTransportSlot {
 #[transport(choice)]
 pub enum SubscriptExpressionObjectTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -10469,7 +10487,7 @@ pub enum SubscriptExpressionObjectTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -10511,7 +10529,7 @@ pub enum SubscriptExpressionObjectTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -10874,14 +10892,14 @@ impl ::sittir_core::view::KindOf for SubscriptExpressionObjectTransportSlot {
 impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SubscriptExpressionObjectTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            SubscriptExpressionObjectTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            SubscriptExpressionObjectTransportSlot::AsExpression(inner) => inner.render(w),
+            SubscriptExpressionObjectTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::InstantiationExpression(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::InternalModule(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::TypeAssertion(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::SubscriptExpression(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::MemberExpression(inner) => inner.render(w),
-            SubscriptExpressionObjectTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            SubscriptExpressionObjectTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::Identifier(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::NumberHex(inner) => inner.render(w),
@@ -10902,7 +10920,7 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
             SubscriptExpressionObjectTransportSlot::Object(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::Array(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            SubscriptExpressionObjectTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            SubscriptExpressionObjectTransportSlot::ArrowFunction(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             SubscriptExpressionObjectTransportSlot::Class(inner) => inner.as_ref().render(w),
             SubscriptExpressionObjectTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -11042,7 +11060,7 @@ impl ::sittir_core::render::Render for LhsExpressionContentTransportSlot {
 #[transport(choice)]
 pub enum AssignmentExpressionLeftTransportSlot {
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
@@ -11096,7 +11114,7 @@ impl ::sittir_core::view::KindOf for AssignmentExpressionLeftTransportSlot {
 impl ::sittir_core::render::Render for AssignmentExpressionLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             AssignmentExpressionLeftTransportSlot::LhsExpression(inner) => inner.render(w),
         }
@@ -11113,7 +11131,7 @@ pub enum AugmentedAssignmentExpressionLeftTransportSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::NON_NULL_EXPRESSION)]
@@ -11192,7 +11210,7 @@ impl ::sittir_core::render::Render for AugmentedAssignmentExpressionLeftTranspor
             AugmentedAssignmentExpressionLeftTransportSlot::MemberExpression(inner) => inner.render(w),
             AugmentedAssignmentExpressionLeftTransportSlot::SubscriptExpression(inner) => inner.render(w),
             AugmentedAssignmentExpressionLeftTransportSlot::Identifier(inner) => inner.render(w),
-            AugmentedAssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            AugmentedAssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             AugmentedAssignmentExpressionLeftTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             AugmentedAssignmentExpressionLeftTransportSlot::NonNullExpression(inner) => inner.render(w),
             AugmentedAssignmentExpressionLeftTransportSlot::Verbatim(inner) => inner.render(w),
@@ -11627,7 +11645,7 @@ impl ::sittir_core::render::Render for TemplateStringElementsTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum DecoratorExpressionTransportSlot {
+pub enum DecoratorContentTransportSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
@@ -11640,41 +11658,41 @@ pub enum DecoratorExpressionTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for DecoratorExpressionTransportSlot {
+impl ::sittir_core::prepare::Prepare for DecoratorContentTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            DecoratorExpressionTransportSlot::Identifier(t) => t.prepare(ctx),
-            DecoratorExpressionTransportSlot::DecoratorMemberExpression(t) => t.prepare(ctx),
-            DecoratorExpressionTransportSlot::DecoratorCallExpression(t) => t.prepare(ctx),
-            DecoratorExpressionTransportSlot::DecoratorParenthesizedExpression(t) => t.prepare(ctx),
-            DecoratorExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
+            DecoratorContentTransportSlot::Identifier(t) => t.prepare(ctx),
+            DecoratorContentTransportSlot::DecoratorMemberExpression(t) => t.prepare(ctx),
+            DecoratorContentTransportSlot::DecoratorCallExpression(t) => t.prepare(ctx),
+            DecoratorContentTransportSlot::DecoratorParenthesizedExpression(t) => t.prepare(ctx),
+            DecoratorContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            DecoratorExpressionTransportSlot::Identifier(t) => t.gap_edges(),
-            DecoratorExpressionTransportSlot::DecoratorMemberExpression(t) => t.gap_edges(),
-            DecoratorExpressionTransportSlot::DecoratorCallExpression(t) => t.gap_edges(),
-            DecoratorExpressionTransportSlot::DecoratorParenthesizedExpression(t) => t.gap_edges(),
-            DecoratorExpressionTransportSlot::Verbatim(t) => t.gap_edges(),
+            DecoratorContentTransportSlot::Identifier(t) => t.gap_edges(),
+            DecoratorContentTransportSlot::DecoratorMemberExpression(t) => t.gap_edges(),
+            DecoratorContentTransportSlot::DecoratorCallExpression(t) => t.gap_edges(),
+            DecoratorContentTransportSlot::DecoratorParenthesizedExpression(t) => t.gap_edges(),
+            DecoratorContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            DecoratorExpressionTransportSlot::Identifier(t) => t.snapshot_edge(),
-            DecoratorExpressionTransportSlot::DecoratorMemberExpression(t) => t.snapshot_edge(),
-            DecoratorExpressionTransportSlot::DecoratorCallExpression(t) => t.snapshot_edge(),
-            DecoratorExpressionTransportSlot::DecoratorParenthesizedExpression(t) => t.snapshot_edge(),
-            DecoratorExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            DecoratorContentTransportSlot::Identifier(t) => t.snapshot_edge(),
+            DecoratorContentTransportSlot::DecoratorMemberExpression(t) => t.snapshot_edge(),
+            DecoratorContentTransportSlot::DecoratorCallExpression(t) => t.snapshot_edge(),
+            DecoratorContentTransportSlot::DecoratorParenthesizedExpression(t) => t.snapshot_edge(),
+            DecoratorContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
-            DecoratorExpressionTransportSlot::Identifier(t) => t.source_separator(ctx),
-            DecoratorExpressionTransportSlot::DecoratorMemberExpression(t) => t.source_separator(ctx),
-            DecoratorExpressionTransportSlot::DecoratorCallExpression(t) => t.source_separator(ctx),
-            DecoratorExpressionTransportSlot::DecoratorParenthesizedExpression(t) => t.source_separator(ctx),
-            DecoratorExpressionTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            DecoratorContentTransportSlot::Identifier(t) => t.source_separator(ctx),
+            DecoratorContentTransportSlot::DecoratorMemberExpression(t) => t.source_separator(ctx),
+            DecoratorContentTransportSlot::DecoratorCallExpression(t) => t.source_separator(ctx),
+            DecoratorContentTransportSlot::DecoratorParenthesizedExpression(t) => t.source_separator(ctx),
+            DecoratorContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -11682,7 +11700,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorExpressionTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for DecoratorExpressionTransportSlot {
+impl ::sittir_core::view::KindOf for DecoratorContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
@@ -11694,14 +11712,14 @@ impl ::sittir_core::view::KindOf for DecoratorExpressionTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for DecoratorExpressionTransportSlot {
+impl ::sittir_core::render::Render for DecoratorContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DecoratorExpressionTransportSlot::Identifier(inner) => inner.render(w),
-            DecoratorExpressionTransportSlot::DecoratorMemberExpression(inner) => inner.render(w),
-            DecoratorExpressionTransportSlot::DecoratorCallExpression(inner) => inner.render(w),
-            DecoratorExpressionTransportSlot::DecoratorParenthesizedExpression(inner) => inner.render(w),
-            DecoratorExpressionTransportSlot::Verbatim(inner) => inner.render(w),
+            DecoratorContentTransportSlot::Identifier(inner) => inner.render(w),
+            DecoratorContentTransportSlot::DecoratorMemberExpression(inner) => inner.render(w),
+            DecoratorContentTransportSlot::DecoratorCallExpression(inner) => inner.render(w),
+            DecoratorContentTransportSlot::DecoratorParenthesizedExpression(inner) => inner.render(w),
+            DecoratorContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -11773,7 +11791,64 @@ impl ::sittir_core::render::Render for DecoratorMemberExpressionObjectTransportS
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum MethodDefinitionAccessorKindTransportSlot {
+pub enum FormalParametersElementsTransportSlot {
+    #[kind(kind::FORMAL_PARAMETERS_ELEMENTS)]
+    FormalParametersElements(FormalParametersElementsTransport),
+    #[kind(kind::_FORMAL_PARAMETERS_ELEMENTS_RECEIVER)]
+    FormalParametersElementsReceiver(FormalParametersElementsReceiverTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            FormalParametersElementsTransportSlot::FormalParametersElements(t) => t.prepare(ctx),
+            FormalParametersElementsTransportSlot::FormalParametersElementsReceiver(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            FormalParametersElementsTransportSlot::FormalParametersElements(t) => t.gap_edges(),
+            FormalParametersElementsTransportSlot::FormalParametersElementsReceiver(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FormalParametersElementsTransportSlot::FormalParametersElements(t) => t.snapshot_edge(),
+            FormalParametersElementsTransportSlot::FormalParametersElementsReceiver(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            FormalParametersElementsTransportSlot::FormalParametersElements(t) => t.source_separator(ctx),
+            FormalParametersElementsTransportSlot::FormalParametersElementsReceiver(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for FormalParametersElementsTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::FormalParametersElements(inner) => inner.kind_in(kinds),
+            Self::FormalParametersElementsReceiver(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for FormalParametersElementsTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            FormalParametersElementsTransportSlot::FormalParametersElements(inner) => inner.render(w),
+            FormalParametersElementsTransportSlot::FormalParametersElementsReceiver(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum MethodDefinitionGeneratorTransportSlot {
     #[kind(kind::GET_KEYWORD)]
     GetKeyword,
     #[kind(kind::SET_KEYWORD)]
@@ -11782,12 +11857,12 @@ pub enum MethodDefinitionAccessorKindTransportSlot {
     Star,
 }
 
-impl ::sittir_core::prepare::Prepare for MethodDefinitionAccessorKindTransportSlot {
+impl ::sittir_core::prepare::Prepare for MethodDefinitionGeneratorTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            MethodDefinitionAccessorKindTransportSlot::GetKeyword => Ok(()),
-            MethodDefinitionAccessorKindTransportSlot::SetKeyword => Ok(()),
-            MethodDefinitionAccessorKindTransportSlot::Star => Ok(()),
+            MethodDefinitionGeneratorTransportSlot::GetKeyword => Ok(()),
+            MethodDefinitionGeneratorTransportSlot::SetKeyword => Ok(()),
+            MethodDefinitionGeneratorTransportSlot::Star => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -11795,7 +11870,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionAccessorKindTransportSl
     }
 }
 
-impl ::sittir_core::view::KindOf for MethodDefinitionAccessorKindTransportSlot {
+impl ::sittir_core::view::KindOf for MethodDefinitionGeneratorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::GetKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
@@ -11805,12 +11880,12 @@ impl ::sittir_core::view::KindOf for MethodDefinitionAccessorKindTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for MethodDefinitionAccessorKindTransportSlot {
+impl ::sittir_core::render::Render for MethodDefinitionGeneratorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MethodDefinitionAccessorKindTransportSlot::GetKeyword => render_get_keyword(w),
-            MethodDefinitionAccessorKindTransportSlot::SetKeyword => render_set_keyword(w),
-            MethodDefinitionAccessorKindTransportSlot::Star => render_star(w),
+            MethodDefinitionGeneratorTransportSlot::GetKeyword => render_get_keyword(w),
+            MethodDefinitionGeneratorTransportSlot::SetKeyword => render_set_keyword(w),
+            MethodDefinitionGeneratorTransportSlot::Star => render_star(w),
         }
     }
 }
@@ -12331,7 +12406,7 @@ impl ::sittir_core::render::Render for DecoratorParenthesizedExpressionExpressio
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum AsExpressionTypeAnnotationTransportSlot {
+pub enum AsExpressionTypeTransportSlot {
     #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeTransport),
     #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
@@ -12388,125 +12463,125 @@ pub enum AsExpressionTypeAnnotationTransportSlot {
     ConstKeyword,
 }
 
-impl ::sittir_core::prepare::Prepare for AsExpressionTypeAnnotationTransportSlot {
+impl ::sittir_core::prepare::Prepare for AsExpressionTypeTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::PredefinedType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::GenericType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ObjectType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ArrayType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TupleType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::FlowMaybeType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeQuery(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::IndexTypeQuery(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::LiteralType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::LookupType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ConditionalType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TemplateLiteralType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::IntersectionType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::UnionType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::FunctionType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ReadonlyType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ConstructorType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::This(_) => Ok(()),
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType(_) => Ok(()),
-            AsExpressionTypeAnnotationTransportSlot::ConstKeyword => Ok(()),
+            AsExpressionTypeTransportSlot::ParenthesizedType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::PredefinedType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::NestedTypeIdentifier(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::GenericType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::ObjectType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::ArrayType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::TupleType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::FlowMaybeType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::TypeQuery(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::IndexTypeQuery(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::LiteralType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::LookupType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::ConditionalType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::TemplateLiteralType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::IntersectionType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::UnionType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::FunctionType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::ReadonlyType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::ConstructorType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::InferType(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.prepare(ctx),
+            AsExpressionTypeTransportSlot::This(_) => Ok(()),
+            AsExpressionTypeTransportSlot::ExistentialType(_) => Ok(()),
+            AsExpressionTypeTransportSlot::ConstKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::PredefinedType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::GenericType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::ObjectType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::ArrayType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::TupleType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::FlowMaybeType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::TypeQuery(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::IndexTypeQuery(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::LiteralType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::LookupType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::ConditionalType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::TemplateLiteralType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::IntersectionType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::UnionType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::FunctionType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::ReadonlyType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::ConstructorType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::This(edges) => Some(edges),
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType(edges) => Some(edges),
-            AsExpressionTypeAnnotationTransportSlot::ConstKeyword => None,
+            AsExpressionTypeTransportSlot::ParenthesizedType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::PredefinedType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::TypeIdentifier(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::NestedTypeIdentifier(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::GenericType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::ObjectType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::ArrayType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::TupleType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::FlowMaybeType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::TypeQuery(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::IndexTypeQuery(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::LiteralType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::LookupType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::ConditionalType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::TemplateLiteralType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::IntersectionType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::UnionType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::FunctionType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::ReadonlyType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::ConstructorType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::InferType(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.gap_edges(),
+            AsExpressionTypeTransportSlot::This(edges) => Some(edges),
+            AsExpressionTypeTransportSlot::ExistentialType(edges) => Some(edges),
+            AsExpressionTypeTransportSlot::ConstKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::PredefinedType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::GenericType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::ObjectType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::ArrayType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::TupleType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::FlowMaybeType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::TypeQuery(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::IndexTypeQuery(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::LiteralType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::LookupType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::ConditionalType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::TemplateLiteralType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::IntersectionType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::UnionType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::FunctionType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::ReadonlyType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::ConstructorType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::This(_) => None,
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType(_) => None,
-            AsExpressionTypeAnnotationTransportSlot::ConstKeyword => None,
+            AsExpressionTypeTransportSlot::ParenthesizedType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::PredefinedType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::NestedTypeIdentifier(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::GenericType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::ObjectType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::ArrayType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::TupleType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::FlowMaybeType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::TypeQuery(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::IndexTypeQuery(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::LiteralType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::LookupType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::ConditionalType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::TemplateLiteralType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::IntersectionType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::UnionType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::ReadonlyType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::ConstructorType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::InferType(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.snapshot_edge(),
+            AsExpressionTypeTransportSlot::This(_) => None,
+            AsExpressionTypeTransportSlot::ExistentialType(_) => None,
+            AsExpressionTypeTransportSlot::ConstKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
-            AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::PredefinedType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::GenericType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ObjectType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ArrayType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TupleType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::FlowMaybeType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeQuery(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::IndexTypeQuery(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::LiteralType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::LookupType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ConditionalType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TemplateLiteralType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::IntersectionType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::UnionType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::FunctionType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ReadonlyType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::ConstructorType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_separator(ctx),
-            AsExpressionTypeAnnotationTransportSlot::This(_) => None,
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType(_) => None,
-            AsExpressionTypeAnnotationTransportSlot::ConstKeyword => None,
+            AsExpressionTypeTransportSlot::ParenthesizedType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::PredefinedType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::TypeIdentifier(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::NestedTypeIdentifier(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::GenericType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::ObjectType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::ArrayType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::TupleType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::FlowMaybeType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::TypeQuery(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::IndexTypeQuery(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::LiteralType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::LookupType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::ConditionalType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::TemplateLiteralType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::IntersectionType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::UnionType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::FunctionType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::ReadonlyType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::ConstructorType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::InferType(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_separator(ctx),
+            AsExpressionTypeTransportSlot::This(_) => None,
+            AsExpressionTypeTransportSlot::ExistentialType(_) => None,
+            AsExpressionTypeTransportSlot::ConstKeyword => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -12514,7 +12589,7 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTypeAnnotationTransportSlot
     }
 }
 
-impl ::sittir_core::view::KindOf for AsExpressionTypeAnnotationTransportSlot {
+impl ::sittir_core::view::KindOf for AsExpressionTypeTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ParenthesizedType(inner) => inner.kind_in(kinds),
@@ -12547,35 +12622,35 @@ impl ::sittir_core::view::KindOf for AsExpressionTypeAnnotationTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for AsExpressionTypeAnnotationTransportSlot {
+impl ::sittir_core::render::Render for AsExpressionTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::PredefinedType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::GenericType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::ObjectType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::ArrayType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::TupleType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::FlowMaybeType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::TypeQuery(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::IndexTypeQuery(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::LiteralType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::LookupType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::ConditionalType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::TemplateLiteralType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::IntersectionType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::UnionType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::FunctionType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::ReadonlyType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::ConstructorType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::InferType(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
-            AsExpressionTypeAnnotationTransportSlot::ConstKeyword => {
+            AsExpressionTypeTransportSlot::ParenthesizedType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::PredefinedType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::NestedTypeIdentifier(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::GenericType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::ObjectType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::ArrayType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::TupleType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::FlowMaybeType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::TypeQuery(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::IndexTypeQuery(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::LiteralType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::LookupType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::ConditionalType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::TemplateLiteralType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::IntersectionType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::UnionType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::FunctionType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::ReadonlyType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::ConstructorType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::InferType(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
+            AsExpressionTypeTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            AsExpressionTypeTransportSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
+            AsExpressionTypeTransportSlot::ConstKeyword => {
                 w.site_at(options::SITE_AS_EXPRESSION_CONST_KEYWORD_BEFORE);
                 let written = render_const_keyword(w);
                 written?;
@@ -12599,7 +12674,7 @@ pub enum AmbientDeclarationContentTransportSlot {
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
     #[kind(kind::FUNCTION_SIGNATURE)]
-    FunctionSignature(Box<FunctionSignatureTransport>),
+    FunctionSignature(FunctionSignatureTransport),
     #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(Box<AbstractClassDeclarationTransport>),
     #[kind(kind::MODULE)]
@@ -12739,7 +12814,7 @@ impl ::sittir_core::render::Render for AmbientDeclarationContentTransportSlot {
             AmbientDeclarationContentTransportSlot::ClassDeclaration(inner) => inner.as_ref().render(w),
             AmbientDeclarationContentTransportSlot::LexicalDeclaration(inner) => inner.render(w),
             AmbientDeclarationContentTransportSlot::VariableDeclaration(inner) => inner.render(w),
-            AmbientDeclarationContentTransportSlot::FunctionSignature(inner) => inner.as_ref().render(w),
+            AmbientDeclarationContentTransportSlot::FunctionSignature(inner) => inner.render(w),
             AmbientDeclarationContentTransportSlot::AbstractClassDeclaration(inner) => inner.as_ref().render(w),
             AmbientDeclarationContentTransportSlot::Module(inner) => inner.render(w),
             AmbientDeclarationContentTransportSlot::InternalModule(inner) => inner.render(w),
@@ -12990,7 +13065,7 @@ impl ::sittir_core::render::Render for TypeAliasDeclarationTerminatorTransportSl
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum RequiredParameterPatternTransportSlot {
+pub enum OptionalParameterNameTransportSlot {
     #[kind(kind::_LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
     #[kind(kind::REST_PATTERN)]
@@ -13000,33 +13075,33 @@ pub enum RequiredParameterPatternTransportSlot {
     This(::sittir_core::options::Edges),
 }
 
-impl ::sittir_core::prepare::Prepare for RequiredParameterPatternTransportSlot {
+impl ::sittir_core::prepare::Prepare for OptionalParameterNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            RequiredParameterPatternTransportSlot::LhsExpression(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::RestPattern(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::This(_) => Ok(()),
+            OptionalParameterNameTransportSlot::LhsExpression(t) => t.prepare(ctx),
+            OptionalParameterNameTransportSlot::RestPattern(t) => t.prepare(ctx),
+            OptionalParameterNameTransportSlot::This(_) => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            RequiredParameterPatternTransportSlot::LhsExpression(t) => t.gap_edges(),
-            RequiredParameterPatternTransportSlot::RestPattern(t) => t.gap_edges(),
-            RequiredParameterPatternTransportSlot::This(edges) => Some(edges),
+            OptionalParameterNameTransportSlot::LhsExpression(t) => t.gap_edges(),
+            OptionalParameterNameTransportSlot::RestPattern(t) => t.gap_edges(),
+            OptionalParameterNameTransportSlot::This(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            RequiredParameterPatternTransportSlot::LhsExpression(t) => t.snapshot_edge(),
-            RequiredParameterPatternTransportSlot::RestPattern(t) => t.snapshot_edge(),
-            RequiredParameterPatternTransportSlot::This(_) => None,
+            OptionalParameterNameTransportSlot::LhsExpression(t) => t.snapshot_edge(),
+            OptionalParameterNameTransportSlot::RestPattern(t) => t.snapshot_edge(),
+            OptionalParameterNameTransportSlot::This(_) => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
-            RequiredParameterPatternTransportSlot::LhsExpression(t) => t.source_separator(ctx),
-            RequiredParameterPatternTransportSlot::RestPattern(t) => t.source_separator(ctx),
-            RequiredParameterPatternTransportSlot::This(_) => None,
+            OptionalParameterNameTransportSlot::LhsExpression(t) => t.source_separator(ctx),
+            OptionalParameterNameTransportSlot::RestPattern(t) => t.source_separator(ctx),
+            OptionalParameterNameTransportSlot::This(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -13034,7 +13109,7 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterPatternTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for RequiredParameterPatternTransportSlot {
+impl ::sittir_core::view::KindOf for OptionalParameterNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::LhsExpression(inner) => inner.kind_in(kinds),
@@ -13044,12 +13119,12 @@ impl ::sittir_core::view::KindOf for RequiredParameterPatternTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for RequiredParameterPatternTransportSlot {
+impl ::sittir_core::render::Render for OptionalParameterNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RequiredParameterPatternTransportSlot::LhsExpression(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::RestPattern(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            OptionalParameterNameTransportSlot::LhsExpression(inner) => inner.render(w),
+            OptionalParameterNameTransportSlot::RestPattern(inner) => inner.render(w),
+            OptionalParameterNameTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
         }
     }
 }
@@ -14861,9 +14936,9 @@ impl ::sittir_core::render::Render for FormalParametersElementsItemTransportSlot
 #[transport(choice)]
 pub enum TupleTypeMembersItemTransportSlot {
     #[kind(kind::TUPLE_PARAMETER)]
-    TupleParameter(Box<TupleParameterTransport>),
+    TupleParameter(TupleParameterTransport),
     #[kind(kind::OPTIONAL_TUPLE_PARAMETER)]
-    OptionalTupleParameter(Box<OptionalTupleParameterTransport>),
+    OptionalTupleParameter(OptionalTupleParameterTransport),
     #[kind(kind::OPTIONAL_TYPE)]
     OptionalType(Box<OptionalTypeTransport>),
     #[kind(kind::REST_TYPE)]
@@ -15099,8 +15174,8 @@ impl ::sittir_core::view::KindOf for TupleTypeMembersItemTransportSlot {
 impl ::sittir_core::render::Render for TupleTypeMembersItemTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TupleTypeMembersItemTransportSlot::TupleParameter(inner) => inner.as_ref().render(w),
-            TupleTypeMembersItemTransportSlot::OptionalTupleParameter(inner) => inner.as_ref().render(w),
+            TupleTypeMembersItemTransportSlot::TupleParameter(inner) => inner.render(w),
+            TupleTypeMembersItemTransportSlot::OptionalTupleParameter(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::OptionalType(inner) => inner.as_ref().render(w),
             TupleTypeMembersItemTransportSlot::RestType(inner) => inner.as_ref().render(w),
             TupleTypeMembersItemTransportSlot::ParenthesizedType(inner) => inner.render(w),
@@ -15327,7 +15402,7 @@ pub enum ObjectTypeContentItemTransportSlot {
     #[kind(kind::CALL_SIGNATURE)]
     CallSignature(CallSignatureTransport),
     #[kind(kind::CONSTRUCT_SIGNATURE)]
-    ConstructSignature(Box<ConstructSignatureTransport>),
+    ConstructSignature(ConstructSignatureTransport),
     #[kind(kind::INDEX_SIGNATURE_COLON)]
     IndexSignatureColon(Box<IndexSignatureColonTransport>),
     #[kind(kind::INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE)]
@@ -15424,7 +15499,7 @@ impl ::sittir_core::render::Render for ObjectTypeContentItemTransportSlot {
             ObjectTypeContentItemTransportSlot::ExportStatementNamespaceExport(inner) => inner.render(w),
             ObjectTypeContentItemTransportSlot::PropertySignature(inner) => inner.as_ref().render(w),
             ObjectTypeContentItemTransportSlot::CallSignature(inner) => inner.render(w),
-            ObjectTypeContentItemTransportSlot::ConstructSignature(inner) => inner.as_ref().render(w),
+            ObjectTypeContentItemTransportSlot::ConstructSignature(inner) => inner.render(w),
             ObjectTypeContentItemTransportSlot::IndexSignatureColon(inner) => inner.as_ref().render(w),
             ObjectTypeContentItemTransportSlot::IndexSignatureMappedTypeClause(inner) => inner.as_ref().render(w),
             ObjectTypeContentItemTransportSlot::MethodSignature(inner) => inner.as_ref().render(w),
@@ -15524,9 +15599,9 @@ impl ::sittir_core::render::Render for ExportStatementEqualsExportTerminatorTran
 #[transport(choice)]
 pub enum BinaryExpressionInLeftTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
+    AsExpression(AsExpressionTransport),
     #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
+    SatisfiesExpression(SatisfiesExpressionTransport),
     #[kind(kind::INSTANTIATION_EXPRESSION)]
     InstantiationExpression(InstantiationExpressionTransport),
     #[kind(kind::INTERNAL_MODULE)]
@@ -15538,7 +15613,7 @@ pub enum BinaryExpressionInLeftTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -15580,7 +15655,7 @@ pub enum BinaryExpressionInLeftTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -15950,14 +16025,14 @@ impl ::sittir_core::view::KindOf for BinaryExpressionInLeftTransportSlot {
 impl ::sittir_core::render::Render for BinaryExpressionInLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BinaryExpressionInLeftTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            BinaryExpressionInLeftTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
+            BinaryExpressionInLeftTransportSlot::AsExpression(inner) => inner.render(w),
+            BinaryExpressionInLeftTransportSlot::SatisfiesExpression(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::InstantiationExpression(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::InternalModule(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::TypeAssertion(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::SubscriptExpression(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::MemberExpression(inner) => inner.render(w),
-            BinaryExpressionInLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            BinaryExpressionInLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::Identifier(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::NumberHex(inner) => inner.render(w),
@@ -15978,7 +16053,7 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::Object(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::Array(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            BinaryExpressionInLeftTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            BinaryExpressionInLeftTransportSlot::ArrowFunction(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             BinaryExpressionInLeftTransportSlot::Class(inner) => inner.as_ref().render(w),
             BinaryExpressionInLeftTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -16280,7 +16355,7 @@ impl ::sittir_core::render::Render for IndexSignatureColonSignTransportSlot {
 #[transport(choice)]
 pub enum IndexSignatureColonTypeTransportSlot {
     #[kind(kind::TYPE_ANNOTATION)]
-    TypeAnnotation(Box<TypeAnnotationTransport>),
+    TypeAnnotation(TypeAnnotationTransport),
     #[kind(kind::OMITTING_TYPE_ANNOTATION)]
     OmittingTypeAnnotation(Box<OmittingTypeAnnotationTransport>),
     #[kind(kind::ADDING_TYPE_ANNOTATION)]
@@ -16341,7 +16416,7 @@ impl ::sittir_core::view::KindOf for IndexSignatureColonTypeTransportSlot {
 impl ::sittir_core::render::Render for IndexSignatureColonTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IndexSignatureColonTypeTransportSlot::TypeAnnotation(inner) => inner.as_ref().render(w),
+            IndexSignatureColonTypeTransportSlot::TypeAnnotation(inner) => inner.render(w),
             IndexSignatureColonTypeTransportSlot::OmittingTypeAnnotation(inner) => inner.as_ref().render(w),
             IndexSignatureColonTypeTransportSlot::AddingTypeAnnotation(inner) => inner.as_ref().render(w),
             IndexSignatureColonTypeTransportSlot::OptingTypeAnnotation(inner) => inner.as_ref().render(w),
@@ -16351,18 +16426,18 @@ impl ::sittir_core::render::Render for IndexSignatureColonTypeTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum ImportSpecifierNameImportKindTransportSlot {
+pub enum ImportSpecifierNameTypeOnlyTransportSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
-impl ::sittir_core::prepare::Prepare for ImportSpecifierNameImportKindTransportSlot {
+impl ::sittir_core::prepare::Prepare for ImportSpecifierNameTypeOnlyTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ImportSpecifierNameImportKindTransportSlot::TypeKeyword => Ok(()),
-            ImportSpecifierNameImportKindTransportSlot::TypeofKeyword => Ok(()),
+            ImportSpecifierNameTypeOnlyTransportSlot::TypeKeyword => Ok(()),
+            ImportSpecifierNameTypeOnlyTransportSlot::TypeofKeyword => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -16370,7 +16445,7 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierNameImportKindTransportS
     }
 }
 
-impl ::sittir_core::view::KindOf for ImportSpecifierNameImportKindTransportSlot {
+impl ::sittir_core::view::KindOf for ImportSpecifierNameTypeOnlyTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -16379,16 +16454,16 @@ impl ::sittir_core::view::KindOf for ImportSpecifierNameImportKindTransportSlot 
     }
 }
 
-impl ::sittir_core::render::Render for ImportSpecifierNameImportKindTransportSlot {
+impl ::sittir_core::render::Render for ImportSpecifierNameTypeOnlyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportSpecifierNameImportKindTransportSlot::TypeKeyword => {
+            ImportSpecifierNameTypeOnlyTransportSlot::TypeKeyword => {
                 let written = render_type_keyword(w);
                 written?;
                 w.site_at(options::SITE_IMPORT_SPECIFIER_NAME_TYPE_KEYWORD_AFTER);
                 Ok(())
             }
-            ImportSpecifierNameImportKindTransportSlot::TypeofKeyword => {
+            ImportSpecifierNameTypeOnlyTransportSlot::TypeofKeyword => {
                 let written = render_typeof_keyword(w);
                 written?;
                 w.site_at(options::SITE_IMPORT_SPECIFIER_NAME_TYPEOF_KEYWORD_AFTER);
@@ -16400,18 +16475,18 @@ impl ::sittir_core::render::Render for ImportSpecifierNameImportKindTransportSlo
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum ImportSpecifierAsImportKindTransportSlot {
+pub enum ImportSpecifierAsTypeOnlyTransportSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
     #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
 }
 
-impl ::sittir_core::prepare::Prepare for ImportSpecifierAsImportKindTransportSlot {
+impl ::sittir_core::prepare::Prepare for ImportSpecifierAsTypeOnlyTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ImportSpecifierAsImportKindTransportSlot::TypeKeyword => Ok(()),
-            ImportSpecifierAsImportKindTransportSlot::TypeofKeyword => Ok(()),
+            ImportSpecifierAsTypeOnlyTransportSlot::TypeKeyword => Ok(()),
+            ImportSpecifierAsTypeOnlyTransportSlot::TypeofKeyword => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -16419,7 +16494,7 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierAsImportKindTransportSlo
     }
 }
 
-impl ::sittir_core::view::KindOf for ImportSpecifierAsImportKindTransportSlot {
+impl ::sittir_core::view::KindOf for ImportSpecifierAsTypeOnlyTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -16428,16 +16503,16 @@ impl ::sittir_core::view::KindOf for ImportSpecifierAsImportKindTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ImportSpecifierAsImportKindTransportSlot {
+impl ::sittir_core::render::Render for ImportSpecifierAsTypeOnlyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ImportSpecifierAsImportKindTransportSlot::TypeKeyword => {
+            ImportSpecifierAsTypeOnlyTransportSlot::TypeKeyword => {
                 let written = render_type_keyword(w);
                 written?;
                 w.site_at(options::SITE_IMPORT_SPECIFIER_AS_TYPE_KEYWORD_AFTER);
                 Ok(())
             }
-            ImportSpecifierAsImportKindTransportSlot::TypeofKeyword => {
+            ImportSpecifierAsTypeOnlyTransportSlot::TypeofKeyword => {
                 let written = render_typeof_keyword(w);
                 written?;
                 w.site_at(options::SITE_IMPORT_SPECIFIER_AS_TYPEOF_KEYWORD_AFTER);
@@ -16455,7 +16530,7 @@ pub enum CallExpressionTemplateCallFunctionTransportSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
     #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD))]
@@ -16497,7 +16572,7 @@ pub enum CallExpressionTemplateCallFunctionTransportSlot {
     #[kind(kind::FUNCTION_EXPRESSION)]
     FunctionExpression(Box<FunctionExpressionTransport>),
     #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
+    ArrowFunction(ArrowFunctionTransport),
     #[kind(kind::GENERATOR_FUNCTION)]
     GeneratorFunction(Box<GeneratorFunctionTransport>),
     #[kind(kind::CLASS)]
@@ -16774,7 +16849,7 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionTranspo
         match self {
             CallExpressionTemplateCallFunctionTransportSlot::SubscriptExpression(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::MemberExpression(inner) => inner.render(w),
-            CallExpressionTemplateCallFunctionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            CallExpressionTemplateCallFunctionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::Identifier(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NumberHex(inner) => inner.render(w),
@@ -16795,7 +16870,7 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionTranspo
             CallExpressionTemplateCallFunctionTransportSlot::Object(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::Array(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            CallExpressionTemplateCallFunctionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
+            CallExpressionTemplateCallFunctionTransportSlot::ArrowFunction(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
             CallExpressionTemplateCallFunctionTransportSlot::Class(inner) => inner.as_ref().render(w),
             CallExpressionTemplateCallFunctionTransportSlot::CallExpressionCall(inner) => inner.render(w),
@@ -17156,6 +17231,8 @@ impl ::sittir_core::render::Render for ExportStatementDefaultFromContentTranspor
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ExportStatementDefaultDeclarationContentTransportSlot {
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
+    ExportStatementDefaultDeclarationDefaultKw(Box<ExportStatementDefaultDeclarationDefaultKwTransport>),
     #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(Box<FunctionDeclarationTransport>),
     #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
@@ -17167,7 +17244,7 @@ pub enum ExportStatementDefaultDeclarationContentTransportSlot {
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
     #[kind(kind::FUNCTION_SIGNATURE)]
-    FunctionSignature(Box<FunctionSignatureTransport>),
+    FunctionSignature(FunctionSignatureTransport),
     #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(Box<AbstractClassDeclarationTransport>),
     #[kind(kind::MODULE)]
@@ -17184,13 +17261,12 @@ pub enum ExportStatementDefaultDeclarationContentTransportSlot {
     ImportAlias(ImportAliasTransport),
     #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationTransport),
-    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
-    ExportStatementDefaultDeclarationDefaultKw(ExportStatementDefaultDeclarationDefaultKwTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationContentTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.prepare(ctx),
@@ -17205,11 +17281,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(t) => t.prepare(ctx),
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.gap_edges(),
@@ -17224,11 +17300,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(t) => t.gap_edges(),
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.snapshot_edge(),
@@ -17243,11 +17319,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(t) => t.snapshot_edge(),
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(t) => t.source_separator(ctx),
@@ -17262,7 +17338,6 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(t) => t.source_separator(ctx),
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -17273,6 +17348,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
 impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
+            Self::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.kind_in(kinds),
             Self::FunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::GeneratorFunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::ClassDeclaration(inner) => inner.kind_in(kinds),
@@ -17287,7 +17363,6 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentTra
             Self::InterfaceDeclaration(inner) => inner.kind_in(kinds),
             Self::ImportAlias(inner) => inner.kind_in(kinds),
             Self::AmbientDeclaration(inner) => inner.kind_in(kinds),
-            Self::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -17295,12 +17370,13 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentTra
 impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
+            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::ClassDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::LexicalDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::VariableDeclaration(inner) => inner.render(w),
-            ExportStatementDefaultDeclarationContentTransportSlot::FunctionSignature(inner) => inner.as_ref().render(w),
+            ExportStatementDefaultDeclarationContentTransportSlot::FunctionSignature(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::AbstractClassDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::Module(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::InternalModule(inner) => inner.render(w),
@@ -17309,7 +17385,6 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentT
             ExportStatementDefaultDeclarationContentTransportSlot::InterfaceDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::ImportAlias(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentTransportSlot::AmbientDeclaration(inner) => inner.render(w),
-            ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.render(w),
         }
     }
 }
@@ -17328,7 +17403,7 @@ pub enum ExportStatementDefaultDeclarationDefaultKwContentTransportSlot {
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationTransport),
     #[kind(kind::FUNCTION_SIGNATURE)]
-    FunctionSignature(Box<FunctionSignatureTransport>),
+    FunctionSignature(FunctionSignatureTransport),
     #[kind(kind::ABSTRACT_CLASS_DECLARATION)]
     AbstractClassDeclaration(Box<AbstractClassDeclarationTransport>),
     #[kind(kind::MODULE)]
@@ -17461,7 +17536,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ClassDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::LexicalDeclaration(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::VariableDeclaration(inner) => inner.render(w),
-            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionSignature(inner) => inner.as_ref().render(w),
+            ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionSignature(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::AbstractClassDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::Module(inner) => inner.render(w),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::InternalModule(inner) => inner.render(w),
@@ -17525,7 +17600,7 @@ pub enum ForHeaderLhsLeftTransportSlot {
     #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
     LhsExpression(LhsExpressionTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
+    ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
 }
@@ -17578,7 +17653,7 @@ impl ::sittir_core::render::Render for ForHeaderLhsLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ForHeaderLhsLeftTransportSlot::LhsExpression(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+            ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
         }
     }
@@ -18063,7 +18138,7 @@ pub struct ExportClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_export_specifiers")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::EXPORT_SPECIFIERS, word = 2, width = 5)]
     pub export_specifiers: Option<::sittir_core::SlotValue<ExportSpecifiersTransport>>,
 }
 
@@ -18111,9 +18186,9 @@ impl ::sittir_core::prepare::Prepare for ExportClauseTransport {
 pub struct ExportSpecifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_export_kind")]
-    #[slot(field = field::EXPORT_KIND, word = 2, width = 5)]
-    pub export_kind: Option<::sittir_core::SlotValue<ExportSpecifierExportKindTransportSlot>>,
+    #[wire(key = "_type_only")]
+    #[slot(field = field::TYPE_ONLY, word = 2, width = 5)]
+    pub type_only: Option<::sittir_core::SlotValue<ExportSpecifierTypeOnlyTransportSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameTransportSlot>,
@@ -18144,7 +18219,7 @@ impl ::sittir_core::prepare::Prepare for ExportSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.export_kind.prepare(ctx)?;
+        self.type_only.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
@@ -18196,9 +18271,9 @@ impl ::sittir_core::render::Render for ImportTransport {
 pub struct ImportStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_import_clause")]
-    #[slot(field = field::IMPORT_CLAUSE, word = 2, width = 5)]
-    pub import_clause: Option<::sittir_core::SlotValue<ImportStatementImportClauseTransportSlot>>,
+    #[wire(key = "_type_only")]
+    #[slot(field = field::TYPE_ONLY, word = 2, width = 5)]
+    pub type_only: Option<::sittir_core::SlotValue<ImportStatementTypeOnlyTransportSlot>>,
     #[wire(key = "_from_clause")]
     #[slot(field = field::FROM_CLAUSE, word = 7, width = 5)]
     pub from_clause: ::sittir_core::SlotValue<ImportStatementFromClauseTransportSlot>,
@@ -18233,7 +18308,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if self.terminator.is_none() { self.terminator = ImportStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_IMPORT_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
-        self.import_clause.prepare(ctx)?;
+        self.type_only.prepare(ctx)?;
         self.from_clause.prepare(ctx)?;
         self.import_attribute.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
@@ -18926,9 +19001,9 @@ impl ::sittir_core::prepare::Prepare for ForStatementTransport {
 pub struct ForInStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_await")]
-    #[slot(field = field::AWAIT, presence = kind::AWAIT_KEYWORD, word = 2, bit = 0)]
-    pub await_: bool,
+    #[wire(key = "_async")]
+    #[slot(field = field::ASYNC, presence = kind::AWAIT_KEYWORD, word = 2, bit = 0)]
+    pub async_: bool,
     #[wire(key = "_header")]
     #[slot(field = field::HEADER, word = 3, width = 5)]
     pub header: ::sittir_core::SlotValue<ForHeaderTransport>,
@@ -18959,7 +19034,7 @@ impl ::sittir_core::prepare::Prepare for ForInStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.await_.prepare(ctx)?;
+        self.async_.prepare(ctx)?;
         self.header.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
@@ -19097,9 +19172,9 @@ pub struct TryStatementTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
-    #[wire(key = "_handler")]
-    #[slot(field = field::HANDLER, word = 7, width = 5)]
-    pub handler: Option<::sittir_core::SlotValue<CatchClauseTransport>>,
+    #[wire(key = "_handlers")]
+    #[slot(field = field::HANDLERS, word = 7, width = 5)]
+    pub handlers: Option<::sittir_core::SlotValue<CatchClauseTransport>>,
     #[wire(key = "_finalizer")]
     #[slot(field = field::FINALIZER, word = 12, width = 5)]
     pub finalizer: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
@@ -19128,7 +19203,7 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.handler.prepare(ctx)?;
+        self.handlers.prepare(ctx)?;
         self.finalizer.prepare(ctx)?;
         Ok(())
     }
@@ -20479,10 +20554,10 @@ pub struct FunctionExpressionTransport {
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 13, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
+    pub parameters: ::sittir_core::SlotValue<Box<FormalParametersTransport>>,
     #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE, word = 18, width = 5)]
-    pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
+    pub return_type: Option<::sittir_core::SlotValue<Box<FunctionExpressionReturnTypeTransportSlot>>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 23, width = 5)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
@@ -20622,10 +20697,10 @@ pub struct GeneratorFunctionTransport {
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 13, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
+    pub parameters: ::sittir_core::SlotValue<Box<FormalParametersTransport>>,
     #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE, word = 18, width = 5)]
-    pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
+    pub return_type: Option<::sittir_core::SlotValue<Box<FunctionExpressionReturnTypeTransportSlot>>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 23, width = 5)]
     pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
@@ -20759,7 +20834,7 @@ pub struct ArrowFunctionTransport {
     pub async_: bool,
     #[wire(key = "_content")]
     #[slot(word = 3, width = 5)]
-    pub content: ::sittir_core::SlotValue<ArrowFunctionContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<Box<ArrowFunctionContentTransportSlot>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 8, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<ArrowFunctionBodyTransportSlot>>,
@@ -20839,9 +20914,9 @@ impl ::sittir_core::render::Render for OptionalChainTransport {
 pub struct NewExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_constructor")]
-    #[slot(field = field::CONSTRUCTOR, word = 2, width = 5)]
-    pub constructor: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
+    #[wire(key = "_function")]
+    #[slot(field = field::FUNCTION, word = 2, width = 5)]
+    pub function: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_type_arguments")]
     #[slot(field = field::TYPE_ARGUMENTS, word = 7, width = 5)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
@@ -20872,7 +20947,7 @@ impl ::sittir_core::prepare::Prepare for NewExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.constructor.prepare(ctx)?;
+        self.function.prepare(ctx)?;
         self.type_arguments.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
         Ok(())
@@ -20948,9 +21023,9 @@ pub struct MemberExpressionTransport {
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT, word = 2, width = 5)]
     pub object: ::sittir_core::SlotValue<Box<MemberExpressionObjectTransportSlot>>,
-    #[wire(key = "_separator")]
-    #[slot(field = field::SEPARATOR, word = 7, width = 5)]
-    pub separator: ::sittir_core::SlotValue<MemberExpressionSeparatorTransportSlot>,
+    #[wire(key = "_optional_chain")]
+    #[slot(field = field::OPTIONAL_CHAIN, word = 7, width = 5)]
+    pub optional_chain: ::sittir_core::SlotValue<MemberExpressionOptionalChainTransportSlot>,
     #[wire(key = "_property")]
     #[slot(field = field::PROPERTY, word = 12, width = 5)]
     pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
@@ -20979,7 +21054,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
-        self.separator.prepare(ctx)?;
+        self.optional_chain.prepare(ctx)?;
         self.property.prepare(ctx)?;
         Ok(())
     }
@@ -21107,9 +21182,9 @@ impl ::sittir_core::prepare::Prepare for LhsExpressionTransport {
 pub struct AssignmentExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_using")]
-    #[slot(field = field::USING, presence = kind::USING_KEYWORD, word = 2, bit = 0)]
-    pub using: bool,
+    #[wire(key = "_disposable")]
+    #[slot(field = field::DISPOSABLE, presence = kind::USING_KEYWORD, word = 2, bit = 0)]
+    pub disposable: bool,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT, word = 3, width = 5)]
     pub left: ::sittir_core::SlotValue<Box<AssignmentExpressionLeftTransportSlot>>,
@@ -21140,7 +21215,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.using.prepare(ctx)?;
+        self.disposable.prepare(ctx)?;
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
@@ -22324,9 +22399,9 @@ impl ::sittir_core::prepare::Prepare for ArgumentsTransport {
 pub struct DecoratorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
-    pub expression: ::sittir_core::SlotValue<DecoratorExpressionTransportSlot>,
+    #[wire(key = "_content")]
+    #[slot(field = field::CONTENT, word = 2, width = 5)]
+    pub content: ::sittir_core::SlotValue<DecoratorContentTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for DecoratorTransport {
@@ -22351,7 +22426,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.expression.prepare(ctx)?;
+        self.content.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22533,13 +22608,13 @@ impl ::sittir_core::prepare::Prepare for ClassBodyTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FORMAL_PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[transport(kind = kind::FORMAL_PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct FormalParametersTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 5)]
-    pub elements: Option<::sittir_core::SlotValue<FormalParametersElementsTransport>>,
+    pub elements: Option<::sittir_core::SlotValue<Box<FormalParametersElementsTransportSlot>>>,
 }
 
 impl ::sittir_core::view::KindOf for FormalParametersTransport {
@@ -22704,9 +22779,9 @@ pub struct MethodDefinitionTransport {
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 3)]
     pub async_: bool,
-    #[wire(key = "_accessor_kind")]
-    #[slot(field = field::ACCESSOR_KIND, word = 8, width = 5)]
-    pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
+    #[wire(key = "_generator")]
+    #[slot(field = field::GENERATOR, word = 8, width = 5)]
+    pub generator: Option<::sittir_core::SlotValue<MethodDefinitionGeneratorTransportSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 13, width = 5)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
@@ -22754,7 +22829,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionTransport {
         self.override_.prepare(ctx)?;
         self.readonly.prepare(ctx)?;
         self.async_.prepare(ctx)?;
-        self.accessor_kind.prepare(ctx)?;
+        self.generator.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.optional.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -23099,9 +23174,9 @@ pub struct MethodSignatureTransport {
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 3)]
     pub async_: bool,
-    #[wire(key = "_accessor_kind")]
-    #[slot(field = field::ACCESSOR_KIND, word = 8, width = 5)]
-    pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
+    #[wire(key = "_generator")]
+    #[slot(field = field::GENERATOR, word = 8, width = 5)]
+    pub generator: Option<::sittir_core::SlotValue<MethodDefinitionGeneratorTransportSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 13, width = 5)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
@@ -23146,7 +23221,7 @@ impl ::sittir_core::prepare::Prepare for MethodSignatureTransport {
         self.override_.prepare(ctx)?;
         self.readonly.prepare(ctx)?;
         self.async_.prepare(ctx)?;
-        self.accessor_kind.prepare(ctx)?;
+        self.generator.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.optional.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -23179,9 +23254,9 @@ pub struct AbstractMethodSignatureTransport {
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER, word = 2, bit = 0)]
     pub override_: bool,
-    #[wire(key = "_accessor_kind")]
-    #[slot(field = field::ACCESSOR_KIND, word = 8, width = 5)]
-    pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
+    #[wire(key = "_generator")]
+    #[slot(field = field::GENERATOR, word = 8, width = 5)]
+    pub generator: Option<::sittir_core::SlotValue<MethodDefinitionGeneratorTransportSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 13, width = 5)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
@@ -23223,7 +23298,7 @@ impl ::sittir_core::prepare::Prepare for AbstractMethodSignatureTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.accessibility_modifier.prepare(ctx)?;
         self.override_.prepare(ctx)?;
-        self.accessor_kind.prepare(ctx)?;
+        self.generator.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.optional.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -23425,9 +23500,9 @@ pub struct AsExpressionTransport {
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_type_annotation")]
-    #[slot(field = field::TYPE_ANNOTATION, word = 7, width = 5)]
-    pub type_annotation: ::sittir_core::SlotValue<AsExpressionTypeAnnotationTransportSlot>,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE, word = 7, width = 5)]
+    pub type_: ::sittir_core::SlotValue<Box<AsExpressionTypeTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for AsExpressionTransport {
@@ -23453,7 +23528,7 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
-        self.type_annotation.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23478,9 +23553,9 @@ pub struct SatisfiesExpressionTransport {
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_type_annotation")]
-    #[slot(field = field::TYPE_ANNOTATION, word = 7, width = 5)]
-    pub type_annotation: ::sittir_core::SlotValue<TypeTransport>,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE, word = 7, width = 5)]
+    pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for SatisfiesExpressionTransport {
@@ -23506,7 +23581,7 @@ impl ::sittir_core::prepare::Prepare for SatisfiesExpressionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
-        self.type_annotation.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24556,9 +24631,9 @@ pub struct RequiredParameterTransport {
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD, word = 2, bit = 1)]
     pub readonly: bool,
-    #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 10, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<RequiredParameterPatternTransportSlot>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 10, width = 5)]
+    pub name: ::sittir_core::SlotValue<PatternTransport>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 15, width = 5)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
@@ -24598,7 +24673,7 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterTransport {
         self.accessibility_modifier.prepare(ctx)?;
         self.override_.prepare(ctx)?;
         self.readonly.prepare(ctx)?;
-        self.pattern.prepare(ctx)?;
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -24634,9 +24709,9 @@ pub struct OptionalParameterTransport {
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD, word = 2, bit = 1)]
     pub readonly: bool,
-    #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 10, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<RequiredParameterPatternTransportSlot>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 10, width = 5)]
+    pub name: ::sittir_core::SlotValue<OptionalParameterNameTransportSlot>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 15, width = 5)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
@@ -24676,7 +24751,7 @@ impl ::sittir_core::prepare::Prepare for OptionalParameterTransport {
         self.accessibility_modifier.prepare(ctx)?;
         self.override_.prepare(ctx)?;
         self.readonly.prepare(ctx)?;
-        self.pattern.prepare(ctx)?;
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -24849,7 +24924,7 @@ pub struct TypeAnnotationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 2, width = 5)]
-    pub type_: ::sittir_core::SlotValue<TypeTransport>,
+    pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for TypeAnnotationTransport {
@@ -25053,7 +25128,7 @@ pub struct AssertsAnnotationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_asserts")]
     #[slot(word = 2, width = 5)]
-    pub asserts: ::sittir_core::SlotValue<AssertsTransport>,
+    pub asserts: ::sittir_core::SlotValue<Box<AssertsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for AssertsAnnotationTransport {
@@ -25312,7 +25387,7 @@ pub struct ConstructorTypeTransport {
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 8, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
+    pub parameters: ::sittir_core::SlotValue<Box<FormalParametersTransport>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 13, width = 5)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -25686,7 +25761,7 @@ pub struct TypePredicateAnnotationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type_predicate")]
     #[slot(word = 2, width = 5)]
-    pub type_predicate: ::sittir_core::SlotValue<TypePredicateTransport>,
+    pub type_predicate: ::sittir_core::SlotValue<Box<TypePredicateTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for TypePredicateAnnotationTransport {
@@ -26538,10 +26613,10 @@ pub struct CallSignatureTransport {
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 7, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
+    pub parameters: ::sittir_core::SlotValue<Box<FormalParametersTransport>>,
     #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE, word = 12, width = 5)]
-    pub return_type: Option<::sittir_core::SlotValue<FunctionExpressionReturnTypeTransportSlot>>,
+    pub return_type: Option<::sittir_core::SlotValue<Box<FunctionExpressionReturnTypeTransportSlot>>>,
 }
 
 impl ::sittir_core::view::KindOf for CallSignatureTransport {
@@ -26721,9 +26796,9 @@ pub struct TypeParameterTransport {
     #[wire(key = "_constraint")]
     #[slot(field = field::CONSTRAINT, word = 8, width = 5)]
     pub constraint: Option<::sittir_core::SlotValue<ConstraintTransport>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 13, width = 5)]
-    pub value: Option<::sittir_core::SlotValue<DefaultTypeTransport>>,
+    #[wire(key = "_default")]
+    #[slot(field = field::DEFAULT, word = 13, width = 5)]
+    pub default: Option<::sittir_core::SlotValue<DefaultTypeTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for TypeParameterTransport {
@@ -26751,7 +26826,7 @@ impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
         self.const_.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.constraint.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.default.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26825,9 +26900,9 @@ pub struct ConstraintTransport {
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<ConstraintContentTransportSlot>,
-    #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 7, width = 5)]
-    pub type_: ::sittir_core::SlotValue<TypeTransport>,
+    #[wire(key = "_bounds")]
+    #[slot(field = field::BOUNDS, word = 7, width = 5)]
+    pub bounds: ::sittir_core::SlotValue<TypeTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ConstraintTransport {
@@ -26857,7 +26932,7 @@ impl ::sittir_core::prepare::Prepare for ConstraintTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
-        self.type_.prepare(ctx)?;
+        self.bounds.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -26990,7 +27065,7 @@ pub struct TupleTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tuple_type_members")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::TUPLE_TYPE_MEMBERS, word = 2, width = 5)]
     pub tuple_type_members: Option<::sittir_core::SlotValue<TupleTypeMembersTransport>>,
 }
 
@@ -27198,7 +27273,7 @@ pub struct FunctionTypeTransport {
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 7, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersTransport>,
+    pub parameters: ::sittir_core::SlotValue<Box<FormalParametersTransport>>,
     #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE, word = 12, width = 5)]
     pub return_type: ::sittir_core::SlotValue<Box<FunctionTypeReturnTypeTransportSlot>>,
@@ -28057,9 +28132,9 @@ impl ::sittir_core::prepare::Prepare for ExportStatementNamespaceExportTransport
 pub struct ExportStatementEqualsExportTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
-    pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
+    #[wire(key = "_value")]
+    #[slot(field = field::VALUE, word = 2, width = 5)]
+    pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 7, width = 5)]
     pub terminator: Option<::sittir_core::SlotValue<ExportStatementEqualsExportTerminatorTransportSlot>>,
@@ -28088,7 +28163,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementEqualsExportTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if self.terminator.is_none() { self.terminator = ExportStatementEqualsExportTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
-        self.expression.prepare(ctx)?;
+        self.value.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
     }
@@ -28207,9 +28282,9 @@ impl ::sittir_core::prepare::Prepare for CommentBlockTransport {
 pub struct LiteralTypeNegativeNumberTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT, word = 2, width = 5)]
-    pub argument: ::sittir_core::SlotValue<NumberTransport>,
+    #[wire(key = "_value")]
+    #[slot(field = field::VALUE, word = 2, width = 5)]
+    pub value: ::sittir_core::SlotValue<NumberTransport>,
 }
 
 impl ::sittir_core::view::KindOf for LiteralTypeNegativeNumberTransport {
@@ -28234,7 +28309,7 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeNegativeNumberTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.argument.prepare(ctx)?;
+        self.value.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -29177,7 +29252,7 @@ pub struct IndexSignatureMappedTypeClauseTransport {
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD, word = 2, bit = 0)]
     pub readonly: bool,
     #[wire(key = "_mapped_type_clause")]
-    #[slot(word = 8, width = 5)]
+    #[slot(field = field::MAPPED_TYPE_CLAUSE, word = 8, width = 5)]
     pub mapped_type_clause: ::sittir_core::SlotValue<MappedTypeClauseTransport>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 13, width = 5)]
@@ -29361,9 +29436,9 @@ impl ::sittir_core::render::Render for OptionalChainMarkerTransport {
 pub struct ImportSpecifierNameTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_import_kind")]
-    #[slot(field = field::IMPORT_KIND, word = 2, width = 5)]
-    pub import_kind: Option<::sittir_core::SlotValue<ImportSpecifierNameImportKindTransportSlot>>,
+    #[wire(key = "_type_only")]
+    #[slot(field = field::TYPE_ONLY, word = 2, width = 5)]
+    pub type_only: Option<::sittir_core::SlotValue<ImportSpecifierNameTypeOnlyTransportSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -29391,7 +29466,7 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierNameTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.import_kind.prepare(ctx)?;
+        self.type_only.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
@@ -29414,9 +29489,9 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierNameTransport {
 pub struct ImportSpecifierAsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_import_kind")]
-    #[slot(field = field::IMPORT_KIND, word = 2, width = 5)]
-    pub import_kind: Option<::sittir_core::SlotValue<ImportSpecifierAsImportKindTransportSlot>>,
+    #[wire(key = "_type_only")]
+    #[slot(field = field::TYPE_ONLY, word = 2, width = 5)]
+    pub type_only: Option<::sittir_core::SlotValue<ImportSpecifierAsTypeOnlyTransportSlot>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<NamespaceExportModuleExportNameTransportSlot>,
@@ -29447,7 +29522,7 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierAsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.import_kind.prepare(ctx)?;
+        self.type_only.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
@@ -29472,11 +29547,11 @@ pub struct ParenthesizedExpressionTypedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 7, width = 5)]
-    pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
+    pub type_: Option<::sittir_core::SlotValue<Box<TypeAnnotationTransport>>>,
 }
 
 impl ::sittir_core::view::KindOf for ParenthesizedExpressionTypedTransport {
@@ -30108,9 +30183,9 @@ impl ::sittir_core::prepare::Prepare for ImportClauseDefaultImportTransport {
 pub struct ExportStatementDefaultFromTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_type")]
-    #[slot(field = field::TYPE, presence = kind::TYPE_KEYWORD, word = 2, bit = 0)]
-    pub type_: bool,
+    #[wire(key = "_type_only")]
+    #[slot(field = field::TYPE_ONLY, presence = kind::TYPE_KEYWORD, word = 2, bit = 0)]
+    pub type_only: bool,
     #[wire(key = "_content")]
     #[slot(word = 3, width = 5)]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultFromContentTransportSlot>,
@@ -30142,7 +30217,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         if self.terminator.is_none() { self.terminator = ExportStatementDefaultFromTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
-        self.type_.prepare(ctx)?;
+        self.type_only.prepare(ctx)?;
         self.content.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -30170,7 +30245,7 @@ pub struct ExportStatementDefaultDeclarationTransport {
     #[slot(field = field::DECORATOR, word = 2, width = 2, run = 5)]
     pub decorator: Vec<::sittir_core::SlotValue<DecoratorTransport>>,
     #[wire(key = "_content")]
-    #[slot(word = 4, width = 5)]
+    #[slot(field = field::DECLARATION, untagged, word = 4, width = 5)]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>,
     #[wire(key = "_decorator_separator_space")]
     pub decorator_separator_space: Option<u16>,
@@ -31285,6 +31360,182 @@ impl ::sittir_core::render::Render for DedentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_RECEIVER_PARAMETER_DECLARATION, layout = [kind::THIS, kind::EQ], words = 20)]
+pub struct ReceiverParameterDeclarationTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_decorator")]
+    #[slot(field = field::DECORATOR, word = 3, width = 2, run = 5)]
+    pub decorator: Vec<::sittir_core::SlotValue<DecoratorTransport>>,
+    #[wire(key = "_accessibility_modifier")]
+    #[slot(word = 5, width = 5)]
+    pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
+    #[wire(key = "_override")]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER, word = 2, bit = 0)]
+    pub override_: bool,
+    #[wire(key = "_readonly")]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD, word = 2, bit = 1)]
+    pub readonly: bool,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE, word = 10, width = 5)]
+    pub type_: Option<::sittir_core::SlotValue<Box<TypeAnnotationTransport>>>,
+    #[wire(key = "_value")]
+    #[slot(field = field::VALUE, word = 15, width = 5)]
+    pub value: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
+    #[wire(key = "_decorator_separator_space")]
+    pub decorator_separator_space: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for ReceiverParameterDeclarationTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(435)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for ReceiverParameterDeclarationTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(435) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for ReceiverParameterDeclarationTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(435)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_receiver_parameter_declaration(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ReceiverParameterDeclarationTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.decorator.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_decorator"));
+        self.decorator_separator_space.get_or_insert(ctx.options.spacing[options::SITE_RECEIVER_PARAMETER_DECLARATION_DECORATOR_SEPARATOR_SPACE].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.decorator.iter_mut().map(Some), options::SEATS_RECEIVER_PARAMETER_DECLARATION_DECORATOR, ctx);
+        self.decorator.prepare(ctx)?;
+        self.accessibility_modifier.prepare(ctx)?;
+        self.override_.prepare(ctx)?;
+        self.readonly.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
+        self.value.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_RECEIVER, words = 12)]
+pub struct FormalParametersElementsReceiverTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_receiver")]
+    #[slot(field = field::RECEIVER, word = 2, width = 5)]
+    pub receiver: ::sittir_core::SlotValue<Box<ReceiverParameterDeclarationTransport>>,
+    #[wire(key = "_formal_parameters_elements_receiver_group")]
+    #[slot(word = 7, width = 5)]
+    pub formal_parameters_elements_receiver_group: Option<::sittir_core::SlotValue<FormalParametersElementsReceiverGroupTransport>>,
+}
+
+impl ::sittir_core::view::KindOf for FormalParametersElementsReceiverTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(437)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for FormalParametersElementsReceiverTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(437) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for FormalParametersElementsReceiverTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(437)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_formal_parameters_elements_receiver(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for FormalParametersElementsReceiverTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.receiver.prepare(ctx)?;
+        self.formal_parameters_elements_receiver_group.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::FORMAL_PARAMETERS_ELEMENTS_RECEIVER_GROUP, min_depth = 2, layout = [kind::COMMA], words = 7)]
+pub struct FormalParametersElementsReceiverGroupTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
+    pub elements: Option<::sittir_core::SlotValue<FormalParametersElementsTransport>>,
+}
+
+impl ::sittir_core::view::KindOf for FormalParametersElementsReceiverGroupTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(438)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for FormalParametersElementsReceiverGroupTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(438) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for FormalParametersElementsReceiverGroupTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(438)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_formal_parameters_elements_receiver_group(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for FormalParametersElementsReceiverGroupTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.elements.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_TERNARY_QMARK, text, words = 2)]
 pub struct TernaryQmarkTransport {
     #[wire(key = "$_layout")]
@@ -31388,19 +31639,19 @@ pub struct StatementIdentifierTransport {
 
 impl ::sittir_core::view::KindOf for StatementIdentifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(464)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(469)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StatementIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(464) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(469) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for StatementIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(464)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_statement_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(469)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_statement_identifier(self, w))
     }
 }
 
@@ -31436,19 +31687,19 @@ pub struct ShorthandPropertyIdentifierTransport {
 
 impl ::sittir_core::view::KindOf for ShorthandPropertyIdentifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(462)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(467)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShorthandPropertyIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(462) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(467) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShorthandPropertyIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(462)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_property_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(467)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_property_identifier(self, w))
     }
 }
 
@@ -31484,19 +31735,19 @@ pub struct ShorthandPropertyIdentifierPatternTransport {
 
 impl ::sittir_core::view::KindOf for ShorthandPropertyIdentifierPatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(463)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(468)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShorthandPropertyIdentifierPatternTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(463) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(468) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShorthandPropertyIdentifierPatternTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(463)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_property_identifier_pattern(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(468)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_property_identifier_pattern(self, w))
     }
 }
 
@@ -31532,19 +31783,19 @@ pub struct PropertyIdentifierTransport {
 
 impl ::sittir_core::view::KindOf for PropertyIdentifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(461)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(466)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for PropertyIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(461) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(466) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for PropertyIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(461)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_property_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(466)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_property_identifier(self, w))
     }
 }
 
@@ -31580,19 +31831,19 @@ pub struct TypeIdentifierTransport {
 
 impl ::sittir_core::view::KindOf for TypeIdentifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(466)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(471)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeIdentifierTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(466) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(471) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeIdentifierTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(466)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(471)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
 }
 
@@ -31628,19 +31879,19 @@ pub struct InterfaceBodyTransport {
 
 impl ::sittir_core::view::KindOf for InterfaceBodyTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(459)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(464)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for InterfaceBodyTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(459) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(464) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for InterfaceBodyTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(459)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_interface_body(self, w))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(464)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_interface_body(self, w))
     }
 }
 
@@ -37668,7 +37919,7 @@ impl ::sittir_core::prepare::SeatTarget for MethodDefinitionNameTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for AsExpressionTypeAnnotationTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for AsExpressionTypeTransportSlot {
     fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ParenthesizedType(t) => t.seat_target(table, ctx),
@@ -37745,7 +37996,7 @@ impl ::sittir_core::prepare::SeatTarget for ExtendsTypeClauseTypeTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for RequiredParameterPatternTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for OptionalParameterNameTransportSlot {
     fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::RestPattern(t) => t.seat_target(table, ctx),
@@ -38089,6 +38340,7 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTemplateCallFunctionTr
 impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationContentTransportSlot {
     fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
+            Self::ExportStatementDefaultDeclarationDefaultKw(t) => t.seat_target(table, ctx),
             Self::FunctionDeclaration(t) => t.seat_target(table, ctx),
             Self::GeneratorFunctionDeclaration(t) => t.seat_target(table, ctx),
             Self::ClassDeclaration(t) => t.seat_target(table, ctx),
@@ -38103,7 +38355,6 @@ impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationCon
             Self::InterfaceDeclaration(t) => t.seat_target(table, ctx),
             Self::ImportAlias(t) => t.seat_target(table, ctx),
             Self::AmbientDeclaration(t) => t.seat_target(table, ctx),
-            Self::ExportStatementDefaultDeclarationDefaultKw(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -38349,10 +38600,10 @@ fn render_export_clause(node: &ExportClauseTransport, w: &mut dyn ::sittir_core:
 
 fn render_export_specifier(node: &ExportSpecifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = View::new(&node.alias, "{}");
-    let export_kind = View::new(&node.export_kind, "{}");
     let name = &node.name;
+    let type_only = View::new(&node.type_only, "{}");
     w.edge(::sittir_core::types::KindId(192), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_export_kind", 0, w, |w| export_kind.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_only", 0, w, |w| type_only.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     if alias.is_present() {
         w.site_at(options::SITE_EXPORT_SPECIFIER_AS_KEYWORD_BEFORE);
@@ -38367,12 +38618,12 @@ fn render_export_specifier(node: &ExportSpecifierTransport, w: &mut dyn ::sittir
 fn render_import_statement(node: &ImportStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let from_clause = &node.from_clause;
     let import_attribute = View::new(&node.import_attribute, "{}");
-    let import_clause = View::new(&node.import_clause, "{}");
     let terminator = View::new(&node.terminator, "{}");
+    let type_only = View::new(&node.type_only, "{}");
     w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_import_clause", 0, w, |w| import_clause.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_only", 0, w, |w| type_only.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_from_clause", 0, w, |w| from_clause.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_import_attribute", 0, w, |w| import_attribute.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_terminator", 0, w, |w| terminator.render(w))?;
@@ -38579,16 +38830,16 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_for_in_statement(node: &ForInStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let await_ = View::new(&node.await_, "await");
+    let async_ = View::new(&node.async_, "await");
     let body = &node.body;
     let header = &node.header;
     w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("for")?;
     w.site_at(options::SITE_FOR_IN_STATEMENT_FOR_KEYWORD_AFTER);
-    if await_.is_present() {
-        w.site_at(options::SITE_FOR_IN_STATEMENT_AWAIT_BEFORE);
-        await_.render(w)?;
-        w.site_at(options::SITE_FOR_IN_STATEMENT_AWAIT_AFTER);
+    if async_.is_present() {
+        w.site_at(options::SITE_FOR_IN_STATEMENT_ASYNC_BEFORE);
+        async_.render(w)?;
+        w.site_at(options::SITE_FOR_IN_STATEMENT_ASYNC_AFTER);
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_header", 0, w, |w| header.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
@@ -38628,12 +38879,12 @@ fn render_do_statement(node: &DoStatementTransport, w: &mut dyn ::sittir_core::r
 fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let finalizer = View::new(&node.finalizer, "{}");
-    let handler = View::new(&node.handler, "{}");
+    let handlers = View::new(&node.handlers, "{}");
     w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("try")?;
     w.site_at(options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_handler", 0, w, |w| handler.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_handlers", 0, w, |w| handlers.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_finalizer", 0, w, |w| finalizer.render(w))?;
     w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -39105,9 +39356,9 @@ fn render_generator_function(node: &GeneratorFunctionTransport, w: &mut dyn ::si
     w.site_at(options::SITE_GENERATOR_FUNCTION_FUNCTION_KEYWORD_BEFORE);
     w.text("function")?;
     w.site_at(options::SITE_GENERATOR_FUNCTION_FUNCTION_KEYWORD_AFTER);
-    w.site_at(options::SITE_GENERATOR_FUNCTION_STAR_BEFORE);
+    w.site_at(options::SITE_GENERATOR_FUNCTION_GENERATOR_BEFORE);
     w.text("*")?;
-    w.site_at(options::SITE_GENERATOR_FUNCTION_STAR_AFTER);
+    w.site_at(options::SITE_GENERATOR_FUNCTION_GENERATOR_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_parameters", 0, w, |w| type_parameters.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters", 0, w, |w| parameters.render(w))?;
@@ -39133,9 +39384,9 @@ fn render_generator_function_declaration(node: &GeneratorFunctionDeclarationTran
     w.site_at(options::SITE_GENERATOR_FUNCTION_DECLARATION_FUNCTION_KEYWORD_BEFORE);
     w.text("function")?;
     w.site_at(options::SITE_GENERATOR_FUNCTION_DECLARATION_FUNCTION_KEYWORD_AFTER);
-    w.site_at(options::SITE_GENERATOR_FUNCTION_DECLARATION_STAR_BEFORE);
+    w.site_at(options::SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_BEFORE);
     w.text("*")?;
-    w.site_at(options::SITE_GENERATOR_FUNCTION_DECLARATION_STAR_AFTER);
+    w.site_at(options::SITE_GENERATOR_FUNCTION_DECLARATION_GENERATOR_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_parameters", 0, w, |w| type_parameters.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters", 0, w, |w| parameters.render(w))?;
@@ -39166,12 +39417,12 @@ fn render_arrow_function(node: &ArrowFunctionTransport, w: &mut dyn ::sittir_cor
 
 fn render_new_expression(node: &NewExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let arguments = View::new(&node.arguments, "{}");
-    let constructor = &node.constructor;
+    let function = &node.function;
     let type_arguments = View::new(&node.type_arguments, "{}");
     w.edge(::sittir_core::types::KindId(254), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("new")?;
     w.site_at(options::SITE_NEW_EXPRESSION_NEW_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_constructor", 0, w, |w| constructor.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_function", 0, w, |w| function.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_arguments", 0, w, |w| type_arguments.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_arguments", 0, w, |w| arguments.render(w))?;
     w.edge(::sittir_core::types::KindId(254), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -39190,11 +39441,11 @@ fn render_await_expression(node: &AwaitExpressionTransport, w: &mut dyn ::sittir
 
 fn render_member_expression(node: &MemberExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let object = &node.object;
+    let optional_chain = &node.optional_chain;
     let property = &node.property;
-    let separator = &node.separator;
     w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_object", 0, w, |w| object.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_separator", 0, w, |w| separator.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_optional_chain", 0, w, |w| optional_chain.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_property", 0, w, |w| property.render(w))?;
     w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -39228,13 +39479,13 @@ fn render_lhs_expression(node: &LhsExpressionTransport, w: &mut dyn ::sittir_cor
 }
 
 fn render_assignment_expression(node: &AssignmentExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let disposable = View::new(&node.disposable, "using");
     let left = &node.left;
     let right = &node.right;
-    let using = View::new(&node.using, "using");
     w.edge(::sittir_core::types::KindId(259), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    if using.is_present() {
-        using.render(w)?;
-        w.site_at(options::SITE_ASSIGNMENT_EXPRESSION_USING_AFTER);
+    if disposable.is_present() {
+        disposable.render(w)?;
+        w.site_at(options::SITE_ASSIGNMENT_EXPRESSION_DISPOSABLE_AFTER);
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", 0, w, |w| left.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_EXPRESSION_EQ_BEFORE);
@@ -39457,11 +39708,11 @@ fn render_arguments(node: &ArgumentsTransport, w: &mut dyn ::sittir_core::render
 }
 
 fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
+    let content = &node.content;
     w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("@")?;
     w.site_at(options::SITE_DECORATOR_AT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", 0, w, |w| expression.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -39553,9 +39804,9 @@ fn render_rest_pattern(node: &RestPatternTransport, w: &mut dyn ::sittir_core::r
 
 fn render_method_definition(node: &MethodDefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let accessibility_modifier = View::new(&node.accessibility_modifier, "{}");
-    let accessor_kind = View::new(&node.accessor_kind, "{}");
     let async_ = View::new(&node.async_, "async");
     let body = &node.body;
+    let generator = View::new(&node.generator, "{}");
     let name = &node.name;
     let optional = View::new(&node.optional, "?");
     let override_ = View::new(::sittir_core::view::Presence::new(node.override_, OverrideModifierTransport::OverrideModifier), "{}");
@@ -39589,17 +39840,17 @@ fn render_method_definition(node: &MethodDefinitionTransport, w: &mut dyn ::sitt
         async_.render(w)?;
         w.site_at(options::SITE_METHOD_DEFINITION_ASYNC_AFTER);
     }
-    if accessor_kind.is_present() {
-        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+    if generator.is_present() {
+        if generator.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
         } else {
-            w.site_at(options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_BEFORE);
+            w.site_at(options::SITE_METHOD_DEFINITION_GENERATOR_BEFORE);
         }
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_accessor_kind", 0, w, |w| accessor_kind.render(w))?;
-        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_generator", 0, w, |w| generator.render(w))?;
+        if generator.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
         } else {
-            w.site_at(options::SITE_METHOD_DEFINITION_ACCESSOR_KIND_AFTER);
+            w.site_at(options::SITE_METHOD_DEFINITION_GENERATOR_AFTER);
         }
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
@@ -39725,8 +39976,8 @@ fn render_non_null_expression(node: &NonNullExpressionTransport, w: &mut dyn ::s
 
 fn render_method_signature(node: &MethodSignatureTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let accessibility_modifier = View::new(&node.accessibility_modifier, "{}");
-    let accessor_kind = View::new(&node.accessor_kind, "{}");
     let async_ = View::new(&node.async_, "async");
+    let generator = View::new(&node.generator, "{}");
     let name = &node.name;
     let optional = View::new(&node.optional, "?");
     let override_ = View::new(::sittir_core::view::Presence::new(node.override_, OverrideModifierTransport::OverrideModifier), "{}");
@@ -39760,17 +40011,17 @@ fn render_method_signature(node: &MethodSignatureTransport, w: &mut dyn ::sittir
         async_.render(w)?;
         w.site_at(options::SITE_METHOD_SIGNATURE_ASYNC_AFTER);
     }
-    if accessor_kind.is_present() {
-        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+    if generator.is_present() {
+        if generator.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
         } else {
-            w.site_at(options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE);
+            w.site_at(options::SITE_METHOD_SIGNATURE_GENERATOR_BEFORE);
         }
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_accessor_kind", 0, w, |w| accessor_kind.render(w))?;
-        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_generator", 0, w, |w| generator.render(w))?;
+        if generator.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
         } else {
-            w.site_at(options::SITE_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER);
+            w.site_at(options::SITE_METHOD_SIGNATURE_GENERATOR_AFTER);
         }
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
@@ -39788,7 +40039,7 @@ fn render_method_signature(node: &MethodSignatureTransport, w: &mut dyn ::sittir
 
 fn render_abstract_method_signature(node: &AbstractMethodSignatureTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let accessibility_modifier = View::new(&node.accessibility_modifier, "{}");
-    let accessor_kind = View::new(&node.accessor_kind, "{}");
+    let generator = View::new(&node.generator, "{}");
     let name = &node.name;
     let optional = View::new(&node.optional, "?");
     let override_ = View::new(::sittir_core::view::Presence::new(node.override_, OverrideModifierTransport::OverrideModifier), "{}");
@@ -39808,17 +40059,17 @@ fn render_abstract_method_signature(node: &AbstractMethodSignatureTransport, w: 
         override_.render(w)?;
         w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_AFTER);
     }
-    if accessor_kind.is_present() {
-        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+    if generator.is_present() {
+        if generator.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
         } else {
-            w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_BEFORE);
+            w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_GENERATOR_BEFORE);
         }
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_accessor_kind", 0, w, |w| accessor_kind.render(w))?;
-        if accessor_kind.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_generator", 0, w, |w| generator.render(w))?;
+        if generator.kind_in(&*w, &[::sittir_core::types::KindId(46), ::sittir_core::types::KindId(47)]) {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
         } else {
-            w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_ACCESSOR_KIND_AFTER);
+            w.site_at(options::SITE_ABSTRACT_METHOD_SIGNATURE_GENERATOR_AFTER);
         }
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
@@ -39882,26 +40133,26 @@ fn render_type_assertion(node: &TypeAssertionTransport, w: &mut dyn ::sittir_cor
 
 fn render_as_expression(node: &AsExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let type_annotation = &node.type_annotation;
+    let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", 0, w, |w| expression.render(w))?;
     w.site_at(options::SITE_AS_EXPRESSION_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_AS_EXPRESSION_AS_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_annotation", 0, w, |w| type_annotation.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_satisfies_expression(node: &SatisfiesExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let type_annotation = &node.type_annotation;
+    let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", 0, w, |w| expression.render(w))?;
     w.site_at(options::SITE_SATISFIES_EXPRESSION_SATISFIES_KEYWORD_BEFORE);
     w.text("satisfies")?;
     w.site_at(options::SITE_SATISFIES_EXPRESSION_SATISFIES_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_annotation", 0, w, |w| type_annotation.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(299), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -40021,9 +40272,9 @@ fn render_abstract_class_declaration(node: &AbstractClassDeclarationTransport, w
     let type_parameters = View::new(&node.type_parameters, "{}");
     w.edge(::sittir_core::types::KindId(306), ::sittir_core::options::Side::Before, node.layout.edges().before);
     decorator.render(w)?;
-    w.site_at(options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_KEYWORD_BEFORE);
+    w.site_at(options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_BEFORE);
     w.text("abstract")?;
-    w.site_at(options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_KEYWORD_AFTER);
+    w.site_at(options::SITE_ABSTRACT_CLASS_DECLARATION_ABSTRACT_AFTER);
     w.site_at(options::SITE_ABSTRACT_CLASS_DECLARATION_CLASS_KEYWORD_BEFORE);
     w.text("class")?;
     w.site_at(options::SITE_ABSTRACT_CLASS_DECLARATION_CLASS_KEYWORD_AFTER);
@@ -40209,8 +40460,8 @@ fn render_required_parameter(node: &RequiredParameterTransport, w: &mut dyn ::si
         tail: Some(options::SITE_REQUIRED_PARAMETER_DECORATOR_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_decorator"),
     };
+    let name = &node.name;
     let override_ = View::new(::sittir_core::view::Presence::new(node.override_, OverrideModifierTransport::OverrideModifier), "{}");
-    let pattern = &node.pattern;
     let readonly = View::new(&node.readonly, "readonly");
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
@@ -40227,7 +40478,7 @@ fn render_required_parameter(node: &RequiredParameterTransport, w: &mut dyn ::si
         readonly.render(w)?;
         w.site_at(options::SITE_REQUIRED_PARAMETER_READONLY_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
     if value.is_present() {
         w.site_at(options::SITE_REQUIRED_PARAMETER_EQ_BEFORE);
@@ -40254,8 +40505,8 @@ fn render_optional_parameter(node: &OptionalParameterTransport, w: &mut dyn ::si
         tail: Some(options::SITE_OPTIONAL_PARAMETER_DECORATOR_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_decorator"),
     };
+    let name = &node.name;
     let override_ = View::new(::sittir_core::view::Presence::new(node.override_, OverrideModifierTransport::OverrideModifier), "{}");
-    let pattern = &node.pattern;
     let readonly = View::new(&node.readonly, "readonly");
     let type_ = View::new(&node.type_, "{}");
     let value = View::new(&node.value, "{}");
@@ -40272,10 +40523,10 @@ fn render_optional_parameter(node: &OptionalParameterTransport, w: &mut dyn ::si
         readonly.render(w)?;
         w.site_at(options::SITE_OPTIONAL_PARAMETER_READONLY_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
-    w.site_at(options::SITE_OPTIONAL_PARAMETER_QMARK_BEFORE);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
+    w.site_at(options::SITE_OPTIONAL_PARAMETER_OPTIONAL_BEFORE);
     w.text("?")?;
-    w.site_at(options::SITE_OPTIONAL_PARAMETER_QMARK_AFTER);
+    w.site_at(options::SITE_OPTIONAL_PARAMETER_OPTIONAL_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
     if value.is_present() {
         w.site_at(options::SITE_OPTIONAL_PARAMETER_EQ_BEFORE);
@@ -40774,8 +41025,8 @@ fn render_type_parameters(node: &TypeParametersTransport, w: &mut dyn ::sittir_c
 fn render_type_parameter(node: &TypeParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let const_ = View::new(&node.const_, "const");
     let constraint = View::new(&node.constraint, "{}");
+    let default = View::new(&node.default, "{}");
     let name = &node.name;
-    let value = View::new(&node.value, "{}");
     w.edge(::sittir_core::types::KindId(365), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if const_.is_present() {
         const_.render(w)?;
@@ -40783,7 +41034,7 @@ fn render_type_parameter(node: &TypeParameterTransport, w: &mut dyn ::sittir_cor
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_constraint", 0, w, |w| constraint.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_default", 0, w, |w| default.render(w))?;
     w.edge(::sittir_core::types::KindId(365), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -40799,11 +41050,11 @@ fn render_default_type(node: &DefaultTypeTransport, w: &mut dyn ::sittir_core::r
 }
 
 fn render_constraint(node: &ConstraintTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let bounds = &node.bounds;
     let content = &node.content;
-    let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(367), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_bounds", 0, w, |w| bounds.render(w))?;
     w.edge(::sittir_core::types::KindId(367), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -41145,15 +41396,15 @@ fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExpor
 }
 
 fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
     let terminator = View::new(&node.terminator, "{}");
+    let value = &node.value;
     w.edge(::sittir_core::types::KindId(393), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("export")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_KEYWORD_AFTER);
     w.site_at(options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", 0, w, |w| expression.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_terminator", 0, w, |w| terminator.render(w))?;
     w.edge(::sittir_core::types::KindId(393), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -41178,11 +41429,11 @@ fn render_comment_block(node: &CommentBlockTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_literal_type_negative_number(node: &LiteralTypeNegativeNumberTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let argument = &node.argument;
+    let value = &node.value;
     w.edge(::sittir_core::types::KindId(394), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("-")?;
     w.site_at(options::SITE_LITERAL_TYPE_NEGATIVE_NUMBER_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", 0, w, |w| argument.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(394), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -41462,10 +41713,10 @@ fn render_yield_expression_delegate(node: &YieldExpressionDelegateTransport, w: 
 }
 
 fn render_import_specifier_name(node: &ImportSpecifierNameTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let import_kind = View::new(&node.import_kind, "{}");
     let name = &node.name;
+    let type_only = View::new(&node.type_only, "{}");
     w.edge(::sittir_core::types::KindId(406), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_import_kind", 0, w, |w| import_kind.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_only", 0, w, |w| type_only.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     w.edge(::sittir_core::types::KindId(406), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -41473,10 +41724,10 @@ fn render_import_specifier_name(node: &ImportSpecifierNameTransport, w: &mut dyn
 
 fn render_import_specifier_as(node: &ImportSpecifierAsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alias = &node.alias;
-    let import_kind = View::new(&node.import_kind, "{}");
     let name = &node.name;
+    let type_only = View::new(&node.type_only, "{}");
     w.edge(::sittir_core::types::KindId(407), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_import_kind", 0, w, |w| import_kind.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_only", 0, w, |w| type_only.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     w.site_at(options::SITE_IMPORT_SPECIFIER_AS_AS_KEYWORD_BEFORE);
     w.text("as")?;
@@ -41540,9 +41791,9 @@ fn render_call_expression_member(node: &CallExpressionMemberTransport, w: &mut d
     let type_arguments = View::new(&node.type_arguments, "{}");
     w.edge(::sittir_core::types::KindId(412), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_function", 0, w, |w| function.render(w))?;
-    w.site_at(options::SITE_CALL_EXPRESSION_MEMBER_QMARK_DOT_BEFORE);
+    w.site_at(options::SITE_CALL_EXPRESSION_MEMBER_OPTIONAL_CHAIN_BEFORE);
     w.text("?.")?;
-    w.site_at(options::SITE_CALL_EXPRESSION_MEMBER_QMARK_DOT_AFTER);
+    w.site_at(options::SITE_CALL_EXPRESSION_MEMBER_OPTIONAL_CHAIN_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_arguments", 0, w, |w| type_arguments.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_arguments", 0, w, |w| arguments.render(w))?;
     w.edge(::sittir_core::types::KindId(412), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -41644,14 +41895,14 @@ fn render_import_clause_default_import(node: &ImportClauseDefaultImportTransport
 fn render_export_statement_default_from(node: &ExportStatementDefaultFromTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let terminator = View::new(&node.terminator, "{}");
-    let type_ = View::new(&node.type_, "type");
+    let type_only = View::new(&node.type_only, "type");
     w.edge(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("export")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_EXPORT_KEYWORD_AFTER);
-    if type_.is_present() {
-        w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_TYPE_BEFORE);
-        type_.render(w)?;
-        w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_TYPE_AFTER);
+    if type_only.is_present() {
+        w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_TYPE_ONLY_BEFORE);
+        type_only.render(w)?;
+        w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_FROM_TYPE_ONLY_AFTER);
     }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_terminator", 0, w, |w| terminator.render(w))?;
@@ -41767,9 +42018,9 @@ fn render_variable_declarator_definite(node: &VariableDeclaratorDefiniteTranspor
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(428), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
-    w.site_at(options::SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_BEFORE);
+    w.site_at(options::SITE_VARIABLE_DECLARATOR_DEFINITE_DEFINITE_BEFORE);
     w.text("!")?;
-    w.site_at(options::SITE_VARIABLE_DECLARATOR_DEFINITE_BANG_AFTER);
+    w.site_at(options::SITE_VARIABLE_DECLARATOR_DEFINITE_DEFINITE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(428), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -41857,6 +42108,72 @@ fn render_jsx_text(t: &JsxTextTransport, w: &mut dyn ::sittir_core::render::Rend
 fn render_template_chars(t: &TemplateCharsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(174));
     w.text(&t.text)
+}
+
+fn render_receiver_parameter_declaration(node: &ReceiverParameterDeclarationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let accessibility_modifier = View::new(&node.accessibility_modifier, "{}");
+    let decorator = ListView {
+        items: &node.decorator,
+        template: "{}",
+        token: "",
+        separators: None,
+        before: 0,
+        after: node.decorator_separator_space.unwrap_or(0),
+        leading: false,
+        trailing: false,
+        head: Some(options::SITE_RECEIVER_PARAMETER_DECLARATION_DECORATOR_START),
+        tail: Some(options::SITE_RECEIVER_PARAMETER_DECLARATION_DECORATOR_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_decorator"),
+    };
+    let override_ = View::new(::sittir_core::view::Presence::new(node.override_, OverrideModifierTransport::OverrideModifier), "{}");
+    let readonly = View::new(&node.readonly, "readonly");
+    let type_ = View::new(&node.type_, "{}");
+    let value = View::new(&node.value, "{}");
+    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    decorator.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_accessibility_modifier", 0, w, |w| accessibility_modifier.render(w))?;
+    if override_.is_present() {
+        w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_OVERRIDE_BEFORE);
+        override_.render(w)?;
+        w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_OVERRIDE_AFTER);
+    }
+    if readonly.is_present() {
+        w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_READONLY_BEFORE);
+        readonly.render(w)?;
+        w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_READONLY_AFTER);
+    }
+    w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_NAME_BEFORE);
+    w.text("this")?;
+    w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_NAME_AFTER);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
+    if value.is_present() {
+        w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_EQ_BEFORE);
+        w.text("=")?;
+        w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_EQ_AFTER);
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
+    }
+    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_formal_parameters_elements_receiver(node: &FormalParametersElementsReceiverTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let formal_parameters_elements_receiver_group = View::new(&node.formal_parameters_elements_receiver_group, "{}");
+    let receiver = &node.receiver;
+    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_receiver", 0, w, |w| receiver.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_formal_parameters_elements_receiver_group", 0, w, |w| formal_parameters_elements_receiver_group.render(w))?;
+    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_formal_parameters_elements_receiver_group(node: &FormalParametersElementsReceiverGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(&node.elements, "{}");
+    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.text(",")?;
+    w.site_at(options::SITE_FORMAL_PARAMETERS_ELEMENTS_RECEIVER_GROUP_COMMA_AFTER);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
+    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
 }
 
 fn render_ternary_qmark(t: &TernaryQmarkTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42582,7 +42899,7 @@ fn render_declaration(t: &DeclarationTransport, w: &mut dyn ::sittir_core::rende
         DeclarationTransport::ClassDeclaration(inner) => inner.as_ref().render(w),
         DeclarationTransport::LexicalDeclaration(inner) => inner.render(w),
         DeclarationTransport::VariableDeclaration(inner) => inner.render(w),
-        DeclarationTransport::FunctionSignature(inner) => inner.as_ref().render(w),
+        DeclarationTransport::FunctionSignature(inner) => inner.render(w),
         DeclarationTransport::AbstractClassDeclaration(inner) => inner.as_ref().render(w),
         DeclarationTransport::Module(inner) => inner.render(w),
         DeclarationTransport::InternalModule(inner) => inner.render(w),
@@ -42629,7 +42946,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
 fn render_variable_declarator(t: &VariableDeclaratorTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         VariableDeclaratorTransport::VariableDeclaratorPlain(inner) => inner.as_ref().render(w),
-        VariableDeclaratorTransport::VariableDeclaratorDefinite(inner) => inner.as_ref().render(w),
+        VariableDeclaratorTransport::VariableDeclaratorDefinite(inner) => inner.render(w),
     }
 }
 
@@ -42643,15 +42960,15 @@ fn render_for_header(t: &ForHeaderTransport, w: &mut dyn ::sittir_core::render::
 
 fn render_parenthesized_expression(t: &ParenthesizedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ParenthesizedExpressionTransport::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
+        ParenthesizedExpressionTransport::ParenthesizedExpressionTyped(inner) => inner.render(w),
         ParenthesizedExpressionTransport::ParenthesizedExpressionSequence(inner) => inner.render(w),
     }
 }
 
 fn render_expression(t: &ExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        ExpressionTransport::AsExpression(inner) => inner.as_ref().render(w),
-        ExpressionTransport::SatisfiesExpression(inner) => inner.as_ref().render(w),
+        ExpressionTransport::AsExpression(inner) => inner.render(w),
+        ExpressionTransport::SatisfiesExpression(inner) => inner.render(w),
         ExpressionTransport::InstantiationExpression(inner) => inner.render(w),
         ExpressionTransport::InternalModule(inner) => inner.render(w),
         ExpressionTransport::TypeAssertion(inner) => inner.render(w),
@@ -42688,7 +43005,7 @@ fn render_primary_expression(t: &PrimaryExpressionTransport, w: &mut dyn ::sitti
         PrimaryExpressionTransport::Object(inner) => inner.render(w),
         PrimaryExpressionTransport::Array(inner) => inner.render(w),
         PrimaryExpressionTransport::FunctionExpression(inner) => inner.as_ref().render(w),
-        PrimaryExpressionTransport::ArrowFunction(inner) => inner.as_ref().render(w),
+        PrimaryExpressionTransport::ArrowFunction(inner) => inner.render(w),
         PrimaryExpressionTransport::GeneratorFunction(inner) => inner.as_ref().render(w),
         PrimaryExpressionTransport::Class(inner) => inner.as_ref().render(w),
         PrimaryExpressionTransport::MetaProperty(inner) => inner.render(w),
@@ -43068,6 +43385,9 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::HtmlComment(inner) => inner.kind_in(kinds),
             Self::JsxText(inner) => inner.kind_in(kinds),
             Self::TemplateChars(inner) => inner.kind_in(kinds),
+            Self::ReceiverParameterDeclaration(inner) => inner.kind_in(kinds),
+            Self::FormalParametersElementsReceiver(inner) => inner.kind_in(kinds),
+            Self::FormalParametersElementsReceiverGroup(inner) => inner.kind_in(kinds),
             Self::TernaryQmark(inner) => inner.kind_in(kinds),
             Self::ErrorRecovery(inner) => inner.kind_in(kinds),
             Self::StatementIdentifier(inner) => inner.kind_in(kinds),
@@ -43476,6 +43796,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::HtmlComment(t) => t.render(w),
             AnyTransport::JsxText(t) => t.render(w),
             AnyTransport::TemplateChars(t) => t.render(w),
+            AnyTransport::ReceiverParameterDeclaration(t) => t.render(w),
+            AnyTransport::FormalParametersElementsReceiver(t) => t.render(w),
+            AnyTransport::FormalParametersElementsReceiverGroup(t) => t.render(w),
             AnyTransport::TernaryQmark(t) => t.render(w),
             AnyTransport::ErrorRecovery(t) => t.render(w),
             AnyTransport::StatementIdentifier(t) => t.render(w),
@@ -43684,8 +44007,8 @@ const _: () = assert!(::core::mem::size_of::<ArrayPatternTransport>() <= 256, "A
 const _: () = assert!(::core::mem::size_of::<ArrayTransport>() <= 256, "ArrayTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ArrayTypeTransport>() <= 256, "ArrayTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ArrowFunctionParameterTransport>() <= 256, "ArrowFunctionParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrowFunctionTransport>() > 256, "ArrowFunctionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AsExpressionTransport>() > 256, "AsExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ArrowFunctionTransport>() <= 256, "ArrowFunctionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AsExpressionTransport>() <= 256, "AsExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssertsAnnotationTransport>() <= 256, "AssertsAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssertsTransport>() <= 256, "AssertsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssignmentExpressionTransport>() <= 256, "AssignmentExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -43700,8 +44023,8 @@ const _: () = assert!(::core::mem::size_of::<CallExpressionMemberTransport>() <=
 const _: () = assert!(::core::mem::size_of::<CallExpressionTemplateCallTransport>() <= 256, "CallExpressionTemplateCallTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CallExpressionTransport>() <= 256, "CallExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CallSignatureTransport>() <= 256, "CallSignatureTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CatchClauseGroupTransport>() > 256, "CatchClauseGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CatchClauseTransport>() > 256, "CatchClauseTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CatchClauseGroupTransport>() <= 256, "CatchClauseGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CatchClauseTransport>() <= 256, "CatchClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassBodyMemberDeclarationTransport>() <= 256, "ClassBodyMemberDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassBodyMemberMethodSigTransport>() > 256, "ClassBodyMemberMethodSigTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassBodyMemberMethodTransport>() > 256, "ClassBodyMemberMethodTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -43716,7 +44039,7 @@ const _: () = assert!(::core::mem::size_of::<CommentLineTransport>() <= 256, "Co
 const _: () = assert!(::core::mem::size_of::<ComputedPropertyNameTransport>() <= 256, "ComputedPropertyNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConditionalTypeTransport>() <= 256, "ConditionalTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConstraintTransport>() > 256, "ConstraintTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ConstructSignatureTransport>() > 256, "ConstructSignatureTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ConstructSignatureTransport>() <= 256, "ConstructSignatureTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConstructorTypeTransport>() <= 256, "ConstructorTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ContinueStatementTransport>() <= 256, "ContinueStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DebuggerStatementTransport>() <= 256, "DebuggerStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -43738,7 +44061,7 @@ const _: () = assert!(::core::mem::size_of::<EscapeSequenceTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<ExportClauseTransport>() <= 256, "ExportClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportSpecifierTransport>() <= 256, "ExportSpecifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportSpecifiersTransport>() <= 256, "ExportSpecifiersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwTransport>() <= 256, "ExportStatementDefaultDeclarationDefaultKwTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwTransport>() > 256, "ExportStatementDefaultDeclarationDefaultKwTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationDefaultKwValueTransport>() <= 256, "ExportStatementDefaultDeclarationDefaultKwValueTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultDeclarationTransport>() > 256, "ExportStatementDefaultDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExportStatementDefaultFromClauseFromTransport>() <= 256, "ExportStatementDefaultFromClauseFromTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -43760,11 +44083,13 @@ const _: () = assert!(::core::mem::size_of::<ForHeaderLhsTransport>() > 256, "Fo
 const _: () = assert!(::core::mem::size_of::<ForHeaderVarKindTransport>() > 256, "ForHeaderVarKindTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForInStatementTransport>() <= 256, "ForInStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForStatementTransport>() > 256, "ForStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverGroupTransport>() <= 256, "FormalParametersElementsReceiverGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverTransport>() <= 256, "FormalParametersElementsReceiverTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsTransport>() <= 256, "FormalParametersElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FormalParametersTransport>() <= 256, "FormalParametersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionDeclarationTransport>() > 256, "FunctionDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionExpressionTransport>() > 256, "FunctionExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionSignatureTransport>() > 256, "FunctionSignatureTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FunctionSignatureTransport>() <= 256, "FunctionSignatureTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FunctionTypeTransport>() <= 256, "FunctionTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<GeneratorFunctionDeclarationTransport>() > 256, "GeneratorFunctionDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<GeneratorFunctionTransport>() > 256, "GeneratorFunctionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -43835,13 +44160,13 @@ const _: () = assert!(::core::mem::size_of::<ObjectTypeTransport>() <= 256, "Obj
 const _: () = assert!(::core::mem::size_of::<OmittingTypeAnnotationTransport>() > 256, "OmittingTypeAnnotationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OptingTypeAnnotationTransport>() > 256, "OptingTypeAnnotationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OptionalParameterTransport>() > 256, "OptionalParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OptionalTupleParameterTransport>() > 256, "OptionalTupleParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OptionalTupleParameterTransport>() <= 256, "OptionalTupleParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<OptionalTypeTransport>() > 256, "OptionalTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PairPatternTransport>() > 256, "PairPatternTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PairTransport>() > 256, "PairTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionSequenceTransport>() <= 256, "ParenthesizedExpressionSequenceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionTransport>() <= 256, "ParenthesizedExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionTypedTransport>() > 256, "ParenthesizedExpressionTypedTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionTypedTransport>() <= 256, "ParenthesizedExpressionTypedTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ParenthesizedTypeTransport>() <= 256, "ParenthesizedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PredefinedTypeEnum>() <= 256, "PredefinedTypeEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PrimaryExpressionTransport>() <= 256, "PrimaryExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -43852,6 +44177,7 @@ const _: () = assert!(::core::mem::size_of::<PropertyIdentifierTransport>() <= 2
 const _: () = assert!(::core::mem::size_of::<PropertySignatureTransport>() > 256, "PropertySignatureTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PublicFieldDefinitionTransport>() > 256, "PublicFieldDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReadonlyTypeTransport>() <= 256, "ReadonlyTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ReceiverParameterDeclarationTransport>() <= 256, "ReceiverParameterDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RegexFlagsTransport>() <= 256, "RegexFlagsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RegexPatternTransport>() <= 256, "RegexPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RegexTransport>() <= 256, "RegexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -43859,7 +44185,7 @@ const _: () = assert!(::core::mem::size_of::<RequiredParameterTransport>() > 256
 const _: () = assert!(::core::mem::size_of::<RestPatternTransport>() <= 256, "RestPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RestTypeTransport>() > 256, "RestTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReturnStatementTransport>() <= 256, "ReturnStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SatisfiesExpressionTransport>() > 256, "SatisfiesExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<SatisfiesExpressionTransport>() <= 256, "SatisfiesExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SequenceExpressionTransport>() <= 256, "SequenceExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ShorthandPropertyIdentifierPatternTransport>() <= 256, "ShorthandPropertyIdentifierPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ShorthandPropertyIdentifierTransport>() <= 256, "ShorthandPropertyIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -43883,11 +44209,11 @@ const _: () = assert!(::core::mem::size_of::<TernaryExpressionTransport>() <= 25
 const _: () = assert!(::core::mem::size_of::<TernaryQmarkTransport>() <= 256, "TernaryQmarkTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ThrowStatementTransport>() <= 256, "ThrowStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TryStatementTransport>() > 256, "TryStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TupleParameterTransport>() > 256, "TupleParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TupleParameterTransport>() <= 256, "TupleParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleTypeMembersTransport>() <= 256, "TupleTypeMembersTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleTypeTransport>() <= 256, "TupleTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeAliasDeclarationTransport>() > 256, "TypeAliasDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeAnnotationTransport>() > 256, "TypeAnnotationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeAnnotationTransport>() <= 256, "TypeAnnotationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsTransport>() <= 256, "TypeArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeAssertionTransport>() <= 256, "TypeAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeIdentifierTransport>() <= 256, "TypeIdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -43912,11 +44238,11 @@ const _: () = assert!(::core::mem::size_of::<UpdateExpressionPostfixTransport>()
 const _: () = assert!(::core::mem::size_of::<UpdateExpressionPrefixTransport>() <= 256, "UpdateExpressionPrefixTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UpdateExpressionTransport>() <= 256, "UpdateExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<VariableDeclarationTransport>() <= 256, "VariableDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VariableDeclaratorDefiniteTransport>() > 256, "VariableDeclaratorDefiniteTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<VariableDeclaratorDefiniteTransport>() <= 256, "VariableDeclaratorDefiniteTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<VariableDeclaratorPlainTransport>() > 256, "VariableDeclaratorPlainTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<WhileStatementTransport>() <= 256, "WhileStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "WithStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionDelegateTransport>() <= 256, "YieldExpressionDelegateTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, ExportStatementTransport, DeclarationTransport, ImportSpecifierTransport, StatementTransport, VariableDeclaratorTransport, ForHeaderTransport, ParenthesizedExpressionTransport, ExpressionTransport, PrimaryExpressionTransport, CallExpressionTransport, UpdateExpressionTransport, StringTransport, NumberTransport, MetaPropertyTransport, PatternTransport, TypeTransport, PrimaryTypeTransport, ClassBodyMemberTransport, EnumBodyElementTransport, ExportStatementDefaultTransport, NumberBigintTransport, NamespaceExportModuleExportNameTransportSlot, ExportSpecifierExportKindTransportSlot, ImportStatementImportClauseTransportSlot, ImportStatementFromClauseTransportSlot, ImportStatementTerminatorTransportSlot, ImportClauseContentTransportSlot, ImportAttributeAttributeKindTransportSlot, ExpressionStatementExpressionTransportSlot, ExpressionStatementTerminatorTransportSlot, VariableDeclarationTerminatorTransportSlot, LexicalDeclarationKindTransportSlot, LexicalDeclarationTerminatorTransportSlot, StatementBlockTerminatorTransportSlot, ForStatementInitializerTransportSlot, ForStatementConditionTransportSlot, DoStatementTerminatorTransportSlot, BreakStatementTerminatorTransportSlot, ContinueStatementTerminatorTransportSlot, DebuggerStatementTerminatorTransportSlot, ReturnStatementTerminatorTransportSlot, ThrowStatementTerminatorTransportSlot, LabeledStatementLabelTransportSlot, SwitchBodyCasesTransportSlot, YieldExpressionExpressionTransportSlot, ObjectPropertiesTransportSlot, ObjectPatternPropertiesTransportSlot, ObjectAssignmentPatternLeftTransportSlot, ArrayElementsTransportSlot, ArrayPatternElementsTransportSlot, NestedIdentifierObjectTransportSlot, ClassHeritageContentTransportSlot, FunctionExpressionReturnTypeTransportSlot, ArrowFunctionBodyTransportSlot, ArrowFunctionContentTransportSlot, MemberExpressionObjectTransportSlot, MemberExpressionSeparatorTransportSlot, MemberExpressionPropertyTransportSlot, SubscriptExpressionObjectTransportSlot, LhsExpressionContentTransportSlot, AssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, UnaryExpressionOperatorTransportSlot, TemplateStringElementsTransportSlot, DecoratorExpressionTransportSlot, DecoratorMemberExpressionObjectTransportSlot, MethodDefinitionAccessorKindTransportSlot, MethodDefinitionNameTransportSlot, PublicFieldDefinitionOptionalityTransportSlot, FunctionSignatureTerminatorTransportSlot, DecoratorParenthesizedExpressionExpressionTransportSlot, AsExpressionTypeAnnotationTransportSlot, AmbientDeclarationContentTransportSlot, ModuleNameTransportSlot, ImportAliasTerminatorTransportSlot, ExtendsTypeClauseTypeTransportSlot, TypeAliasDeclarationTerminatorTransportSlot, RequiredParameterPatternTransportSlot, TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot, TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot, AssertsValueTransportSlot, TupleParameterNameTransportSlot, TemplateTypeTypeTransportSlot, TemplateLiteralTypeElementsTransportSlot, GenericTypeNameTransportSlot, TypePredicateNameTransportSlot, TypeQueryMemberExpressionObjectTransportSlot, TypeQueryMemberExpressionContentTransportSlot, TypeQuerySubscriptExpressionIndexTransportSlot, TypeQueryCallExpressionFunctionTransportSlot, TypeQueryExpressionTransportSlot, LiteralTypeContentTransportSlot, ObjectTypeOpeningTransportSlot, ObjectTypeClosingTransportSlot, ConstraintContentTransportSlot, FunctionTypeReturnTypeTransportSlot, FormalParametersElementsItemTransportSlot, TupleTypeMembersItemTransportSlot, ImportClauseGroupContentTransportSlot, CatchClauseGroupParameterTransportSlot, AmbientDeclarationModuleTerminatorTransportSlot, ObjectTypeContentItemTransportSlot, ExportStatementNamespaceExportTerminatorTransportSlot, ExportStatementEqualsExportTerminatorTransportSlot, BinaryExpressionInLeftTransportSlot, ClassBodyMemberMethodTerminatorTransportSlot, ClassBodyMemberMethodSigTerminatorTransportSlot, ClassBodyMemberDeclarationMemberTransportSlot, ClassBodyMemberDeclarationTerminatorTransportSlot, IndexSignatureColonSignTransportSlot, IndexSignatureColonTypeTransportSlot, ImportSpecifierNameImportKindTransportSlot, ImportSpecifierAsImportKindTransportSlot, CallExpressionTemplateCallFunctionTransportSlot, StringDoubleElementsTransportSlot, StringSingleElementsTransportSlot, UpdateExpressionPostfixOperatorTransportSlot, UpdateExpressionPrefixOperatorTransportSlot, ExportStatementDefaultFromTerminatorTransportSlot, ExportStatementDefaultFromContentTransportSlot, ExportStatementDefaultDeclarationContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot, ForHeaderLhsLeftTransportSlot, ForHeaderLhsOperatorTransportSlot, ForHeaderLetConstKindKindTransportSlot, StatementIdentifierContentTransportSlot, ProgramTransport, HashBangLineTransport, NamespaceExportTransport, ExportClauseTransport, ExportSpecifierTransport, ImportTransport, ImportStatementTransport, ImportClauseTransport, NamespaceImportTransport, NamedImportsTransport, ImportAttributeTransport, ExpressionStatementTransport, VariableDeclarationTransport, LexicalDeclarationTransport, StatementBlockTransport, ElseClauseTransport, IfStatementTransport, SwitchStatementTransport, ForStatementTransport, ForInStatementTransport, WhileStatementTransport, DoStatementTransport, TryStatementTransport, WithStatementTransport, BreakStatementTransport, ContinueStatementTransport, DebuggerStatementTransport, ReturnStatementTransport, ThrowStatementTransport, EmptyStatementTransport, LabeledStatementTransport, SwitchBodyTransport, SwitchCaseTransport, SwitchDefaultTransport, CatchClauseTransport, FinallyClauseTransport, YieldExpressionTransport, ObjectTransport, ObjectPatternTransport, AssignmentPatternTransport, ObjectAssignmentPatternTransport, ArrayTransport, ArrayPatternTransport, NestedIdentifierTransport, ClassTransport, ClassDeclarationTransport, ClassHeritageTransport, FunctionExpressionTransport, FunctionDeclarationTransport, GeneratorFunctionTransport, GeneratorFunctionDeclarationTransport, ArrowFunctionTransport, OptionalChainTransport, NewExpressionTransport, AwaitExpressionTransport, MemberExpressionTransport, SubscriptExpressionTransport, LhsExpressionTransport, AssignmentExpressionTransport, AugmentedAssignmentExpressionTransport, SpreadElementTransport, TernaryExpressionTransport, BinaryExpressionTransport, UnaryExpressionTransport, SequenceExpressionTransport, UnescapedDoubleStringFragmentTransport, UnescapedSingleStringFragmentTransport, EscapeSequenceTransport, TemplateStringTransport, TemplateSubstitutionTransport, RegexTransport, RegexPatternTransport, RegexFlagsTransport, IdentifierTransport, PrivatePropertyIdentifierTransport, ThisTransport, SuperTransport, TrueTransport, FalseTransport, NullTransport, UndefinedTransport, ArgumentsTransport, DecoratorTransport, DecoratorMemberExpressionTransport, DecoratorCallExpressionTransport, ClassBodyTransport, FormalParametersTransport, ClassStaticBlockTransport, RestPatternTransport, MethodDefinitionTransport, PairTransport, PairPatternTransport, ComputedPropertyNameTransport, PublicFieldDefinitionTransport, NonNullExpressionTransport, MethodSignatureTransport, AbstractMethodSignatureTransport, FunctionSignatureTransport, DecoratorParenthesizedExpressionTransport, TypeAssertionTransport, AsExpressionTransport, SatisfiesExpressionTransport, InstantiationExpressionTransport, ImportRequireClauseTransport, ExtendsClauseTransport, ExtendsClauseSingleTransport, ImplementsClauseTransport, AmbientDeclarationTransport, AbstractClassDeclarationTransport, ModuleTransport, InternalModuleTransport, ImportAliasTransport, NestedTypeIdentifierTransport, InterfaceDeclarationTransport, ExtendsTypeClauseTransport, EnumDeclarationTransport, EnumBodyTransport, EnumAssignmentTransport, TypeAliasDeclarationTransport, AccessibilityModifierEnum, OverrideModifierTransport, RequiredParameterTransport, OptionalParameterTransport, OmittingTypeAnnotationTransport, AddingTypeAnnotationTransport, OptingTypeAnnotationTransport, TypeAnnotationTransport, TypeQueryMemberExpressionInTypeAnnotationTransport, TypeQueryCallExpressionInTypeAnnotationTransport, AssertsTransport, AssertsAnnotationTransport, TupleParameterTransport, OptionalTupleParameterTransport, OptionalTypeTransport, RestTypeTransport, ConstructorTypeTransport, TemplateTypeTransport, TemplateLiteralTypeTransport, InferTypeTransport, ConditionalTypeTransport, GenericTypeTransport, TypePredicateTransport, TypePredicateAnnotationTransport, TypeQueryMemberExpressionTransport, TypeQuerySubscriptExpressionTransport, TypeQueryCallExpressionTransport, TypeQueryInstantiationExpressionTransport, TypeQueryTransport, IndexTypeQueryTransport, LookupTypeTransport, MappedTypeClauseTransport, LiteralTypeTransport, ExistentialTypeTransport, FlowMaybeTypeTransport, ParenthesizedTypeTransport, PredefinedTypeEnum, TypeArgumentsTransport, ObjectTypeTransport, CallSignatureTransport, PropertySignatureTransport, TypeParametersTransport, TypeParameterTransport, DefaultTypeTransport, ConstraintTransport, ConstructSignatureTransport, ArrayTypeTransport, TupleTypeTransport, ReadonlyTypeTransport, UnionTypeTransport, IntersectionTypeTransport, FunctionTypeTransport, ExportSpecifiersTransport, ImportSpecifiersTransport, FormalParametersElementsTransport, EnumBodyElementNameTransport, EnumBodyElementsTransport, TypesTransport, TypeParametersElementsTransport, TupleTypeMembersTransport, ImportClauseGroupTransport, CatchClauseGroupTransport, AmbientDeclarationGlobalTransport, AmbientDeclarationModuleTransport, ObjectTypeContentTransport, ExportStatementNamespaceExportTransport, ExportStatementEqualsExportTransport, CommentLineTransport, CommentBlockTransport, LiteralTypeNegativeNumberTransport, NumberHexTransport, NumberFloatPointTransport, NumberFloatLeadingPointTransport, NumberFloatScientificTransport, NumberDecimalTransport, NumberBinaryTransport, NumberOctalTransport, NumberBigintHexTransport, NumberBigintBinaryTransport, NumberBigintOctalTransport, NumberBigintDecimalTransport, BinaryExpressionInTransport, EmptyMemberTransport, ClassBodyMemberMethodTransport, ClassBodyMemberMethodSigTransport, ClassBodyMemberDeclarationTransport, IndexSignatureColonTransport, IndexSignatureMappedTypeClauseTransport, ImportStatementClauseFromTransport, YieldExpressionDelegateTransport, OptionalChainMarkerTransport, ImportSpecifierNameTransport, ImportSpecifierAsTransport, ParenthesizedExpressionTypedTransport, ParenthesizedExpressionSequenceTransport, CallExpressionCallTransport, CallExpressionTemplateCallTransport, CallExpressionMemberTransport, StringDoubleTransport, StringSingleTransport, UpdateExpressionPostfixTransport, UpdateExpressionPrefixTransport, ArrowFunctionParameterTransport, ClassHeritageExtendsClauseTransport, ImportClauseDefaultImportTransport, ExportStatementDefaultFromTransport, ExportStatementDefaultDeclarationTransport, ExportStatementDefaultFromStarFromTransport, ExportStatementDefaultFromNsFromTransport, ExportStatementDefaultFromClauseFromTransport, ExportStatementDefaultDeclarationDefaultKwTransport, ExportStatementDefaultDeclarationDefaultKwValueTransport, VariableDeclaratorPlainTransport, VariableDeclaratorDefiniteTransport, MetaPropertyNewTargetTransport, MetaPropertyImportMetaTransport, ForHeaderLhsTransport, ForHeaderVarKindTransport, ForHeaderLetConstKindTransport, HtmlCommentTransport, JsxTextTransport, TemplateCharsTransport, AutomaticSemicolonTransport, FunctionSignatureAutomaticSemicolonTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, TernaryQmarkTransport, ErrorRecoveryTransport, StatementIdentifierTransport, ShorthandPropertyIdentifierTransport, ShorthandPropertyIdentifierPatternTransport, PropertyIdentifierTransport, TypeIdentifierTransport, InterfaceBodyTransport, StarTransport, AsKeywordTransport, LbraceTransport, RbraceTransport, TypeKeywordTransport, TypeofKeywordTransport, ImportKeywordTransport, SemiTransport, WithKeywordTransport, AssertKeywordTransport, VarKeywordTransport, LetKeywordTransport, ConstKeywordTransport, ElseKeywordTransport, IfKeywordTransport, SwitchKeywordTransport, ForKeywordTransport, LparenTransport, RparenTransport, AwaitKeywordTransport, WhileKeywordTransport, DoKeywordTransport, TryKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DebuggerKeywordTransport, ReturnKeywordTransport, ThrowKeywordTransport, DeclareKeywordTransport, NamespaceKeywordTransport, PublicKeywordTransport, PrivateKeywordTransport, ProtectedKeywordTransport, OverrideKeywordTransport, ReadonlyKeywordTransport, ModuleKeywordTransport, AnyKeywordTransport, NumberKeywordTransport, BooleanKeywordTransport, StringKeywordTransport, SymbolKeywordTransport, ExportKeywordTransport, ObjectKeywordTransport, NewKeywordTransport, GetKeywordTransport, SetKeywordTransport, AsyncKeywordTransport, StaticKeywordTransport, ColonTransport, CaseKeywordTransport, DefaultKeywordTransport, CatchKeywordTransport, FinallyKeywordTransport, YieldKeywordTransport, EqTransport, LbrackTransport, RbrackTransport, DotTransport, ClassKeywordTransport, FunctionKeywordTransport, EqGtTransport, QmarkDotTransport, UsingKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, CaretEqTransport, AmpEqTransport, PipeEqTransport, GtGtEqTransport, GtGtGtEqTransport, LtLtEqTransport, StarStarEqTransport, AmpAmpEqTransport, PipePipeEqTransport, QmarkQmarkEqTransport, DotDotDotTransport, QmarkTransport, AmpAmpTransport, PipePipeTransport, GtGtTransport, GtGtGtTransport, LtLtTransport, AmpTransport, CaretTransport, PipeTransport, PlusTransport, DashTransport, SlashTransport, PercentTransport, StarStarTransport, LtTransport, LtEqTransport, EqEqTransport, EqEqEqTransport, BangEqTransport, BangEqEqTransport, GtEqTransport, GtTransport, QmarkQmarkTransport, InstanceofKeywordTransport, BangTransport, TildeTransport, VoidKeywordTransport, DeleteKeywordTransport, BquoteTransport, DollarLbraceTransport, AtTransport, AbstractKeywordTransport, AccessorKeywordTransport, SatisfiesKeywordTransport, RequireKeywordTransport, ExtendsKeywordTransport, ImplementsKeywordTransport, InterfaceKeywordTransport, EnumKeywordTransport, DashQmarkColonTransport, PlusQmarkColonTransport, QmarkColonTransport, AssertsKeywordTransport, InferKeywordTransport, IsKeywordTransport, KeyofKeywordTransport, InKeywordTransport, UniqueTransport, UnknownKeywordTransport, NeverKeywordTransport, LbracePipeTransport, PipeRbraceTransport, CommaTransport, GlobalKeywordTransport, FromKeywordTransport, DquoteTransport, SquoteTransport, PlusPlusTransport, DashDashTransport, TargetKeywordTransport, MetaKeywordTransport, OfKeywordTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, ExportStatementTransport, DeclarationTransport, ImportSpecifierTransport, StatementTransport, VariableDeclaratorTransport, ForHeaderTransport, ParenthesizedExpressionTransport, ExpressionTransport, PrimaryExpressionTransport, CallExpressionTransport, UpdateExpressionTransport, StringTransport, NumberTransport, MetaPropertyTransport, PatternTransport, TypeTransport, PrimaryTypeTransport, ClassBodyMemberTransport, EnumBodyElementTransport, ExportStatementDefaultTransport, NumberBigintTransport, NamespaceExportModuleExportNameTransportSlot, ExportSpecifierTypeOnlyTransportSlot, ImportStatementTypeOnlyTransportSlot, ImportStatementFromClauseTransportSlot, ImportStatementTerminatorTransportSlot, ImportClauseContentTransportSlot, ImportAttributeAttributeKindTransportSlot, ExpressionStatementExpressionTransportSlot, ExpressionStatementTerminatorTransportSlot, VariableDeclarationTerminatorTransportSlot, LexicalDeclarationKindTransportSlot, LexicalDeclarationTerminatorTransportSlot, StatementBlockTerminatorTransportSlot, ForStatementInitializerTransportSlot, ForStatementConditionTransportSlot, DoStatementTerminatorTransportSlot, BreakStatementTerminatorTransportSlot, ContinueStatementTerminatorTransportSlot, DebuggerStatementTerminatorTransportSlot, ReturnStatementTerminatorTransportSlot, ThrowStatementTerminatorTransportSlot, LabeledStatementLabelTransportSlot, SwitchBodyCasesTransportSlot, YieldExpressionExpressionTransportSlot, ObjectPropertiesTransportSlot, ObjectPatternPropertiesTransportSlot, ObjectAssignmentPatternLeftTransportSlot, ArrayElementsTransportSlot, ArrayPatternElementsTransportSlot, NestedIdentifierObjectTransportSlot, ClassHeritageContentTransportSlot, FunctionExpressionReturnTypeTransportSlot, ArrowFunctionBodyTransportSlot, ArrowFunctionContentTransportSlot, MemberExpressionObjectTransportSlot, MemberExpressionOptionalChainTransportSlot, MemberExpressionPropertyTransportSlot, SubscriptExpressionObjectTransportSlot, LhsExpressionContentTransportSlot, AssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, UnaryExpressionOperatorTransportSlot, TemplateStringElementsTransportSlot, DecoratorContentTransportSlot, DecoratorMemberExpressionObjectTransportSlot, FormalParametersElementsTransportSlot, MethodDefinitionGeneratorTransportSlot, MethodDefinitionNameTransportSlot, PublicFieldDefinitionOptionalityTransportSlot, FunctionSignatureTerminatorTransportSlot, DecoratorParenthesizedExpressionExpressionTransportSlot, AsExpressionTypeTransportSlot, AmbientDeclarationContentTransportSlot, ModuleNameTransportSlot, ImportAliasTerminatorTransportSlot, ExtendsTypeClauseTypeTransportSlot, TypeAliasDeclarationTerminatorTransportSlot, OptionalParameterNameTransportSlot, TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot, TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot, AssertsValueTransportSlot, TupleParameterNameTransportSlot, TemplateTypeTypeTransportSlot, TemplateLiteralTypeElementsTransportSlot, GenericTypeNameTransportSlot, TypePredicateNameTransportSlot, TypeQueryMemberExpressionObjectTransportSlot, TypeQueryMemberExpressionContentTransportSlot, TypeQuerySubscriptExpressionIndexTransportSlot, TypeQueryCallExpressionFunctionTransportSlot, TypeQueryExpressionTransportSlot, LiteralTypeContentTransportSlot, ObjectTypeOpeningTransportSlot, ObjectTypeClosingTransportSlot, ConstraintContentTransportSlot, FunctionTypeReturnTypeTransportSlot, FormalParametersElementsItemTransportSlot, TupleTypeMembersItemTransportSlot, ImportClauseGroupContentTransportSlot, CatchClauseGroupParameterTransportSlot, AmbientDeclarationModuleTerminatorTransportSlot, ObjectTypeContentItemTransportSlot, ExportStatementNamespaceExportTerminatorTransportSlot, ExportStatementEqualsExportTerminatorTransportSlot, BinaryExpressionInLeftTransportSlot, ClassBodyMemberMethodTerminatorTransportSlot, ClassBodyMemberMethodSigTerminatorTransportSlot, ClassBodyMemberDeclarationMemberTransportSlot, ClassBodyMemberDeclarationTerminatorTransportSlot, IndexSignatureColonSignTransportSlot, IndexSignatureColonTypeTransportSlot, ImportSpecifierNameTypeOnlyTransportSlot, ImportSpecifierAsTypeOnlyTransportSlot, CallExpressionTemplateCallFunctionTransportSlot, StringDoubleElementsTransportSlot, StringSingleElementsTransportSlot, UpdateExpressionPostfixOperatorTransportSlot, UpdateExpressionPrefixOperatorTransportSlot, ExportStatementDefaultFromTerminatorTransportSlot, ExportStatementDefaultFromContentTransportSlot, ExportStatementDefaultDeclarationContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot, ForHeaderLhsLeftTransportSlot, ForHeaderLhsOperatorTransportSlot, ForHeaderLetConstKindKindTransportSlot, StatementIdentifierContentTransportSlot, ProgramTransport, HashBangLineTransport, NamespaceExportTransport, ExportClauseTransport, ExportSpecifierTransport, ImportTransport, ImportStatementTransport, ImportClauseTransport, NamespaceImportTransport, NamedImportsTransport, ImportAttributeTransport, ExpressionStatementTransport, VariableDeclarationTransport, LexicalDeclarationTransport, StatementBlockTransport, ElseClauseTransport, IfStatementTransport, SwitchStatementTransport, ForStatementTransport, ForInStatementTransport, WhileStatementTransport, DoStatementTransport, TryStatementTransport, WithStatementTransport, BreakStatementTransport, ContinueStatementTransport, DebuggerStatementTransport, ReturnStatementTransport, ThrowStatementTransport, EmptyStatementTransport, LabeledStatementTransport, SwitchBodyTransport, SwitchCaseTransport, SwitchDefaultTransport, CatchClauseTransport, FinallyClauseTransport, YieldExpressionTransport, ObjectTransport, ObjectPatternTransport, AssignmentPatternTransport, ObjectAssignmentPatternTransport, ArrayTransport, ArrayPatternTransport, NestedIdentifierTransport, ClassTransport, ClassDeclarationTransport, ClassHeritageTransport, FunctionExpressionTransport, FunctionDeclarationTransport, GeneratorFunctionTransport, GeneratorFunctionDeclarationTransport, ArrowFunctionTransport, OptionalChainTransport, NewExpressionTransport, AwaitExpressionTransport, MemberExpressionTransport, SubscriptExpressionTransport, LhsExpressionTransport, AssignmentExpressionTransport, AugmentedAssignmentExpressionTransport, SpreadElementTransport, TernaryExpressionTransport, BinaryExpressionTransport, UnaryExpressionTransport, SequenceExpressionTransport, UnescapedDoubleStringFragmentTransport, UnescapedSingleStringFragmentTransport, EscapeSequenceTransport, TemplateStringTransport, TemplateSubstitutionTransport, RegexTransport, RegexPatternTransport, RegexFlagsTransport, IdentifierTransport, PrivatePropertyIdentifierTransport, ThisTransport, SuperTransport, TrueTransport, FalseTransport, NullTransport, UndefinedTransport, ArgumentsTransport, DecoratorTransport, DecoratorMemberExpressionTransport, DecoratorCallExpressionTransport, ClassBodyTransport, FormalParametersTransport, ClassStaticBlockTransport, RestPatternTransport, MethodDefinitionTransport, PairTransport, PairPatternTransport, ComputedPropertyNameTransport, PublicFieldDefinitionTransport, NonNullExpressionTransport, MethodSignatureTransport, AbstractMethodSignatureTransport, FunctionSignatureTransport, DecoratorParenthesizedExpressionTransport, TypeAssertionTransport, AsExpressionTransport, SatisfiesExpressionTransport, InstantiationExpressionTransport, ImportRequireClauseTransport, ExtendsClauseTransport, ExtendsClauseSingleTransport, ImplementsClauseTransport, AmbientDeclarationTransport, AbstractClassDeclarationTransport, ModuleTransport, InternalModuleTransport, ImportAliasTransport, NestedTypeIdentifierTransport, InterfaceDeclarationTransport, ExtendsTypeClauseTransport, EnumDeclarationTransport, EnumBodyTransport, EnumAssignmentTransport, TypeAliasDeclarationTransport, AccessibilityModifierEnum, OverrideModifierTransport, RequiredParameterTransport, OptionalParameterTransport, OmittingTypeAnnotationTransport, AddingTypeAnnotationTransport, OptingTypeAnnotationTransport, TypeAnnotationTransport, TypeQueryMemberExpressionInTypeAnnotationTransport, TypeQueryCallExpressionInTypeAnnotationTransport, AssertsTransport, AssertsAnnotationTransport, TupleParameterTransport, OptionalTupleParameterTransport, OptionalTypeTransport, RestTypeTransport, ConstructorTypeTransport, TemplateTypeTransport, TemplateLiteralTypeTransport, InferTypeTransport, ConditionalTypeTransport, GenericTypeTransport, TypePredicateTransport, TypePredicateAnnotationTransport, TypeQueryMemberExpressionTransport, TypeQuerySubscriptExpressionTransport, TypeQueryCallExpressionTransport, TypeQueryInstantiationExpressionTransport, TypeQueryTransport, IndexTypeQueryTransport, LookupTypeTransport, MappedTypeClauseTransport, LiteralTypeTransport, ExistentialTypeTransport, FlowMaybeTypeTransport, ParenthesizedTypeTransport, PredefinedTypeEnum, TypeArgumentsTransport, ObjectTypeTransport, CallSignatureTransport, PropertySignatureTransport, TypeParametersTransport, TypeParameterTransport, DefaultTypeTransport, ConstraintTransport, ConstructSignatureTransport, ArrayTypeTransport, TupleTypeTransport, ReadonlyTypeTransport, UnionTypeTransport, IntersectionTypeTransport, FunctionTypeTransport, ExportSpecifiersTransport, ImportSpecifiersTransport, FormalParametersElementsTransport, EnumBodyElementNameTransport, EnumBodyElementsTransport, TypesTransport, TypeParametersElementsTransport, TupleTypeMembersTransport, ImportClauseGroupTransport, CatchClauseGroupTransport, AmbientDeclarationGlobalTransport, AmbientDeclarationModuleTransport, ObjectTypeContentTransport, ExportStatementNamespaceExportTransport, ExportStatementEqualsExportTransport, CommentLineTransport, CommentBlockTransport, LiteralTypeNegativeNumberTransport, NumberHexTransport, NumberFloatPointTransport, NumberFloatLeadingPointTransport, NumberFloatScientificTransport, NumberDecimalTransport, NumberBinaryTransport, NumberOctalTransport, NumberBigintHexTransport, NumberBigintBinaryTransport, NumberBigintOctalTransport, NumberBigintDecimalTransport, BinaryExpressionInTransport, EmptyMemberTransport, ClassBodyMemberMethodTransport, ClassBodyMemberMethodSigTransport, ClassBodyMemberDeclarationTransport, IndexSignatureColonTransport, IndexSignatureMappedTypeClauseTransport, ImportStatementClauseFromTransport, YieldExpressionDelegateTransport, OptionalChainMarkerTransport, ImportSpecifierNameTransport, ImportSpecifierAsTransport, ParenthesizedExpressionTypedTransport, ParenthesizedExpressionSequenceTransport, CallExpressionCallTransport, CallExpressionTemplateCallTransport, CallExpressionMemberTransport, StringDoubleTransport, StringSingleTransport, UpdateExpressionPostfixTransport, UpdateExpressionPrefixTransport, ArrowFunctionParameterTransport, ClassHeritageExtendsClauseTransport, ImportClauseDefaultImportTransport, ExportStatementDefaultFromTransport, ExportStatementDefaultDeclarationTransport, ExportStatementDefaultFromStarFromTransport, ExportStatementDefaultFromNsFromTransport, ExportStatementDefaultFromClauseFromTransport, ExportStatementDefaultDeclarationDefaultKwTransport, ExportStatementDefaultDeclarationDefaultKwValueTransport, VariableDeclaratorPlainTransport, VariableDeclaratorDefiniteTransport, MetaPropertyNewTargetTransport, MetaPropertyImportMetaTransport, ForHeaderLhsTransport, ForHeaderVarKindTransport, ForHeaderLetConstKindTransport, HtmlCommentTransport, JsxTextTransport, TemplateCharsTransport, AutomaticSemicolonTransport, FunctionSignatureAutomaticSemicolonTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ReceiverParameterDeclarationTransport, FormalParametersElementsReceiverTransport, FormalParametersElementsReceiverGroupTransport, TernaryQmarkTransport, ErrorRecoveryTransport, StatementIdentifierTransport, ShorthandPropertyIdentifierTransport, ShorthandPropertyIdentifierPatternTransport, PropertyIdentifierTransport, TypeIdentifierTransport, InterfaceBodyTransport, StarTransport, AsKeywordTransport, LbraceTransport, RbraceTransport, TypeKeywordTransport, TypeofKeywordTransport, ImportKeywordTransport, SemiTransport, WithKeywordTransport, AssertKeywordTransport, VarKeywordTransport, LetKeywordTransport, ConstKeywordTransport, ElseKeywordTransport, IfKeywordTransport, SwitchKeywordTransport, ForKeywordTransport, LparenTransport, RparenTransport, AwaitKeywordTransport, WhileKeywordTransport, DoKeywordTransport, TryKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DebuggerKeywordTransport, ReturnKeywordTransport, ThrowKeywordTransport, DeclareKeywordTransport, NamespaceKeywordTransport, PublicKeywordTransport, PrivateKeywordTransport, ProtectedKeywordTransport, OverrideKeywordTransport, ReadonlyKeywordTransport, ModuleKeywordTransport, AnyKeywordTransport, NumberKeywordTransport, BooleanKeywordTransport, StringKeywordTransport, SymbolKeywordTransport, ExportKeywordTransport, ObjectKeywordTransport, NewKeywordTransport, GetKeywordTransport, SetKeywordTransport, AsyncKeywordTransport, StaticKeywordTransport, ColonTransport, CaseKeywordTransport, DefaultKeywordTransport, CatchKeywordTransport, FinallyKeywordTransport, YieldKeywordTransport, EqTransport, LbrackTransport, RbrackTransport, DotTransport, ClassKeywordTransport, FunctionKeywordTransport, EqGtTransport, QmarkDotTransport, UsingKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, CaretEqTransport, AmpEqTransport, PipeEqTransport, GtGtEqTransport, GtGtGtEqTransport, LtLtEqTransport, StarStarEqTransport, AmpAmpEqTransport, PipePipeEqTransport, QmarkQmarkEqTransport, DotDotDotTransport, QmarkTransport, AmpAmpTransport, PipePipeTransport, GtGtTransport, GtGtGtTransport, LtLtTransport, AmpTransport, CaretTransport, PipeTransport, PlusTransport, DashTransport, SlashTransport, PercentTransport, StarStarTransport, LtTransport, LtEqTransport, EqEqTransport, EqEqEqTransport, BangEqTransport, BangEqEqTransport, GtEqTransport, GtTransport, QmarkQmarkTransport, InstanceofKeywordTransport, BangTransport, TildeTransport, VoidKeywordTransport, DeleteKeywordTransport, BquoteTransport, DollarLbraceTransport, AtTransport, AbstractKeywordTransport, AccessorKeywordTransport, SatisfiesKeywordTransport, RequireKeywordTransport, ExtendsKeywordTransport, ImplementsKeywordTransport, InterfaceKeywordTransport, EnumKeywordTransport, DashQmarkColonTransport, PlusQmarkColonTransport, QmarkColonTransport, AssertsKeywordTransport, InferKeywordTransport, IsKeywordTransport, KeyofKeywordTransport, InKeywordTransport, UniqueTransport, UnknownKeywordTransport, NeverKeywordTransport, LbracePipeTransport, PipeRbraceTransport, CommaTransport, GlobalKeywordTransport, FromKeywordTransport, DquoteTransport, SquoteTransport, PlusPlusTransport, DashDashTransport, TargetKeywordTransport, MetaKeywordTransport, OfKeywordTransport, TriviaTransport);

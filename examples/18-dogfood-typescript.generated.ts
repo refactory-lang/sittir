@@ -6,25 +6,23 @@ const ts = await typescript.createEngine();
 export function rebuildFormatGenerated() {
 	return ts.build.program.strict({
 		statements: [ts.build.importStatement.clauseFrom.strict({
-			importClause: ts.kinds.TypeKeyword,
-			fromClause: {
-				importClause: ts.build.importClause.strict(ts.build.namedImports.strict(ts.build.importSpecifierName.strict({
-					name: ts.build.identifier("FormatRecord"),
-				}), ts.build.importSpecifierName.strict({
-					name: ts.build.identifier("FormatTrivia"),
-				}))),
-				source: ts.build.stringSingle.strict(ts.build.unescapedSingleStringFragment("@sittir/types")),
-			},
+			typeOnly: ts.kinds.TypeKeyword,
+			importClause: ts.build.importClause.strict(ts.build.namedImports.strict(ts.build.importSpecifierName.strict({
+				name: ts.build.identifier("FormatRecord"),
+			}), ts.build.importSpecifierName.strict({
+				name: ts.build.identifier("FormatTrivia"),
+			}))),
+			source: ts.build.stringSingle.strict(ts.build.unescapedSingleStringFragment("@sittir/types")),
 		}), ts.build.exportStatementDefaultDeclaration.strict({
 			content: ts.build.functionDeclaration.strict({
 				name: ts.build.identifier("applyFormat"),
-				parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-					pattern: ts.build.lhsExpression.strict(ts.build.identifier("canonicalRender")),
+				parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+					name: ts.build.lhsExpression.strict(ts.build.identifier("canonicalRender")),
 					type: ts.build.typeAnnotation.strict(ts.kinds.StringKeyword),
 				}), ts.build.requiredParameter.strict({
-					pattern: ts.build.lhsExpression.strict(ts.build.identifier("format")),
+					name: ts.build.lhsExpression.strict(ts.build.identifier("format")),
 					type: ts.build.typeAnnotation.strict(ts.build.identifier("FormatRecord")),
-				})),
+				}))),
 				returnType: ts.build.typeAnnotation.strict(ts.kinds.StringKeyword),
 				body: ts.build.statementBlock.strict({
 					terminator: ts.kinds.AutomaticSemicolon,
@@ -52,13 +50,13 @@ export function rebuildFormatGenerated() {
 			}),
 		}).$trivia.leading(ts.build.commentBlock("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), ts.build.functionDeclaration.strict({
 			name: ts.build.identifier("applyBoundary"),
-			parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("s")),
+			parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+				name: ts.build.lhsExpression.strict(ts.build.identifier("s")),
 				type: ts.build.typeAnnotation.strict(ts.kinds.StringKeyword),
 			}), ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("format")),
+				name: ts.build.lhsExpression.strict(ts.build.identifier("format")),
 				type: ts.build.typeAnnotation.strict(ts.build.identifier("FormatRecord")),
-			})),
+			}))),
 			returnType: ts.build.typeAnnotation.strict(ts.kinds.StringKeyword),
 			body: ts.build.statementBlock.strict({
 				terminator: ts.kinds.AutomaticSemicolon,
@@ -83,7 +81,7 @@ export function rebuildFormatGenerated() {
 					value: ts.build.binaryExpression.strict({
 						left: ts.build.memberExpression.strict({
 							object: ts.build.identifier("boundary"),
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: ts.build.identifier("leading"),
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -97,7 +95,7 @@ export function rebuildFormatGenerated() {
 					value: ts.build.binaryExpression.strict({
 						left: ts.build.memberExpression.strict({
 							object: ts.build.identifier("boundary"),
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: ts.build.identifier("trailing"),
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -109,13 +107,13 @@ export function rebuildFormatGenerated() {
 			terminator: ts.kinds.AutomaticSemicolon,
 		}).$trivia.leading(ts.build.commentBlock("* Prepend/append boundary whitespace. ")), ts.build.functionDeclaration.strict({
 			name: ts.build.identifier("applyTrivia"),
-			parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("s")),
+			parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+				name: ts.build.lhsExpression.strict(ts.build.identifier("s")),
 				type: ts.build.typeAnnotation.strict(ts.kinds.StringKeyword),
 			}), ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("format")),
+				name: ts.build.lhsExpression.strict(ts.build.identifier("format")),
 				type: ts.build.typeAnnotation.strict(ts.build.identifier("FormatRecord")),
-			})),
+			}))),
 			returnType: ts.build.typeAnnotation.strict(ts.kinds.StringKeyword),
 			body: ts.build.statementBlock.strict({
 				terminator: ts.kinds.AutomaticSemicolon,
@@ -136,7 +134,7 @@ export function rebuildFormatGenerated() {
 						right: ts.build.binaryExpression.strict({
 							left: ts.build.memberExpression.strict({
 								object: ts.build.identifier("trivia"),
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: ts.build.identifier("length"),
 							}),
 							operator: ts.kinds.EqEqEq,
@@ -152,27 +150,27 @@ export function rebuildFormatGenerated() {
 					value: ts.build.callExpressionCall.strict({
 						function: ts.build.memberExpression.strict({
 							object: ts.build.array.strict(ts.build.spreadElement.strict(ts.build.identifier("trivia"))),
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: ts.build.identifier("sort"),
 						}),
 						arguments: ts.build.arguments.strict(ts.build.arrowFunction.strict({
 							content: ts.build.callSignature.strict({
-								parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-									pattern: ts.build.lhsExpression.strict(ts.build.identifier("a")),
+								parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+									name: ts.build.lhsExpression.strict(ts.build.identifier("a")),
 								}), ts.build.requiredParameter.strict({
-									pattern: ts.build.lhsExpression.strict(ts.build.identifier("b")),
-								})),
+									name: ts.build.lhsExpression.strict(ts.build.identifier("b")),
+								}))),
 							}),
 							body: ts.build.binaryExpression.strict({
 								left: ts.build.memberExpression.strict({
 									object: ts.build.identifier("b"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 								operator: ts.kinds.Dash,
 								right: ts.build.memberExpression.strict({
 									object: ts.build.identifier("a"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 							}),
@@ -201,22 +199,22 @@ export function rebuildFormatGenerated() {
 						value: ts.build.callExpressionCall.strict({
 							function: ts.build.memberExpression.strict({
 								object: ts.build.identifier("Math"),
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: ts.build.identifier("max"),
 							}),
 							arguments: ts.build.arguments.strict(ts.build.number.decimal("0"), ts.build.callExpressionCall.strict({
 								function: ts.build.memberExpression.strict({
 									object: ts.build.identifier("Math"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("min"),
 								}),
 								arguments: ts.build.arguments.strict(ts.build.memberExpression.strict({
 									object: ts.build.identifier("item"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}), ts.build.memberExpression.strict({
 									object: ts.build.identifier("result"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("length"),
 								})),
 							})),
@@ -229,7 +227,7 @@ export function rebuildFormatGenerated() {
 							left: ts.build.callExpressionCall.strict({
 								function: ts.build.memberExpression.strict({
 									object: ts.build.identifier("result"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("slice"),
 								}),
 								arguments: ts.build.arguments.strict(ts.build.number.decimal("0"), ts.build.identifier("offset")),
@@ -237,7 +235,7 @@ export function rebuildFormatGenerated() {
 							operator: ts.kinds.Plus,
 							right: ts.build.memberExpression.strict({
 								object: ts.build.identifier("item"),
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: ts.build.identifier("text"),
 							}),
 						}),
@@ -245,7 +243,7 @@ export function rebuildFormatGenerated() {
 						right: ts.build.callExpressionCall.strict({
 							function: ts.build.memberExpression.strict({
 								object: ts.build.identifier("result"),
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: ts.build.identifier("slice"),
 							}),
 							arguments: ts.build.arguments.strict(ts.build.identifier("offset")),
@@ -258,16 +256,16 @@ export function rebuildFormatGenerated() {
 		}).$trivia.leading(ts.build.commentBlock("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), ts.build.exportStatementDefaultDeclaration.strict({
 			content: ts.build.functionDeclaration.strict({
 				name: ts.build.identifier("rebaseTrivia"),
-				parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-					pattern: ts.build.lhsExpression.strict(ts.build.identifier("format")),
+				parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+					name: ts.build.lhsExpression.strict(ts.build.identifier("format")),
 					type: ts.build.typeAnnotation.strict(ts.build.identifier("FormatRecord")),
 				}), ts.build.requiredParameter.strict({
-					pattern: ts.build.lhsExpression.strict(ts.build.identifier("editStart")),
+					name: ts.build.lhsExpression.strict(ts.build.identifier("editStart")),
 					type: ts.build.typeAnnotation.strict(ts.kinds.NumberKeyword),
 				}), ts.build.requiredParameter.strict({
-					pattern: ts.build.lhsExpression.strict(ts.build.identifier("delta")),
+					name: ts.build.lhsExpression.strict(ts.build.identifier("delta")),
 					type: ts.build.typeAnnotation.strict(ts.kinds.NumberKeyword),
-				})),
+				}))),
 				returnType: ts.build.typeAnnotation.strict(ts.build.identifier("FormatRecord")),
 				body: ts.build.statementBlock.strict({
 					terminator: ts.kinds.AutomaticSemicolon,
@@ -279,7 +277,7 @@ export function rebuildFormatGenerated() {
 							function: ts.build.identifier("rebaseTriviaItems"),
 							arguments: ts.build.arguments.strict(ts.build.memberExpression.strict({
 								object: ts.build.identifier("format"),
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: ts.build.identifier("trivia"),
 							}), ts.build.identifier("editStart"), ts.build.identifier("delta")),
 						}),
@@ -292,7 +290,7 @@ export function rebuildFormatGenerated() {
 							function: ts.build.identifier("rebaseKinds"),
 							arguments: ts.build.arguments.strict(ts.build.memberExpression.strict({
 								object: ts.build.identifier("format"),
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: ts.build.identifier("kinds"),
 							}), ts.build.identifier("editStart"), ts.build.identifier("delta")),
 						}),
@@ -323,19 +321,19 @@ export function rebuildFormatGenerated() {
 			}),
 		}).$trivia.leading(ts.build.commentBlock("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), ts.build.functionDeclaration.strict({
 			name: ts.build.identifier("rebaseTriviaItems"),
-			parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("trivia")),
+			parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+				name: ts.build.lhsExpression.strict(ts.build.identifier("trivia")),
 				type: ts.build.typeAnnotation.strict(ts.build.readonlyType.strict(ts.build.unionType.strict({
 					left: ts.build.arrayType.strict(ts.build.identifier("FormatTrivia")),
 					right: ts.build.literalType.strict(ts.kinds.Undefined),
 				}))),
 			}), ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("editStart")),
+				name: ts.build.lhsExpression.strict(ts.build.identifier("editStart")),
 				type: ts.build.typeAnnotation.strict(ts.kinds.NumberKeyword),
 			}), ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("delta")),
+				name: ts.build.lhsExpression.strict(ts.build.identifier("delta")),
 				type: ts.build.typeAnnotation.strict(ts.kinds.NumberKeyword),
-			})),
+			}))),
 			returnType: ts.build.typeAnnotation.strict(ts.build.unionType.strict({
 				left: ts.build.arrayType.strict(ts.build.identifier("FormatTrivia")),
 				right: ts.build.literalType.strict(ts.kinds.Undefined),
@@ -353,21 +351,21 @@ export function rebuildFormatGenerated() {
 			}), ts.build.returnStatement.strict(ts.build.callExpressionCall.strict({
 				function: ts.build.memberExpression.strict({
 					object: ts.build.identifier("trivia"),
-					separator: ts.kinds.Dot,
+					optionalChain: ts.kinds.Dot,
 					property: ts.build.identifier("map"),
 				}),
 				arguments: ts.build.arguments.strict(ts.build.arrowFunction.strict({
 					content: ts.build.callSignature.strict({
-						parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-							pattern: ts.build.lhsExpression.strict(ts.build.identifier("item")),
-						})),
+						parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+							name: ts.build.lhsExpression.strict(ts.build.identifier("item")),
+						}))),
 					}),
 					body: ts.build.statementBlock.strict(ts.build.ifStatement.strict({
 						condition: ts.build.parenthesizedExpressionTyped.strict({
 							expression: ts.build.binaryExpression.strict({
 								left: ts.build.memberExpression.strict({
 									object: ts.build.identifier("item"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 								operator: ts.kinds.Lt,
@@ -382,7 +380,7 @@ export function rebuildFormatGenerated() {
 							value: ts.build.binaryExpression.strict({
 								left: ts.build.memberExpression.strict({
 									object: ts.build.identifier("item"),
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: ts.build.identifier("offset"),
 								}),
 								operator: ts.kinds.Plus,
@@ -394,7 +392,7 @@ export function rebuildFormatGenerated() {
 						value: ts.build.callExpressionCall.strict({
 							function: ts.build.memberExpression.strict({
 								object: ts.build.identifier("Math"),
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: ts.build.identifier("max"),
 							}),
 							arguments: ts.build.arguments.strict(ts.build.number.decimal("0"), ts.build.identifier("newOffset")),
@@ -406,8 +404,8 @@ export function rebuildFormatGenerated() {
 			terminator: ts.kinds.AutomaticSemicolon,
 		}).$trivia.leading(ts.build.commentBlock("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), ts.build.functionDeclaration.strict({
 			name: ts.build.identifier("rebaseKinds"),
-			parameters: ts.build.formalParameters.strict(ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("kinds")),
+			parameters: ts.build.formalParameters.strict(ts.build.formalParametersElements.strict(ts.build.requiredParameter.strict({
+				name: ts.build.lhsExpression.strict(ts.build.identifier("kinds")),
 				type: ts.build.typeAnnotation.strict(ts.build.unionType.strict({
 					left: ts.build.genericType.strict({
 						name: ts.build.identifier("Record"),
@@ -416,12 +414,12 @@ export function rebuildFormatGenerated() {
 					right: ts.build.literalType.strict(ts.kinds.Undefined),
 				})),
 			}), ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("editStart")),
+				name: ts.build.lhsExpression.strict(ts.build.identifier("editStart")),
 				type: ts.build.typeAnnotation.strict(ts.kinds.NumberKeyword),
 			}), ts.build.requiredParameter.strict({
-				pattern: ts.build.lhsExpression.strict(ts.build.identifier("delta")),
+				name: ts.build.lhsExpression.strict(ts.build.identifier("delta")),
 				type: ts.build.typeAnnotation.strict(ts.kinds.NumberKeyword),
-			})),
+			}))),
 			returnType: ts.build.typeAnnotation.strict(ts.build.unionType.strict({
 				left: ts.build.genericType.strict({
 					name: ts.build.identifier("Record"),
@@ -457,7 +455,7 @@ export function rebuildFormatGenerated() {
 					right: ts.build.callExpressionCall.strict({
 						function: ts.build.memberExpression.strict({
 							object: ts.build.identifier("Object"),
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: ts.build.identifier("entries"),
 						}),
 						arguments: ts.build.arguments.strict(ts.build.identifier("kinds")),

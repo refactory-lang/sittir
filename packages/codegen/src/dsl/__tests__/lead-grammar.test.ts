@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { lead, leadGrammar, leadIssue, LeadRefusal, match, type GrammarRecord, type Lead } from '../bind.ts';
+import { makeRuleMetadata } from '../rule-metadata.ts';
 
 const BLANK = { type: 'BLANK' };
 const sym = (name: string) => ({ type: 'SYMBOL', name });
+const groupRef = (name: string) => ({ ...sym(name), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) });
 const str = (value: string) => ({ type: 'STRING', value });
 const field = (name: string, content: unknown) => ({ type: 'FIELD', name, content });
 const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
@@ -83,9 +85,17 @@ const RUST_LEAD = lead(
 	'parameters_elements',
 	'item',
 	'receiver',
-	match('attributed_parameter', [match('self_parameter'), match('parameter', { name: [match('self')] }, 'typed_self_parameter')])
+	match('attributed_parameter', [
+		match('self_parameter'),
+		match('parameter', { name: [match('self')] }, 'typed_self_parameter')
+	])
 );
-const TS_LEAD = lead('formal_parameters_elements', 'item', 'receiver', match('required_parameter', { pattern: [match('this')] }, 'this_parameter'));
+const TS_LEAD = lead(
+	'formal_parameters_elements',
+	'item',
+	'receiver',
+	match('required_parameter', { pattern: [match('this')] }, 'this_parameter')
+);
 
 const rulesOf = (grammar: GrammarRecord) => grammar.rules as Record<string, unknown>;
 
@@ -137,8 +147,11 @@ describe('leadGrammar', () => {
 		expect(rules._parameters_elements_receiver).toEqual(
 			seq(
 				field('receiver', alias(sym('_attributed_parameter_receiver'), 'attributed_parameter_receiver')),
-				blankChoice(seq(str(','), blankChoice(field('elements', sym('parameters_elements')))))
+				blankChoice(groupRef('parameters_elements_receiver_group'))
 			)
+		);
+		expect(rules.parameters_elements_receiver_group).toEqual(
+			expect.objectContaining(seq(str(','), blankChoice(field('elements', sym('parameters_elements')))))
 		);
 	});
 
@@ -156,9 +169,14 @@ describe('leadGrammar', () => {
 	it('narrows the lead to what it admits, naming a visible variant by its as, or else by its kind and the lead field', () => {
 		const rules = rulesOf(leadGrammar(rust(), [RUST_LEAD]));
 		expect(rules._attributed_parameter_receiver).toEqual(
-			seq(blankChoice(sym('attribute')), choice(alias(sym('_parameter_receiver'), 'typed_self_parameter'), sym('self_parameter')))
+			seq(
+				blankChoice(sym('attribute')),
+				choice(alias(sym('_parameter_receiver'), 'typed_self_parameter'), sym('self_parameter'))
+			)
 		);
-		expect(rules._parameter_receiver).toEqual(seq(field('name', sym('self')), str(':'), field('type', sym('identifier'))));
+		expect(rules._parameter_receiver).toEqual(
+			seq(field('name', sym('self')), str(':'), field('type', sym('identifier')))
+		);
 	});
 
 	it("narrows the rest in place where a rule is the list's own, and a shared visible kind in place too", () => {
@@ -176,13 +194,24 @@ describe('leadGrammar', () => {
 		expect(rules._formal_parameters_elements_receiver).toEqual(
 			seq(
 				field('receiver', alias(sym('_required_parameter_receiver'), 'this_parameter')),
-				blankChoice(seq(str(','), blankChoice(field('elements', sym('formal_parameters_elements')))))
+				blankChoice(groupRef('formal_parameters_elements_receiver_group'))
 			)
 		);
-		expect(rules._required_parameter_receiver).toEqual(seq(sym('_parameter_name_receiver'), blankChoice(field('type', sym('type_annotation')))));
-		expect(rules._parameter_name_receiver).toEqual(seq(blankChoice(field('override', sym('override_modifier'))), field('pattern', sym('this'))));
-		expect(rules._parameter_name_item).toEqual(seq(blankChoice(field('override', sym('override_modifier'))), field('pattern', sym('pattern'))));
-		expect(rules.required_parameter).toEqual(seq(sym('_parameter_name_item'), blankChoice(field('type', sym('type_annotation')))));
+		expect(rules.formal_parameters_elements_receiver_group).toEqual(
+			expect.objectContaining(seq(str(','), blankChoice(field('elements', sym('formal_parameters_elements')))))
+		);
+		expect(rules._required_parameter_receiver).toEqual(
+			seq(sym('_parameter_name_receiver'), blankChoice(field('type', sym('type_annotation'))))
+		);
+		expect(rules._parameter_name_receiver).toEqual(
+			seq(blankChoice(field('override', sym('override_modifier'))), field('pattern', sym('this')))
+		);
+		expect(rules._parameter_name_item).toEqual(
+			seq(blankChoice(field('override', sym('override_modifier'))), field('pattern', sym('pattern')))
+		);
+		expect(rules.required_parameter).toEqual(
+			seq(sym('_parameter_name_item'), blankChoice(field('type', sym('type_annotation'))))
+		);
 		expect(rules._parameter_name).toEqual(rulesOf(typescript())._parameter_name);
 		expect(rules.optional_parameter).toEqual(rulesOf(typescript()).optional_parameter);
 		expect(rules._formal_parameter).toEqual(rulesOf(typescript())._formal_parameter);
@@ -207,8 +236,11 @@ describe('leadGrammar', () => {
 		expect(rules._parameters_elements_receiver).toEqual(
 			seq(
 				field('receiver', alias(sym('_attributed_parameter_receiver'), 'attributed_parameter_receiver')),
-				optional(seq(str(','), optional(field('elements', sym('parameters_elements')))))
+				optional(groupRef('parameters_elements_receiver_group'))
 			)
+		);
+		expect(rules.parameters_elements_receiver_group).toEqual(
+			expect.objectContaining(seq(str(','), optional(field('elements', sym('parameters_elements')))))
 		);
 	});
 
@@ -217,9 +249,13 @@ describe('leadGrammar', () => {
 		expect(out.inline).toEqual(['_parameter_name', '_parameter_name_receiver', '_parameter_name_item']);
 	});
 
-	it('clones a hidden rule the lead\'s variant still holds at another position, rather than narrowing it in place under the variant', () => {
-		const rules = rulesOf(leadGrammar(named(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('_name')))), [NAMED_LEAD]));
-		expect(rules._parameter_receiver).toEqual(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('self'))));
+	it("clones a hidden rule the lead's variant still holds at another position, rather than narrowing it in place under the variant", () => {
+		const rules = rulesOf(
+			leadGrammar(named(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('_name')))), [NAMED_LEAD])
+		);
+		expect(rules._parameter_receiver).toEqual(
+			seq(field('qualifier', sym('_name')), str(':'), field('name', sym('self')))
+		);
 		expect(rules.parameter).toEqual(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('_name_item'))));
 		expect(rules._name).toEqual(choice(sym('self'), sym('identifier'), sym('other')));
 		expect(rules._name_item).toEqual(choice(sym('identifier'), sym('other')));
@@ -263,7 +299,10 @@ describe('leadGrammar', () => {
 		const literal = { ...named(seq(field('name', sym('_name')), str(':'))), rules: { ...rulesOf(named(seq(field('name', sym('_name')), str(':')))), params: separatedList(choice(alias(str('&self'), 'self_parameter'), sym('parameter'))) } };
 		const renamed = rulesOf(leadGrammar(literal, [lead('params', 'item', 'receiver', match('self_parameter', undefined, 'receiver_parameter'))]));
 		expect(renamed._params_receiver).toEqual(
-			seq(field('receiver', alias(str('&self'), 'receiver_parameter')), blankChoice(seq(str(','), blankChoice(field('parameters', sym('params'))))))
+			seq(field('receiver', alias(str('&self'), 'receiver_parameter')), blankChoice(groupRef('params_receiver_group')))
+		);
+		expect(renamed.params_receiver_group).toEqual(
+			expect.objectContaining(seq(str(','), blankChoice(field('parameters', sym('params')))))
 		);
 		expect(leadIssue(literal, [lead('params', 'item', 'receiver', match('self_parameter', { name: [match('self')] }))])).toBe("'self_parameter' has no rule to narrow");
 	});
@@ -283,10 +322,23 @@ describe('leadGrammar', () => {
 		expect(rules.params).toEqual(separatedList(choice(alias(sym('_atom_item'), 'a'), alias(sym('_atom'), 'b'))));
 	});
 
-	it('keeps the list\'s separator flanks: no trailing separator after a lone receiver when the list takes none', () => {
-		const untrailed = { ...named(seq(field('name', sym('_name')), str(':'))), rules: { ...rulesOf(named(seq(field('name', sym('_name')), str(':')))), params: seq(field('item', sym('parameter')), repeat(seq(str(','), field('item', sym('parameter'))))) } };
-		expect(rulesOf(leadGrammar(untrailed, [NAMED_LEAD]))._params_receiver).toEqual(
-			seq(field('receiver', alias(sym('_parameter_receiver'), 'parameter_receiver')), blankChoice(seq(str(','), field('parameters', sym('params')))))
+	it("keeps the list's separator flanks: no trailing separator after a lone receiver when the list takes none", () => {
+		const untrailed = {
+			...named(seq(field('name', sym('_name')), str(':'))),
+			rules: {
+				...rulesOf(named(seq(field('name', sym('_name')), str(':')))),
+				params: seq(field('item', sym('parameter')), repeat(seq(str(','), field('item', sym('parameter')))))
+			}
+		};
+		const rules = rulesOf(leadGrammar(untrailed, [NAMED_LEAD]));
+		expect(rules._params_receiver).toEqual(
+			seq(
+				field('receiver', alias(sym('_parameter_receiver'), 'parameter_receiver')),
+				blankChoice(groupRef('params_receiver_group'))
+			)
+		);
+		expect(rules.params_receiver_group).toEqual(
+			expect.objectContaining(seq(str(','), field('parameters', sym('params'))))
 		);
 	});
 
@@ -376,7 +428,7 @@ describe('leadGrammar', () => {
 		});
 	});
 
-	describe('partitions the item\'s language exactly: the lead and the rest are disjoint, and together the original item', () => {
+	describe("partitions the item's language exactly: the lead and the rest are disjoint, and together the original item", () => {
 		const cases: readonly [string, () => GrammarRecord, Lead][] = [
 			['rust', () => rust(), RUST_LEAD],
 			['rust, OPTIONAL spelling', () => rust(optional), RUST_LEAD],
@@ -406,26 +458,37 @@ describe('leadGrammar', () => {
 	it('refuses an admitted kind inside a supertype or inline rule of any name, which the narrowing does not walk', () => {
 		const wrapped = (lists: Record<string, unknown>) => ({
 			...named(field('name', sym('_name'))),
-			rules: { ...rulesOf(named(field('name', sym('_name')))), _name: choice(sym('wrapper'), sym('other')), wrapper: choice(sym('self'), sym('identifier')) },
-			...lists
-		});
-		expect(leadIssue(wrapped({ supertypes: ['wrapper'] }), [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
-		expect(leadIssue(wrapped({ inline: ['wrapper'] }), [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
-	});
-
-	it.each(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC'])('refuses an admitted kind inside a transparent rule under %s', (type) => {
-		const grammar = {
-			...named(seq(field('name', sym('_name')), str(':'))),
 			rules: {
-				...rulesOf(named(seq(field('name', sym('_name')), str(':')))),
-				_name: choice(sym('self'), sym('_prefixed'), sym('other')),
-				_prefixed: seq(blankChoice(str('&')), { type, value: 1, content: sym('wrapper') }),
+				...rulesOf(named(field('name', sym('_name')))),
+				_name: choice(sym('wrapper'), sym('other')),
 				wrapper: choice(sym('self'), sym('identifier'))
 			},
-			inline: ['wrapper']
-		};
-		expect(leadIssue(grammar, [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
+			...lists
+		});
+		expect(leadIssue(wrapped({ supertypes: ['wrapper'] }), [NAMED_LEAD])).toBe(
+			"'self' sits where the split cannot divide it"
+		);
+		expect(leadIssue(wrapped({ inline: ['wrapper'] }), [NAMED_LEAD])).toBe(
+			"'self' sits where the split cannot divide it"
+		);
 	});
+
+	it.each(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC'])(
+		'refuses an admitted kind inside a transparent rule under %s',
+		(type) => {
+			const grammar = {
+				...named(seq(field('name', sym('_name')), str(':'))),
+				rules: {
+					...rulesOf(named(seq(field('name', sym('_name')), str(':')))),
+					_name: choice(sym('self'), sym('_prefixed'), sym('other')),
+					_prefixed: seq(blankChoice(str('&')), { type, value: 1, content: sym('wrapper') }),
+					wrapper: choice(sym('self'), sym('identifier'))
+				},
+				inline: ['wrapper']
+			};
+			expect(leadIssue(grammar, [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
+		}
+	);
 
 	it('leaves a grammar with no leads as it is', () => {
 		const grammar = rust();

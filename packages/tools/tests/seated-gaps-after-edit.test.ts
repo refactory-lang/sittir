@@ -147,14 +147,14 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.parameters();
 		const list = parameters.elements();
-		if (list === undefined) throw new Error('expected parameters');
+		if (list === undefined || !rust.is.parametersElements(list)) throw new Error('expected parameters');
 		const [first, second] = list.items();
 		const a = first?.content();
 		const b = second?.content();
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
 		const edited = b.$with.type(a.type());
-		expect(parameters.$with.elements(a, edited).$render()).toBe('(a: u8,b: u8)');
+		expect(parameters.$with.elements(rust.build.parametersElements(a, edited)).$render()).toBe('(a: u8,b: u8)');
 	});
 
 	it('python: takes the seat when a removed statement sat between two kept ones', () => {
@@ -214,28 +214,34 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.parameters();
-		const [first, second] = parameters.elements()?.items() ?? [];
+		const list = parameters.elements();
+		if (list === undefined || !rust.is.parametersElements(list)) throw new Error('expected parameters');
+		const [first, second] = list.items();
 		const a = first?.content();
 		const b = second?.content();
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
 		const other = rust.parse('fn g(c: u16) {}\n').statements()[0];
 		if (other === undefined || typeof other === 'number' || !rust.is.functionItem(other)) throw new Error('expected a function item');
-		const c = other.parameters().elements()?.items()[0]?.content();
+		const otherList = other.parameters().elements();
+		if (otherList === undefined || !rust.is.parametersElements(otherList)) throw new Error('expected parameters');
+		const c = otherList.items()[0]?.content();
 		if (c === undefined || typeof c === 'number' || !rust.is.parameter(c)) throw new Error('expected a parameter');
-		expect(parameters.$with.elements(a, c, b).$render()).toBe('(\n    a: u8,\n\n    c: u16,\n\n    b: i8,\n)');
+		expect(parameters.$with.elements(rust.build.parametersElements(a, c, b)).$render()).toBe('(\n    a: u8,\n\n    c: u16,\n\n    b: i8,\n)');
 	});
 
 	it('keeps both flanks beside an edited last parameter', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.parameters();
-		const [first, second] = parameters.elements()?.items() ?? [];
+		const list = parameters.elements();
+		if (list === undefined || !rust.is.parametersElements(list)) throw new Error('expected parameters');
+		const [first, second] = list.items();
 		const a = first?.content();
 		const b = second?.content();
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
 		const edited = b.$with.type(a.type());
-		expect(parameters.$with.elements(a, edited).$render()).toBe('(\n    a: u8,\n    b: u8,\n)');
+		expect(parameters.$with.elements(rust.build.parametersElements(a, edited)).$render()).toBe('(\n    a: u8,\n    b: u8,\n)');
 	});
 });

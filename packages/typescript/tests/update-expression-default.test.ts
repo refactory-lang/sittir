@@ -18,8 +18,8 @@ describe('the update expression default', () => {
 		expect(ts.build.updateExpression.prefix({ argument: 'i', operator: '++' }).$render()).toBe('++i');
 	});
 
-	it('resolves through the default under a sub-factory mount', () => {
-		expect(ts.build.parenthesizedExpression.typed.update({ type: 'T', expression: [{ argument: 'i', operator: '++' }] }).$render()).toBe('(i++: T)');
-		expect(ts.build.parenthesizedExpression.typed.update.prefix({ type: 'T', expression: [{ argument: 'i', operator: '++' }] }).$render()).toBe('(++i: T)');
+	it('resolves the default and named arm in the explicitly named expression field', () => {
+		expect(ts.build.parenthesizedExpression.typed({ type: 'T', expression: ts.build.updateExpression({ argument: 'i', operator: '++' }) }).$render()).toBe('(i++: T)');
+		expect(ts.build.parenthesizedExpression.typed({ type: 'T', expression: ts.build.updateExpression.prefix({ argument: 'i', operator: '++' }) }).$render()).toBe('(++i: T)');
 	});
 });

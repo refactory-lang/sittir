@@ -39,26 +39,25 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 
 describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 	it('object with `$type` field routes through _resolveByKind', () => {
-		// assignment is flattened into its variants; the eq variant's
-		// `right` expression slot resolves a kind-tagged object through
-		// _resolveByKind.
+		// The value expression resolves a kind-tagged input through the common resolver.
 		const result = py.build.assignment.eq({
-			left: 'x' as any,
-			right: { $type: py.kinds.IntegerDecimalPlain, text: '42' } as any
-		}) as any;
+			name: 'x',
+			// @ts-expect-error tagged text exercises the runtime loose-input boundary
+			value: { $type: py.kinds.IntegerDecimalPlain, text: '42' }
+		});
 		expect(result.$type).toBe(py.kinds.AssignmentEq);
-		expect(result.right().$type).toBe(py.kinds.IntegerDecimalPlain);
-		expect(result.right().$text).toBe('42');
+		expect(result.value()).toMatchObject({ $type: py.kinds.IntegerDecimalPlain, $text: '42' });
 	});
 
 	it('a leaf tag builds that leaf from its text', () => {
-		const result = py.build.assignment.eq({ left: 'x' as any, right: { $type: py.kinds.Identifier, text: 'y' } as any }) as any;
-		expect(result.right().$type).toBe(py.kinds.Identifier);
-		expect(result.right().$text).toBe('y');
+		// @ts-expect-error tagged text exercises the runtime loose-input boundary
+		const result = py.build.assignment.eq({ name: 'x', value: { $type: py.kinds.Identifier, text: 'y' } });
+		expect(result.value()).toMatchObject({ $type: py.kinds.Identifier, $text: 'y' });
 	});
 
 	it('a leaf tag without its text throws naming the shape', () => {
-		expect(() => py.build.assignment.eq({ left: 'x' as any, right: { $type: py.kinds.Identifier, value: 'y' } as any })).toThrow(
+		// @ts-expect-error an identifier tag needs text, not a value field
+		expect(() => py.build.assignment.eq({ name: 'x', value: { $type: py.kinds.Identifier, value: 'y' } })).toThrow(
 			/the identifier tag takes its text: \{ \$type: <kind id>, text: "…" \}/
 		);
 	});
@@ -94,12 +93,12 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 
 describe('loose from() — UntypedNode passthrough still works', () => {
 	it('pre-built UntypedNode is passed through unchanged', () => {
-		const untypedNode = py.build.integer('42') as any;
+		const untypedNode = py.build.integer('42');
 		const result = py.build.assignment.eq({
-			left: 'x' as any,
-			right: untypedNode
-		}) as any;
+			name: 'x',
+			value: untypedNode
+		});
 		expect(result.$type).toBe(py.kinds.AssignmentEq);
-		expect(result.right()).toBe(untypedNode);
+		expect(result.value()).toBe(untypedNode);
 	});
 });

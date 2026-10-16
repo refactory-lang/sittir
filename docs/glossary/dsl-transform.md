@@ -1835,3 +1835,10 @@ The option-path segment a `field()` patch renames on the patched kind: an existi
 ### `packages/codegen/src/dsl/transform/transform.ts::recordAliasEffect`
 
 A named `alias()` of a symbol renames that kind in option paths; recorded only while a binding set applies.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
+
+Rebuilds a precedence wrapper with its original precedence value and kind, then
+uses the same property preservation operation as container and other wrapper
+reconstruction. Annotations and metadata survive both flat and path patches,
+including a hoisted rule whose annotation lives on a named precedence wrapper.

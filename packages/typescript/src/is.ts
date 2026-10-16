@@ -613,6 +613,12 @@ export interface IsGuards {
 	forHeaderLetConstKind<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderLetConstKind };
+	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
+	formalParametersElementsReceiver<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersElementsReceiver };
 	statementIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StatementIdentifier };
@@ -1177,19 +1183,6 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumAssignment };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Tab
-		| TSKindId.Newline
-		| TSKindId.Blankline
-		| TSKindId.DoubleBlankline
-		| TSKindId.Indent
-		| TSKindId.Dedent
-	>;
 	readonly exportStatementDefault: {
 		<T extends { readonly $type: string | number } | number>(
 			v: T
@@ -1221,6 +1214,19 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintDecimal };
 	};
+	layout<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -1266,18 +1272,18 @@ const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160
 const _supertype_metaProperty_ids = new Set<number>([429, 430]);
 const _supertype_pattern_ids = new Set<number>([258, 284]);
 const _supertype_type_ids = new Set<number>([
-	466, 465, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373, 375, 372, 337,
+	471, 470, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373, 375, 372, 337,
 	341, 327, 328
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	466, 465, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373
+	471, 470, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373
 ]);
 const _supertype_indexSignature_ids = new Set<number>([401, 402]);
 const _supertype_classBodyMember_ids = new Set<number>([398, 399, 282, 400, 397]);
 const _supertype_enumBodyElement_ids = new Set<number>([380, 316]);
-const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
 const _supertype_exportStatementDefault_ids = new Set<number>([420, 421]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
+const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[189, _supertype_exportStatement_ids],
@@ -1628,6 +1634,8 @@ export const is = Object.freeze({
 	forHeaderLhs: _g(TSKindId.ForHeaderLhs),
 	forHeaderVarKind: _g(TSKindId.ForHeaderVarKind),
 	forHeaderLetConstKind: _g(TSKindId.ForHeaderLetConstKind),
+	receiverParameterDeclaration: _g(TSKindId.ReceiverParameterDeclaration),
+	formalParametersElementsReceiver: _g(TSKindId.FormalParametersElementsReceiver),
 	statementIdentifier: _g(TSKindId.StatementIdentifier),
 	shorthandPropertyIdentifier: _g(TSKindId.ShorthandPropertyIdentifier),
 	shorthandPropertyIdentifierPattern: _g(TSKindId.ShorthandPropertyIdentifierPattern),
@@ -1656,7 +1664,7 @@ export const is = Object.freeze({
 	indexSignature: _supertype_indexSignature_guard,
 	classBodyMember: _supertype_classBodyMember_guard,
 	enumBodyElement: _supertype_enumBodyElement_guard,
-	layout: _sg(_supertype_layout_ids),
 	exportStatementDefault: _supertype_exportStatementDefault_guard,
-	numberBigint: _supertype_numberBigint_guard
+	numberBigint: _supertype_numberBigint_guard,
+	layout: _sg(_supertype_layout_ids)
 }) as unknown as IsGuards;

@@ -27,7 +27,7 @@ export function nestedGreetFunction() {
 		),
 		name: engine.build.identifier('greet'),
 		parameters: engine.build.parameters.strict(
-			engine.build.parameter({ name: 'name', type: 'String' }),
+			engine.build.parametersElements.strict(engine.build.parameter({ name: 'name', type: 'String' })),
 		),
 		body: engine.build.block.strict(),
 	});
@@ -38,10 +38,10 @@ export function looseGreetFunction() {
 		visibilityModifier: 'pub',
 		name: 'greet',
 		parameters: engine.build.parameters(
-			engine.build.parameter({ name: 'name', type: 'String', mutable: true }),
+			engine.build.parametersElements(engine.build.parameter({ name: 'name', type: 'String', mutable: true })),
 		),
 		body: engine.build.block({
-			statements: engine.build.statement.let({ pattern: 'a', mutable: true, value: engine.build.integerLiteral('1') }),
+			statements: engine.build.statement.let({ name: 'a', mutable: true, value: engine.build.integerLiteral('1') }),
 		}),
 	});
 }

@@ -1,5 +1,5 @@
 {
-	"grammarHash": "55bc60d25db5454cf38f39cd20888003a33caceaf23f7e44519160aa701242c9",
+	"grammarHash": "f37d13efec55059b062b4e14a619b2922457392cae13129e061f24d1cd4a7ecc",
 	"resolutions": [
 		{
 			"resolution": {
@@ -1907,7 +1907,137 @@
 		}
 	],
 	"bound": {
-		"grammarHash": "55bc60d25db5454cf38f39cd20888003a33caceaf23f7e44519160aa701242c9",
-		"resolutions": []
+		"grammarHash": "19e2ffa8bc43db2642138500d19c00304a1e4e4bcd1a32290ee6b73820562f33",
+		"resolutions": [
+			{
+				"resolution": {
+					"kind": "AddConflict",
+					"symbols": [
+						"primary_expression",
+						"_parameter_name",
+						"_parameter_name_formal_parameter"
+					]
+				},
+				"step": "default",
+				"sourceChains": [
+					[
+						"primary_expression"
+					],
+					[
+						"_parameter_name"
+					],
+					[
+						"_parameter_name_formal_parameter"
+					]
+				],
+				"conflict": {
+					"symbolSequence": [
+						"'('",
+						"'readonly'"
+					],
+					"lookahead": "'('",
+					"interpretations": [
+						"primary_expression",
+						"_parameter_name",
+						"_parameter_name_formal_parameter"
+					]
+				}
+			},
+			{
+				"resolution": {
+					"kind": "AddConflict",
+					"symbols": [
+						"primary_expression",
+						"_parameter_name_receiver"
+					]
+				},
+				"step": "default",
+				"sourceChains": [
+					[
+						"primary_expression"
+					],
+					[
+						"_parameter_name_receiver"
+					]
+				],
+				"conflict": {
+					"symbolSequence": [
+						"'('",
+						"this"
+					],
+					"lookahead": "','",
+					"interpretations": [
+						"primary_expression",
+						"_parameter_name_receiver"
+					]
+				}
+			},
+			{
+				"resolution": {
+					"kind": "AddConflict",
+					"symbols": [
+						"primary_type",
+						"_parameter_name_receiver"
+					]
+				},
+				"step": "default",
+				"sourceChains": [
+					[
+						"primary_type"
+					],
+					[
+						"_parameter_name_receiver"
+					]
+				],
+				"conflict": {
+					"symbolSequence": [
+						"'<'",
+						"'('",
+						"this"
+					],
+					"lookahead": "')'",
+					"interpretations": [
+						"primary_type",
+						"_parameter_name_receiver"
+					]
+				}
+			},
+			{
+				"resolution": {
+					"kind": "AddConflict",
+					"symbols": [
+						"primary_expression",
+						"primary_type",
+						"_parameter_name_receiver"
+					]
+				},
+				"step": "default",
+				"sourceChains": [
+					[
+						"primary_expression"
+					],
+					[
+						"primary_type"
+					],
+					[
+						"_parameter_name_receiver"
+					]
+				],
+				"conflict": {
+					"symbolSequence": [
+						"'<'",
+						"'('",
+						"'('",
+						"this"
+					],
+					"lookahead": "')'",
+					"interpretations": [
+						"primary_expression",
+						"primary_type",
+						"_parameter_name_receiver"
+					]
+				}
+			}
+		]
 	}
 }

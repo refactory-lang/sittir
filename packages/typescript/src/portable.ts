@@ -102,6 +102,7 @@ export interface PortableIds {
 		| TSKindId.OptionalParameter
 		| TSKindId.PropertySignature
 		| TSKindId.PublicFieldDefinition
+		| TSKindId.ReceiverParameterDeclaration
 		| TSKindId.RequiredParameter
 		| TSKindId.TypeAliasDeclaration
 		| TSKindId.TypeParameter
@@ -148,10 +149,23 @@ export interface PortableIds {
 	'declaration.module': TSKindId.InternalModule | TSKindId.Module;
 	'declaration.module.external': TSKindId.Module;
 	'declaration.module_property': TSKindId.AmbientDeclarationModule;
-	'declaration.parameter': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
-	'declaration.parameter.private': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
-	'declaration.parameter.protected': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
-	'declaration.parameter.public': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
+	'declaration.parameter':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.private':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.protected':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.public':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.receiver': TSKindId.ReceiverParameterDeclaration | TSKindId.RequiredParameter;
 	'declaration.property':
 		| TSKindId.AbstractMethodSignature
 		| TSKindId.MethodDefinition
@@ -876,10 +890,12 @@ export interface PortableKindsAt {
 		readonly private: PortableKindsAt['declaration.parameter.private'];
 		readonly protected: PortableKindsAt['declaration.parameter.protected'];
 		readonly public: PortableKindsAt['declaration.parameter.public'];
+		readonly receiver: PortableKindsAt['declaration.parameter.receiver'];
 	};
 	'declaration.parameter.private': { readonly $ids: readonly PortableIds['declaration.parameter.private'][] };
 	'declaration.parameter.protected': { readonly $ids: readonly PortableIds['declaration.parameter.protected'][] };
 	'declaration.parameter.public': { readonly $ids: readonly PortableIds['declaration.parameter.public'][] };
+	'declaration.parameter.receiver': { readonly $ids: readonly PortableIds['declaration.parameter.receiver'][] };
 	'declaration.property': {
 		readonly $ids: readonly PortableIds['declaration.property'][];
 		readonly getter: PortableKindsAt['declaration.property.getter'];
@@ -1737,10 +1753,12 @@ export interface PortableIsAt {
 		readonly private: PortableIsAt['declaration.parameter.private'];
 		readonly protected: PortableIsAt['declaration.parameter.protected'];
 		readonly public: PortableIsAt['declaration.parameter.public'];
+		readonly receiver: PortableIsAt['declaration.parameter.receiver'];
 	};
 	'declaration.parameter.private': PortableGuard<PortableIds['declaration.parameter.private']> & {};
 	'declaration.parameter.protected': PortableGuard<PortableIds['declaration.parameter.protected']> & {};
 	'declaration.parameter.public': PortableGuard<PortableIds['declaration.parameter.public']> & {};
+	'declaration.parameter.receiver': PortableGuard<PortableIds['declaration.parameter.receiver']> & {};
 	'declaration.property': PortableGuard<PortableIds['declaration.property']> & {
 		readonly getter: PortableIsAt['declaration.property.getter'];
 		readonly private: PortableIsAt['declaration.property.private'];
@@ -2478,6 +2496,7 @@ const table: PortableTable = {
 				TSKindId.OptionalParameter,
 				TSKindId.PropertySignature,
 				TSKindId.PublicFieldDefinition,
+				TSKindId.ReceiverParameterDeclaration,
 				TSKindId.RequiredParameter,
 				TSKindId.TypeAliasDeclaration,
 				TSKindId.TypeParameter,
@@ -2545,10 +2564,26 @@ const table: PortableTable = {
 		'declaration.module': { ids: [TSKindId.InternalModule, TSKindId.Module], exact: true },
 		'declaration.module.external': { ids: [TSKindId.Module], exact: true },
 		'declaration.module_property': { ids: [TSKindId.AmbientDeclarationModule], exact: true },
-		'declaration.parameter': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: true },
-		'declaration.parameter.private': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
-		'declaration.parameter.protected': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
-		'declaration.parameter.public': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
+		'declaration.parameter': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: true
+		},
+		'declaration.parameter.private': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
+		'declaration.parameter.protected': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
+		'declaration.parameter.public': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
+		'declaration.parameter.receiver': {
+			ids: [TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
 		'declaration.property': {
 			ids: [
 				TSKindId.AbstractMethodSignature,
@@ -3703,12 +3738,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '285': 6 } }, { slots: { '466': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], slots: { '285': 6 } } }
 				]
 			},
 			{
@@ -3717,12 +3752,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '285': 6 } }, { slots: { '466': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], slots: { '285': 6 } } }
 				]
 			},
 			{
@@ -3731,12 +3766,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '285': 6 } }, { slots: { '466': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], slots: { '285': 6 } } }
 				]
 			},
 			{
@@ -3745,10 +3780,10 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '285': 6 } }, { slots: { '466': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], slots: { '285': 6 } } }
 				]
 			},
 			{
@@ -4139,6 +4174,34 @@ const table: PortableTable = {
 			{ path: 'modifier.visibility', within: [], test: [] }
 		],
 		[TSKindId.ReadonlyType]: [{ path: 'type.readonly', within: [], test: [] }],
+		[TSKindId.ReceiverParameterDeclaration]: [
+			{
+				path: 'declaration.parameter.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '435': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '435': 1 } } }
+				]
+			},
+			{
+				path: 'declaration.parameter.protected',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '435': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '435': 1 } } }
+				]
+			},
+			{
+				path: 'declaration.parameter.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '435': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '435': 1 } } }
+				]
+			},
+			{ path: 'declaration.parameter', within: [], test: [] },
+			{ path: 'declaration.parameter.receiver', within: [], test: [] }
+		],
 		[TSKindId.Regex]: [{ path: 'literal.regex', within: [], test: [] }],
 		[TSKindId.RegexFlags]: [{ path: 'literal.regex.flags', within: [], test: [] }],
 		[TSKindId.RegexPattern]: [{ path: 'literal.regex.pattern', within: [], test: [] }],
@@ -4166,6 +4229,11 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '320': 1 } } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '320': 1 } } }
 				]
+			},
+			{
+				path: 'declaration.parameter.receiver',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [119], slots: { '320': 4 } } }]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
 		],
@@ -4559,6 +4627,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 		privateName: { op: 'is', types: [118], slots: { '290': 8 } },
 		computed: { op: 'is', types: [289], slots: { '290': 8 } }
 	},
+	[TSKindId.ReceiverParameterDeclaration]: {
+		override: { op: 'present', slots: { '435': 2 } },
+		readonly: { op: 'present', slots: { '435': 3 } }
+	},
 	[TSKindId.RequiredParameter]: {
 		override: { op: 'present', slots: { '320': 2 } },
 		readonly: { op: 'present', slots: { '320': 3 } }
@@ -4681,6 +4753,9 @@ declare module './types.js' {
 			| 'definite'
 			| 'privateName'
 			| 'computed';
+	}
+	interface ReceiverParameterDeclaration {
+		readonly __flags__?: 'override' | 'readonly';
 	}
 	interface RequiredParameter {
 		readonly __flags__?: 'override' | 'readonly';

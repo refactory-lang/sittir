@@ -76,19 +76,22 @@ beforeAll(async () => {
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe('deriveGrammarBindings', () => {
-	it('renames each plain claimed kind to its path\'s bound name, subkind first', () => {
+	it("renames each plain claimed kind to its path's bound name, subkind first", () => {
 		const { bindings } = deriveGrammarBindings({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.renames).toEqual({ let_item: 'variable_declaration', call: 'call_expression' });
 	});
 
 	it('makes no grammar change for a slot a claim drops', () => {
-		const facts: BindingFacts = { ...FACTS, members: [{ route: 'dropped', owner: 'let_item', field: 'left', kind: null, after: null, anchor: null }] };
+		const facts: BindingFacts = {
+			...FACTS,
+			members: [{ route: 'dropped', owner: 'let_item', field: 'left', kind: null, after: null, anchor: null }]
+		};
 		const { bindings, report } = deriveGrammarBindings({ file: FILE, facts, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.patches).toEqual(new Map());
 		expect(report.residue.filter((r) => r.row.startsWith('let_item.'))).toEqual([]);
 	});
 
-	it('patches a member routed to a field of another name into a field of the member\'s name', () => {
+	it("patches a member routed to a field of another name into a field of the member's name", () => {
 		const { bindings } = deriveGrammarBindings({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
 	});
@@ -109,13 +112,20 @@ describe('deriveGrammarBindings', () => {
 		]);
 	});
 
-	it('names a kind claimed plainly twice by its first claim, and checks its members against that claim\'s vocabulary kind', () => {
+	it("names a kind claimed plainly twice by its first claim, and checks its members against that claim's vocabulary kind", () => {
 		const facts: BindingFacts = {
 			...FACTS,
 			claims: [claim('expression.call', 'call'), claim('expression.invocation', 'call')],
 			members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }]
 		};
-		const { bindings, report } = deriveGrammarBindings({ file: FILE, facts, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings, report } = deriveGrammarBindings({
+			file: FILE,
+			facts,
+			base,
+			vocabMembers: VOCABULARY,
+			routes: ROUTES,
+			model: NO_MODEL
+		});
 		expect(bindings.renames).toEqual({ call: 'call_expression' });
 		expect(report.residue).toEqual([
 			{ cause: 'kind named by an earlier claim', row: 'call → expression.invocation' },
@@ -123,7 +133,7 @@ describe('deriveGrammarBindings', () => {
 		]);
 	});
 
-	it('names no form by a claim that refines its supertype\'s claim with a test of its own, and still names a form by a plain claim', () => {
+	it("names no form by a claim that refines its supertype's claim with a test of its own, and still names a form by a plain claim", () => {
 		const form = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 			kind,
 			modelType: 'branch',
@@ -154,7 +164,7 @@ describe('deriveGrammarBindings', () => {
 		expect(report.residue).toContainEqual({ cause: 'child-pattern refinement', row: 'call → expression.call' });
 	});
 
-	it('checks a form\'s members against the vocabulary kind the routes name it by, though its own claims all refine its supertype\'s', () => {
+	it("checks a form's members against the vocabulary kind the routes name it by, though its own claims all refine its supertype's", () => {
 		const form = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 			kind,
 			modelType: 'branch',
@@ -195,7 +205,7 @@ describe('deriveGrammarBindings', () => {
 		const derive = (facts: BindingFacts, routedMembers: ReadonlyMap<string, readonly MemberRoute[]>) =>
 			deriveGrammarBindings({ file: FILE, facts, base, vocabMembers: vocab, routes: { members: routedMembers, vocabOf: new Map([['call', 'expression.call'], ['let_item', 'expression.call']]) }, model: NO_MODEL });
 
-		it('aliases both to the path\'s name when they supply the same members, as a form restricted to a context does', () => {
+		it("aliases both to the path's name when they supply the same members, as a form restricted to a context does", () => {
 			const { report } = derive(sharing([]), routed(['parameters', 'body'], ['body', 'parameters']));
 			expect(report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
 		});
@@ -207,12 +217,46 @@ describe('deriveGrammarBindings', () => {
 			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
 		});
 
+		it('keeps a terminal and a nonterminal apart even when both supply no portable members', () => {
+			const facts = {
+				...FACTS,
+				claims: [claim('expression.call', 'call'), claim('expression.call', 'identifier')],
+				members: []
+			};
+			const { bindings, report } = derive(facts, NO_MEMBERS);
+			expect(report.aliases).toEqual({});
+			expect(bindings.renames).toEqual({ call: 'call_expression' });
+			expect(report.residue).toContainEqual({
+				cause: 'kind kept apart by its shape',
+				row: 'identifier → expression.call'
+			});
+		});
+
+		it('merges only base rules, so a claim whose one other kind is no base rule renames its kind, and the report names the partition', () => {
+			const facts = {
+				...FACTS,
+				claims: [claim('expression.call', 'nope'), claim('expression.call', 'call'), claim('expression.call', 'let_item')],
+				members: []
+			};
+			const { bindings, report } = derive(facts, routed([], ['name']));
+			expect(report.aliases).toEqual({});
+			expect(bindings.patches.size).toBe(0);
+			expect(bindings.renames).toEqual({ call: 'call_expression' });
+			expect(report.residue).toContainEqual({
+				cause: 'claimed kinds not merged',
+				row: 'expression.call: call | let_item; not a base rule: nope'
+			});
+		});
+
 		it('keeps the further kind apart when a flag reads it', () => {
 			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' }]);
 			const { bindings, report } = derive(facts, routed([], []));
 			expect(report.aliases).toEqual({});
 			expect(bindings.renames).toEqual({ call: 'call_expression' });
-			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
+			expect(report.residue).toContainEqual({
+				cause: 'kind kept apart by its shape',
+				row: 'let_item → expression.call'
+			});
 		});
 
 		it('realizes a flag without a field edit', () => {
@@ -222,7 +266,6 @@ describe('deriveGrammarBindings', () => {
 			expect(report.residue.filter((r) => r.row === 'call.private')).toEqual([]);
 		});
 	});
-
 
 	it('keeps a renamed kind visible when its rule name is, though the catalog stamps it hidden in the parse tree', () => {
 		const predictedKinds = base.predictedKinds;
@@ -247,7 +290,14 @@ describe('deriveGrammarBindings', () => {
 
 describe('printBindingsModule', () => {
 	it('prints the grammar bindings with the hash of the sources it was derived from, and nothing else', () => {
-		const { bindings } = deriveGrammarBindings({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings } = deriveGrammarBindings({
+			file: FILE,
+			facts: FACTS,
+			base,
+			vocabMembers: VOCABULARY,
+			routes: ROUTES,
+			model: NO_MODEL
+		});
 		const text = printBindingsModule(bindings, 'h');
 		expect(text).toContain('export default bindings({\n\thash: "h",');
 		expect(text).toContain('rename("let_item", "variable_declaration")');
@@ -256,7 +306,14 @@ describe('printBindingsModule', () => {
 	});
 
 	it('prints no leads, and imports neither builder, where none are derived', () => {
-		const { bindings } = deriveGrammarBindings({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		const { bindings } = deriveGrammarBindings({
+			file: FILE,
+			facts: FACTS,
+			base,
+			vocabMembers: VOCABULARY,
+			routes: ROUTES,
+			model: NO_MODEL
+		});
 		const text = printBindingsModule(bindings, 'h');
 		expect(text).toContain('\tleads: [],\n\tsplits: ');
 		expect(text).not.toMatch(/\b(lead|match)\b,/);
@@ -272,7 +329,7 @@ describe('printBindingsModule', () => {
 });
 
 describe('loadBindingsModule', () => {
-	it('reads committed grammar bindings, alias patches included, outside the grammar\'s evaluation', async () => {
+	it("reads committed grammar bindings, alias patches included, outside the grammar's evaluation", async () => {
 		const pkg = mkdtempSync(join(dir, 'pkg-'));
 		const bindings = { patches: new Map([['call', [[{ path: '0/0', edit: { alias: { from: 'identifier', to: 'callee' } } }]]]]), renames: {}, leads: [], splits: [] };
 		writeFileSync(join(pkg, 'grammar.bindings.ts'), printBindingsModule(bindings, 'h').replace("'../codegen/src/dsl/dsl-authoring.ts'", JSON.stringify(join(__dirname, '../../dsl/dsl-authoring.ts'))).replace(/^\/\/\/ <reference.*\n/m, ''));
