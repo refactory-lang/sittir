@@ -3829,8 +3829,11 @@ export interface Object {
 	readonly __slotHints__?: {
 		readonly properties: SlotHint<
 			(
-				| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-				| T.ShorthandPropertyIdentifier.Types
+				| (
+						| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+						| T.ShorthandPropertyIdentifier.Types
+				  )
+				| undefined
 			)[],
 			false,
 			true
@@ -3857,8 +3860,11 @@ export interface ObjectPattern {
 	readonly __slotHints__?: {
 		readonly properties: SlotHint<
 			(
-				| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-				| T.ShorthandPropertyIdentifierPattern.Types
+				| (
+						| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+						| T.ShorthandPropertyIdentifierPattern.Types
+				  )
+				| undefined
 			)[],
 			false,
 			true
@@ -3947,7 +3953,7 @@ export interface Array {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(T.Expression | T.SpreadElement)[], false, true>;
+		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | undefined)[], false, true>;
 	};
 	readonly elements: () => readonly (Expression | SpreadElement | undefined)[];
 }
@@ -3956,7 +3962,7 @@ export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
 	readonly _elements: readonly (Pattern | AssignmentPattern | undefined)[];
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(T.Pattern | T.AssignmentPattern)[], false, true>;
+		readonly elements: SlotHint<((T.Pattern | T.AssignmentPattern) | undefined)[], false, true>;
 	};
 	readonly elements: () => readonly (Pattern | AssignmentPattern | undefined)[];
 }
@@ -4825,7 +4831,7 @@ export interface Arguments {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(T.Expression | T.SpreadElement)[], false, true>;
+		readonly elements: SlotHint<((T.Expression | T.SpreadElement) | undefined)[], false, true>;
 	};
 	readonly elements: () => readonly (Expression | SpreadElement | undefined)[];
 }
