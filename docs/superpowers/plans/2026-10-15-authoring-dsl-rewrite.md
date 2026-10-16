@@ -343,7 +343,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 
 - [x] **Step 1: Rename `patches` to `edits`, with no other change.** Regenerate all five grammars. `tool output-gate --check` shows no difference. Commit.
   - **Landed:** 2adb24cf3. Accepted as a consequence: the grammar diagnostics name the key in their messages, so the four `grammar-diagnostics.json` files move by that one word (python 4 messages, typescript 3, rust 1, scm 1). Helper names that say patch are unchanged. The reference is re-recorded at 2adb24cf3; its snapshots and rows equal 777411578's.
-- [ ] **Step 2: Write the failing tests.**
+- [x] **Step 2: Write the failing tests.**
   - Reading a pending base's `rules` before completion throws, while its `name` and `externals` read.
   - **The hook's guards** (spec §1.2):
     - reading `options.rules` before the pass has run throws, naming tree-sitter 0.26.9;
@@ -361,10 +361,17 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - Each config callback runs exactly once per evaluation, counted with a spy.
   - `contexts` given to a layer never reaches the runtime's options.
   - `wire({ edits: { missing: … } })` over a fixture base is a type error. Write it as a type test with `@ts-expect-error`.
-- [ ] **Step 3: Run them and confirm they fail.**
-- [ ] **Step 4: Implement.**
-- [ ] **Step 5: Switch scm and regex** to the stock shape, regenerate both, and run `tool output-gate --check`. There is no difference for scm or regex, and their snapshots are equal.
-- [ ] **Step 6: Run the suite. Write the glossary entries, and commit.**
+- [x] **Step 3: Run them and confirm they fail.**
+- [x] **Step 4: Implement.**
+- [x] **Step 5: Switch scm and regex** to the stock shape, regenerate both, and run `tool output-gate --check`. There is no difference for scm or regex, and their snapshots are equal.
+- [x] **Step 6: Run the suite. Write the glossary entries, and commit.**
+  - **Landed:** b30ee9058 on `feat/authoring-dsl`. Every gate is against the 2adb24cf3 reference and equal: the output gate, the snapshots, the rows, the bindings inventory and the grammar type-check ratchet. Where it differs from the steps above:
+    - **The type test.** The user ruled (via brainstorm) that `EditsCheck` stays the current check, so an `edits` key that the typed base lacks type-checks. The test pins an `edits` path that a base kind lacks instead (spec §2.1).
+    - **`edit-site-missing`.** A key that names no rule when the layer evaluates is now this blocking diagnostic, built in this task: it records on the layer record and reaches the compile gate. Four keys name a kind their own layer mints, and each finds its minted body. The strict check over the layer's whole namespace is filed as an issue; it waits on a typed derivation of enrich's mints.
+    - **Evaluation.** Wire's externals entry (`evaluatingExternals`) evaluates the rule callbacks and the `extras`, `supertypes` and `precedences` lists once, and `recordingExternals` goes with `wrapRuleHook`. The record also carries the conflict-derivation records and the pass's diagnostics. `deadEnrichMints` takes the layer's grammar view and the mints.
+    - **Extras.** The authored `extras` callback runs once: at the first layer, enrich evaluates it against the base's list, and wire gets no `extras` key.
+    - **Not yet once.** `groups`, `visibleExternals` and `renderAs` are still evaluated more than once per evaluation: 4, 5 and 3 times on a fixture layer. evaluate's drains account for some, and wire's own readers of the three keys account for the rest. Task 2.2 Step 2 brings each to one.
+    - **Bootstrap test.** The composition test in `bootstrap-templates.test.ts` accepts `sittirGrammar` until the switch, but the template itself must be in the stock shape.
 
 ### Task 1.3: `copy`, `narrow` and the `lead` helper
 
@@ -475,7 +482,8 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Test (Review Focus 4, a layer's own records): over a fixture chain, a `field()` entry in layer 1 leaves layer 1's own `options` as written, while the same entry in layer 2 rewrites the inherited option path. Both are read from the evaluated grammar.
 
 - [ ] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
-- [ ] **Step 2:** Run the suite and the stage gate. Commit.
+- [ ] **Step 2: Each config callback once** (spec §1.3). With the drains gone, wire's readers of `groups`, `visibleExternals` and `renderAs` take what its entry evaluated, so each callback runs once per evaluation. Extend `layer.test.ts`'s spy test to the three.
+- [ ] **Step 3:** Run the suite and the stage gate. Commit.
 
 ### Task 2.3: `injects:` and the record form of `groups:` go
 
