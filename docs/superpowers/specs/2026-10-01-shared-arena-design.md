@@ -424,9 +424,7 @@ members in the builder's literal — changed all three, and the maintainer ruled
 1. **Parsed nodes as views.** The per-kind prototype is ruled out. A parsed node's literal holds a
    reference to its record, which makes "a parsed node is its coordinate" true by construction
    (ruling 4).
-2. **Built-node storage.** Builders write their members in the literal and need no record to be
-   cheap, so the shared-memory chunks lose the construction argument they had. A built node keeps
-   its fields, encoded at each render, 45–56 ns a slot value (ruling 5).
+2. **Built-node storage (historical, superseded).** The October 1 measurement favored object literals with encoding at render (45–56 ns a slot value); ruling 5 captured that temporary design. The 2026-10-06 relative-coordinates decision and 2026-10-16 definitive-format decision supersede it: builders create immutable arena records directly, and `$with` shares unchanged records without mutation. The recorded encoding cost remains a comparison baseline.
 3. **Which lands first.** The image is withdrawn. The typed reader lands first, the record wire
    after it, and the relative-coordinates work between them (ruling 6).
 
@@ -610,11 +608,7 @@ raised (11).
 3. **The wire is canonical packed immutable arena records,** following the measured implementation and safety/correctness cutover checks; performance numbers guide optimization, not whether the format is adopted (§ The wire; Architectural decision, 2026-10-16).
 4. **A parsed node's storage is a reference to its record** (§ What the JavaScript wrap keeps,
    § Render).
-5. **A built node's storage is fields on the object, encoded at render** (§ What the JavaScript wrap
-   keeps, § Render).
-   Superseded on 2026-10-06: arena storage holds built nodes too, written eagerly and read and
-   written by their members directly, and the object encoder is retired
-   (`2026-10-06-relative-coordinates-design.md`, § The record wire).
+5. **Built-node storage (original ruling, superseded 2026-10-06 and reaffirmed 2026-10-16).** Object fields encoded at render remain a historical benchmark and the pre-cutover implementation only. The definitive representation stores constructed nodes directly as immutable arena records; members read those records, and `$with` appends a new record referencing unchanged children. The object encoder is retired at cutover (`2026-10-06-relative-coordinates-design.md`, § The record wire).
 6. **The typed reader lands first on the transitional object wire; the definitive record format is implemented and measured in its own later step.** Where the relative-coordinates work falls was left to this draft; placed here and
    accepted in review:
    1. **The typed reader**, emitting today's napi objects: the cursor reader, tree-and-row
