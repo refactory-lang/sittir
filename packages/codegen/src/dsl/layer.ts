@@ -16,9 +16,11 @@ import {
 } from './enrich.ts';
 import type { TransformPatchMap } from '../grammar-shapes/path-type.ts';
 import { layerRecordOf, withLayerRecord, type LayerRecord, type LayerRecords } from './layer-record.ts';
-import { isRecord } from './rule-patterns.ts';
+import { isRecord, type GrammarRecord } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
+import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
 import { effectsForOwners, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
+import { applyLeads } from './verbs/lead.ts';
 import { deadEnrichMints, withoutDeadNames } from './wire/dead-mints.ts';
 import { derivationRecordsOf } from './wire/derivation-records.ts';
 import type { LiftName } from './wire/lift-names.ts';
@@ -35,7 +37,8 @@ import {
 	type OptionsCheck,
 	type WireConfig,
 	type WireContext,
-	type WiredOpts
+	type WiredOpts,
+	type WireLayer
 } from './wire/wire.ts';
 
 declare const LAYER_BASE: unique symbol;
@@ -81,8 +84,7 @@ export interface LayerOutput {
 	readonly wire: WireContext;
 }
 
-export interface LayerCtx {
-	readonly name: string;
+export interface LayerCtx extends VerbCtx {
 	readonly depth: number;
 	readonly inherited: LayerRecord | undefined;
 	readonly upstream: GrammarJson;
@@ -92,10 +94,7 @@ export interface LayerCtx {
 	readonly wire: WireContext;
 	readonly protectedNames: readonly string[];
 	readonly rules: Record<string, Rule>;
-	readonly created: readonly string[];
 	readonly symbols: Record<string, unknown>;
-	readonly effects: readonly Effect[];
-	readonly diagnostics: GrammarDiagnostic[];
 }
 
 interface LayerHandle {
@@ -284,7 +283,8 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 	const diagnostics = [...(inherited?.diagnostics ?? [])];
 	const completed = intake(source, { config, name, inherited, diagnostics });
 	completePendingBase(base, completed);
-	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, diagnostics);
+	const layer: WireLayer = { name, diagnostics, leads: [] };
+	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, layer);
 	const wire = wired.__wireContext__!;
 	const anyName = layerSymbols();
 	const externals = wired.externals!.call(anyName, anyName, completed.grammar.externals as unknown[]);
@@ -292,8 +292,12 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 	const baseRules = baseRulesOf<Rule>(completed) ?? {};
 	const rules: Record<string, Rule> = { ...baseRules };
 	for (const [ruleName, body] of bodies) rules[ruleName] = normalizedBody(body, ruleName);
+	const symbols = layerSymbols(new Set([...Object.keys(rules), ...symbolNamesOf(externals)]));
+	const evaluated = evaluatedLists(wired, { base: completed, symbols, externals });
 	const ctx: LayerCtx = {
-		name,
+		...verbCtxOf(layerView(name, rules, evaluated, completed), { effects: [...resolvedEffects(rules, wire)], diagnostics }, rules),
+		rules,
+		created: [...bodies.keys()].filter((ruleName) => !(ruleName in baseRules)),
 		depth: (inherited?.depth ?? 0) + 1,
 		inherited,
 		upstream: inherited?.upstream ?? (source.grammar as unknown as GrammarJson),
@@ -302,13 +306,22 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 		conflictsAuthored: (inherited?.derivationRecords.conflictsAuthored ?? false) || config.conflicts !== undefined,
 		wire,
 		protectedNames: protectedWireRuleNames(wired),
-		rules,
-		created: [...bodies.keys()].filter((ruleName) => !(ruleName in baseRules)),
-		symbols: layerSymbols(new Set([...Object.keys(rules), ...symbolNamesOf(externals)])),
-		effects: resolvedEffects(rules, wire),
-		diagnostics
+		symbols
 	};
-	return completeLayer(evaluatedLists(wired, { ...ctx, externals }), ctx);
+	applyLeads(layer.leads, ctx);
+	return completeLayer(evaluated, ctx);
+}
+
+function layerView(name: string, rules: Record<string, Rule>, evaluated: Omit<LayerLists, 'conflicts'>, base: GrammarResult): GrammarRecord {
+	return {
+		name,
+		rules,
+		externals: evaluated.externals,
+		extras: evaluated.extras ?? base.grammar.extras,
+		supertypes: evaluated.supertypes,
+		inline: evaluated.inline,
+		word: evaluated.word === undefined ? base.grammar.word : symbolNamesOf([evaluated.word]).values().next().value
+	};
 }
 
 function resolvedEffects(rules: Readonly<Record<string, Rule>>, wire: WireContext): readonly Effect[] {
@@ -325,7 +338,13 @@ function normalizedBody(body: unknown, name: string): Rule {
 	throw new TypeError(`Invalid rule: ${String(body)}`);
 }
 
-function evaluatedLists(wired: WiredOpts, ctx: LayerCtx & { readonly externals: unknown }): Omit<LayerLists, 'conflicts'> {
+interface ListsCtx {
+	readonly base: GrammarResult;
+	readonly symbols: Record<string, unknown>;
+	readonly externals: unknown;
+}
+
+function evaluatedLists(wired: WiredOpts, ctx: ListsCtx): Omit<LayerLists, 'conflicts'> {
 	const $ = ctx.symbols;
 	const base = ctx.base.grammar as Readonly<Record<string, unknown>>;
 	const reserved = base.reserved as Readonly<Record<string, unknown>> | undefined;
@@ -355,18 +374,7 @@ function layerConflicts(ctx: LayerCtx): readonly (readonly unknown[])[] {
 
 function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx): LayerOutput {
 	const { rules, wire, depth } = ctx;
-	const word = evaluated.word === undefined ? ctx.base.grammar.word : symbolNamesOf([evaluated.word]).values().next().value;
-	const view = {
-		grammar: {
-			name: ctx.name,
-			rules,
-			externals: evaluated.externals,
-			extras: evaluated.extras ?? ctx.base.grammar.extras,
-			supertypes: evaluated.supertypes,
-			inline: evaluated.inline,
-			word
-		}
-	};
+	const view = { grammar: { ...ctx.grammar, rules, supertypes: ctx.lists.supertypes, inline: ctx.lists.inline } };
 	stampWiredVariants(view, ctx.base, wire.automaticVariants, new Set(wire.elementSupertypes.keys()));
 	const dead = deadEnrichMints(view.grammar, { mints: getEnrichMints(ctx.base), protectedNames: ctx.protectedNames });
 	const blank = nativeRuleFn<() => Rule>('blank');
@@ -394,6 +402,7 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 	const start = Object.keys(rules)[0];
 	const bodies = new Map<string, unknown>();
 	for (const [name, body] of wire.evaluatedBodies!) bodies.set(name, name === start || dead.has(name) || isRecord(body) ? rules[name] : body);
+	for (const name of ctx.created) if (!bodies.has(name)) bodies.set(name, rules[name]);
 	if (start !== undefined) bodies.set(start, withLayerRecord(rules[start]!, record));
 	return {
 		name: ctx.name,
@@ -401,8 +410,8 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 		lists: {
 			...evaluated,
 			conflicts: layerConflicts(ctx),
-			inline: withoutDeadNames(evaluated.inline, dead) as readonly unknown[],
-			supertypes: withoutDeadNames(evaluated.supertypes, dead) as readonly unknown[]
+			inline: withoutDeadNames(ctx.lists.inline, dead) as readonly unknown[],
+			supertypes: withoutDeadNames(ctx.lists.supertypes, dead) as readonly unknown[]
 		},
 		record,
 		wire

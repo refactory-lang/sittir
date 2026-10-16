@@ -648,12 +648,15 @@ export function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<str
 	return out;
 }
 
+export const listEntryName = (entry: unknown): string | undefined =>
+	typeof entry === 'string' ? entry : isRecord(entry) && typeof entry.name === 'string' ? entry.name : undefined;
+
+export function listedNames(list: unknown): ReadonlySet<string> {
+	return new Set((Array.isArray(list) ? list : []).flatMap((entry) => listEntryName(entry) ?? []));
+}
+
 export function supertypesOf(grammar: GrammarRecord): ReadonlySet<string> {
-	return new Set(
-		(Array.isArray(grammar.supertypes) ? grammar.supertypes : []).flatMap((s) =>
-			typeof s === 'string' ? [s] : isRecord(s) && typeof s.name === 'string' ? [s.name] : []
-		)
-	);
+	return listedNames(grammar.supertypes);
 }
 
 export function transparentReach(rules: GrammarRecord, from: string, stop: ReadonlySet<string>): Set<string> {
@@ -669,6 +672,33 @@ export function transparentReach(rules: GrammarRecord, from: string, stop: Reado
 	}
 	return out;
 }
+
+export const OPAQUE_RULES: ReadonlySet<unknown> = new Set(['FIELD', 'TOKEN', 'IMMEDIATE_TOKEN']);
+
+export function replaceSymbols(rule: unknown, replace: (name: string) => string): unknown {
+	if (Array.isArray(rule)) return rule.map((r) => replaceSymbols(r, replace));
+	if (!isRecord(rule)) return rule;
+	if (rule.type === 'SYMBOL' && typeof rule.name === 'string') return { ...rule, name: replace(rule.name) };
+	const out: GrammarRecord = {};
+	for (const [key, value] of Object.entries(rule)) out[key] = replaceSymbols(value, replace);
+	return out;
+}
+
+export function refRule(ref: unknown): string | undefined {
+	const node = unwrapPrec(ref);
+	if (!isRecord(node)) return undefined;
+	if (node.type === 'SYMBOL' && typeof node.name === 'string') return node.name;
+	return node.type === 'ALIAS' ? refRule(node.content) : undefined;
+}
+
+export function refKind(ref: unknown): string | undefined {
+	const node = unwrapPrec(ref);
+	if (!isRecord(node)) return undefined;
+	if (node.type === 'ALIAS' && node.named === true && typeof node.value === 'string') return node.value;
+	return node.type === 'SYMBOL' && typeof node.name === 'string' && !isParserHiddenName(node.name) ? node.name : undefined;
+}
+
+export const aliasOf = (name: string, value: string): GrammarRecord => ({ type: 'ALIAS', content: { type: 'SYMBOL', name }, named: true, value });
 
 export interface SymbolSource {
 	readonly rules: Readonly<Record<string, AnyRule>>;

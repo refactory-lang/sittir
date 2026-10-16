@@ -167,6 +167,25 @@ export function boundSegmentOf(
 	};
 }
 
+export function bindMatch(
+	match: LeadMatch,
+	rename: (kind: string) => string,
+	fieldNameOf: (owner: string, field: string) => string = (_owner, field) => field
+): LeadMatch {
+	return {
+		...match,
+		kind: rename(match.kind),
+		...(match.within === undefined
+			? {}
+			: {
+					within: {
+						field: match.within.field === null ? null : fieldNameOf(match.kind, match.within.field),
+						admits: match.within.admits.map((m) => bindMatch(m, rename, fieldNameOf))
+					}
+				})
+	};
+}
+
 export function boundFieldNameOf(
 	rewrites: readonly SegmentRewrite[],
 	grammar?: GrammarRecord
@@ -362,7 +381,33 @@ function soleName(names: readonly string[], refusal: string): string {
 	return name;
 }
 
-function leadEffectOf({ origin, copies }: LeadCopies, rules: Readonly<Record<string, unknown>>): LeadEffect {
+function namedAliasValues(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	if (Array.isArray(rule)) for (const r of rule) namedAliasValues(r, out);
+	else if (isRecord(rule)) {
+		if (rule.type === 'ALIAS' && rule.named === true && typeof rule.value === 'string') out.add(rule.value);
+		for (const value of Object.values(rule)) namedAliasValues(value, out);
+	}
+	return out;
+}
+
+function renamesWithoutCopy(admits: readonly LeadMatch[]): (readonly [string, string])[] {
+	return admits.flatMap((admit) => [
+		...(admit.as !== undefined && admit.within === undefined ? [[admit.kind, admit.as] as const] : []),
+		...renamesWithoutCopy(admit.within?.admits ?? [])
+	]);
+}
+
+function headVariants({ origin, copies }: LeadCopies, rules: Readonly<Record<string, unknown>>): Record<string, string> {
+	const shown = new Set<string>();
+	for (const copy of copies) if (copy.context === origin.field) namedAliasValues(rules[copy.copy], shown);
+	return Object.fromEntries([
+		...copies.flatMap((copy) => (copy.admitted === undefined || copy.display === undefined ? [] : [[copy.admitted, copy.display] as const])),
+		...renamesWithoutCopy(origin.admits).filter(([, as]) => shown.has(as))
+	]);
+}
+
+function leadEffectOf(lead: LeadCopies, rules: Readonly<Record<string, unknown>>): LeadEffect {
+	const { origin, copies } = lead;
 	const receiver = copies.find((copy) => copy.source === origin.list);
 	if (receiver?.display === undefined) throw new Error(`effects: the lead on '${origin.list}.${origin.field}' records no shown copy of the list`);
 	const group = soleName(symbolsOutsideField(rules[receiver.copy], origin.field), `the receiver form '${receiver.copy}' names no single group`);
@@ -376,9 +421,7 @@ function leadEffectOf({ origin, copies }: LeadCopies, rules: Readonly<Record<str
 		receiver: receiver.display,
 		group,
 		restField,
-		variants: Object.fromEntries(
-			copies.flatMap((copy) => (copy.admitted === undefined || copy.display === undefined ? [] : [[copy.admitted, copy.display]]))
-		)
+		variants: headVariants(lead, rules)
 	};
 }
 

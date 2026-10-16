@@ -9,11 +9,12 @@ import { evaluate, evaluateDsl, withDslGlobals } from '../../compiler/evaluate.t
 import type { EvaluatedGrammar } from '../../compiler/types.ts';
 import { canonical } from '../../transpile/evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing, treeSitterCliVersion } from '../../transpile/tree-sitter-cli.ts';
-import { alias, field } from '../dsl-authoring.ts';
+import { alias, field, match } from '../dsl-authoring.ts';
 import type { GrammarResult } from '../enrich.ts';
 import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
 import { layerOptions, pendingBase } from '../layer.ts';
 import { layerRecordOf } from '../layer-record.ts';
+import { lead } from '../primitives/lead.ts';
 import { SENTINEL } from './fixtures/layer-chain/sentinel.ts';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
@@ -214,6 +215,42 @@ describe('an edits key that names no rule', () => {
 		const diagnosis = diagnoseGrammar({ grammar: 'chain', evaluated });
 		expect(diagnosis.passed).toBe(false);
 		expect(diagnosis.blocked).toEqual([expect.objectContaining({ code: 'edit-site-missing', grammar: 'chain', ownerKind: 'let_statemnt' })]);
+	});
+});
+
+describe('a lead entry in a layer', () => {
+	const listed = (): GrammarResult =>
+		upstream({
+			program: ($: Symbols) => repeat($.function_item!),
+			function_item: ($: Symbols) => seq('fn', field('parameters', $.params!)),
+			params: ($: Symbols) => seq(field('item', $._param!), repeat(seq(',', field('item', $._param!)))),
+			_param: ($: Symbols) => choice($.self_param!, $.param!),
+			self_param: () => 'self',
+			param: () => /[a-z]+/
+		});
+	const RECEIVER = { params: { '.': lead('item', 'receiver', match('self_param')) } };
+
+	it('applies after the paths, its receiver form and group the last rules, and records its copies on the layer record', async () => {
+		await withDslGlobals(async () => {
+			const result = layer(layer(listed(), {}), { edits: RECEIVER });
+			const { rules } = result.grammar;
+			expect(Object.keys(rules).slice(-2)).toEqual(['_params_receiver', 'params_receiver_group']);
+			expect(JSON.stringify(rules.function_item)).toContain(JSON.stringify({ type: 'ALIAS', content: { type: 'SYMBOL', name: '_params_receiver' }, named: true, value: 'params_receiver' }));
+			const record = layerRecordOf(result);
+			expect(record?.diagnostics).toEqual([]);
+			expect(record?.effects).toContainEqual(expect.objectContaining({ kind: 'copy', copy: '_params_receiver', source: 'params', display: 'params_receiver', origin: expect.objectContaining({ kind: 'lead', list: 'params', field: 'receiver' }) }));
+		});
+	});
+
+	it('records a refused lead with its code, and drops the entry', async () => {
+		await withDslGlobals(async () => {
+			const plain = layer(layer(listed(), {}), {});
+			const refused = layer(layer(listed(), {}), { edits: { params: { '.': lead('item', 'receiver', match('missing')) } } });
+			expect(Object.keys(refused.grammar.rules)).toEqual(Object.keys(plain.grammar.rules));
+			expect(layerRecordOf(refused)?.diagnostics).toEqual([
+				expect.objectContaining({ code: 'narrow-invalid', severity: 'fail', ownerKind: 'params', message: "lead 'params.receiver': it admits no item of the list" })
+			]);
+		});
 	});
 });
 

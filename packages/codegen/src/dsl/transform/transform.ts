@@ -24,6 +24,7 @@ import { isPreference, type PreferencePlaceholder } from '../primitives/preferen
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/flatten.ts';
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
+import { isLeadPlaceholder, type LeadPlaceholder } from '../primitives/lead.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
@@ -47,6 +48,8 @@ import {
 	wireTextTokenOf,
 	wireAutomaticVariants,
 	wireRecordPatchSite,
+	wireQueueLead,
+	wireRefuse,
 	wireGetLiftBody,
 	wireElementSlotOf,
 	wireLiftRenamedTo,
@@ -103,7 +106,8 @@ export type PatchValue =
 	| PreferencePlaceholder
 	| GroupPlaceholder
 	| FlattenPlaceholder
-	| RegexPlaceholder;
+	| RegexPlaceholder
+	| LeadPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -120,7 +124,7 @@ function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
 	recordPatchSites(patches);
 	const hasPathKeys = requiresPathMode(patches);
 	const hasPlaceholderAlias = Object.values(patches).some(
-		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
+		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isLeadPlaceholder(v)
 	);
 	return hasPathKeys || hasPlaceholderAlias ? applyPathPatches(rule, patches) : applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>);
 }
@@ -143,6 +147,7 @@ function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
 	if (isGroupPlaceholder(value)) return { form: 'group' };
 	if (isFlattenPlaceholder(value)) return { form: 'flatten' };
 	if (isRegexPlaceholder(value)) return { form: 'regex' };
+	if (isLeadPlaceholder(value)) return { form: 'lead' };
 	if (isPreference(value)) return { form: 'preference' };
 	if (isFieldLike(value)) return { form: 'field', name: value.name };
 	return { form: 'literal' };
@@ -156,6 +161,10 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
+		if (isLeadPlaceholder(value)) {
+			queueLeadEntry(value, key);
+			continue;
+		}
 		const segments = parsePath(key);
 		if (isArmDefault(value)) assertChoiceArmPath(rule, key, segments);
 		rule = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
@@ -168,6 +177,17 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		if (value.default === true) rule = clearSiblingDefaults(rule, parsePath(key));
 	}
 	return rule;
+}
+
+function queueLeadEntry(entry: LeadPlaceholder, key: string): void {
+	if (key === '.') return wireQueueLead(entry);
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'edit-entry-invalid',
+		ownerKind: owner,
+		message: `edits: '${owner}': a lead entry applies at '.', the list kind itself, not at '${key}'`,
+		details: { kind: owner, path: key }
+	});
 }
 
 function clearSiblingDefaults(rule: RuntimeRule, segments: readonly PathSegment[]): RuntimeRule {

@@ -677,3 +677,39 @@ A patch placeholder carrying a replacement regex source for the pattern at the p
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::SemanticGapWitness`
 
 Evidence for `reauthored('semantic-gap', witness, body)`: the upstream parser's kind, accepted text and grammar form, plus the language meaning that differs from the modeled construction. The gate checks that the kind is unchanged, the upstream rule derives the form, and the meaning is stated. Upstream parser tests verify the text/kind; construction regressions verify the semantic correction. This cause covers the one-element tuple, where `(x)` and `(x,)` share an upstream tuple kind but mean different things in the language. It does not claim to prove language semantics from the grammar.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::NarrowPlaceholder`
+
+A `narrow` entry: its direction and the admits.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::isNarrowPlaceholder`
+
+Whether an entry value is a `narrow` placeholder.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::narrowing`
+
+The placeholder builder for one direction.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::narrow`
+
+`narrow(...admits)` keeps only the admitted arms at its entry's site, and `narrow.except(...admits)` every other arm (`verbs/narrow.ts::applyNarrow`).
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::withinOf`
+
+A `match` restriction from its authored form: an array is an unfielded child; a record restricts the one field it names, and a record of any other size is refused.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::match`
+
+Builds a `LeadMatch`: a kind, an optional restriction (`withinOf`) and an optional name for its form. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
+
+### `packages/codegen/src/dsl/primitives/lead.ts::LeadPlaceholder`
+
+A `lead` entry: the list's item field, the field the head takes, and the admits.
+
+### `packages/codegen/src/dsl/primitives/lead.ts::isLeadPlaceholder`
+
+Whether an entry value is a `lead` placeholder.
+
+### `packages/codegen/src/dsl/primitives/lead.ts::lead`
+
+`L: { '.': lead(item, field, ...admits) }` separates the head of the separated list `L` that the admits allow into a receiver form (`verbs/lead.ts::applyLead`). It is valid only at the list kind's `.`, where wire queues it for the layer's whole-grammar phase (`transform/transform.ts::queueLeadEntry`).

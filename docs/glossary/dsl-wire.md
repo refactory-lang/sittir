@@ -957,7 +957,7 @@ Partitions the config's `rules:` functions into `ruleCauses` and
 
 One `edits:` entry: the owner kind it patches, its path key, and the form
 of its placeholder (`PatchForm`: `field`, `variant`, `alias`, `rule`,
-`default`, `group`, `flatten`, `regex`, `preference`, or `literal` for a raw
+`default`, `group`, `flatten`, `regex`, `preference`, `lead`, or `literal` for a raw
 rule value), with the placeholder's name where it has one. `lifts` names the enrich lifts the entry rewrote or
 renamed while it applied (`WireContext.liftClaims`), so the diagnostic records credit it with the records those
 lifts own.
@@ -1636,15 +1636,35 @@ A whole-grammar operation sees every body at once, so its result does not depend
 
 ### `packages/codegen/src/dsl/wire/wire.ts::refuseEditSite`
 
-Refuses an `edits` key that names no rule when the layer evaluates: no rule of the base (enrich's mints included) or of the config's `rules:`, and no kind the layer minted before wire reached the key. Wire evaluates in key order and a mint exists once the callback that mints it has run, so a key naming a mint follows the key that mints it. The refusal is the blocking `edit-site-missing` diagnostic, naming the grammar and the key (`ownerKind`). Given the layer pass's diagnostics list (`WireContext.diagnostics`), wire records it there; given none, it throws the diagnostic's message.
+Refuses an `edits` key that names no rule when the layer evaluates: no rule of the base (enrich's mints included) or of the config's `rules:`, and no kind the layer minted before wire reached the key. Wire evaluates in key order and a mint exists once the callback that mints it has run, so a key naming a mint follows the key that mints it. The refusal is the blocking `edit-site-missing` diagnostic, naming the grammar and the key (`ownerKind`). Given the layer pass's handle (`WireContext.layer`), wire records it there (`recordRefusal`); given none, it throws the diagnostic's message.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.layer`
+
+The layer pass's handle (`WireLayer`), where wire's refusals and the lead entries it queues go. Absent outside a layer pass, where a refusal throws and a lead entry has no phase to run in.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireLayer`
+
+What a layer pass hands wire: the layer's name, the diagnostics list wire's refusals join, and the lead entries wire queues for the whole-grammar phase, in the order it evaluates them.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal`
+
+A refusal wire records: its code, the kind it names, its message and its details.
+
+### `packages/codegen/src/dsl/wire/wire.ts::recordRefusal`
+
+Records a refusal as a blocking diagnostic of the grammar on the layer handle, or throws its message when the context has none.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRefuse`
+
+Records a refusal against the wire context the running rule callback evaluates in, naming the layer's grammar.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireQueueLead`
+
+Queues a lead entry for the layer's whole-grammar phase, its list the kind whose callback is running, as a `verbs/effects.ts::Lead`. Outside a layer pass the entry has no phase to run in, so it throws.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.editedMints`
 
 The `edits` keys that name neither a rule of the base nor one of the config's `rules:` (`composeOrSynthesizePatchedParents`). Each must name a kind the layer mints; wire's entry refuses one it reaches with no minted body (`refuseEditSite`).
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.diagnostics`
-
-The list wire's refusals join: the layer pass's, which becomes its record's. Absent outside a layer pass, where a refusal throws.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::returnEvaluatedBodies`
 
@@ -1711,8 +1731,8 @@ The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` 
 generic base type only checks the authored config's keys; `wireWithoutConfig`, `wireBindings` and the layer pass
 (`layer.ts::runLayerPass`) call it directly. The runtime's call to its `externals` callback is where wire evaluates
 the config (`evaluatingExternals`); the rule callbacks and the `extras`, `supertypes` and `precedences` callbacks
-return what that call computed. The layer pass also passes its diagnostics list, which wire's refusals join
-(`WireContext.diagnostics`); the other callers pass none.
+return what that call computed. The layer pass also passes its handle (`WireLayer`), which wire's refusals and the lead entries it queues join
+(`WireContext.layer`); the other callers pass none.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wire`
 

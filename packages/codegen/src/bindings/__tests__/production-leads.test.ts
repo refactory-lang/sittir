@@ -1,9 +1,28 @@
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadBindingsModule } from '../module.ts';
 import { evaluateDsl } from '../../compiler/evaluate.ts';
 
 const PACKAGES = join(__dirname, '../../../..');
+
+const recorded = JSON.parse(readFileSync(join(__dirname, '../../dsl/__tests__/fixtures/bindings-layer-effects.json'), 'utf8')) as Readonly<
+	Record<string, { readonly provenance: { readonly leadFrom?: unknown; readonly bindingEffects: readonly { readonly kind: string }[] } }>
+>;
+
+describe('the production leads, on the lead verb', () => {
+	it.each([
+		['rust', ['_parameter_receiver', '_attributed_parameter_receiver', '_parameters_elements_receiver', 'parameters_elements_receiver_group']],
+		['typescript', ['_parameter_name_receiver', '_required_parameter_receiver', '_parameter_name_formal_parameter', '_formal_parameters_elements_receiver', 'formal_parameters_elements_receiver_group']]
+	])("%s ends with its lead's copies and then its group, and projects the recorded provenance", async (grammar, last) => {
+		const raw = await evaluateDsl(join(PACKAGES, grammar, 'grammar.sittir.ts'));
+		expect(Object.keys(raw.rules).slice(-last.length)).toEqual(last);
+		const { provenance } = recorded[grammar]!;
+		expect(JSON.stringify(raw.leadFrom)).toBe(JSON.stringify(provenance.leadFrom));
+		const leads = (effects: readonly { readonly kind: string }[] | undefined) => JSON.stringify((effects ?? []).filter((effect) => effect.kind === 'lead'));
+		expect(leads(raw.bindingEffects)).toBe(leads(provenance.bindingEffects));
+	});
+});
 
 describe('the production receiver edits', () => {
 	it.each([

@@ -546,9 +546,13 @@ calls.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPathPatches`
 
-Applies a path-keyed patch set: every non-variant entry at its path, each as its own active patch site
-(`wireWithPatchSites`), then the `variant()` entries together (`applyVariantPatches`), then clears sibling
-defaults an `arm.default` entry displaced.
+Applies a path-keyed patch set: a `lead` entry goes to `queueLeadEntry`; every other non-variant entry applies at its path, each as its own active patch site
+(`wireWithPatchSites`), then the `variant()` entries together (`applyVariantPatches`), then sibling
+defaults an `arm.default` entry displaced are cleared.
+
+### `packages/codegen/src/dsl/transform/transform.ts::queueLeadEntry`
+
+A `lead` entry. At `.`, the list kind itself, it is queued for the layer's whole-grammar phase (`wire/wire.ts::wireQueueLead`); at any other path it is `edit-entry-invalid` (`wire/wire.ts::wireRefuse`). It walks no path, so the rule stays as it is.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 

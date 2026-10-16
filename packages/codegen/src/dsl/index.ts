@@ -12,7 +12,8 @@ export { preference } from './primitives/preference.ts';
 export { field } from './primitives/field.ts';
 export { refine } from './primitives/refine.ts';
 export { sittirGrammar } from './sittir-grammar.ts';
-export { bindings, lead, match, rename, split } from './bind.ts';
+export { bindings, lead, rename, split } from './bind.ts';
+export { match } from './primitives/narrow.ts';
 export { reauthored, vocabulary } from './primitives/rule-cause.ts';
 export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts';
 export type {

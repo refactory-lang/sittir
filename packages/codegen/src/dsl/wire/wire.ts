@@ -1,4 +1,4 @@
-import type { BindingEffect } from '../verbs/effects.ts';
+import type { BindingEffect, Lead } from '../verbs/effects.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
@@ -17,6 +17,7 @@ import {
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
+import type { LeadPlaceholder } from '../primitives/lead.ts';
 import {
 	ABSENT_VARIANT_NAME,
 	isVariantPlaceholder,
@@ -27,7 +28,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { aliasOf, isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, nativeRuleFn, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -54,6 +55,7 @@ export type PatchForm =
 	| 'flatten'
 	| 'regex'
 	| 'preference'
+	| 'lead'
 	| 'literal';
 
 export interface PatchSite {
@@ -104,7 +106,13 @@ export interface WireContext {
 	readonly source: unknown;
 	evaluatedExternals: ReadonlySet<string>;
 	evaluatedBodies?: ReadonlyMap<string, unknown>;
-	readonly diagnostics: GrammarDiagnostic[] | undefined;
+	readonly layer: WireLayer | undefined;
+}
+
+export interface WireLayer {
+	readonly name: string;
+	readonly diagnostics: GrammarDiagnostic[];
+	readonly leads: Lead[];
 }
 
 export interface WireLists {
@@ -366,7 +374,7 @@ export function withWireContext<T>(
 		activePatchSites: [],
 		source: base,
 		evaluatedExternals: new Set(),
-		diagnostics: undefined
+		layer: undefined
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -549,7 +557,7 @@ export function wireBindings(name: string, base: GrammarResult, edits: EditsConf
 	return wireImpl({ name, edits }, base, base);
 }
 
-export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, diagnostics?: GrammarDiagnostic[]): WiredOpts {
+export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, layer?: WireLayer): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.edits ?? {}, knownRuleNames(cfg, baseArg));
@@ -591,7 +599,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, d
 		activePatchSites: [],
 		source,
 		evaluatedExternals: new Set(),
-		diagnostics
+		layer
 	};
 
 	const edits = cfg.edits ?? {};
@@ -750,18 +758,35 @@ function evaluatingExternals(
 }
 
 function refuseEditSite(kind: string, cfg: WireConfig<any>, ctx: WireEntryCtx): void {
-	const diagnostic: GrammarDiagnostic = {
-		scope: 'grammar',
+	recordRefusal(ctx.context, cfg.name, {
 		code: 'edit-site-missing',
-		severity: 'fail',
-		canProceed: false,
-		grammar: cfg.name,
 		ownerKind: kind,
 		message: `edits: '${kind}' names no rule of the base or of the layer's rules:, nor a kind the layer minted before it evaluated '${kind}'`,
 		details: { kind }
-	};
-	if (ctx.context.diagnostics === undefined) throw new Error(diagnostic.message);
-	ctx.context.diagnostics.push(diagnostic);
+	});
+}
+
+export interface WireRefusal {
+	readonly code: string;
+	readonly ownerKind: string;
+	readonly message: string;
+	readonly details: Record<string, unknown>;
+}
+
+function recordRefusal(context: WireContext | null, grammar: string, { code, ownerKind, message, details }: WireRefusal): void {
+	if (context?.layer === undefined) throw new Error(message);
+	context.layer.diagnostics.push({ scope: 'grammar', code, severity: 'fail', canProceed: false, grammar, ownerKind, message, details });
+}
+
+export function wireRefuse(refusal: WireRefusal): void {
+	recordRefusal(currentContext, currentContext?.layer?.name ?? '', refusal);
+}
+
+export function wireQueueLead(entry: LeadPlaceholder): void {
+	const list = currentContext?.currentRuleKind;
+	if (currentContext?.layer === undefined || list === null || list === undefined)
+		throw new Error(`lead('${entry.item}', '${entry.field}'): a lead entry applies in a layer pass, as the '.' entry of a list kind`);
+	currentContext.layer.leads.push({ list, item: entry.item, field: entry.field, admits: entry.admits });
 }
 
 function evaluateWireLists(cfg: WireConfig<any>, ctx: WireEntryCtx & { readonly symbols: Record<string, unknown> }): void {
@@ -1285,7 +1310,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 			const site =
 				c.aliasAs === undefined
 					? { type: 'SYMBOL', name: c.name }
-					: { type: 'ALIAS', content: { type: 'SYMBOL', name: c.name }, named: true, value: c.aliasAs };
+					: aliasOf(c.name, c.aliasAs);
 			return relabelledArm(site, rule, automatic());
 		}
 	}

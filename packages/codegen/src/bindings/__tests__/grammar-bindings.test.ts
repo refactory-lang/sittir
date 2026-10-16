@@ -4,7 +4,8 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
-import { lead, match } from '../../dsl/bind.ts';
+import { lead } from '../../dsl/bind.ts';
+import { match } from '../../dsl/primitives/narrow.ts';
 import { type BindingFacts, type ClaimFact, type MemberRoute, type ModelNode, type SlotModel, deriveGrammarBindings, loadBindingsModule, printBindingsModule } from '../index.ts';
 
 const claim = (vocab: string, kind: string, extra: Partial<ClaimFact> = {}): ClaimFact => ({
