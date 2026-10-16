@@ -25,9 +25,7 @@ The 2026-10-01 draft's read side, a whole-tree image written at parse and projec
 JavaScript, is withdrawn (§ Alternatives considered). Its render side, records read in place, is
 kept: records are the wire in both directions (ruling 3).
 
-## Architectural decision (2026-10-16): packed AST is definitive
-
-**Status:** This section supersedes earlier performance-contingent adoption language in `§ The wire`, `§ Verification`, and the 2026-10-04 rulings. Historical probe results remain evidence, not a veto.
+## Packed AST is definitive
 
 The grammar-generated packed, immutable AST is Sittir's **canonical constructed-node representation** and its typed native interchange representation. The object-based N-API transport is a transitional compatibility and measurement path, not a competing permanent storage architecture. Performance measurements determine layout, batching, wrapper and allocation optimizations and may block a particular implementation from replacing the existing path; they do **not** reopen the choice of packed AST as the destination.
 
@@ -35,7 +33,7 @@ The grammar-generated packed, immutable AST is Sittir's **canonical constructed-
 
 **Storage contract:** codegen derives kind-specific record layouts and emits identical Rust/TypeScript layout metadata. Store booleans, presence bits, fixed literals, enum/choice discriminants and suitable numeric scalars inline; use the narrowest correct width (for example `u16` for kind IDs only when the grammar's ID range fits). Optional scalar fields use presence bits or tagged inline storage. Recursive child references are fixed-size arena addresses; they do not themselves require an independent allocation. Lists are offset/length references into arena runs; strings are offset/length references into UTF-8 storage. Record headers, alignment, addressing, optional tags, capacity slack and list-run storage count toward actual footprint. The current generic five-word cell is a **prototype encoding**, not a mandated per-field physical layout. Prefer immutable, kind-specific packed layouts unless measurements or correctness require a uniform cell. Persistent records live in heap-backed arena chunks, **not on the call stack**; temporary Rust values may use stack space. Arena allocation is amortized by chunks, not necessarily allocation-free.
 
-**Immutability and sharing:** a `$with`/replacement produces a new record and shares unchanged child references. No mutable cell is required solely to support updates. Native arena ownership, reference lifetimes and any cross-arena references must remain valid as snapshots, trees and wrappers are retained or disposed. Parsed-tree trivia stays in its tree table; built-node trivia belongs to immutable record-owned data or a stable referenced immutable run. Explicitly distinguish mutable *ownership/registry metadata* from immutable *node contents*.
+**Immutability and sharing:** a `$with`/replacement produces a new record and shares unchanged child references. No mutable cell is required solely to support updates. Native arena ownership, reference lifetimes and any cross-arena references must remain valid as snapshots, trees and wrappers are retained or disposed. Parsed-tree trivia stays in its tree table, and a built node's trivia is in the built nodes' own native table, keyed by record address and side and outside the record, so writing a side never changes a record (§ Trivia). Explicitly distinguish mutable *ownership/registry metadata* from immutable *node contents*.
 
 **Boundary and wrappers:** an external `ArrayBuffer` exposing native UTF-8 source or arena chunks avoids copying bytes but still uses N-API for exposure and does not imply concurrent `SharedArrayBuffer` semantics. JavaScript wrapper allocation and method representation are separate from the packed AST. Prototype-based accessors can be benchmarked independently against both object and record storage; they are **not** a prerequisite for adopting records, nor automatically authorized by this decision. Avoid conflating V8 `heapUsed` with total resident/native/external memory.
 
@@ -346,7 +344,7 @@ each comment wrapper.
   JavaScript needs the layout too: codegen emits the JavaScript readers from the same declaration it
   writes the attributes from, so the layout has one derivation and the macro computes no offset.
 
-**Architectural choice: packed arena records** (ruling 3, revised 2026-10-16). The probe measured native render decoding 15–32 times faster than the other wires, but its initial record wrappers read no faster and held more heap per node. These are historical results for the tested representations, not general performance guarantees. The packed immutable AST is the definitive format; the typed reader and relative coordinates precede the record cutover (ruling 6). Objects remain only as a temporary comparison and compatibility path.
+**Packed arena records** (ruling 3). The probe measured native render decoding 15–32 times faster than the other wires; its first record wrappers read no faster and held more heap per node, which the view's construction accounted for, not the record format. The packed immutable AST is the definitive format; the typed reader and relative coordinates precede the record cutover (ruling 6). The object wire is a temporary comparison and compatibility path.
 
 **Measurement and cutover readiness, not an adoption gate.** Compare single-node and batch reads, retained heap, and native render decoding against the object path under identical wrapper APIs. A slower or larger implementation calls for a documented optimization and retest, not abandonment of the packed format. Correctness, source fidelity, lifetime and memory safety are mandatory cutover conditions. The initial record wrapper's 1.9 KB overhead was sensitive to accessor/closure construction: the first view with an empty `$with` and no `$trivia` held 3 702 B against objects' 4 949 B. The view-construction study and its later V2 improvements remain relevant, but wrapper form is a separate choice from the record format.
 
@@ -361,7 +359,7 @@ helpers, the enum projections, `readTerminalFromOther`, `_aliasEnvelope`, the sp
 
 A parsed node's literal holds a reference to its record, the buffer and offset, instead of copies
 of its slots (ruling 4); until the record step lands, it holds the transport's fields as own keys.
-A built node is constructed directly into an immutable arena record; before the record cutover only, it holds fields on its JavaScript object and is encoded through the transitional object wire (ruling 5 was superseded on 2026-10-06, reaffirmed 2026-10-16).
+A built node is constructed directly into an immutable arena record (ruling 5); until the record cutover, it holds fields on its JavaScript object and crosses on the object wire.
 
 A wrapped node's heap is mostly its wrapper, not its read data: the wrapped tree holds 7–8 times
 its read data today, 2.2–2.5 KB a wrapped node (§ Problem), and a `function_item`'s own wrapper is
@@ -395,7 +393,8 @@ travel with it.
   builds it from the source and the tree, and it holds every write to the tree's trivia, each
   marking its side edited. It lands in step 3, ahead of the record wire, which it does not need;
   the arena-tables plan (`docs/superpowers/plans/2026-10-10-arena-tables.md`) holds the order.
-- **A built node's trivia** is in its record, by side, and travels with it when it is placed. It
+- **A built node's trivia** is in its own native table, keyed by the node's record address and side, outside the record. It travels with the node when the node is placed, and
+  writing a side updates the table, never the immutable record or a record that shares it. It
   lands with the record step (ruling 6.3), when built nodes get arena storage. Until then a built
   node keeps its trivia on the node, and `$trivia` reads the same on parsed and built nodes.
 - **A parsed node's record holds no trivia:** its tree's table does. Prepare resolves no trivia
@@ -424,7 +423,7 @@ members in the builder's literal — changed all three, and the maintainer ruled
 1. **Parsed nodes as views.** The per-kind prototype is ruled out. A parsed node's literal holds a
    reference to its record, which makes "a parsed node is its coordinate" true by construction
    (ruling 4).
-2. **Built-node storage (historical, superseded).** The October 1 measurement favored object literals with encoding at render (45–56 ns a slot value); ruling 5 captured that temporary design. The 2026-10-06 relative-coordinates decision and 2026-10-16 definitive-format decision supersede it: builders create immutable arena records directly, and `$with` shares unchanged records without mutation. The recorded encoding cost remains a comparison baseline.
+2. **Built-node storage.** Builders write immutable arena records directly, and `$with` makes a new record that shares the unchanged ones (ruling 5). Encoding object fields at render (45–56 ns a slot value) is the comparison baseline.
 3. **Which lands first.** The image is withdrawn. The typed reader lands first, the record wire
    after it, and the relative-coordinates work between them (ruling 6).
 
@@ -605,10 +604,10 @@ raised (11).
    kind's minimum depth (a list owner brings its items) is a fact codegen stamps and the reader
    applies. The depth decides only where coordinates start, never the struct or its attributes
    (§ Laziness).
-3. **The wire is canonical packed immutable arena records,** following the measured implementation and safety/correctness cutover checks; performance numbers guide optimization, not whether the format is adopted (§ The wire; Architectural decision, 2026-10-16).
+3. **The wire is canonical packed immutable arena records,** following the measured implementation and safety/correctness cutover checks; performance numbers guide optimization, not whether the format is adopted (§ The wire; § Packed AST is definitive).
 4. **A parsed node's storage is a reference to its record** (§ What the JavaScript wrap keeps,
    § Render).
-5. **Built-node storage (original ruling, superseded 2026-10-06 and reaffirmed 2026-10-16).** Object fields encoded at render remain a historical benchmark and the pre-cutover implementation only. The definitive representation stores constructed nodes directly as immutable arena records; members read those records, and `$with` appends a new record referencing unchanged children. The object encoder is retired at cutover (`2026-10-06-relative-coordinates-design.md`, § The record wire).
+5. **A built node's storage is an immutable arena record.** Builders write it directly; members read it, and `$with` appends a new record referencing the unchanged children. The object encoder is retired at cutover (`2026-10-06-relative-coordinates-design.md`, § The record wire).
 6. **The typed reader lands first on the transitional object wire; the definitive record format is implemented and measured in its own later step.** Where the relative-coordinates work falls was left to this draft; placed here and
    accepted in review:
    1. **The typed reader**, emitting today's napi objects: the cursor reader, tree-and-row
@@ -616,11 +615,9 @@ raised (11).
       go, which settles a source-backed node's coordinate.
    2. **Relative coordinates**, re-based on rows and narrowed to what rows leave (§ Relationship to
       other designs). This settles a detached node's coordinate.
-   3. **The definitive record format**, laid out once for Rust and TypeScript: records in both directions, parsed nodes over lazily materialized records with no fold walk, built nodes written directly as immutable records, and the N-API object codecs removed at cutover. Object-wire measurements are re-taken beside record measurements to optimize and verify the implementation; numerical performance superiority is not a prerequisite for adoption (§ The wire; Architectural decision, 2026-10-16).
-      Extended on 2026-10-09 (the maintainer): built nodes' trivia lands in this step, in their
-      records (§ Trivia).
-      Extended on 2026-10-10 (the maintainer): the parsed tree's table lands in this step too, ahead
-      of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with both
+   3. **The definitive record format**, laid out once for Rust and TypeScript: records in both directions, parsed nodes over lazily materialized records with no fold walk, built nodes written directly as immutable records, and the N-API object codecs removed at cutover. Object-wire measurements are re-taken beside record measurements to optimize and verify the implementation; numerical performance superiority is not a prerequisite for adoption (§ The wire; § Packed AST is definitive).
+      Built nodes' trivia lands in this step, in their own native table (§ Trivia). The parsed
+      tree's table lands in this step too, ahead of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with both
       tables is a feature of its own.
 
    Relative coordinates come after the typed reader so that they are designed against rows, not
