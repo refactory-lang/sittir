@@ -2,19 +2,22 @@
 
 Typed factories, guards, kind ids, a reader and a native renderer for Rust, generated from the tree-sitter-rust grammar by `@sittir/codegen`. The package exports the language descriptor and its types; everything you call is reached through an engine.
 
+A [portable vocabulary preview](../../docs/use-cases-and-examples.md#portable-preview), selected with `api: 'portable'`, exposes shared vocabulary kinds and guards over this language's nodes. Construction, parsing, queries, and rendering use the grammar-specific engine shown below.
+
 ## Installation
 
+Install the language package with your preferred package manager; for example:
+
 ```bash
-pnpm add @sittir/common @sittir/rust
+npm install @sittir/rust
 ```
 
 ## Quick start
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await rust.createEngine();
 
 const fn = engine.build.statement.function({
 	visibilityModifier: 'pub',
@@ -34,10 +37,9 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 A builder called with plain values is the coercing form: strings become leaf nodes, single values become lists where a list is expected. `.strict` takes only built nodes.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await rust.createEngine();
 
 const strict = engine.build.statement.function.strict({
 	visibilityModifier: engine.build.visibilityModifier.pub(),
@@ -55,10 +57,9 @@ strict.$render(); // "pub fn main() {}"
 `parse` returns a lazily hydrated tree: a child is read the first time an accessor reaches it. Nothing you leave alone is re-spelled, so an untouched tree renders back to its own source, byte for byte.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const source = 'fn main() {\n    // keep me\n    run( 1 );\n}\n';
 
 const file = engine.parse(source);
@@ -75,10 +76,9 @@ file.$render() === source; // true
 Nodes are immutable. `$with` returns a rebuilt node, and only what you rebuild is re-spelled.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await rust.createEngine();
 
 const fn = engine.build.statement.function({
 	name: 'main',
@@ -94,10 +94,9 @@ fn.$with.name(engine.build.identifier('greet')).$render(); // "fn greet() {}"
 `$trivia` attaches comments to a node. A loose string is built into the grammar's default comment.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await rust.createEngine();
 
 const fn = engine.build.statement.function({
 	name: 'main',
@@ -113,10 +112,9 @@ fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}
 An engine's render options come from the descriptor's `Options` type and are checked against it.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust, { render: { layout: { indent: '\t' } } });
+using engine = await rust.createEngine({ render: { layout: { indent: '\t' } } });
 
 const fn = engine.build.statement.function({
 	name: 'f',
@@ -134,10 +132,9 @@ engine.render(fn).toString(); // "fn f() {\n\ta;\n}"
 `$with` replaces one slot of a parsed node. The edited node renders its own text, and a node the edit did not touch renders the bytes it was read from.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await rust.createEngine();
 
 const [fn] = engine.parse('fn  a( ) { 1 }\n').statements();
 if (fn !== undefined && engine.is.functionItem(fn)) fn.$with.name(engine.build.identifier('b')).$render(); // "fn b( ) { 1 }"
@@ -148,10 +145,9 @@ if (fn !== undefined && engine.is.functionItem(fn)) fn.$with.name(engine.build.i
 The guards narrow to this engine's language: a node of another engine of the language passes, a node of another language does not, and a value with no engine never does.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const built = engine.build.identifier('x');
 const parsed = engine.parse('fn a() {}\n');
 

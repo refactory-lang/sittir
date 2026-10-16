@@ -3,7 +3,7 @@ import rust from '@sittir/rust';
 
 const engine = await createEngine(rust);
 
-export function renderDirectlyWithoutInlineTemplates() {
+export function renderFunction() {
 	return engine.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'render_config',

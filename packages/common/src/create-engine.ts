@@ -306,6 +306,9 @@ function assembleEngine<API extends LanguageAPI>(
 		dispose() {
 			handle.current = identity;
 			native.dispose();
+		},
+		[Symbol.dispose]() {
+			engine.dispose();
 		}
 	};
 	handle.current = engine;

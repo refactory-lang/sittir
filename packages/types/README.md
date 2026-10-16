@@ -1,31 +1,23 @@
 # @sittir/types
 
-The types of sittir's engine API, shared by `@sittir/common` and every grammar package. It exports types only.
+Shared TypeScript contracts and type projections for Sittir engines, generated language APIs, node families, queries, and rendering.
 
-## Installation
-
-```bash
+```sh
 pnpm add @sittir/types
 ```
 
-## What it holds
-
-| Type                                   | What it is                                                                                                   |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `Language<API>`                        | A grammar package's default export: its name and a `load()` that imports the implementation on demand        |
-| `LanguageAPI`                          | The type-level shape of one language: builder table, guards, kind ids, node types, options, empty forms      |
-| `Engine<API>`                          | What `createEngine(language)` returns: `build`, `is`, `kinds`, `parse`, `render`, the node guards |
-| `EngineOptions<API>`                   | The options `createEngine` takes: `render` (the language's render options) and `format`                      |
-| `Rendered`                             | The lazily rendered text `engine.render` returns: `toString()`, `print()`, `save(path)`                      |
-| `Types<Engine>`                        | The kind-to-node-type map of an engine, for generic code                                                     |
-| `EngineDiagnostics`, `ParsedRead`      | The raw read a parse makes, for tooling                                                                      |
-
-## Using them
-
-A function can take an engine typed by its language, and builds through that engine's own surface:
+| Type | Contract |
+| --- | --- |
+| `Language<API>` | A grammar descriptor with a lazily loaded implementation |
+| `LanguageAPI` | A grammar's builders, guards, kind IDs, root/node types, and options |
+| `Engine<API>` | The bound construction, parse, query, read, and render surface |
+| `PortableLanguageAPI`, `PortableEngine<API>` | The portable preview's vocabulary kinds and language-scoped guards |
+| `EngineOptions<API>` | API selection, grammar render options, and interceptors |
+| `Rendered` | A render result with `toString`, `print`, and `save` |
+| `Types<Engine>` | The engine's grammar-indexed node type map |
+| `EngineDiagnostics`, `ParsedRead` | Low-level read diagnostics for tooling |
 
 ```ts
-import { createEngine } from '@sittir/common';
 import type { Engine } from '@sittir/types';
 import rust, { type RustAPI } from '@sittir/rust';
 
@@ -33,10 +25,8 @@ function identifier(engine: Engine<RustAPI>, name: string) {
 	return engine.build.identifier(name);
 }
 
-const engine = await createEngine(rust);
-identifier(engine, 'b').$render(); // "b"
+using engine = await rust.createEngine();
+identifier(engine, 'value').$render(); // "value"
 ```
 
-## License
-
-MIT
+These types describe syntax and engine contracts, not the target language's semantic type system. Vocabulary declarations also live here. The portable preview selected with `api: 'portable'` exposes kinds and guards; portable node projections, readers, and builders remain planned. See the [usage guide](../../docs/use-cases-and-examples.md) and [architecture](../../docs/architecture.md).
