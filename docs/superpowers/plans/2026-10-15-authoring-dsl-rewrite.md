@@ -563,9 +563,12 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
 - Modify: the enrich inputs (`packages/codegen/src/dsl/enrich.ts`) and the completion check (`packages/codegen/src/dsl/layer.ts`). The declared families come from the layer record's alias effects: a display that two or more alias effects name.
 - Test: `packages/codegen/src/dsl/__tests__/visible-externals.test.ts`. Python's pin goes, and its completed top layer is a plain fixpoint.
 
-- [ ] **Step 1:** Change python's case to expect no change. It fails on `expression` and `_expression_within_for_in_clause`.
-- [ ] **Step 2:** Implement. The test passes, and the output gate against Stage 2's commit shows no difference.
-- [ ] **Step 3:** Commit, with the gate in the message.
+- [x] **Step 1:** Change python's case to expect no change. It fails on `expression` and `_expression_within_for_in_clause`.
+- [x] **Step 2:** Implement. The test passes, and the output gate against Stage 2's commit shows no difference.
+- [x] **Step 3:** Commit, with the gate in the message.
+  - **Landed:** 33753ae2b on `feat/authoring-dsl`. Python's completed top layer is a plain fixpoint of enrich, and the output gate against Stage 2's commit (02b582c36, whose output is the 913f2cfec reference's) shows no difference. The snapshots and rows are equal, and the bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **The narrowing is at the site.** `unaliasOverloadedDisplays` does not collect a site whose display and storage symbol a declared family names (`DisplayFamilies`), so its count never sees the family, and a storage it splits is never minted a family's display.
+    - **`enrichFixpoint` takes the record** (its sidecars and its effect log) and passes the families the log declares (`verbs/effects.ts::displayFamiliesOf`), so the families have one derivation where the check runs. There is no completion check yet, so the two callers are intake's check over a completed layer, which passes its base's families, and the tests.
 
 ### Task 3.1
 
