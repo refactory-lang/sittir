@@ -41,8 +41,8 @@ describe('githubRepoOf', () => {
 
 describe('candidateRefs', () => {
 	it('tries the v-prefixed tag then the bare version for an npm dependency', () => {
-		const repo = { owner: 'tree-sitter', repo: 'tree-sitter-rust' };
-		expect(candidateRefs('rust', upstreamPackage('rust'), '0.24.0', repo)).toEqual(['v0.24.0', '0.24.0']);
+		const repo = { owner: 'tree-sitter', repo: 'tree-sitter-python' };
+		expect(candidateRefs('python', upstreamPackage('python'), '0.25.0', repo)).toEqual(['v0.25.0', '0.25.0']);
 	});
 
 	it('pins a git dependency to the commit pnpm-lock resolved', () => {

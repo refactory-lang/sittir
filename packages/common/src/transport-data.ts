@@ -51,6 +51,18 @@ export function carryRead<T>(from: object, to: T): T {
 	return to;
 }
 
+const rebuiltObjects = new WeakSet<object>();
+
+/** Record that a `$with` rebuild returned `node`: a builder wrote its slots, whether or not it counts as read. */
+export function markRebuilt(node: object): void {
+	rebuiltObjects.add(node);
+}
+
+/** Whether a `$with` rebuild returned `node` (`markRebuilt`). */
+export function isRebuilt(node: object): boolean {
+	return rebuiltObjects.has(node);
+}
+
 function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
 	if (Array.isArray(value)) {
 		for (const entry of value) forEachParsedObject(entry, visit);

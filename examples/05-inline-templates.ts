@@ -8,7 +8,7 @@ export function renderDirectlyWithoutInlineTemplates() {
 		visibilityModifier: 'pub',
 		name: 'render_config',
 		parameters: engine.build.parameters.strict(),
-		returnType: engine.build.synonym.type('String'),
+		returnType: 'String',
 		body: engine.build.block.strict(),
 	}).$render();
 }

@@ -12,6 +12,7 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
 
 describe('setters do not coerce', () => {
 	it('takes the slot type on a parsed node, not the loose config', () => {
@@ -39,7 +40,7 @@ describe('setters do not coerce', () => {
 	});
 
 	it('rejects a bare string that the CONSTRUCTOR accepts', () => {
-		const built = rs.build.label(rs.build.identifier('outer'));
+		const built = verifying.build.label(verifying.build.identifier('outer'));
 		// @ts-expect-error `ir.identifier` is how a string becomes an Identifier.
 		expect(() => built.$with.name('inner')).toThrow(/a strict factory takes a built node, not a string/);
 		expect(built.$with.name(rs.build.identifier('inner')).$render()).toContain('inner');

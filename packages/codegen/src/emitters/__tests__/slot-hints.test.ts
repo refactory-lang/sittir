@@ -42,7 +42,7 @@ describe('__slotHints__', () => {
 	});
 	it('a list slot reads as the stored list node', () => {
 		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
-		expect(ps).toContain('elements(): ParametersElements | undefined;');
+		expect(ps).toContain('readonly elements: () => ParametersElements | undefined;');
 	});
 	it('a slot that holds a list stamps the builder arguments its setter takes', () => {
 		const fn = interfaceBlock(rustTypes(), 'FunctionItem').replace(/\s+/g, ' ');

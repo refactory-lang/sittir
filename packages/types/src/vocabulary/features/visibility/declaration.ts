@@ -279,26 +279,6 @@ export namespace Declaration {
 		}
 	}
 	export namespace Module {
-		export namespace Foreign {
-			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module.Foreign<G>, V.Modifier.Visibility.Private<G>> {
-				// claimed by r
-				readonly $kind: 'declaration.module.foreign.private';
-			}
-			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module.Foreign<G>, V.Modifier.Visibility.Public<G>> {
-				// claimed by r
-				readonly $kind: 'declaration.module.foreign.public';
-			}
-			export namespace Public {
-				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module.Foreign.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
-					// claimed by r
-					readonly $kind: 'declaration.module.foreign.public.internal';
-				}
-				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module.Foreign.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
-					// claimed by r
-					readonly $kind: 'declaration.module.foreign.public.restricted';
-				}
-			}
-		}
 		export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Module<G>, V.Modifier.Visibility.Private<G>> {
 			// claimed by r
 			readonly $kind: 'declaration.module.private';

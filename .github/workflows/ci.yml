@@ -515,6 +515,13 @@ jobs:
             echo "| python     | 107/114 | 105/115 | 205/860 |"
           } >> "$GITHUB_STEP_SUMMARY"
 
+  no-tracked-node-modules:
+    name: no tracked node_modules
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - run: bash scripts/assert-no-tracked-node-modules.sh
+
   # Spec 012 T064 — scope-boundary enforcement. Fails the build if
   # WASM artifacts leak into the MVP, if `cargo publish` reappears in
   # any workflow, if generated render crates contain non-source files,

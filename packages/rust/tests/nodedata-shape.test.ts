@@ -23,6 +23,7 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
 
 // ---------- helpers ----------
 
@@ -149,6 +150,7 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 	});
 
 	it('$with.name produces an updated node', () => {
+		const original = verifying.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 		const withNs = (original as unknown as Record<string, unknown>)['$with'] as Record<string, unknown>;
 		expect(withNs).toBeDefined();
 		const nameFn = withNs['name'] as (v: unknown) => unknown;

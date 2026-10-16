@@ -3,6 +3,7 @@ import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
+const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
 const b = rs.build;
 
 describe('a strict builder takes kind ids and booleans, never the text of a keyword or kind', () => {
@@ -15,12 +16,12 @@ describe('a strict builder takes kind ids and booleans, never the text of a keyw
 
 	it('refuses the text of a keyword-presence slot', () => {
 		const text = { mutable: 'mut' } as never;
-		expect(() => b.selfParameter.strict(text)).toThrow(/a strict factory takes a built node, not a string; expected a boolean/);
+		expect(() => verifying.build.selfParameter.strict(text)).toThrow(/a strict factory takes a built node, not a string; expected a boolean/);
 	});
 
 	it('refuses the text of a kind-enum slot', () => {
 		const config = { left: b.identifier('a'), operator: '+', right: b.identifier('b') } as never;
-		expect(() => b.binaryExpression.strict(config)).toThrow(/a strict factory takes a built node, not a string; expected a kind id/);
+		expect(() => verifying.build.binaryExpression.strict(config)).toThrow(/a strict factory takes a built node, not a string; expected a kind id/);
 	});
 });
 

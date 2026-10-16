@@ -52,6 +52,49 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "rust",
+    "message": "conflict between function_modifiers, foreign_mod_item_semi, foreign_mod_item_body on 'extern' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "function_modifiers",
+          "foreign_mod_item_semi",
+          "foreign_mod_item_body"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "function_modifiers"
+        ],
+        [
+          "foreign_mod_item_semi",
+          "foreign_mod_item"
+        ],
+        [
+          "foreign_mod_item_body",
+          "foreign_mod_item"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'unsafe'"
+        ],
+        "lookahead": "'extern'",
+        "interpretations": [
+          "foreign_mod_item_semi",
+          "foreign_mod_item_body",
+          "function_modifiers_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "rust",
     "message": "conflict between _attributed_argument on ']' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {

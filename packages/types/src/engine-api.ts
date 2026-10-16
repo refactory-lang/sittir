@@ -130,6 +130,20 @@ export interface NativeEngineOptions<O extends object = Readonly<Record<string, 
 	readonly options?: O;
 }
 
+/** The structure facts the generated types prove for one kind's built nodes, by slot storage key. An engine constructed with `verifyStructure: 'runtime'` checks them when a node is built or rebuilt. */
+export interface StructureRow {
+	readonly kind: string;
+	/** `[storageKey, slot]`: the slot holds a value. */
+	readonly required?: readonly (readonly [storageKey: string, slot: string])[];
+	/** `[storageKey, label]`: the list holds at least one item. */
+	readonly nonEmpty?: readonly (readonly [storageKey: string, label: string])[];
+	/** `[storageKey, label, expected]`: the slot holds a built node, never bare text. */
+	readonly nodeOnly?: readonly (readonly [storageKey: string, label: string, expected: string])[];
+}
+
+/** Each kind's {@link StructureRow} by kind id; a kind with nothing to check has no row. */
+export type StructureTable = Readonly<Record<number, StructureRow>>;
+
 export interface LanguageHooks<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly renderModuleHash: string;
@@ -139,6 +153,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly trivia: TriviaFacts;
 	readonly querySlots: QuerySlots;
 	readonly queryFlags?: QueryFlags;
+	readonly structure: StructureTable;
 	readonly membership: KindMembership;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
@@ -320,6 +335,13 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 	readonly api?: M;
 	readonly render?: API['options'];
 	readonly intercept?: readonly Interceptor<API>[];
+	/**
+	 * Whether a built node's structure is checked at run time. `'compileTimeOnly'` (the default) trusts the generated types for
+	 * required slots, non-empty lists and slots that take a built node. `'runtime'` also checks them when a node is built or
+	 * rebuilt, and throws naming the kind and the slot. Text checks (leaf patterns, reserved and keyword words), coordinate
+	 * checks and read checks run in both modes.
+	 */
+	readonly verifyStructure?: 'compileTimeOnly' | 'runtime';
 }
 
 export interface Interceptor<API extends LanguageAPI> {

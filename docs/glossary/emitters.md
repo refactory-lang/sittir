@@ -194,23 +194,7 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
  * `@sittir/common/utils` (see `.claude/codegen-conventions.md` rule 3).
  * Nothing to emit here.
  *
- * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
- */
-```
-
-### `packages/codegen/src/emitters/factories.ts::emitNonEmptyAssertHelper`
-
-```text
-/**
- * Emit the `_assertNonEmpty` runtime guard + static narrowing helper source lines.
- *
- * @returns Array of source lines for the helper (without trailing blank line).
- * @remarks
- *   Callers get `readonly T[]` from input collections (`_children.filter(...)`,
- *   `_resolveMany(...)`, etc.) but the factory's stored shape is the non-empty
- *   tuple `readonly [T, ...T[]]`. This assertion function throws on empty input
- *   AND narrows the static type of the argument so the subsequent assignment /
- *   spread type-checks without a cast.
+ * @returns Empty array.
  */
 ```
 
@@ -658,6 +642,26 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 // `Parameters<typeof fn>[0]` so the same text is valid in `types.ts`,
 // where no builder is in scope.
 ```
+
+### `packages/codegen/src/emitters/factories.ts::emittedSlots`
+
+The slots a field-carrying builder stores on its node: every slot, or for a spread builder the spread slot and the registered options. The builder and its structure row take them from here, so the row checks only keys the builder writes.
+
+### `packages/codegen/src/emitters/factories.ts::compoundStructureRow`
+
+A field-carrying kind's structure row: what each built node of the kind holds, by storage key. Among the stored slots that are not registered options, a required single slot must hold a value. A non-empty list (`needsNonEmptyHoist`) must hold an item, labelled `<kind>.children` for a spread builder's parameter and `<kind>.<property>` otherwise. A slot with a `bareTextExpectation` holds no bare text, with the builder's label and expectation. `undefined` when there is nothing to check.
+
+### `packages/codegen/src/emitters/factories.ts::listStructureRow`
+
+A separated list's structure row: a non-empty list's elements, under its content key, must hold an item (`<kind>.elements`).
+
+### `packages/codegen/src/emitters/factories.ts::structureRow`
+
+A row from its three check lists, empty lists dropped; `undefined` when all three are empty.
+
+### `packages/codegen/src/emitters/factories.ts::listContentStorageKey`
+
+Where a separated list stores its elements: its canonical field's storage key, or `_content` for a list with more than one field.
 
 ### `packages/codegen/src/emitters/factories.ts::emitFieldCarryingFactory`
 
@@ -1140,7 +1144,7 @@ The lines that split a leading options object off a rest argument list: the firs
 
 ### `packages/codegen/src/emitters/shared.ts::pruneUnusedImports`
 
-The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
+The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; `listStorage` in the coerce module; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
 
 ### `packages/codegen/src/emitters/shared.ts::isDeclaredSupertype`
 
@@ -1366,6 +1370,12 @@ The expression a required single-value slot defaults to when its value is omitte
 
 `factoryNs` prefixes the factory call (`'F.'` in the coercer module); a kind id needs no prefix.
 
+It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. Two such slots still answer `null`: fixed text with no kind entry to name it, and a reference to a fixed-text leaf with none either. `assertOmittedSlotsFilled` turns either into a generation failure.
+
+### `packages/codegen/src/emitters/shared.ts::assertOmittedSlotsFilled`
+
+Fails generation when a kind's builder may omit a required slot that has no empty default: the model says the slot is filled when omitted (`slotFilledWhenOmitted`), but `emptyDefaultOf` has nothing to fill it with. This keeps two type-level promises true without a runtime check. A strict builder takes `Partial<Config>` only when every required slot is filled this way. The loose `from()` makes its input optional only under the same `argumentOptional`, so a required slot it can leave unfilled is a required `LooseConfig` key, and leaving it out is a type error. It runs in `emitFieldCarryingFactory`, where the kind entries that name fixed text are always present; the types emitter resolves surfaces without them.
+
 ### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
 
 ```text
@@ -1463,8 +1473,8 @@ The expression a required single-value slot defaults to when its value is omitte
 // Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
 // the factory's Config surface — they're a `Bitflag<Const, T>` /
 // `BooleanKeyword<T>` brand. Skip the non-empty hoist for those even
-// when the underlying values are repeat1, otherwise we generate a
-// `_ne_X` array hoist + `_assertNonEmpty` call against a non-array.
+// when the underlying values are repeat1: their storage is a brand, not
+// a list to type as non-empty.
 ```
 
 #### body
@@ -1787,7 +1797,7 @@ A builder with leading options is called through an untyped view with the option
  * spread/index call shape `emitRepeatedChildrenFrom` uses for real
  * container-shape branches would bind `children[0]` to `elements` and
  * `children[1]` to `options` instead of the whole array, and nothing would
- * throw: `_assertNonEmpty` is a no-op outside `SITTIR_DEBUG`.
+ * throw: a builder runs no non-empty check of its own.
  *
  * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
  * let the original bug hide from tsgo undetected) — empirically confirmed
@@ -2283,42 +2293,6 @@ wrapper's content and a kind-less config there would have no single kind to
 take it; every other element goes to `resolve`, the element slot's resolver
 supplied by `emitSeparatedListFrom`.
 
-### `packages/codegen/src/emitters/from.ts::emitAssertNonEmptyHelper`
-
-```text
-/**
- * Emits the `_assertNonEmpty` runtime guard and static narrowing helper into
- * generated from.ts.
- *
- * @remarks
- * Runtime guard + static narrowing helper for repeat1-sourced list fields.
- * `from()` resolves a loose input to a `readonly T[]` via `_resolveMany*`,
- * but the factory's config slot is the non-empty tuple `readonly [T, ...T[]]`.
- * Calling this assertion on the resolver result narrows the static type to
- * the tuple shape AND throws at runtime if the input was empty.
- *
- * @param lines - Output lines array to push into.
- */
-```
-
-### `packages/codegen/src/emitters/from.ts::emitRequireFieldHelper`
-
-```text
-/**
- * Emits the `_requireField` runtime guard into generated from.ts.
- *
- * @remarks
- * Gap A: a required slot whose loose-input value didn't resolve to any
- * known branch/leaf kind comes back `undefined` from `_resolveOne` —
- * indistinguishable from a legitimately-absent optional slot. Call sites
- * for REQUIRED, non-defaultable fields wrap the resolver result in this
- * guard so the failure surfaces at the `from()` boundary (naming the kind
- * and slot) instead of silently constructing a node with a missing field.
- *
- * @param lines - Output lines array to push into.
- */
-```
-
 ### `packages/codegen/src/emitters/from.ts::soleElementKindOf`
 
 ```text
@@ -2456,162 +2430,6 @@ would. A `'direct'` kind still takes `children[0]` into its strict factory.
 `_wrapArray` therefore carries no element resolution of its own: it recurses
 into a direct kind's list target and otherwise hands the array to
 `_wrapWithChildren`. One element resolver per kind, in its coercer.
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymAliases`
-
-Emits the role-named getters on `synonym` (`function`, `class`, `method`, `module`, `interface`), each returning the `ir` member for the role's primary kind. Each getter is annotated with the `ir` member type it returns, `(typeof ir)['<key>']`. `ir` carries an explicit annotation, so the indexed type resolves without inference; left inferred, a large overlay surface (rust's `struct_item` with its whole-arm variants) exceeds what the declaration emitter will serialize (TS7056).
-
-### `packages/codegen/src/emitters/ir.ts::bundleExpr`
-
-```text
-/**
- * Factory+from bundle expression, shared by flat and grouped emission.
- * Kinds with refine() metadata carry per-form bundles keyed by the form's
- * camelCase short name (e.g. `ir.interfaceBody.curly`). Branches call the
- * loose `from()` path by default and expose the raw factory as `.strict`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::resolveRoleNodes`
-
-```text
-/**
- * Resolve role kinds to concrete AssembledNode entries that exist in the
- * nodeMap. Filters out candidate kinds that don't have a node entry.
- *
- * Also probes the hidden (`_`-prefixed) variant of each kind name, since
- * tree-sitter SCM captures reference unprefixed names but the grammar's
- * internal representation may use the hidden prefix (e.g. `type_identifier`
- * in SCM → `_type_identifier` in grammar).
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Role-synonym namespace — native JS value → node, keyed by semantic role
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/emitters/ir.ts::isLeafFactory`
-
-```text
-/**
- * A leaf kind with a build function: a pattern or a keyword. An
- * enum-of-literals is a leaf but mints no factory (`rawFactoryName` is
- * undefined) — its members are spelled as kind ids.
- */
-```
-
-#### token interior
-
-```text
-A lexed kind with a bare content slot is a leaf factory for the role synonyms; it is called through its hoisted factory.
-```
-
-### `packages/codegen/src/emitters/ir.ts::returnTypeExpr`
-
-```text
-/**
- * Build the ReturnType expression for a factory. Uses `ReturnType<typeof F.xxx>`
- * so the type tracks the fluent methods attached by withMethods. A build
- * constant (`isBuilderTextLeaf`) is not called, so its type is `typeof F.xxx`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromNamespace`
-
-```text
-/**
- * Emit the `from` const — canonical factories that accept native JS values
- * and resolve to grammar-specific UntypedNode kinds.
- *
- * Emitted as `export const from = { ... } as const` for tree-shakeable
- * standalone access (`from.boolean(...)`) and also referenced inside the
- * `ir` object for `ir.synonym.boolean(...)` access.
- *
- * @returns Lines to prepend before the `ir` const. Empty if no roles have kinds.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromBoolean`
-
-```text
-/**
- * `from.boolean(value: boolean)` — resolves `true`/`false` to the grammar's
- * boolean kind. Handles three shapes:
- * - Enum leaf: `booleanLiteral('true' | 'false')` (Rust)
- * - Keyword pair: `true_()` / `false_()` (Python, TypeScript)
- * - Single leaf: direct factory call
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromNumber`
-
-```text
-/**
- * `from.number(value: number)` — resolves integers to integer-kind, floats to
- * float-kind. When only one number kind exists, routes everything there.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromString`
-
-```text
-/**
- * `from.string(value: string)` — routes to the primary string kind.
- *
- * Most grammars have branch string nodes (with escape sequences, content
- * children). For these, the canonical factory composes the branch: it wraps
- * the input text in a string-content leaf and passes it to the branch
- * factory. Only emitted when a composition path exists.
- *
- * Heuristic for primary string kind: the first kind whose name contains
- * `string` (not `char`, `raw`, `template`, `regex`). This picks
- * `string_literal` for Rust and `string` for TypeScript/Python.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromComment`
-
-```text
-/**
- * `from.comment(text: string)` — routes to line/block comment kinds.
- * Discriminates by prefix: `//` or `#` → line comment, `/*` → block comment.
- * When only one comment kind exists, routes everything there.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromType`
-
-```text
-/**
- * `from.type(name: string)` — routes to the grammar's type-identifier kind.
- * Excludes `type.builtin` kinds. When the type kind is a branch that takes
- * an identifier child, composes `F.typeIdentifier(F.identifier(name))`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromIdentifier`
-
-```text
-/**
- * `from.identifier(name: string)` — routes to the grammar's `identifier` kind.
- *
- * Looks for the `identifier` kind in the `variable` role. Does not exclude
- * `variable.builtin` since some grammars (TypeScript) capture `identifier`
- * under both `@variable` and `@variable.builtin`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromAliases`
-
-```text
-/**
- * Emit definition-role aliases — `from.function`, `from.class`, etc.
- * These are direct references to the grammar-specific `ir.*` entry,
- * not wrapper functions. E.g., `from.function = ir.functionItem`.
- */
-```
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::kindIdMemberName`
 
@@ -4653,7 +4471,7 @@ transport node.
 /**
  * `classifyChildFactorySurface` is module-private on purpose. It answers
  * one structural question — does this kind construct from children, and
- * if so by spread or directly — and five unrelated decisions used to read
+ * if so by spread or directly — and four unrelated decisions used to read
  * that single answer:
  *
  *   factoryTakesSpreadChildren   factories.ts: does the factory take
@@ -4664,12 +4482,10 @@ transport node.
  *                                forwarded to?
  *   testConstructsWithChildren   test.ts: may a generated test construct
  *                                this with children?
- *   irNamespacesChildFactory     ir.ts: does a leaf factory under this
- *                                parent get namespaced?
  *
  * They agree today, and each is a one-line delegation because of that.
  * The names exist so they can stop agreeing: widening the shared
- * classifier for one consumer used to re-shape the other four silently —
+ * classifier for one consumer used to re-shape the other three silently —
  * narrowing it once emptied `_wrapKindIds` and broke array auto-wrap at
  * runtime, and re-broadening it moved named kinds into the child coercer
  * and cost them their dual-surface tolerance. A consumer whose question
@@ -4857,14 +4673,6 @@ their individual leaf ids.
 
 ```text
 /** May a generated test construct this kind with children? Delegates to the module-private `classifyChildFactorySurface`;
- *  named separately so this consumer's answer can change without
- *  re-shaping the other five. */
-```
-
-### `packages/codegen/src/emitters/shared.ts::irNamespacesChildFactory`
-
-```text
-/** Does a leaf factory under this parent get namespaced? Delegates to the module-private `classifyChildFactorySurface`;
  *  named separately so this consumer's answer can change without
  *  re-shaping the other five. */
 ```
@@ -5860,7 +5668,7 @@ its parent, or `undefined` when the kind has no public path.
  * Config-object field but wrong for this synthetic elements slot (every
  * separatedList factory requires a real array, even when its content is
  * keyword/literal-shaped). This both satisfies `nonEmpty` lists'
- * `_assertNonEmpty` runtime check and guarantees non-empty render output —
+ * types and the native repeat1 decode, and guarantees non-empty render output —
  * so no separate empty-config render-test branch is needed here (unlike
  * `emitBranchTest`, which must accommodate an all-optional minimal config).
  */
@@ -6828,6 +6636,10 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
 // The NamespaceMap key — the kind's id. `Kind` below stays the NAME,
 // which is the grammar's own spelling and what a reader recognises.
 ```
+
+### `packages/codegen/src/emitters/types.ts::nonEmptyProofLines`
+
+The compile-time proof, inside a kind's namespace, that each of its non-empty list slots refuses `[]` on every surface that takes it: the strict `Config` key, the `LooseConfig` key and the `$with` setter (`Proven<[KeyRefusesEmpty<…>, KeyRefusesEmpty<…>, SetterRefusesEmpty<…>]>`). The loose and `$with` types are derived at the type level from the interface, so codegen cannot check them itself; a surface that widens a `NonEmptyArray` back to a plain array, or a key under another name, fails the grammar package's type-check. It covers the slots `needsNonEmptyHoist` names, a registered option aside. A kind with none emits nothing.
 
 ### `packages/codegen/src/emitters/types.ts::aliasContentTypeExpr`
 
@@ -8523,8 +8335,8 @@ One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`ke
  * their `TSKindId.X` references — `number` when none resolves or
  * `kindEntries` is absent. Whether the enum has a parser symbol of its own
  * (rust `boolean_literal`) or not (`_primitive_type`) makes no difference:
- * the slot stores a member id either way, so the type alias, the form
- * constructor's `value:` parameter and the boolean synonym all read this.
+ * the slot stores a member id either way, so the type alias and the form
+ * constructor's `value:` parameter both read this.
  * @param node - The `AssembledEnum` node whose member discriminant to build.
  * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for
  *   legacy callers without parser.c metadata.
@@ -8682,12 +8494,12 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 ### `packages/codegen/src/emitters/shared.ts::needsNonEmptyHoist`
 
 ```text
-/** A non-empty repeated field reaches the factory config through
- *  `_assertNonEmpty`, which narrows an inline expression to the tuple form
- *  the config demands; a declared resolver return type is a plain array and
- *  loses that narrowing. Keyword-presence fields (boolean / bitflag) are a
- *  brand rather than an array on the Config surface, so they take no hoist
- *  even when the underlying values are repeat1. */
+/** A non-empty repeated field: its loose resolver returns its resolved
+ *  items as the storage's `NonEmptyArray`, which the loose input type
+ *  proves, and its kind's structure row and non-empty proof list it.
+ *  Keyword-presence fields (boolean / bitflag) are a brand rather than an
+ *  array on the Config surface, so they are not one even when the
+ *  underlying values are repeat1. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::isWrapChildrenKind`
@@ -9115,6 +8927,8 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 ### `packages/codegen/src/emitters/types.ts::emitInterface`
 
 A storage key is optional exactly when its slot is a single optional value: a list's key never is, a possibly-empty list storing `readonly (X)[]` (`[]` when empty) and a `repeat1` list `NonEmptyArray<X>`. A builder input still omits a possibly-empty list: `ConfigOf` and `LooseConfigOf` take input optionality from `RequiredKeys`, which leaves such a list out, and the factory stores `[]`.
+
+Every member of a node interface is `readonly`, its slot getters included: a getter is declared `readonly <name>: () => T` rather than with method syntax, which TypeScript lets a caller reassign, so nothing on a node surface can be swapped without a cast.
 
 #### body
 
@@ -10241,6 +10055,10 @@ The member a `where` recorder tests a flag by (`common/src/query.ts::flagRef`), 
 
 Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition compiles each slot it reads to that slot's number.
 
+### `packages/codegen/src/emitters/client-utils.ts::emitStructure`
+
+Emits `structure`, the factories emitter's structure table as a frozen object keyed by kind id. The language hooks carry it to the engine, where `verifyStructure: 'runtime'` checks each built node against its kind's row.
+
 ### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
@@ -10697,7 +10515,7 @@ The keyword-arm texts a strict slot refuses as an identifier: the texts of `keyw
 
 ### `packages/codegen/src/emitters/factories.ts::keywordTextRejection`
 
-Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<configKey>', <word kind id>, [<texts>])` when `seatedKeywordTexts` is non-empty. It runs after `bareTextRejection`, on the built value, so it sees only nodes. Its one job is the message: an identifier spelled as one of the slot's keyword arms is rejected, naming the slot; it does not look up or build the arm.
+Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<configKey>', <word kind id>, [<texts>])` when `seatedKeywordTexts` is non-empty. It runs on the stored value, so a keyword arm's text is already its kind id. Its one job is the message: an identifier spelled as one of the slot's keyword arms is rejected, naming the slot; it does not look up or build the arm.
 
 ### `packages/codegen/src/emitters/factories.ts::slotStorageFromValueExpr`
 
@@ -10719,7 +10537,7 @@ A slot that can default to its empty form stores `orDefault(<config value>, () =
 // an array, never `| undefined` — storage draws no distinction between
 // "empty array" and "absent" for array-shaped slots; "must have at least
 // one" is enforced elsewhere (the Config type's required key, or
-// `_assertNonEmpty` at the from.ts boundary), not by leaving storage
+// a `'runtime'` engine's structure verifier), not by leaving storage
 // `undefined`. Default here unconditionally for any multiple field so a
 // bypassed/omitted value still stores `[]` rather than `undefined`.
 ```
@@ -11092,8 +10910,8 @@ never one permissive `...args: (Options | E)[]` that admits a lone options bag
 and so zero elements for a `repeat1` list. Overload order is load-bearing: the
 coercers reach these builders through `Parameters<typeof F.build<Kind>>`, which
 resolves to the last declared overload, so the elements-only form is declared
-last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
-`SITTIR_DEBUG`, and a `repeat1` list takes no spread of a possibly-empty array
+last. The arity is a type-level contract only: the builder runs no non-empty check,
+a `'runtime'` engine's verifier refuses an empty list, and a `repeat1` list takes no spread of a possibly-empty array
 (`T[]` is not `NonEmptyArray<T>`).
 
 A compound target whose builder takes leading options declares both forms as `paramsOverloads`, the options-led one first, so a forwarding builder offers the same pair.
@@ -11403,6 +11221,10 @@ Throws when one of the node's accessors or options has the name of a `ReadonlyAr
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.structure`
+
+The structure table the emitter recorded while emitting builders: each emitted compound's or list's row, by kind id. A kind without a builder or a kind id has no row. The language utils print it as `structure`.
+
 ### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.constructor`
 
 #### body
@@ -11615,9 +11437,9 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 // `...children` rest args. We need a placeholder element when:
 //   - the singular child is required, OR
 //   - the multi children slot is `nonEmpty` (repeat1-sourced)
-//     — the factory's `_assertNonEmpty` helper throws on empty
-//     input, so the no-arg form `ir.kind()` would fail at
-//     runtime even though it type-checks.
+//     — an empty list fails the native decode at render (and a
+//     `'runtime'` engine's verifier at the call), so the no-arg form
+//     `ir.kind()` would not render.
 //
 // `soleSlotFacts` is the same canonical derivation
 // `emitFieldCarryingFactory` (factories.ts) bases its real signature
@@ -11722,7 +11544,7 @@ The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
-Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups as top-level consts, then the frozen `ir` table — bundled node factories, the variant parents, keyword factories, own-text leaves, leaf node factories, the group namespaces and `synonym`. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter adds only the role synonyms, which come from the grammar's roles rather than the model.
+Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups as top-level consts, then the frozen `ir` table — bundled node factories, the variant parents, keyword factories, own-text leaves, leaf node factories and the group namespaces. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter only prints it.
 
 No emitted code attaches properties to a factory: a factory is shared under every key that reaches it, so a mutation made for one key shows under all of them.
 
@@ -11760,13 +11582,6 @@ No emitted code attaches properties to a factory: a factory is shared under ever
 #### body
 
 ```text
-// ------------------------------------------------------------------
-// Role synonyms — native JS value → this grammar's node for that role.
-// Grammar-agnostic construction from native JS values, keyed by the
-// semantic role a kind plays rather than by its grammar-specific name.
-// Emitted BEFORE `ir` so it can be referenced as `ir.synonym`.
-// Also exported standalone for tree-shakeable `synonym.boolean(...)`.
-// ------------------------------------------------------------------
 // ----------------------------------------------------------------------
 // Flat `ir.*` namespace — every grammar kind by camelCase short name.
 // ----------------------------------------------------------------------
@@ -11779,135 +11594,7 @@ No emitted code attaches properties to a factory: a factory is shared under ever
 // hoisted bundle consts above.
 ```
 
-`ir` and `synonym` are frozen tables: the emitted module is the one place each is built, and nothing writes to either afterwards.
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymBoolean`
-
-#### body
-
-```text
-// Strategy 1: single leaf factory that accepts text
-```
-
-#### body
-
-```text
-// Strategy 2: keyword pair — look for `true` and `false` keyword kinds
-```
-
-#### body
-
-```text
-// Strategy 3: single factory (whatever it is)
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymNumber`
-
-#### body
-
-```text
-// Identify integer and float kinds via the number.float sub-role
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymString`
-
-#### body
-
-```text
-// Find the primary string kind — prefer kinds containing "string"
-// but not "char", "raw", "template", "regex"
-```
-
-#### body
-
-```text
-// If it's a leaf, emit directly
-```
-
-#### body
-
-```text
-// Branch string: look for a string-content leaf child to compose. Only
-// when the branch is container-shaped (`classifyChildFactorySurface`
-// 'direct'/'spread' — a single positional child, or `...children`,
-// either of which accepts one positional argument the same way) —
-// composing via a hardcoded `{ children: [...] }` config object here
-// previously assumed a calling convention the factory doesn't have.
-```
-
-#### body
-
-```text
-// Otherwise: skip — too complex to auto-compose
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymComment`
-
-Emits `synonym.comment` from the grammar's trivia kinds (a trivia supertype contributes its subtypes). Each kind is reached through its stamped `builderPath` on `ir` (`ir.commentLine`), never by splicing a name; a trivia kind with no builder path is refused. With more than one leaf comment kind, the line comment is the one whose text ends only at a line break (`lineTerminatedKinds`) and the block comment one that does not (typescript `comment_line` and `comment_block`).
-
-#### body
-
-```text
-// Find leaf comment kinds (Python/TS: `comment(text)`)
-```
-
-#### body
-
-```text
-// Single leaf comment kind — route everything there
-```
-
-#### body
-
-```text
-// No leaf comment kinds — branch/polymorph comment kinds (e.g. Rust's
-// line_comment polymorph, block_comment branch) are too complex to
-// auto-compose in a canonical factory. Skip emission.
-// Users should call the grammar-specific `ir.lineComment(...)` /
-// `ir.blockComment(...)` factories directly.
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymType`
-
-#### body
-
-```text
-// Get type kinds, excluding builtin types
-```
-
-#### body
-
-```text
-// Find the type-identifier node (not plain `identifier`).
-// Probe both bare and hidden-prefixed names since SCM captures use
-// unprefixed names but the grammar may use `_type_identifier`.
-```
-
-#### body
-
-```text
-// No type-specific kind — check if `identifier` is the only option
-```
-
-#### body
-
-```text
-// Simple leaf type factory
-```
-
-#### body
-
-```text
-// Branch type-identifier — compose with identifier factory
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymIdentifier`
-
-#### body
-
-```text
-// Find the `identifier` kind specifically — not `this`, `super`, `self`
-```
+`ir` is a frozen table: the emitted module is the one place it is built, and nothing writes to it afterwards.
 
 ### `packages/codegen/src/emitters/from.ts::module`
 
@@ -12172,7 +11859,7 @@ The arity of a keyword leaf's pair: its coercer takes one optional `<Kind>.Loose
 
 ### `packages/codegen/src/emitters/from.ts::storedFieldCall`
 
-A slot's resolver expression without keyword extraction: the single-kind fast path or the interned resolver call, wrapped in the kind-enum or mixed-enum storage coercion. `resolveFieldCall` puts keyword extraction in front of it: whole value for a scalar slot, one element at a time (resolved as a scalar) for an array slot.
+A slot's resolver expression without keyword extraction: the single-kind fast path or the interned resolver call, wrapped in the kind-enum or mixed-enum storage coercion (`slotStorageCoercion` with text input), mapped over a multiple slot's items through `storageCallExpr`. `resolveFieldCall` puts keyword extraction in front of it: whole value for a scalar slot, one element at a time (resolved as a scalar) for an array slot.
 
 ### `packages/codegen/src/emitters/from.ts::WrapChildrenEntry`
 
@@ -14798,13 +14485,29 @@ The text leaves one slot admits: the slot's node-stored values whose kind is a p
 
 What a strict slot expects in place of a string, or `undefined` when a string is a legal strict value. A slot with text leaves (`textLeaves`) names their builders (`buildStringOpen(…)`); otherwise a slot with at least one node-stored value and no `literal`-stored value names the built types it stores (`a built Expression / ExpressionList`). A `literal` value's text is its stored form, and a slot with no node value stores kind ids or verbatim text, so neither takes the guard. The same predicate decides the `rejectBareText` import.
 
-### `packages/codegen/src/emitters/factories.ts::bareTextRejection`
+### `packages/codegen/src/emitters/factories.ts::bareTextExpectation`
 
-Wraps a slot's stored value in `rejectBareText(value, '<Kind>.<configKey>', '<expected>')` when `strictNodeExpectation` names an expectation. It runs after the slot's enum storage coercion, so a mixed slot's keyword members are already kind ids and only a string left over is rejected.
+What a strict slot takes instead of bare text, for the bare-text refusal: the leaf builders or built node types `strictNodeExpectation` names, else `a kind id` for a slot that stores kind ids. A boolean-keyword slot takes `a boolean`. `undefined` when bare text is not refused. The slot's structure row reads it; a `'runtime'` engine refuses with it.
+
+### `packages/codegen/src/emitters/factories.ts::bareTextLabel`
+
+`<TypeName>.<configKey>`: how a bare-text refusal names the slot, in the builder and in the structure row alike.
 
 ### `packages/codegen/src/emitters/factories.ts::storedSlotValueExpr`
 
-The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mixed enum, or verbatim), before the bare-text rejection. `slotStorageFromValueExpr` composes it with `bareTextRejection`.
+The storage of one slot value, before the keyword-text rejection. A list slot (`isListStorage`) stores through `listStorage`, with the slot's coercion as the item function, so every list a builder holds is its own array and no caller keeps a handle on it; any other slot stores through its coercion (`slotStorageCoercion`) or as given. A strict boolean-keyword slot stores through `strictBooleanStorage`, so bare text stays visible to a `'runtime'` engine's verifier. `slotStorageFromValueExpr` composes it with `admittedSlotInput`.
+
+### `packages/codegen/src/emitters/factories.ts::slotStorageCoercion`
+
+The runtime helper one slot value is stored through, by the slot's storage encoding (`resolveFieldStorageInfo`): `strictBooleanStorage` or `coerceBooleanKeywordStorage`, `coerceBitflagStorage` with the slot's texts, `kindIdStorage` for a strict kind-enum or mixed slot and `coerceKindEnumStorage` / `coerceMixedEnumStorage` with the slot's text table for text input; `undefined` for a verbatim slot, or an enum slot without kind entries. `typed` says whether the helper takes the slot's storage type. `storedSlotValueExpr` and `storedFieldCall` emit it and `collectStorageCoercionImports` imports it, so they cannot disagree.
+
+### `packages/codegen/src/emitters/factories.ts::storageCallExpr`
+
+The call that stores one value: for a list, `listStorage` over it with the coercion as the item function (the helper itself when it takes no table, otherwise a closure passing the table); otherwise the coercion applied to the value, or the value as given. `storedSlotValueExpr` and the loose resolvers' `storedFieldCall` both emit through it, so a list is stored one way whichever surface builds it.
+
+### `packages/codegen/src/emitters/factories.ts::isListStorage`
+
+Whether a slot stores a list: a repeated slot whose encoding is not a presence (`boolean` or `bitflag` collapse a repeat into one value).
 
 ### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
 
@@ -14970,12 +14673,6 @@ The key under which a lexed kind's per-slot guard regex is registered.
 A lexed kind serializes its `interior` beside its slots, from the same derivation the runtime table uses.
 
 A kind with a full form serializes it (`fullForm`, its literal `open` and `close` texts), the same stamp the coercer's full-form acceptance reads. The source emitter spells a text-only read entry with it.
-```
-
-### `packages/codegen/src/emitters/ir.ts::factoryRef`
-
-```text
-A text leaf is called through its raw builder, and so is any other kind with one surface; a lexed kind with a coercing entry is called through its hoisted factory, which coerces the bare content.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::patternSlotDummy`
@@ -15167,10 +14864,6 @@ The text nodes of a template body, descending into the arms of its conditionals.
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 
 The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
-
-### `packages/codegen/src/emitters/shared.ts::emptyDefaultOf`
-
-The expression that fills a required slot the caller omitted: the fixed text's discriminant, or a call of the target kind's factory. It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. A hidden infrastructure slot is never defaulted. The predicate also accepts a slot that holds fixed text, so two cases stay `null` after it accepts: fixed text with no kind entry to name it (no discriminant to write), and a reference to a fixed-text leaf with none either; a leaf of that kind has a factory but no no-argument call to emit.
 
 ### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
 

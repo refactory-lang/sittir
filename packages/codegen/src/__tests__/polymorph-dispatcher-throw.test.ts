@@ -3,14 +3,9 @@
  * error behavior for a variant kind (python `assignment.eq`, the arm that
  * carries the parent's `left`; the parent itself is a pure choice).
  *
- * Covers the two silent-failure gaps fixed in the `_resolveOne` family and
- * the `from()` call-emission site (packages/codegen/src/emitters/from.ts):
- *   - Gap B: an unresolvable object/array slot value throws a clear error
- *     naming the parent kind / expected kind(s), instead of being embedded
- *     raw into the tree.
- *   - Gap A: a REQUIRED slot that resolves to undefined/null throws a
- *     purpose-built "Missing required slot" error, instead of silently
- *     constructing a node with a missing field.
+ * An unresolvable object/array slot value throws a clear error naming the
+ * parent kind / expected kind(s), instead of being embedded raw into the
+ * tree (Gap B).
  *
  * Uses the generated python package directly so the test pins the
  * GENERATED code's behavior, not an abstract contract.
@@ -47,10 +42,6 @@ describe('generated from() resolver — silent-failure gaps', () => {
 
 	it('embeds the offending value in the Gap B error message', () => {
 		expect(() => assignment({ left: { totally: 'garbage' } })).toThrow(/totally/);
-	});
-
-	it('throws a purpose-built "Missing required slot" error when a required slot resolves to undefined (Gap A)', () => {
-		expect(() => assignment({})).toThrow(/Missing required slot 'left' on \w*assignment\w*\.from\(\)/);
 	});
 
 	it('throws on null input (malformed)', () => {
