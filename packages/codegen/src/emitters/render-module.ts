@@ -1,4 +1,4 @@
-import { relaxedKeywordIds } from './kind-id-rust.ts';
+import { relaxedDisplayIds, relaxedKeywordIds } from './kind-id-rust.ts';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
@@ -1258,7 +1258,7 @@ function foldsWithRelaxed(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): ReadonlyMap<number, readonly number[]> {
-	const relaxed = relaxedKeywordIds(nodeMap, kindEntries);
+	const relaxed = [...new Set([...relaxedKeywordIds(nodeMap, kindEntries), ...relaxedDisplayIds(nodeMap, kindEntries).flatMap(([, ids]) => ids)])];
 	const word = nodeMap.word === null || nodeMap.word === undefined ? undefined : findKindEntry(kindEntries, nodeMap.word);
 	if (relaxed.length === 0 || word === undefined) return folds;
 	const merged = new Map(folds);

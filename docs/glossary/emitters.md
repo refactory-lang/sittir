@@ -2684,6 +2684,14 @@ Also emits `RELAXED_KEYWORDS`, the token ids of the keywords the grammar relaxes
 
 The catalog ids of the tokens of a node map's `relaxedLiterals`: the keywords the grammar aliases to its word rule. Resolves each literal through `findKindEntryForLiteral`, preserving the canonical anonymous-token, literal-rule, then terminal precedence independently of catalog row order. Shared by the reader's relaxed-keyword table and identifier transport folding.
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::relaxedDisplayIds`
+
+The display ids that stand for the word rule because the grammar aliases the word rule to them (`property_identifier`, `statement_identifier`), each with the ids of the keyword tokens aliased to it. A display with no catalog row or no token row is left out.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::relaxationTable`
+
+The one relaxation fact the generated reader, the identifier transport's folded tokens and the node model all read: the word rule's own display with its relaxed tokens, and each word-alias display with its tokens. The generated `relaxes` predicate and `relaxesOf` in the validators are the same test over this table.
+
 ### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
 
 One `kind_ids.rs` constant: its name and the kind id it holds.

@@ -121,6 +121,7 @@ export interface RawGrammar {
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
+	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
@@ -230,6 +231,7 @@ export interface LinkedGrammar {
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
+	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly references: SymbolRef[];
@@ -265,6 +267,7 @@ export interface NormalizedGrammar {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
+	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
@@ -301,6 +304,7 @@ export interface SimplifiedGrammar {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
+	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
@@ -344,6 +348,7 @@ export interface NodeMap {
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
+	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];

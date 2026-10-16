@@ -3229,89 +3229,89 @@ const table: PortableTable = {
 				path: 'declaration.property.signature.abstract.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '294': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } }]
 			},
 			{
 				path: 'declaration.property.signature.abstract.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } }]
 			},
 			{ path: 'declaration.method.signature.abstract', within: [], test: [] }
 		],
@@ -3333,77 +3333,77 @@ const table: PortableTable = {
 			{
 				path: 'expression.assignment.compound.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right_unsigned',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||=', slots: { '262': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.coalesce',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??=', slots: { '261': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??=', slots: { '262': 1 } } }]
 			},
 			{ path: 'expression.assignment.compound', within: [], test: [] }
 		],
@@ -3412,127 +3412,127 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [396], slots: { '266': 3 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [403], slots: { '267': 3 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.loose_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.loose_not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '===', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '===', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!==', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!==', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right_unsigned',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.coalesce',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', slots: { '267': 1 } } }]
 			},
 			{
 				path: 'expression.binary.membership.instanceof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', slots: { '266': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', slots: { '267': 1 } } }]
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
@@ -3545,7 +3545,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [256], slots: { '410': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '417': 0 } } }]
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
@@ -3599,7 +3599,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.default',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [425], slots: { '421': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [432], slots: { '428': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -3607,7 +3607,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.all',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [422], slots: { '420': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [429], slots: { '427': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -3642,7 +3642,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '407': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '414': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3650,7 +3650,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '406': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '413': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3703,12 +3703,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '291': 6 } }, { slots: { '470': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [470], slots: { '291': 6 } } }
 				]
 			},
 			{
@@ -3717,12 +3717,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '291': 6 } }, { slots: { '470': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [470], slots: { '291': 6 } } }
 				]
 			},
 			{
@@ -3731,12 +3731,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '291': 6 } }, { slots: { '470': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [470], slots: { '291': 6 } } }
 				]
 			},
 			{
@@ -3745,99 +3745,99 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
+						via: [{ slots: { '291': 6 } }, { slots: { '470': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [470], slots: { '291': 6 } } }
 				]
 			},
 			{
 				path: 'declaration.property.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } }]
 			},
 			{
 				path: 'declaration.property.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -3846,89 +3846,89 @@ const table: PortableTable = {
 				path: 'declaration.property.signature.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '293': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '299': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } }]
 			},
 			{
 				path: 'declaration.property.signature.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } }]
 			},
 			{ path: 'declaration.method.signature', within: [], test: [] }
 		],
@@ -4007,24 +4007,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '321': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '321': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '327': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '327': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '321': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '321': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '327': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '327': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '321': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '321': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '327': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '327': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -4049,24 +4049,24 @@ const table: PortableTable = {
 				path: 'declaration.field.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '363': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '363': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '369': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '369': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.field.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '363': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '363': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '369': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '369': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.field.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '363': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '363': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '369': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '369': 0 } } }
 				]
 			},
 			{ path: 'declaration.field.signature', within: [], test: [] }
@@ -4080,57 +4080,57 @@ const table: PortableTable = {
 				path: 'declaration.property.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '290': 2 } } }
+					{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '296': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.property.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '290': 2 } } }
+					{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '296': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.property.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '290': 2 } } }
+					{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '296': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '290': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '296': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '290': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '296': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '290': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '296': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.property',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } }]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
 		],
@@ -4147,24 +4147,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '320': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '320': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '326': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '326': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '320': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '320': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '326': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '326': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '320': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '320': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '326': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '326': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -4217,37 +4217,37 @@ const table: PortableTable = {
 			{
 				path: 'expression.unary.negation',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '267': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '268': 0 } } }]
 			},
 			{
 				path: 'expression.unary.plus',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '267': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '268': 0 } } }]
 			},
 			{
 				path: 'expression.unary.not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', slots: { '267': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', slots: { '268': 0 } } }]
 			},
 			{
 				path: 'expression.unary.bitwise_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', slots: { '267': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', slots: { '268': 0 } } }]
 			},
 			{
 				path: 'expression.unary.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '267': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '268': 0 } } }]
 			},
 			{
 				path: 'expression.unary.void',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', slots: { '267': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', slots: { '268': 0 } } }]
 			},
 			{
 				path: 'expression.unary.delete',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'delete', slots: { '267': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'delete', slots: { '268': 0 } } }]
 			},
 			{ path: 'expression.unary', within: [], test: [] }
 		],
@@ -4266,12 +4266,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '415': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '422': 1 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '415': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '422': 1 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -4279,12 +4279,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '416': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '423': 0 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '416': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '423': 0 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -4296,7 +4296,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.pattern',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [240, 236], slots: { '427': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [241, 237], slots: { '434': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -4321,6 +4321,7 @@ const table: PortableTable = {
 		[TSKindId.Undefined]: 'undefined',
 		[TSKindId.OverrideModifier]: 'override',
 		[TSKindId.ExistentialType]: '*',
+		[TSKindId.UsingDeclarationArm]: 'await using',
 		[TSKindId.EmptyMember]: ';',
 		[TSKindId.OptionalChainMarker]: '?.',
 		[TSKindId.MetaPropertyNewTarget]: 'new.target',
@@ -4334,6 +4335,7 @@ const table: PortableTable = {
 		[TSKindId.DoubleBlankline]: '\n\n\n',
 		[TSKindId.Star]: '*',
 		[TSKindId.AsKeyword]: 'as',
+		[TSKindId.DefaultKeyword]: 'default',
 		[TSKindId.Lbrace]: '{',
 		[TSKindId.Rbrace]: '}',
 		[TSKindId.TypeKeyword]: 'type',
@@ -4345,6 +4347,7 @@ const table: PortableTable = {
 		[TSKindId.VarKeyword]: 'var',
 		[TSKindId.LetKeyword]: 'let',
 		[TSKindId.ConstKeyword]: 'const',
+		[TSKindId.UsingKeyword]: 'using',
 		[TSKindId.ElseKeyword]: 'else',
 		[TSKindId.IfKeyword]: 'if',
 		[TSKindId.SwitchKeyword]: 'switch',
@@ -4360,29 +4363,8 @@ const table: PortableTable = {
 		[TSKindId.DebuggerKeyword]: 'debugger',
 		[TSKindId.ReturnKeyword]: 'return',
 		[TSKindId.ThrowKeyword]: 'throw',
-		[TSKindId.DeclareKeyword]: 'declare',
-		[TSKindId.NamespaceKeyword]: 'namespace',
-		[TSKindId.PublicKeyword]: 'public',
-		[TSKindId.PrivateKeyword]: 'private',
-		[TSKindId.ProtectedKeyword]: 'protected',
-		[TSKindId.OverrideKeyword]: 'override',
-		[TSKindId.ReadonlyKeyword]: 'readonly',
-		[TSKindId.ModuleKeyword]: 'module',
-		[TSKindId.AnyKeyword]: 'any',
-		[TSKindId.NumberKeyword]: 'number',
-		[TSKindId.BooleanKeyword]: 'boolean',
-		[TSKindId.StringKeyword]: 'string',
-		[TSKindId.SymbolKeyword]: 'symbol',
-		[TSKindId.ExportKeyword]: 'export',
-		[TSKindId.ObjectKeyword]: 'object',
-		[TSKindId.NewKeyword]: 'new',
-		[TSKindId.GetKeyword]: 'get',
-		[TSKindId.SetKeyword]: 'set',
-		[TSKindId.AsyncKeyword]: 'async',
-		[TSKindId.StaticKeyword]: 'static',
 		[TSKindId.Colon]: ':',
 		[TSKindId.CaseKeyword]: 'case',
-		[TSKindId.DefaultKeyword]: 'default',
 		[TSKindId.CatchKeyword]: 'catch',
 		[TSKindId.FinallyKeyword]: 'finally',
 		[TSKindId.YieldKeyword]: 'yield',
@@ -4391,10 +4373,11 @@ const table: PortableTable = {
 		[TSKindId.Rbrack]: ']',
 		[TSKindId.Dot]: '.',
 		[TSKindId.ClassKeyword]: 'class',
+		[TSKindId.AsyncKeyword]: 'async',
 		[TSKindId.FunctionKeyword]: 'function',
 		[TSKindId.EqGt]: '=>',
 		[TSKindId.QmarkDot]: '?.',
-		[TSKindId.UsingKeyword]: 'using',
+		[TSKindId.NewKeyword]: 'new',
 		[TSKindId.PlusEq]: '+=',
 		[TSKindId.DashEq]: '-=',
 		[TSKindId.StarEq]: '*=',
@@ -4441,15 +4424,31 @@ const table: PortableTable = {
 		[TSKindId.DeleteKeyword]: 'delete',
 		[TSKindId.Bquote]: '`',
 		[TSKindId.DollarLbrace]: '${',
+		[TSKindId.ThisKeyword]: 'this',
+		[TSKindId.SuperKeyword]: 'super',
+		[TSKindId.TrueKeyword]: 'true',
+		[TSKindId.FalseKeyword]: 'false',
+		[TSKindId.NullKeyword]: 'null',
 		[TSKindId.At]: '@',
+		[TSKindId.StaticKeyword]: 'static',
+		[TSKindId.ReadonlyKeyword]: 'readonly',
+		[TSKindId.GetKeyword]: 'get',
+		[TSKindId.SetKeyword]: 'set',
+		[TSKindId.DeclareKeyword]: 'declare',
 		[TSKindId.AbstractKeyword]: 'abstract',
 		[TSKindId.AccessorKeyword]: 'accessor',
 		[TSKindId.SatisfiesKeyword]: 'satisfies',
 		[TSKindId.RequireKeyword]: 'require',
 		[TSKindId.ExtendsKeyword]: 'extends',
 		[TSKindId.ImplementsKeyword]: 'implements',
+		[TSKindId.ModuleKeyword]: 'module',
+		[TSKindId.NamespaceKeyword]: 'namespace',
 		[TSKindId.InterfaceKeyword]: 'interface',
 		[TSKindId.EnumKeyword]: 'enum',
+		[TSKindId.PublicKeyword]: 'public',
+		[TSKindId.PrivateKeyword]: 'private',
+		[TSKindId.ProtectedKeyword]: 'protected',
+		[TSKindId.OverrideKeyword]: 'override',
 		[TSKindId.DashQmarkColon]: '-?:',
 		[TSKindId.PlusQmarkColon]: '+?:',
 		[TSKindId.QmarkColon]: '?:',
@@ -4458,13 +4457,20 @@ const table: PortableTable = {
 		[TSKindId.IsKeyword]: 'is',
 		[TSKindId.KeyofKeyword]: 'keyof',
 		[TSKindId.InKeyword]: 'in',
+		[TSKindId.AnyKeyword]: 'any',
+		[TSKindId.NumberKeyword]: 'number',
+		[TSKindId.BooleanKeyword]: 'boolean',
+		[TSKindId.StringKeyword]: 'string',
+		[TSKindId.SymbolKeyword]: 'symbol',
 		[TSKindId.Unique]: 'unique symbol',
 		[TSKindId.UnknownKeyword]: 'unknown',
 		[TSKindId.NeverKeyword]: 'never',
+		[TSKindId.ObjectKeyword]: 'object',
 		[TSKindId.LbracePipe]: '{|',
 		[TSKindId.PipeRbrace]: '|}',
 		[TSKindId.Comma]: ',',
 		[TSKindId.GlobalKeyword]: 'global',
+		[TSKindId.ExportKeyword]: 'export',
 		[TSKindId.FromKeyword]: 'from',
 		[TSKindId.Dquote]: '"',
 		[TSKindId.Squote]: "'",
@@ -4481,90 +4487,90 @@ export const portable = portableSurface<PortableKinds, PortableIs>(table, queryS
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AbstractClassDeclaration]: { abstract: { op: 'and', of: [] } },
 	[TSKindId.AbstractMethodSignature]: {
-		override: { op: 'present', slots: { '294': 1 } },
-		optional: { op: 'present', slots: { '294': 4 } },
-		generator: { op: 'eq', text: '*', slots: { '294': 2 } },
-		privateName: { op: 'is', types: [118], slots: { '294': 3 } },
-		computed: { op: 'is', types: [289], slots: { '294': 3 } }
+		override: { op: 'present', slots: { '300': 1 } },
+		optional: { op: 'present', slots: { '300': 4 } },
+		generator: { op: 'eq', text: '*', slots: { '300': 2 } },
+		privateName: { op: 'is', types: [127], slots: { '300': 3 } },
+		computed: { op: 'is', types: [295], slots: { '300': 3 } }
 	},
-	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '249': 0 } } },
-	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', slots: { '259': 0 } } },
+	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '250': 0 } } },
+	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', slots: { '260': 0 } } },
 	[TSKindId.CallExpressionMember]: { optionalChain: { op: 'and', of: [] } },
-	[TSKindId.ConstructSignature]: { abstract: { op: 'present', slots: { '368': 0 } } },
-	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '337': 0 } } },
-	[TSKindId.EnumDeclaration]: { const: { op: 'present', slots: { '314': 0 } } },
+	[TSKindId.ConstructSignature]: { abstract: { op: 'present', slots: { '374': 0 } } },
+	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '343': 0 } } },
+	[TSKindId.EnumDeclaration]: { const: { op: 'present', slots: { '320': 0 } } },
 	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', slots: { '192': 0 } } },
-	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '420': 0 } } },
-	[TSKindId.ForInStatement]: { async: { op: 'present', slots: { '213': 0 } } },
-	[TSKindId.FunctionDeclaration]: { async: { op: 'present', slots: { '246': 0 } } },
-	[TSKindId.FunctionExpression]: { async: { op: 'present', slots: { '245': 0 } } },
-	[TSKindId.FunctionSignature]: { async: { op: 'present', slots: { '295': 0 } } },
-	[TSKindId.GeneratorFunction]: { async: { op: 'present', slots: { '247': 0 } }, generator: { op: 'and', of: [] } },
+	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '427': 0 } } },
+	[TSKindId.ForInStatement]: { async: { op: 'present', slots: { '214': 0 } } },
+	[TSKindId.FunctionDeclaration]: { async: { op: 'present', slots: { '247': 0 } } },
+	[TSKindId.FunctionExpression]: { async: { op: 'present', slots: { '246': 0 } } },
+	[TSKindId.FunctionSignature]: { async: { op: 'present', slots: { '301': 0 } } },
+	[TSKindId.GeneratorFunction]: { async: { op: 'present', slots: { '248': 0 } }, generator: { op: 'and', of: [] } },
 	[TSKindId.GeneratorFunctionDeclaration]: {
-		async: { op: 'present', slots: { '248': 0 } },
+		async: { op: 'present', slots: { '249': 0 } },
 		generator: { op: 'and', of: [] }
 	},
-	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '407': 0 } } },
-	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '406': 0 } } },
+	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '414': 0 } } },
+	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '413': 0 } } },
 	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', slots: { '196': 0 } } },
-	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '401': 1 } } },
-	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '402': 1 } } },
+	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '408': 1 } } },
+	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '409': 1 } } },
 	[TSKindId.MemberExpression]: {
-		optionalChain: { op: 'is', types: [252], slots: { '256': 1 } },
-		privateName: { op: 'is', types: [118], slots: { '256': 2 } }
+		optionalChain: { op: 'is', types: [253], slots: { '257': 1 } },
+		privateName: { op: 'is', types: [127], slots: { '257': 2 } }
 	},
 	[TSKindId.MethodDefinition]: {
-		static: { op: 'present', slots: { '285': 1 } },
-		override: { op: 'present', slots: { '285': 2 } },
-		readonly: { op: 'present', slots: { '285': 3 } },
-		async: { op: 'present', slots: { '285': 4 } },
-		optional: { op: 'present', slots: { '285': 7 } },
-		generator: { op: 'eq', text: '*', slots: { '285': 5 } },
-		privateName: { op: 'is', types: [118], slots: { '285': 6 } },
-		computed: { op: 'is', types: [289], slots: { '285': 6 } }
+		static: { op: 'present', slots: { '291': 1 } },
+		override: { op: 'present', slots: { '291': 2 } },
+		readonly: { op: 'present', slots: { '291': 3 } },
+		async: { op: 'present', slots: { '291': 4 } },
+		optional: { op: 'present', slots: { '291': 7 } },
+		generator: { op: 'eq', text: '*', slots: { '291': 5 } },
+		privateName: { op: 'is', types: [127], slots: { '291': 6 } },
+		computed: { op: 'is', types: [295], slots: { '291': 6 } }
 	},
 	[TSKindId.MethodSignature]: {
-		static: { op: 'present', slots: { '293': 1 } },
-		override: { op: 'present', slots: { '293': 2 } },
-		readonly: { op: 'present', slots: { '293': 3 } },
-		async: { op: 'present', slots: { '293': 4 } },
-		optional: { op: 'present', slots: { '293': 7 } },
-		generator: { op: 'eq', text: '*', slots: { '293': 5 } },
-		privateName: { op: 'is', types: [118], slots: { '293': 6 } },
-		computed: { op: 'is', types: [289], slots: { '293': 6 } }
+		static: { op: 'present', slots: { '299': 1 } },
+		override: { op: 'present', slots: { '299': 2 } },
+		readonly: { op: 'present', slots: { '299': 3 } },
+		async: { op: 'present', slots: { '299': 4 } },
+		optional: { op: 'present', slots: { '299': 7 } },
+		generator: { op: 'eq', text: '*', slots: { '299': 5 } },
+		privateName: { op: 'is', types: [127], slots: { '299': 6 } },
+		computed: { op: 'is', types: [295], slots: { '299': 6 } }
 	},
 	[TSKindId.OptionalParameter]: {
-		override: { op: 'present', slots: { '321': 2 } },
-		readonly: { op: 'present', slots: { '321': 3 } },
+		override: { op: 'present', slots: { '327': 2 } },
+		readonly: { op: 'present', slots: { '327': 3 } },
 		optional: { op: 'and', of: [] }
 	},
-	[TSKindId.Pair]: { computed: { op: 'is', types: [289], slots: { '286': 0 } } },
-	[TSKindId.PairPattern]: { computed: { op: 'is', types: [289], slots: { '287': 0 } } },
+	[TSKindId.Pair]: { computed: { op: 'is', types: [295], slots: { '292': 0 } } },
+	[TSKindId.PairPattern]: { computed: { op: 'is', types: [295], slots: { '293': 0 } } },
 	[TSKindId.PropertySignature]: {
-		static: { op: 'present', slots: { '363': 1 } },
-		override: { op: 'present', slots: { '363': 2 } },
-		readonly: { op: 'present', slots: { '363': 3 } },
-		optional: { op: 'present', slots: { '363': 5 } },
-		privateName: { op: 'is', types: [118], slots: { '363': 4 } },
-		computed: { op: 'is', types: [289], slots: { '363': 4 } }
+		static: { op: 'present', slots: { '369': 1 } },
+		override: { op: 'present', slots: { '369': 2 } },
+		readonly: { op: 'present', slots: { '369': 3 } },
+		optional: { op: 'present', slots: { '369': 5 } },
+		privateName: { op: 'is', types: [127], slots: { '369': 4 } },
+		computed: { op: 'is', types: [295], slots: { '369': 4 } }
 	},
 	[TSKindId.PublicFieldDefinition]: {
-		declare: { op: 'present', slots: { '290': 1 } },
-		static: { op: 'present', slots: { '290': 3 } },
-		override: { op: 'present', slots: { '290': 4 } },
-		readonly: { op: 'present', slots: { '290': 5 } },
-		abstract: { op: 'present', slots: { '290': 6 } },
-		optional: { op: 'eq', text: '?', slots: { '290': 9 } },
-		definite: { op: 'eq', text: '!', slots: { '290': 9 } },
-		privateName: { op: 'is', types: [118], slots: { '290': 8 } },
-		computed: { op: 'is', types: [289], slots: { '290': 8 } }
+		declare: { op: 'present', slots: { '296': 1 } },
+		static: { op: 'present', slots: { '296': 3 } },
+		override: { op: 'present', slots: { '296': 4 } },
+		readonly: { op: 'present', slots: { '296': 5 } },
+		abstract: { op: 'present', slots: { '296': 6 } },
+		optional: { op: 'eq', text: '?', slots: { '296': 9 } },
+		definite: { op: 'eq', text: '!', slots: { '296': 9 } },
+		privateName: { op: 'is', types: [127], slots: { '296': 8 } },
+		computed: { op: 'is', types: [295], slots: { '296': 8 } }
 	},
 	[TSKindId.RequiredParameter]: {
-		override: { op: 'present', slots: { '320': 2 } },
-		readonly: { op: 'present', slots: { '320': 3 } }
+		override: { op: 'present', slots: { '326': 2 } },
+		readonly: { op: 'present', slots: { '326': 3 } }
 	},
-	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [252], slots: { '257': 1 } } },
-	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '365': 0 } } },
+	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [253], slots: { '258': 1 } } },
+	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '371': 0 } } },
 	[TSKindId.Unique]: { unique: { op: 'and', of: [] } },
 	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } }
 } satisfies QueryFlags);
@@ -4572,745 +4578,755 @@ export const queryFlags: QueryFlags = Object.freeze({
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	188: {
 		statements: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	204: {
 		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	205: { declarators: { definite: [428] } },
-	206: { declarators: { definite: [428] } },
-	208: {
-		statements: {
-			abstract: [306],
 			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
+			disposable: { kind: 260, context: false },
 			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
+	205: { declarators: { definite: [435] } },
+	206: { declarators: { definite: [435] } },
+	207: { variableDeclarators: { definite: [435] } },
 	209: {
-		body: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+		statements: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	210: {
-		consequence: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+		body: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
-	212: {
-		initializer: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		condition: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		increment: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		body: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+	211: {
+		consequence: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	213: {
-		body: {
-			abstract: [306],
+		initializer: {
 			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
+			disposable: { kind: 260, context: false },
 			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		condition: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		increment: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		body: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
-	215: {
+	214: {
 		body: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	216: {
 		body: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
-	218: {
+	217: {
 		body: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
-	222: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+	219: {
+		body: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	223: {
 		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	225: {
+	224: {
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	226: {
 		body: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
-		}
-	},
-	227: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		bodies: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	228: {
-		bodies: {
-			abstract: [306],
+		value: {
 			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
+			disposable: { kind: 260, context: false },
 			generator: [248],
-			typeOnly: { kind: 420, context: false }
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		bodies: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
-	234: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+	229: {
+		bodies: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249],
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	235: {
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	236: {
 		properties: {
-			async: { kind: 285, context: false },
-			computed: { kind: 286, context: false },
-			generator: { kind: 285, context: false },
-			optional: { kind: 285, context: false },
-			override: { kind: 285, context: false },
-			privateName: { kind: 285, context: false },
-			readonly: { kind: 285, context: false },
-			static: { kind: 285, context: false }
+			async: { kind: 291, context: false },
+			computed: { kind: 292, context: false },
+			generator: { kind: 291, context: false },
+			optional: { kind: 291, context: false },
+			override: { kind: 291, context: false },
+			privateName: { kind: 291, context: false },
+			readonly: { kind: 291, context: false },
+			static: { kind: 291, context: false }
 		}
 	},
-	236: { properties: { computed: { kind: 287, context: false } } },
-	237: {
-		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
+	237: { properties: { computed: { kind: 293, context: false } } },
 	238: {
 		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	239: {
+		right: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	240: {
 		elements: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	249: {
+	250: {
 		body: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	254: {
-		constructor_: {
-			async: { kind: 245, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	255: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		constructor_: {
+			async: { kind: 246, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	256: {
-		object: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	257: {
 		object: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	258: {
+		object: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		},
 		index: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	258: { content: { optionalChain: { kind: 256, context: false }, privateName: { kind: 256, context: false } } },
-	259: {
+	259: { content: { optionalChain: { kind: 257, context: false }, privateName: { kind: 257, context: false } } },
+	260: {
 		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	261: {
-		left: { optionalChain: { kind: 256, context: false }, privateName: { kind: 256, context: false } },
+	262: {
+		left: { optionalChain: { kind: 257, context: false }, privateName: { kind: 257, context: false } },
 		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	264: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	265: {
-		condition: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		consequence: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		alternative: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	266: {
-		left: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		condition: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		},
-		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		consequence: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		alternative: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	267: {
+		left: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		right: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	268: {
 		argument: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	269: {
+	270: {
 		expressions: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	272: {
+	273: {
 		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	276: {
+	282: {
 		elements: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	284: { lhsExpression: { optionalChain: { kind: 256, context: false }, privateName: { kind: 256, context: false } } },
-	286: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	289: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	290: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
+	290: { lhsExpression: { optionalChain: { kind: 257, context: false }, privateName: { kind: 257, context: false } } },
 	292: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	297: {
+	295: {
 		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	296: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	298: {
 		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		typeAnnotation: { abstract: { kind: 337, context: false }, unique: [143] }
-	},
-	299: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		typeAnnotation: { abstract: { kind: 337, context: false }, unique: [143] }
-	},
-	300: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	303: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	304: { types: { abstract: { kind: 337, context: false }, unique: [143] } },
-	305: {
-		content: {
-			abstract: [306],
-			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248]
-		}
-	},
-	316: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	317: { value: { abstract: { kind: 337, context: false }, unique: [143] } },
-	320: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	321: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	323: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	324: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	325: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	326: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	334: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	335: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	337: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	339: { type: { unique: [143] } },
-	341: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	342: {
-		left: { abstract: { kind: 337, context: false }, unique: [143] },
-		right: { abstract: { kind: 337, context: false }, unique: [143] },
-		consequence: { abstract: { kind: 337, context: false }, unique: [143] },
-		alternative: { abstract: { kind: 337, context: false }, unique: [143] }
-	},
-	344: { name: { unique: [143] }, type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	347: { index: { unique: [143] } },
-	351: { type: { unique: [143] } },
-	352: { type: { unique: [143] }, indexType: { abstract: { kind: 337, context: false }, unique: [143] } },
-	353: {
-		type: { abstract: { kind: 337, context: false }, unique: [143] },
-		alias: { abstract: { kind: 337, context: false }, unique: [143] }
-	},
-	357: { type: { unique: [143] } },
-	358: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	366: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	367: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	370: { type: { unique: [143] } },
-	372: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	373: {
-		left: { abstract: { kind: 337, context: false }, unique: [143] },
-		right: { abstract: { kind: 337, context: false }, unique: [143] }
-	},
-	374: {
-		left: { abstract: { kind: 337, context: false }, unique: [143] },
-		right: { abstract: { kind: 337, context: false }, unique: [143] }
-	},
-	375: { returnType: { abstract: { kind: 337, context: false }, unique: [143] } },
-	376: { items: { typeOnly: { kind: 192, context: false } } },
-	377: { items: { typeOnly: { kind: 406, context: false } } },
-	379: { items: { optional: [321], override: { kind: 320, context: false }, readonly: { kind: 320, context: false } } },
-	383: { items: { abstract: { kind: 337, context: false }, unique: [143] } },
-	384: { items: { const: { kind: 365, context: false } } },
-	385: { items: { abstract: { kind: 337, context: false }, unique: [143] } },
-	389: { type: { abstract: { kind: 337, context: false }, unique: [143] } },
-	390: {
-		items: {
-			abstract: { kind: 368, context: false },
-			async: { kind: 293, context: false },
-			computed: { kind: 363, context: false },
-			generator: { kind: 293, context: false },
-			optional: { kind: 363, context: false },
-			override: { kind: 363, context: false },
-			privateName: { kind: 363, context: false },
-			readonly: { kind: 363, context: false },
-			static: { kind: 363, context: false },
-			typeOnly: { kind: 420, context: false }
-		}
-	},
-	393: {
 		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	396: {
-		left: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+	304: {
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		},
-		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		typeAnnotation: { abstract: { kind: 343, context: false }, unique: [144] }
+	},
+	305: {
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		typeAnnotation: { abstract: { kind: 343, context: false }, unique: [144] }
+	},
+	306: {
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	398: {
-		methodDefinition: {
-			async: { kind: 285, context: false },
-			computed: { kind: 285, context: false },
-			generator: { kind: 285, context: false },
-			optional: { kind: 285, context: false },
-			override: { kind: 285, context: false },
-			privateName: { kind: 285, context: false },
-			readonly: { kind: 285, context: false },
-			static: { kind: 285, context: false }
+	309: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	399: {
-		methodSignature: {
-			async: { kind: 293, context: false },
-			computed: { kind: 293, context: false },
-			generator: { kind: 293, context: false },
-			optional: { kind: 293, context: false },
-			override: { kind: 293, context: false },
-			privateName: { kind: 293, context: false },
-			readonly: { kind: 293, context: false },
-			static: { kind: 293, context: false }
+	310: { types: { abstract: { kind: 343, context: false }, unique: [144] } },
+	311: {
+		content: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249]
+		}
+	},
+	322: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	323: { value: { abstract: { kind: 343, context: false }, unique: [144] } },
+	326: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	327: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	329: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	330: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	331: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	332: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	340: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	341: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	343: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	345: { type: { unique: [144] } },
+	347: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	348: {
+		left: { abstract: { kind: 343, context: false }, unique: [144] },
+		right: { abstract: { kind: 343, context: false }, unique: [144] },
+		consequence: { abstract: { kind: 343, context: false }, unique: [144] },
+		alternative: { abstract: { kind: 343, context: false }, unique: [144] }
+	},
+	350: { name: { unique: [144] }, type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	353: { index: { unique: [144] } },
+	357: { type: { unique: [144] } },
+	358: { type: { unique: [144] }, indexType: { abstract: { kind: 343, context: false }, unique: [144] } },
+	359: {
+		type: { abstract: { kind: 343, context: false }, unique: [144] },
+		alias: { abstract: { kind: 343, context: false }, unique: [144] }
+	},
+	363: { type: { unique: [144] } },
+	364: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	372: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	373: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	376: { type: { unique: [144] } },
+	378: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	379: {
+		left: { abstract: { kind: 343, context: false }, unique: [144] },
+		right: { abstract: { kind: 343, context: false }, unique: [144] }
+	},
+	380: {
+		left: { abstract: { kind: 343, context: false }, unique: [144] },
+		right: { abstract: { kind: 343, context: false }, unique: [144] }
+	},
+	381: { returnType: { abstract: { kind: 343, context: false }, unique: [144] } },
+	382: { items: { typeOnly: { kind: 192, context: false } } },
+	383: { items: { typeOnly: { kind: 413, context: false } } },
+	385: { items: { optional: [327], override: { kind: 326, context: false }, readonly: { kind: 326, context: false } } },
+	389: { items: { abstract: { kind: 343, context: false }, unique: [144] } },
+	390: { items: { const: { kind: 371, context: false } } },
+	391: { items: { abstract: { kind: 343, context: false }, unique: [144] } },
+	396: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	397: {
+		items: {
+			abstract: { kind: 374, context: false },
+			async: { kind: 299, context: false },
+			computed: { kind: 369, context: false },
+			generator: { kind: 299, context: false },
+			optional: { kind: 369, context: false },
+			override: { kind: 369, context: false },
+			privateName: { kind: 369, context: false },
+			readonly: { kind: 369, context: false },
+			static: { kind: 369, context: false },
+			typeOnly: { kind: 427, context: false }
 		}
 	},
 	400: {
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	403: {
+		left: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		right: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	405: {
+		methodDefinition: {
+			async: { kind: 291, context: false },
+			computed: { kind: 291, context: false },
+			generator: { kind: 291, context: false },
+			optional: { kind: 291, context: false },
+			override: { kind: 291, context: false },
+			privateName: { kind: 291, context: false },
+			readonly: { kind: 291, context: false },
+			static: { kind: 291, context: false }
+		}
+	},
+	406: {
+		methodSignature: {
+			async: { kind: 299, context: false },
+			computed: { kind: 299, context: false },
+			generator: { kind: 299, context: false },
+			optional: { kind: 299, context: false },
+			override: { kind: 299, context: false },
+			privateName: { kind: 299, context: false },
+			readonly: { kind: 299, context: false },
+			static: { kind: 299, context: false }
+		}
+	},
+	407: {
 		member: {
-			abstract: { kind: 290, context: false },
-			async: { kind: 293, context: false },
-			computed: { kind: 294, context: false },
-			declare: { kind: 290, context: false },
-			definite: { kind: 290, context: false },
-			generator: { kind: 294, context: false },
-			optional: { kind: 294, context: false },
-			override: { kind: 294, context: false },
-			privateName: { kind: 294, context: false },
-			readonly: { kind: 401, context: false },
-			static: { kind: 293, context: false }
+			abstract: { kind: 296, context: false },
+			async: { kind: 299, context: false },
+			computed: { kind: 300, context: false },
+			declare: { kind: 296, context: false },
+			definite: { kind: 296, context: false },
+			generator: { kind: 300, context: false },
+			optional: { kind: 300, context: false },
+			override: { kind: 300, context: false },
+			privateName: { kind: 300, context: false },
+			readonly: { kind: 408, context: false },
+			static: { kind: 299, context: false }
 		}
 	},
-	401: { indexType: { abstract: { kind: 337, context: false }, unique: [143] } },
-	404: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	408: {
-		expression: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	410: {
-		function: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
+	408: { indexType: { abstract: { kind: 343, context: false }, unique: [144] } },
 	411: {
-		function: {
-			async: { kind: 245, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	412: {
-		function: {
-			async: { kind: 245, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		expression: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
 	415: {
-		argument: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	416: {
-		argument: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		}
-	},
-	421: {
-		content: {
-			abstract: [306],
+		expression: {
 			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248]
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	425: {
-		content: {
-			abstract: [306],
+	417: {
+		function: {
 			async: { kind: 246, context: false },
-			const: { kind: 314, context: false },
-			generator: [248]
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	426: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+	418: {
+		function: {
+			async: { kind: 246, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	427: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+	419: {
+		function: {
+			async: { kind: 246, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	},
-	431: {
-		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+	422: {
+		argument: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	423: {
+		argument: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	428: {
+		content: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249]
 		}
 	},
 	432: {
-		value: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
-		},
-		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+		content: {
+			abstract: [312],
+			async: { kind: 247, context: false },
+			const: { kind: 320, context: false },
+			generator: [249]
 		}
 	},
 	433: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	434: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	438: {
 		right: {
-			async: { kind: 245, context: false },
-			disposable: { kind: 259, context: false },
-			generator: [247],
-			optionalChain: { kind: 257, context: false },
-			privateName: { kind: 256, context: false }
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	439: {
+		value: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		},
+		right: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	440: {
+		right: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
+		}
+	},
+	441: {
+		right: {
+			async: { kind: 246, context: false },
+			disposable: { kind: 260, context: false },
+			generator: [248],
+			optionalChain: { kind: 258, context: false },
+			privateName: { kind: 257, context: false }
 		}
 	}
 } satisfies QuerySlotFlags);
@@ -5451,6 +5467,9 @@ declare module './types.js' {
 	}
 	interface LexicalDeclaration {
 		readonly __slotFlags__?: { readonly declarators: 'definite' };
+	}
+	interface UsingDeclaration {
+		readonly __slotFlags__?: { readonly variableDeclarators: 'definite' };
 	}
 	interface StatementBlock {
 		readonly __slotFlags__?: { readonly statements: 'abstract' | 'generator' };
@@ -5737,6 +5756,9 @@ declare module './types.js' {
 		readonly __slotFlags__?: { readonly value: 'generator'; readonly right: 'generator' };
 	}
 	interface ForHeaderLetConstKind {
+		readonly __slotFlags__?: { readonly right: 'generator' };
+	}
+	interface ForHeaderUsingKind {
 		readonly __slotFlags__?: { readonly right: 'generator' };
 	}
 }

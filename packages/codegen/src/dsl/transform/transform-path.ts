@@ -20,6 +20,7 @@ interface RuntimeDsl {
 	repeat1?: (content: RuntimeRule) => RuntimeRule;
 	token?: ((content: RuntimeRule) => RuntimeRule) & { immediate?: (content: RuntimeRule) => RuntimeRule };
 	field?: (name: string, content: RuntimeRule) => RuntimeRule;
+	reserved?: (contextName: string, content: RuntimeRule) => RuntimeRule;
 	prec?: ((value: number, content: RuntimeRule) => RuntimeRule) & {
 		left?: (value: number, content: RuntimeRule) => RuntimeRule;
 		right?: (value: number, content: RuntimeRule) => RuntimeRule;
@@ -521,6 +522,9 @@ const PREC_VARIANT_MAP = {
 
 export function reconstructPrec(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
 	const t = rule.type;
+	if (t === 'RESERVED') {
+		return nativeRequired('reserved')((rule as unknown as { context_name: string }).context_name, newContent);
+	}
 	const value = (rule as { value?: number }).value ?? 0;
 	const prec = nativeRequired('prec');
 	const variant = PREC_VARIANT_MAP[t as keyof typeof PREC_VARIANT_MAP];

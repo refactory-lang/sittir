@@ -175,16 +175,26 @@ export function firstParseDefect(node: TSNode): string | null {
 	return null;
 }
 
-const isTarget = (node: TSNode, target: string | number): boolean => (typeof target === 'number' ? node.grammarId === target : node.type === target);
+/** The id a node reads as: its display id where it is a relaxed keyword, else its grammar id. */
+export type ReadIdentity = (node: TSNode) => number;
 
-function findNodeAt(node: TSNode, kind: string | number, offset: number): TSNode | null {
-	if (isTarget(node, kind) && node.startIndex === offset) return node;
+const grammarIdentity: ReadIdentity = (node) => node.grammarId;
+
+export function readIdentityOf(relaxes: (grammar: number, display: number) => boolean): ReadIdentity {
+	return (node) => (relaxes(node.grammarId, node.typeId) ? node.typeId : node.grammarId);
+}
+
+const isTarget = (node: TSNode, target: string | number, identity: ReadIdentity): boolean =>
+	typeof target === 'number' ? identity(node) === target : node.type === target;
+
+function findNodeAt(node: TSNode, kind: string | number, offset: number, identity: ReadIdentity): TSNode | null {
+	if (isTarget(node, kind, identity) && node.startIndex === offset) return node;
 	for (let i = 0; i < node.childCount; i++) {
 		const c = node.child(i);
 		if (!c) continue;
 		// Quick prune: the rendered fragment must be inside this child's range.
 		if (offset < c.startIndex || offset >= c.endIndex) continue;
-		const hit = findNodeAt(c, kind, offset);
+		const hit = findNodeAt(c, kind, offset, identity);
 		if (hit) return hit;
 	}
 	return null;
@@ -256,9 +266,10 @@ export function astStructuralDiff(
 	b: TSNode,
 	path: string = '',
 	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
-	tolerance?: AstTolerance
+	tolerance?: AstTolerance,
+	identity: ReadIdentity = grammarIdentity
 ): string | null {
-	const structural = structuralDiff(a, b, path, variantChildKinds, tolerance);
+	const structural = structuralDiff(a, b, path, variantChildKinds, tolerance, identity);
 	return structural ?? (path === '' ? extrasDiff(a, b) : null);
 }
 
@@ -267,9 +278,10 @@ function structuralDiff(
 	b: TSNode,
 	path: string = '',
 	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
-	tolerance?: AstTolerance
+	tolerance?: AstTolerance,
+	identity: ReadIdentity = grammarIdentity
 ): string | null {
-	if (a.grammarId !== b.grammarId) {
+	if (identity(a) !== identity(b)) {
 		return `${path || 'root'}: grammar type ${a.grammarType} ≠ ${b.grammarType}`;
 	}
 	if (a.isNamed && a.childCount === 0 && b.childCount === 0 && a.text !== b.text) {
@@ -344,7 +356,7 @@ function structuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = structuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds, tolerance);
+		const sub = structuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds, tolerance, identity);
 		if (sub) return sub;
 	}
 	return null;
@@ -586,16 +598,17 @@ export function findReparsedNodeAtOffset(
 	tree2: TSTree,
 	targetKind: string | number,
 	wrapped: { text: string; offset: number; at?: (renderedOffset: number) => number },
-	offsetAdjust = 0
+	offsetAdjust = 0,
+	identity: ReadIdentity = grammarIdentity
 ): TSNode | null {
-	const adjusted = findNodeAt(tree2.rootNode, targetKind, wrapped.at?.(offsetAdjust) ?? wrapped.offset + offsetAdjust);
+	const adjusted = findNodeAt(tree2.rootNode, targetKind, wrapped.at?.(offsetAdjust) ?? wrapped.offset + offsetAdjust, identity);
 	if (adjusted !== null) return adjusted;
-	const plain = offsetAdjust === 0 ? null : findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
+	const plain = offsetAdjust === 0 ? null : findNodeAt(tree2.rootNode, targetKind, wrapped.offset, identity);
 	if (plain !== null) return plain;
 	let lead = wrapped.offset;
 	while (lead > 0 && /\s/.test(wrapped.text[lead - 1] ?? 'x')) lead--;
 	for (let at = lead; at < wrapped.offset; at++) {
-		const hit = findNodeAt(tree2.rootNode, targetKind, at);
+		const hit = findNodeAt(tree2.rootNode, targetKind, at, identity);
 		if (hit !== null && hit.endIndex > wrapped.offset) return hit;
 	}
 	return null;
@@ -714,6 +727,7 @@ export interface RenderReparseContext {
 	readonly root: Awaited<ReturnType<typeof loadNodeModel>>['root'];
 	readonly variantChildKinds: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly visibleKinds: ReadonlySet<string>;
+	readonly readIdentity: ReadIdentity;
 	readonly placements: ReadonlyMap<string, Placement>;
 }
 
@@ -817,7 +831,7 @@ export function renderReparse(
 	const reparsed = treeRoot
 		? tree2.rootNode
 		: source !== null
-			? findReparsedNodeAtOffset(tree2, source.grammarId, wrapped, triviaOffsetAdjust)
+			? findReparsedNodeAtOffset(tree2, ctx.readIdentity(source), wrapped, triviaOffsetAdjust, ctx.readIdentity)
 			: (findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
 				(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust) : null));
 	if (!reparsed) {
@@ -832,7 +846,7 @@ export function renderReparse(
 		rendered,
 		wrapped,
 		reparsed,
-		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds, tolerance) : null
+		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds, tolerance, ctx.readIdentity) : null
 	};
 }
 
@@ -890,6 +904,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 		const kindIdsOf = (kind: string): readonly number[] => idsByName.get(kind) ?? [];
 		const admits = new Map(Object.entries(model.slotKinds).map(([kind, slots]) => [kind, new Set(Object.values(slots).flat())]));
 		for (const [kind, elements] of Object.entries(model.listElementKinds)) admits.set(kind, new Set([...(admits.get(kind) ?? []), ...elements]));
+		const identityOfNode = readIdentityOf(model.relaxes);
 		const derived = deriveReparseHosts({
 			declared,
 			root: model.root,
@@ -900,8 +915,8 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 			corpus,
 			parse: (text) => parser.parse(text) as TSTree,
-			findAt: (tree, source, hosted) => findReparsedNodeAtOffset(tree, source.grammarId, hosted),
-			same: (source, reparsed) => astStructuralDiff(source, reparsed) === null
+			findAt: (tree, source, hosted) => findReparsedNodeAtOffset(tree, identityOfNode(source), hosted, 0, identityOfNode),
+			same: (source, reparsed) => astStructuralDiff(source, reparsed, '', undefined, undefined, identityOfNode) === null
 		});
 		setDerivedReparseHosts(grammar, derived);
 	})();
@@ -929,6 +944,7 @@ export async function loadRenderReparseContext(
 		adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 		root: model.root,
 		variantChildKinds: await loadVariantChildKindsByOwner(grammar),
+		readIdentity: readIdentityOf(model.relaxes),
 		placements: placementsOf(grammar, parser, model.splitFrom)
 	};
 }

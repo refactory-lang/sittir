@@ -116,7 +116,7 @@ export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.NamespaceExport as const,
 		moduleExportName() {
-			return hydrateSlot<T.Identifier | T.String>(this, '_module_export_name', tree);
+			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_module_export_name', tree);
 		},
 		$with: {
 			moduleExportName: (v: NonNullable<T.NamespaceExport['_module_export_name']>) =>
@@ -190,10 +190,10 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle): 
 			return this._export_kind;
 		},
 		name() {
-			return hydrateSlot<T.Identifier | T.String>(this, '_name', tree);
+			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_name', tree);
 		},
 		alias() {
-			return hydrateSlot<T.Identifier | T.String | undefined>(this, '_alias', tree);
+			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword | undefined>(this, '_alias', tree);
 		},
 		$with: {
 			exportKind: (v: NonNullable<T.ExportSpecifier['_export_kind']>) =>
@@ -467,6 +467,42 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.LexicalDeclaration.Parsed;
+}
+
+export function wrapUsingDeclaration(data: T.UsingDeclaration, tree: TreeHandle): T.UsingDeclaration.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.UsingDeclaration as const,
+		kind() {
+			return this._kind;
+		},
+		variableDeclarators() {
+			return hydrateSlots<T.VariableDeclarator>(this, '_variable_declarator', tree);
+		},
+		automaticSemicolon() {
+			return this._automatic_semicolon;
+		},
+		$with: {
+			kind: (v: NonNullable<T.UsingDeclaration['_kind']>) =>
+				rebuilt(node, handle, () => wrapUsingDeclaration({ ...$edited(data), _kind: v }, tree)),
+			variableDeclarators: (...v: NonEmptyArray<NonNullable<T.UsingDeclaration['_variable_declarator']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapUsingDeclaration({ ...$edited(data), _variable_declarator: restItems('variableDeclarators', v) }, tree)
+				),
+			automaticSemicolon: (v: NonNullable<T.UsingDeclaration['_automatic_semicolon']>) =>
+				rebuilt(node, handle, () => wrapUsingDeclaration({ ...$edited(data), _automatic_semicolon: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UsingDeclaration.Parsed;
 }
 
 export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.StatementBlock.Parsed {
@@ -935,31 +971,7 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
 		...data,
 		$type: TSKindId.LabeledStatement as const,
 		label() {
-			return hydrateSlot<
-				| T.StatementIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-			>(this, '_label', tree);
+			return hydrateSlot<T.StatementIdentifier>(this, '_label', tree);
 		},
 		body() {
 			return hydrateSlot<T.Statement>(this, '_body', tree);
@@ -1194,34 +1206,11 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 		...data,
 		$type: TSKindId.Object as const,
 		properties() {
-			return hydrateSlots<
-				| T.Pair
-				| T.SpreadElement
-				| T.MethodDefinition
-				| T.ShorthandPropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-			>(this, '_properties', tree);
+			return hydrateSlots<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
+				this,
+				'_properties',
+				tree
+			);
 		},
 		$with: {
 			properties: (...v: NonNullable<T.Object['_properties']>[number][]) =>
@@ -1247,32 +1236,7 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle): T.Ob
 		$type: TSKindId.ObjectPattern as const,
 		properties() {
 			return hydrateSlots<
-				| T.PairPattern
-				| T.RestPattern
-				| T.ObjectAssignmentPattern
-				| T.ShorthandPropertyIdentifierPattern
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
+				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
 			>(this, '_properties', tree);
 		},
 		$with: {
@@ -1332,33 +1296,7 @@ export function wrapObjectAssignmentPattern(
 		...data,
 		$type: TSKindId.ObjectAssignmentPattern as const,
 		left() {
-			return hydrateSlot<
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.ShorthandPropertyIdentifierPattern
-				| T.ObjectPattern
-				| T.ArrayPattern
-			>(this, '_left', tree);
+			return hydrateSlot<T.ShorthandPropertyIdentifierPattern | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		right() {
 			return hydrateSlot<T.Expression>(this, '_right', tree);
@@ -2495,7 +2433,7 @@ export function wrapDecoratorMemberExpression(
 		...data,
 		$type: TSKindId.DecoratorMemberExpression as const,
 		object() {
-			return hydrateSlot<T.Identifier | T.DecoratorMemberExpression>(this, '_object', tree);
+			return hydrateSlot<T.Identifier | TSKindId.Super | T.DecoratorMemberExpression>(this, '_object', tree);
 		},
 		property() {
 			return hydrateSlot<T.PropertyIdentifier>(this, '_property', tree);
@@ -2719,33 +2657,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 		},
 		name() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_name', tree);
 		},
 		optional() {
@@ -2826,33 +2738,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 		$type: TSKindId.Pair as const,
 		key() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_key', tree);
 		},
 		value() {
@@ -2883,33 +2769,7 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle): T.PairPa
 		$type: TSKindId.PairPattern as const,
 		key() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_key', tree);
 		},
 		value() {
@@ -2994,33 +2854,7 @@ export function wrapPublicFieldDefinition(
 		},
 		name() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_name', tree);
 		},
 		optionality() {
@@ -3121,33 +2955,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle): 
 		},
 		name() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_name', tree);
 		},
 		optional() {
@@ -3235,33 +3043,7 @@ export function wrapAbstractMethodSignature(
 		},
 		name() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_name', tree);
 		},
 		optional() {
@@ -4039,33 +3821,7 @@ export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle): T.
 		$type: TSKindId.EnumAssignment as const,
 		name() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_name', tree);
 		},
 		value() {
@@ -5389,33 +5145,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 		},
 		name() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_name', tree);
 		},
 		optional() {
@@ -5947,33 +5677,7 @@ export function wrapEnumBodyElementName(data: T.EnumBodyElementName, tree: TreeH
 		$type: TSKindId.EnumBodyElementName as const,
 		name() {
 			return hydrateSlot<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
+				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
 			>(this, '_name', tree);
 		},
 		$with: {
@@ -7067,7 +6771,7 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 			return this._import_kind;
 		},
 		name() {
-			return hydrateSlot<T.Identifier | T.String>(this, '_name', tree);
+			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_name', tree);
 		},
 		alias() {
 			return hydrateSlot<T.Identifier>(this, '_alias', tree);
@@ -7904,37 +7608,57 @@ export function wrapForHeaderLetConstKind(
 	return node as unknown as T.ForHeaderLetConstKind.Parsed;
 }
 
+export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHandle): T.ForHeaderUsingKind.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForHeaderUsingKind as const,
+		kind() {
+			return this._kind;
+		},
+		left() {
+			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
+		},
+		terminator() {
+			return this._terminator;
+		},
+		operator() {
+			return this._operator;
+		},
+		right() {
+			return hydrateSlot<T.Expression | T.SequenceExpression>(this, '_right', tree);
+		},
+		$with: {
+			kind: (v: NonNullable<T.ForHeaderUsingKind['_kind']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _kind: v }, tree)),
+			left: (v: NonNullable<T.ForHeaderUsingKind['_left']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _left: v }, tree)),
+			terminator: (v: NonNullable<T.ForHeaderUsingKind['_terminator']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _terminator: v }, tree)),
+			operator: (v: NonNullable<T.ForHeaderUsingKind['_operator']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _operator: v }, tree)),
+			right: (v: NonNullable<T.ForHeaderUsingKind['_right']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForHeaderUsingKind.Parsed;
+}
+
 export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeHandle): T.StatementIdentifier.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
 		$type: TSKindId.StatementIdentifier as const,
 		content() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-			>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.StatementIdentifier['_content']>) =>
@@ -7961,31 +7685,7 @@ export function wrapShorthandPropertyIdentifier(
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifier as const,
 		content() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-			>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandPropertyIdentifier['_content']>) =>
@@ -8012,31 +7712,7 @@ export function wrapShorthandPropertyIdentifierPattern(
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifierPattern as const,
 		content() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-			>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandPropertyIdentifierPattern['_content']>) =>
@@ -8060,31 +7736,7 @@ export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHan
 		...data,
 		$type: TSKindId.PropertyIdentifier as const,
 		content() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-			>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.PropertyIdentifier['_content']>) =>
@@ -8164,6 +7816,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
 	[TSKindId.VariableDeclaration]: (d, t) => wrapVariableDeclaration(d as unknown as T.VariableDeclaration, t),
 	[TSKindId.LexicalDeclaration]: (d, t) => wrapLexicalDeclaration(d as unknown as T.LexicalDeclaration, t),
+	[TSKindId.UsingDeclaration]: (d, t) => wrapUsingDeclaration(d as unknown as T.UsingDeclaration, t),
 	[TSKindId.StatementBlock]: (d, t) => wrapStatementBlock(d as unknown as T.StatementBlock, t),
 	[TSKindId.ElseClause]: (d, t) => wrapElseClause(d as unknown as T.ElseClause, t),
 	[TSKindId.IfStatement]: (d, t) => wrapIfStatement(d as unknown as T.IfStatement, t),
@@ -8413,6 +8066,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ForHeaderLhs]: (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
+	[TSKindId.ForHeaderUsingKind]: (d, t) => wrapForHeaderUsingKind(d as unknown as T.ForHeaderUsingKind, t),
 	[TSKindId.StatementIdentifier]: (d, t) => wrapStatementIdentifier(d as unknown as T.StatementIdentifier, t),
 	[TSKindId.ShorthandPropertyIdentifier]: (d, t) =>
 		wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),

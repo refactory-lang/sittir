@@ -5,6 +5,7 @@ import { armIdOf } from './render-options-rs.ts';
 import { deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
+	placedAlias,
 	collectAliasSourceKinds,
 	forwardedTargetKind,
 	resolveFactoryFieldNames,
@@ -110,7 +111,7 @@ function mapVariantChildKindsToNames(variantChildKinds: readonly VariantChild[])
 }
 
 function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
-	return classifyFactoryShape(node, nodeMap);
+	return placedAlias(node, nodeMap) ? 'placed' : classifyFactoryShape(node, nodeMap);
 }
 
 function createFactorySlotMeta(

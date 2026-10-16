@@ -218,6 +218,7 @@ export const ir: {
 	readonly expressionStatement: typeof F.expressionStatement;
 	readonly variableDeclaration: typeof F.variableDeclaration;
 	readonly lexicalDeclaration: typeof F.lexicalDeclaration;
+	readonly usingDeclaration: typeof F.usingDeclaration;
 	readonly statementBlock: typeof F.statementBlock;
 	readonly elseClause: typeof F.elseClause;
 	readonly ifStatement: typeof F.ifStatement;
@@ -398,6 +399,7 @@ export const ir: {
 	readonly forHeaderLhs: typeof F.forHeaderLhs;
 	readonly forHeaderVarKind: typeof F.forHeaderVarKind;
 	readonly forHeaderLetConstKind: typeof F.forHeaderLetConstKind;
+	readonly forHeaderUsingKind: typeof F.forHeaderUsingKind;
 	readonly declaration: typeof F.declaration;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
@@ -428,6 +430,7 @@ export const ir: {
 	readonly undefined: typeof F.buildUndefined;
 	readonly overrideModifier: typeof F.buildOverrideModifier;
 	readonly existentialType: typeof F.buildExistentialType;
+	readonly usingDeclarationArm: typeof F.buildUsingDeclarationArm;
 	readonly emptyMember: typeof F.buildEmptyMember;
 	readonly optionalChainMarker: typeof F.buildOptionalChainMarker;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
@@ -470,6 +473,7 @@ export const ir: {
 	expressionStatement: F.expressionStatement,
 	variableDeclaration: F.variableDeclaration,
 	lexicalDeclaration: F.lexicalDeclaration,
+	usingDeclaration: F.usingDeclaration,
 	statementBlock: F.statementBlock,
 	elseClause: F.elseClause,
 	ifStatement: F.ifStatement,
@@ -650,6 +654,7 @@ export const ir: {
 	forHeaderLhs: F.forHeaderLhs,
 	forHeaderVarKind: F.forHeaderVarKind,
 	forHeaderLetConstKind: F.forHeaderLetConstKind,
+	forHeaderUsingKind: F.forHeaderUsingKind,
 	declaration: F.declaration,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
@@ -682,6 +687,7 @@ export const ir: {
 	undefined: F.buildUndefined,
 	overrideModifier: F.buildOverrideModifier,
 	existentialType: F.buildExistentialType,
+	usingDeclarationArm: F.buildUsingDeclarationArm,
 	emptyMember: F.buildEmptyMember,
 	optionalChainMarker: F.buildOptionalChainMarker,
 	metaPropertyNewTarget: F.buildMetaPropertyNewTarget,

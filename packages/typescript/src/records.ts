@@ -39,6 +39,12 @@ export const records = {
 		declarators: { word: 7, width: 2, run: 5 },
 		terminator: { word: 9, width: 5 }
 	},
+	UsingDeclarationTransport: {
+		words: 14,
+		kind: { word: 2, width: 5 },
+		variable_declarator: { word: 7, width: 2, run: 5 },
+		automatic_semicolon: { word: 9, width: 5 }
+	},
 	StatementBlockTransport: { words: 9, statements: { word: 2, width: 2, run: 5 }, terminator: { word: 4, width: 5 } },
 	ElseClauseTransport: { words: 7, body: { word: 2, width: 5 } },
 	IfStatementTransport: {
@@ -681,6 +687,14 @@ export const records = {
 		terminator: { word: 12, width: 5 },
 		operator: { word: 17, width: 5 },
 		right: { word: 22, width: 5 }
+	},
+	ForHeaderUsingKindTransport: {
+		words: 23,
+		kind: { word: 3, width: 5 },
+		left: { word: 8, width: 5 },
+		terminator: { word: 2, bit: 0 },
+		operator: { word: 13, width: 5 },
+		right: { word: 18, width: 5 }
 	},
 	HtmlCommentTransport: { words: 2 },
 	JsxTextTransport: { words: 2 },

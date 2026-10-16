@@ -93,6 +93,13 @@ export function upstreamPackage(name: GrammarName): string {
 
 export const UPSTREAM_WASM = 'upstream.wasm';
 
+export const UPSTREAM_GENERATION_CONFLICTS: Readonly<Partial<Record<GrammarName, readonly (readonly string[])[]>>> = {
+	typescript: [
+		['primary_expression', 'variable_declarator'],
+		['assignment_expression', '_initializer']
+	]
+};
+
 export function packageRequire(pkg: Pick<GrammarPackage, 'dir'>): NodeJS.Require {
 	return createRequire(join(pkg.dir, 'package.json'));
 }

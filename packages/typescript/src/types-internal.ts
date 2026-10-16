@@ -107,6 +107,7 @@ export interface SubBuilderRowKind {
 	'declaration.lexical': TSKindId.LexicalDeclaration;
 	'declaration.module': TSKindId.Module;
 	'declaration.typeAlias': TSKindId.TypeAliasDeclaration;
+	'declaration.using': TSKindId.UsingDeclaration;
 	'declaration.variable': TSKindId.VariableDeclaration;
 	'enumBodyElement.assignment': TSKindId.EnumAssignment;
 	'enumBodyElement.name': TSKindId.EnumBodyElementName;
@@ -118,6 +119,7 @@ export interface SubBuilderRowKind {
 	'exportStatementDefault.from': TSKindId.ExportStatementDefaultFrom;
 	'forHeader.letConstKind': TSKindId.ForHeaderLetConstKind;
 	'forHeader.lhs': TSKindId.ForHeaderLhs;
+	'forHeader.usingKind': TSKindId.ForHeaderUsingKind;
 	'forHeader.varKind': TSKindId.ForHeaderVarKind;
 	'importSpecifier.as': TSKindId.ImportSpecifierAs;
 	'importSpecifier.name': TSKindId.ImportSpecifierName;
@@ -165,6 +167,7 @@ export interface SubBuilderRowKind {
 	'statement.declaration.lexical': TSKindId.LexicalDeclaration;
 	'statement.declaration.module': TSKindId.Module;
 	'statement.declaration.typeAlias': TSKindId.TypeAliasDeclaration;
+	'statement.declaration.using': TSKindId.UsingDeclaration;
 	'statement.declaration.variable': TSKindId.VariableDeclaration;
 	'statement.do': TSKindId.DoStatement;
 	'statement.empty': TSKindId.EmptyStatement;

@@ -756,6 +756,10 @@ The dependency name a grammar package declares for its upstream tree-sitter gram
 
 The upstream judge's file name in a grammar's `.sittir` directory, shared by the regen that writes it and the validators that read it.
 
+
+### `packages/codegen/src/grammars.ts::UPSTREAM_GENERATION_CONFLICTS`
+
+The conflict pairs an upstream grammar needs declared for tree-sitter to generate it at all, by grammar name. The upstream judge's staged grammar adds them to the unmodified upstream rules; the grammar sittir builds does not declare them, because it resolves the construct differently. Typescript lists the two its `using` syntax needs under the pinned javascript.
 ### `packages/codegen/src/grammars.ts::grammarRequire`
 
 `packageRequire` for the grammar's own package directory.

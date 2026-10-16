@@ -187,6 +187,7 @@ function derivesForm(
 			case 'PREC_LEFT':
 			case 'PREC_RIGHT':
 			case 'PREC_DYNAMIC':
+			case 'RESERVED':
 				return ends(node.content, at);
 			case PATTERN:
 			case SUPERTYPE:

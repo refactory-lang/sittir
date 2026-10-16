@@ -69,6 +69,7 @@ export function classifyByType(
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
+		case 'RESERVED':
 		case IMMEDIATE_TOKEN:
 			return anyChildNonterminal ? 'nonterminal' : 'terminal';
 		default:
@@ -93,6 +94,7 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
+		case 'RESERVED':
 		case IMMEDIATE_TOKEN:
 			return [anyRule.content as Rule<Phase>];
 		case SEQ:

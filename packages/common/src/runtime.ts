@@ -56,6 +56,17 @@ export function rejectKeywordText<T>(value: T, where: string, word: number, keyw
 	return value;
 }
 
+export function rejectReservedText<T>(value: T, where: string, word: number, reserved: ReadonlySet<string>): T {
+	if (Array.isArray(value)) {
+		for (const item of value) rejectReservedText(item, where, word, reserved);
+		return value;
+	}
+	if (isRecord(value) && value.$type === word && typeof value.$text === 'string' && reserved.has(value.$text)) {
+		throw new Error(`${where}: '${value.$text}' is a reserved word`);
+	}
+	return value;
+}
+
 export type AliasBuilder = readonly [storage: readonly number[], build: (content: unknown) => unknown];
 
 export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly AliasBuilder[]): T {

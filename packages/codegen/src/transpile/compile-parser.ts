@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { runTreeSitterCli, treeSitterCliVersion } from './tree-sitter-cli.ts';
-import { UPSTREAM_WASM, upstreamPackage } from '../grammars.ts';
+import { UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, upstreamPackage, type GrammarName } from '../grammars.ts';
 import { BASE_ENTRY } from '../grammar-shapes/emit-grammar-shape.ts';
 
 const UPSTREAM_KEY = 'upstream.json';
@@ -27,12 +27,20 @@ export function withUpstreamGrammar<T>(grammarDir: string, use: (dir: string, sc
 	try {
 		const dir = join(work, 'upstream', 'grammar');
 		mkdirSync(dir, { recursive: true });
-		writeFileSync(join(dir, 'grammar.js'), `export { default } from ${JSON.stringify(pathToFileURL(join(grammarDir, BASE_ENTRY)).href)};\n`);
+		writeFileSync(join(dir, 'grammar.js'), upstreamEntryOf(grammarDir));
 		for (const file of ['package.json', 'tree-sitter.json']) copyFileSync(join(grammarDir, '.sittir', file), join(dir, file));
 		return use(dir, syncExternalScanner(grammarDir, dir));
 	} finally {
 		rmSync(work, { recursive: true, force: true });
 	}
+}
+
+function upstreamEntryOf(grammarDir: string): string {
+	const base = JSON.stringify(pathToFileURL(join(grammarDir, BASE_ENTRY)).href);
+	const conflicts = UPSTREAM_GENERATION_CONFLICTS[grammarDir.split('/').pop() as GrammarName] ?? [];
+	if (conflicts.length === 0) return `export { default } from ${base};\n`;
+	const pairs = conflicts.map((pair) => `[${pair.map((name) => `$.${name}`).join(', ')}]`).join(', ');
+	return `import base from ${base};\nexport default grammar(base, { name: base.grammar.name, rules: {}, conflicts: ($, previous) => previous.concat([${pairs}]) });\n`;
 }
 
 export function upstreamKeyOf(dir: string, scannerFiles: readonly string[]): string {

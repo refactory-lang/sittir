@@ -36,7 +36,7 @@ function listSetters(grammar: string): ListSetter[] {
 // How many list setters the census must find in each grammar. A count that
 // moves means the grammar's surface changed, or the matcher stopped seeing
 // some setters; either way the census is no longer what it claims to cover.
-const LIST_SETTER_COUNTS: Readonly<Record<string, number>> = { python: 20, regex: 3, rust: 33, scm: 12, typescript: 29 };
+const LIST_SETTER_COUNTS: Readonly<Record<string, number>> = { python: 20, regex: 3, rust: 33, scm: 12, typescript: 30 };
 
 describe('list-valued $with setters', () => {
 	it.each(stableGrammars().map((grammar) => [grammar]))('%s: every one takes rest arguments', (grammar) => {

@@ -1,7 +1,7 @@
 import { CHOICE, FIELD, IMMEDIATE_TOKEN, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { FieldRule, Rule } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
-import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
+import { makeRuleMetadata, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { grammarRootNames, pruneOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
@@ -77,6 +77,10 @@ function canonicalTokenRule(rule: EvalRule): EvalRule {
 }
 
 function canonicalRule(rule: EvalRule): EvalRule {
+	if (rule.type === 'RESERVED') {
+		const metadata = withReservedWordsets((rule as { metadata?: unknown }).metadata, [rule.context_name]);
+		return canonicalRule(peelWrapper({ ...rule, metadata } as unknown as EvalRule));
+	}
 	if (isPrecWrapper(rule)) return canonicalRule(peelWrapper(rule));
 	switch (rule.type) {
 		case OPTIONAL:

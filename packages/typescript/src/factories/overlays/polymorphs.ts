@@ -27,6 +27,25 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
 
+const namespaceExport$default =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const namespaceExport$default$strict = namespaceExport$default(F.buildNamespaceExport, TSKindId.DefaultKeyword);
+const namespaceExport$default$coerce = namespaceExport$default(C.coerceToNamespaceExport, TSKindId.DefaultKeyword);
+export const namespaceExport = Object.freeze({
+	...B.namespaceExport,
+	default: bundle(namespaceExport$default$strict, namespaceExport$default$coerce, {
+		key: 'namespaceExport.default',
+		max: 1
+	})
+}) as unknown as typeof B.namespaceExport & {
+	default: {
+		strict: (options?: OptionsArg<typeof F.buildNamespaceExport>) => ReturnType<typeof F.buildNamespaceExport>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNamespaceExport>) => ReturnType<typeof C.coerceToNamespaceExport>;
+	};
+};
+
 const importStatement$clauseFrom =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -358,6 +377,54 @@ export const importClause = Object.freeze({
 				) => ReturnType<typeof F.buildImportClause>;
 			};
 		};
+	};
+};
+
+const usingDeclaration$automaticSemicolon =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(config as never, _m(options, { automaticSemicolon: value }) as never);
+const usingDeclaration$automaticSemicolon$strict = usingDeclaration$automaticSemicolon(
+	F.buildUsingDeclaration,
+	TSKindId.AutomaticSemicolon
+);
+const usingDeclaration$automaticSemicolon$coerce = usingDeclaration$automaticSemicolon(
+	C.coerceToUsingDeclaration,
+	TSKindId.AutomaticSemicolon
+);
+const usingDeclaration$semi =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'automaticSemicolon'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(config as never, _m(options, { automaticSemicolon: value }) as never);
+const usingDeclaration$semi$strict = usingDeclaration$semi(F.buildUsingDeclaration, TSKindId.Semi);
+const usingDeclaration$semi$coerce = usingDeclaration$semi(C.coerceToUsingDeclaration, TSKindId.Semi);
+export const usingDeclaration = Object.freeze({
+	...B.usingDeclaration,
+	automaticSemicolon: bundle(usingDeclaration$automaticSemicolon$strict, usingDeclaration$automaticSemicolon$coerce, {
+		key: 'usingDeclaration.automaticSemicolon',
+		max: 2
+	}),
+	semi: bundle(usingDeclaration$semi$strict, usingDeclaration$semi$coerce, { key: 'usingDeclaration.semi', max: 2 })
+}) as unknown as typeof B.usingDeclaration & {
+	automaticSemicolon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>,
+			options?: OptionsArg<typeof F.buildUsingDeclaration>
+		) => ReturnType<typeof F.buildUsingDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>,
+			options?: OptionsArg<typeof C.coerceToUsingDeclaration>
+		) => ReturnType<typeof C.coerceToUsingDeclaration>;
+	};
+	semi: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>,
+			options?: OptionsArg<typeof F.buildUsingDeclaration>
+		) => ReturnType<typeof F.buildUsingDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>,
+			options?: OptionsArg<typeof C.coerceToUsingDeclaration>
+		) => ReturnType<typeof C.coerceToUsingDeclaration>;
 	};
 };
 
@@ -710,6 +777,12 @@ const ambientDeclaration$variable$coerce = ambientDeclaration$variable(
 	F.buildAmbientDeclaration,
 	C.coerceToVariableDeclaration
 );
+const ambientDeclaration$using =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$using$strict = ambientDeclaration$using(F.buildAmbientDeclaration, F.buildUsingDeclaration);
+const ambientDeclaration$using$coerce = ambientDeclaration$using(F.buildAmbientDeclaration, C.coerceToUsingDeclaration);
 const ambientDeclaration$functionSignature =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -812,6 +885,30 @@ const ambientDeclaration$global$coerce = ambientDeclaration$global(
 	F.buildAmbientDeclaration,
 	C.coerceToAmbientDeclarationGlobal
 );
+const ambientDeclaration$using$automaticSemicolon =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$using$automaticSemicolon$strict = ambientDeclaration$using$automaticSemicolon(
+	F.buildAmbientDeclaration,
+	usingDeclaration.automaticSemicolon.strict
+);
+const ambientDeclaration$using$automaticSemicolon$coerce = ambientDeclaration$using$automaticSemicolon(
+	F.buildAmbientDeclaration,
+	usingDeclaration.automaticSemicolon.coerce
+);
+const ambientDeclaration$using$semi =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$using$semi$strict = ambientDeclaration$using$semi(
+	F.buildAmbientDeclaration,
+	usingDeclaration.semi.strict
+);
+const ambientDeclaration$using$semi$coerce = ambientDeclaration$using$semi(
+	F.buildAmbientDeclaration,
+	usingDeclaration.semi.coerce
+);
 export const ambientDeclaration = Object.freeze({
 	...B.ambientDeclaration,
 	function: bundle(ambientDeclaration$function$strict, ambientDeclaration$function$coerce, {
@@ -831,6 +928,21 @@ export const ambientDeclaration = Object.freeze({
 		max: 2
 	}),
 	variable: bundle(ambientDeclaration$variable$strict, ambientDeclaration$variable$coerce),
+	using: {
+		...bundle(ambientDeclaration$using$strict, ambientDeclaration$using$coerce, {
+			key: 'ambientDeclaration.using',
+			max: 2
+		}),
+		automaticSemicolon: bundle(
+			ambientDeclaration$using$automaticSemicolon$strict,
+			ambientDeclaration$using$automaticSemicolon$coerce,
+			{ key: 'ambientDeclaration.using.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(ambientDeclaration$using$semi$strict, ambientDeclaration$using$semi$coerce, {
+			key: 'ambientDeclaration.using.semi',
+			max: 2
+		})
+	},
 	functionSignature: bundle(ambientDeclaration$functionSignature$strict, ambientDeclaration$functionSignature$coerce, {
 		key: 'ambientDeclaration.functionSignature',
 		max: 2
@@ -889,6 +1001,22 @@ export const ambientDeclaration = Object.freeze({
 	variable: {
 		strict: (...args: ArgsOf<typeof F.buildVariableDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
 		coerce: (...args: ArgsOf<typeof C.coerceToVariableDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+	};
+	using: {
+		strict: (...args: ArgsOf<typeof F.buildUsingDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: (...args: ArgsOf<typeof C.coerceToUsingDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		automaticSemicolon: {
+			strict: (
+				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>
+			) => ReturnType<typeof F.buildAmbientDeclaration>;
+			coerce: (
+				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>
+			) => ReturnType<typeof F.buildAmbientDeclaration>;
+		};
+		semi: {
+			strict: (...args: ArgsOf<typeof usingDeclaration.semi.strict>) => ReturnType<typeof F.buildAmbientDeclaration>;
+			coerce: (...args: ArgsOf<typeof usingDeclaration.semi.coerce>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		};
 	};
 	functionSignature: {
 		strict: (...args: ArgsOf<typeof F.buildFunctionSignature>) => ReturnType<typeof F.buildAmbientDeclaration>;
@@ -1067,6 +1195,34 @@ export const indexSignatureMappedTypeClause = Object.freeze({
 			},
 			options?: OptionsArg<typeof C.coerceToIndexSignatureMappedTypeClause>
 		) => ReturnType<typeof C.coerceToIndexSignatureMappedTypeClause>;
+	};
+};
+
+const importSpecifierAs$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
+const importSpecifierAs$default$strict = importSpecifierAs$default(F.buildImportSpecifierAs, TSKindId.DefaultKeyword);
+const importSpecifierAs$default$coerce = importSpecifierAs$default(
+	C.coerceToImportSpecifierAs,
+	TSKindId.DefaultKeyword
+);
+export const importSpecifierAs = Object.freeze({
+	...B.importSpecifierAs,
+	default: bundle(importSpecifierAs$default$strict, importSpecifierAs$default$coerce, {
+		key: 'importSpecifierAs.default',
+		max: 2
+	})
+}) as unknown as typeof B.importSpecifierAs & {
+	default: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildImportSpecifierAs>[0], 'name'>,
+			options?: OptionsArg<typeof F.buildImportSpecifierAs>
+		) => ReturnType<typeof F.buildImportSpecifierAs>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifierAs>[0], 'name'>,
+			options?: OptionsArg<typeof C.coerceToImportSpecifierAs>
+		) => ReturnType<typeof C.coerceToImportSpecifierAs>;
 	};
 };
 
@@ -1333,6 +1489,18 @@ const exportStatementDefaultDeclarationDefaultKw$variable$coerce = exportStateme
 	F.buildExportStatementDefaultDeclarationDefaultKw,
 	C.coerceToVariableDeclaration
 );
+const exportStatementDefaultDeclarationDefaultKw$using =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$using$strict = exportStatementDefaultDeclarationDefaultKw$using(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildUsingDeclaration
+);
+const exportStatementDefaultDeclarationDefaultKw$using$coerce = exportStatementDefaultDeclarationDefaultKw$using(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToUsingDeclaration
+);
 const exportStatementDefaultDeclarationDefaultKw$functionSignature =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -1465,6 +1633,34 @@ const exportStatementDefaultDeclarationDefaultKw$value$coerce = exportStatementD
 	F.buildExportStatementDefaultDeclarationDefaultKw,
 	C.coerceToExportStatementDefaultDeclarationDefaultKwValue
 );
+const exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		usingDeclaration.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		usingDeclaration.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclarationDefaultKw$using$semi =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$using$semi$strict =
+	exportStatementDefaultDeclarationDefaultKw$using$semi(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		usingDeclaration.semi.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$using$semi$coerce =
+	exportStatementDefaultDeclarationDefaultKw$using$semi(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		usingDeclaration.semi.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$function =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -1534,6 +1730,20 @@ const exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce =
 	exportStatementDefaultDeclarationDefaultKw$ambient$variable(
 		F.buildExportStatementDefaultDeclarationDefaultKw,
 		ambientDeclaration.variable.coerce
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$using =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$using(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.using.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$using(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.using.coerce
 	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1661,6 +1871,34 @@ const exportStatementDefaultDeclarationDefaultKw$ambient$global$coerce =
 		F.buildExportStatementDefaultDeclarationDefaultKw,
 		ambientDeclaration.global.coerce
 	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.using.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.using.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$semi =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$semi$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$using$semi(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.using.semi.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$using$semi$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$using$semi(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.using.semi.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -1729,6 +1967,30 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToVariableDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+	};
+	using: {
+		strict: (
+			...args: ArgsOf<typeof F.buildUsingDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToUsingDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+		automaticSemicolon: {
+			strict: (
+				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+			coerce: (
+				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+		};
+		semi: {
+			strict: (
+				...args: ArgsOf<typeof usingDeclaration.semi.strict>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+			coerce: (
+				...args: ArgsOf<typeof usingDeclaration.semi.coerce>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+		};
 	};
 	functionSignature: {
 		strict: (
@@ -1840,6 +2102,30 @@ const exportStatementDefaultDeclarationDefaultKw: {
 			coerce: (
 				...args: ArgsOf<typeof ambientDeclaration.variable.coerce>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+		};
+		using: {
+			strict: (
+				...args: ArgsOf<typeof ambientDeclaration.using.strict>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+			coerce: (
+				...args: ArgsOf<typeof ambientDeclaration.using.coerce>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+			automaticSemicolon: {
+				strict: (
+					...args: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+				coerce: (
+					...args: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+			};
+			semi: {
+				strict: (
+					...args: ArgsOf<typeof ambientDeclaration.using.semi.strict>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+				coerce: (
+					...args: ArgsOf<typeof ambientDeclaration.using.semi.coerce>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+			};
 		};
 		functionSignature: {
 			strict: (
@@ -1963,6 +2249,23 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		exportStatementDefaultDeclarationDefaultKw$variable$strict,
 		exportStatementDefaultDeclarationDefaultKw$variable$coerce
 	),
+	using: {
+		...bundle(
+			exportStatementDefaultDeclarationDefaultKw$using$strict,
+			exportStatementDefaultDeclarationDefaultKw$using$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.using', max: 2 }
+		),
+		automaticSemicolon: bundle(
+			exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon$strict,
+			exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(
+			exportStatementDefaultDeclarationDefaultKw$using$semi$strict,
+			exportStatementDefaultDeclarationDefaultKw$using$semi$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.using.semi', max: 2 }
+		)
+	},
 	functionSignature: bundle(
 		exportStatementDefaultDeclarationDefaultKw$functionSignature$strict,
 		exportStatementDefaultDeclarationDefaultKw$functionSignature$coerce,
@@ -2033,6 +2336,23 @@ const exportStatementDefaultDeclarationDefaultKw: {
 			exportStatementDefaultDeclarationDefaultKw$ambient$variable$strict,
 			exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce
 		),
+		using: {
+			...bundle(
+				exportStatementDefaultDeclarationDefaultKw$ambient$using$strict,
+				exportStatementDefaultDeclarationDefaultKw$ambient$using$coerce,
+				{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.using', max: 2 }
+			),
+			automaticSemicolon: bundle(
+				exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon$strict,
+				exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon$coerce,
+				{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon', max: 2 }
+			),
+			semi: bundle(
+				exportStatementDefaultDeclarationDefaultKw$ambient$using$semi$strict,
+				exportStatementDefaultDeclarationDefaultKw$ambient$using$semi$coerce,
+				{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.using.semi', max: 2 }
+			)
+		},
 		functionSignature: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$strict,
 			exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$coerce,
@@ -2202,6 +2522,25 @@ const exportStatementDefaultDeclaration$variable$strict = exportStatementDefault
 const exportStatementDefaultDeclaration$variable$coerce = exportStatementDefaultDeclaration$variable(
 	C.coerceToExportStatementDefaultDeclaration,
 	C.coerceToVariableDeclaration
+);
+const exportStatementDefaultDeclaration$using =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'kind' || key === 'variableDeclarator' || key === 'automaticSemicolon') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$using$strict = exportStatementDefaultDeclaration$using(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildUsingDeclaration
+);
+const exportStatementDefaultDeclaration$using$coerce = exportStatementDefaultDeclaration$using(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToUsingDeclaration
 );
 const exportStatementDefaultDeclaration$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2396,6 +2735,36 @@ const exportStatementDefaultDeclaration$defaultKw$coerce = exportStatementDefaul
 	C.coerceToExportStatementDefaultDeclaration,
 	C.coerceToExportStatementDefaultDeclarationDefaultKw
 );
+const exportStatementDefaultDeclaration$using$automaticSemicolon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclaration$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclaration,
+		usingDeclaration.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclaration$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclaration$using$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclaration,
+		usingDeclaration.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclaration$using$semi =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$using$semi$strict = exportStatementDefaultDeclaration$using$semi(
+	F.buildExportStatementDefaultDeclaration,
+	usingDeclaration.semi.strict
+);
+const exportStatementDefaultDeclaration$using$semi$coerce = exportStatementDefaultDeclaration$using$semi(
+	C.coerceToExportStatementDefaultDeclaration,
+	usingDeclaration.semi.coerce
+);
 const exportStatementDefaultDeclaration$ambient$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2467,6 +2836,20 @@ const exportStatementDefaultDeclaration$ambient$variable$strict = exportStatemen
 const exportStatementDefaultDeclaration$ambient$variable$coerce = exportStatementDefaultDeclaration$ambient$variable(
 	C.coerceToExportStatementDefaultDeclaration,
 	ambientDeclaration.variable.coerce
+);
+const exportStatementDefaultDeclaration$ambient$using =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$using$strict = exportStatementDefaultDeclaration$ambient$using(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.using.strict
+);
+const exportStatementDefaultDeclaration$ambient$using$coerce = exportStatementDefaultDeclaration$ambient$using(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.using.coerce
 );
 const exportStatementDefaultDeclaration$ambient$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2602,6 +2985,38 @@ const exportStatementDefaultDeclaration$ambient$global$coerce = exportStatementD
 	C.coerceToExportStatementDefaultDeclaration,
 	ambientDeclaration.global.coerce
 );
+const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclaration$ambient$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.using.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclaration$ambient$using$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.using.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$using$semi =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$using$semi$strict =
+	exportStatementDefaultDeclaration$ambient$using$semi(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.using.semi.strict
+	);
+const exportStatementDefaultDeclaration$ambient$using$semi$coerce =
+	exportStatementDefaultDeclaration$ambient$using$semi(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.using.semi.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2678,6 +3093,20 @@ const exportStatementDefaultDeclaration$defaultKw$variable$coerce =
 		C.coerceToExportStatementDefaultDeclaration,
 		exportStatementDefaultDeclarationDefaultKw.variable.coerce
 	);
+const exportStatementDefaultDeclaration$defaultKw$using =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$using$strict = exportStatementDefaultDeclaration$defaultKw$using(
+	F.buildExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.using.strict
+);
+const exportStatementDefaultDeclaration$defaultKw$using$coerce = exportStatementDefaultDeclaration$defaultKw$using(
+	C.coerceToExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.using.coerce
+);
 const exportStatementDefaultDeclaration$defaultKw$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2830,6 +3259,38 @@ const exportStatementDefaultDeclaration$defaultKw$value$coerce = exportStatement
 	C.coerceToExportStatementDefaultDeclaration,
 	exportStatementDefaultDeclarationDefaultKw.value.coerce
 );
+const exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclaration$defaultKw$using$semi =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$using$semi$strict =
+	exportStatementDefaultDeclaration$defaultKw$using$semi(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.using.semi.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$using$semi$coerce =
+	exportStatementDefaultDeclaration$defaultKw$using$semi(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.using.semi.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2909,6 +3370,22 @@ const exportStatementDefaultDeclaration$defaultKw$ambient$variable$coerce =
 	exportStatementDefaultDeclaration$defaultKw$ambient$variable(
 		C.coerceToExportStatementDefaultDeclaration,
 		exportStatementDefaultDeclarationDefaultKw.ambient.variable.coerce
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$using =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$using(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.using.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$using(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.using.coerce
 	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3054,6 +3531,38 @@ const exportStatementDefaultDeclaration$defaultKw$ambient$global$coerce =
 		C.coerceToExportStatementDefaultDeclaration,
 		exportStatementDefaultDeclarationDefaultKw.ambient.global.coerce
 	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$semi =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$semi$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$using$semi(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$using$semi$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$using$semi(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -3111,6 +3620,22 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 		exportStatementDefaultDeclaration$variable$coerce,
 		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
 	),
+	using: {
+		...bundle(exportStatementDefaultDeclaration$using$strict, exportStatementDefaultDeclaration$using$coerce, {
+			key: 'exportStatementDefaultDeclaration.using',
+			max: 2
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultDeclaration$using$automaticSemicolon$strict,
+			exportStatementDefaultDeclaration$using$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultDeclaration.using.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(
+			exportStatementDefaultDeclaration$using$semi$strict,
+			exportStatementDefaultDeclaration$using$semi$coerce,
+			{ key: 'exportStatementDefaultDeclaration.using.semi', max: 2 }
+		)
+	},
 	functionSignature: bundle(
 		exportStatementDefaultDeclaration$functionSignature$strict,
 		exportStatementDefaultDeclaration$functionSignature$coerce,
@@ -3179,6 +3704,23 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 			exportStatementDefaultDeclaration$ambient$variable$coerce,
 			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
 		),
+		using: {
+			...bundle(
+				exportStatementDefaultDeclaration$ambient$using$strict,
+				exportStatementDefaultDeclaration$ambient$using$coerce,
+				{ key: 'exportStatementDefaultDeclaration.ambient.using', max: 2 }
+			),
+			automaticSemicolon: bundle(
+				exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$strict,
+				exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$coerce,
+				{ key: 'exportStatementDefaultDeclaration.ambient.using.automaticSemicolon', max: 2 }
+			),
+			semi: bundle(
+				exportStatementDefaultDeclaration$ambient$using$semi$strict,
+				exportStatementDefaultDeclaration$ambient$using$semi$coerce,
+				{ key: 'exportStatementDefaultDeclaration.ambient.using.semi', max: 2 }
+			)
+		},
 		functionSignature: bundle(
 			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
 			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
@@ -3255,6 +3797,23 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 			exportStatementDefaultDeclaration$defaultKw$variable$coerce,
 			{ key: 'exportStatementDefaultDeclaration.defaultKw.variable', max: 2 }
 		),
+		using: {
+			...bundle(
+				exportStatementDefaultDeclaration$defaultKw$using$strict,
+				exportStatementDefaultDeclaration$defaultKw$using$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.using', max: 2 }
+			),
+			automaticSemicolon: bundle(
+				exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon$strict,
+				exportStatementDefaultDeclaration$defaultKw$using$automaticSemicolon$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.using.automaticSemicolon', max: 2 }
+			),
+			semi: bundle(
+				exportStatementDefaultDeclaration$defaultKw$using$semi$strict,
+				exportStatementDefaultDeclaration$defaultKw$using$semi$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.using.semi', max: 2 }
+			)
+		},
 		functionSignature: bundle(
 			exportStatementDefaultDeclaration$defaultKw$functionSignature$strict,
 			exportStatementDefaultDeclaration$defaultKw$functionSignature$coerce,
@@ -3326,6 +3885,23 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 				exportStatementDefaultDeclaration$defaultKw$ambient$variable$coerce,
 				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.variable', max: 2 }
 			),
+			using: {
+				...bundle(
+					exportStatementDefaultDeclaration$defaultKw$ambient$using$strict,
+					exportStatementDefaultDeclaration$defaultKw$ambient$using$coerce,
+					{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.using', max: 2 }
+				),
+				automaticSemicolon: bundle(
+					exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon$strict,
+					exportStatementDefaultDeclaration$defaultKw$ambient$using$automaticSemicolon$coerce,
+					{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.using.automaticSemicolon', max: 2 }
+				),
+				semi: bundle(
+					exportStatementDefaultDeclaration$defaultKw$ambient$using$semi$strict,
+					exportStatementDefaultDeclaration$defaultKw$ambient$using$semi$coerce,
+					{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.using.semi', max: 2 }
+				)
+			},
 			functionSignature: bundle(
 				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$strict,
 				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$coerce,
@@ -3454,6 +4030,46 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 			},
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	using: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildUsingDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToUsingDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		automaticSemicolon: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		semi: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.semi.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.semi.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
 	};
 	functionSignature: {
 		strict: (
@@ -3635,6 +4251,48 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 				},
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		using: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.using.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.using.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			automaticSemicolon: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>;
+					},
+					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			};
+			semi: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.semi.strict>;
+					},
+					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.semi.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			};
 		};
 		functionSignature: {
 			strict: (
@@ -3846,6 +4504,48 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
+		using: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			automaticSemicolon: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.strict>;
+					},
+					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			};
+			semi: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.semi.strict>;
+					},
+					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.semi.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			};
+		};
 		functionSignature: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
@@ -4041,6 +4741,52 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
+			using: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.strict>;
+					},
+					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+				automaticSemicolon: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<
+								typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.strict
+							>;
+						},
+						options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+					) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<
+								typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.coerce
+							>;
+						},
+						options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+					) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+				};
+				semi: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.strict>;
+						},
+						options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+					) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.coerce>;
+						},
+						options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+					) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+				};
+			};
 			functionSignature: {
 				strict: (
 					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
@@ -4219,6 +4965,7 @@ export const declaration: {
 	readonly class: typeof B.classDeclaration;
 	readonly lexical: typeof B.lexicalDeclaration;
 	readonly variable: typeof B.variableDeclaration;
+	readonly using: typeof usingDeclaration;
 	readonly functionSignature: typeof B.functionSignature;
 	readonly abstractClass: typeof B.abstractClassDeclaration;
 	readonly module: typeof B.module;
@@ -4234,6 +4981,7 @@ export const declaration: {
 	class: B.classDeclaration,
 	lexical: B.lexicalDeclaration,
 	variable: B.variableDeclaration,
+	using: usingDeclaration,
 	functionSignature: B.functionSignature,
 	abstractClass: B.abstractClassDeclaration,
 	module: B.module,
@@ -4247,10 +4995,10 @@ export const declaration: {
 
 export const importSpecifier: {
 	readonly name: typeof B.importSpecifierName;
-	readonly as: typeof B.importSpecifierAs;
+	readonly as: typeof importSpecifierAs;
 } = Object.freeze({
 	name: B.importSpecifierName,
-	as: B.importSpecifierAs
+	as: importSpecifierAs
 });
 
 export const variableDeclarator: {
@@ -4265,10 +5013,12 @@ export const forHeader: {
 	readonly lhs: typeof B.forHeaderLhs;
 	readonly varKind: typeof B.forHeaderVarKind;
 	readonly letConstKind: typeof B.forHeaderLetConstKind;
+	readonly usingKind: typeof B.forHeaderUsingKind;
 } = Object.freeze({
 	lhs: B.forHeaderLhs,
 	varKind: B.forHeaderVarKind,
-	letConstKind: B.forHeaderLetConstKind
+	letConstKind: B.forHeaderLetConstKind,
+	usingKind: B.forHeaderUsingKind
 });
 
 export const callExpression: {

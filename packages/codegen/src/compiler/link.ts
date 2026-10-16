@@ -93,6 +93,7 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
 import { isAllTextShape } from './assemble.ts';
 import { auxTokenKinds } from './diagnostics/catalog-coverage.ts';
 import { createRuleId } from './rule-catalog.ts';
@@ -318,6 +319,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
 		relaxedLiterals: raw.relaxedLiterals,
+		relaxedDisplayLiterals: raw.relaxedDisplayLiterals,
 		fileTypes: raw.fileTypes,
 		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom, variantOf: ownedVariants(variantChildren, references) },
 		references,
@@ -931,20 +933,45 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	};
 	const wordMatcher = compileWordMatcher(raw.word, raw.rules);
 	const relaxedLiterals = new Set<string>();
-	const relaxedWord = (rule: Rule<'evaluate'>): SymbolRule<'evaluate'> | undefined => {
-		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.value !== raw.word || rule.content.type !== STRING) return undefined;
+	const relaxedDisplayLiterals = new Map<string, Set<string>>();
+	const wordDisplays = wordDisplaysOf(raw.rules, { word: raw.word ?? undefined });
+	const relaxedWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> | undefined => {
+		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.content.type !== STRING) return undefined;
+		const stands = rule.value === raw.word || wordDisplays.has(rule.value);
+		if (!stands) return undefined;
 		const literal = rule.content.value;
 		if (!matchesWordShape(literal, wordMatcher) || findEntryForLiteralText(ctx.kindEntries, literal) === undefined) return undefined;
-		relaxedLiterals.add(literal);
-		return { type: SYMBOL, name: raw.word, inline: false } as SymbolRule<'evaluate'>;
+		const word = { type: SYMBOL, name: raw.word, inline: false } as SymbolRule<'evaluate'>;
+		if (rule.value === raw.word) {
+			relaxedLiterals.add(literal);
+			return word;
+		}
+		relaxedDisplayLiterals.set(rule.value, (relaxedDisplayLiterals.get(rule.value) ?? new Set<string>()).add(literal));
+		return { ...rule, content: word };
 	};
 	const dedupeWordArms = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		if (rule.type !== CHOICE) return rule;
-		const isWordArm = (member: Rule<'evaluate'>): boolean => member.type === SYMBOL && member.name === raw.word && member.literal === undefined;
-		const arms = rule.members.filter(isWordArm);
-		if (arms.length < 2) return rule;
-		const kept = arms.find((arm) => arm.annotations?.variant === raw.word) ?? arms.find((arm) => arm.annotations !== undefined) ?? arms[0]!;
-		const members = rule.members.filter((member) => !isWordArm(member) || member === kept);
+		const wordArmKey = (member: Rule<'evaluate'>): string | undefined => {
+			if (member.type === SYMBOL && member.name === raw.word && member.literal === undefined) return raw.word;
+			if (member.type === ALIAS && member.named && member.value !== raw.word && wordDisplays.has(member.value) && member.content.type === SYMBOL && member.content.name === raw.word) {
+				return `alias:${member.value}`;
+			}
+			return undefined;
+		};
+		const armsByKey = new Map<string, Rule<'evaluate'>[]>();
+		for (const member of rule.members) {
+			const key = wordArmKey(member);
+			if (key !== undefined) armsByKey.set(key, [...(armsByKey.get(key) ?? []), member]);
+		}
+		const kept = new Map<string, Rule<'evaluate'>>();
+		for (const [key, arms] of armsByKey) {
+			kept.set(key, arms.find((arm) => arm.annotations?.variant === raw.word) ?? arms.find((arm) => arm.annotations !== undefined) ?? arms[0]!);
+		}
+		const members = rule.members.filter((member) => {
+			const key = wordArmKey(member);
+			return key === undefined || kept.get(key) === member;
+		});
+		if (members.length === rule.members.length) return rule;
 		return members.length === 1 ? members[0]! : { ...rule, members };
 	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
@@ -971,7 +998,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 			hidden: isSurfaceHiddenKind(name, ctx.kindEntries)
 		};
 	}
-	if (relaxedLiterals.size === 0 || raw.word === null) return { ...raw, rules };
+	const displayLiterals = Object.fromEntries([...relaxedDisplayLiterals].map(([display, literals]) => [display, [...literals]]));
+	if ((relaxedLiterals.size === 0 && relaxedDisplayLiterals.size === 0) || raw.word === null) return { ...raw, rules };
 	const isWordOnly = (name: string): boolean => {
 		const body = rules[name];
 		return name !== raw.word && (body?.hidden === true || raw.inline.includes(name)) && body?.type === SYMBOL && body.name === raw.word;
@@ -987,7 +1015,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 		...raw,
 		rules: kept,
 		inline: raw.inline.filter((name) => !dissolved.has(name)),
-		relaxedLiterals: [...relaxedLiterals]
+		relaxedLiterals: [...relaxedLiterals],
+		relaxedDisplayLiterals: displayLiterals
 	};
 }
 
