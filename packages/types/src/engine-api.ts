@@ -113,7 +113,8 @@ export interface Language<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly fileTypes: readonly string[];
 	/**
-	 * The language's guards, the same object as every engine's `is`. Each narrows a node of this language by its kind, and refuses
+	 * The language's guards, the same object as every engine's `is` (an engine of a descriptor copied from another binds the guards
+	 * to the copy instead). Each narrows a node of this language by its kind, and refuses
 	 * a node of another language or a value no engine stamped. A supertype or member guard also takes a bare kind id, and passes
 	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine.
 	 */

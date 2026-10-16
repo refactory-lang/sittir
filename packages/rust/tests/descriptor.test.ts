@@ -46,6 +46,17 @@ describe('the rust descriptor shares is and kinds with its engines', () => {
 		expect(engine.kinds).toBe(rust.kinds);
 	});
 
+	it('binds a copied descriptor engine guards to the copy, as its node checks are', async () => {
+		const copy = { ...rust };
+		const engine = await createEngine(copy);
+		const own = only(engine.parse(RUST_SOURCE).$query().$descendants.ofType(rust.kinds.FunctionItem));
+		const original = only((await createEngine(rust)).parse(RUST_SOURCE).$query().$descendants.ofType(rust.kinds.FunctionItem));
+		expect([engine.isNode(own), engine.is.functionItem(own)]).toEqual([true, true]);
+		expect([engine.isNode(original), engine.is.functionItem(original)]).toEqual([false, false]);
+		expect(engine.is).not.toBe(rust.is);
+		expect(engine.is).toBe((await createEngine(copy)).is);
+	});
+
 	it('keeps a portable engine own is', async () => {
 		expect(rust.is).toBeDefined();
 		const engine = await createEngine(rust, { api: 'portable' });

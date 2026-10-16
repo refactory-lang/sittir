@@ -22,7 +22,7 @@ import type {
 	StructureTable
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
-import { inLanguage as inLanguageOf, languageGuards } from './language.ts';
+import { guardsOf, inLanguage as inLanguageOf, languageGuards } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
@@ -208,7 +208,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const engine: Engine<API> = {
 		...identity,
 		build,
-		is: language.is,
+		is: guardsOf(language),
 		kinds: language.kinds,
 		types: undefined as unknown as API['types'],
 		diagnostics: {
