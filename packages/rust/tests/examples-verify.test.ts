@@ -1,9 +1,6 @@
-// Runtime verification of the COMPILE-CHECKED use-case examples
-// (01/02/07/09 — the `type-check:examples` include set): every export of
-// those modules executes against the native engine and produces the
-// output the guide promises. Typecheck pins the surface; this suite pins
-// the behavior. The pending-surface examples (03–06, 08, 10–16) join as
-// their APIs land.
+// Runtime verification of the rust use-case examples the guide relies on:
+// each export asserted here produces the output the guide promises.
+// `type-check:examples` pins the surface; this suite pins the behavior.
 import { describe, expect, it } from 'vitest';
 import {
 	explicitMainFunction,
@@ -11,13 +8,12 @@ import {
 	looseGreetFunction,
 	minimalMainFunction,
 	immutableFunctionUpdates,
-	structSideBySide
+	strictAndLooseFunctions
 } from '../../../examples/01-construct-nodes.ts';
 import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
-import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
@@ -62,7 +58,7 @@ describe('examples/01 construct nodes', () => {
 		expect(immutableFunctionUpdates().$render()).toContain('greet');
 	});
 	it('strict and loose spellings render identically', () => {
-		const { strictFn, looseFn } = structSideBySide();
+		const { strictFn, looseFn } = strictAndLooseFunctions();
 		expect(strictFn.$render()).toBe(looseFn.$render());
 	});
 });
@@ -232,14 +228,6 @@ describe('ir entry ratchet', () => {
 		// enum-of-literals leaves are not, their values being kind ids.)
 		const builders = Object.keys(rs.build).filter((k) => typeof (rs.build as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(219);
-	});
-});
-
-// The strict half: the same items through `.strict` alone, so each gap lands on
-// the layer that owns it.
-describe('examples/17 dogfood rust — strict factory surface', () => {
-	it('builds the items the public surface can reach', () => {
-		expect(rebuildSpliceStrict().$render()).toContain('pub enum SpliceError');
 	});
 });
 

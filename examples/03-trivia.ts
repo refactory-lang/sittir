@@ -15,15 +15,6 @@ export function attachDocComment() {
 	return fn.$render();
 }
 
-export function attachLeadingTrivia() {
-	return rs.build.statement.function({
-		visibilityModifier: 'crate',
-		name: 'main',
-		parameters: rs.build.parameters.strict(),
-		body: rs.build.block.strict(),
-	}).$trivia.leading(rs.build.lineComment.docOuter('Main entry point.'));
-}
-
 export function commentAnEmptyBody() {
 	return rs.build.statement
 		.function({

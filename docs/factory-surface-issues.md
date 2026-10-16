@@ -105,8 +105,7 @@ by a route the census does not measure: the variant form their parent declares,
 where the entry is the CHILD's own builder namespaced under the parent
 (`ir.importStatement.clauseFrom.strict` is `F.buildImportStatementClauseFrom`),
 yielding the child kind for the caller to seat. That is the alias-form
-convention `examples/18-dogfood-typescript-strict.ts` already documents and
-spells by hand.
+convention.
 
 | kind | declared form |
 | --- | --- |
@@ -618,13 +617,9 @@ and names the real slot keys. Four conventions account for most confusion:
 
 ## Where the examples stand
 
-`examples/17-dogfood-rust-strict.ts`, `18-dogfood-typescript-strict.ts` and
-`19-dogfood-python-strict.ts` each rebuild their whole target file through the
-factory surface and name a row above only where it bites (`17` marks L2). The
-hand-written loose rebuilds that once sat beside them are retired: their gap
-commentary named calling mistakes from the earlier worklist rather than surface
-limits, and the generated loose rebuilds below prove the same targets on the
-same surface with no hand-authored second derivation.
+The dogfood targets have no hand-written rebuilds. The generated strict and
+loose rebuilds below prove each target on both surfaces with no hand-authored
+second derivation.
 
 ### The generated rebuilds
 
