@@ -66,7 +66,7 @@ Carried forward unchanged:
 
 - **`grammar` is the runtime's own function.** That is tree-sitter's under the CLI and sittir's `grammarFn` under `evaluate()`; each runtime installs it as a global, and layer files call the global.
   - `authoring-globals.d.ts` declares its type, generic over the base.
-  - TypeScript infers `wire`'s base type from the call's contextual return type, so `wire(config)` is checked against the base's rule names. A reduced type probe confirmed it: an `edits` key and a `$.name` that the base lacks are both type errors.
+  - TypeScript infers `wire`'s base type from the call's contextual return type, so `wire(config)` is checked against the base. A `$.name` that the base lacks is a type error, as a reduced type probe confirmed, and so is an `edits` path that a base kind lacks (§2.1).
 - **`enrich(base)` is the base half, and `wire(config)` is the options half.** Neither sees the other when it is called; §1.2 says where they meet.
 - **`name`** defaults to the base's. `wire` sets `options.name` when it completes the layer, before the runtime reads it.
 - **Imports run upward.** Each layer imports the one below it, so grammar.sittir.ts no longer imports grammar.bindings.ts.
@@ -286,8 +286,10 @@ edits: {
 - **An entry** is one of:
   - a verb call without its target (§3), for example `field('name')`, `alias('name')`, `variant('name')`, `narrow(…)`, `lead(…)` or `rename('to')`. Such entries are placeholders, which is why a generated layer can be plain data;
   - a rule, or `($, member) => rule`, which replaces the member (§3.2).
-- **Keys are type-checked** against the base's kinds at every layer, through the base type that `wire` infers (§1.1). `EditsCheck` is today's `PatchesCheck`, renamed. A key that names no rule when the layer evaluates is `edit-site-missing`.
-- **A key names a rule** of the layer's base or of its own `rules:`. A copy takes its edits where it is made: `replace(copy(…), path, rule)` or `edit(copy(…), sets)` (§4.1).
+- **Paths are type-checked** at every layer, through the base type that `wire` infers (§1.1). A key that names a kind of that type has each path checked against the kind, and a path the kind lacks is a type error. `EditsCheck` is today's `PatchesCheck`, renamed.
+  - A key that the type lacks is not checked, because it may name a kind the type does not carry: a rule of the layer's `rules:`, or a kind that enrich or the layer mints.
+  - A key that names no rule when the layer evaluates is `edit-site-missing`.
+- **A key names a rule** of the layer's base (enrich's mints included), of its own `rules:`, or a kind the layer itself mints (the rule of a `variant` or `alias` entry). A copy takes its edits where it is made: `replace(copy(…), path, rule)` or `edit(copy(…), sets)` (§4.1).
 
 ### 2.2 Addressing
 
