@@ -65,7 +65,7 @@ export function immutableFunctionUpdates() {
 		.$with.body(rs.build.block.strict());
 }
 
-export function structSideBySide() {
+export function strictAndLooseFunctions() {
 	const strictFn = rs.build.statement.function.strict({
 		visibilityModifier: rs.build.visibilityModifier.pub(),
 		name: rs.build.identifier('config'),
