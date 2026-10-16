@@ -87,6 +87,23 @@ describe('semantic-gap reauthoring witnesses', () => {
 	});
 });
 
+describe('a witnessed cause given an empty witness array', () => {
+	const upstreamRules = { tuple: { type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'STRING', value: ')' }] } };
+	it.each(['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'accepts-invalid-syntax'] as const)(
+		'%s is a mismatch',
+		(cause) => {
+			const ds = diagnose({
+				ruleCauses: { tuple: { kind: 'reauthored', cause, witnesses: [] as never } },
+				enriched: enriched({ ruleNames: new Set(['tuple']) }),
+				upstreamRules,
+				authoredRules: upstreamRules
+			});
+			expect(codesOf(ds)).toEqual(['rule-cause-mismatch:tuple']);
+			expect(ds[0]!.message).toContain('declares no witness');
+		}
+	);
+});
+
 describe('diagnoseRuleCauses', () => {
 	it('a reauthored rule provoked by a code of its cause class is silent, whether or not that code blocks yet', () => {
 		const ds = diagnose({
@@ -301,6 +318,29 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 		const ds = check([witness], upstreamRules);
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
 		expect(ds[0]!.message).toContain('the authored rule still derives');
+	});
+
+	it('is a mismatch when the authored grammar has no rule of the witness kind', () => {
+		const ds = check([witness], {});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain("no authored rule 'getter'");
+	});
+
+	it('is a mismatch when the authored rule still derives the form through a rule sittir minted', () => {
+		const ds = check([witness], { getter: sym('getter_accessor'), getter_accessor: upstreamRules.getter });
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain('the authored rule still derives');
+	});
+
+	it('reads a symbol upstream also declares as a witness item, not as its body', () => {
+		const withName = { ...upstreamRules, name: str('x') };
+		const ds = diagnose({
+			ruleCauses: { getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: [witness] } },
+			enriched: enriched({ ruleNames: new Set(Object.keys(withName)) }),
+			upstreamRules: withName,
+			authoredRules: { ...authoredRules, name: str('x') }
+		});
+		expect(ds).toEqual([]);
 	});
 
 	it('is a mismatch when the witness cites no production', () => {

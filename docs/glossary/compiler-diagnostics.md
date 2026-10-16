@@ -559,8 +559,9 @@ reason: no diagnostic provokes them, their witnesses are their justification
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeWitnesses`
 
-The loop every witnessed cause shares. A declaration without witnesses is a
-`rule-cause-mismatch`; otherwise each witness is judged in order, and the first
+The loop every witnessed cause shares. A declaration without witnesses, or with
+an empty array, is a `rule-cause-mismatch`: grammar files are not type-checked,
+so the non-empty tuple type alone does not hold it; otherwise each witness is judged in order, and the first
 that fails is the `rule-cause-mismatch`, naming its index and text. The
 mismatch message ends with the cause's own requirement, which the caller states.
 
@@ -578,9 +579,9 @@ which rule wins, and a test parses every declared witness text with it. The same
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::derivesForm`
 
 Whether a rule can produce a sequence of literal tokens and symbols. A string
-matches its literal; a symbol matches an item naming it, and a hidden symbol
-(leading underscore) is also expanded into its own body, since it leaves no
-node of its own. Sequences, choices, optionals and repeats are followed; fields,
+matches its literal; a symbol matches an item naming it, and a symbol the caller
+expands is also followed into its own body. By default only hidden symbols
+(leading underscore) expand, since they leave no node of its own. Sequences, choices, optionals and repeats are followed; fields,
 aliases and tokens are transparent. A hidden rule re-entered at the same
 position derives nothing new and is cut, so left recursion terminates.
 
@@ -609,11 +610,18 @@ The claim is that upstream accepts a form the language's productions exclude,
 and the authored rule does not. For each witness:
 - it must cite the excluding `production`;
 - the upstream rule named by its `kind` must derive its `form`;
-- the authored rule of that name must not.
-A failure on any of these is a `rule-cause-mismatch`. Rules alone cannot show
+- the grammar must author a rule of that name, and that rule must not derive
+  the `form`.
+The authored check also follows every rule sittir added, hidden or not (any rule
+upstream does not declare). An authored body that moves the excluded form into
+a minted variant still accepts it, so it counts as deriving it. Upstream's own
+symbols stay items, as in the upstream check. A failure on any of these is a
+`rule-cause-mismatch`. Rules alone cannot show
 what the built parser does, so the reauthor-witness test parses every witness
-text with both parsers. Upstream's must accept it, and sittir's must report an
-error confined to the witness's own top-level statement.
+text with both parsers. Upstream's must accept it. Sittir's parses the text
+between two valid statements of the grammar and must report an error. Every
+error must lie within the witness's text, and both surrounding statements must
+parse clean, so a recovery that swallows a neighbour fails.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
 

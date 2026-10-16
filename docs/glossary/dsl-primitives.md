@@ -293,7 +293,8 @@ that excludes it, cited from the language's own grammar (an ECMAScript or
 TypeScript spec section, Python's PEG grammar, the Rust Reference). The gate
 checks that upstream's `kind` derives the form and the authored `kind` does not.
 A test checks the text against both parsers: upstream's accepts it, and
-sittir's reports an error confined to the witness's own top-level statement.
+sittir's reports an error that stays within the witness's text when it is
+parsed between two valid statements.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::Witnesses`
 

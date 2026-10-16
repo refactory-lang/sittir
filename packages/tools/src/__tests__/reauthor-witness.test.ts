@@ -20,42 +20,66 @@ for (const grammar of await invoke('grammars', 'allGrammars')) {
 	}
 }
 
-interface ParsedWitness {
-	readonly kinds: Set<string>;
-	readonly hasError: boolean;
-	readonly errorStatements: Set<number>;
-	readonly rootIsError: boolean;
-}
+type Language = Awaited<ReturnType<typeof loadLanguageForGrammar>>['lang'];
+type Tree = NonNullable<ReturnType<InstanceType<Awaited<ReturnType<typeof loadWebTreeSitter>>['Parser']>['parse']>>;
 
-async function parseWith(lang: Awaited<ReturnType<typeof loadLanguageForGrammar>>['lang'], text: string): Promise<ParsedWitness> {
+const SENTINELS: Readonly<Record<string, readonly [string, string]>> = {
+	typescript: ['let sittirBefore = 0;\n', 'let sittirAfter = 0;\n'],
+	python: ['sittir_before = 0\n', 'sittir_after = 0\n'],
+	rust: ['fn sittir_before() {}\n', 'fn sittir_after() {}\n']
+};
+
+async function parse(lang: Language, source: string): Promise<Tree> {
 	const { Parser } = await loadWebTreeSitter();
 	const parser = new Parser();
 	parser.setLanguage(lang);
-	const tree = parser.parse(text);
-	if (!tree) throw new Error(`parser returned no tree for ${JSON.stringify(text)}`);
-	const kinds = new Set<string>();
-	const errorStatements = new Set<number>();
-	const pending = tree.rootNode.children.flatMap((child, index) => (child === null ? [] : [{ node: child, statement: index }]));
-	for (let entry = pending.pop(); entry !== undefined; entry = pending.pop()) {
-		const { node, statement } = entry;
-		kinds.add(node.type);
-		if (node.isError || node.isMissing) errorStatements.add(statement);
-		for (const child of node.children) if (child !== null) pending.push({ node: child, statement });
-	}
-	return { kinds, hasError: tree.rootNode.hasError, errorStatements, rootIsError: tree.rootNode.isError };
+	const tree = parser.parse(source);
+	if (!tree) throw new Error(`parser returned no tree for ${JSON.stringify(source)}`);
+	return tree;
 }
 
-async function upstreamParse(grammar: string, text: string): Promise<ParsedWitness> {
+function nodesOf(tree: Tree): Tree['rootNode'][] {
+	const nodes: Tree['rootNode'][] = [];
+	const pending = [tree.rootNode];
+	for (let node = pending.pop(); node !== undefined; node = pending.pop()) {
+		nodes.push(node);
+		for (const child of node.children) if (child !== null) pending.push(child);
+	}
+	return nodes;
+}
+
+async function upstreamParse(grammar: string, text: string): Promise<{ kinds: Set<string>; hasError: boolean }> {
 	const wasm = upstreamWasmPath(grammar);
 	if (wasm === undefined) throw new Error(`no upstream parser for ${grammar}`);
 	const { Language } = await loadWebTreeSitter();
-	return parseWith(await Language.load(wasm), text);
+	const tree = await parse(await Language.load(wasm), text);
+	return { kinds: new Set(nodesOf(tree).map((node) => node.type)), hasError: tree.rootNode.hasError };
 }
 
-async function sittirParse(grammar: string, text: string): Promise<ParsedWitness> {
+async function sittirRejection(grammar: string, text: string): Promise<{ hasError: boolean; confined: boolean }> {
+	const sentinels = SENTINELS[grammar];
+	if (sentinels === undefined) throw new Error(`no sentinel statements for ${grammar}: add a valid statement pair to SENTINELS`);
 	const { lang, isOverride } = await loadLanguageForGrammar(grammar);
 	if (!isOverride) throw new Error(`${grammar} has no .sittir/parser.wasm to judge its authored rules`);
-	return parseWith(lang, text);
+	const [before, after] = sentinels;
+	const witness = text.endsWith('\n') ? text : `${text}\n`;
+	const tree = await parse(lang, before + witness + after);
+	const [start, end] = [before.length, before.length + witness.length];
+	const root = tree.rootNode;
+	const first = root.child(0);
+	const last = root.child(root.childCount - 1);
+	const confined =
+		!root.isError &&
+		first !== null &&
+		!first.hasError &&
+		first.endIndex <= start &&
+		last !== null &&
+		!last.hasError &&
+		last.startIndex >= end &&
+		nodesOf(tree)
+			.filter((node) => node.isError || node.isMissing)
+			.every((node) => node.startIndex >= start && node.endIndex <= end);
+	return { hasError: root.hasError, confined };
 }
 
 describe('reauthoring grammar witnesses', () => {
@@ -72,11 +96,6 @@ describe('reauthoring grammar witnesses', () => {
 		expect(hasError).toBe(false);
 		expect(kinds.has(kind)).toBe(true);
 		if (cause === 'accepts-other-kind') expect(kinds.has(rule)).toBe(false);
-		if (cause === 'accepts-invalid-syntax') {
-			const sittir = await sittirParse(grammar, text);
-			expect(sittir.hasError).toBe(true);
-			expect(sittir.rootIsError).toBe(false);
-			expect(sittir.errorStatements.size).toBe(1);
-		}
+		if (cause === 'accepts-invalid-syntax') expect(await sittirRejection(grammar, text)).toEqual({ hasError: true, confined: true });
 	});
 });

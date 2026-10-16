@@ -126,7 +126,14 @@ function judgeVocabulary(grammar: string, name: string, enriched: StageDiagnosis
 	);
 }
 
-function derivesForm(rules: GrammarRules, rule: Rule<'evaluate'>, form: readonly WitnessFormItem[]): boolean {
+const expandsHidden = (name: string): boolean => name.startsWith('_');
+
+function derivesForm(
+	rules: GrammarRules,
+	rule: Rule<'evaluate'>,
+	form: readonly WitnessFormItem[],
+	expands: (name: string) => boolean = expandsHidden
+): boolean {
 	const expanding = new Set<string>();
 	const ends = (node: Rule<'evaluate'>, at: number): number[] => {
 		const item = form[at];
@@ -135,7 +142,7 @@ function derivesForm(rules: GrammarRules, rule: Rule<'evaluate'>, form: readonly
 				return item === node.value ? [at + 1] : [];
 			case SYMBOL: {
 				if (typeof item === 'object' && item.symbol === node.name) return [at + 1];
-				const body = node.name.startsWith('_') ? rules[node.name] : undefined;
+				const body = expands(node.name) ? rules[node.name] : undefined;
 				const key = `${node.name}@${at}`;
 				if (body === undefined || expanding.has(key)) return [];
 				expanding.add(key);
@@ -202,7 +209,7 @@ function judgeWitnesses<W extends OtherKindWitness>(
 			`rules: '${name}' is declared reauthored('${cause}') but ${reason}. ${requirement}`,
 			{ cause, ...(witness === undefined ? {} : { witness }) }
 		);
-	if (witnesses === undefined) return mismatch('declares no witness');
+	if (witnesses === undefined || witnesses.length === 0) return mismatch('declares no witness');
 	for (const [index, witness] of witnesses.entries()) {
 		const reason = judge(witness);
 		if (reason !== undefined) return mismatch(`for witness ${index} ('${witness.text}'), ${reason}`, witness);
@@ -280,7 +287,9 @@ function judgeInvalidWitnesses(
 			if (upstream === undefined) return `upstream declares no rule '${witness.kind}'`;
 			if (!derivesForm(upstreamRules, upstream, witness.form)) return `upstream '${witness.kind}' does not derive the witness form`;
 			const authored = authoredRules[witness.kind];
-			if (authored !== undefined && derivesForm(authoredRules, authored, witness.form))
+			if (authored === undefined) return `the grammar has no authored rule '${witness.kind}'`;
+			const minted = (rule: string): boolean => expandsHidden(rule) || !Object.hasOwn(upstreamRules, rule);
+			if (derivesForm(authoredRules, authored, witness.form, minted))
 				return `the authored rule still derives the witness form through '${witness.kind}'`;
 			return undefined;
 		}
