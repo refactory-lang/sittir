@@ -1,5 +1,6 @@
-import type { PortableCondition, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableCondition, QueryPlan, QuerySubject, SlotFlagRefusal, SlotSubject } from '@sittir/types';
 import type { MemberRoute, SlotStep } from '../../../bindings/routes.ts';
+import type { AssembledNode, AssembledNonterminal } from '../../../compiler/model/node-map.ts';
 import { keywordTestOf, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
 
 export interface ClaimFlag {
@@ -86,4 +87,51 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 	}
 	for (const flag of contextual) plans.set(flag, null);
 	return plans;
+}
+
+export type SlotFlag = readonly number[] | SlotFlagRefusal;
+
+export interface SlotFlagsInput {
+	readonly nodes: Iterable<AssembledNode>;
+	readonly kindsOf: (slot: AssembledNonterminal) => readonly string[];
+	readonly plans: ReadonlyMap<string, ReadonlyMap<string, QueryPlan | null>>;
+	readonly typeOf: (kind: string) => number | undefined;
+	readonly typesOf: (kind: string) => readonly number[];
+}
+
+const isAlways = (plan: QueryPlan): boolean => plan.op === 'and' && plan.of.length === 0;
+
+export interface SlotFlagsRow {
+	readonly node: AssembledNode;
+	readonly slots: ReadonlyMap<string, ReadonlyMap<string, SlotFlag>>;
+}
+
+export function slotFlagsOf({ nodes, kindsOf, plans, typeOf, typesOf }: SlotFlagsInput): Map<number, SlotFlagsRow> {
+	const rows = new Map<number, SlotFlagsRow>();
+	for (const node of nodes) {
+		if (node.kindId === undefined || node.slots.length === 0) continue;
+		const slots = new Map<string, Map<string, SlotFlag>>();
+		for (const slot of node.slots) {
+			const flags = new Map<string, SlotFlag>();
+			for (const kind of kindsOf(slot)) {
+				for (const [flag, plan] of plans.get(kind) ?? []) {
+					const held = flags.get(flag);
+					if (held !== undefined && !Array.isArray(held)) continue;
+					if (plan === null || !isAlways(plan)) {
+						const id = typeOf(kind);
+						if (id !== undefined) flags.set(flag, { kind: id, context: plan === null });
+						continue;
+					}
+					flags.set(flag, [...new Set([...((held as readonly number[] | undefined) ?? []), ...typesOf(kind)])].sort((a, b) => a - b));
+				}
+			}
+			if (flags.size > 0) slots.set(slot.propertyName, new Map([...flags].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))));
+		}
+		if (slots.size === 0) continue;
+		const claimed = rows.get(node.kindId);
+		if (claimed !== undefined && JSON.stringify([...claimed.slots].map(([k, v]) => [k, [...v]])) !== JSON.stringify([...slots].map(([k, v]) => [k, [...v]])))
+			throw new Error(`portable: kind id ${node.kindId} ('${node.kind}') has two slot flag tables`);
+		rows.set(node.kindId, { node, slots });
+	}
+	return new Map([...rows].sort(([a], [b]) => a - b));
 }

@@ -5,6 +5,11 @@ import { displayNameOf } from './display-name.ts';
 
 export type SupertypeMembers = ReadonlyMap<string, readonly string[]>;
 
+export function memberKindsOf(kind: string, nodeMap: NodeMap): readonly string[] {
+	const node = nodeMap.nodes.get(kind);
+	return node instanceof AssembledEnum && node.resolvedKinds.length > 0 ? node.resolvedKinds : [kind];
+}
+
 export function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 	const out = new Map<string, string[]>();
 	for (const [supertype, members] of buildMembersMap(nodeMap, (node) => (node instanceof AssembledSupertype ? node.subtypeNames : null))) {
@@ -28,7 +33,7 @@ function buildMembersMap(nodeMap: NodeMap, directMembers: (node: unknown) => rea
 		seen.add(kind);
 		const node = nodeMap.nodes.get(kind);
 		if (!node) return [kind];
-		if (node instanceof AssembledEnum) return node.resolvedKinds.length > 0 ? [...node.resolvedKinds] : [kind];
+		if (node instanceof AssembledEnum) return [...memberKindsOf(kind, nodeMap)];
 		const direct = directMembers(node);
 		if (direct === null) return [kind];
 		const members = new Set<string>();

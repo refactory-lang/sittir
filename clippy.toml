@@ -1,1 +1,14 @@
-disallowed-methods = [{ path = "tree_sitter::Node::kind_id", reason = "kinds are keyed by grammar id; use grammar_id(), or display_id() at an alias envelope" }]
+disallowed-methods = [
+    { path = "tree_sitter::Node::kind_id", reason = "kinds cross as KindId: use read::display_id at an alias envelope, read::grammar_id elsewhere" },
+    { path = "tree_sitter::Node::grammar_id", reason = "kinds cross as KindId: use read::grammar_id" },
+    { path = "tree_sitter::Language::node_kind_for_id", reason = "kinds cross as KindId: use read::kind_name" },
+    { path = "tree_sitter::Language::id_for_node_kind", reason = "kinds cross as KindId: use read::kind_named" },
+    { path = "tree_sitter::TreeCursor::field_id", reason = "fields cross as FieldId: use read::field_id" },
+    { path = "tree_sitter::Node::child_by_field_id", reason = "fields cross as FieldId: use read::child_by_field" },
+    { path = "tree_sitter::Language::field_name_for_id", reason = "fields cross as FieldId: use read::field_name" },
+    { path = "tree_sitter::TreeCursor::descendant_index", reason = "nodes cross as NodeIndex: use read::index_of from the root, read::offset_of below a subtree" },
+    { path = "tree_sitter::TreeCursor::goto_descendant", reason = "nodes cross as NodeIndex: use read::goto" },
+    { path = "tree_sitter::Node::start_byte", reason = "offsets cross as u32: use types::Span::of" },
+    { path = "tree_sitter::Node::end_byte", reason = "offsets cross as u32: use types::Span::of" },
+    { path = "tree_sitter::Node::byte_range", reason = "offsets cross as u32: use types::Span::of, and Span::range to slice" },
+]

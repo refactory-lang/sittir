@@ -1,0 +1,18 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"skipLibCheck": false,
+		"composite": false,
+		"declaration": false,
+		"declarationMap": false,
+		"incremental": false,
+		"types": [
+			"node"
+		]
+	},
+	"include": [
+		"packages/*/native/index.d.ts"
+	],
+	"references": []
+}

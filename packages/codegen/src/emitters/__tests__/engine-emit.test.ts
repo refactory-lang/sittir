@@ -81,9 +81,9 @@ describe('emitApi', () => {
 		expect(output).not.toContain('portable');
 		expect(output).not.toContain('queryFlags');
 		const bound = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', portable: true });
-		expect(bound).toContain("import { portable, queryFlags } from './portable.js';");
+		expect(bound).toContain("import { portable, queryFlags, querySlotFlags } from './portable.js';");
 		expect(bound).toContain('readonly portable: typeof portable;');
-		expect(bound).toContain('\tportable,\n\tqueryFlags\n});');
+		expect(bound).toContain('\tportable,\n\tqueryFlags,\n\tquerySlotFlags\n});');
 	});
 
 	it("hands the engine the package's render module hash", () => {

@@ -11,21 +11,81 @@ import { parseNativeFixture, tryLoadNativeEngine } from './helpers.ts';
  * itself instead of relying on a later lookup to fail.
  */
 const invalidTreeIds = [
-	{ label: 'NaN tree id', treeId: Number.NaN, expected: /treeId must be a finite number/ },
-	{ label: 'infinite tree id', treeId: Number.POSITIVE_INFINITY, expected: /treeId must be a finite number/ },
-	{ label: 'negative tree id', treeId: -1, expected: /treeId must not be negative/ },
-	{ label: 'fractional tree id', treeId: 1.5, expected: /treeId must be a whole number/ },
+	{ label: 'NaN tree id', treeId: Number.NaN, expected: /TreeId must be a finite number/ },
+	{ label: 'infinite tree id', treeId: Number.POSITIVE_INFINITY, expected: /TreeId must be a finite number/ },
+	{ label: 'negative tree id', treeId: -1, expected: /TreeId must not be negative/ },
+	{ label: 'fractional tree id', treeId: 1.5, expected: /TreeId must be a whole number/ },
 	{ label: 'tree id past exact-integer range', treeId: 2 ** 53, expected: /beyond the exact-integer range/ }
 ] as const;
 
 const invalidIndexes = [
-	{ label: 'NaN index', index: Number.NaN, expected: /index must be a finite number/ },
-	{ label: 'negative index', index: -1, expected: /index must not be negative/ },
-	{ label: 'fractional index', index: 2.5, expected: /index must be a whole number/ }
+	{ label: 'NaN index', index: Number.NaN, expected: /NodeIndex must be a finite number/ },
+	{ label: 'negative index', index: -1, expected: /NodeIndex must not be negative/ },
+	{ label: 'fractional index', index: 2.5, expected: /NodeIndex must be a whole number/ }
 ] as const;
+
+/** A kind id crosses the same way, as the `$type` of a coordinate in a slot. */
+const invalidKindIds = [
+	{ label: 'NaN kind id', $type: Number.NaN, expected: /KindId must be a finite number/ },
+	{ label: 'negative kind id', $type: -1, expected: /KindId must not be negative/ },
+	{ label: 'fractional kind id', $type: 1.5, expected: /KindId must be a whole number/ },
+	{ label: 'kind id past u16', $type: 2 ** 16 + 5, expected: /KindId 65541 does not fit a u16/ }
+] as const;
+
+/** A byte offset crosses the same way: a coordinate's `$span`, or the byte a snapshot measures from. */
+const invalidOffsets = [
+	{ label: 'negative offset', offset: -1, expected: /must not be negative/ },
+	{ label: 'fractional offset', offset: 0.5, expected: /must be a whole number/ },
+	{ label: 'offset past u32', offset: 2 ** 32, expected: /does not fit a u32/ }
+] as const;
+
+const sources = { rust: 'fn a() {}\n', typescript: 'let a = 1;\n', python: 'a = 1\n' } as const;
+
+/** The first coordinate a read node holds in one of its slots. */
+function slotCoordinate(node: Record<string, unknown>): Record<string, unknown> {
+	for (const [key, value] of Object.entries(node)) {
+		if (key.startsWith('$')) continue;
+		const first = Array.isArray(value) ? value[0] : value;
+		if (typeof first === 'object' && first !== null && '$treeHandle' in first) return first as Record<string, unknown>;
+	}
+	throw new Error(`no slot coordinate in ${JSON.stringify(node)}`);
+}
 
 for (const grammar of ['rust', 'typescript', 'python'] as const) {
 	describe(`${grammar} native argument validation`, () => {
+		for (const testCase of invalidKindIds) {
+			it(`render rejects a coordinate with a ${testCase.label}`, () => {
+				const engine = tryLoadNativeEngine(grammar);
+				if (!engine) return;
+
+				const { treeId } = parseNativeFixture(engine, sources[grammar]);
+				const root = engine.read(treeId, 0, 1) as Record<string, unknown>;
+				slotCoordinate(root).$type = testCase.$type;
+				expect(() => engine.render(root)).toThrow(testCase.expected);
+			});
+		}
+
+		for (const testCase of invalidOffsets) {
+			it(`render rejects a coordinate whose span starts at a ${testCase.label}`, () => {
+				const engine = tryLoadNativeEngine(grammar);
+				if (!engine) return;
+
+				const { treeId } = parseNativeFixture(engine, sources[grammar]);
+				const root = engine.read(treeId, 0, 1) as Record<string, unknown>;
+				const coordinate = slotCoordinate(root);
+				coordinate.$span = { ...(coordinate.$span as object), start: testCase.offset };
+				expect(() => engine.render(root)).toThrow(testCase.expected);
+			});
+
+			it(`snapshot rejects a holder byte at a ${testCase.label}`, () => {
+				const engine = tryLoadNativeEngine(grammar);
+				if (!engine) return;
+
+				const { treeId } = parseNativeFixture(engine, sources[grammar]);
+				expect(() => engine.snapshot(treeId, 0, testCase.offset)).toThrow(testCase.expected);
+			});
+		}
+
 		for (const testCase of invalidTreeIds) {
 			it(`siblings rejects a ${testCase.label}`, () => {
 				const engine = tryLoadNativeEngine(grammar);

@@ -32,6 +32,8 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
+use crate::types::NodeIndex;
+
 /// The whitespace a render has written so far: its line breaks, spaces and
 /// tabs. A gap's whitespace is the tally at its end less the tally at its
 /// start (`since`).
@@ -88,7 +90,7 @@ pub struct Item {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Written {
     Text(Box<str>),
-    Node(u32),
+    Node(NodeIndex),
 }
 
 impl Written {
@@ -115,7 +117,7 @@ pub struct FrameItems {
 pub struct Baseline {
     opens: HashMap<u32, (Option<Tally>, Tally)>,
     closes: HashMap<u32, (Tally, Tally)>,
-    frames: HashMap<u32, FrameItems>,
+    frames: HashMap<NodeIndex, FrameItems>,
 }
 
 impl Baseline {
@@ -131,7 +133,7 @@ impl Baseline {
     }
 
     /// The frame the node at descendant `index` rendered in, when it did.
-    pub fn frame(&self, index: u32) -> Option<&FrameItems> {
+    pub fn frame(&self, index: NodeIndex) -> Option<&FrameItems> {
         self.frames.get(&index)
     }
 }
@@ -140,7 +142,7 @@ impl Baseline {
 /// when it was read from the tree, and what it has written directly.
 #[derive(Debug)]
 struct OpenFrame {
-    index: Option<u32>,
+    index: Option<NodeIndex>,
     end: Option<u32>,
     open: Option<Tally>,
     items: Vec<Item>,
@@ -214,7 +216,7 @@ impl<'a> Recorder<'a> {
 
     /// A node's frame opened, from the node at `origin` when it was read
     /// from the tree: its descendant index and the bytes it spans.
-    pub fn open_frame(&mut self, origin: Option<(u32, u32, u32)>) {
+    pub fn open_frame(&mut self, origin: Option<(NodeIndex, u32, u32)>) {
         self.frames.push(OpenFrame { index: origin.map(|(index, ..)| index), end: origin.map(|(.., end)| end), open: None, items: Vec::new() });
         if let Some((_, start, _)) = origin {
             self.open(start);
@@ -326,7 +328,7 @@ impl<'a> Recorder<'a> {
 
     /// The text just written was a slice of the source of the node at
     /// descendant `index`: an item of the frame around it.
-    pub fn wrote_slice(&mut self, index: u32) {
+    pub fn wrote_slice(&mut self, index: NodeIndex) {
         if self.deferring.is_some() {
             return;
         }

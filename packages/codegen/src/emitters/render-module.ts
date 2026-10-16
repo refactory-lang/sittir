@@ -845,7 +845,7 @@ function separatorTextFn(
 	for (const name of candidateKindNames) {
 		const id = kindIdByKind.get(name);
 		if (id === undefined) continue;
-		arms.push(`${id} => ${JSON.stringify(name)}`);
+		arms.push(`KindId(${id}) => ${JSON.stringify(name)}`);
 	}
 	if (arms.length === 0) return undefined;
 	return `|kind| match kind { ${[...arms, `_ => ${fallbackSeparator}`].join(', ')} }`;
@@ -924,9 +924,9 @@ function buildTypedTemplateBody(
 					: undefined;
 			const wireKey = JSON.stringify(slotWireKey(f.storageName));
 			const spacing = spacingFieldExprs(plan, node, f.name);
-			const spaced = (site: string | undefined): string => (site === undefined ? '0' : `${site}.unwrap_or(0)`);
+			const spaced = (site: string | undefined): string => (site === undefined ? 'KindId::BLANK' : `${site}.unwrap_or(KindId::BLANK)`);
 			bound.add(ident);
-			if (separatorText !== undefined) lines.push(`    let ${ident}_separator: fn(u16) -> &'static str = ${separatorText};`);
+			if (separatorText !== undefined) lines.push(`    let ${ident}_separator: fn(KindId) -> &'static str = ${separatorText};`);
 			lines.push(`    let ${ident} = ListView {`);
 			lines.push(`        items: ${items},`);
 			lines.push(`        template: ${template},`);
@@ -1460,7 +1460,7 @@ function commonRustUseImports(): string {
 	lines.push('');
 	lines.push('use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};');
 	lines.push('use ::sittir_core::render::Render;');
-	lines.push('use ::sittir_core::types::{Source, Span};');
+	lines.push('use ::sittir_core::types::{KindId, Source, Span};');
 	lines.push('');
 	return lines.join('\n');
 }
@@ -2543,7 +2543,7 @@ const TRIVIA_TEXT = '::sittir_core::trivia::TriviaText';
 const BLANK_VARIANT = 'Blank';
 const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`;
 const READ_COORDINATE = [
-	`    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
+	`    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
 	`        Some(::sittir_core::read::read_coordinate(tree, ctx, index))`,
 	`    }`
 ];
@@ -2582,7 +2582,7 @@ function prepareEnumImpl(enumName: string, arms: readonly PrepareArm[], reads = 
 					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${unit(a)} => None,`)),
 					`        }`,
 					`    }`,
-					`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {`,
+					`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {`,
 					`        match self {`,
 					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.source_separator(ctx),` : `            ${unit(a)} => None,`)),
 					`        }`,
@@ -2783,7 +2783,7 @@ function seatWrappersOf(nodeMap: NodeMap, tables: GeneratedIdTables): SeatWrappe
 		const slot = wrapperSlotOf(node);
 		const id = slot === undefined ? undefined : node.kindId;
 		if (slot === undefined || id === undefined) return [];
-		if (slot.isUnnamed) return [{ id, field: 0 }];
+		if (slot.isUnnamed) return [{ id }];
 		const field = fields.get(slot.name!);
 		if (field === undefined) throw new Error(`the wrapper '${node.display.name}' holds its content in '${slot.name}', which has no field id`);
 		return [{ id, field }];
@@ -2834,7 +2834,7 @@ function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
 
 function seatTargetSig(usesCtx: boolean): string {
 	const ctx = usesCtx ? 'ctx' : '_ctx';
-	return `    fn seat_target(&mut self, table: &[u16], ${ctx}: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {`;
+	return `    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ${ctx}: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {`;
 }
 
 function seatTargetMatchImpl(typeName: string, arms: readonly string[], exhaustive: boolean): string[] {
@@ -2995,7 +2995,7 @@ function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: Choi
 				);
 			}
 			const ident = rustFieldIdent(slot.storageName);
-			const build = `${choiceNameOf(choices, node.typeName, slot.name)}::from_kind_id(ctx.options.spacing[options::${site.constName}].arm)`;
+			const build = `${choiceNameOf(choices, node.typeName, slot.name)}::from_kind_id(ctx.options.site_arm(options::${site.constName}).arm)`;
 			return `        if self.${ident}.is_none() { self.${ident} = ${build}.map(::sittir_core::SlotValue::Transport); }`;
 		});
 }
@@ -3043,16 +3043,16 @@ function prepareStructImpl(
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
 			body.push(
-				`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}].arm);`
+				`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.site_arm(options::${site.constName}).arm);`
 			);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
 		if (delim !== undefined) {
-			const fallback = `ctx.options.delimiter[options::${delim.constName}]`;
+			const fallback = `ctx.options.delimiter_at(options::${delim.constName})`;
 			const value =
 				trailing === undefined
 					? fallback
-					: `::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.join(', ')}], ${fallback}, ctx)`;
+					: `::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
 			body.push(`        self.delimiter.get_or_insert(${value});`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
@@ -3061,7 +3061,7 @@ function prepareStructImpl(
 				`        if let Some(kind) = ::sittir_core::layout::Layout::slot(&self.layout, ${JSON.stringify(listItemWireKey(node))}).and_then(|slot| slot.separator).and_then(Self::separator_kind_of) {`,
 				'            self.separator_kind.get_or_insert(kind);',
 				'        }',
-				`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`,
+				`        self.separator_kind.get_or_insert(ctx.options.site_arm(options::${sep.constName}).arm);`,
 				`        ::sittir_core::prepare::fill_slot_separators(&mut self.layout, ${JSON.stringify(listItemWireKey(node))}, ${listItemsExpr(node)}, Self::separator_kind_of, ctx);`
 			);
 		}
@@ -3077,7 +3077,7 @@ function prepareStructImpl(
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
 		`    }`,
-		`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {`,
+		`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {`,
 		`        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)`,
 		`    }`,
 		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
@@ -3215,12 +3215,12 @@ function renderTransportDataStruct(
 				lines.push(wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<u8>,');
 			}
 			if (node.separatorRule !== undefined) {
-				lines.push(wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<u16>,');
+				lines.push(wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<KindId>,');
 			}
 		}
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			lines.push(wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`);
+			lines.push(wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<KindId>,`);
 		}
 	} else if (isTerminalNode(node)) {
 		lines.push(...renderLayoutField(), ...renderLeafTextField());

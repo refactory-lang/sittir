@@ -347,15 +347,15 @@ pub const _NAMES: KindId = KindId(336);
 pub const ERROR: KindId = KindId(65535);
 pub const SIMPLE_STATEMENTS: KindId = KindId(338);
 pub const SIMPLE_PATTERN: KindId = KindId(337);
-const _: () = assert!(ERROR.0 == KindId::ERROR.0);
+const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
-    lists: &[135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 271, 275, 276, 289, 290],
-    units: &[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 67, 68, 69, 70, 71, 72, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 122, 123, 124, 125, 126, 137, 147, 148, 149, 210, 211, 252, 257, 258, 279],
-    layout: &[106, 107],
-    indent: 116,
-    dedent: 117,
+    lists: &[KindId(135), KindId(180), KindId(192), KindId(193), KindId(217), KindId(242), KindId(259), KindId(260), KindId(261), KindId(262), KindId(263), KindId(264), KindId(265), KindId(266), KindId(267), KindId(268), KindId(270), KindId(271), KindId(275), KindId(276), KindId(289), KindId(290)],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(30), KindId(31), KindId(32), KindId(33), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53), KindId(54), KindId(55), KindId(56), KindId(57), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(65), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(72), KindId(75), KindId(76), KindId(77), KindId(78), KindId(79), KindId(80), KindId(81), KindId(82), KindId(83), KindId(84), KindId(85), KindId(86), KindId(87), KindId(88), KindId(107), KindId(108), KindId(109), KindId(110), KindId(111), KindId(112), KindId(113), KindId(114), KindId(115), KindId(116), KindId(117), KindId(122), KindId(123), KindId(124), KindId(125), KindId(126), KindId(137), KindId(147), KindId(148), KindId(149), KindId(210), KindId(211), KindId(252), KindId(257), KindId(258), KindId(279)],
+    layout: &[KindId(106), KindId(107)],
+    indent: KindId(116),
+    dedent: KindId(117),
     depth: super::options::DEPTH_REGIONS,
 };
 
@@ -367,7 +367,7 @@ pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(39), KindId(67), KindId(38), Ki
 
 /// Whether a node with this grammar id and display id is a relaxed keyword (`ReadCtx::relaxes`).
 pub fn relaxes(grammar: KindId, display: KindId) -> bool {
-    display.0 == 1 && RELAXED_KEYWORDS.contains(&grammar)
+    display == KindId(1) && RELAXED_KEYWORDS.contains(&grammar)
 }
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.

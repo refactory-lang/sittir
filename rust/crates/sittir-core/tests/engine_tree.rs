@@ -2,7 +2,8 @@
 //! kind name, the regions of a source that did not parse, and a list's last
 //! child.
 
-use sittir_core::read::display_id;
+use sittir_core::read::{display_id, grammar_id};
+use sittir_core::KindId;
 use sittir_core::types::Span;
 use sittir_core::{ErrorRegion, ErrorRegionKind};
 
@@ -30,13 +31,14 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
     parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
     for source in sources {
         let tree = parser.parse(source, None).unwrap();
-        let mut by_span: HashMap<(usize, usize), Vec<tree_sitter::Node<'_>>> = HashMap::new();
+        let mut by_span: HashMap<(u32, u32), Vec<tree_sitter::Node<'_>>> = HashMap::new();
         let mut cursor = tree.walk();
         let mut nodes = Vec::new();
         'walk: loop {
             let node = cursor.node();
             nodes.push(node);
-            by_span.entry((node.start_byte(), node.end_byte())).or_default().push(node);
+            let Span { start, end } = Span::of(&node);
+            by_span.entry((start, end)).or_default().push(node);
             if cursor.goto_first_child() {
                 continue;
             }
@@ -47,13 +49,14 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
             }
         }
         for node in &nodes {
-            for kind in [node.grammar_id(), display_id(node).0] {
-                let expected = by_span[&(node.start_byte(), node.end_byte())]
+            let span = Span::of(node);
+            for kind in [grammar_id(node), display_id(node)] {
+                let expected = by_span[&(span.start, span.end)]
                     .iter()
-                    .find(|candidate| candidate.grammar_id() == kind || display_id(candidate).0 == kind)
+                    .find(|candidate| grammar_id(candidate) == kind || display_id(candidate) == kind)
                     .map(|found| found.id());
-                let found = node_at_span(&tree, node.start_byte(), node.end_byte(), kind).map(|found| found.id());
-                assert_eq!(found, expected, "{} at {}..{}", node.kind(), node.start_byte(), node.end_byte());
+                let found = node_at_span(&tree, span, kind).map(|found| found.id());
+                assert_eq!(found, expected, "{} at {}..{}", node.kind(), span.start, span.end);
             }
         }
     }
@@ -100,8 +103,8 @@ fn an_error_inside_an_error_is_part_of_the_outer_region() {
 /// The kind name of the last child, extras aside, of the list spelled `list` in `source`, its own kind `kind`.
 fn last_list_child_of(source: &str, list: &str, kind: u16) -> Option<String> {
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
-    let start = source.find(list).unwrap();
-    sittir_core::engine::last_list_child(&tree, start, start + list.len(), kind).map(|child| child.kind().to_string())
+    let start = source.find(list).unwrap() as u32;
+    sittir_core::engine::last_list_child(&tree, Span { start, end: start + list.len() as u32 }, KindId(kind)).map(|child| child.kind().to_string())
 }
 
 #[test]
@@ -127,6 +130,6 @@ fn a_list_the_tree_holds_a_node_for_ends_in_that_node_child() {
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
     let arguments = tree.root_node().descendant_for_byte_range(10, 17).unwrap();
     assert_eq!(arguments.kind(), "arguments");
-    let last = sittir_core::engine::last_list_child(&tree, 10, 17, arguments.grammar_id()).unwrap();
+    let last = sittir_core::engine::last_list_child(&tree, Span { start: 10, end: 17 }, sittir_core::read::grammar_id(&arguments)).unwrap();
     assert_eq!(last.kind(), ")");
 }
