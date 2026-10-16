@@ -28,7 +28,7 @@
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
   - Stage 1's reference was recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
-  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 913f2cfec's: Task 1.4's switch, with the two consequences the user accepted (below Task 1.4). The master merges re-recorded it at 777411578 (below Task 1.1) and b56cee690 (below Task 1.4), and Task 1.2 Step 1's accepted consequence at 2adb24cf3.
+  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 913f2cfec's: Task 1.4's switch, with the two consequences the user accepted (below Task 1.4). Task 1.5 (b2259c7da) moves no output, so it is Stage 2's reference too. The master merges re-recorded it at 777411578 (below Task 1.1) and b56cee690 (below Task 1.4), and Task 1.2 Step 1's accepted consequence at 2adb24cf3.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -482,10 +482,16 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - `packages/codegen/src/dsl/__tests__/bindings-layer.test.ts`, into `layer.test.ts`
   - `packages/codegen/src/compiler/__tests__/post-evaluate-invariant.test.ts`, whose `bindingEffects` and `leadFrom` now come from the projections
 
-- [ ] **Step 1:** Delete, migrate, and run the full suite as its own call. Any new failure is isolated with stash-and-rerun before it is accepted as pre-existing.
-- [ ] **Step 2:** Regenerate all five grammars with `pnpm run validate:native`, which generates.
-- [ ] **Step 3: Run the stage gate** (above): output-gate, snapshots and rows.
-- [ ] **Step 4:** Run the standing gates. Commit, with the stage gate's numbers in the message.
+- [x] **Step 1:** Delete, migrate, and run the full suite as its own call. Any new failure is isolated with stash-and-rerun before it is accepted as pre-existing.
+- [x] **Step 2:** Regenerate all five grammars with `pnpm run validate:native`, which generates.
+- [x] **Step 3: Run the stage gate** (above): output-gate, snapshots and rows.
+- [x] **Step 4:** Run the standing gates. Commit, with the stage gate's numbers in the message.
+  - **Landed:** b2259c7da on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **Already gone:** `BINDING_SET`, `markBindingSet`, `isBindingSet`, `wireWithBindingEffects` and `recordingBindingEffects` went with the inheriting layer's commit (5c20d509e), and `checkBindingPatches` with the switch. `transform` had no `isBindingSet` branch left, and `wireRecordBindingEffect` already recorded in every layer.
+    - **Also gone:** `rename`, `Rename`, `leadIssue`, `wireBindings` and `wireBindingEffects`, and the sidecars nothing attaches since the switch: the text-token, dead-mint and derivation-record keys with their attach and get functions, and the two functions that applied the conflict resolutions. `evaluate` reads those facts from the layer record only.
+    - **The derivation's lead check** applies each lead with the lead verb over one verb context, through `refusalOf`, in place of `leadIssue`.
+    - **The authoring `prec`, `token` and `reserved`** read the DSL runtime when they are called. Folding `bindings-layer.test.ts` into `layer.test.ts` showed that the facade, imported outside a DSL window, captured `undefined` for every grammar evaluated after it.
+    - **Tests:** beyond the three the steps name, `lead.test.ts`, `dead-enrich-mints.test.ts` and `conflict-resolutions.test.ts` lose the deleted functions' unit tests, and `dead-enrich-mints.test.ts` tests the layer's dead mints in their place.
 
 ---
 
