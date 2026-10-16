@@ -13,9 +13,9 @@ npm install @sittir/regex
 ```ts
 import regex from '@sittir/regex';
 
-using re = await regex.createEngine();
+using rx = await regex.createEngine();
 const source = '[a-z]+';
-re.parse(source, { errors: 'throw' }).$render() === source; // true
+rx.parse(source, { errors: 'throw' }).$render() === source; // true
 ```
 
 ## Regenerating
