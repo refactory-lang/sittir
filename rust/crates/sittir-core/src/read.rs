@@ -531,10 +531,10 @@ pub enum Route {
     Trivia,
     /// Stored in slot `slot`. `scalar` when the slot stores it as a unit
     /// variant.
-    Slot { slot: u16, scalar: bool },
+    Slot { slot: crate::types::SlotId, scalar: bool },
     /// A separator of slot `slot`, stored nowhere. `tagged` when it carries
     /// the slot's own field: only those mark an elided slot's holes.
-    Separator { slot: u16, tagged: bool },
+    Separator { slot: crate::types::SlotId, tagged: bool },
     /// A token the kind's own template writes: skipped.
     Layout,
 }
@@ -1151,7 +1151,7 @@ pub const TRAILING: u8 = 2;
 /// that item is a unit variant, the flank is present when the list holds
 /// more anonymous unfielded tokens than the separators between its items and
 /// the mandatory flank tokens account for.
-pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: u16, leading: Option<u16>, trailing: Option<u16>) -> u8 {
+pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> u8 {
     let item_children: Vec<(&Child, bool)> = children
         .iter()
         .zip(routes)

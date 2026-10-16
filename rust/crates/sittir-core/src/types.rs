@@ -131,6 +131,12 @@ id_newtype! {
     EdgeRow(u16)
 }
 
+id_newtype! {
+    /// A kind's slot: the slot field's position among the kind's transport
+    /// slots, the number a read routes a child to.
+    SlotId(u16)
+}
+
 /// Where a node originated. `Ts` = read from a tree-sitter tree; `Sg` =
 /// ast-grep path; `Factory` = constructed on the TS side.
 ///

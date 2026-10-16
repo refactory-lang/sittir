@@ -66,12 +66,12 @@ impl Address {
 #[derive(serde::Deserialize, Debug, Clone, Default)]
 pub struct Slots {
     #[serde(deserialize_with = "numbered_by_kind")]
-    pub slots: HashMap<crate::types::KindId, u16>,
+    pub slots: HashMap<crate::types::KindId, crate::types::SlotId>,
 }
 
 /// A JSON object of slot numbers by kind id: its keys are the ids as text.
-fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<HashMap<crate::types::KindId, u16>, D::Error> {
-    let by_text: HashMap<String, u16> = serde::Deserialize::deserialize(deserializer)?;
+fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<HashMap<crate::types::KindId, crate::types::SlotId>, D::Error> {
+    let by_text: HashMap<String, crate::types::SlotId> = serde::Deserialize::deserialize(deserializer)?;
     by_text
         .into_iter()
         .map(|(kind, slot)| kind.parse().map(|kind| (crate::types::KindId(kind), slot)).map_err(|_| serde::de::Error::custom(format!("kind id {kind:?} is not a number"))))
@@ -251,13 +251,13 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
         }
         Router::Interior(interior, captures) => {
             let Some(groups) = interior.captures(text(&node)) else { return false };
-            if let Some(group) = captures.get(slot as usize).and_then(|name| groups.name(name)) {
+            if let Some(group) = captures.get(slot.index()).and_then(|name| groups.name(name)) {
                 visit(Hit { node: None, text: group.as_str() });
             }
             true
         }
         Router::Envelope { wraps_hidden } => {
-            if slot != 0 {
+            if slot != crate::types::SlotId(0) {
                 return false;
             }
             if !wraps_hidden {
@@ -325,7 +325,7 @@ mod tests {
             Sel::Kind(name) => field.is_none() && kind == *name,
         });
         match slot {
-            Some(slot) => Ok(Route::Slot { slot: slot as u16, scalar: false }),
+            Some(slot) => Ok(Route::Slot { slot: crate::types::SlotId(u16::try_from(slot).expect("a test kind has few slots")), scalar: false }),
             None if strict && child.named => Err(ReadError::Unrouted { kind: KindId(0), child: child.grammar, index: child.index }),
             None => Ok(Route::Layout),
         }

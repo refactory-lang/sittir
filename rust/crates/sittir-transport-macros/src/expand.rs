@@ -771,6 +771,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     let mut untagged = Vec::new();
     let mut separators = Vec::new();
     for &(i, field, slot) in &slots {
+        let i = slot_id(i);
         let ty = field.ty;
         let kind = slot_kind(field, slot);
         let scalar = match kind {
@@ -830,7 +831,8 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
 
     let accs: Vec<Ident> = slots.iter().map(|(i, ..)| format_ident!("__acc{}", i)).collect();
     let tys: Vec<&Type> = slots.iter().map(|(_, field, _)| field.ty).collect();
-    let idxs: Vec<u16> = slots.iter().map(|(i, ..)| *i).collect();
+    let idxs: Vec<TokenStream> = slots.iter().map(|&(i, ..)| slot_id(i)).collect();
+    let positions: Vec<usize> = slots.iter().map(|&(i, ..)| usize::from(i)).collect();
     let names: Vec<&Ident> = slots.iter().map(|(_, field, _)| field.ident).collect();
     let labels: Vec<LitStr> = names.iter().map(|name| LitStr::new(&name.to_string(), name.span())).collect();
     let keys: Vec<&LitStr> = slots
@@ -882,7 +884,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
             let unit_slots = if idxs.is_empty() {
                 quote!()
             } else {
-                quote!(let mut __unit_slots: ::std::vec::Vec<u16> = ::std::vec::Vec::new();)
+                quote!(let mut __unit_slots: ::std::vec::Vec<::sittir_core::types::SlotId> = ::std::vec::Vec::new();)
             };
             let unit_positions = if idxs.is_empty() {
                 quote!()
@@ -910,7 +912,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     match routes[i] {
                         #(__rt::Route::Slot { slot: #idxs, scalar } => {
                             let __child = __rt::index_of(cursor);
-                            let __arrival = <#tys as __rt::ReadSlot>::arrival(&#accs, __items[#idxs as usize]);
+                            let __arrival = <#tys as __rt::ReadSlot>::arrival(&#accs, __items[#positions]);
                             <#tys as __rt::ReadSlot>::take(
                                 &mut #accs,
                                 cursor,
@@ -924,7 +926,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                                     __unit_slots.push(#idxs);
                                 }
                             }
-                            __items[#idxs as usize] += 1;
+                            __items[#positions] += 1;
                         })*
                         #(__rt::Route::Separator { slot: #idxs, tagged } => <#tys as __rt::ReadSlot>::separator(&mut #accs, tagged),)*
                         _ => {}
@@ -956,7 +958,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
                 let slot = slots
                     .iter()
                     .find(|(_, f, _)| f.ident == item)
-                    .map(|(i, ..)| *i)
+                    .map(|&(i, ..)| slot_id(i))
                     .ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
                 let (leading, trailing) = (option(flank.leading), option(flank.trailing));
                 inits.push(quote! {
@@ -968,6 +970,11 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
         }
     }
     Ok(inits)
+}
+
+/// A slot position as the `SlotId` a route names it by.
+fn slot_id(position: u16) -> TokenStream {
+    quote!(::sittir_core::types::SlotId(#position))
 }
 
 fn option(value: Option<u16>) -> TokenStream {
@@ -1007,7 +1014,7 @@ mod tests {
         assert!(has(
             &out,
             "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<KeyTransport> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {
-                return ::core::result::Result::Ok(__rt::Route::Slot { slot: 0u16, scalar: <SlotValue<KeyTransport> as __rt::ReadSlot>::scalar(child.grammar, child.display) });
+                return ::core::result::Result::Ok(__rt::Route::Slot { slot: ::sittir_core::types::SlotId(0u16), scalar: <SlotValue<KeyTransport> as __rt::ReadSlot>::scalar(child.grammar, child.display) });
             }"
         ));
         assert!(has(

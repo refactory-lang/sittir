@@ -1701,8 +1701,8 @@ mod tests {
         let field = child.field.and_then(|field| crate::read::field_name(&language, field));
         Ok(match field {
             _ if child.trivia => crate::read::Route::Trivia,
-            Some("name") => crate::read::Route::Slot { slot: 0, scalar: false },
-            Some("return_type") => crate::read::Route::Slot { slot: 1, scalar: false },
+            Some("name") => crate::read::Route::Slot { slot: crate::types::SlotId(0), scalar: false },
+            Some("return_type") => crate::read::Route::Slot { slot: crate::types::SlotId(1), scalar: false },
             _ => crate::read::Route::Layout,
         })
     }
@@ -1712,7 +1712,7 @@ mod tests {
         let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
         Ok(match crate::read::kind_name(&language, child.grammar) {
             _ if child.trivia => crate::read::Route::Trivia,
-            Some("function_item") => crate::read::Route::Slot { slot: 0, scalar: false },
+            Some("function_item") => crate::read::Route::Slot { slot: crate::types::SlotId(0), scalar: false },
             _ => crate::read::Route::Layout,
         })
     }
