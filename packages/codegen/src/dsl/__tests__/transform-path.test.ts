@@ -6,6 +6,7 @@ import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../rule-metadata.ts';
 import { field } from '../primitives/field.ts';
+import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
 
 const transform: typeof transformRule = (rule, patches) => withWireContext(null, () => transformRule(rule, patches)).result;
 
@@ -653,4 +654,23 @@ describe('transform() — a field inside a token', () => {
 			content: { type: 'CHOICE', members: [{ type: 'STRING', value: 'b' }, { type: 'BLANK' }] }
 		});
 	});
+});
+
+describe('edit() inline equals the edits entry', () => {
+	const FORMS: readonly (readonly [string, string, string])[] = [
+		['a numeric index', '1', "k: ($) => seq($.word, ',', $.word)"],
+		['a field name', 'body:', "k: ($) => field('body', $.word)"],
+		['a kind match', '(word)', "k: ($) => choice(seq('(', $.word, ')'), $.word)"],
+		['a quoted literal', '","', "k: ($) => seq($.word, ',', $.word)"],
+		['the wildcard', '_', "k: ($) => seq($.word, ',', $.word)"],
+		['the whole rule', '.', "k: ($) => seq($.word, ',', $.word)"]
+	];
+
+	it.each(FORMS)('gives %s the same body, patch sites and binding effects as the edits entry', async (_form, path, rules) => {
+		const inline = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: `rules: { k: ($, previous) => edit(previous, { ${JSON.stringify(path)}: field('x') }) }` });
+		const keyed = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: `edits: { k: { ${JSON.stringify(path)}: field('x') } }` });
+		expect(inline.rules.k).toEqual(keyed.rules.k);
+		expect(inline.patchSites).toEqual(keyed.patchSites);
+		expect(inline.bindingEffects).toEqual(keyed.bindingEffects);
+	}, 60_000);
 });

@@ -191,9 +191,9 @@ rewritten content is rebuilt in the representation it had
  * dsl/field.ts — sittir field shadow with one-arg placeholder form.
  *
  * Tree-sitter's baseline `field()` takes two args: `field(name, content)`.
- * Sittir's transform() patches need a one-arg form so authors can write:
+ * Sittir's edit() patches need a one-arg form so authors can write:
  *
- *     transform(original, { 0: field('expression') })
+ *     edit(original, { 0: field('expression') })
  *
  * Two-arg calls delegate to whichever `field` is provided as a global
  * by the runtime — sittir's grammarFn-injected field (`{type:'FIELD'}`)
@@ -335,7 +335,7 @@ tree-sitter's CLI.
  *      patch target. Same pattern as `field('name')`.
  *
  *      In the override file:
- *        transform(original, { '1/0': alias('assignment_eq') })
+ *        edit(original, { '1/0': alias('assignment_eq') })
  *
  *      resolvePatch produces:
  *        alias(original_content_at_1_0, { type: 'SYMBOL', name: 'assignment_eq' })
@@ -482,7 +482,7 @@ It carries no data; it is a placeholder like `arm.default`, recognised by
  *
  * Usage in grammar.sittir.ts:
  *
- *     closure_expression: ($, original) => transform(original,
+ *     closure_expression: ($, original) => edit(original,
  *         { 0: field('static'), 1: field('async'), 2: field('move') },
  *         { '4/0': variant('block'), '4/1': variant('expr') },
  *     ),

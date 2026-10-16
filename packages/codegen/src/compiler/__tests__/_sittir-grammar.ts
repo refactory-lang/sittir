@@ -27,12 +27,12 @@ export function writeSittirGrammarPackage(
 	writeFileSync(join(dir, '.sittir', 'resolutions.json'), JSON.stringify(resolutions));
 	writeFileSync(
 		join(dir, GRAMMAR_ENTRY),
-		`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { enrich, wire, field, alias, preference } from ${DSL};\nexport default grammar(enrich(base), wire({ resolutions, name: '${name}', ${config} }));\n`
+		`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { enrich, wire, edit, field, alias, preference } from ${DSL};\nexport default grammar(enrich(base), wire({ resolutions, name: '${name}', ${config} }));\n`
 	);
 	if (bindings !== undefined)
 		writeFileSync(
 			join(dir, BINDINGS_MODULE),
-			`import sittir from './${GRAMMAR_ENTRY}';\nimport { enrich, wire, field, alias, lead, match } from ${DSL};\nexport const renames = ${JSON.stringify(renames)};\nexport default grammar(enrich(sittir), wire({ ${bindings} }));\n`
+			`import sittir from './${GRAMMAR_ENTRY}';\nimport { enrich, wire, edit, field, alias, lead, match } from ${DSL};\nexport const renames = ${JSON.stringify(renames)};\nexport default grammar(enrich(sittir), wire({ ${bindings} }));\n`
 		);
 }
 

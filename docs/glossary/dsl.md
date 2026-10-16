@@ -2333,6 +2333,10 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
 /** 1-arg → transform placeholder; 2-arg → a grammar-shapes `FieldRule` (rule body). */
 ```
 
+### `packages/codegen/src/dsl/dsl-authoring.ts::edit`
+
+The authoring name of `transform/transform.ts::transform`: `edit(previous, ...sets)` applies each set, keyed by path as an `edits:` entry is, to the rule a `rules:` callback received. It is the same application as the kind's `edits:` entry, which the layer lowers to `edit(result, edits[K])` after the callback, so it records the same patch sites and effects. `transform` stays the internal name the lowering calls.
+
 ### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringAlias`
 
 ```text
@@ -4505,13 +4509,13 @@ The list a lead can split: a head-form separated list (`separatedListBodyInfo`) 
  * This is the stable import surface for `packages/<lang>/grammar.sittir.ts`.
  * Override files import from here:
  *
- *     import { transform, role, enrich, field, alias } from '@sittir/codegen/dsl'
+ *     import { edit, role, enrich, field, alias } from '@sittir/codegen/dsl'
  *
  * Two categories of exports:
  *
  * **Pure sittir extensions** (no tree-sitter equivalent):
- *   - `transform` — override-authoring primitive that patches positions
- *     in an existing rule tree.
+ *   - `edit(previous, sets)` — applies `edits:`-entry sets to a rule
+ *     inside a `rules:` callback (the authoring name of `transform`).
  *   - `role` — structural-whitespace annotation with per-grammar
  *     accumulator.
  *   - `enrich(base)` — a layer's base half: the pending base its layer
@@ -4521,7 +4525,7 @@ The list a lead can split: a head-form separated list (`separatedListBodyInfo`) 
  *
  * **Sittir shadows of baseline tree-sitter DSL** (add one-arg shorthand;
  * two-arg calls delegate to the runtime-injected native):
- *   - `field(name)` — one-arg placeholder for `transform()` patches.
+ *   - `field(name)` — one-arg placeholder for `edit()` patches.
  *     Two-arg form delegates to the runtime's native `field()`.
  *   - `alias($.name)` — one-arg shorthand for `alias($.name, $.name)`.
  *     Two-arg form delegates to the runtime's native `alias()`.

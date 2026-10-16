@@ -1254,7 +1254,7 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
  *
  * Override files import these explicitly:
  *
- *     import { transform, insert, replace } from '@sittir/codegen/dsl'
+ *     import { edit } from '@sittir/codegen/dsl'
  *
  * The baseline shadow functions (`grammar`, `seq`, `choice`, `field`, ...)
  * are still injected as globals by `evaluate.ts` — don't import those.

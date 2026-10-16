@@ -4,6 +4,8 @@ import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
 import { refine as refineImpl, type FormMap } from './primitives/refine.ts';
+import { transform } from './transform/transform.ts';
+import type { PatchMap } from './wire/wire.ts';
 import type {
 	FieldRule,
 	AliasRule,
@@ -61,6 +63,11 @@ interface AuthoringRefine {
 	<R extends AuthoringRule>(original: R, forms: FormMap): R;
 }
 export const refine = refineImpl as unknown as AuthoringRefine;
+
+interface AuthoringEdit {
+	<R extends AuthoringRule>(previous: R, ...sets: readonly PatchMap[]): R;
+}
+export const edit = transform as unknown as AuthoringEdit;
 
 type DslFn = (...args: readonly unknown[]) => unknown;
 

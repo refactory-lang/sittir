@@ -723,7 +723,7 @@ shrinks.
 
 ### `tuple_pattern` (`packages/python/grammar.sittir.ts`)
 
-The `semantic-gap` override uses `transform(original, …)` to replace only the optional middle of the upstream sequence. A singleton pattern requires its comma and builds as `(x,)`. The parser rejects `(x) = y`, per the maintainer's #550 decision; it still accepts empty and multi-element tuple patterns. The upstream witness records that `(x) = y` binds the whole value, rather than unpacking a tuple. Tuple expressions reuse the same element construction in `_tuple_elements`, with their existing separate `parenthesized_expression` kind.
+The `semantic-gap` override uses `edit(original, …)` to replace only the optional middle of the upstream sequence. A singleton pattern requires its comma and builds as `(x,)`. The parser rejects `(x) = y`, per the maintainer's #550 decision; it still accepts empty and multi-element tuple patterns. The upstream witness records that `(x) = y` binds the whole value, rather than unpacking a tuple. Tuple expressions reuse the same element construction in `_tuple_elements`, with their existing separate `parenthesized_expression` kind.
 
 ### `tupleElements` (`packages/python/grammar.sittir.ts`)
 
