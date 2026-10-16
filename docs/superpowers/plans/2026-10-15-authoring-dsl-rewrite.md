@@ -27,7 +27,8 @@
   - The branch merges to master on the maintainer's word, carrying 2b.
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
-  - Stage 1's reference is the baseline re-recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
+  - Stage 1's reference was recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
+  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 2adb24cf3's: the master merge's (777411578, below Task 1.1), with Task 1.2 Step 1's accepted consequence.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -208,14 +209,14 @@ In this stage, the intake over a completed layer still re-enriches its base with
 
 **Gate:** spec §10. Run:
 ```
-tool output-gate --check scratchpad/handoffs/reshape-gate-manifest-2867fa8ed.txt \
+tool output-gate --check scratchpad/handoffs/reshape-gate-manifest-2adb24cf3.txt \
   --except packages/rust/grammar.bindings.ts --except packages/typescript/grammar.bindings.ts --except packages/python/grammar.bindings.ts \
   --except packages/rust/.sittir/grammar.js --except packages/typescript/.sittir/grammar.js --except packages/python/.sittir/grammar.js \
   --except packages/rust/.sittir/src/grammar.json:splitFrom,leadFrom,bindingEffects \
   --except packages/typescript/.sittir/src/grammar.json:splitFrom,leadFrom,bindingEffects \
   --except packages/python/.sittir/src/grammar.json:splitFrom,bindingEffects
 ```
-Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshots-2867fa8ed/`. The rows must equal `reshape-gate-rows-2867fa8ed.txt`.
+Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshots-2adb24cf3/`. The rows must equal `reshape-gate-rows-2adb24cf3.txt`.
 
 ### Task 1.1: the layer record and the effect table
 
@@ -288,6 +289,16 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - [x] **Step 4: Run the tests and the existing `split-layout`, `lead-grammar` and `grammar-bindings` tests.** All pass.
 - [x] **Step 5: Write the glossary entries and commit.**
 
+### The master merge after Task 1.1
+
+**Landed** on `feat/authoring-dsl`: fd351a017 merges master at 396d7fb4c (the structure verifier, `ir.synonym` removed, tree-sitter-rust pinned to v0.24.2, the `node_modules` symlinks untracked). 777411578 fixes the from check the merge exposed.
+- The from check derived a display-merged node's config under its display name, which has no slot table. Python's `lambda` and `lambda_within_for_in_clause` built empty and passed, until master's `'runtime'` verifier refused them (fromPass 178/180). The check now resolves the storage kind, for the node and every child it holds.
+- The reference is re-recorded at 777411578: `scratchpad/handoffs/reshape-gate-manifest-777411578.txt` (255 files), `reshape-snapshots-777411578/` and `reshape-gate-rows-777411578.txt`. Against 2867fa8ed:
+  - only rust's grammar-level outputs, its crate and its evaluated grammar move, from the pin;
+  - every grammar's emitted package moves, from the verifier and the `ir.synonym` removal, and each grammar gains `.sittir/upstream.json` and `upstream.wasm`;
+  - the three bindings layers move in their hash only;
+  - the rows equal 2867fa8ed's, except rust's, which add master's deltas.
+
 ### Task 1.2: the pending base and the layer pass
 
 **Files:**
@@ -330,7 +341,8 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - the conflict sets, which the `conflicts` callback returns (spec §6);
   - the record, on the start rule's body.
 
-- [ ] **Step 1: Rename `patches` to `edits`, with no other change.** Regenerate all five grammars. `tool output-gate --check` shows no difference. Commit.
+- [x] **Step 1: Rename `patches` to `edits`, with no other change.** Regenerate all five grammars. `tool output-gate --check` shows no difference. Commit.
+  - **Landed:** 2adb24cf3. Accepted as a consequence: the grammar diagnostics name the key in their messages, so the four `grammar-diagnostics.json` files move by that one word (python 4 messages, typescript 3, rust 1, scm 1). Helper names that say patch are unchanged. The reference is re-recorded at 2adb24cf3; its snapshots and rows equal 777411578's.
 - [ ] **Step 2: Write the failing tests.**
   - Reading a pending base's `rules` before completion throws, while its `name` and `externals` read.
   - **The hook's guards** (spec §1.2):
