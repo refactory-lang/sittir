@@ -48,7 +48,7 @@ serde_json = "1"
 # semver-stable ABI bridge with no `links` field), so they stay compatible.
 tree-sitter = "0.27"
 tree-sitter-language = "0.1.7"
-sha2 = "0.10"
+sha2 = "0.11"
 cc = "1"
 # Insertion-order-preserving map for UntypedNode.fields (sittir-core) —
 # std::collections::HashMap's per-instance random iteration order made
