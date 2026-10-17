@@ -231,6 +231,12 @@ pub trait BodyLayout<'a>: Copy {
 
     /// `list_units`.
     fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)>;
+
+    /// `trivia::render_inner`: the node's inner trivia, at its inner gap.
+    fn render_inner(self, w: &mut dyn RenderSink) -> RenderResult;
+
+    /// `trivia::has_inner`.
+    fn has_inner(self) -> bool;
 }
 
 impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Option<&'a NodeLayout<T>> {
@@ -254,6 +260,14 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Optio
 
     fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
         list_units(self, slot)
+    }
+
+    fn render_inner(self, w: &mut dyn RenderSink) -> RenderResult {
+        crate::trivia::render_inner(self.and_then(|layout| layout.trivia.as_ref()), w)
+    }
+
+    fn has_inner(self) -> bool {
+        crate::trivia::has_inner(self.and_then(|layout| layout.trivia.as_ref()))
     }
 }
 
@@ -910,5 +924,29 @@ mod tests {
         assert_eq!(some.slot_tokens("_items"), &[None, Some(KindId(7))]);
         assert!(some.slot_tokens("_other").is_empty());
         assert_eq!(some.list_units("_items").map(|(slot, _)| slot), Some("_items"));
+    }
+
+    #[test]
+    fn a_body_reads_inner_trivia_through_its_layout() {
+        use super::BodyLayout;
+
+        let none: Option<&NodeLayout<MockTrivia>> = None;
+        assert!(!none.has_inner());
+        let layout = NodeLayout::<MockTrivia> {
+            trivia: Some(NodeTrivia { inner: Some(vec![entry("/* a */")]), ..NodeTrivia::default() }),
+            ..NodeLayout::default()
+        };
+        assert!(Some(&layout).has_inner());
+        let written = |render: &dyn Fn(&mut dyn RenderSink) -> RenderResult| {
+            let mut out = String::new();
+            let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+            render(&mut w).unwrap();
+            w.finish().unwrap();
+            out
+        };
+        assert_eq!(written(&|w| none.render_inner(w)), "");
+        let through_trait = written(&|w| Some(&layout).render_inner(w));
+        assert!(through_trait.starts_with("/* a */"));
+        assert_eq!(through_trait, written(&|w| crate::trivia::render_inner(layout.trivia.as_ref(), w)));
     }
 }
