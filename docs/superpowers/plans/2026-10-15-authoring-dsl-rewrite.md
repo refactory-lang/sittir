@@ -634,6 +634,11 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - A re-authored rule `choice(variant('a', seq('x', $.y)), variant('b', seq('z', $.y)))` yields exactly the rules and annotations that the bare choice plus `edits: { k: { '0': variant('a'), '1': variant('b') } }` yields.
   - `refine(forms)` at `.` records the same forms as typescript's inline `interface_body` call.
 - [ ] **Step 2:** Implement and run the gate. Typescript keeps its inline `refine` call: it is one site, and needs no change. Commit.
+  - **Landed:** c4349a544 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - The direct form labels a copy of the rule under a non-enumerable symbol key. The labelled arms are lowered to `variant` entries at their paths, applied after the kind's `edits:` sets, which is the order a set applies its own variant entries in. An entry that edits inside a labelled arm therefore lands in its mint.
+    - A kind minted inside a callback had a deposit and no rule, since wire declares mint rules from the `edits:` config. The pass now appends such deposits as rules after the declared ones; this also covers an inline `edit(previous, { … variant(…) })`.
+    - The forms map in the test is `object_type`'s; typescript has no `refine` call on `interface_body`.
+    - A `refine` entry at any path but `.` is `edit-entry-invalid`, and records no patch site, as the inline call records none.
 
 ### Task 4.4: the same-site check
 
