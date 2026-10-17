@@ -17,7 +17,7 @@ import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type Laye
 import { withRoleScope } from './primitives/role.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
 import type { DisplayFamilies } from './rule-transforms.ts';
-import { baseRulesOf } from './shared.ts';
+import { baseRulesOf, VERIFIED_TREE_SITTER } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
 import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
@@ -110,8 +110,6 @@ interface LayerHandle {
 }
 
 const LAYER_HANDLE: unique symbol = Symbol.for('sittir.layerHandle') as never;
-
-const VERIFIED_TREE_SITTER = '0.26.9';
 
 const PENDING_KEYS = ['rules', 'extras', 'conflicts', 'precedences', 'inline', 'supertypes', 'word', 'reserved'] as const;
 

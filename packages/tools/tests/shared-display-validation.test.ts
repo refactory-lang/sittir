@@ -21,7 +21,7 @@ it('keeps both physical Python lambda factories in the from validation universe'
 it('checks both physical Python lambda templates behind their shared display', () => {
 	const result = validateTemplateCoverage('python');
 	expect(result.issues).toEqual([]);
-	expect(result.total).toBe(147);
-	expect(result.pass).toBe(147);
+	expect(result.total).toBe(149);
+	expect(result.pass).toBe(149);
 	expect(result.excluded.filter((entry) => entry.entry === 'lambda_expression')).toEqual([]);
 });

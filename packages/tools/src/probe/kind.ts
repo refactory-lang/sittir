@@ -343,10 +343,9 @@ async function computeValidatorWrapDiag(
 	rendered: string
 ): Promise<ProbeWrapDiag> {
 	const { loadRawEntries } = await load('nodeTypesLoader');
-	const rawEntries = loadRawEntries(grammar);
-	const kindToSupertypes = buildKindToSupertypes(rawEntries);
+	const { root, subtypes } = await loadNodeModel(grammar);
+	const kindToSupertypes = buildKindToSupertypes(loadRawEntries(grammar), subtypes);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
-	const { root } = await loadNodeModel(grammar);
 	// Parity with the validator: candidates key by the CANONICAL catalog
 	// name of the wire `$type`, so the replayed wrapper selection must too.
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);

@@ -20,7 +20,8 @@ function reportFor(a: string, b: string, lookahead = "';'"): ConflictReport {
 			done: true,
 			conflicting_lookahead: lookahead,
 			precedence: null,
-			associativity: null
+			associativity: null,
+			requires_eof_lookahead: false
 		})),
 		possible_resolutions: [{ Precedence: { symbols: [a] } }, { AddConflict: { symbols: [a, b] } }]
 	};

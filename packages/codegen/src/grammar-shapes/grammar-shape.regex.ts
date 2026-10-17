@@ -964,7 +964,7 @@ export const regexGrammarShape = {
 			value: '\\d+'
 		}
 	},
-	supertypeNames: []
+	supertypes: []
 } as const satisfies GrammarJson;
 
 export type RegexGrammarShape = typeof regexGrammarShape;
