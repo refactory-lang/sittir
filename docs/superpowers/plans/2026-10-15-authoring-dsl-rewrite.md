@@ -619,6 +619,9 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - `($, member) => rule` receives the member.
   - `replace(previous, path, rule)` gives the entry's result and records the same patch sites.
 - [ ] **Step 2:** Implement and run the gate. Commit.
+  - **Landed:** 82561896b on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - A replacing function receives the `$` of the rule callback it is applied in. Wire's context carries it beside the current rule kind. Its rule then resolves as a literal entry does, so the alias-of-own-symbol case and the alias effect follow.
+    - The literal cases are characterized at the bindings layer: a literal alias over a bare symbol keeps the symbol, and over a fielded member it replaces the field. A literal alias at a choice arm records a patch site but leaves the rule unchanged; that belongs to Task 5.1, where the literal alias goes.
 
 ### Task 4.3: `variant(name, rule, options?)` and `refine(forms)`
 
