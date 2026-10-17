@@ -5,7 +5,7 @@
 //! parse/read/render/edit state machine so `sittir-{lang}` crates stay
 //! thin and grammar-owned.
 //!
-//! ## Engine / ParsedTree split
+//! ## Engine / `ParsedTree` split
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
 //! `ParsedTree<G>` that owns the tree, its source and what the source infers. A handle names a
@@ -82,8 +82,9 @@ pub trait EngineGrammar: Copy {
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
+#[must_use]
 pub fn node_at_index(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_sitter::Node<'_>> {
-    if index.index() >= tree.root_node().descendant_count() {
+    if index.index() >= crate::read::descendant_count(&tree.root_node()) as usize {
         return None;
     }
     let mut cursor = tree.walk();
@@ -99,6 +100,7 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_
 /// re-indents text leaves it where it is. The tokens are the token walk's
 /// (`trivia_table::walk`) and its entries, each an extra or an `ERROR` taken
 /// whole. In source order, each offset once.
+#[must_use]
 pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Vec<u32> {
     let walk = crate::trivia_table::walk(node, index, source);
     let mut spans: Vec<(u32, u32)> = walk.tokens.iter().map(|token| (token.start, token.end)).collect();
@@ -112,7 +114,7 @@ pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, index: NodeIndex, 
         }
         let mut at = start;
         while let Some(found) = source.get(Span { start: at, end }.range()).and_then(|text| text.find('\n')) {
-            let line = at + found as u32 + 1;
+            let line = at + crate::types::narrow(found) + 1;
             if line >= end {
                 break;
             }
@@ -129,8 +131,9 @@ pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, index: NodeIndex, 
 
 /// The descendant index of child `position` of the node at `index`: its own
 /// index, one for the node, and every earlier child's descendant count.
+#[must_use]
 pub fn child_index_of(node: tree_sitter::Node<'_>, index: NodeIndex, position: ChildPosition) -> NodeIndex {
-    (0..position.get()).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| child.descendant_count() as u32))
+    (0..position.get()).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| crate::read::descendant_count(&child)))
 }
 
 /// The siblings beside a node in its own slot, taken at the outermost node
@@ -200,12 +203,13 @@ fn error_adjacency(node: &tree_sitter::Node<'_>, source: &str) -> (Span, Span) {
     if before < start && before > 0 && !matches!(bytes[before - 1], b'\n' | b'\r') && !taken {
         start = before;
     }
-    (Span { start: start as u32, end: own.start }, Span { start: own.end, end: end as u32 })
+    (Span { start: crate::types::narrow(start), end: own.start }, Span { start: own.end, end: crate::types::narrow(end) })
 }
 
 /// Every ERROR and MISSING region of `tree`, in source order. The walk enters
 /// only nodes that hold an error, and never an ERROR node: a region nested in
 /// another is part of it.
+#[must_use]
 pub fn error_regions(tree: &tree_sitter::Tree) -> Vec<ErrorRegion> {
     let mut regions = Vec::new();
     if !tree.root_node().has_error() {
@@ -247,8 +251,9 @@ pub fn error_regions(tree: &tree_sitter::Tree) -> Vec<ErrorRegion> {
 /// end of a sibling ending at `start` or in a zero-width sibling there, so the
 /// walk first steps back over the siblings ending at `start`, then tries each
 /// child forward, in source order, while it starts at or before `start`.
-pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, span: Span, kind: KindId) -> Option<tree_sitter::Node<'t>> {
-    fn search<'t>(node: tree_sitter::Node<'t>, span: Span, kind: KindId) -> Option<tree_sitter::Node<'t>> {
+#[must_use]
+pub fn node_at_span(tree: &tree_sitter::Tree, span: Span, kind: KindId) -> Option<tree_sitter::Node<'_>> {
+    fn search(node: tree_sitter::Node<'_>, span: Span, kind: KindId) -> Option<tree_sitter::Node<'_>> {
         if Span::of(&node) == span && (crate::read::grammar_id(&node) == kind || crate::read::display_id(&node) == kind) {
             return Some(node);
         }
@@ -289,16 +294,14 @@ pub fn node_at_span<'t>(tree: &'t tree_sitter::Tree, span: Span, kind: KindId) -
 /// list the tree holds no node of its own for, of the node holding the list's
 /// children, among the children that lie within the span. That node is the
 /// one strictly around the span, above any node spanning exactly the span.
+#[must_use]
 pub fn last_list_child(tree: &tree_sitter::Tree, span: Span, kind: KindId) -> Option<tree_sitter::Node<'_>> {
-    let holder = match node_at_span(tree, span, kind) {
-        Some(list) => list,
-        None => {
-            let inner = outermost_same_span(tree.root_node().descendant_for_byte_range(span.range().start, span.range().end)?);
-            if Span::of(&inner) == span {
-                inner.parent()?
-            } else {
-                inner
-            }
+    let holder = if let Some(list) = node_at_span(tree, span, kind) { list } else {
+        let inner = outermost_same_span(tree.root_node().descendant_for_byte_range(span.range().start, span.range().end)?);
+        if Span::of(&inner) == span {
+            inner.parent()?
+        } else {
+            inner
         }
     };
     let mut cursor = holder.walk();
@@ -323,6 +326,7 @@ pub(crate) fn outermost_same_span(node: tree_sitter::Node<'_>) -> tree_sitter::N
 }
 
 /// The siblings beside the node at descendant `index` (`Siblings`).
+#[must_use]
 pub fn siblings(tree: &tree_sitter::Tree, index: crate::types::NodeIndex) -> Siblings {
     siblings_counting(tree, index, |_| ())
 }
@@ -477,21 +481,20 @@ fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<
 /// claim); the id and the value to record come back together, or nothing
 /// once `MAX_TREE_ID` has been claimed — the owner then records nothing, so
 /// the counter stays put and no id is ever reused.
+#[must_use]
 pub fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeId, f64)> {
-    let next = next.unwrap_or(0.0);
-    if !(0.0..=MAX_TREE_ID as f64).contains(&next) || next.fract() != 0.0 {
-        return None;
-    }
-    let id = next as u32;
+    let id = crate::types::exact_whole(next.unwrap_or(0.0)).ok().and_then(|whole| u32::try_from(whole).ok()).filter(|&id| id <= MAX_TREE_ID)?;
     Some((TreeId(id), f64::from(id) + 1.0))
 }
 
 /// Pack a tree id and a node index into one self-identifying handle.
+#[must_use]
 pub fn encode_handle(tree_id: TreeId, index: NodeIndex) -> TreeHandle {
     TreeHandle((u64::from(tree_id.get()) << HANDLE_INDEX_BITS) | u64::from(index.get()))
 }
 
 /// Split a handle back into the tree that minted it and the index within it.
+#[must_use]
 pub fn decode_handle(handle: TreeHandle) -> (TreeId, NodeIndex) {
     let handle = handle.get();
     (
@@ -539,7 +542,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     fn error_under(&self, index: crate::types::NodeIndex, ctx: &crate::read::ReadCtx<'_>) -> Option<crate::ErrorRead> {
-        let node = node_at_index(&self.tree, index).filter(|node| node.is_error())?;
+        let node = node_at_index(&self.tree, index).filter(tree_sitter::Node::is_error)?;
         let at = ctx.coordinate(&node, index);
         let text = self.source[at.span.range()].to_owned();
         Some(crate::ErrorRead { text, kind: at.kind, at: ctx.origin(&node, index) })
@@ -704,7 +707,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 })
             {
                 coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
-                if coordinates.len() as u32 >= limit {
+                if crate::types::narrow(coordinates.len()) >= limit {
                     return Ok(DescendantBatch { coordinates, resume: Some(path), origin });
                 }
             }
@@ -862,6 +865,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// slot's stored class on that side, else the run's baseline class
     /// (`None` where no baseline reaches it). `None` outside a slot's gaps,
     /// and for a run that does not carry the layout around it.
+    #[allow(clippy::option_option, reason = "`None` outside a slot's gaps; `Some(None)` inside one that no baseline reaches")]
     fn slot_class(&self, at: RunId) -> Option<Option<KindId>> {
         use crate::list_slots::SlotSide;
         let run = self.trivia_table().run(at);
@@ -895,7 +899,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let runs = table.runs();
         let run_at = |start: u32, end: u32| {
             let from = runs.partition_point(|run| run.start < start);
-            runs[from..].iter().take_while(|run| run.start == start).position(|run| run.end == end).map(|at| RunId((from + at) as u32))
+            runs[from..].iter().take_while(|run| run.start == start).position(|run| run.end == end).map(|at| RunId(crate::types::narrow(from + at)))
         };
         let slots = self.grammar.slot_routes(&self.tree, index).map_or_else(Vec::new, |routed| crate::list_slots::slot_gaps(&routed, run_at));
         let mut measured = NodeSlots::default();
@@ -950,7 +954,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// (`node_slots`): the item after an outlier separator stores it.
     pub fn separator_before(&self, index: crate::types::NodeIndex) -> Option<KindId> {
         let mut cursor = self.tree.walk();
-        if index.index() >= self.tree.root_node().descendant_count() {
+        if index.index() >= crate::read::descendant_count(&self.tree.root_node()) as usize {
             return None;
         }
         crate::read::goto(&mut cursor, index);
@@ -1033,7 +1037,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             }
         }
         match REGION_DEPTH {
-            crate::read::Depth::Levels(least) => std::num::NonZeroU32::new(deepest as u32 + 1).map_or(REGION_DEPTH, |levels| crate::read::Depth::Levels(levels.max(least))),
+            crate::read::Depth::Levels(least) => std::num::NonZeroU32::new(crate::types::narrow(deepest) + 1).map_or(REGION_DEPTH, |levels| crate::read::Depth::Levels(levels.max(least))),
             crate::read::Depth::All => REGION_DEPTH,
         }
     }
@@ -1106,7 +1110,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// separator (`separator_before`), over every node.
     pub fn stored_layout(&self) -> crate::layout::StoredLayout {
         let count = |n: usize| u32::try_from(n).unwrap_or(u32::MAX);
-        let nodes = (0..self.tree.root_node().descendant_count() as u32).map(NodeIndex::new);
+        let nodes = (0..crate::read::descendant_count(&self.tree.root_node())).map(NodeIndex::new);
         let slots = nodes.map(|index| self.node_slots(index)).fold((0, 0), |(layouts, separators), slots| {
             (layouts + slots.layouts.iter().filter(|layout| !layout.is_empty()).count(), separators + slots.separators.len())
         });
@@ -1234,7 +1238,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// and trailing too when `own_sides` is set.
     pub fn edited_within(&self, index: crate::types::NodeIndex, own_sides: bool) -> bool {
         let Some(node) = node_at_index(&self.tree, index) else { return false };
-        let end = index + node.descendant_count() as u32;
+        let end = index + crate::read::descendant_count(&node);
         self.written
             .range((index, TriviaSide::Leading)..(end, TriviaSide::Leading))
             .any(|(&(at, side), _)| at != index || own_sides || side == TriviaSide::Inner)
@@ -1357,22 +1361,22 @@ impl<G: EngineGrammar> Engine<G> {
     /// The caller owns id assignment because it owns the set of live trees;
     /// ids must be distinct across every tree a caller can still reach, or
     /// handles stop being unambiguous.
-    pub fn parse(&mut self, source: String, tree_id: TreeId) -> Result<ParsedTree<G>, String> {
-        let tree = self.parser.parse(&source, None).ok_or_else(|| {
+    pub fn parse(&mut self, source: &str, tree_id: TreeId) -> Result<ParsedTree<G>, String> {
+        let tree = self.parser.parse(source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
         })?;
         let (whitespace, _) = self.grammar.whitespace();
         let root = crate::read::grammar_id(&tree.root_node());
-        let inferred = crate::options::InferredOptions::infer(&source, root, &self.options, self.grammar.option_tables(), whitespace);
+        let inferred = crate::options::InferredOptions::infer(source, root, &self.options, self.grammar.option_tables(), whitespace);
         let indent = inferred.indent.as_deref().unwrap_or(&self.options.indent);
-        let spaces = |unit: &str| unit.chars().filter(|&c| c == ' ').count() as u32;
+        let spaces = |unit: &str| u32::try_from(unit.chars().filter(|&c| c == ' ').count()).unwrap_or(u32::MAX);
         let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         let read_options = inferred.over(&self.options);
         Ok(ParsedTree {
             grammar: self.grammar,
             tree,
-            source: Arc::from(source.as_str()),
+            source: Arc::from(source),
             inferred,
             level_width,
             tree_id,
@@ -1393,7 +1397,8 @@ impl<G: EngineGrammar> Engine<G> {
 
 }
 
-pub fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
+#[must_use]
+pub fn panic_msg(payload: &(dyn std::any::Any + Send), fallback: &str) -> String {
     if let Some(s) = payload.downcast_ref::<String>() {
         s.clone()
     } else if let Some(s) = payload.downcast_ref::<&str>() {
@@ -1602,7 +1607,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
 /// The engine's live trees as the render context's source table: a handle's
 /// tag names the tree, and the tree owns the source its spans index into.
-impl<G: EngineGrammar> SourceTable for HashMap<crate::types::TreeId, ParsedTree<G>> {
+impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate::types::TreeId, ParsedTree<G>, H> {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
         self.get(&tree_id)?.source_of(tree_id)
     }
@@ -1697,6 +1702,7 @@ mod tests {
     }
 
     /// A test `function_item`'s slots: `name` 0, `return_type` 1.
+    #[allow(clippy::unnecessary_wraps, reason = "a `Router::Children` route, whose type returns a `Result`")]
     fn function_item_route(child: &crate::read::Child) -> Result<crate::read::Route, crate::read::ReadError> {
         let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
         let field = child.field.and_then(|field| crate::read::field_name(&language, field));
@@ -1709,6 +1715,7 @@ mod tests {
     }
 
     /// A test block's or declaration list's one slot: each `function_item`.
+    #[allow(clippy::unnecessary_wraps, reason = "a `Router::Children` route, whose type returns a `Result`")]
     fn item_route(child: &crate::read::Child) -> Result<crate::read::Route, crate::read::ReadError> {
         let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
         Ok(match crate::read::kind_name(&language, child.grammar) {
@@ -1849,7 +1856,7 @@ mod tests {
         let b = source.find("  b").unwrap();
         let y = source.find("  y").unwrap();
         let close = source.find("*/").unwrap();
-        assert_eq!(line_starts_inside_tokens(tree.root_node(), NodeIndex::ROOT, source), vec![b as u32, y as u32, close as u32]);
+        assert_eq!(line_starts_inside_tokens(tree.root_node(), NodeIndex::ROOT, source), vec![crate::types::narrow(b), crate::types::narrow(y), crate::types::narrow(close)]);
     }
 
     #[test]
@@ -1868,7 +1875,7 @@ mod tests {
 
     fn parsed(source: &str) -> (ParsedTree<TestGrammar>, TreeHandle) {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
-        let tree = engine.parse(source.to_string(), crate::types::TreeId(1)).expect("parse");
+        let tree = engine.parse(source, crate::types::TreeId(1)).expect("parse");
         (tree, encode_handle(crate::types::TreeId(1), crate::types::NodeIndex(0)))
     }
 
@@ -1898,7 +1905,7 @@ mod tests {
         let mut resume: Option<Vec<ChildPosition>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, kinds, plan, resume.as_deref(), limit, None).expect("walk");
-            assert!(batch.coordinates.len() as u32 <= limit);
+            assert!(crate::types::narrow(batch.coordinates.len()) <= limit);
             found.extend(batch.coordinates);
             match batch.resume {
                 Some(path) => resume = Some(path),
@@ -1952,7 +1959,7 @@ mod tests {
         let sibling = |start, end| Some(Sibling { start, end, kind: item });
         assert_eq!(tree.siblings(f), Siblings { previous: None, next: sibling(15, 24) });
         assert_eq!(tree.siblings(g), Siblings { previous: sibling(0, 9), next: None }, "the comment between them holds no sides");
-        assert_eq!(tree.siblings(NodeIndex(tree.tree.root_node().descendant_count() as u32)), Siblings::default());
+        assert_eq!(tree.siblings(NodeIndex(crate::read::descendant_count(&tree.tree.root_node()))), Siblings::default());
     }
 
     #[test]
@@ -2013,7 +2020,8 @@ mod tests {
         let blocks = walk(&tree, root, &lists, Some(&by_item), 4);
         assert_eq!(texts(&tree, &blocks), ["{ fn e() {} }"]);
         let unnumbered = plan(&format!(r#"{{ "op": "eq", {}, "text": "b" }}"#, slots(&[("block", 0)])));
-        assert!(walk(&tree, root, &[kind_id("function_item")], Some(&unnumbered), 4).is_empty());
+        let found = walk(&tree, root, &[kind_id("function_item")], Some(&unnumbered), 4);
+        assert!(found.is_empty(), "{found:?}");
     }
 
     fn walk_from(tree: &ParsedTree<TestGrammar>, from: crate::query::Address, kinds: &[KindId]) -> Vec<String> {
@@ -2078,7 +2086,7 @@ mod tests {
     }
 
     fn index_of_kind(tree: &ParsedTree<TestGrammar>, kind: &str, nth: usize) -> NodeIndex {
-        (0..tree.tree().root_node().descendant_count() as u32)
+        (0..crate::read::descendant_count(&tree.tree().root_node()))
             .map(NodeIndex::new)
             .filter(|&at| node_at_index(tree.tree(), at).is_some_and(|node| node.kind() == kind))
             .nth(nth)
@@ -2129,7 +2137,7 @@ mod tests {
     #[test]
     fn an_error_in_a_side_reads_as_its_kind_and_source_text_with_the_runs_beside_it_on_its_line() {
         let (tree, _) = parsed("fn f() {} @@ fn g() {}");
-        let sides = (0..tree.tree().root_node().descendant_count() as u32)
+        let sides = (0..crate::read::descendant_count(&tree.tree().root_node()))
             .map(NodeIndex::new)
             .flat_map(|at| [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].map(|side| tree.trivia_side(at, side)))
             .flatten()
@@ -2168,7 +2176,7 @@ mod tests {
 
     fn coordinate(tree: &ParsedTree<TestGrammar>, index: crate::types::NodeIndex) -> NodeCoordinate {
         let node = node_at_index(tree.tree(), index).expect("a node");
-        NodeCoordinate::new(crate::types::TreeId(1), index, index + node.descendant_count() as u32, Span::of(&node))
+        NodeCoordinate::new(crate::types::TreeId(1), index, index + crate::read::descendant_count(&node), Span::of(&node))
     }
 
     #[test]

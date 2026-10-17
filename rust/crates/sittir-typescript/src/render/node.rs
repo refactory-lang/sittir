@@ -7,6 +7,7 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]
 #![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]
+#![allow(clippy::unnecessary_wraps, clippy::trivially_copy_pass_by_ref, clippy::needless_pass_by_value, reason = "each generated function role has one signature: a render function takes its node by reference and returns RenderResult, and a conversion into AnyNode takes its node by value, whatever one body needs")]
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
@@ -36590,7 +36591,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionNode {
             Self::UpdateExpression(t) => t.seat_target(table, ctx),
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::BinaryExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36619,7 +36620,7 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionNode {
             Self::MetaProperty(t) => t.seat_target(table, ctx),
             Self::CallExpression(t) => t.seat_target(table, ctx),
             Self::NonNullExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Number { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36665,7 +36666,7 @@ impl ::sittir_core::prepare::SeatTarget for PatternNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::RestPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::LhsExpression { .. } => None,
         }
     }
 }
@@ -36704,7 +36705,7 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryTypeNode {
             Self::TemplateLiteralType(t) => t.seat_target(table, ctx),
             Self::IntersectionType(t) => t.seat_target(table, ctx),
             Self::UnionType(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } => None,
         }
     }
 }
@@ -36725,7 +36726,7 @@ impl ::sittir_core::prepare::SeatTarget for EnumBodyElementNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::EnumAssignment(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::EnumBodyElementName { .. } => None,
         }
     }
 }
@@ -36744,7 +36745,7 @@ impl ::sittir_core::prepare::SeatTarget for NamespaceExportModuleExportNameNodeS
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::DefaultKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36754,7 +36755,7 @@ impl ::sittir_core::prepare::SeatTarget for ExportSpecifierNameNodeSlot {
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::DefaultKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36764,7 +36765,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportStatementFromClauseNodeSlot {
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::ImportStatementClauseFrom { .. } | Self::ImportRequireClause { .. } => None,
         }
     }
 }
@@ -36812,7 +36813,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementExpressionNodeSlo
             Self::UpdateExpressionPrefix(t) => t.seat_target(table, ctx),
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::SequenceExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36863,7 +36864,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementInitializerNodeSlot {
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(225)).map(|site| (edges, site)),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::SequenceExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36912,7 +36913,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementConditionNodeSlot {
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(225)).map(|site| (edges, site)),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::SequenceExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36969,7 +36970,7 @@ impl ::sittir_core::prepare::SeatTarget for YieldExpressionExpressionNodeSlot {
             Self::UpdateExpressionPrefix(t) => t.seat_target(table, ctx),
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::YieldExpressionDelegate { .. } | Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36980,7 +36981,7 @@ impl ::sittir_core::prepare::SeatTarget for ObjectPropertiesNodeSlot {
             Self::Pair(t) => t.seat_target(table, ctx),
             Self::SpreadElement(t) => t.seat_target(table, ctx),
             Self::MethodDefinition(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::ShorthandPropertyIdentifier { .. } => None,
         }
     }
 }
@@ -36991,7 +36992,7 @@ impl ::sittir_core::prepare::SeatTarget for ObjectPatternPropertiesNodeSlot {
             Self::PairPattern(t) => t.seat_target(table, ctx),
             Self::RestPattern(t) => t.seat_target(table, ctx),
             Self::ObjectAssignmentPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::ShorthandPropertyIdentifierPattern { .. } => None,
         }
     }
 }
@@ -37040,7 +37041,7 @@ impl ::sittir_core::prepare::SeatTarget for ArrayElementsNodeSlot {
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::SpreadElement(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37050,7 +37051,7 @@ impl ::sittir_core::prepare::SeatTarget for ArrayPatternElementsNodeSlot {
         match self {
             Self::RestPattern(t) => t.seat_target(table, ctx),
             Self::AssignmentPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::LhsExpression { .. } => None,
         }
     }
 }
@@ -37099,7 +37100,7 @@ impl ::sittir_core::prepare::SeatTarget for ArrowFunctionBodyNodeSlot {
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::StatementBlock(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37108,7 +37109,7 @@ impl ::sittir_core::prepare::SeatTarget for ArrowFunctionContentNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::CallSignature(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::ArrowFunctionParameter { .. } => None,
         }
     }
 }
@@ -37156,7 +37157,7 @@ impl ::sittir_core::prepare::SeatTarget for MemberExpressionObjectNodeSlot {
             Self::UpdateExpressionPrefix(t) => t.seat_target(table, ctx),
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::Import { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37204,7 +37205,7 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptExpressionObjectNodeSlot {
             Self::UpdateExpressionPrefix(t) => t.seat_target(table, ctx),
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37216,7 +37217,7 @@ impl ::sittir_core::prepare::SeatTarget for LhsExpressionContentNodeSlot {
             Self::SubscriptExpression(t) => t.seat_target(table, ctx),
             Self::NonNullExpression(t) => t.seat_target(table, ctx),
             Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(128)).map(|site| (edges, site)),
-            _ => None,
+            Self::Identifier { .. } | Self::ObjectPattern { .. } | Self::ArrayPattern { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37226,7 +37227,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentExpressionLeftNodeSlot {
         match self {
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table, ctx),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::LhsExpression { .. } => None,
         }
     }
 }
@@ -37239,7 +37240,7 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentExpressionLeftNod
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table, ctx),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table, ctx),
             Self::NonNullExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37248,7 +37249,7 @@ impl ::sittir_core::prepare::SeatTarget for DecoratorMemberExpressionObjectNodeS
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(278)).map(|site| (edges, site)),
-            _ => None,
+            Self::Identifier { .. } | Self::DecoratorMemberExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37258,7 +37259,7 @@ impl ::sittir_core::prepare::SeatTarget for MethodDefinitionNameNodeSlot {
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::PropertyIdentifier { .. } | Self::PrivatePropertyIdentifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::ComputedPropertyName { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37289,7 +37290,7 @@ impl ::sittir_core::prepare::SeatTarget for AsExpressionTypeAnnotationNodeSlot {
             Self::InferType(t) => t.seat_target(table, ctx),
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
             Self::TypeQueryCallExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::ConstKeyword { .. } => None,
         }
     }
 }
@@ -37312,7 +37313,7 @@ impl ::sittir_core::prepare::SeatTarget for AmbientDeclarationContentNodeSlot {
             Self::InterfaceDeclaration(t) => t.seat_target(table, ctx),
             Self::ImportAlias(t) => t.seat_target(table, ctx),
             Self::AmbientDeclaration(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::AmbientDeclarationGlobal { .. } | Self::AmbientDeclarationModule { .. } => None,
         }
     }
 }
@@ -37322,7 +37323,7 @@ impl ::sittir_core::prepare::SeatTarget for ModuleNameNodeSlot {
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NestedIdentifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37332,7 +37333,7 @@ impl ::sittir_core::prepare::SeatTarget for ExtendsTypeClauseTypeNodeSlot {
         match self {
             Self::NestedTypeIdentifier(t) => t.seat_target(table, ctx),
             Self::GenericType(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::TypeIdentifier { .. } => None,
         }
     }
 }
@@ -37342,7 +37343,7 @@ impl ::sittir_core::prepare::SeatTarget for RequiredParameterPatternNodeSlot {
         match self {
             Self::RestPattern(t) => t.seat_target(table, ctx),
             Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)).map(|site| (edges, site)),
-            _ => None,
+            Self::LhsExpression { .. } => None,
         }
     }
 }
@@ -37352,7 +37353,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeQueryMemberExpressionInTypeAnnot
         match self {
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
             Self::TypeQueryCallExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Import { .. } => None,
         }
     }
 }
@@ -37361,7 +37362,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeQueryCallExpressionInTypeAnnotat
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Import { .. } => None,
         }
     }
 }
@@ -37370,7 +37371,7 @@ impl ::sittir_core::prepare::SeatTarget for AssertsValueNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)).map(|site| (edges, site)),
-            _ => None,
+            Self::TypePredicate { .. } | Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37379,7 +37380,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleParameterNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::RestPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37405,7 +37406,7 @@ impl ::sittir_core::prepare::SeatTarget for TemplateTypeTypeNodeSlot {
             Self::IntersectionType(t) => t.seat_target(table, ctx),
             Self::UnionType(t) => t.seat_target(table, ctx),
             Self::InferType(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } => None,
         }
     }
 }
@@ -37414,7 +37415,7 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::NestedTypeIdentifier(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::TypeIdentifier { .. } => None,
         }
     }
 }
@@ -37423,7 +37424,7 @@ impl ::sittir_core::prepare::SeatTarget for TypePredicateNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)).map(|site| (edges, site)),
-            _ => None,
+            Self::Identifier { .. } | Self::PredefinedType { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37432,7 +37433,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeQueryMemberExpressionObjectNodeS
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)).map(|site| (edges, site)),
-            _ => None,
+            Self::Identifier { .. } | Self::TypeQuerySubscriptExpression { .. } | Self::TypeQueryMemberExpression { .. } | Self::TypeQueryCallExpression { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37442,7 +37443,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeQuerySubscriptExpressionIndexNod
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::PredefinedType { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37451,7 +37452,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeQueryExpressionNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)).map(|site| (edges, site)),
-            _ => None,
+            Self::TypeQuerySubscriptExpression { .. } | Self::TypeQueryMemberExpression { .. } | Self::TypeQueryCallExpression { .. } | Self::TypeQueryInstantiationExpression { .. } | Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37466,7 +37467,7 @@ impl ::sittir_core::prepare::SeatTarget for LiteralTypeContentNodeSlot {
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(280)).map(|site| (edges, site)),
             Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
             Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(128)).map(|site| (edges, site)),
-            _ => None,
+            Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37497,7 +37498,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionTypeReturnTypeNodeSlot {
             Self::InferType(t) => t.seat_target(table, ctx),
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
             Self::TypeQueryCallExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::Asserts { .. } | Self::TypePredicate { .. } => None,
         }
     }
 }
@@ -37541,7 +37542,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleTypeMembersItemNodeSlot {
             Self::InferType(t) => t.seat_target(table, ctx),
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
             Self::TypeQueryCallExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } => None,
         }
     }
 }
@@ -37606,7 +37607,7 @@ impl ::sittir_core::prepare::SeatTarget for BinaryExpressionInLeftNodeSlot {
             Self::UpdateExpressionPrefix(t) => t.seat_target(table, ctx),
             Self::NewExpression(t) => t.seat_target(table, ctx),
             Self::YieldExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpression { .. } | Self::PrivatePropertyIdentifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37617,7 +37618,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassBodyMemberDeclarationMemberNode
             Self::IndexSignatureColon(t) => t.seat_target(table, ctx),
             Self::IndexSignatureMappedTypeClause(t) => t.seat_target(table, ctx),
             Self::MethodSignature(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::AbstractMethodSignature { .. } | Self::PublicFieldDefinition { .. } => None,
         }
     }
 }
@@ -37627,7 +37628,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportSpecifierAsNameNodeSlot {
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::DefaultKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37662,7 +37663,7 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTemplateCallFunctionNo
             Self::CallExpressionMember(t) => t.seat_target(table, ctx),
             Self::NonNullExpression(t) => t.seat_target(table, ctx),
             Self::NewExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -37708,7 +37709,7 @@ impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationDef
             Self::InterfaceDeclaration(t) => t.seat_target(table, ctx),
             Self::ImportAlias(t) => t.seat_target(table, ctx),
             Self::AmbientDeclaration(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::ExportStatementDefaultDeclarationDefaultKwValue { .. } => None,
         }
     }
 }
@@ -37718,7 +37719,7 @@ impl ::sittir_core::prepare::SeatTarget for ForHeaderLhsLeftNodeSlot {
         match self {
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table, ctx),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::LhsExpression { .. } => None,
         }
     }
 }
@@ -37862,7 +37863,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::VariableDeclaratorDefinite(t) => t.seat_target(table, ctx),
             Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(436)).map(|site| (edges, site)),
             Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(437)).map(|site| (edges, site)),
-            _ => None,
+            Self::Program { .. } | Self::HashBangLine { .. } | Self::ExportClause { .. } | Self::ImportClause { .. } | Self::NamespaceImport { .. } | Self::NamedImports { .. } | Self::ImportAttribute { .. } | Self::ElseClause { .. } | Self::SwitchBody { .. } | Self::CatchClause { .. } | Self::FinallyClause { .. } | Self::ObjectPattern { .. } | Self::ArrayPattern { .. } | Self::NestedIdentifier { .. } | Self::ClassHeritage { .. } | Self::LhsExpression { .. } | Self::BinaryExpression { .. } | Self::SequenceExpression { .. } | Self::UnescapedDoubleStringFragment { .. } | Self::UnescapedSingleStringFragment { .. } | Self::EscapeSequence { .. } | Self::TemplateSubstitution { .. } | Self::RegexPattern { .. } | Self::RegexFlags { .. } | Self::Identifier { .. } | Self::PrivatePropertyIdentifier { .. } | Self::Arguments { .. } | Self::DecoratorMemberExpression { .. } | Self::DecoratorCallExpression { .. } | Self::ClassBody { .. } | Self::FormalParameters { .. } | Self::ComputedPropertyName { .. } | Self::PublicFieldDefinition { .. } | Self::AbstractMethodSignature { .. } | Self::DecoratorParenthesizedExpression { .. } | Self::ImportRequireClause { .. } | Self::ExtendsClause { .. } | Self::ImplementsClause { .. } | Self::ExtendsTypeClause { .. } | Self::EnumBody { .. } | Self::AccessibilityModifier { .. } | Self::OmittingTypeAnnotation { .. } | Self::AddingTypeAnnotation { .. } | Self::OptingTypeAnnotation { .. } | Self::TypeAnnotation { .. } | Self::Asserts { .. } | Self::AssertsAnnotation { .. } | Self::TemplateType { .. } | Self::TypePredicate { .. } | Self::TypePredicateAnnotation { .. } | Self::TypeQueryMemberExpression { .. } | Self::TypeQuerySubscriptExpression { .. } | Self::TypeQueryCallExpression { .. } | Self::TypeQueryInstantiationExpression { .. } | Self::MappedTypeClause { .. } | Self::PredefinedType { .. } | Self::TypeArguments { .. } | Self::TypeParameters { .. } | Self::DefaultType { .. } | Self::Constraint { .. } | Self::ExportSpecifiers { .. } | Self::ImportSpecifiers { .. } | Self::FormalParametersElements { .. } | Self::EnumBodyElementName { .. } | Self::EnumBodyElements { .. } | Self::Types { .. } | Self::TypeParametersElements { .. } | Self::TupleTypeMembers { .. } | Self::ImportClauseGroup { .. } | Self::CatchClauseGroup { .. } | Self::AmbientDeclarationGlobal { .. } | Self::AmbientDeclarationModule { .. } | Self::ObjectTypeContent { .. } | Self::CommentLine { .. } | Self::CommentBlock { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpressionIn { .. } | Self::ImportStatementClauseFrom { .. } | Self::YieldExpressionDelegate { .. } | Self::ArrowFunctionParameter { .. } | Self::ClassHeritageExtendsClause { .. } | Self::ImportClauseDefaultImport { .. } | Self::ExportStatementDefaultFromStarFrom { .. } | Self::ExportStatementDefaultFromNsFrom { .. } | Self::ExportStatementDefaultFromClauseFrom { .. } | Self::ExportStatementDefaultDeclarationDefaultKwValue { .. } | Self::ForHeaderLhs { .. } | Self::ForHeaderVarKind { .. } | Self::ForHeaderLetConstKind { .. } | Self::ForHeaderUsingKind { .. } | Self::HtmlComment { .. } | Self::JsxText { .. } | Self::TemplateChars { .. } | Self::TernaryQmark { .. } | Self::ErrorRecovery { .. } | Self::StatementIdentifier { .. } | Self::ShorthandPropertyIdentifier { .. } | Self::ShorthandPropertyIdentifierPattern { .. } | Self::PropertyIdentifier { .. } | Self::TypeIdentifier { .. } | Self::InterfaceBody { .. } | Self::Import { .. } | Self::OptionalChain { .. } | Self::OverrideModifier { .. } | Self::UsingDeclarationArm { .. } | Self::OptionalChainMarker { .. } | Self::AutomaticSemicolon { .. } | Self::FunctionSignatureAutomaticSemicolon { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Star { .. } | Self::AsKeyword { .. } | Self::DefaultKeyword { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::TypeKeyword { .. } | Self::TypeofKeyword { .. } | Self::ImportKeyword { .. } | Self::Semi { .. } | Self::WithKeyword { .. } | Self::AssertKeyword { .. } | Self::VarKeyword { .. } | Self::LetKeyword { .. } | Self::ConstKeyword { .. } | Self::UsingKeyword { .. } | Self::ElseKeyword { .. } | Self::IfKeyword { .. } | Self::SwitchKeyword { .. } | Self::ForKeyword { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::AwaitKeyword { .. } | Self::WhileKeyword { .. } | Self::DoKeyword { .. } | Self::TryKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::DebuggerKeyword { .. } | Self::ReturnKeyword { .. } | Self::ThrowKeyword { .. } | Self::Colon { .. } | Self::CaseKeyword { .. } | Self::CatchKeyword { .. } | Self::FinallyKeyword { .. } | Self::YieldKeyword { .. } | Self::Eq { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Dot { .. } | Self::ClassKeyword { .. } | Self::AsyncKeyword { .. } | Self::FunctionKeyword { .. } | Self::EqGt { .. } | Self::QmarkDot { .. } | Self::NewKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::CaretEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::GtGtEq { .. } | Self::GtGtGtEq { .. } | Self::LtLtEq { .. } | Self::StarStarEq { .. } | Self::AmpAmpEq { .. } | Self::PipePipeEq { .. } | Self::QmarkQmarkEq { .. } | Self::DotDotDot { .. } | Self::Qmark { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::GtGt { .. } | Self::GtGtGt { .. } | Self::LtLt { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::Pipe { .. } | Self::Plus { .. } | Self::Dash { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::StarStar { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::EqEqEq { .. } | Self::BangEq { .. } | Self::BangEqEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::QmarkQmark { .. } | Self::InstanceofKeyword { .. } | Self::Bang { .. } | Self::Tilde { .. } | Self::VoidKeyword { .. } | Self::DeleteKeyword { .. } | Self::Bquote { .. } | Self::DollarLbrace { .. } | Self::ThisKeyword { .. } | Self::SuperKeyword { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::NullKeyword { .. } | Self::At { .. } | Self::StaticKeyword { .. } | Self::ReadonlyKeyword { .. } | Self::GetKeyword { .. } | Self::SetKeyword { .. } | Self::DeclareKeyword { .. } | Self::AbstractKeyword { .. } | Self::AccessorKeyword { .. } | Self::SatisfiesKeyword { .. } | Self::RequireKeyword { .. } | Self::ExtendsKeyword { .. } | Self::ImplementsKeyword { .. } | Self::ModuleKeyword { .. } | Self::NamespaceKeyword { .. } | Self::InterfaceKeyword { .. } | Self::EnumKeyword { .. } | Self::PublicKeyword { .. } | Self::PrivateKeyword { .. } | Self::ProtectedKeyword { .. } | Self::OverrideKeyword { .. } | Self::DashQmarkColon { .. } | Self::PlusQmarkColon { .. } | Self::QmarkColon { .. } | Self::AssertsKeyword { .. } | Self::InferKeyword { .. } | Self::IsKeyword { .. } | Self::KeyofKeyword { .. } | Self::InKeyword { .. } | Self::AnyKeyword { .. } | Self::NumberKeyword { .. } | Self::BooleanKeyword { .. } | Self::StringKeyword { .. } | Self::SymbolKeyword { .. } | Self::Unique { .. } | Self::UnknownKeyword { .. } | Self::NeverKeyword { .. } | Self::ObjectKeyword { .. } | Self::LbracePipe { .. } | Self::PipeRbrace { .. } | Self::Comma { .. } | Self::GlobalKeyword { .. } | Self::ExportKeyword { .. } | Self::FromKeyword { .. } | Self::Dquote { .. } | Self::Squote { .. } | Self::PlusPlus { .. } | Self::DashDash { .. } | Self::TargetKeyword { .. } | Self::MetaKeyword { .. } | Self::OfKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -42476,7 +42477,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 .with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 43), (43, 61), (45, 45), (45, 61), (47, 61), (60, 61), (62, 61), (63, 46), (63, 61), (94, 61), (123, 124), (124, 61), (124, 125)]); // "!=" "%=" "&=" "*=" "++" "+=" "--" "-=" "/=" "<=" ">=" "?." "?=" "^=" "{|" "|=" "|}"
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
-/// carrier, so the root renders through the SAME single SpacingWriter
+/// carrier, so the root renders through the SAME single `SpacingWriter`
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
@@ -42901,7 +42902,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::TargetKeyword => [::sittir_core::types::KindId(171)].iter().any(|k| kinds.contains(k)),
             Self::MetaKeyword => [::sittir_core::types::KindId(172)].iter().any(|k| kinds.contains(k)),
             Self::OfKeyword => [::sittir_core::types::KindId(150)].iter().any(|k| kinds.contains(k)),
-            _ => false,
+            Self::Verbatim(_) => false,
         }
     }
 }

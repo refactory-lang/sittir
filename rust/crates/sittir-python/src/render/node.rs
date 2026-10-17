@@ -7,6 +7,7 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]
 #![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]
+#![allow(clippy::unnecessary_wraps, clippy::trivially_copy_pass_by_ref, clippy::needless_pass_by_value, reason = "each generated function role has one signature: a render function takes its node by reference and returns RenderResult, and a conversion into AnyNode takes its node by value, whatever one body needs")]
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
@@ -23660,7 +23661,7 @@ impl ::sittir_core::prepare::SeatTarget for ParameterNode {
             Self::KeywordSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(258)).map(|site| (edges, site)),
             Self::PositionalSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(257)).map(|site| (edges, site)),
             Self::DictionarySplatPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23673,7 +23674,7 @@ impl ::sittir_core::prepare::SeatTarget for PatternNode {
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             Self::TuplePattern(t) => t.seat_target(table, ctx),
             Self::ListPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23689,7 +23690,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionNode {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23719,7 +23720,7 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionNode {
             Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Integer { .. } | Self::Float { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23728,7 +23729,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportListNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::AliasedImport(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::DottedName { .. } => None,
         }
     }
 }
@@ -23779,7 +23780,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementContentNodeSlot {
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionStatementTuple { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23816,7 +23817,7 @@ impl ::sittir_core::prepare::SeatTarget for ReturnStatementExpressionsNodeSlot {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23838,7 +23839,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementLeftNodeSlot {
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             Self::TuplePattern(t) => t.seat_target(table, ctx),
             Self::ListPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23847,7 +23848,7 @@ impl ::sittir_core::prepare::SeatTarget for ExecStatementCodeNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::String(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23875,7 +23876,7 @@ impl ::sittir_core::prepare::SeatTarget for CasePatternContentNodeSlot {
         match self {
             Self::CaseAsPattern(t) => t.seat_target(table, ctx),
             Self::KeywordPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::SimplePattern { .. } => None,
         }
     }
 }
@@ -23896,7 +23897,7 @@ impl ::sittir_core::prepare::SeatTarget for SimplePatternContentNodeSlot {
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)).map(|site| (edges, site)),
-            _ => None,
+            Self::UnionPattern { .. } | Self::DottedName { .. } => None,
         }
     }
 }
@@ -23905,7 +23906,7 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::TuplePattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23915,7 +23916,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTargetNodeSlot {
         match self {
             Self::Subscript(t) => t.seat_target(table, ctx),
             Self::Attribute(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23953,7 +23954,7 @@ impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseBodyNodeSlot 
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::LambdaWithinForInClause(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -23995,7 +23996,7 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentRightNodeSlot {
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24032,7 +24033,7 @@ impl ::sittir_core::prepare::SeatTarget for YieldContentNodeSlot {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::YieldFromClause { .. } | Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24041,7 +24042,7 @@ impl ::sittir_core::prepare::SeatTarget for CallArgumentsNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::GeneratorExpression(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::ArgumentList { .. } => None,
         }
     }
 }
@@ -24051,7 +24052,7 @@ impl ::sittir_core::prepare::SeatTarget for TypedParameterNameNodeSlot {
         match self {
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             Self::DictionarySplatPattern(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24093,7 +24094,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeContentNodeSlot {
             Self::UnionType(t) => t.seat_target(table, ctx),
             Self::ConstrainedType(t) => t.seat_target(table, ctx),
             Self::MemberType(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24131,7 +24132,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionExpressionNod
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24171,7 +24172,7 @@ impl ::sittir_core::prepare::SeatTarget for CollectionElementsItemNodeSlot {
             Self::Yield(t) => t.seat_target(table, ctx),
             Self::ListSplat(t) => t.seat_target(table, ctx),
             Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24209,7 +24210,7 @@ impl ::sittir_core::prepare::SeatTarget for InterpolationExpressionNodeSlot {
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::ExpressionList { .. } | Self::PatternList { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24250,7 +24251,7 @@ impl ::sittir_core::prepare::SeatTarget for ArgumentListElementsItemNodeSlot {
             Self::DictionarySplat(t) => t.seat_target(table, ctx),
             Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
             Self::KeywordArgument(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24297,7 +24298,7 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptsSubscriptNodeSlot {
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::Slice(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24427,7 +24428,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AssignmentType(t) => t.seat_target(table, ctx),
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::MatchBlock { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::DottedName { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Underscore { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Pipe { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -27473,7 +27474,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 .with_literal_merge_pairs(&[(33, 61), (37, 61), (38, 61), (42, 61), (43, 61), (45, 61), (47, 61), (60, 61), (60, 62), (62, 61), (64, 61), (94, 61), (124, 61)]); // "!=" "%=" "&=" "*=" "+=" "-=" "/=" "<=" "<>" ">=" "@=" "^=" "|="
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
-/// carrier, so the root renders through the SAME single SpacingWriter
+/// carrier, so the root renders through the SAME single `SpacingWriter`
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
@@ -27775,7 +27776,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::NotIn => [::sittir_core::types::KindId(210)].iter().any(|k| kinds.contains(k)),
             Self::IsKeyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
             Self::IsNot => [::sittir_core::types::KindId(211)].iter().any(|k| kinds.contains(k)),
-            _ => false,
+            Self::Verbatim(_) => false,
         }
     }
 }

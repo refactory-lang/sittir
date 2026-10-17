@@ -11,6 +11,22 @@ members = ["rust/crates/*"]
 # grammar-owned native crates live under `rust/crates/sittir-{lang}`.
 
 [workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+# Pedantic lints that don't fit this workspace:
+# - match_same_arms: dispatch matches have one arm per kind, and arms
+#   that share a body still name distinct kinds.
+# - too_many_lines: the emitted per-kind dispatch and prepare bodies
+#   grow with the grammar.
+# - missing_errors_doc: each error type documents its variants; a
+#   per-function `# Errors` section would repeat them.
+# - struct_excessive_bools: a node's bool fields are the grammar's
+#   presence flags, one per keyword slot.
+# - similar_names: generated bindings take the grammar's slot names.
+match_same_arms = "allow"
+too_many_lines = "allow"
+missing_errors_doc = "allow"
+struct_excessive_bools = "allow"
+similar_names = "allow"
 allow_attributes_without_reason = "warn"
 clone_on_ref_ptr = "warn"
 dbg_macro = "warn"

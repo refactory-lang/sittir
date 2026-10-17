@@ -21,6 +21,7 @@ impl<T> TryFrom<Vec<T>> for NonEmptyVec<T> {
 
 impl<T> NonEmptyVec<T> {
     /// The items as a plain list.
+    #[must_use]
     pub fn into_vec(self) -> Vec<T> {
         self.0
     }
