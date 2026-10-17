@@ -476,10 +476,10 @@ Detailed against master `591b07885`, where 3a has merged (the trivia table, dept
 
 **Selecting node storage (the maintainer, 2026-10-16).** Until the cutover, arena storage is opt-in beside the object wire, and both derive from the one stamped layout.
 
-1. **The cargo feature `records` is additive.** It adds the record codec and its napi entry points (Interfaces) beside the object codec, and never removes or switches the object wire, since cargo features unify across the workspace. The derive's record items expand inside a `records_codec!` wrapper, which keeps them only when `sittir-core` is built with the feature, as `napi_codec!` does for the object codec.
-2. **One runtime switch: the engine option `nodeStorage: 'object' | 'arena'`,** default `'object'`. `rust.createEngine({ nodeStorage: 'arena' })` gives an engine whose reads and renders cross as records. The engine reads which storage the addon supports, and asking for `'arena'` from an addon built without the feature throws, naming it: "arena node storage needs an addon built with the `records` feature".
+1. **The cargo feature `arena` is additive.** It adds the record codec and its napi entry points (Interfaces) beside the object codec, and never removes or switches the object wire, since cargo features unify across the workspace. The derive's record items expand inside a `records_codec!` wrapper, which keeps them only when `sittir-core` is built with the feature, as `napi_codec!` does for the object codec.
+2. **One runtime switch: the engine option `nodeStorage: 'object' | 'arena'`,** default `'object'`. `rust.createEngine({ nodeStorage: 'arena' })` gives an engine whose reads and renders cross as records. The engine reads which storage the addon supports, and asking for `'arena'` from an addon built without the feature throws, naming it: "arena node storage needs an addon built with the `arena` feature".
 3. **`@sittir/<lang>/arena` is shorthand for it.** Its descriptor is the default descriptor whose `createEngine` sets `nodeStorage: 'arena'`. The descriptor codegen is shared; `is`, `kinds` and the types are the same objects. There is one mechanism, and the export only sets a default.
-4. **One addon.** Published prebuilds are built with `records`, so one binary per platform carries both codecs. The feature still gates local and CI builds.
+4. **One addon.** Published prebuilds are built with `arena`, so one binary per platform carries both codecs. The feature still gates local and CI builds.
 5. **Both readers are emitted** from the one layout: `records.ts` with the record-backed wrap, and the wrap's object path. The engine picks by `nodeStorage`.
 6. **CI runs the parity job under both settings,** with identical validation rows, while the option lives.
 7. **At the cutover** (3b-ii), `'arena'` becomes the default. `nodeStorage` and `/arena` are deprecated, then removed with the object codec and the feature.
@@ -602,7 +602,7 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
   - `render_record(address, tree, options) -> string`;
   - `chunk(arena, n) -> ArrayBuffer`.
 
-  The existing `read` and `render` are unchanged. The new methods exist only under the `records` feature (§ Selecting node storage).
+  The existing `read` and `render` are unchanged. The new methods exist only under the `arena` feature (§ Selecting node storage).
 
 **Terms.** A *record* is a kind's fixed words in an arena. A *cell* is one slot's words within it. A *view* is the parsed node's literal over a record: its members, and the record's address in place of the transport's fields. The *object wire* is today's napi objects.
 

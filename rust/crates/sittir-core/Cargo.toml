@@ -19,7 +19,7 @@ napi-bindings = ["dep:napi", "dep:napi-derive"]
 
 # The record codec and its entry points, beside the object codec: additive,
 # never switching or removing the object wire.
-records = []
+arena = []
 
 [dependencies]
 regex = "1"
