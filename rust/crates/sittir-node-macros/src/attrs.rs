@@ -19,6 +19,7 @@ pub struct KindAttrs {
     pub wraps_hidden: bool,
     /// `text`, or `text = "…"`: a leaf read as its text, with the fixed text
     /// it reads as when its span is empty or its tokens do not tile it.
+    #[allow(clippy::option_option, reason = "the attribute's three spellings: absent, bare `text`, and `text = \"…\"`")]
     pub text: Option<Option<LitStr>>,
     pub interior: Option<LitStr>,
     pub content: Option<Ident>,
@@ -211,7 +212,7 @@ pub fn variant_kinds(attrs: &[Attribute]) -> syn::Result<Option<VariantKinds>> {
             Meta::List(list) if list.path.is_ident("display") => out.shown.push(list.parse_args()?),
             Meta::List(list) if list.path.is_ident("folded") => out.folded.push(list.parse_args()?),
             Meta::List(list) if list.path.is_ident("decodes") => {
-                out.decodes.extend(list.parse_args_with(Punctuated::<Path, Token![,]>::parse_terminated)?)
+                out.decodes.extend(list.parse_args_with(Punctuated::<Path, Token![,]>::parse_terminated)?);
             }
             other => {
                 return Err(syn::Error::new_spanned(

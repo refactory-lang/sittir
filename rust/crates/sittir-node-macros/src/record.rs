@@ -84,7 +84,7 @@ fn end_word(ident: &Ident, word: u32, width: u32) -> syn::Result<u32> {
 mod tests {
     use syn::{parse_quote, Data, DeriveInput, Fields};
 
-    fn checks(input: DeriveInput) -> syn::Result<String> {
+    fn checks(input: &DeriveInput) -> syn::Result<String> {
         let Data::Struct(data) = &input.data else { panic!("a struct") };
         let Fields::Named(named) = &data.fields else { panic!("named fields") };
         let words = crate::attrs::kind_attrs(&input.attrs)?.words;
@@ -103,7 +103,7 @@ mod tests {
 
     #[test]
     fn each_stamped_field_asserts_its_type_fits_its_cell() {
-        let out = checks(parse_quote! {
+        let out = checks(&parse_quote! {
             #[node(words = 10)]
             pub struct LetDeclarationNode {
                 pub layout: Option<Box<NodeLayout>>,
@@ -118,27 +118,27 @@ mod tests {
         .expect("checks");
         assert!(has(&out, r#"assert!(::sittir_core::record::fits_bit::<bool>(), "LetDeclarationNode.mutable: a stamped bit holds only a presence")"#));
         assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(5u32, 0u32), "LetDeclarationNode.pattern: its type needs more than its stamped record cell")"#));
-        assert!(has(&out, r#"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(2u32, 5u32)"#));
+        assert!(has(&out, r"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(2u32, 5u32)"));
     }
 
     #[test]
     fn a_struct_with_no_record_attribute_checks_nothing() {
-        let out = checks(parse_quote! {
+        let out = checks(&parse_quote! {
             pub struct IdentifierNode {
                 pub text: String,
             }
         })
         .expect("checks");
-        assert!(out.is_empty());
+        assert_eq!(out, "");
     }
 
-    fn refusal(input: DeriveInput) -> String {
+    fn refusal(input: &DeriveInput) -> String {
         checks(input).expect_err("refused").to_string()
     }
 
     #[test]
     fn two_cells_sharing_a_word_are_refused_naming_the_later_field() {
-        let message = refusal(parse_quote! {
+        let message = refusal(&parse_quote! {
             #[node(words = 10)]
             pub struct S {
                 #[slot(word = 2, width = 5)]
@@ -152,19 +152,19 @@ mod tests {
 
     #[test]
     fn a_cell_past_the_record_s_words_is_refused() {
-        let message = refusal(parse_quote! {
+        let message = refusal(&parse_quote! {
             #[node(words = 6)]
             pub struct S {
                 #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
             }
         });
-        assert!(message.contains("`a`") && message.contains("6"), "{message}");
+        assert!(message.contains("`a`") && message.contains('6'), "{message}");
     }
 
     #[test]
     fn a_bit_shared_or_inside_a_cell_is_refused() {
-        let shared = refusal(parse_quote! {
+        let shared = refusal(&parse_quote! {
             #[node(words = 4)]
             pub struct S {
                 #[slot(word = 2, bit = 3)]
@@ -174,7 +174,7 @@ mod tests {
             }
         });
         assert!(shared.contains("`b`"), "{shared}");
-        let inside = refusal(parse_quote! {
+        let inside = refusal(&parse_quote! {
             #[node(words = 8)]
             pub struct S {
                 #[slot(word = 2, width = 5)]
@@ -188,7 +188,7 @@ mod tests {
 
     #[test]
     fn a_stamped_field_needs_the_struct_s_words() {
-        let message = refusal(parse_quote! {
+        let message = refusal(&parse_quote! {
             pub struct S {
                 #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
@@ -199,7 +199,7 @@ mod tests {
 
     #[test]
     fn cell_end_overflow_is_refused_naming_the_field() {
-        let message = refusal(parse_quote! {
+        let message = refusal(&parse_quote! {
             #[node(words = 10)]
             pub struct S {
                 #[slot(word = 4294967295, width = 5)]
@@ -211,7 +211,7 @@ mod tests {
 
     #[test]
     fn presence_end_overflow_is_refused_naming_the_field() {
-        let message = refusal(parse_quote! {
+        let message = refusal(&parse_quote! {
             #[node(words = 10)]
             pub struct S {
                 #[slot(word = 4294967295, bit = 0)]
@@ -223,7 +223,7 @@ mod tests {
 
     #[test]
     fn a_record_slot_cannot_omit_its_stamp() {
-        let message = refusal(parse_quote! {
+        let message = refusal(&parse_quote! {
             #[node(words = 7)]
             pub struct S {
                 #[slot]
@@ -235,13 +235,13 @@ mod tests {
 
     #[test]
     fn legacy_slots_without_record_attributes_remain_valid() {
-        let out = checks(parse_quote! {
+        let out = checks(&parse_quote! {
             pub struct S {
                 #[slot]
                 pub a: SlotValue<A>,
             }
         })
         .expect("legacy slot");
-        assert!(out.is_empty());
+        assert_eq!(out, "");
     }
 }

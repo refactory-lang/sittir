@@ -121,6 +121,7 @@ pub const RELAXED_KEYWORDS: &[KindId] = &[];
 pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[];
 
 /// Whether a node with this grammar id and display id is a relaxed keyword (`ReadCtx::relaxes`).
+#[must_use]
 pub fn relaxes(grammar: KindId, display: KindId) -> bool {
     let _ = (grammar, display);
     false
@@ -128,6 +129,7 @@ pub fn relaxes(grammar: KindId, display: KindId) -> bool {
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
+#[must_use]
 pub fn kind_name_from_id(id: KindId) -> &'static str {
     match id.0 {
         1 => "|", // "pipe"

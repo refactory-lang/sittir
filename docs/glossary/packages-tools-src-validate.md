@@ -426,7 +426,7 @@ A python expression fragment is reparsed inside brackets, `_ = (…)`. A node's 
 
 An assignment target reparses as the left side of a parenthesized assignment, `(${r} = null);`. The parentheses keep an object pattern (`{a} = null`) from parsing as a block statement.
 
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.expression`
+### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS::python`
 
 ```text
 // tree-sitter-python supertypes are also unprefixed.

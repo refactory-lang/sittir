@@ -37,7 +37,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut wire: Vec<codec::WireVariant<'_>> = Vec::new();
     let mut builds = Vec::new();
     let mut all_units = true;
-    for (at, variant) in data.variants.iter().enumerate() {
+    if u16::try_from(data.variants.len()).is_err() {
+        return Err(syn::Error::new_spanned(&data.variants, "a choice indexes its variants by u16: at most 65535"));
+    }
+    for (index, (at, variant)) in (0..=u16::MAX).zip(data.variants.iter().enumerate()) {
         let name = &variant.ident;
         let form = attrs::kind_attrs(&variant.attrs)?;
         let payload = match &variant.fields {
@@ -92,7 +95,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             let built = unit(quote!(Self));
             builds.push(quote!(if [#(#claims),*].contains(&id) { return ::core::option::Option::Some(#built); }));
         }
-        let i = at as u16;
+        let i = index;
         let first = kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned();
         wire.push(codec::WireVariant {
             index: Some(i),
@@ -780,19 +783,17 @@ fn slot_kind<'a>(field: &Field<'a>, slot: &'a SlotAttrs) -> SlotKind<'a> {
 }
 
 fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
-    let slots: Vec<(u16, &Field<'_>, &SlotAttrs)> = fields
+    let slot_fields: Vec<(&Field<'_>, &SlotAttrs)> = fields
         .iter()
         .filter_map(|field| match &field.role {
             Role::Slot(slot) => Some((field, slot)),
             _ => None,
         })
-        .enumerate()
-        .map(|(i, (field, slot))| (i as u16, field, slot))
         .collect();
-
-    if slots.len() > usize::from(u16::MAX) {
+    if u16::try_from(slot_fields.len()).is_err() {
         return Err(syn::Error::new_spanned(attrs.kind.as_ref(), "a kind indexes its slots by u16: at most 65535"));
     }
+    let slots: Vec<(u16, &Field<'_>, &SlotAttrs)> = (0..=u16::MAX).zip(slot_fields).map(|(i, (field, slot))| (i, field, slot)).collect();
     let mut tagged_separators = Vec::new();
     let mut tagged = Vec::new();
     let mut untagged = Vec::new();
@@ -1012,18 +1013,15 @@ fn slot_id(position: u16) -> TokenStream {
 }
 
 fn option(value: Option<u16>) -> TokenStream {
-    match value {
-        Some(value) => quote!(::core::option::Option::Some(#value)),
-        None => quote!(::core::option::Option::None),
-    }
+    if let Some(value) = value { quote!(::core::option::Option::Some(#value)) } else { quote!(::core::option::Option::None) }
 }
 
 #[cfg(test)]
 mod tests {
     use syn::parse_quote;
 
-    fn expand(input: syn::DeriveInput) -> String {
-        super::derive(&input).expect("expands").to_string().split_whitespace().collect()
+    fn expand(input: &syn::DeriveInput) -> String {
+        super::derive(input).expect("expands").to_string().split_whitespace().collect()
     }
 
     fn has(out: &str, part: &str) -> bool {
@@ -1032,7 +1030,7 @@ mod tests {
 
     #[test]
     fn a_child_one_slot_does_not_take_is_tried_on_the_next_slot_of_its_field() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(kind = kind::PAIR)]
             pub struct PairNode {
                 #[wire(key = "$_layout")]
@@ -1059,7 +1057,7 @@ mod tests {
 
     #[test]
     fn a_presence_flag_decodes_a_missing_key_as_false() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(kind = kind::STATIC_ITEM)]
             pub struct StaticItemNode {
                 #[wire(key = "$_layout")]
@@ -1074,7 +1072,7 @@ mod tests {
 
     #[test]
     fn a_struct_refuses_a_node_its_kind_does_not_admit_before_it_reads() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(kind = kind::PAIR)]
             pub struct PairNode {
                 #[wire(key = "$_layout")]
@@ -1091,7 +1089,7 @@ mod tests {
 
     #[test]
     fn a_choice_of_units_builds_each_arm_from_a_kind_id_it_claims() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(choice)]
             pub enum Terminator {
                 #[kind(kind::_AUTOMATIC_SEMICOLON)]
@@ -1117,7 +1115,7 @@ mod tests {
 
     #[test]
     fn an_edged_unit_builds_and_reads_from_its_kind_id_with_no_edge_set() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(choice)]
             pub enum Statement {
                 #[kind(kind::EMPTY_STATEMENT)]
@@ -1147,7 +1145,7 @@ mod tests {
 
     #[test]
     fn a_choice_with_a_payload_arm_has_no_kind_id_constructor() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(choice)]
             pub enum Content {
                 #[kind(kind::SEMI)]

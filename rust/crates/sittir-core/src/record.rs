@@ -95,11 +95,13 @@ impl<T: RecordCell> RecordCell for NonEmptyVec<T> {
 
 /// Whether `T` fits a cell of `width` words whose list run, if any, is `run`
 /// words an item.
+#[must_use]
 pub const fn fits_cell<T: RecordCell>(width: u32, run: u32) -> bool {
     !T::PRESENCE && T::WIDTH <= width && T::RUN <= run
 }
 
 /// Whether `T` is a presence, which a stamped bit holds.
+#[must_use]
 pub const fn fits_bit<T: RecordCell>() -> bool {
     T::PRESENCE
 }

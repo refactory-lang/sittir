@@ -79,6 +79,7 @@ pub struct SlotLayout {
 
 impl SlotLayout {
     /// Whether the layout stores anything.
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.before.is_none() && self.after.is_none() && self.separator.is_none()
     }
@@ -130,6 +131,7 @@ impl LayoutWorkCounter {
 }
 
 /// The layout `layout` holds for the list slot `slot`.
+#[must_use]
 pub fn slot_layout<'a, T>(layout: Option<&'a NodeLayout<T>>, slot: &str) -> Option<&'a SlotLayout> {
     layout?.slots.iter().find(|entry| entry.slot == slot)
 }
@@ -138,18 +140,16 @@ pub fn slot_layout<'a, T>(layout: Option<&'a NodeLayout<T>>, slot: &str) -> Opti
 /// either is absent.
 pub fn slot_entry<'a, T>(layout: &'a mut Option<Box<NodeLayout<T>>>, slot: &str) -> &'a mut SlotLayout {
     let slots = &mut layout.get_or_insert_with(Default::default).slots;
-    let at = match slots.iter().position(|entry| entry.slot == slot) {
-        Some(at) => at,
-        None => {
-            slots.push(SlotLayout { slot: slot.to_string(), ..SlotLayout::default() });
-            slots.len() - 1
-        }
+    let at = if let Some(at) = slots.iter().position(|entry| entry.slot == slot) { at } else {
+        slots.push(SlotLayout { slot: slot.to_string(), ..SlotLayout::default() });
+        slots.len() - 1
     };
     &mut slots[at]
 }
 
 /// Each item's own separator in the list slot `slot`, by its place
 /// (`SlotLayout::tokens`); empty where none differs from the slot's.
+#[must_use]
 pub fn slot_tokens<'a, T>(layout: Option<&'a NodeLayout<T>>, slot: &str) -> &'a [Option<KindId>] {
     slot_layout(layout, slot).map_or(&[], |entry| &entry.tokens)
 }
@@ -158,6 +158,7 @@ pub fn slot_tokens<'a, T>(layout: Option<&'a NodeLayout<T>>, slot: &str) -> &'a 
 /// is not the slot's: the one it carries (`NodeLayout::separator`), else,
 /// while its neighbour before is still its source's, the one its source
 /// stores (its own coordinate, or the node it was rebuilt from).
+#[must_use]
 pub fn source_separator<T>(layout: Option<&NodeLayout<T>>, ctx: &RenderContext<'_>) -> Option<KindId> {
     let layout = layout?;
     layout.separator.or_else(|| {
@@ -178,6 +179,7 @@ pub struct UnitSides<T> {
 }
 
 /// The sides `layout` holds for the unit at item `item` of the slot `slot`.
+#[must_use]
 pub fn unit_sides<'a, T>(layout: Option<&'a NodeLayout<T>>, slot: &str, item: crate::types::ItemIndex) -> Option<&'a NodeTrivia<T>> {
     layout?.units.iter().find(|unit| unit.slot == slot && unit.item == item).map(|unit| &unit.trivia)
 }
@@ -206,6 +208,7 @@ impl<T: Render + TriviaSeam + std::fmt::Debug> crate::view::UnitFrames for NodeL
 
 /// A list slot's unit frames, for its `ListView`: the slot `slot` of
 /// `layout`, when the node has a layout.
+#[must_use]
 pub fn list_units<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a>(layout: Option<&'a NodeLayout<T>>, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
     layout.map(|layout| (slot, layout as &dyn crate::view::UnitFrames))
 }
@@ -486,6 +489,7 @@ impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for Box<NodeLayout<T>>
 {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         Ok(Box::new(unsafe { NodeLayout::from_napi_value(env, napi_val)? }))
     }
 }
@@ -493,6 +497,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for Box<NodeLayout<T>> {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { NodeLayout::to_napi_value(env, *val) }
     }
 }
@@ -506,6 +511,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         use crate::boundary::property;
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             Ok(Self {
                 trivia: property(env, napi_val, c"trivia")?,
@@ -539,6 +545,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
     /// `{ slot, item, leading?, trailing?, inner? }`.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::property;
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             Ok(Self {
                 slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a unit's sides name its slot"))?,
@@ -554,6 +561,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// `{ slot, item, leading?, trailing?, inner? }`, each side only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"slot", Some(val.slot))?,
@@ -571,6 +579,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlotLayout {
     /// `{ slot, before?, after?, separator? }`.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::property;
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             Ok(Self {
                 slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a slot's layout names its slot"))?,
@@ -588,6 +597,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlotLayout {
     /// `{ slot, before?, after?, separator? }`, each class only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"slot", Some(val.slot))?,
@@ -604,6 +614,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for LayoutWork {
     /// `{ regionNodes, siblingItems }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"regionNodes", Some(val.region_nodes))?,
@@ -618,6 +629,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for StoredLayout {
     /// `{ deviations, slots, separators }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"deviations", Some(val.deviations))?,
@@ -634,10 +646,11 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// The edges never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"trivia", val.trivia)?,
-                present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, at))?,
+                present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, &at))?,
                 present(env, c"span", val.span)?,
                 present(env, c"units", (!val.units.is_empty()).then_some(val.units))?,
                 present(env, c"slots", (!val.slots.is_empty()).then_some(val.slots))?,
@@ -664,8 +677,7 @@ mod tests {
     #[derive(Debug, Clone, PartialEq)]
     struct MockTrivia(String);
 
-    #[cfg(feature = "napi-bindings")]
-    crate::trivia::refuse_napi_decode!(MockTrivia);
+    crate::refuse_napi_codec!(MockTrivia);
 
     impl crate::trivia::TriviaSeam for MockTrivia {
         fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {
@@ -715,21 +727,21 @@ mod tests {
 
     /// Leading entries each on its own line: a line break after each, as the
     /// table lays them out, unless the entry's span ends its line.
-    fn leading(texts: &[&str]) -> Option<Vec<TriviaEntry<MockTrivia>>> {
-        Some(texts.iter().flat_map(|t| std::iter::once(entry(t)).chain((!t.ends_with('\n')).then(|| entry("\n")))).collect())
+    fn leading(texts: &[&str]) -> Vec<TriviaEntry<MockTrivia>> {
+        texts.iter().flat_map(|t| std::iter::once(entry(t)).chain((!t.ends_with('\n')).then(|| entry("\n")))).collect()
     }
 
     /// Trailing entries on the owner's line (`same_line`), or each on a line
     /// of its own, after a line break.
-    fn trailing(texts: &[&str], same_line: bool) -> Option<Vec<TriviaEntry<MockTrivia>>> {
-        Some(texts.iter().flat_map(|t| (!same_line).then(|| entry("\n")).into_iter().chain(std::iter::once(entry(t)))).collect())
+    fn trailing(texts: &[&str], same_line: bool) -> Vec<TriviaEntry<MockTrivia>> {
+        texts.iter().flat_map(|t| (!same_line).then(|| entry("\n")).into_iter().chain(std::iter::once(entry(t)))).collect()
     }
 
     fn owner(text: &'static str, leading_texts: &[&str], trailing_texts: &[&str], same_line: bool) -> MockNode {
         MockNode {
             text,
             layout: Some(Box::new(NodeLayout {
-                trivia: Some(NodeTrivia { leading: leading(leading_texts), trailing: trailing(trailing_texts, same_line), inner: None }),
+                trivia: Some(NodeTrivia { leading: Some(leading(leading_texts)), trailing: Some(trailing(trailing_texts, same_line)), inner: None }),
                 ..Default::default()
             })),
         }
@@ -759,7 +771,7 @@ mod tests {
                 (tree_id == crate::types::TreeId(1)).then_some(&self.0)
             }
             fn sides(&self, _: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-                Some(Box::new(NodeTrivia { leading: leading(&["// top"]), trailing: trailing(&["// bottom"], false), inner: None }))
+                Some(Box::new(NodeTrivia { leading: Some(leading(&["// top"])), trailing: Some(trailing(&["// bottom"], false)), inner: None }))
             }
         }
         let sources = Sources(std::sync::Arc::from("CONTENT"));

@@ -76,6 +76,7 @@ impl KindFlags {
     pub const ROOT: Self = Self(1 << 3);
 
     /// Whether the set holds any flag of `other`.
+    #[must_use]
     pub const fn has(self, other: Self) -> bool {
         self.0 & other.0 != 0
     }
@@ -91,6 +92,7 @@ pub struct SiteSpec {
 
 impl SiteSpec {
     /// `arm` at this site: the default's strength when it is the default, declared otherwise.
+    #[must_use]
     pub fn seam(&self, arm: KindId) -> crate::slot::SeamArm {
         let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SeamStrength::Declared };
         crate::slot::SeamArm { arm, strength }
@@ -168,24 +170,28 @@ impl Default for ResolvedOptions {
 
 impl ResolvedOptions {
     /// Every site at its default arm.
+    #[must_use]
     pub fn default_spacing(sites: &[SiteSpec]) -> Vec<crate::slot::SeamArm> {
         sites.iter().map(|spec| spec.seam(spec.default_arm)).collect()
     }
 
     /// The edge seams the resolved options give a node of `kind`, or none when the kind owns no edge site.
+    #[must_use]
     pub fn edge_arms(&self, kind: KindId) -> Option<crate::slot::CoordinateEdges> {
         let row = self.edge_row(kind)?;
         Some(crate::slot::CoordinateEdges {
-            before: row.before.and_then(|site| self.edge_seam(site, None)),
-            after: row.after.and_then(|site| self.edge_seam(site, None)),
+            before: row.before.map(|site| self.edge_seam(site, None)),
+            after: row.after.map(|site| self.edge_seam(site, None)),
         })
     }
 
+    #[must_use]
     pub fn site_arm(&self, site: SiteId) -> crate::slot::SeamArm {
         self.spacing[site.index()]
     }
 
     /// The `Delimiter` bitflag resolved for a flank site.
+    #[must_use]
     pub fn delimiter_at(&self, site: FlankId) -> crate::types::Delimiter {
         self.delimiter[site.index()]
     }
@@ -201,6 +207,7 @@ impl ResolvedOptions {
     /// own strength, or the site's spec strength for that arm when it carries
     /// none), else the site's resolved arm. None when the kind owns no edge row
     /// or the row has no site on that side.
+    #[must_use]
     pub fn edge_arm(
         &self,
         kind: KindId,
@@ -214,11 +221,12 @@ impl ResolvedOptions {
             Side::After => (row.after, row.after_arms),
         };
         let site = arm.and_then(|arm| arms.iter().find(|a| a.arm == arm)).map_or(shared, |a| Some(a.site));
-        self.edge_seam(site?, stamped)
+        Some(self.edge_seam(site?, stamped))
     }
 
     /// The arms a kind's edge on `side` resolves one by one: empty when the
     /// edge has one site for every token.
+    #[must_use]
     pub fn edge_arm_sites(&self, kind: KindId, side: Side) -> &'static [ArmSite] {
         match (self.edge_row(kind), side) {
             (Some(row), Side::Before) => row.before_arms,
@@ -227,22 +235,24 @@ impl ResolvedOptions {
         }
     }
 
-    fn edge_seam(&self, site: SiteId, stamped: Option<EdgeArm>) -> Option<crate::slot::SeamArm> {
+    fn edge_seam(&self, site: SiteId, stamped: Option<EdgeArm>) -> crate::slot::SeamArm {
         let site = site.index();
-        Some(match stamped {
+        match stamped {
             Some(EdgeArm { arm, strength: Some(strength) }) => crate::slot::SeamArm { arm, strength },
             Some(EdgeArm { arm, strength: None }) => self.sites[site].seam(arm),
             None => self.spacing[site],
-        })
+        }
     }
 
     /// Whether `kind` carries `flag` in the kind flag table.
+    #[must_use]
     pub fn kind_has(&self, kind: KindId, flag: crate::options::KindFlags) -> bool {
         self.kind_flags.get(kind.index()).is_some_and(|flags| flags.has(flag))
     }
 
     /// The spacing sites of `kind`'s edge row, before and after it: `None` on a
     /// side the row has no site, or when the kind owns no edge row.
+    #[must_use]
     pub fn edge_sites(&self, kind: KindId) -> (Option<SiteId>, Option<SiteId>) {
         self.edge_row(kind).map_or((None, None), |row| (row.before, row.after))
     }
@@ -343,7 +353,7 @@ impl<S: OptionSites> Options<S> {
     /// `newline`, each only where the grammar admits it.
     fn read_layout<O: OptionObject>(&mut self, obj: &O) -> Result<(), String> {
         let tables = S::TABLES;
-        if !self.has_layout() {
+        if !Self::has_layout() {
             return Ok(());
         }
         let Some(layout) = obj.object(LAYOUT_KEY)? else { return Ok(()) };
@@ -357,13 +367,13 @@ impl<S: OptionSites> Options<S> {
         Ok(())
     }
 
-    fn has_layout(&self) -> bool {
+    fn has_layout() -> bool {
         !S::TABLES.indent_chars.is_empty() || !S::TABLES.newline_arms.is_empty()
     }
 
     fn read_level<O: OptionObject>(&mut self, obj: &O, nodes: &'static [AddressNode], at: &str) -> Result<(), String> {
         for key in obj.keys()? {
-            if at.is_empty() && key == LAYOUT_KEY && self.has_layout() {
+            if at.is_empty() && key == LAYOUT_KEY && Self::has_layout() {
                 continue;
             }
             let Some(node) = nodes.iter().find(|n| n.key() == key) else {
@@ -407,14 +417,14 @@ impl<S: OptionSites> Options<S> {
                     tables.indent_chars.chars().collect::<Vec<_>>()
                 ));
             }
-            table.indent = indent.clone();
+            table.indent.clone_from(indent);
         }
         if let Some(newline) = &self.newline {
             if !tables.newline_arms.contains(&newline.as_str()) {
                 let arms = tables.newline_arms.iter().map(|arm| format!("'{}'", arm.escape_default())).collect::<Vec<_>>().join(", ");
                 return Err(format!("options: newline {newline:?} is not one of [{arms}]"));
             }
-            table.newline = newline.clone();
+            table.newline.clone_from(newline);
         }
         for (site, value) in &self.spacing {
             let allowed = (tables.allowed)(site.site);
@@ -435,7 +445,7 @@ impl<S: OptionSites> Options<S> {
         }
         for (kind, sites) in tables.depth_sites {
             let mut depth = 0usize;
-            for site in sites.iter() {
+            for site in *sites {
                 let value = table.spacing[site.index()].arm;
                 if tables.indent != KindId::BLANK && value == tables.indent {
                     depth += 1;
@@ -493,37 +503,36 @@ impl OptionObject for ::serde_json::Map<String, ::serde_json::Value> {
 
 /// Whether a JSON-shaped number is a kind id or bitflag: a whole number that fits a `u32`.
 pub fn option_number(key: &str, value: f64) -> Result<u32, String> {
-    if value.fract() == 0.0 && (0.0..=u32::MAX as f64).contains(&value) {
-        Ok(value as u32)
-    } else {
-        Err(format!("options: {key} must be a kind id, not {value}"))
-    }
+    crate::types::exact_whole(value)
+        .ok()
+        .and_then(|whole| u32::try_from(whole).ok())
+        .ok_or_else(|| format!("options: {key} must be a kind id, not {value}"))
 }
 
 #[cfg(feature = "napi-bindings")]
 impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
     fn keys(&self) -> Result<Vec<String>, String> {
-        ::napi::bindgen_prelude::Object::keys(self).map_err(|e| e.reason.clone())
+        ::napi::bindgen_prelude::Object::keys(self).map_err(|e| e.reason)
     }
 
     fn object(&self, key: &str) -> Result<Option<Self>, String> {
-        self.get::<Option<Self>>(key).map(Option::flatten).map_err(|e| e.reason.clone())
+        self.get::<Option<Self>>(key).map(Option::flatten).map_err(|e| e.reason)
     }
 
     fn number(&self, key: &str) -> Result<Option<u32>, String> {
-        let value = self.get::<Option<f64>>(key).map(Option::flatten).map_err(|e| e.reason.clone())?;
+        let value = self.get::<Option<f64>>(key).map(Option::flatten).map_err(|e| e.reason)?;
         value.map(|v| option_number(key, v)).transpose()
     }
 
     fn string(&self, key: &str) -> Result<Option<String>, String> {
-        self.get::<Option<String>>(key).map(Option::flatten).map_err(|e| e.reason.clone())
+        self.get::<Option<String>>(key).map(Option::flatten).map_err(|e| e.reason)
     }
 
     fn is_null(&self, key: &str) -> Result<bool, String> {
-        let value = self.get::<::napi::Unknown>(key).map_err(|e| e.reason.clone())?;
+        let value = self.get::<::napi::Unknown>(key).map_err(|e| e.reason)?;
         match value {
             None => Ok(false),
-            Some(value) => value.get_type().map(|t| t == ::napi::ValueType::Null).map_err(|e| e.reason.clone()),
+            Some(value) => value.get_type().map(|t| t == ::napi::ValueType::Null).map_err(|e| e.reason),
         }
     }
 }
@@ -531,6 +540,7 @@ impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
 #[cfg(feature = "napi-bindings")]
 impl<S: OptionSites> ::napi::bindgen_prelude::FromNapiValue for Options<S> {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
         Self::read(&obj).map_err(::napi::Error::from_reason)
     }
@@ -543,6 +553,7 @@ impl<S: OptionSites> ::napi::bindgen_prelude::FromNapiValue for Options<S> {
 /// the unit, so nesting depth never votes: a two-space file nested four deep
 /// still steps by two spaces. `None` when the source never indents or when
 /// two steps tie; otherwise the unit, whatever whitespace it is made of.
+#[must_use]
 pub fn indent_unit(source: &str) -> Option<String> {
     let mut steps: Vec<(&str, usize)> = Vec::new();
     let mut previous = "";
@@ -584,6 +595,7 @@ pub struct InferredOptions {
 
 impl InferredOptions {
     /// The layer `source`, whose root is of `root`, sets apart from `base`.
+    #[must_use]
     pub fn infer(source: &str, root: KindId, base: &ResolvedOptions, tables: &OptionTables, whitespace: &crate::render::WhitespaceTable) -> Self {
         let indent = indent_unit(source).filter(|unit| *unit != base.indent);
         let (before, after) = base.edge_sites(root);
@@ -601,10 +613,11 @@ impl InferredOptions {
     }
 
     /// `base` with this layer's entries resolved over it.
+    #[must_use]
     pub fn over(&self, base: &ResolvedOptions) -> ResolvedOptions {
         let mut table = base.clone();
         if let Some(indent) = &self.indent {
-            table.indent = indent.clone();
+            table.indent.clone_from(indent);
         }
         for &(site, arm) in &self.edges {
             table.set_arm(site, arm);
@@ -614,6 +627,11 @@ impl InferredOptions {
 
     /// The layer as the options object a render takes: `layout.indent`, and
     /// each edge under its site's address.
+    ///
+    /// # Panics
+    ///
+    /// Never: every site address the tables hold has at least one key.
+    #[must_use]
     pub fn to_json(&self, tables: &OptionTables) -> serde_json::Value {
         let mut root = serde_json::Map::new();
         if let Some(indent) = &self.indent {

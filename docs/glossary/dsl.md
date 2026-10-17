@@ -2439,7 +2439,7 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
  */
 ```
 
-### `packages/codegen/src/dsl/rule-walker.ts::RuleWalker.descends`
+### `packages/codegen/src/dsl/rule-walker.ts::RuleWalker::descends`
 
 ```text
 /**
@@ -6543,11 +6543,11 @@ The one shared context of an `enrich()` call. It carries the values every enrich
 
 `priorOrigins` is the origins sidecar of the grammar enrich was given (empty for a grammar no pass has enriched) and also the starting content of `ruleOrigins`. `isTextToken` and `isPriorMint` answer from it: the first names a text mint, the second any mint other than a promoted authored group (`isMintOrigin`, the predicate `getEnrichMints` reads).
 
-### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx.create`
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx::create`
 
 Builds the ctx for one `enrich()` call from the grammar-level inputs, with empty mint registries and no hoist state.
 
-### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx.withHoist`
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx::withHoist`
 
 The clause-hoist view: the same ctx — the registries are shared, not copied, so mints made through the view are the call's mints — with `hoist` set.
 

@@ -1010,6 +1010,33 @@ can't be unified.
 // means the `token_tree.content` slot must also accept `delim_token_tree_paren/
 ```
 
+#### body
+
+```text
+// rule typed as Rule<'link'> — a hoisted compound can carry GroupRule<'link'>
+// (pre-unwrap), SeqRule<'link'>/ChoiceRule<'link'> after
+// unwrapGroupRuleAndSimplified(), or any Rule<'link'> when constructed as
+// polymorph forms (form.content can be any Rule<'link'> type).
+```
+
+#### body
+
+```text
+// Hoisted compounds always derive a factoryName — hidden hoisted kinds emit
+// fragment factories for composition (hidden-group-factories). Polymorph
+// form compounds still use the explicitly provided factoryName so their
+// emitted name matches the form name (e.g. `rangePatternUFormLeftWithRight`),
+// not the raw kind.
+//
+// Hidden hoisted kinds (kind starts with `_`) need the leading `_` preserved
+// in the factory name so the emitted function is `_fooBar`, not `fooBar`.
+// `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
+// re-derive and prefix here when no explicit factoryName was provided. A
+// non-hoisted compound never hits this branch — `hoisted` is `undefined`
+// for an ordinary branch/envelope/polymorph, and factoryName derivation
+// falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.separator`
 
 ```text
@@ -1206,14 +1233,14 @@ flatten and simplify joins use.
 	 * flatten saw aliased arms. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.nonEmpty`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::nonEmpty`
 
 ```text
 /** `true` when the source rule is `repeat1` (at least one element);
 	 * `false` for plain `repeat` (zero-or-more). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separator`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::separator`
 
 ```text
 /**
@@ -1500,7 +1527,7 @@ literals are lexeme fragments and take no kind.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.textPattern`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern::textPattern`
 
 The regex source the kind's whole text must match: the pattern composed from the linked token, with its affixes, when one exists, otherwise the bare pattern of a pattern-only rule, otherwise `undefined`. `pattern` is the unwrapped pattern value; consumers that validate or match a leaf's text use `textPattern`.
 
@@ -2528,12 +2555,6 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
 // in place.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
-
-```text
-// cycle — conservative false
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch`
 
 ```text
@@ -2566,7 +2587,7 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
  *  variant/form dispatch surface until the enrichment overlays lift it. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPolymorph.arms`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPolymorph::arms`
 
 ```text
 /** The choice's member rules — one per polymorph arm. `[]` if the
@@ -2740,7 +2761,7 @@ the rule shape.
 	 * wrapper's stamp, or an external scanner symbol). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.fixedLiteralText`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern::fixedLiteralText`
 
 ```text
 /**
@@ -2759,7 +2780,7 @@ the rule shape.
 	 *  re-deriving one from the keyword's text later. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::constructor`
 
 #### body
 
@@ -2784,7 +2805,7 @@ the rule shape.
 /** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation::constructor`
 
 A fixed-text leaf whose text is not word-shaped. `hidden` defaults to true
 (an anonymous or `_`-prefixed delimiter); `assemble` passes `hidden: false`
@@ -2796,13 +2817,13 @@ for a named non-word literal kind so it keeps its factory and type.
 // SYNTHESIZED StringRule (never link-stamped) — literal-text lookup.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation::parameterless`
 
 ```text
 // No emitFactory — tokens are always hidden, no factoryName.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.storage`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation::storage`
 
 ```text
 /** A token is always fixed text: identity is the value. Whether it is a
@@ -2812,7 +2833,7 @@ for a named non-word literal kind so it keeps its factory and type.
  *  construction. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.storage`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::storage`
 
 ```text
 /** Transitional form: `kindId` when the keyword has no factory OR its
@@ -2852,7 +2873,7 @@ for a named non-word literal kind so it keeps its factory and type.
 
 The id is the one the parser shows for the member: a multi-token member such as typescript `unique symbol` is an alias, and each of its tokens displays the alias's id (143). A read enum node is folded onto its member by that id, so two members resolving to one id could not be told apart on a read: construction throws, naming the enum and both members.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.storage`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::storage`
 
 ```text
 /** An enum-of-literals stores as a kind id: its value set is its members'
@@ -2861,35 +2882,35 @@ The id is the one the parser shows for the member: a multi-token member such as 
  *  member node to its id, and the native node decodes the bare id. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.rawFactoryName`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::rawFactoryName`
 
 ```text
 /** No build function: a caller spells the member id (`TSKindId.Comma`)
  *  itself. Every factory-bearing site gates on this being undefined. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.fromFunctionName`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::fromFunctionName`
 
 ```text
 /** No coercer either — the loose surface accepts the member text through
  *  the slot's kind-enum text table, not through a per-kind function. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.members`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::members`
 
 ```text
 /** The member set as storage rows (`EnumMemberStorage`), in
  *  `resolvedByText` order — what a reference to this enum stamps. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.literalMembers`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::literalMembers`
 
 ```text
 The enum's literal arms with nested choices flattened, the list its `values` read. An inline alias of a keyword
 choice onto a display arrives as a choice inside a choice.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.immediate`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::immediate`
 
 Whether the enum forbids preceding whitespace: true when it has members and every member token carries the grammar's `immediate` stamp. A choice has no stamp of its own, so a leaf enum the grammar wrote as one immediate token over a spelling choice and one the distribution turned into a choice of immediate tokens answer alike, and a slot whose only scalar source is the enum keeps its adjacency flag.
 
@@ -2901,7 +2922,7 @@ The literal members of a choice as `AssembledEnum` reads them: nested choices fl
 
 The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the one derivation of an enum's values. Assemble counts them before it builds an `AssembledEnum`, and records `single-literal-choice` when there are fewer than two, so the constructor's own check is an invariant no grammar reaches.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::constructor`
 
 #### body
 
@@ -2936,14 +2957,14 @@ The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the o
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.declared`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::declared`
 
 Whether the grammar declares this supertype, read from the rule's
 link-stamped `declared`. A declared supertype gets an ir namespace; an
 undeclared hidden choice that assembles as a supertype does not (see
 `emitters/ir.ts::module`).
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.variantSubtypes`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::variantSubtypes`
 
 The subtype refs when this supertype is a flattened polymorph parent — at
 least two subtypes, every one stamped as a variant of this kind — or
@@ -2951,7 +2972,7 @@ least two subtypes, every one stamped as a variant of this kind — or
 re-checking the subtype facts (sub-factory mounting through a slot, route
 emission).
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.defaultVariantSubtype`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::defaultVariantSubtype`
 
 The variant subtype stamped as the default, when this supertype is variant-bearing and names one. Whether a variant-bearing supertype is callable without naming an arm is exactly whether this is defined.
 
@@ -3002,7 +3023,7 @@ construction by `stampDisplay` from the catalog the node is built with.
 Every address, site name and option key reads it; none strips a kind name.
 A subclass that knows why it may have no row says so (`rowless`).
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::constructor`
 
 Takes the catalog like every node, so a supertype carries its own row and
 display. A supertype with no row is stamped `supertype`.
@@ -3011,31 +3032,6 @@ display. A supertype with no row is stamped `supertype`.
 
 ```text
 // Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.constructor`
-
-```text
-// rule typed as Rule<'link'> — a hoisted compound can carry GroupRule<'link'>
-// (pre-unwrap), SeqRule<'link'>/ChoiceRule<'link'> after
-// unwrapGroupRuleAndSimplified(), or any Rule<'link'> when constructed as
-// polymorph forms (form.content can be any Rule<'link'> type).
-```
-
-```text
-// Hoisted compounds always derive a factoryName — hidden hoisted kinds emit
-// fragment factories for composition (hidden-group-factories). Polymorph
-// form compounds still use the explicitly provided factoryName so their
-// emitted name matches the form name (e.g. `rangePatternUFormLeftWithRight`),
-// not the raw kind.
-//
-// Hidden hoisted kinds (kind starts with `_`) need the leading `_` preserved
-// in the factory name so the emitted function is `_fooBar`, not `fooBar`.
-// `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
-// re-derive and prefix here when no explicit factoryName was provided. A
-// non-hoisted compound never hits this branch — `hoisted` is `undefined`
-// for an ordinary branch/envelope/polymorph, and factoryName derivation
-// falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorRule`
@@ -3063,7 +3059,7 @@ capture, the render-module match, the kind-literal table, the factory
 option type, the separator option site) reads this stamp, so no reader
 walks the separator rule itself and none meets a non-token arm.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorCandidateKindNames`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::separatorCandidateKindNames`
 
 The kind name each token arm resolves by: a string arm's text, a symbol
 arm's name.
@@ -3137,7 +3133,7 @@ all read it.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::constructor`
 
 #### body
 
@@ -3147,7 +3143,7 @@ all read it.
 // so the wrap capture keys can include it.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.terminatedSeparator`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::terminatedSeparator`
 
 ```text
 /**
@@ -3160,7 +3156,7 @@ all read it.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.singleElementNeedsTrailing`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::singleElementNeedsTrailing`
 
 A terminated list whose trailing delimiter is optional: the grammar puts a
 required separator after the first element, so one element is that kind only
@@ -5125,39 +5121,39 @@ The last Unicode code point, `0x10FFFF`: the top of every `CharSet`.
 
 An exact set of code points held as sorted, disjoint, non-adjacent `CodeRange`s. The constructor is private, so every set is built normalised through `of`; `EMPTY` and `ALL` are the two bounds. Sets are exact rather than sampled, which is what lets the automaton answer questions such as "does this state accept every character of a line" with a proof instead of a probe.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.of`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::of`
 
 A set from any ranges: drops empty ones, sorts, and merges overlapping or touching ranges.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.chars`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::chars`
 
 The set of the code points in a text.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.union`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::union`
 
 The code points in either set.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.complement`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::complement`
 
 The code points from 0 to `MAX_CODE_POINT` not in the set.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.minus`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::minus`
 
 The code points in this set and not the other, as the complement of (complement ∪ other).
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.has`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::has`
 
 Whether a code point is in the set.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.covers`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::covers`
 
 Whether every code point of the other set is in this one.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.isEmpty`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::isEmpty`
 
 Whether the set has no code points.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet.size`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::CharSet::size`
 
 The number of code points in the set.
 
@@ -5201,51 +5197,51 @@ The parser's signal for syntax the automaton does not read (lookaround, backrefe
 
 A recursive-descent parser of tree-sitter's pattern dialect into a `Node`: alternation, sequence, groups (`(?:…)` and named `(?<n>…)`, which match as plain groups), character classes with ranges and negation, escapes (`\d \D \w \W \s \S \n \r \t \v \f \0`, `\xHH`, `\uHHHH`, `\u{…}`, `\p{…}`, `\P{…}`, and identity escapes), and the quantifiers `*`, `+`, `?`, `{m}`, `{m,}`, `{m,n}`, each optionally lazy. Laziness does not change which texts match, so it is read and dropped.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.parse`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::parse`
 
 The whole pattern as one `Node`; text left over after the top alternation is unsupported.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.peek`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::peek`
 
 The next pattern character without consuming it.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.take`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::take`
 
 Consumes and returns the next pattern character; the end of the pattern is unsupported here.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.alternation`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::alternation`
 
 Arms separated by `|`, each a `sequence`.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.sequence`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::sequence`
 
 Quantified atoms up to the next `|` or `)`.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.quantified`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::quantified`
 
 Wraps an atom in each quantifier that follows it.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.quantifier`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::quantifier`
 
 The `[min, max]` bounds of the quantifier at the cursor, consuming a lazy `?` after it, or `undefined` when none is there. A `{` that does not open a bound is not a quantifier, so `atom` reads it as a literal `{`.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.atom`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::atom`
 
 One group, class, escape, `.` or literal character. Anchors, lookaround groups and a quantifier with nothing to repeat are unsupported.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.charClass`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::charClass`
 
 A bracketed class as a `CharSet`, complemented when it opens with `^`. A range whose ends are not single characters is unsupported.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.classAtom`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::classAtom`
 
 One class member: its set, and its code point when it is a single character that can end a range.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.escape`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::escape`
 
 The set an escape denotes, inside or outside a class. Inside a class `\b` is a backspace; outside it, `\b`, `\B` and backreferences are unsupported.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser.hexEscape`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::hexEscape`
 
 The code point a hex escape spells, from the digits the given regex matches.
 
@@ -5257,15 +5253,15 @@ One Thompson-NFA state: its character edges and its empty (epsilon) edges.
 
 Builds a Thompson NFA from a `Node`: each node is wired between a start and an end state. A bounded repeat is unrolled `max` times with an exit after each copy past `min`; an unbounded one loops on one state.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder.state`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder::state`
 
 Adds an empty state and returns its index.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder.fragment`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder::fragment`
 
 A fresh start and end state with the node wired between them.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder.wire`
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder::wire`
 
 Wires a node between two states: a set as one edge, a sequence through fresh states, an alternation as each arm between the same two states, and a repeat as described on `NfaBuilder`.
 
@@ -5456,7 +5452,7 @@ Whether a slot needs no value from the caller. An optional slot, and a required 
 
 A compound can be built with no argument when every config slot (the slots no registered option carries) is filled when omitted.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.argumentOptional`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::argumentOptional`
 
 A list that must hold at least one element is never built with no argument, whatever its element slot's multiplicity says; otherwise the compound rule applies.
 

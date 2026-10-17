@@ -338,13 +338,20 @@ every struct and enum impl asks it.
 
 `impl SeatTarget` for an enum (a supertype node enum, a per-slot child
 enum, `AnyNode`, a fixed literal's own type): one arm per reaching
-variant (`seatArm`), and a non-exhaustive list falls through to `None`. An
-enum with no reaching variant gets no impl.
+variant (`seatArm`). The variants that don't reach share one closing arm,
+`Self::A { .. } | Self::B { .. } => None` (a braced pattern fits unit and
+tuple variants alike), so the match names every variant and has no
+wildcard: none of its arms is unreachable, and a variant added later can't
+fall through unnoticed. The variant list is the one the enum's emitter
+recorded in `read.variants` while printing the enum (Verbatim, blank and
+fixed-literal variants included); an enum with seat arms and no recorded
+list is a codegen error. An enum with no reaching variant gets no impl.
 
 ### `packages/codegen/src/emitters/render-module.ts::seatArm`
 
-The seat arm of one reaching variant: a payload delegates to its own
-`seat_target`, and an edged unit answers its seat itself (`fixedSeatArm`).
+The seat arm of one reaching variant, with the variant it covers: a
+payload delegates to its own `seat_target`, and an edged unit answers its
+seat itself (`fixedSeatArm`).
 
 ### `packages/codegen/src/emitters/render-module.ts::seatTargetStructImpl`
 
@@ -3143,6 +3150,12 @@ The `use` block at the top of `node.rs`: the views (`View`,
 `ListView`, `NO_ITEMS`) and the node support types. `fmt::Write` is
 deliberately not imported; the kind bodies write through `Formatter`'s
 inherent `write_fmt`, and the render root spells the trait call in full.
+
+The module allows `clippy::unnecessary_wraps`,
+`clippy::trivially_copy_pass_by_ref` and `clippy::needless_pass_by_value`
+because each generated function role keeps one signature: a render
+function takes its node by reference and returns `RenderResult`, and a
+conversion into `AnyNode` takes its node by value, whatever one body needs.
 
 The module permits `clippy::large_enum_variant` because
 `payloadCeilingAssertions` enforces the canonical pinned payload ceiling
@@ -9243,7 +9256,7 @@ The keyword kinds among a slot's literal values, through
 undefined for a slot whose values are all keywords or all punctuation. It is
 the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 
-### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter::constructor`
 
 #### body
 
@@ -11248,11 +11261,11 @@ Throws when one of the node's accessors or options has the name of a `ReadonlyAr
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.structure`
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::structure`
 
 The structure table the emitter recorded while emitting builders: each emitted compound's or list's row, by kind id. A kind without a builder or a kind id has no row. The language utils print it as `structure`.
 
-### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.constructor`
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::constructor`
 
 #### body
 
@@ -12119,7 +12132,7 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::FromEmitter.finalize`
+### `packages/codegen/src/emitters/from.ts::FromEmitter::finalize`
 
 #### body
 
@@ -12300,7 +12313,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.rootTreeTypeName`
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::rootTreeTypeName`
 
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
@@ -12312,7 +12325,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::finalize`
 
 Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfData` (a node's `$type` mapped to its wrapped surface through `T.ParsedByKindId`, the data type itself for a grammar with no kind catalog), the hydrate helpers, every per-kind wrap function, the `_wrapTable` dispatch table and `wrapNode`.
 
@@ -12369,13 +12382,13 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitLeaf`
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter::emitLeaf`
 
 ```text
 // No per-node accumulation needed — emitRenderModule reads the full nodeMap.
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitBranch`
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter::emitBranch`
 
 ```text
 // 'list' participates in this scan uniformly alongside 'branch' (no-op
@@ -13339,7 +13352,9 @@ fixture file is: both land in the validator's own commit.
 The `KindOf` answer a generated node type gives a kind-gated body: a
 struct is its own kind, an enum answers for the variant it holds (a payload
 variant delegates, a literal variant names its id), and a verbatim value
-stands for whichever pattern kinds the position admits. Every node
+stands for whichever pattern kinds the position admits. `AnyNode`'s
+`Verbatim` admits no kind, so its arm answers `false`; every match names
+all its variants. Every node
 struct, supertype enum, per-slot enum, literal enum and `AnyNode` gets
 one, so a `SlotValue` of any generated type satisfies `KindTest`.
 
@@ -15072,7 +15087,7 @@ Whether a presence slot's value is a keyword the site wraps in an alias, read fr
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the node printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the nodes printed (`nodes`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are. The record layout of each struct it prints is kept on `records`, by struct name, for `records.ts`.
+What the node printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, the variants each printed enum holds (`variants`), which the seat-target matches name, and the nodes printed (`nodes`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are. The record layout of each struct it prints is kept on `records`, by struct name, for `records.ts`.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 

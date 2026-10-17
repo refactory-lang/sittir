@@ -1,6 +1,6 @@
 //! `KindId` serde transparency, Display, and From/Into conversion tests.
 //!
-//! Per the KindID runtime migration design (2026-04-30): `KindId` is a
+//! Per the `KindID` runtime migration design (2026-04-30): `KindId` is a
 //! `#[repr(transparent)]` newtype over `u16` with `#[serde(transparent)]`
 //! so JSON numeric `$type` values decode directly without an enum table.
 

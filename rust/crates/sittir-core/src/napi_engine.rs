@@ -189,7 +189,7 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
                 let tree_id = self.claim_tree_id(&env)?;
-                let parsed = self.engine.parse(source, tree_id).map_err(::napi::Error::from_reason)?;
+                let parsed = self.engine.parse(&source, tree_id).map_err(::napi::Error::from_reason)?;
                 let json = ::serde_json::json!({
                     "treeId": tree_id,
                     "options": parsed.inferred_options(),
@@ -220,7 +220,7 @@ macro_rules! napi_engine {
                     }
                     let grammar = <$grammar as ::std::default::Default>::default();
                     ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read::<$any>(index, depth)))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "read panicked")))?
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "read panicked")))?
                         .map(::napi::Either::A)
                         .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
                 })
@@ -273,7 +273,7 @@ macro_rules! napi_engine {
                     }
                     let grammar = <$grammar as ::std::default::Default>::default();
                     ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.snapshot::<$any>(index, holder_byte)))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "snapshot panicked")))?
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "snapshot panicked")))?
                         .map(::napi::Either::A)
                         .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
                 })
@@ -541,30 +541,15 @@ macro_rules! napi_engine {
 /// and be answered as though it were a real request. Every rejection here is a
 /// value that would otherwise have been silently rounded into a valid one.
 pub fn checked_index(value: f64, label: impl std::fmt::Display) -> napi::Result<u64> {
-    /// Above this a double no longer counts integers exactly, so a handle
-    /// could not survive the trip through JavaScript intact.
-    const MAX_EXACT: f64 = 9_007_199_254_740_991.0; // 2^53 - 1
-    if !value.is_finite() {
-        return Err(napi::Error::from_reason(format!(
-            "{label} must be a finite number"
-        )));
-    }
-    if value < 0.0 {
-        return Err(napi::Error::from_reason(format!(
-            "{label} must not be negative (got {value})"
-        )));
-    }
-    if value.fract() != 0.0 {
-        return Err(napi::Error::from_reason(format!(
-            "{label} must be a whole number (got {value})"
-        )));
-    }
-    if value > MAX_EXACT {
-        return Err(napi::Error::from_reason(format!(
-            "{label} {value} is beyond the exact-integer range"
-        )));
-    }
-    Ok(value as u64)
+    use crate::types::NotWhole;
+    crate::types::exact_whole(value).map_err(|why| {
+        napi::Error::from_reason(match why {
+            NotWhole::NotFinite => format!("{label} must be a finite number"),
+            NotWhole::Negative => format!("{label} must not be negative (got {value})"),
+            NotWhole::Fraction => format!("{label} must be a whole number (got {value})"),
+            NotWhole::BeyondExact => format!("{label} {value} is beyond the exact-integer range"),
+        })
+    })
 }
 
 /// A JavaScript number that is meant to be a whole number of `T`: checked as
@@ -600,12 +585,12 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::read::Depth> {
     if levels == f64::INFINITY {
         return Ok(crate::read::Depth::All);
     }
-    if levels.fract() != 0.0 || levels < 1.0 || levels > f64::from(u32::MAX) {
-        return Err(napi::Error::from_reason(format!(
-            "depth {levels} is not a whole number of levels (at least 1) or Infinity"
-        )));
-    }
-    Ok(crate::read::Depth::Levels(std::num::NonZeroU32::new(levels as u32).expect("levels >= 1")))
+    crate::types::exact_whole(levels)
+        .ok()
+        .and_then(|whole| u32::try_from(whole).ok())
+        .and_then(std::num::NonZeroU32::new)
+        .map(crate::read::Depth::Levels)
+        .ok_or_else(|| napi::Error::from_reason(format!("depth {levels} is not a whole number of levels (at least 1) or Infinity")))
 }
 
 /// A run of whitespace a side takes, with the line breaks, spaces and tabs
@@ -623,6 +608,7 @@ pub struct BaselineRun {
 }
 
 impl BaselineRun {
+    #[must_use]
     pub fn new(run: crate::trivia_table::LayoutRun, written: Option<crate::baseline::Tally>) -> Self {
         Self {
             start: run.start,
@@ -637,6 +623,7 @@ impl BaselineRun {
 }
 
 /// A trivia side's wire name (`trivia_side_from_wire`).
+#[must_use]
 pub fn trivia_side_to_wire(side: crate::trivia_table::TriviaSide) -> &'static str {
     use crate::trivia_table::TriviaSide;
     match side {
@@ -658,6 +645,7 @@ pub fn trivia_side_from_wire(side: &str) -> napi::Result<crate::trivia_table::Tr
 }
 
 /// The refusal for an address into a tree this thread does not hold.
+#[must_use]
 pub fn tree_not_live(tree_id: crate::types::TreeId) -> napi::Error {
     napi::Error::from_reason(format!(
         "tree {tree_id} is not live (never parsed on this thread, or already released)"

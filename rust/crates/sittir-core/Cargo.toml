@@ -50,3 +50,6 @@ sha2 = { workspace = true }
 # code — the real grammar binding lives in the per-grammar napi crates.
 tree-sitter-rust = "0.24"
 tree-sitter-python = "0.25"
+
+[lints]
+workspace = true

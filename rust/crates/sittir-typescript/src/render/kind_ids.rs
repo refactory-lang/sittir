@@ -506,12 +506,14 @@ pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(32), KindId(33), KindId(7), Kin
 pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[(KindId(473), &[KindId(32), KindId(33), KindId(7), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53)]), (KindId(471), &[KindId(32), KindId(33), KindId(7), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53)]), (KindId(472), &[KindId(32), KindId(33), KindId(7), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53)]), (KindId(470), &[KindId(27), KindId(55), KindId(56), KindId(63), KindId(67), KindId(28), KindId(29), KindId(9), KindId(68), KindId(25), KindId(17), KindId(45), KindId(69), KindId(70), KindId(57), KindId(20), KindId(64), KindId(18), KindId(10), KindId(71), KindId(72), KindId(47), KindId(73), KindId(30), KindId(74), KindId(19), KindId(75), KindId(31), KindId(76), KindId(26), KindId(8), KindId(14), KindId(77), KindId(24), KindId(12), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53), KindId(32), KindId(33), KindId(7), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(46)])];
 
 /// Whether a node with this grammar id and display id is a relaxed keyword (`ReadCtx::relaxes`).
+#[must_use]
 pub fn relaxes(grammar: KindId, display: KindId) -> bool {
     display == KindId(1) && RELAXED_KEYWORDS.contains(&grammar) || RELAXED_DISPLAYS.iter().any(|(shown, tokens)| *shown == display && tokens.contains(&grammar))
 }
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
+#[must_use]
 pub fn kind_name_from_id(id: KindId) -> &'static str {
     match id.0 {
         1 => "identifier", // "identifier"
