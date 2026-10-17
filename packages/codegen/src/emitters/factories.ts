@@ -2622,9 +2622,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type * as T from '../types-internal.js';`);
 		lines.push(DELIMITER_IMPORT);
 		if (kindEntries) {
-			const kindIdImports = ['TSKindId'];
-			if (collectUsesKindIdFromName(nodeMap, kindEntries)) kindIdImports.push('kindIdFromName');
-			lines.push(`import { ${kindIdImports.join(', ')} } from '../types.js';`);
+			lines.push(`import { TSKindId } from '../kinds.js';`);
+			if (collectUsesKindIdFromName(nodeMap, kindEntries)) lines.push(`import { kindIdFromName } from '../types.js';`);
 		}
 		const usesElementWrap = [...nodeMap.nodes.values()].some(
 			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined

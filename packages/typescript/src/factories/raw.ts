@@ -2,7 +2,7 @@
 
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
-import { TSKindId } from '../types.js';
+import { TSKindId } from '../kinds.js';
 import type {
 	Admit,
 	ListOptions,

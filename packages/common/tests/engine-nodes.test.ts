@@ -3,6 +3,7 @@ import type { AnyUntypedNode, TriviaFacts } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 import { createRenderHandle } from '../src/engine.ts';
 import { inTreeEngine } from '../src/engine-scope.ts';
+import { languageGuards } from '../src/language.ts';
 import { ERROR_KIND_ID } from '../src/error-kind.ts';
 import { Source } from '../src/source.ts';
 import { withMembers as withMethods } from './support/members.ts';
@@ -33,12 +34,6 @@ function fakeLanguage(name: string) {
 			group: (...items: unknown[]) => node({ $type: 3, _items: items, $source: Source.Factory }),
 			number: { bigint: (v: bigint) => node({ $type: 2, $text: String(v), $source: Source.Factory }) }
 		},
-		is: {
-			leaf: (v: AnyUntypedNode) => v.$type === 1,
-			kind: (v: AnyUntypedNode, k: number) => v.$type === k,
-			expression: (v: AnyUntypedNode) => new Set([1, 3]).has(v.$type as number)
-		},
-		kinds: {},
 		trivia,
 		createNative: (opts?: { options?: Options }) => {
 			const label = String.fromCharCode(65 + engines++);
@@ -55,8 +50,17 @@ function fakeLanguage(name: string) {
 		},
 		wrap: (root: object, tree: object) => inTreeEngine(tree, () => asRead(node({ ...root })))
 	};
+	const language = { name, kinds: {}, load: async () => hooks, get is() { return is; } };
+	const is = languageGuards(
+		{
+			leaf: (v: AnyUntypedNode) => v.$type === 1,
+			kind: (v: AnyUntypedNode, k: number) => v.$type === k,
+			expression: (v: AnyUntypedNode) => new Set([1, 3]).has(v.$type as number)
+		},
+		language
+	);
 	return {
-		language: { name, load: async () => hooks },
+		language,
 		hydrate: (tree: object) => inTreeEngine(tree, () => asRead(node({ $type: 5, $text: 'lazy' }))),
 		trees
 	};

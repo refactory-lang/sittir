@@ -30,8 +30,9 @@ import type {
 	KeyRefusesEmpty,
 	SetterRefusesEmpty
 } from '@sittir/types';
+import { TSKindId } from './kinds.js';
+export { TSKindId } from './kinds.js';
 import type * as T from './types.js';
-import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
 
 export type LeafScalarMap = {};
 
@@ -49,83 +50,6 @@ export type LeafStringMap = {
 	[TSKindId.MissingKeyword]: 'MISSING';
 	[TSKindId.Underscore]: '_';
 };
-
-export enum TSKindId {
-	EscapeSequence = 1,
-	Star = 2,
-	Plus = 3,
-	Qmark = 4,
-	Identifier = 5,
-	ImmediateIdentifier = 6,
-	Underscore = 7,
-	At = 8,
-	Dquote = 9,
-	Dquote2 = 10,
-	Comment = 11,
-	Lbrack = 12,
-	Rbrack = 13,
-	Lparen = 14,
-	Rparen = 15,
-	MissingKeyword = 16,
-	Colon = 17,
-	Bang = 18,
-	Pound = 19,
-	Dot = 20,
-	Qmark2 = 21,
-	Bang2 = 22,
-	StringContentText = 23,
-	Slash = 24,
-	Tight = 25,
-	Space = 26,
-	Tab = 27,
-	Newline = 28,
-	Blankline = 29,
-	DoubleBlankline = 30,
-	Indent = 31,
-	Dedent = 32,
-	Program = 33,
-	Definition = 34,
-	GroupExpression = 35,
-	NamedNodeExpression = 36,
-	Quantifier = 37,
-	NodeIdentifier = 38,
-	Capture = 39,
-	String = 40,
-	ImmediateString = 41,
-	StringContent = 42,
-	Parameters = 43,
-	List = 44,
-	Grouping = 45,
-	MissingNode = 46,
-	AnonymousNode = 47,
-	NamedNode = 48,
-	_FieldName = 49,
-	FieldDefinition = 50,
-	NegatedField = 51,
-	Predicate = 52,
-	PredicateType = 53,
-	ListElementQuantifier = 54,
-	ListElement = 55,
-	GroupExpressionArm = 56,
-	NamedNodeExpressionArm = 57,
-	GroupingGroup = 58,
-	NamedNodeGroup = 59,
-	Anchor = 60,
-	NamedNodePlain = 61,
-	NamedNodeSupertyped = 62,
-	NamedNodeGroupChildren = 63,
-	NamedNodeGroupAnchoredLast = 64,
-	ProgramRepeat1 = 65,
-	StringContentRepeat1 = 66,
-	ParametersRepeat1 = 67,
-	ListRepeat1 = 68,
-	GroupingRepeat1 = 69,
-	NamedNodeGroupChildrenRepeat1 = 70,
-	Error = 65535
-}
-Object.freeze(TSKindId);
-
-void (TSKindId.Error satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'escape_sequence'],

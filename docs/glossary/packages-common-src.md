@@ -16,23 +16,15 @@ The one mapping from an engine's options to its native engine's: `format` passes
 
 The error a file verb (`read`, `create`, `write`) raises while file changes are not implemented.
 
-### `packages/common/src/create-engine.ts::languageGuards`
-
-Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard, its variant guards and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type. One composition shares a map from each guard to its composed guard (`wrapped`), so a guard reached under several names, as a portable path is under its aliases, is composed once and stays one object.
-
-### `packages/common/src/create-engine.ts::languageGuard`
-
-One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn through `languageGuards` and defined on the composed function, so `engine.is.suite.block` checks the language as `engine.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.
-
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
-Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the hooks' `is` guards and kind ids and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with an inner side and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
+Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the language's guards (`guardsOf`: the descriptor's own `is` when it was composed for that descriptor) and kind ids (`language.kinds`), the same objects on every engine of the language, and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with an inner side and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
 
 The `intercept` option activates build, parse and render middleware. Parse hooks surround the existing read/bind/error/wrap operation, while raw `diagnostics.parseAndRead` remains a direct diagnostic path. Render checks language ownership before invoking its chain, including when a hook short-circuits. File verbs are still unimplemented, so the reserved file hook has no write pipeline to run around.
 
 The engine object and its `EngineIdentity` are frozen, so no member can be reassigned; the identity holds the caller's `options` as given, and that object stays the caller's.
 
-`is` on the engine is the language's table through `languageGuards`, so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone.
+`is` on the engine is the language's table composed against the engine's own language (`guardsOf`), so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone.
 
 ### `packages/common/src/create-engine.ts::scopeBuilders`
 
@@ -62,13 +54,9 @@ A lazy output handle whose text is produced through render middleware. The hook 
 
 Produces text from an already captured native handle and, when enabled, records the native materialization duration and input/output sizes. Render middleware reaches it through `next`; the direct path retains its existing immediate measurement when metrics are enabled.
 
-### `packages/common/src/create-engine.ts::inLanguageOf`
-
-The language check an engine's guards use: a value whose stamped engine is of the identity's language (`engineOf`, `sameLanguage`), or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language of the engine asking, and a number read from one grammar and asked of another engine is that engine's kind id. The default engine and the portable engine compose their guards with it.
-
 ### `packages/common/src/create-engine.ts::assemblePortableEngine`
 
-The portable engine: the language's identity, its portable `kinds` as the language's hooks carry them, and its portable `is` composed with the language check (`languageGuards`), so a node of another language whose kind id a guard would read is rejected. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
+The portable engine: the language's identity, its portable `kinds` as the language's hooks carry them, and its portable `is` composed with the language check (`language.ts::languageGuards`), so a node of another language whose kind id a guard would read is rejected. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
 
 ### `packages/common/src/create-engine.ts::mergeRenderOptions`
 
@@ -830,3 +818,23 @@ The `KindView` of data with no wrapper or list kinds: no for every kind.
 ### `packages/common/src/interior.ts::interiorPattern`
 
 The compiled whole-token regex of a token interior, built once per interior object (flags `su`) and cached. `projectInterior` splits text with it, and the coercer's leaf registry row for a lexed kind holds it as its pattern, so the interior's `regex` string is compiled in one place on the client.
+
+### `packages/common/src/language.ts::inLanguage`
+
+The language check a language's guards use: a value whose stamped engine is of `language` (`engineOf`), compared by the language object itself, or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language asking. Keyed by the language rather than an engine, so a descriptor builds its guards before any engine exists, and `assembleEngine`'s node guards use the same check.
+
+### `packages/common/src/language.ts::languageGuards`
+
+Composes every function on a language's `is` table with the language check (`inLanguage`): the guard runs only for a value of `language`, and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. The generated descriptor composes its guards with it at import, against the descriptor module itself, so `rust.is` needs no engine and is the object every engine of that descriptor exposes; the portable engine composes its portable table the same way. It records each composed table with the guards and the language it was composed from, which `guardsOf` reads. The module imports only `engine-scope.ts`, which reaches no native addon, so the descriptor stays light.
+
+### `packages/common/src/language.ts::guardsOf`
+
+The guards an engine of `language` exposes: `language.is` itself when it was composed against `language`, as a generated descriptor's is. Otherwise the same guards composed against `language`: a descriptor copied from another (`{ ...rust }`) carries guards checking the original, while its engine stamps nodes with the copy, so reusing them would reject the engine's own nodes and pass the original's, disagreeing with `isNode`. A hand-built table that no composition recorded is composed as it is. The result is kept per language, so every engine of one descriptor exposes one object.
+
+### `packages/common/src/language.ts::composed`
+
+The composition over one table: each guard composed through `languageGuard`, the result frozen with the table's type. One composition shares a map from each guard to its composed guard (`wrapped`), so a guard reached under several names, as a portable path is under its aliases, is composed once and stays one object.
+
+### `packages/common/src/language.ts::languageGuard`
+
+One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn and defined on the composed function, so `rust.is.suite.block` checks the language as `rust.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.

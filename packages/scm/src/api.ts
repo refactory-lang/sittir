@@ -3,15 +3,9 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
-import { is, isMember, membersOf } from './is.js';
-import {
-	TSKindId,
-	type FixedTextKindId,
-	type TypeKeyOf,
-	type NamespaceMap,
-	type ScmNode,
-	type ScmTypeMap
-} from './types.js';
+import { isMember, membersOf, type is } from './is.js';
+import type { TSKindId } from './kinds.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ScmNode, ScmTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 import { coerceToComment } from './factories/coerce.js';
@@ -37,8 +31,6 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	name: 'scm',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
-	is,
-	kinds: TSKindId,
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
 	structure,
