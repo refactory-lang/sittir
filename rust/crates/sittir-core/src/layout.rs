@@ -210,6 +210,53 @@ pub fn list_units<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a>(layout: Opt
     layout.map(|layout| (slot, layout as &dyn crate::view::UnitFrames))
 }
 
+/// What a generated render body reads from its node's layout: its edges, a
+/// unit child framed by its sides, and a list slot's per-item separators and
+/// unit frames. A native node answers from its `NodeLayout`; a record view
+/// answers from its side record.
+pub trait BodyLayout<'a>: Copy {
+    fn edges(self) -> Edges;
+
+    /// `render_unit`.
+    fn render_unit(
+        self,
+        slot: &str,
+        item: crate::types::ItemIndex,
+        w: &mut dyn RenderSink,
+        body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
+    ) -> RenderResult;
+
+    /// `slot_tokens`.
+    fn slot_tokens(self, slot: &str) -> &'a [Option<KindId>];
+
+    /// `list_units`.
+    fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)>;
+}
+
+impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Option<&'a NodeLayout<T>> {
+    fn edges(self) -> Edges {
+        self.and_then(|layout| layout.edges).unwrap_or(Edges::NONE)
+    }
+
+    fn render_unit(
+        self,
+        slot: &str,
+        item: crate::types::ItemIndex,
+        w: &mut dyn RenderSink,
+        body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
+    ) -> RenderResult {
+        render_unit(self, slot, item, w, body)
+    }
+
+    fn slot_tokens(self, slot: &str) -> &'a [Option<KindId>] {
+        slot_tokens(self, slot)
+    }
+
+    fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
+        list_units(self, slot)
+    }
+}
+
 impl<T> Default for NodeLayout<T> {
     fn default() -> Self {
         Self {
@@ -833,5 +880,35 @@ mod tests {
     fn a_standalone_render_keeps_a_line_comment_break_and_drops_a_block_comment_space() {
         assert_eq!(render(&owner("a;", &[], &["// end"], true)), "a; // end\n");
         assert_eq!(render(&owner("a;", &[], &["/* end */"], true)), "a; /* end */");
+    }
+
+    /// What a render body reads from its node's layout, through the one
+    /// trait a record's side record will answer too.
+    #[test]
+    fn a_body_reads_edges_slot_tokens_and_units_through_its_layout() {
+        use super::{BodyLayout, SlotLayout};
+        use crate::options::{EdgeArm, Edges};
+
+        let none: Option<&NodeLayout<MockTrivia>> = None;
+        assert_eq!(none.edges(), Edges::NONE);
+        assert!(none.slot_tokens("_items").is_empty());
+        assert!(none.list_units("_items").is_none());
+        let mut out = String::new();
+        let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+        none.render_unit("_items", crate::types::ItemIndex(0), &mut w, |w| w.text("x")).unwrap();
+        w.finish().unwrap();
+        assert_eq!(out, "x");
+
+        let edges = Edges { before: Some(EdgeArm { arm: KindId(3), strength: None }), after: None };
+        let layout = NodeLayout::<MockTrivia> {
+            edges: Some(edges),
+            slots: vec![SlotLayout { slot: "_items".into(), tokens: vec![None, Some(KindId(7))], ..SlotLayout::default() }],
+            ..NodeLayout::default()
+        };
+        let some = Some(&layout);
+        assert_eq!(some.edges(), edges);
+        assert_eq!(some.slot_tokens("_items"), &[None, Some(KindId(7))]);
+        assert!(some.slot_tokens("_other").is_empty());
+        assert_eq!(some.list_units("_items").map(|(slot, _)| slot), Some("_items"));
     }
 }
