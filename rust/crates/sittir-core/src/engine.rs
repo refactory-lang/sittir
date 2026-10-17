@@ -1584,9 +1584,9 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
             if !exact {
                 return;
             }
-            node = u32::try_from(current.child_count())
-                .ok()
-                .and_then(|count| count.checked_sub(1))
+            node = current
+                .child_count()
+                .checked_sub(1)
                 .and_then(|last| current.child(last))
                 .filter(|last| Span::of(last).end == Span::of(&current).end);
         }
