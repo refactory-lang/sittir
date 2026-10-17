@@ -6169,14 +6169,7 @@ export const pythonGrammarShape = {
 			value: '*'
 		}
 	},
-	supertypeNames: [
-		'_simple_statement',
-		'_compound_statement',
-		'expression',
-		'primary_expression',
-		'pattern',
-		'parameter'
-	]
+	supertypes: ['_simple_statement', '_compound_statement', 'expression', 'primary_expression', 'pattern', 'parameter']
 } as const satisfies GrammarJson;
 
 export type PythonGrammarShape = typeof pythonGrammarShape;

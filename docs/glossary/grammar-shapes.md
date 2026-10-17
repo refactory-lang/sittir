@@ -166,12 +166,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Top-level compiled grammar.json shape (the subset we type off). */
 ```
 
-### `packages/codegen/src/grammar-shapes/grammar-json.ts::supertypeNames`
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::supertypes`
 
 ```text
-/** Compiled supertype-name array. Named `supertypeNames` (not
-	 *  `supertypes`) to avoid colliding with tree-sitter's authoring callback
-	 *  of the same name — see the file header. */
+/** Compiled supertype-name array, under the key grammar.json and
+	 *  tree-sitter's normalized grammar both use. */
 ```
 
 ### `packages/codegen/src/grammar-shapes/grammar-json.ts::PrecRuleUnion`
@@ -459,18 +458,16 @@ grammar hands `wire()`.
  *     `$.r` still composes in seq()/choice(); it does NOT return the
  *     readonly recursive shape (which wouldn't compose, and isn't what
  *     tree-sitter returns at runtime anyway).
- *   - the `GrammarJson extends GrammarSchema<string>` ladder is proven via
- *     a `MutableDeep<>` bridge (below), not by making rules literally ⊑ Rule.
+ *   - the ladder to tree-sitter's normalized grammar (`GrammarSchema<string>
+ *     ['grammar']`) is proven via a `MutableDeep<>` bridge (below), not by
+ *     making rules literally ⊑ Rule.
  *
  * NOTE: compiled grammar.json has NO `OPTIONAL` rule — tree-sitter lowers
  * `optional(x)` to `CHOICE(x, BLANK)`. The Enrich<> + path machinery match
  * on `CHOICE(_, BLANK)`, never a phantom OPTIONAL.
  *
- * `supertypes` rename: compiled grammar.json carries `supertypes: string[]`,
- * but tree-sitter's ambient `Grammar.supertypes` is an AUTHORING CALLBACK
- * (`($, prev) => RuleOrLiteral[]`). The two collide on the same key, blocking
- * `GrammarJson extends GrammarSchema<string>`. We emit the array under
- * `supertypeNames` instead. Nothing depends on the typed field (the runtime
+ * `supertypes` is the compiled `string[]`, the same key and type as the
+ * normalized grammar's. Nothing depends on the typed field (the runtime
  * cross-check reads the raw `require`; the type-level supertype set is the
  * hardcoded `RustSupertypes`).
  */
@@ -479,7 +476,7 @@ grammar hands `wire()`.
 ### `packages/codegen/src/grammar-shapes/grammar-shape.<grammar>.ts::module`
 
 Generated, one per registered grammar: the upstream `src/grammar.json` reduced
-to `{ name, rules, supertypeNames }` and emitted `as const satisfies
+to `{ name, rules, supertypes }` and emitted `as const satisfies
 GrammarJson`, so every STRING stays a literal, every rule name a literal key
 and every array a readonly tuple. A `resolveJsonModule` import would widen all
 three and destroy the discriminants and tuple indices the type-level deriver

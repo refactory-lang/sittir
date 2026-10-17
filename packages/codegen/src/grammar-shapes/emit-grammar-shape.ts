@@ -47,7 +47,7 @@ export async function emitGrammarShapeSource(pkg: GrammarPackage): Promise<strin
 		rules: Record<string, unknown>;
 		supertypes?: string[];
 	};
-	const slim = { name: gj.name, rules: gj.rules, supertypeNames: gj.supertypes ?? [] };
+	const slim = { name: gj.name, rules: gj.rules, supertypes: gj.supertypes ?? [] };
 	const constName = `${pkg.name}GrammarShape`;
 	const typeName = `${pkg.name.charAt(0).toUpperCase()}${pkg.name.slice(1)}GrammarShape`;
 	const source = `import type { GrammarJson } from './grammar-json.ts';\n\nexport const ${constName} = ${JSON.stringify(slim, null, 1)} as const satisfies GrammarJson;\n\nexport type ${typeName} = typeof ${constName};\n`;
