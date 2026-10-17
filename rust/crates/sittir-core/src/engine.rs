@@ -1792,8 +1792,7 @@ mod tests {
         Newline,
     }
 
-    #[cfg(feature = "napi-bindings")]
-    crate::trivia::refuse_napi_decode!(TestTrivia);
+    crate::refuse_napi_codec!(TestTrivia);
 
     impl FromTriviaText for TestTrivia {
         fn from_text(text: TriviaText) -> Self {

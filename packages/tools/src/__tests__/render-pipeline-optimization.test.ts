@@ -405,7 +405,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
 
 		expect(emitted.nodeRs.contents).toContain(
-			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
+			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]'
 		);
 		// bridge.rs and dispatch.rs retired (PR-E2). No bridge/dispatch artifacts emitted.
 		expect(emitted).not.toHaveProperty('bridgeRs');

@@ -17,7 +17,7 @@
 //! covered by per-crate tests. This harness isolates
 //! grammar crate render module + sittir-core engine parity.
 
-use sittir_parity_tests::{load_fixtures, ParityFixture};
+use sittir_parity_tests::{load_fixtures, ParityFixture, RoundTripFixture};
 use tree_sitter::Parser;
 
 /// One grammar's engine binding — everything the harness needs to
@@ -71,17 +71,9 @@ fn python_engine() -> Engine {
 /// per the tables in `packages/codegen/src/validate/common.ts`.
 /// Capturing the wrapped text + offset means the Rust side doesn't
 /// need to duplicate those tables.
-#[allow(clippy::too_many_arguments)]
-fn assert_roundtrip_parity(
-    engine: &Engine,
-    idx: usize,
-    source_in: &str,
-    pattern: &str,
-    expected_source_out: &str,
-    expected_reparse_tree: &str,
-    wrapped_text: &str,
-    wrapped_offset: u32,
-) {
+fn assert_roundtrip_parity(engine: &Engine, idx: usize, fixture: &RoundTripFixture) {
+    let RoundTripFixture { source_in, pattern, expected_source_out, expected_reparse_tree, wrapped_text, wrapped_offset, .. } = fixture;
+    let wrapped_offset = *wrapped_offset;
     // Fixture backward-compat: older fixtures don't carry
     // `wrappedText` — serde `default` leaves these blank. Skip the
     // assertion quietly so a stale fixture doesn't fail the harness
@@ -130,7 +122,7 @@ fn assert_roundtrip_parity(
     // the reparsed source. Byte-identical render parity (SC-001a)
     // stays strict; semantic s-exp parity (SC-001b) is downgraded
     // to a warn-only diagnostic until the grammar versions align.
-    if actual_reparse_tree != expected_reparse_tree && std::env::var("SITTIR_PARITY_STRICT").is_ok()
+    if actual_reparse_tree != *expected_reparse_tree && std::env::var("SITTIR_PARITY_STRICT").is_ok()
     {
         panic!(
             "[{}][roundtrip #{idx}] pattern={pattern} reparse s-expression divergence (strict mode)\n  expected: {expected_reparse_tree}\n  actual:   {actual_reparse_tree}",
@@ -176,25 +168,8 @@ fn run_parity_suite(engine: Engine) {
             ParityFixture::Render { .. } => {
                 // render_dispatch retired (PR-E2 bridge-sunset) — skip render fixtures.
             }
-            ParityFixture::RoundTrip {
-                source_in,
-                pattern,
-                expected_source_out,
-                expected_reparse_tree,
-                wrapped_text,
-                wrapped_offset,
-                ..
-            } => {
-                assert_roundtrip_parity(
-                    &engine,
-                    idx,
-                    source_in,
-                    pattern,
-                    expected_source_out,
-                    expected_reparse_tree,
-                    wrapped_text,
-                    *wrapped_offset,
-                );
+            ParityFixture::RoundTrip(fixture) => {
+                assert_roundtrip_parity(&engine, idx, fixture);
                 rt_count += 1;
             }
         }

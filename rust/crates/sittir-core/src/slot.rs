@@ -262,6 +262,7 @@ pub unsafe fn node_value_type(
     env: ::napi::sys::napi_env,
     napi_val: ::napi::sys::napi_value,
 ) -> ::napi::Result<::napi::ValueType> {
+    // SAFETY: this fn requires `napi_val` to be live in `env`.
     unsafe { raw_typeof(env, napi_val) }.map(::napi::ValueType::from)
 }
 
@@ -275,6 +276,7 @@ pub unsafe fn js_type_name(env: ::napi::sys::napi_env, napi_val: ::napi::sys::na
     use ::napi::sys::ValueType as T;
     /// `napi_bigint`, which napi-sys declares only under its `napi6` feature.
     const BIGINT: ::napi::sys::napi_valuetype = 9;
+    // SAFETY: this fn requires `napi_val` to be live in `env`.
     Ok(match unsafe { raw_typeof(env, napi_val)? } {
         T::napi_undefined => "undefined",
         T::napi_null => "null",
@@ -293,6 +295,7 @@ pub unsafe fn js_type_name(env: ::napi::sys::napi_env, napi_val: ::napi::sys::na
 #[cfg(feature = "napi-bindings")]
 unsafe fn raw_typeof(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<::napi::sys::napi_valuetype> {
     let mut value_type = 0;
+    // SAFETY: its callers, `node_value_type` and `js_type_name`, require `napi_val` to be live in `env`.
     let status = unsafe { ::napi::sys::napi_typeof(env, napi_val, &mut value_type) };
     if status != ::napi::sys::Status::napi_ok {
         return Err(::napi::Error::new(
@@ -315,12 +318,15 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let value_type = unsafe { node_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
                 return Ok(Self::Coord(coord));
             }
         }
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         Ok(Self::Node(unsafe {
             T::from_napi_value(env, napi_val)?
         }))
@@ -335,7 +341,9 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
     /// reads back as one.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         match val {
+            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
             Self::Node(node) => unsafe { T::to_napi_value(env, node) },
+            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
             Self::Coord(coord) => unsafe { coordinate_to_napi(env, coord) },
         }
     }
@@ -351,16 +359,22 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
 #[cfg(feature = "napi-bindings")]
 pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Option<NodeCoordinate>> {
     use crate::boundary::property;
+    // SAFETY: this fn requires `napi_val` to be a live object in `env`.
     let Some(handle) = (unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }) else {
         return Ok(None);
     };
     let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
+    // SAFETY: this fn requires `napi_val` to be a live object in `env`.
     let span: Span = unsafe { property(env, napi_val, c"$span")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $span")))?;
+    // SAFETY: this fn requires `napi_val` to be a live object in `env`.
     let end: crate::types::NodeIndex = unsafe { property(env, napi_val, c"$end")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
+    // SAFETY: this fn requires `napi_val` to be a live object in `env`.
     let kind: Option<crate::types::KindId> = unsafe { property(env, napi_val, c"$type")? };
+    // SAFETY: this fn requires `napi_val` to be a live object in `env`.
     let changed = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
+        // SAFETY: `layout` was just read from `napi_val`, so it is live in `env`.
         Some(layout) => unsafe { property::<ChangedEdges>(env, ::napi::JsValue::raw(&layout), c"changed")?.unwrap_or_default() },
         None => ChangedEdges::default(),
     };
@@ -375,6 +389,7 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
 #[cfg(feature = "napi-bindings")]
 pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
     use crate::boundary::{object_with_present, present};
+    // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
     unsafe {
         object_with_present(env, &[
             present(env, c"$treeHandle", Some(coord.handle()))?,
@@ -391,7 +406,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ChangedEdges {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::property;
         Ok(Self {
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             leading: unsafe { property::<bool>(env, napi_val, c"leading")? }.unwrap_or(false),
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             trailing: unsafe { property::<bool>(env, napi_val, c"trailing")? }.unwrap_or(false),
         })
     }

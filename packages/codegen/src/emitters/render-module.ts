@@ -1217,6 +1217,7 @@ interface ReadPrint {
 	readonly printedEnums: Set<string>;
 	readonly admitted: Map<string, number[]>;
 	readonly blankChoices: Set<string>;
+	readonly variantCounts: Map<string, number>;
 	readonly choicePayloads: Set<string>;
 	readonly boxedPayloads: readonly string[];
 	readonly nodes: Set<string>;
@@ -1248,6 +1249,7 @@ function readPrintOf(
 		admitted: new Map(),
 		nodes: new Set(),
 		blankChoices: new Set(),
+		variantCounts: new Map(),
 		choicePayloads: new Set(),
 		records: new Map()
 	};
@@ -1365,7 +1367,8 @@ function renderNodeSupport(
 		kindEntries,
 		usedSupertypeNames,
 		choices.emitted.map(({ entry }) => entry),
-		fixed
+		fixed,
+		read
 	);
 
 	const rendered = pruneUnreferencedBridges(
@@ -1452,7 +1455,7 @@ function pruneUnreferencedBridges(rendered: string): string {
 function commonRustUseImports(): string {
 	const lines: string[] = [];
 	lines.push(
-		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
+		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]'
 	);
 	lines.push(
 		'#![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]'
@@ -1637,6 +1640,7 @@ function emitSupertypeNodeEnum(
 	if (admitsVerbatim) lines.push(`    #[node(verbatim)]`, `    Verbatim(VerbatimNode),`);
 	lines.push(`}`);
 	lines.push(``);
+	read.variantCounts.set(enumName, validSubtypes.length + (admitsVerbatim ? 1 : 0));
 	admit(read, enumName, [...claimedBy.values()].flat());
 	lines.push(
 		...prepareEnumImpl(enumName, [
@@ -2271,6 +2275,7 @@ function emitPerSlotChildEnum(
 	if (admitsVerbatim) lines.push(`    #[node(verbatim)]`, `    Verbatim(VerbatimNode),`);
 	lines.push(`}`);
 	lines.push(``);
+	read.variantCounts.set(enumName, nodeKinds.length + units.size + (blank ? 1 : 0) + (admitsVerbatim ? 1 : 0));
 	admit(read, enumName, [...claimedBy.values()].flat());
 	if (blank) read.blankChoices.add(enumName);
 	lines.push(
@@ -2368,6 +2373,7 @@ function renderAnyNode(
 	lines.push('    Verbatim(VerbatimNode),');
 	lines.push('}');
 	lines.push('');
+	read.variantCounts.set('AnyNode', payloadNodes.length + fixed.size + 1);
 	admit(read, 'AnyNode', [...claimedBy.values()].flat());
 	lines.push(...prepareEnumImpl('AnyNode', anyNodePrepareArms(payloadNodes, fixed)));
 
@@ -2837,14 +2843,16 @@ function seatTargetSig(usesCtx: boolean): string {
 	return `    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ${ctx}: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {`;
 }
 
-function seatTargetMatchImpl(typeName: string, arms: readonly string[], exhaustive: boolean): string[] {
+function seatTargetMatchImpl(typeName: string, arms: readonly string[], read: ReadPrint): string[] {
 	if (arms.length === 0) return [];
+	const variantCount = read.variantCounts.get(typeName);
+	if (variantCount === undefined) throw new Error(`enum '${typeName}' has seat arms but no recorded variant count`);
 	return [
 		`impl ::sittir_core::prepare::SeatTarget for ${typeName} {`,
 		seatTargetSig(arms.some((arm) => arm.includes('ctx'))),
 		'        match self {',
 		...arms.map((arm) => `            ${arm}`),
-		...(exhaustive ? [] : ['            #[allow(unreachable_patterns)]', '            _ => None,']),
+		...(arms.length === variantCount ? [] : ['            _ => None,']),
 		'        }',
 		'    }',
 		'}',
@@ -2860,12 +2868,13 @@ function seatTargetStructImpl(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	plan: RenderPlan,
-	fixed: FixedLiterals
+	fixed: FixedLiterals,
+	read: ReadPrint
 ): string[] {
 	const reaches = seatReachOf(plan, nodeMap);
 	if (!reaches(node.kind)) return [];
 	const kind = node.kind;
-	if (isFixedTextLeaf(node)) return seatTargetMatchImpl(rustNodeStructName(node), [fixedSeatArm(`Self::${fixedLiteralOf(fixed, node.kind).variant}`, fixedLiteralOf(fixed, node.kind))], true);
+	if (isFixedTextLeaf(node)) return seatTargetMatchImpl(rustNodeStructName(node), [fixedSeatArm(`Self::${fixedLiteralOf(fixed, node.kind).variant}`, fixedLiteralOf(fixed, node.kind))], read);
 	const body: string[] = [];
 	if (seatedKindsOf(plan).has(node.kind)) {
 		const id = node.kindId;
@@ -2912,13 +2921,14 @@ function renderSeatTargets(
 	kindEntries: readonly KindEntryLike[],
 	usedSupertypeNames: ReadonlySet<string>,
 	perSlotEnums: readonly PerSlotChildEnum[],
-	fixed: FixedLiterals
+	fixed: FixedLiterals,
+	read: ReadPrint
 ): string[] {
 	const reaches = seatReachOf(plan, nodeMap);
 	const lines: string[] = [];
 	for (const node of nodes) {
 		if (node instanceof AssembledEnum || node instanceof AssembledSupertype) continue;
-		lines.push(...seatTargetStructImpl(node, nodeMap, plan, fixed));
+		lines.push(...seatTargetStructImpl(node, nodeMap, plan, fixed, read));
 	}
 	for (const [, node] of nodeMap.nodes) {
 		if (!(node instanceof AssembledSupertype) || !usedSupertypeNames.has(node.typeName)) continue;
@@ -2926,7 +2936,7 @@ function renderSeatTargets(
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
 		const subtypes = collectEffectiveSupertypeNodeShape(node, nodeMap).subtypes;
 		const reaching = subtypes.filter(({ subKind }) => reaches(subKind)).map(({ subKind, subNode }) => seatArm(rustTypeIdent(subNode.typeName), subKind, subNode, fixed));
-		lines.push(...seatTargetMatchImpl(enumName, reaching, false));
+		lines.push(...seatTargetMatchImpl(enumName, reaching, read));
 	}
 	for (const entry of perSlotEnums) {
 		const nodes = expandConcreteNodeKinds(entry.kinds, nodeMap).filter(({ kind }) => reaches(kind));
@@ -2942,10 +2952,10 @@ function renderSeatTargets(
 			...nodes.map(({ kind, node }) => seatArm(rustTypeIdent(node.typeName), kind, node, fixed)),
 			...[...literals.values()].map((unit) => fixedSeatArm(`Self::${unit.variant}`, unit))
 		];
-		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, false));
+		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, read));
 	}
 	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => seatArm(rustNodeVariantName(node), node.kind, node, fixed));
-	lines.push(...seatTargetMatchImpl('AnyNode', anyReaching, false));
+	lines.push(...seatTargetMatchImpl('AnyNode', anyReaching, read));
 	return lines;
 }
 
@@ -3384,6 +3394,7 @@ function fixedLiteralIds(fixed: FixedLiteral): number[] {
 function renderFixedLiteralNode(typeName: string, fixed: FixedLiteral, read: ReadPrint): string[] {
 	const ids = fixedLiteralIds(fixed);
 	admit(read, typeName, ids);
+	read.variantCounts.set(typeName, 1);
 	return [
 		...nodeDeclaration(read, TRANSPORT_DERIVE_UNIT, 'choice', 'enum', typeName),
 		...variantKindLines(typeName, fixed.variant, undefined, ids, read),

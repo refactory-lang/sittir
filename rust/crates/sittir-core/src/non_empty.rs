@@ -43,6 +43,7 @@ impl<T> DerefMut for NonEmptyVec<T> {
 impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for NonEmptyVec<T> {
     /// `Vec`'s decode, refusing an empty array.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let items = unsafe { Vec::<T>::from_napi_value(env, napi_val)? };
         Self::try_from(items).map_err(|EmptyList| ::napi::Error::from_reason("a repeat1 list holds no item"))
     }
@@ -51,6 +52,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for NonEmptyVec<T> {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { Vec::<T>::to_napi_value(env, val.0) }
     }
 }
