@@ -510,7 +510,7 @@ Each record prototype and measuring tool the arena steps already hold, with its 
    - reclaiming records nothing names.
 
    3b-ii's outline holds the semantics the maintainer then rules on.
-7. **The typed model's name** (`…Record`, `…Data` or another). Decided in 3b-ii, once it is settled whether the structs stay structs or become views over records. Nothing is renamed in 3b-i.
+7. **The typed model's name is `…Node`**: the generated structs, the `#[node]` attribute, `derive(Node)`, `ReadNode`, `NodeLayout` and the `sittir-node-macros` crate. A record's view is `…Record<'a>`, beside its kind's `…Node`.
 8. **The review probes of 3a's last rounds** (`scratchpad/backup/wt-arena.scratch-r15.tgz` and `wt-arena-base.scratch-r15.tgz`).
    - **Kept:** one is a measuring tool, now `docs/superpowers/probes/2026-10-11-unit-alignment/reversal-cost.mts`: a rebuilt list's unit alignment, time and heap against list length.
    - **Dropped:** the other sixteen are behavior repros, each now pinned by a committed test (`trivia-ownership.test.ts`, `unit-edges.test.ts`, `written-trivia.test.ts`, `root-edges.test.ts`).
@@ -723,4 +723,3 @@ Detail against the measured implementation after Task 10 and the resulting optim
   - A built node's sides move from the node into the built nodes' trivia table, keyed by record address and side, and travel with it. Writing a side updates the table; the node's record stays immutable, and no record that shares it changes. A built holder keeps nothing for its children. A parsed node placed in a built holder keeps its sides in its tree's table. The render reads trivia from native storage only.
   - **Retires:** `$_layout.trivia`, `setTriviaData` and the trivia writer's client store; `NodeLayout::trivia`, `NodeTrivia` and `TriviaEntry` with their napi decode.
 - **A native file-based parse** (the maintainer, 2026-10-12). `parseFile(path)`, only for grammars that declare file types: native code reads the file, JavaScript gets records, and text decodes lazily from the shared source bytes, so the source never exists as a JavaScript string. Its API shape (the name, options, errors for an unreadable file, and encoding and BOM handling) is designed here and goes to the maintainer before code.
-- **The typed model's name** (prior art 7). Once the structs are views over records or stay structs, they are renamed across the attribute, `ReadNode`, `NodeLayout`, the macro crate, the emitters, every generated `…Node`, and the glossary and specs, in one commit series with no other change.
