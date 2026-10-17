@@ -786,7 +786,7 @@ export const scmGrammarShape = {
 			}
 		}
 	},
-	supertypeNames: ['definition']
+	supertypes: ['definition']
 } as const satisfies GrammarJson;
 
 export type ScmGrammarShape = typeof scmGrammarShape;

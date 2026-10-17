@@ -13,7 +13,8 @@ const report: ConflictReport = {
 			done: true,
 			conflicting_lookahead: "';'",
 			precedence: null,
-			associativity: null
+			associativity: null,
+			requires_eof_lookahead: false
 		},
 		{
 			preceding_symbols: [],
@@ -23,7 +24,8 @@ const report: ConflictReport = {
 			done: true,
 			conflicting_lookahead: "';'",
 			precedence: null,
-			associativity: null
+			associativity: null,
+			requires_eof_lookahead: false
 		}
 	],
 	possible_resolutions: [
@@ -37,7 +39,8 @@ const consoleNoise = "transform: override field('async') on 'for_in_clause' wrap
 
 describe('parseGenerateOutcome', () => {
 	it('reads the conflict report that follows grammar console output on stderr', () => {
-		const stderr = `${consoleNoise}\n${JSON.stringify({ BuildTables: { Conflict: report } }, null, 2)}\n`;
+		const summary = { diagnostics: [{ SupertypeInlined: { name: '_statement' } }], error: { BuildTables: { Conflict: report } } };
+		const stderr = `${consoleNoise}\n${JSON.stringify(summary, null, 2)}\n`;
 		expect(parseGenerateOutcome(1, stderr)).toEqual({ kind: 'conflict', report });
 	});
 
@@ -46,7 +49,7 @@ describe('parseGenerateOutcome', () => {
 	});
 
 	it('surfaces a summary that is not a conflict as an error', () => {
-		const summary = { LoadGrammarFile: { LoadJSGrammarFile: { JSRuntimeExit: { runtime: 'node', code: 1 } } } };
+		const summary = { diagnostics: [], error: { LoadGrammarFile: { LoadJSGrammarFile: { JSRuntimeExit: { runtime: 'node', code: 1 } } } } };
 		expect(parseGenerateOutcome(1, `ReferenceError: module is not defined\n${JSON.stringify(summary, null, 2)}\n`)).toEqual({
 			kind: 'error',
 			summary

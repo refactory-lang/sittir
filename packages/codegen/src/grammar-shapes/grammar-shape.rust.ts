@@ -9634,7 +9634,7 @@ export const rustGrammarShape = {
 			value: '\\$[a-zA-Z_]\\w*'
 		}
 	},
-	supertypeNames: ['_expression', '_type', '_literal', '_literal_pattern', '_declaration_statement', '_pattern']
+	supertypes: ['_expression', '_type', '_literal', '_literal_pattern', '_declaration_statement', '_pattern']
 } as const satisfies GrammarJson;
 
 export type RustGrammarShape = typeof rustGrammarShape;
