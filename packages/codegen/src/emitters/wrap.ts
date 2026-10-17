@@ -417,7 +417,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type { Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
-			...(keyed ? ["import { TSKindId } from './types.js';"] : []),
+			...(keyed ? ["import { TSKindId } from './kinds.js';"] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			"import * as RAW from './factories/raw.js';",

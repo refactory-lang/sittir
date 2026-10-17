@@ -6,7 +6,7 @@ import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitFieldIdRust } from '../emitters/field-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
-import { emitIndex } from '../emitters/index-file.ts';
+import { emitDescriptor, emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
 import { bindingsPathIn } from '../bindings/facts.ts';
 import { grammarInput } from '../bindings/input.ts';
@@ -32,6 +32,8 @@ import { defaultTriviaForm, triviaKinds } from './model/trivia.ts';
 export interface GeneratedFiles {
 	types: string;
 	typesInternal: string;
+	kinds: string | undefined;
+	descriptor: string;
 	renderEngine: string;
 	api: string;
 	backend: string;
@@ -167,6 +169,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			backend: emitBackend({ grammar: cfg.grammar }),
 			types: emitted.types,
 			typesInternal: emitted.typesInternal,
+			kinds: emitted.kinds,
+			descriptor: emitDescriptor({ grammar: cfg.grammar, nodeMap }),
 			templates: emitted.templates,
 			factories: emitted.factories,
 			overlays: emitted.overlays,
@@ -179,7 +183,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			irNamespace: emitted.irNamespace,
 			consts: emitted.consts,
 			options: emitted.options,
-			index: emitIndex({ grammar: cfg.grammar, nodeMap }),
+			index: emitIndex(),
 			tests: emitted.tests,
 			config: emitConfig({ grammar: cfg.grammar, stable: isStableGrammar(cfg.grammar) }),
 			nodeModel,

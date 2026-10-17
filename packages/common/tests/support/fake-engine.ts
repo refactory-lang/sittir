@@ -24,7 +24,7 @@ export function liveHandle(
 	options: { readonly render?: (node: AnyUntypedNode | number) => string; readonly trivia?: TriviaFacts } = {}
 ): EngineHandle {
 	const live: LiveEngine = {
-		language: { name: 'fake', fileTypes: [], load: () => Promise.reject(new Error('type-only')) },
+		language: { name: 'fake', fileTypes: [], is: {}, kinds: {}, load: () => Promise.reject(new Error('type-only')) },
 		renderModuleHash: 'hash',
 		options: undefined,
 		trivia: options.trivia ?? triviaFacts(),

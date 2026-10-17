@@ -24,8 +24,6 @@ function fakeLanguage(name = 'fake') {
 				})
 			}
 		},
-		is: {},
-		kinds: { Leaf: 1 },
 		trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {} },
 		createNative: (opts?: { options?: FakeRenderOptions }) => {
 			created.push(opts?.options);
@@ -49,6 +47,8 @@ function fakeLanguage(name = 'fake') {
 	return {
 		language: {
 			name,
+			is: {},
+			kinds: { Leaf: 1 },
 			load: async () => {
 				loads++;
 				return hooks;
@@ -89,7 +89,7 @@ describe('createEngine', () => {
 		expect(attempts).toBe(2);
 	});
 
-	it('exposes the language, guards and kinds from the hooks', async () => {
+	it('exposes the language, and the guards and kinds of the language', async () => {
 		const e = await engineOf();
 		expect(e.language.name).toBe('fake');
 		expect(e.renderModuleHash).toBe('hash');

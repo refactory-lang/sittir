@@ -21,7 +21,7 @@ import {
 import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
-import { TSKindId } from './types.js';
+import { TSKindId } from './kinds.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
 

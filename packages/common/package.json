@@ -38,6 +38,11 @@
 			"import": "./src/error-kind.ts",
 			"default": "./src/error-kind.ts"
 		},
+		"./language": {
+			"types": "./dist/language.d.ts",
+			"import": "./dist/language.js",
+			"default": "./dist/language.js"
+		},
 		"./utils": {
 			"types": "./dist/utils.d.ts",
 			"import": "./dist/utils.js",

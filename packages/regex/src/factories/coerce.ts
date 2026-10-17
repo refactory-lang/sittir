@@ -3,7 +3,8 @@
 import * as F from './raw.js';
 import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
-import { TSKindId, KIND_NAMES } from '../types.js';
+import { TSKindId } from '../kinds.js';
+import { KIND_NAMES } from '../types.js';
 import type { AnyUntypedNode, Admit } from '@sittir/types';
 import {
 	coerceKindEnumStorage,
