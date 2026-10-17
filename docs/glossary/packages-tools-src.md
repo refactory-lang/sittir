@@ -50,7 +50,7 @@ The repository's `SyncBaseTarget`: every registered grammar's generated roots (s
 
 ### `packages/tools/src/regen.ts::regenerateGrammars`
 
-Regenerates the stale ones of `grammars` (all of them under `force`), each step in a fresh `gen` process, in two passes. The first generates every stale grammar at once (`gen --all --no-build-native --no-workspace-check`, at most `availableParallelism()` at a time, each line of output prefixed with its grammar), with no native build, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native binding in turn from the sources the first wrote (`gen --native-only`, which generates nothing), and only the last runs the workspace `cargo check`. The bindings build one at a time: they share a cargo target, and sittir-core must recompile under each grammar's napi typedef folder for its types to reach that grammar's `index.d.ts`. Returns the exit status of the first generation that failed, in grammar order, before any native build starts; otherwise that of a failed native build (1 when it has none); 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
+Regenerates the stale ones of `grammars` (all of them under `force`), each step in a fresh `gen` process, in two passes. The first generates every stale grammar at once (`gen --all --no-build-native --no-workspace-check`, at most `availableParallelism()` at a time, each line of output prefixed with its grammar), with no native build, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native binding in turn from the sources the first wrote (`gen --native-only`, which generates nothing), and only the last runs the workspace `cargo check`. The bindings build one at a time: they share a cargo target, and sittir-core must recompile under each grammar's napi typedef folder for its types to reach that grammar's `index.d.ts`. Before any work it clears the completion record (`clearRegenRecord`) of every grammar it regenerates, and it writes each one's record (`writeRegenRecord`) only after every native build and the workspace check have succeeded; a run that fails anywhere leaves those grammars to regenerate on the next run, however fresh their files look. Returns the exit status of the first generation that failed, in grammar order, before any native build starts; otherwise that of a failed native build (1 when it has none); 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
 
 ### `packages/tools/src/regen.ts::staleGrammars`
 
@@ -58,7 +58,7 @@ The grammars that need regenerating, with a line printed for each: `skipped` wit
 
 ### `packages/tools/src/regen.ts::staleness`
 
-Why a grammar needs regenerating, or undefined when it does not: its generated files must verify against its sources (`verifyManifestForGrammar`: sources, upstream, generated files and the binary's freshness), and its native binary must have been built from the current native inputs under the `gate` profile (`nativeBuildFreshness`), the profile regeneration builds.
+Why a grammar needs regenerating, or undefined when it does not: its generated files must verify against its sources (`verifyManifestForGrammar`: sources, upstream, generated files and the binary's freshness), and its native binary must have been built from the current native inputs under the `gate` profile, toolchain and build configuration (`nativeBuildFreshness`), the build regeneration would run, and its last regeneration must have finished: the completion record (`readRegenRecord`) must name the current source hash and the binary now present (`currentRecord`). Generation records the manifest, and the native build its stamp, before the workspace check and the post-generate steps run, so files and binary can both look fresh after a run that failed; only the record says the run finished.
 
 ### `packages/tools/src/regen.ts::RegenerateOptions`
 
@@ -71,6 +71,26 @@ One grammar's first pass, its output prefixed with the grammar; resolves with th
 ### `packages/tools/src/regen.ts::prefixed`
 
 Copies a stream to `output` line by line, each line prefixed with the grammar, so concurrent generations stay readable.
+
+### `packages/tools/src/regen.ts::currentRecord`
+
+The completion record a finished regeneration of the grammar would leave now: its current source hash (`computeSourceHash`) and the SHA-256 of its host binary from that binary's build stamp. Undefined when the binary was never stamped.
+
+### `packages/tools/src/regen-record.ts::RegenRecord`
+
+What a finished regeneration of one grammar produced: the source hash it generated from and the SHA-256 of the native binary it built.
+
+### `packages/tools/src/regen-record.ts::readRegenRecord`
+
+The grammar's completion record, from `node_modules/.cache/sittir/regen/<grammar>.json` under `cwd`, or undefined when there is none.
+
+### `packages/tools/src/regen-record.ts::writeRegenRecord`
+
+Writes the grammar's completion record, beside its destination and renamed into place.
+
+### `packages/tools/src/regen-record.ts::clearRegenRecord`
+
+Removes the grammar's completion record, if any.
 
 ### `packages/tools/src/regen.ts::inPool`
 

@@ -211,7 +211,9 @@ Removes the napi typedef directories of one grammar under a cargo target directo
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::hostBinaryFreshnessFor`
 
-Reports, for every `*.node` in the grammar's binding directory, whether it is the binary the last build wrote from the current native inputs. A binary is stale when there is no build stamp, when it is not the binary the stamp names (by name and SHA-256: a binary some other build wrote is not this build's), when the rust toolchain (`rustc -vV`) differs from the build's, or when any native input's content differs from the build's (`nativeInputs`); `reason` says which, naming the first changed input by path. Returns `[]` when no binary is present: absence is tolerated, staleness is not. Any profile serves validation, so a binary's `profile` is reported, not judged; `nativeBuildFreshness` judges it.
+Reports whether the grammar's host binary (`hostBinaryName`, the one this machine's loader selects) is the binary the last build wrote from the current native inputs. Binaries for other targets in the same directory are not judged: the host never loads them, and each carries its own stamp. The binary is stale when it has no build stamp, when its SHA-256 differs from the stamp's (a binary some other build wrote is not this build's), or when any native input's content differs from the build's (`nativeInputs`); `reason` says which, naming the first changed input by path. Returns `[]` when no host binary is present: absence is tolerated, staleness is not.
+
+Only what the binary was compiled from is judged here. The profile, the toolchain and the build configuration are not: validation runs a binary built under any of them, including one built on a CI runner and shipped with its stamp to a checkout that has no rust toolchain at all. `nativeBuildFreshness` adds those checks for a regeneration.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::assertNativeBinaryFresh`
 
@@ -223,11 +225,11 @@ Every file a grammar's native build compiles from, by repo-relative path, with i
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::writeNativeBuildStamp`
 
-Records the build that just wrote `binary`: its profile, the binary's SHA-256, the toolchain and `nativeInputs`, in `node_modules/.cache/sittir/native-build/<grammar>.json` under the checkout. `scripts/build-native.mts` calls it after every successful build, so every native build that goes through the crate scripts, codegen or CI is recorded. The file is written beside its destination and renamed into place.
+Records the build that just wrote `binary`: its profile, the binary's SHA-256, the toolchain (`rustc -vV` unless `setting.toolchain` names one), the build configuration (`nativeBuildConfig` of `setting.env`, defaulting to the process environment) and `nativeInputs`, in `node_modules/.cache/sittir/native-build/<grammar>/<binary>.json` under the checkout. One stamp per binary, so building one target never invalidates another target's binary. `scripts/build-native.mts` calls it after every successful build with the environment the build ran under, so every native build that goes through the crate scripts, codegen or CI is recorded. CI ships the stamp directory in the native artifact alongside the binaries. The file is written beside its destination and renamed into place.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::nativeBuildFreshness`
 
-Whether the grammar's stamped binary was built from the current native inputs under `profile`, and if not, why: no binary, a stale one (`hostBinaryFreshnessFor`'s reason), or a binary built under another profile. `regen:all` skips a grammar's native build only when this holds for the `gate` profile, so a binary built for release is not taken for a gate one, nor the reverse.
+Whether the grammar's host binary is the one a build under `profile` would write now, and if not, why: no binary; a stale one (`hostBinaryFreshnessFor`'s reason); a different rust toolchain; a changed build configuration (`nativeBuildConfig`, naming the first changed variable or cargo config file); or a binary built under another profile. `setting` supplies the current toolchain and environment, defaulting to `rustc -vV` and the process environment. `regen:all` skips a grammar's native build only when this holds for the `gate` profile, so a binary built for release is not taken for a gate one, nor the reverse, and a binary built under other flags is rebuilt.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::NativeProfile`
 
@@ -235,7 +237,23 @@ The cargo profile a binary was built under: `release` (fat LTO; CI and publishin
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::NativeBuildStamp`
 
-The record of one native build (`writeNativeBuildStamp`).
+The record of one native build (`writeNativeBuildStamp`): profile, binary SHA-256, toolchain, build configuration and native inputs.
+
+### `packages/codegen/src/scripts/native-binary-freshness.ts::BuildSetting`
+
+The toolchain and environment a build runs under. Omitted fields are read from the machine (`rustc -vV`, the process environment); tests pass them to stay independent of the host.
+
+### `packages/codegen/src/scripts/native-binary-freshness.ts::hostBinaryName`
+
+The file name of the grammar's binary for the platform this process runs on (`<binary>.<platform suffix>.node`, via `@sittir/common/engine`'s `platformSuffix(hostPlatform())`): the binary the grammar package's loader selects.
+
+### `packages/codegen/src/scripts/native-binary-freshness.ts::nativeBuildConfig`
+
+The build configuration that changes what cargo compiles without changing any input file: the environment variables `RUSTFLAGS`, `CARGO_ENCODED_RUSTFLAGS`, `RUSTC_WRAPPER`, `CARGO_BUILD_*` and `CARGO_PROFILE_*` from `env`, and the SHA-256 of the repo's `.cargo/config.toml` or `.cargo/config` when present. A variable or file added or removed changes the map as an edit does.
+
+### `packages/codegen/src/scripts/native-binary-freshness.ts::nativeBuildStamp`
+
+Reads the stamp recorded for `binary` (the host binary by default), or undefined when the binary was never stamped.
 
 ### `packages/codegen/src/scripts/reconcile-naming.ts::isAllowlisted`
 
@@ -396,6 +414,8 @@ What this does not do: say whether a commit's generated output is what its sourc
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::codegenSourceHash`
 
+The codegen side of a grammar's source hash: every codegen source input (`codegenSourceFiles`), then every file of the shared runtime that generation executes (`commonClosure`), each by path and content. Generation runs `@sittir/common` helpers whose results land in generated files (factories embed host templates computed by the reparse helpers, for example), so an edit there changes what generation writes as surely as an edit to codegen does.
+
 #### body
 
 ```text
@@ -404,7 +424,7 @@ What this does not do: say whether a commit's generated output is what its sourc
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::computeSourceHash`
 
-A grammar's source hash: its own inputs (`grammarSourceInputs`), the codegen source (`codegenSourceHash`) and the installed upstream grammar (`upstreamDigest`).
+A grammar's source hash: its own inputs (`grammarSourceInputs`), the codegen source and the shared runtime it executes (`codegenSourceHash`), and the installed upstream grammar (`upstreamDigest`).
 
 #### body
 
@@ -441,7 +461,7 @@ Host binaries are checked for staleness only in a checkout, and in that checkout
 
 The source inputs and generated files that keep the tree from equalling a trusted commit; empty when it equals one. The trusted commits are HEAD and, while a merge is in progress, MERGE_HEAD (`trustedCommits`): each has passed, or will have to pass, the CI check that regenerates and compares. Source inputs and generated roots must equal the same commit. Source from one parent with output from the other is a combination no check has seen, and it does not pass. A commit being rebased or cherry-picked is deliberately not trusted: its source lands on a different base, which is a new combination and needs a regenerate.
 
-The comparison is git's (`git diff --name-only --no-renames <commit>`, with `--cached` for an index snapshot, plus untracked files in a checkout; without `--no-renames` a source input renamed into a test directory would be reported only under its new path and go unseen), filtered to the paths that matter: the source inputs the source hash reads (`isCodegenSourceInput` and `grammarSourceInputs`), `pnpm-lock.yaml` (git's record of the installed upstream, which the hash reads from `node_modules`), any vocabulary source for a grammar with bindings (`isVocabularyInput`, compared by its directory, so a deleted vocabulary file is a difference although the hash no longer lists it), and the generated roots, less the files that land on their own cadence (`landsOnItsOwnCadence`). Editing a codegen test therefore never fails verification. When the tree equals neither commit, the paths returned are the differences from HEAD.
+The comparison is git's (`git diff --name-only --no-renames <commit>`, with `--cached` for an index snapshot, plus untracked files in a checkout; without `--no-renames` a source input renamed into a test directory would be reported only under its new path and go unseen), filtered to the paths that matter: the source inputs the source hash reads (`isCodegenSourceInput`, `grammarSourceInputs` and the shared runtime closure, `commonClosure`), `pnpm-lock.yaml` (git's record of the installed upstream, which the hash reads from `node_modules`), any vocabulary source for a grammar with bindings (`isVocabularyInput`, compared by its directory, so a deleted vocabulary file is a difference although the hash no longer lists it), and the generated roots, less the files that land on their own cadence (`landsOnItsOwnCadence`). Editing a codegen test therefore never fails verification. When the tree equals neither commit, the paths returned are the differences from HEAD.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::isCodegenSourceInput`
 
@@ -453,9 +473,9 @@ Whether a repo-relative path is a codegen source that takes part in generation: 
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::module`
 
-Freshness of grammar-owned napi binaries (`*.node`). A binary compiles in the grammar crate's generated sources, the grammar's generated parser, sittir-core and the transport macros, under the workspace's `Cargo.toml`, `Cargo.lock` and toolchain; a binary built from any other version of them renders stale code, or segfaults mid-gate. Freshness is content, not time: the binary and its inputs must equal the stamp the build that wrote it recorded (`writeNativeBuildStamp`). The stamp also records the profile: validation accepts any (`hostBinaryFreshnessFor`), a regeneration only the profile it builds (`nativeBuildFreshness`).
+Freshness of grammar-owned napi binaries (`*.node`). A binary compiles in the grammar crate's generated sources, the grammar's generated parser, sittir-core and the transport macros, under the workspace's `Cargo.toml`, `Cargo.lock` and toolchain; a binary built from any other version of them renders stale code, or segfaults mid-gate. Freshness is content, not time: the binary and its inputs must equal the stamp the build that wrote it recorded (`writeNativeBuildStamp`). The stamp also records the profile, the toolchain and the build configuration. Validation accepts any of them (`hostBinaryFreshnessFor`), so a binary built elsewhere validates wherever its stamp travels with it; a regeneration accepts only what it would build now (`nativeBuildFreshness`).
 
-Shared leaf module, consumed by `generated-manifest.ts` (manifest verification), `validate/common.ts` (`loadNativeEngine`), `tools/src/regen.ts` (the regeneration skip) and `scripts/build-native.mts` (the stamp). It imports only `grammars.ts`, so no consumer picks up an import cycle.
+Shared leaf module, consumed by `generated-manifest.ts` (manifest verification), `validate/common.ts` (`loadNativeEngine`), `tools/src/regen.ts` (the regeneration skip) and `scripts/build-native.mts` (the stamp). It imports only `grammars.ts` and `@sittir/common/engine` (for the host platform suffix), so no consumer picks up an import cycle.
 
 ### `packages/codegen/src/scripts/reconcile-naming.ts::module`
 
@@ -619,6 +639,38 @@ Where `name` resolves from `from`, by node's resolution paths, as a real path (p
 
 The `tree-sitter-*` grammars a package depends on (dependencies and peer dependencies), less the CLI.
 
+### `packages/codegen/src/scripts/generated-manifest.ts::COMMON_PACKAGE_DIR`
+
+`packages/common`: the shared runtime package, whose sources generation executes through `@sittir/common`.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::COMMON_SPECIFIER`
+
+`@sittir/common`: the bare specifier that, with its subpaths, names the shared runtime in an import.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::RUNTIME_MODULE_REFERENCE`
+
+Matches the module specifier of each static `import` or `export … from` statement that loads code at run time. Type-only statements (`import type`, `export type`) are skipped, since they are erased and never execute; an import listing both types and values is kept. Dynamic `import()` is not matched.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::runtimeSpecifiers`
+
+The module specifiers a source file loads at run time (`RUNTIME_MODULE_REFERENCE`), in order of appearance.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::commonEntry`
+
+The repo-relative source file an `@sittir/common` specifier resolves to, from the package's own `exports` map, or undefined for any other specifier. The map names built files under `dist/`; generation runs the TypeScript sources (the workspace resolves the package to them), so a `dist/` path ending `.js` maps to the same path under `src/` ending `.ts`.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::codegenSourceFiles`
+
+The codegen source inputs (`isCodegenSourceInput`) under `packages/codegen/src`, as absolute paths in sorted order.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::commonClosure`
+
+The shared runtime files generation executes: starting from every `@sittir/common` specifier the codegen source loads at run time (`runtimeSpecifiers`, `commonEntry`), every file those load in turn through relative or `@sittir/common` specifiers, as sorted repo-relative paths. Computed from the imports themselves, so it follows the code: a module codegen starts using joins the closure, and a module reached only by type imports stays out, so editing it never asks for a regeneration. Cached per manifest source (`commonClosureBySource`).
+
+### `packages/codegen/src/scripts/generated-manifest.ts::commonClosureBySource`
+
+The memoized `commonClosure` of each manifest source.
+
 ### `packages/codegen/src/scripts/generated-manifest.ts::stagedInputPathspecs`
 
-The paths the pre-commit check snapshots from the index before it verifies: the codegen source, `bootstrap.json`, `pnpm-lock.yaml`, the vocabulary, and every grammar's package and native crate. It covers every path `grammarSourceInputs` and `generatedRootsFor` can name, so a staged snapshot hashes the same inputs a working-tree check does; a source input left out of it reads as absent and fails a just-regenerated grammar as changed.
+The paths the pre-commit check snapshots from the index before it verifies: the codegen source, the shared runtime package (`packages/common`, whose closure the source hash reads), `bootstrap.json`, `pnpm-lock.yaml`, the vocabulary, and every grammar's package and native crate. It covers every path `grammarSourceInputs` and `generatedRootsFor` can name, so a staged snapshot hashes the same inputs a working-tree check does; a source input left out of it reads as absent and fails a just-regenerated grammar as changed.

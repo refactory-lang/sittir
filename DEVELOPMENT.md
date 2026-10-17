@@ -64,8 +64,12 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages
 
 `regen:all` generates every stale grammar at once, then builds their native
 bindings one at a time. A grammar is skipped, with a line saying why, only
-when its generated files verify against its sources (the check below) and its
-binding was built from the current native inputs under the `gate` profile.
+when its generated files verify against its sources (the check below), its
+binding was built from the current native inputs under the `gate` profile,
+the current rust toolchain and the current build flags (`RUSTFLAGS`,
+`CARGO_PROFILE_*`, `.cargo/config.toml` and the like), and its last
+regeneration ran to the end, workspace check included. A run that fails
+anywhere regenerates those grammars again next time.
 Anything that gates a pull request runs with `--force`
 (`SITTIR_REGEN_FORCE=1 pnpm run validate:native`), so a skip never stands in
 for the gate's own regeneration.
@@ -81,7 +85,9 @@ check passes when the tree is one of those pairs, or when its source inputs
 and generated files equal HEAD (or, during a merge, the commit being merged;
 both must equal the same one). So a fresh clone, a branch switch, and a merge
 of a base that regenerated all pass without regenerating. Editing codegen
-source, a grammar, or a generated file by hand does not, until you regenerate.
+source, the shared runtime it executes (any `packages/common` module codegen
+imports, directly or not), a grammar, or a generated file by hand does not,
+nor does an upstream grammar or tree-sitter CLI upgrade, until you regenerate.
 
 The file is per worktree and survives `pnpm install`. Deleting it, or
 `node_modules`, loses nothing: the tree is compared with HEAD instead.

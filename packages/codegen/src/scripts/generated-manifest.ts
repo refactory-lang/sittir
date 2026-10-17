@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { basename, join, relative, dirname } from 'node:path';
+import { basename, join, normalize, relative, dirname } from 'node:path';
 import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts';
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
@@ -139,6 +139,12 @@ const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
 
 const LOCKFILE = 'pnpm-lock.yaml';
 
+const COMMON_PACKAGE_DIR = 'packages/common';
+
+const COMMON_SPECIFIER = '@sittir/common';
+
+const RUNTIME_MODULE_REFERENCE = /(?:^|[\n;])\s*(?:import|export)\s+(?!type[\s{])(?:[^'"`;]*?\sfrom\s*)?['"]([^'"\n]+)['"]/g;
+
 const VOCABULARY_SOURCE_DIR = relative(REPO_ROOT, VOCABULARY_DIR);
 
 const isVocabularyInput = (rel: string): boolean => rel.startsWith(`${VOCABULARY_SOURCE_DIR}/`) && isVocabularySource(rel.slice(VOCABULARY_SOURCE_DIR.length + 1));
@@ -157,7 +163,7 @@ function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[
 }
 
 export function stagedInputPathspecs(): string[] {
-	return [CODEGEN_SOURCE_DIR, PIN_FILE, LOCKFILE, VOCABULARY_SOURCE_DIR, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
+	return [CODEGEN_SOURCE_DIR, COMMON_PACKAGE_DIR, PIN_FILE, LOCKFILE, VOCABULARY_SOURCE_DIR, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
 }
 
 function isCodegenSourceInput(relPath: string): boolean {
@@ -172,17 +178,65 @@ function isCodegenSourceInput(relPath: string): boolean {
 
 const codegenHashBySource = new WeakMap<ManifestSource, string>();
 
+const commonClosureBySource = new WeakMap<ManifestSource, readonly string[]>();
+
+function runtimeSpecifiers(source: string): string[] {
+	return [...source.matchAll(RUNTIME_MODULE_REFERENCE)].map((match) => match[1]!);
+}
+
+function commonEntry(root: string, specifier: string): string | undefined {
+	if (specifier !== COMMON_SPECIFIER && !specifier.startsWith(`${COMMON_SPECIFIER}/`)) return undefined;
+	const manifest = join(root, COMMON_PACKAGE_DIR, 'package.json');
+	if (!existsSync(manifest)) return undefined;
+	const exports = (JSON.parse(readFileSync(manifest, 'utf8')) as { exports?: Record<string, string | { import?: string; default?: string }> }).exports ?? {};
+	const target = exports[specifier === COMMON_SPECIFIER ? '.' : `.${specifier.slice(COMMON_SPECIFIER.length)}`];
+	const path = typeof target === 'string' ? target : (target?.import ?? target?.default);
+	if (path === undefined) return undefined;
+	return `${COMMON_PACKAGE_DIR}/${path.replace(/^\.\//, '').replace(/^dist\//, 'src/').replace(/\.js$/, '.ts')}`;
+}
+
+function codegenSourceFiles(src: ManifestSource): string[] {
+	const files: string[] = [];
+	walk(join(src.root, CODEGEN_SOURCE_DIR), files);
+	return files.sort().filter((f) => isCodegenSourceInput(relative(src.root, f)));
+}
+
+function commonClosure(src: ManifestSource): readonly string[] {
+	const cached = commonClosureBySource.get(src);
+	if (cached !== undefined) return cached;
+	const seen = new Set<string>();
+	const pending: string[] = [];
+	const visit = (rel: string | undefined): void => {
+		if (rel === undefined || seen.has(rel) || !existsSync(join(src.root, rel))) return;
+		seen.add(rel);
+		pending.push(rel);
+	};
+	for (const file of codegenSourceFiles(src)) {
+		for (const specifier of runtimeSpecifiers(readFileSync(file, 'utf8'))) visit(commonEntry(src.root, specifier));
+	}
+	while (pending.length > 0) {
+		const rel = pending.shift()!;
+		for (const specifier of runtimeSpecifiers(readFileSync(join(src.root, rel), 'utf8'))) {
+			visit(specifier.startsWith('.') ? normalize(join(dirname(rel), specifier)) : commonEntry(src.root, specifier));
+		}
+	}
+	const closure = [...seen].sort();
+	commonClosureBySource.set(src, closure);
+	return closure;
+}
+
 function codegenSourceHash(src: ManifestSource): string {
 	const cached = codegenHashBySource.get(src);
 	if (cached !== undefined) return cached;
 	const hash = createHash('sha256');
-	const files: string[] = [];
-	walk(join(src.root, CODEGEN_SOURCE_DIR), files);
-	for (const f of files.sort()) {
-		const rel = relative(src.root, f);
-		if (!isCodegenSourceInput(rel)) continue;
-		hash.update(`${rel}\0`);
+	for (const f of codegenSourceFiles(src)) {
+		hash.update(`${relative(src.root, f)}\0`);
 		hash.update(readFileSync(f));
+		hash.update('\0');
+	}
+	for (const rel of commonClosure(src)) {
+		hash.update(`${rel}\0`);
+		hash.update(readFileSync(join(src.root, rel)));
 		hash.update('\0');
 	}
 	const digest = hash.digest('hex');
@@ -211,9 +265,11 @@ function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource)
 	const sourceInputs = grammarSourceInputs(grammar, src);
 	const bound = isBound(grammar, src);
 	const roots = generatedRootsFor(grammar);
-	const pathspecs = [CODEGEN_SOURCE_DIR, LOCKFILE, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
+	const closure = commonClosure(src);
+	const pathspecs = [CODEGEN_SOURCE_DIR, `${COMMON_PACKAGE_DIR}/src`, LOCKFILE, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
 	const matters = (rel: string): boolean =>
 		isCodegenSourceInput(rel) ||
+		closure.includes(rel) ||
 		rel === LOCKFILE ||
 		sourceInputs.includes(rel) ||
 		(bound && isVocabularyInput(rel)) ||

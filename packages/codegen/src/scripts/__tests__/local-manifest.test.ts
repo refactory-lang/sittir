@@ -148,6 +148,50 @@ describe('bindings.scm as a source', () => {
 	});
 });
 
+describe('the shared runtime generation executes as a source', () => {
+	beforeEach(() => {
+		write(
+			'packages/common/package.json',
+			JSON.stringify({
+				exports: {
+					'.': { types: './dist/index.d.ts', import: './dist/index.js' },
+					'./error-kind': { types: './src/error-kind.ts', import: './src/error-kind.ts' }
+				}
+			})
+		);
+		write('packages/common/src/index.ts', "export { hostTemplateFor } from './reparse.ts';\nexport type { Shape } from './shape.ts';\n");
+		write('packages/common/src/reparse.ts', "import { join } from './text.ts';\nexport const hostTemplateFor = () => join('a');\n");
+		write('packages/common/src/text.ts', 'export const join = (s: string) => s;\n');
+		write('packages/common/src/shape.ts', 'export interface Shape {}\n');
+		write('packages/common/src/error-kind.ts', 'export const ERROR_KIND_ID = 65535;\n');
+		write('packages/common/src/engine.ts', 'export const unrelated = 1;\n');
+		write(
+			CODEGEN_SOURCE,
+			"import { hostTemplateFor } from '@sittir/common';\nimport type { Shape } from '@sittir/common';\nimport { ERROR_KIND_ID } from '@sittir/common/error-kind';\nconst emitted = \"import { unrelated } from './engine.ts';\";\n"
+		);
+		regenerate();
+		commitAll('common in use');
+	});
+
+	for (const rel of ['packages/common/src/reparse.ts', 'packages/common/src/text.ts', 'packages/common/src/index.ts', 'packages/common/src/error-kind.ts']) {
+		it(`changes the source when ${rel}, which generation runs, changes`, async () => {
+			write(rel, `${read(rel)}// edited\n`);
+			expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+			git('add', '-A');
+			expect(await verifyStaged()).toMatchObject({ ok: false, sourceChanged: true });
+		});
+	}
+
+	for (const rel of ['packages/common/src/engine.ts', 'packages/common/src/shape.ts']) {
+		it(`leaves the source alone when ${rel}, which generation does not run, changes`, async () => {
+			write(rel, `${read(rel)}// edited\n`);
+			expect(verify().ok).toBe(true);
+			git('add', '-A');
+			expect((await verifyStaged()).ok).toBe(true);
+		});
+	}
+});
+
 describe('the upstream grammar as a source', () => {
 	const UPSTREAM = 'packages/python/node_modules/tree-sitter-python';
 	const NESTED = 'packages/python/node_modules/tree-sitter-javascript';

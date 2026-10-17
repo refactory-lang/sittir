@@ -36,11 +36,12 @@ function run(command: string, args: readonly string[], cwd: string, env: NodeJS.
 }
 
 const outDir = nativeBindingDir(grammar);
+const buildEnv = release && !apple ? { ...process.env, CARGO_PROFILE_RELEASE_STRIP: 'symbols' } : process.env;
 run(
 	'pnpm',
 	['exec', 'napi', 'build', '--platform', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	nativeCrateDir(grammar),
-	release && !apple ? { ...process.env, CARGO_PROFILE_RELEASE_STRIP: 'symbols' } : process.env
+	buildEnv
 );
 
 const binary = `${nativeBinaryName(grammar)}.${suffix}.node`;
@@ -48,4 +49,4 @@ if (release && apple && process.platform === 'darwin') {
 	run('strip', ['-x', join(outDir, binary)], outDir);
 	run('codesign', ['--force', '--sign', '-', join(outDir, binary)], outDir);
 }
-writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary);
+writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary, { env: buildEnv });

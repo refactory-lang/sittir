@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { runNativeOnly } from '../src/run-codegen.ts';
 
 const { execSync, clearNapiTypedefs, writeManifestForGrammar } = vi.hoisted(() => ({
 	execSync: vi.fn(),
@@ -19,7 +20,6 @@ beforeEach(() => vi.clearAllMocks());
 
 describe('runNativeOnly', () => {
 	it('builds the binding under the gate profile, checks the workspace, then records the generation', async () => {
-		const { runNativeOnly } = await import('../src/run-codegen.ts');
 		await runNativeOnly({ grammar: 'rust', outputDir: '' });
 		expect(clearNapiTypedefs).toHaveBeenCalledWith('rust', process.cwd());
 		expect(commands()).toEqual(['pnpm -C rust/crates/sittir-rust run build:gate', 'cargo check --workspace --features napi-bindings']);
@@ -28,13 +28,11 @@ describe('runNativeOnly', () => {
 	});
 
 	it('builds a debug binding under --native-debug', async () => {
-		const { runNativeOnly } = await import('../src/run-codegen.ts');
 		await runNativeOnly({ grammar: 'rust', outputDir: '', nativeDebug: true });
 		expect(commands()[0]).toBe('pnpm -C rust/crates/sittir-rust run build:debug');
 	});
 
 	it('leaves the workspace check to the caller under --no-workspace-check', async () => {
-		const { runNativeOnly } = await import('../src/run-codegen.ts');
 		await runNativeOnly({ grammar: 'rust', outputDir: '', workspaceCheck: false });
 		expect(commands()).toEqual(['pnpm -C rust/crates/sittir-rust run build:gate']);
 	});
@@ -43,7 +41,6 @@ describe('runNativeOnly', () => {
 		execSync.mockImplementationOnce(() => {
 			throw new Error('cargo failed');
 		});
-		const { runNativeOnly } = await import('../src/run-codegen.ts');
 		await expect(runNativeOnly({ grammar: 'rust', outputDir: '' })).rejects.toThrow('cargo failed');
 		expect(writeManifestForGrammar).not.toHaveBeenCalled();
 	});
