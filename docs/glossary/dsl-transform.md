@@ -509,6 +509,18 @@ calls.
 
 `replace(previous, path, rule)`: the inline spelling of a replacing entry, `transform(previous, { [path]: rule })`. `rule` is a rule or a replacing function (`ReplacingFn`), so it records the patch site and effects the entry records.
 
+### `packages/codegen/src/dsl/transform/transform.ts::withDirectVariants`
+
+Lowers a rule callback's direct `variant(name, rule)` arms to entries: each labelled arm's path (indexes through members, through precedence wrappers as the path model does, and `name:` through a field) keys its placeholder, the labels are stripped, and the entries apply through `transform` as the last set, after any `sets` passed in. The arms therefore mint, annotate and record patch sites as the matching `edits:` entries do, and an entry that edits inside a labelled arm lands in its mint, as it does when the label is an entry of the same set (variant entries apply after the set's other entries). The labels must be collected before the sets run, because each set copies the rule and a copy drops them. With no labelled arm and no sets, the rule is returned as it is.
+
+### `packages/codegen/src/dsl/transform/transform.ts::stripDirectVariants`
+
+The walk behind `withDirectVariants`: it collects each labelled arm with its path and returns the rule without the labels. An arm under a wrapper no path addresses (a repeat, an optional, a token, an alias) throws: such an arm is written as an `edits:` entry.
+
+### `packages/codegen/src/dsl/transform/transform.ts::refuseRefineEntry`
+
+A `refine(forms)` entry at a path other than `.` is refused (`edit-entry-invalid`): forms belong to the rule.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::ReplacingFn`
 
 A replacing entry's function form, `($, member) => rule`: it receives the layer's `$` and the member at the path, so the replacement can keep the member.
@@ -1478,7 +1490,7 @@ including sibling `variant()` entries that hoist whole-arm without reaching
 
 ### `packages/codegen/src/dsl/transform/transform.ts::patchSitesOf`
 
-The `PatchSite` of each patch entry under the current rule kind; none outside a rule callback. Both the
+The `PatchSite` of each patch entry under the current rule kind; none outside a rule callback. A `refine(forms)` entry has none, as the inline `refine` call has none: it records forms, not a member it patched. Both the
 recording (`recordPatchSites`) and the application scopes (`wireWithPatchSites`) build sites here, so a lift
 claim lands on the same key the site was recorded under.
 

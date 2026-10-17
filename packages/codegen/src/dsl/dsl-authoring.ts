@@ -3,7 +3,7 @@ import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
-import { refine as refineImpl, type FormMap } from './primitives/refine.ts';
+import { refine as refineImpl, type FormMap, type RefinePlaceholder } from './primitives/refine.ts';
 import { replace as replaceImpl, transform } from './transform/transform.ts';
 import type { PatchMap } from './wire/wire.ts';
 import type {
@@ -60,6 +60,7 @@ interface AuthoringRole {
 export const role = roleImpl as unknown as AuthoringRole;
 
 interface AuthoringRefine {
+	(forms: FormMap): RefinePlaceholder;
 	<R extends AuthoringRule>(original: R, forms: FormMap): R;
 }
 export const refine = refineImpl as unknown as AuthoringRefine;

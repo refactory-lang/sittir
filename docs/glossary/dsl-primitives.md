@@ -132,6 +132,16 @@ rewritten content is rebuilt in the representation it had
  */
 ```
 
+With the forms alone, `refine(forms)` is the entry form: a `RefinePlaceholder` that applies at `.` and registers the same forms when the entry resolves over the rule.
+
+### `packages/codegen/src/dsl/primitives/refine.ts::RefinePlaceholder`
+
+The `refine(forms)` entry: the forms, registered for the kind when the entry resolves at `.`.
+
+### `packages/codegen/src/dsl/primitives/refine.ts::isRefinePlaceholder`
+
+Whether a patch value is the `refine(forms)` entry.
+
 ### `packages/codegen/src/dsl/primitives/role.ts::withRoleScope`
 
 ```text
@@ -514,7 +524,23 @@ the grammar does not name it.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::variant`
 
-Builds the placeholder; `options.absent` and `options.default` are carried only when set. `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
+Builds the placeholder; `options.absent` and `options.default` are carried only when set. Given a rule as its second argument, it is the direct form `variant(name, rule, options?)`: it returns a copy of the rule carrying the placeholder under `DIRECT_VARIANT_KEY`, which the layer pass applies at that arm's position exactly as the entry would (`transform/transform.ts::withDirectVariants`). `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
+
+### `packages/codegen/src/dsl/primitives/variant.ts::DIRECT_VARIANT_KEY`
+
+The symbol key under which a direct `variant(name, rule)` carries its placeholder on the rule it labels. Not enumerable, so JSON never sees it, and a copy of the rule that the pass makes drops it.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::directVariantOf`
+
+The placeholder a rule carries as a direct variant arm, or undefined.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::variantPlaceholder`
+
+The placeholder both forms build, with `absent` and `default` only when set.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::isRuleShape`
+
+Whether `variant`'s second argument is a rule (an object with a string `type`) rather than options.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::variantMintName`
 

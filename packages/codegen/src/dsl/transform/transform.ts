@@ -16,7 +16,8 @@ import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import { canonicalRuleText } from './token-forms.ts';
-import { ABSENT_VARIANT_NAME, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
+import { ABSENT_VARIANT_NAME, directVariantOf, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
+import { isRefinePlaceholder, refine, type RefinePlaceholder } from '../primitives/refine.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
@@ -111,6 +112,7 @@ export type PatchValue =
 	| RegexPlaceholder
 	| NarrowPlaceholder
 	| LeadPlaceholder
+	| RefinePlaceholder
 	| ReplacingFn;
 
 export type ReplacingFn = ($: unknown, member: RuntimeRule) => RuntimeRule;
@@ -127,11 +129,33 @@ export function replace(previous: RuntimeRule, path: string, rule: RuntimeRule |
 	return transform(previous, { [path]: rule });
 }
 
+export function withDirectVariants(rule: unknown, ...sets: readonly PatchSet[]): unknown {
+	const entries: [string, VariantPlaceholder][] = [];
+	const stripped = stripDirectVariants(rule, [], entries);
+	const all = entries.length === 0 ? sets : [...sets, Object.fromEntries(entries)];
+	return all.length === 0 ? rule : transform(stripped as RuntimeRule, ...all);
+}
+
+function stripDirectVariants(rule: unknown, path: readonly string[] | undefined, entries: [string, VariantPlaceholder][]): unknown {
+	if (!rule || typeof rule !== 'object') return rule;
+	const label = directVariantOf(rule);
+	if (label !== undefined) {
+		if (path === undefined) throw new Error(`variant('${label.name}', rule): the arm is under a wrapper a path cannot address; write it as an edits entry`);
+		entries.push([path.length === 0 ? '.' : path.join('/'), label]);
+	}
+	const node = rule as { type?: string; name?: string; members?: unknown[]; content?: unknown };
+	const members = node.members?.map((member, i) => stripDirectVariants(member, path === undefined ? undefined : [...path, String(i)], entries));
+	const contentPath = path === undefined ? undefined : isPrecWrapper(rule as { type: string }) ? path : node.type === 'FIELD' ? [...path, `${node.name}:`] : undefined;
+	const content = node.content === undefined ? undefined : stripDirectVariants(node.content, contentPath, entries);
+	if (label === undefined && members === undefined && content === node.content) return rule;
+	return { ...node, ...(members === undefined ? {} : { members }), ...(node.content === undefined ? {} : { content }) };
+}
+
 function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
 	recordPatchSites(patches);
 	const hasPathKeys = requiresPathMode(patches);
 	const hasPlaceholderAlias = Object.values(patches).some(
-		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v)
+		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRefinePlaceholder(v)
 	);
 	return hasPathKeys || hasPlaceholderAlias ? applyPathPatches(rule, patches) : applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>);
 }
@@ -142,7 +166,7 @@ function recordPatchSites(patches: PatchSet): void {
 
 function patchSitesOf(entries: ReadonlyArray<readonly [string, PatchValue]>): PatchSite[] {
 	const ownerKind = wireGetCurrentRuleKind();
-	return ownerKind === null ? [] : entries.map(([path, value]) => ({ ownerKind, path, ...patchFormOf(value) }));
+	return ownerKind === null ? [] : entries.flatMap(([path, value]) => (isRefinePlaceholder(value) ? [] : [{ ownerKind, path, ...patchFormOf(value) }]));
 }
 
 function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
@@ -177,6 +201,10 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 			queueLeadEntry(value, key);
 			continue;
 		}
+		if (isRefinePlaceholder(value) && key !== '.') {
+			refuseRefineEntry(key);
+			continue;
+		}
 		const segments = parsePath(key);
 		if (isArmDefault(value)) assertChoiceArmPath(rule, key, segments);
 		rule = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
@@ -189,6 +217,16 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		if (value.default === true) rule = clearSiblingDefaults(rule, parsePath(key));
 	}
 	return rule;
+}
+
+function refuseRefineEntry(key: string): void {
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'edit-entry-invalid',
+		ownerKind: owner,
+		message: `edits: '${owner}': a refine entry applies at '.', the rule itself, not at '${key}'`,
+		details: { kind: owner, path: key }
+	});
 }
 
 function queueLeadEntry(entry: LeadPlaceholder, key: string): void {
@@ -679,7 +717,8 @@ function rewritesText(patch: PatchValue): boolean {
 		isGroupPlaceholder(patch) ||
 		isFlattenPlaceholder(patch) ||
 		isVariantPlaceholder(patch) ||
-		isAliasPlaceholder(patch)
+		isAliasPlaceholder(patch) ||
+		isRefinePlaceholder(patch)
 	);
 }
 
@@ -707,6 +746,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		return originalMember;
 	}
 	if (typeof patch === 'function') return resolvePatch(patch(replacingDollar(key), originalMember), originalMember, key, enclosing);
+	if (isRefinePlaceholder(patch)) return refine(originalMember, patch.forms);
 	if (isRulePlaceholder(patch)) {
 		return resolveRulePlaceholder(patch, key);
 	}

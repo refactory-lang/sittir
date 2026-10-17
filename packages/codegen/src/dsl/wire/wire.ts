@@ -4,7 +4,7 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { RuleWalker } from '../rule-walker.ts';
-import { transform as transformFn } from '../transform/transform.ts';
+import { transform as transformFn, withDirectVariants } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
 import { INDENT_KEY, LABELS_KEY, type OptionsConfig } from './options-block.ts';
 import type { ReparseHostsConfig } from './reparse-hosts.ts';
@@ -731,6 +731,7 @@ function evaluatingExternals(
 			if (context.editedMints.has(name) && context.deposits.get(name) === undefined) refuseEditSite(name, cfg, ctx);
 			else bodies.set(name, callback.call(symbols, symbols, context.baseRuleBodies[name]));
 		}
+		for (const [name, body] of context.deposits) if (!bodies.has(name) && !Object.hasOwn(context.baseRuleBodies, name)) bodies.set(name, body);
 		for (const operation of operations) operation(bodies);
 		context.evaluatedBodies = bodies;
 		return value;
@@ -963,8 +964,7 @@ function buildPatchedParentFn(
 ): SittirRuleFn {
 	return function wiredPatchedParent($, original) {
 		const base = userFn ? userFn($, original) : (context.deposits.get(kind) ?? original);
-		if (patchSets.length === 0) return base;
-		return transformFn(base as RuntimeRule, ...(patchSets as readonly Parameters<typeof transformFn>[1][]));
+		return withDirectVariants(base, ...(patchSets as readonly Parameters<typeof transformFn>[1][]));
 	};
 }
 
@@ -1143,7 +1143,7 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
 		context.currentRuleKind = name;
 		context.currentDollar = $;
 		try {
-			return fn($, previous);
+			return withDirectVariants(fn($, previous));
 		} finally {
 			context.currentRuleKind = prevKind;
 			context.currentDollar = prevDollar;

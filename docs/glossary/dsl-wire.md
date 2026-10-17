@@ -174,6 +174,8 @@ A key that names neither a rule of the base (enrich's mints included) nor one of
  */
 ```
 
+The sets apply through `transform/transform.ts::withDirectVariants(base, ...patchSets)`, so the callback's direct `variant` arms are lowered after the entries, the order the entry form uses.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::placeholderHiddenName`
 
 ```text
@@ -447,7 +449,7 @@ patched a reference to it in.
  */
 ```
 
-The callback's `$` is installed and restored the same way (`WireContext.currentDollar`), so a replacing entry applied while the callback runs receives it.
+The callback's `$` is installed and restored the same way (`WireContext.currentDollar`), so a replacing entry applied while the callback runs receives it. The callback's result has its direct `variant` arms lowered to entries (`transform/transform.ts::withDirectVariants`) before it is returned. For a kind with `edits:` entries the callback is `buildPatchedParentFn`'s, which has already lowered them after its sets, so this pass finds no label.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wrapInlineCallback`
 
@@ -1585,7 +1587,7 @@ minted whitespace bodies.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::evaluatingExternals`
 
-Wire's `externals` callback, always present. The runtime calls it once, before it reads any rule, and wire evaluates the config there: it applies the config's `externals` callback (or passes the base's list through), records the names on `WireContext.evaluatedExternals`, builds a `$` over the rule callbacks' names, the base's rules and the externals (`layerSymbols`), evaluates the lists (`evaluateWireLists`), calls every rule callback once in key order with the base body wire holds, and runs the whole-grammar operations over the bodies. A key of `WireContext.editedMints` that no callback has minted a body for by its turn is refused instead (`refuseEditSite`) and has no body. A second call is refused.
+Wire's `externals` callback, always present. The runtime calls it once, before it reads any rule, and wire evaluates the config there: it applies the config's `externals` callback (or passes the base's list through), records the names on `WireContext.evaluatedExternals`, builds a `$` over the rule callbacks' names, the base's rules and the externals (`layerSymbols`), evaluates the lists (`evaluateWireLists`), calls every rule callback once in key order with the base body wire holds, appends each deposit no callback is declared for and no base rule holds (a kind a callback minted inline, such as a direct `variant` arm) as a rule of its own, in the order the deposits were made, and runs the whole-grammar operations over the bodies. A key of `WireContext.editedMints` that no callback has minted a body for by its turn is refused instead (`refuseEditSite`) and has no body. A second call is refused.
 
 A whole-grammar operation sees every body at once, so its result does not depend on the order the runtime calls the rules in. The lift rename is one (`resolveLiftNames`); it refuses a renamed lift among the externals. The externals are returned unchanged: an external is never renamed.
 
