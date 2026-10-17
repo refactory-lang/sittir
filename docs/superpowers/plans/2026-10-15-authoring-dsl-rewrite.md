@@ -651,6 +651,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - `rules: { k: ($, p) => edit(p, { '1': field('a') }) }` with `edits: { k: { 'body:': field('b') } }`, where `body:` is member 1, conflicts.
   - Two different members do not conflict.
 - [ ] **Step 2:** Implement, then run the tests and the gate. Commit.
+  - **Landed:** c5e6b8eb8 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - Wire's context records the nodes a rule callback's verbs wrote, keyed per kind, and transform refuses an entry that resolves onto one of them, at the point it resolves. A node is the member every spelling of a path reaches, so no second path resolver is needed; `layer.ts` is unchanged, and the refusal reaches the layer's diagnostics as the other entry refusals do.
+    - The `'body:'` example can't be written yet: a field segment matches only when the rule at that level is that field, so it never names a seq member. The test spells member 1 as `'-1'` instead.
+    - A direct variant's arm counts as an inline write at that arm.
 
 ---
 
