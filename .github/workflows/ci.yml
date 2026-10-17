@@ -469,7 +469,7 @@ jobs:
       # host); the failure path is the build step above.
       - name: cargo test parity (native targets only)
         if: matrix.cross == false
-        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
+        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --nocapture
       # `if: !cancelled()` — without this, a failure in either test step
       # above skips this step entirely by
       # GitHub Actions' default fail-fast-within-job behavior, even
