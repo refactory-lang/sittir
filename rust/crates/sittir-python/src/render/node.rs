@@ -10015,7 +10015,7 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsNode
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MODULE, words = 4)]
+#[node(kind = kind::MODULE, words = 4, fields = ModuleFields)]
 pub struct ModuleNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10075,7 +10075,7 @@ impl ::sittir_core::prepare::Prepare for ModuleNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_SIMPLE_STATEMENTS, min_depth = 2, layout = [kind::_NEWLINE], words = 7)]
+#[node(kind = kind::_SIMPLE_STATEMENTS, min_depth = 2, layout = [kind::_NEWLINE], words = 7, fields = SimpleStatementsFields)]
 pub struct SimpleStatementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10124,7 +10124,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_STATEMENT, layout = [kind::IMPORT_KEYWORD], words = 7)]
+#[node(kind = kind::IMPORT_STATEMENT, layout = [kind::IMPORT_KEYWORD], words = 7, fields = ImportStatementFields)]
 pub struct ImportStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10173,7 +10173,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_PREFIX, text, words = 2)]
+#[node(kind = kind::IMPORT_PREFIX, text, words = 2, fields = ImportPrefixFields)]
 pub struct ImportPrefixNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10195,7 +10195,7 @@ impl ::sittir_core::options::Edged for ImportPrefixNode {
 
 impl ::sittir_core::render::Render for ImportPrefixNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(131)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(131)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_import_prefix(self, w))
     }
 }
 
@@ -10219,7 +10219,7 @@ impl ::sittir_core::prepare::Prepare for ImportPrefixNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RELATIVE_IMPORT, words = 12)]
+#[node(kind = kind::RELATIVE_IMPORT, words = 12, fields = RelativeImportFields)]
 pub struct RelativeImportNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10272,7 +10272,7 @@ impl ::sittir_core::prepare::Prepare for RelativeImportNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUTURE_IMPORT_STATEMENT, layout = [kind::FROM_KEYWORD, kind::__FUTURE_U_KEYWORD, kind::IMPORT_KEYWORD], words = 7)]
+#[node(kind = kind::FUTURE_IMPORT_STATEMENT, layout = [kind::FROM_KEYWORD, kind::__FUTURE_U_KEYWORD, kind::IMPORT_KEYWORD], words = 7, fields = FutureImportStatementFields)]
 pub struct FutureImportStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10321,7 +10321,7 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_FROM_STATEMENT, layout = [kind::FROM_KEYWORD, kind::IMPORT_KEYWORD], words = 12)]
+#[node(kind = kind::IMPORT_FROM_STATEMENT, layout = [kind::FROM_KEYWORD, kind::IMPORT_KEYWORD], words = 12, fields = ImportFromStatementFields)]
 pub struct ImportFromStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10374,7 +10374,7 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_IMPORT_LIST, item = name, words = 4)]
+#[node(kind = kind::_IMPORT_LIST, item = name, words = 4, fields = ImportListFields)]
 pub struct ImportListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10434,7 +10434,7 @@ impl ::sittir_core::prepare::Prepare for ImportListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ALIASED_IMPORT, layout = [kind::AS_KEYWORD], words = 12)]
+#[node(kind = kind::ALIASED_IMPORT, layout = [kind::AS_KEYWORD], words = 12, fields = AliasedImportFields)]
 pub struct AliasedImportNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10515,7 +10515,7 @@ impl ::sittir_core::render::Render for WildcardImportNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PRINT_STATEMENT, words = 7)]
+#[node(kind = kind::PRINT_STATEMENT, words = 7, fields = PrintStatementFields)]
 pub struct PrintStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10563,7 +10563,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHEVRON, layout = [kind::GT_GT], words = 7)]
+#[node(kind = kind::CHEVRON, layout = [kind::GT_GT], words = 7, fields = ChevronFields)]
 pub struct ChevronNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10612,7 +10612,7 @@ impl ::sittir_core::prepare::Prepare for ChevronNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSERT_STATEMENT, layout = [kind::ASSERT_KEYWORD], words = 4)]
+#[node(kind = kind::ASSERT_STATEMENT, layout = [kind::ASSERT_KEYWORD], words = 4, fields = AssertStatementFields)]
 pub struct AssertStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10669,7 +10669,7 @@ impl ::sittir_core::prepare::Prepare for AssertStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT, words = 7)]
+#[node(kind = kind::EXPRESSION_STATEMENT, words = 7, fields = ExpressionStatementFields)]
 pub struct ExpressionStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10717,7 +10717,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_EXPRESSION, layout = [kind::COLON_EQ], words = 12)]
+#[node(kind = kind::NAMED_EXPRESSION, layout = [kind::COLON_EQ], words = 12, fields = NamedExpressionFields)]
 pub struct NamedExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10770,7 +10770,7 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_NAMED_EXPRESSION_LHS, words = 7)]
+#[node(kind = kind::_NAMED_EXPRESSION_LHS, words = 7, fields = NamedExpressionLhsFields)]
 pub struct NamedExpressionLhsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10818,7 +10818,7 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionLhsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RETURN_STATEMENT, layout = [kind::RETURN_KEYWORD], words = 7)]
+#[node(kind = kind::RETURN_STATEMENT, layout = [kind::RETURN_KEYWORD], words = 7, fields = ReturnStatementFields)]
 pub struct ReturnStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10867,7 +10867,7 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DELETE_STATEMENT, layout = [kind::DEL_KEYWORD], words = 7)]
+#[node(kind = kind::DELETE_STATEMENT, layout = [kind::DEL_KEYWORD], words = 7, fields = DeleteStatementFields)]
 pub struct DeleteStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -10916,7 +10916,7 @@ impl ::sittir_core::prepare::Prepare for DeleteStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RAISE_STATEMENT, layout = [kind::RAISE_KEYWORD, kind::FROM_KEYWORD], words = 12)]
+#[node(kind = kind::RAISE_STATEMENT, layout = [kind::RAISE_KEYWORD, kind::FROM_KEYWORD], words = 12, fields = RaiseStatementFields)]
 pub struct RaiseStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11113,7 +11113,7 @@ impl ::sittir_core::render::Render for ContinueStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IF_STATEMENT, layout = [kind::IF_KEYWORD, kind::COLON], words = 14)]
+#[node(kind = kind::IF_STATEMENT, layout = [kind::IF_KEYWORD, kind::COLON], words = 14, fields = IfStatementFields)]
 pub struct IfStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11175,7 +11175,7 @@ impl ::sittir_core::prepare::Prepare for IfStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ELIF_CLAUSE, layout = [kind::ELIF_KEYWORD, kind::COLON], words = 12)]
+#[node(kind = kind::ELIF_CLAUSE, layout = [kind::ELIF_KEYWORD, kind::COLON], words = 12, fields = ElifClauseFields)]
 pub struct ElifClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11228,7 +11228,7 @@ impl ::sittir_core::prepare::Prepare for ElifClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD, kind::COLON], words = 7)]
+#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD, kind::COLON], words = 7, fields = ElseClauseFields)]
 pub struct ElseClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11277,7 +11277,7 @@ impl ::sittir_core::prepare::Prepare for ElseClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_STATEMENT, layout = [kind::MATCH_KEYWORD, kind::COLON], words = 12)]
+#[node(kind = kind::MATCH_STATEMENT, layout = [kind::MATCH_KEYWORD, kind::COLON], words = 12, fields = MatchStatementFields)]
 pub struct MatchStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11330,7 +11330,7 @@ impl ::sittir_core::prepare::Prepare for MatchStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_MATCH_BLOCK, words = 7)]
+#[node(kind = kind::_MATCH_BLOCK, words = 7, fields = MatchBlockFields)]
 pub struct MatchBlockNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11378,7 +11378,7 @@ impl ::sittir_core::prepare::Prepare for MatchBlockNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CASE_CLAUSE, layout = [kind::CASE_KEYWORD, kind::COLON], words = 17)]
+#[node(kind = kind::CASE_CLAUSE, layout = [kind::CASE_KEYWORD, kind::COLON], words = 17, fields = CaseClauseFields)]
 pub struct CaseClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11435,7 +11435,7 @@ impl ::sittir_core::prepare::Prepare for CaseClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD, kind::COLON], words = 23)]
+#[node(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD, kind::COLON], words = 23, fields = ForStatementFields)]
 pub struct ForStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11500,7 +11500,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHILE_STATEMENT, layout = [kind::WHILE_KEYWORD, kind::COLON], words = 17)]
+#[node(kind = kind::WHILE_STATEMENT, layout = [kind::WHILE_KEYWORD, kind::COLON], words = 17, fields = WhileStatementFields)]
 pub struct WhileStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11557,7 +11557,7 @@ impl ::sittir_core::prepare::Prepare for WhileStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRY_STATEMENT, layout = [kind::TRY_KEYWORD, kind::COLON], words = 19)]
+#[node(kind = kind::TRY_STATEMENT, layout = [kind::TRY_KEYWORD, kind::COLON], words = 19, fields = TryStatementFields)]
 pub struct TryStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11623,7 +11623,7 @@ impl ::sittir_core::prepare::Prepare for TryStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXCEPT_CLAUSE, layout = [kind::EXCEPT_KEYWORD, kind::COLON], words = 13)]
+#[node(kind = kind::EXCEPT_CLAUSE, layout = [kind::EXCEPT_KEYWORD, kind::COLON], words = 13, fields = ExceptClauseFields)]
 pub struct ExceptClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11680,7 +11680,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FINALLY_CLAUSE, layout = [kind::FINALLY_KEYWORD, kind::COLON], words = 7)]
+#[node(kind = kind::FINALLY_CLAUSE, layout = [kind::FINALLY_KEYWORD, kind::COLON], words = 7, fields = FinallyClauseFields)]
 pub struct FinallyClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11729,7 +11729,7 @@ impl ::sittir_core::prepare::Prepare for FinallyClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WITH_STATEMENT, layout = [kind::WITH_KEYWORD, kind::COLON], words = 13)]
+#[node(kind = kind::WITH_STATEMENT, layout = [kind::WITH_KEYWORD, kind::COLON], words = 13, fields = WithStatementFields)]
 pub struct WithStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11786,7 +11786,7 @@ impl ::sittir_core::prepare::Prepare for WithStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WITH_ITEM, words = 7)]
+#[node(kind = kind::WITH_ITEM, words = 7, fields = WithItemFields)]
 pub struct WithItemNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11834,7 +11834,7 @@ impl ::sittir_core::prepare::Prepare for WithItemNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_DEFINITION, layout = [kind::DEF_KEYWORD, kind::DASH_GT, kind::COLON], words = 28)]
+#[node(kind = kind::FUNCTION_DEFINITION, layout = [kind::DEF_KEYWORD, kind::DASH_GT, kind::COLON], words = 28, fields = FunctionDefinitionFields)]
 pub struct FunctionDefinitionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11903,7 +11903,7 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParametersFields)]
 pub struct ParametersNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -11952,7 +11952,7 @@ impl ::sittir_core::prepare::Prepare for ParametersNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LAMBDA_PARAMETERS, min_depth = 2, words = 7)]
+#[node(kind = kind::LAMBDA_PARAMETERS, min_depth = 2, words = 7, fields = LambdaParametersFields)]
 pub struct LambdaParametersNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12000,7 +12000,7 @@ impl ::sittir_core::prepare::Prepare for LambdaParametersNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST_SPLAT, layout = [kind::STAR | kind::STAR2], words = 7)]
+#[node(kind = kind::LIST_SPLAT, layout = [kind::STAR | kind::STAR2], words = 7, fields = ListSplatFields)]
 pub struct ListSplatNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12049,7 +12049,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DICTIONARY_SPLAT, layout = [kind::STAR_STAR], words = 7)]
+#[node(kind = kind::DICTIONARY_SPLAT, layout = [kind::STAR_STAR], words = 7, fields = DictionarySplatFields)]
 pub struct DictionarySplatNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12098,7 +12098,7 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GLOBAL_STATEMENT, layout = [kind::GLOBAL_KEYWORD], words = 4)]
+#[node(kind = kind::GLOBAL_STATEMENT, layout = [kind::GLOBAL_KEYWORD], words = 4, fields = GlobalStatementFields)]
 pub struct GlobalStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12154,7 +12154,7 @@ impl ::sittir_core::prepare::Prepare for GlobalStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NONLOCAL_STATEMENT, layout = [kind::NONLOCAL_KEYWORD], words = 4)]
+#[node(kind = kind::NONLOCAL_STATEMENT, layout = [kind::NONLOCAL_KEYWORD], words = 4, fields = NonlocalStatementFields)]
 pub struct NonlocalStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12210,7 +12210,7 @@ impl ::sittir_core::prepare::Prepare for NonlocalStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXEC_STATEMENT, layout = [kind::EXEC_KEYWORD, kind::IN_KEYWORD], words = 9)]
+#[node(kind = kind::EXEC_STATEMENT, layout = [kind::EXEC_KEYWORD, kind::IN_KEYWORD], words = 9, fields = ExecStatementFields)]
 pub struct ExecStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12271,7 +12271,7 @@ impl ::sittir_core::prepare::Prepare for ExecStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ALIAS_STATEMENT, layout = [kind::TYPE_KEYWORD, kind::EQ], words = 12)]
+#[node(kind = kind::TYPE_ALIAS_STATEMENT, layout = [kind::TYPE_KEYWORD, kind::EQ], words = 12, fields = TypeAliasStatementFields)]
 pub struct TypeAliasStatementNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12324,7 +12324,7 @@ impl ::sittir_core::prepare::Prepare for TypeAliasStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_DEFINITION, layout = [kind::CLASS_KEYWORD, kind::COLON], words = 22)]
+#[node(kind = kind::CLASS_DEFINITION, layout = [kind::CLASS_KEYWORD, kind::COLON], words = 22, fields = ClassDefinitionFields)]
 pub struct ClassDefinitionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12385,7 +12385,7 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETER, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
+#[node(kind = kind::TYPE_PARAMETER, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = TypeParameterFields)]
 pub struct TypeParameterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12434,7 +12434,7 @@ impl ::sittir_core::prepare::Prepare for TypeParameterNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARENTHESIZED_LIST_SPLAT, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::PARENTHESIZED_LIST_SPLAT, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParenthesizedListSplatFields)]
 pub struct ParenthesizedListSplatNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12483,7 +12483,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::ARGUMENT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ArgumentListFields)]
 pub struct ArgumentListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12532,7 +12532,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECORATED_DEFINITION, words = 9)]
+#[node(kind = kind::DECORATED_DEFINITION, words = 9, fields = DecoratedDefinitionFields)]
 pub struct DecoratedDefinitionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12590,7 +12590,7 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECORATOR, layout = [kind::AT, kind::_NEWLINE], words = 7)]
+#[node(kind = kind::DECORATOR, layout = [kind::AT, kind::_NEWLINE], words = 7, fields = DecoratorFields)]
 pub struct DecoratorNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12639,7 +12639,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK, layout = [kind::_DEDENT], words = 4)]
+#[node(kind = kind::BLOCK, layout = [kind::_DEDENT], words = 4, fields = BlockFields)]
 pub struct BlockNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12693,7 +12693,7 @@ impl ::sittir_core::prepare::Prepare for BlockNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_LIST, item = item, words = 4)]
+#[node(kind = kind::EXPRESSION_LIST, item = item, words = 4, fields = ExpressionListFields)]
 pub struct ExpressionListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12753,7 +12753,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DOTTED_NAME, words = 4)]
+#[node(kind = kind::DOTTED_NAME, words = 4, fields = DottedNameFields)]
 pub struct DottedNameNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12808,7 +12808,7 @@ impl ::sittir_core::prepare::Prepare for DottedNameNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CASE_PATTERN, words = 7)]
+#[node(kind = kind::CASE_PATTERN, words = 7, fields = CasePatternFields)]
 pub struct CasePatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12856,7 +12856,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_SIMPLE_PATTERN, words = 7)]
+#[node(kind = kind::_SIMPLE_PATTERN, words = 7, fields = SimplePatternFields)]
 pub struct SimplePatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12904,7 +12904,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_CASE_AS_PATTERN, layout = [kind::AS_KEYWORD], words = 12)]
+#[node(kind = kind::_CASE_AS_PATTERN, layout = [kind::AS_KEYWORD], words = 12, fields = CaseAsPatternFields)]
 pub struct CaseAsPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -12957,7 +12957,7 @@ impl ::sittir_core::prepare::Prepare for CaseAsPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNION_PATTERN, words = 4)]
+#[node(kind = kind::UNION_PATTERN, words = 4, fields = UnionPatternFields)]
 pub struct UnionPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13013,7 +13013,7 @@ impl ::sittir_core::prepare::Prepare for UnionPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DICT_PATTERN, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7)]
+#[node(kind = kind::DICT_PATTERN, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = DictPatternFields)]
 pub struct DictPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13062,7 +13062,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_KEY_VALUE_PATTERN, layout = [kind::COLON], words = 12)]
+#[node(kind = kind::_KEY_VALUE_PATTERN, layout = [kind::COLON], words = 12, fields = KeyValuePatternFields)]
 pub struct KeyValuePatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13115,7 +13115,7 @@ impl ::sittir_core::prepare::Prepare for KeyValuePatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::KEYWORD_PATTERN, layout = [kind::EQ], words = 12)]
+#[node(kind = kind::KEYWORD_PATTERN, layout = [kind::EQ], words = 12, fields = KeywordPatternFields)]
 pub struct KeywordPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13168,7 +13168,7 @@ impl ::sittir_core::prepare::Prepare for KeywordPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SPLAT_PATTERN, words = 12)]
+#[node(kind = kind::SPLAT_PATTERN, words = 12, fields = SplatPatternFields)]
 pub struct SplatPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13225,7 +13225,7 @@ impl ::sittir_core::prepare::Prepare for SplatPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_PATTERN, layout = [kind::LPAREN, kind::RPAREN], words = 12)]
+#[node(kind = kind::CLASS_PATTERN, layout = [kind::LPAREN, kind::RPAREN], words = 12, fields = ClassPatternFields)]
 pub struct ClassPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13278,7 +13278,7 @@ impl ::sittir_core::prepare::Prepare for ClassPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMPLEX_PATTERN, words = 18)]
+#[node(kind = kind::COMPLEX_PATTERN, words = 18, fields = ComplexPatternFields)]
 pub struct ComplexPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13339,7 +13339,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_PARAMETERS_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::_PARAMETERS_ELEMENTS, item = item, words = 4, fields = ParametersElementsFields)]
 pub struct ParametersElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13399,7 +13399,7 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_PATTERNS, item = item, words = 4)]
+#[node(kind = kind::_PATTERNS, item = item, words = 4, fields = PatternsFields)]
 pub struct PatternsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13459,7 +13459,7 @@ impl ::sittir_core::prepare::Prepare for PatternsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TuplePatternFields)]
 pub struct TuplePatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13508,7 +13508,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
+#[node(kind = kind::LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = ListPatternFields)]
 pub struct ListPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13557,7 +13557,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DEFAULT_PARAMETER, layout = [kind::EQ], words = 12)]
+#[node(kind = kind::DEFAULT_PARAMETER, layout = [kind::EQ], words = 12, fields = DefaultParameterFields)]
 pub struct DefaultParameterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13610,7 +13610,7 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPED_DEFAULT_PARAMETER, layout = [kind::COLON, kind::EQ], words = 17)]
+#[node(kind = kind::TYPED_DEFAULT_PARAMETER, layout = [kind::COLON, kind::EQ], words = 17, fields = TypedDefaultParameterFields)]
 pub struct TypedDefaultParameterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13667,7 +13667,7 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST_SPLAT_PATTERN, layout = [kind::STAR | kind::STAR2], words = 7)]
+#[node(kind = kind::LIST_SPLAT_PATTERN, layout = [kind::STAR | kind::STAR2], words = 7, fields = ListSplatPatternFields)]
 pub struct ListSplatPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13716,7 +13716,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DICTIONARY_SPLAT_PATTERN, layout = [kind::STAR_STAR], words = 7)]
+#[node(kind = kind::DICTIONARY_SPLAT_PATTERN, layout = [kind::STAR_STAR], words = 7, fields = DictionarySplatPatternFields)]
 pub struct DictionarySplatPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13765,7 +13765,7 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AS_PATTERN, layout = [kind::AS_KEYWORD], words = 12)]
+#[node(kind = kind::AS_PATTERN, layout = [kind::AS_KEYWORD], words = 12, fields = AsPatternFields)]
 pub struct AsPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13818,7 +13818,7 @@ impl ::sittir_core::prepare::Prepare for AsPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NOT_OPERATOR, layout = [kind::NOT_KEYWORD], words = 7)]
+#[node(kind = kind::NOT_OPERATOR, layout = [kind::NOT_KEYWORD], words = 7, fields = NotOperatorFields)]
 pub struct NotOperatorNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13867,7 +13867,7 @@ impl ::sittir_core::prepare::Prepare for NotOperatorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BOOLEAN_OPERATOR, words = 17)]
+#[node(kind = kind::BOOLEAN_OPERATOR, words = 17, fields = BooleanOperatorFields)]
 pub struct BooleanOperatorNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13924,7 +13924,7 @@ impl ::sittir_core::prepare::Prepare for BooleanOperatorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BINARY_OPERATOR, words = 17)]
+#[node(kind = kind::BINARY_OPERATOR, words = 17, fields = BinaryOperatorFields)]
 pub struct BinaryOperatorNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -13981,7 +13981,7 @@ impl ::sittir_core::prepare::Prepare for BinaryOperatorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNARY_OPERATOR, words = 12)]
+#[node(kind = kind::UNARY_OPERATOR, words = 12, fields = UnaryOperatorFields)]
 pub struct UnaryOperatorNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14038,7 +14038,7 @@ impl ::sittir_core::prepare::Prepare for UnaryOperatorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMPARISON_OPERATOR, words = 9)]
+#[node(kind = kind::COMPARISON_OPERATOR, words = 9, fields = ComparisonOperatorFields)]
 pub struct ComparisonOperatorNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14096,7 +14096,7 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LAMBDA, layout = [kind::LAMBDA_KEYWORD, kind::COLON], words = 12)]
+#[node(kind = kind::LAMBDA, layout = [kind::LAMBDA_KEYWORD, kind::COLON], words = 12, fields = LambdaFields)]
 pub struct LambdaNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14149,7 +14149,7 @@ impl ::sittir_core::prepare::Prepare for LambdaNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LAMBDA_WITHIN_FOR_IN_CLAUSE, layout = [kind::LAMBDA_KEYWORD, kind::COLON], words = 12)]
+#[node(kind = kind::LAMBDA_WITHIN_FOR_IN_CLAUSE, layout = [kind::LAMBDA_KEYWORD, kind::COLON], words = 12, fields = LambdaWithinForInClauseFields)]
 pub struct LambdaWithinForInClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14202,7 +14202,7 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AUGMENTED_ASSIGNMENT, words = 17)]
+#[node(kind = kind::AUGMENTED_ASSIGNMENT, words = 17, fields = AugmentedAssignmentFields)]
 pub struct AugmentedAssignmentNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14259,7 +14259,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PATTERN_LIST, item = item, words = 4)]
+#[node(kind = kind::PATTERN_LIST, item = item, words = 4, fields = PatternListFields)]
 pub struct PatternListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14319,7 +14319,7 @@ impl ::sittir_core::prepare::Prepare for PatternListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::YIELD, layout = [kind::YIELD_KEYWORD], words = 7)]
+#[node(kind = kind::YIELD, layout = [kind::YIELD_KEYWORD], words = 7, fields = YieldFields)]
 pub struct YieldNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14368,7 +14368,7 @@ impl ::sittir_core::prepare::Prepare for YieldNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ATTRIBUTE, layout = [kind::DOT], words = 12)]
+#[node(kind = kind::ATTRIBUTE, layout = [kind::DOT], words = 12, fields = AttributeFields)]
 pub struct AttributeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14421,7 +14421,7 @@ impl ::sittir_core::prepare::Prepare for AttributeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBSCRIPT, layout = [kind::LBRACK, kind::RBRACK], words = 12)]
+#[node(kind = kind::SUBSCRIPT, layout = [kind::LBRACK, kind::RBRACK], words = 12, fields = SubscriptFields)]
 pub struct SubscriptNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14474,7 +14474,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SLICE, layout = [kind::COLON], words = 17)]
+#[node(kind = kind::SLICE, layout = [kind::COLON], words = 17, fields = SliceFields)]
 pub struct SliceNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14579,7 +14579,7 @@ impl ::sittir_core::render::Render for EllipsisNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL, words = 12)]
+#[node(kind = kind::CALL, words = 12, fields = CallFields)]
 pub struct CallNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14632,7 +14632,7 @@ impl ::sittir_core::prepare::Prepare for CallNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPED_PARAMETER, layout = [kind::COLON], words = 12)]
+#[node(kind = kind::TYPED_PARAMETER, layout = [kind::COLON], words = 12, fields = TypedParameterFields)]
 pub struct TypedParameterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14685,7 +14685,7 @@ impl ::sittir_core::prepare::Prepare for TypedParameterNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE, words = 7)]
+#[node(kind = kind::TYPE, words = 7, fields = TypeFields)]
 pub struct TypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14733,7 +14733,7 @@ impl ::sittir_core::prepare::Prepare for TypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SPLAT_TYPE, words = 12)]
+#[node(kind = kind::SPLAT_TYPE, words = 12, fields = SplatTypeFields)]
 pub struct SplatTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14790,7 +14790,7 @@ impl ::sittir_core::prepare::Prepare for SplatTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE, words = 12)]
+#[node(kind = kind::GENERIC_TYPE, words = 12, fields = GenericTypeFields)]
 pub struct GenericTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14843,7 +14843,7 @@ impl ::sittir_core::prepare::Prepare for GenericTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNION_TYPE, layout = [kind::PIPE], words = 12)]
+#[node(kind = kind::UNION_TYPE, layout = [kind::PIPE], words = 12, fields = UnionTypeFields)]
 pub struct UnionTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14896,7 +14896,7 @@ impl ::sittir_core::prepare::Prepare for UnionTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONSTRAINED_TYPE, layout = [kind::COLON], words = 12)]
+#[node(kind = kind::CONSTRAINED_TYPE, layout = [kind::COLON], words = 12, fields = ConstrainedTypeFields)]
 pub struct ConstrainedTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -14949,7 +14949,7 @@ impl ::sittir_core::prepare::Prepare for ConstrainedTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MEMBER_TYPE, layout = [kind::DOT], words = 12)]
+#[node(kind = kind::MEMBER_TYPE, layout = [kind::DOT], words = 12, fields = MemberTypeFields)]
 pub struct MemberTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15002,7 +15002,7 @@ impl ::sittir_core::prepare::Prepare for MemberTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::KEYWORD_ARGUMENT, layout = [kind::EQ], words = 12)]
+#[node(kind = kind::KEYWORD_ARGUMENT, layout = [kind::EQ], words = 12, fields = KeywordArgumentFields)]
 pub struct KeywordArgumentNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15055,7 +15055,7 @@ impl ::sittir_core::prepare::Prepare for KeywordArgumentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
+#[node(kind = kind::LIST, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = ListFields)]
 pub struct ListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15104,7 +15104,7 @@ impl ::sittir_core::prepare::Prepare for ListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SET, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7)]
+#[node(kind = kind::SET, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = SetFields)]
 pub struct SetNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15153,7 +15153,7 @@ impl ::sittir_core::prepare::Prepare for SetNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::TUPLE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TupleFields)]
 pub struct TupleNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15202,7 +15202,7 @@ impl ::sittir_core::prepare::Prepare for TupleNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DICTIONARY, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7)]
+#[node(kind = kind::DICTIONARY, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = DictionaryFields)]
 pub struct DictionaryNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15251,7 +15251,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PAIR, layout = [kind::COLON], words = 12)]
+#[node(kind = kind::PAIR, layout = [kind::COLON], words = 12, fields = PairFields)]
 pub struct PairNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15304,7 +15304,7 @@ impl ::sittir_core::prepare::Prepare for PairNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST_COMPREHENSION, layout = [kind::LBRACK, kind::RBRACK], words = 12)]
+#[node(kind = kind::LIST_COMPREHENSION, layout = [kind::LBRACK, kind::RBRACK], words = 12, fields = ListComprehensionFields)]
 pub struct ListComprehensionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15357,7 +15357,7 @@ impl ::sittir_core::prepare::Prepare for ListComprehensionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DICTIONARY_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE], words = 12)]
+#[node(kind = kind::DICTIONARY_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE], words = 12, fields = DictionaryComprehensionFields)]
 pub struct DictionaryComprehensionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15410,7 +15410,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryComprehensionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SET_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE], words = 12)]
+#[node(kind = kind::SET_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE], words = 12, fields = SetComprehensionFields)]
 pub struct SetComprehensionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15463,7 +15463,7 @@ impl ::sittir_core::prepare::Prepare for SetComprehensionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERATOR_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 12)]
+#[node(kind = kind::GENERATOR_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 12, fields = GeneratorExpressionFields)]
 pub struct GeneratorExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15516,7 +15516,7 @@ impl ::sittir_core::prepare::Prepare for GeneratorExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParenthesizedExpressionFields)]
 pub struct ParenthesizedExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15565,7 +15565,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_COLLECTION_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::_COLLECTION_ELEMENTS, item = item, words = 4, fields = CollectionElementsFields)]
 pub struct CollectionElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15625,7 +15625,7 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_IN_CLAUSE, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 10)]
+#[node(kind = kind::FOR_IN_CLAUSE, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 10, fields = ForInClauseFields)]
 pub struct ForInClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15694,7 +15694,7 @@ impl ::sittir_core::prepare::Prepare for ForInClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IF_CLAUSE, layout = [kind::IF_KEYWORD], words = 7)]
+#[node(kind = kind::IF_CLAUSE, layout = [kind::IF_KEYWORD], words = 7, fields = IfClauseFields)]
 pub struct IfClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15743,7 +15743,7 @@ impl ::sittir_core::prepare::Prepare for IfClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONDITIONAL_EXPRESSION, layout = [kind::IF_KEYWORD, kind::ELSE_KEYWORD], words = 17)]
+#[node(kind = kind::CONDITIONAL_EXPRESSION, layout = [kind::IF_KEYWORD, kind::ELSE_KEYWORD], words = 17, fields = ConditionalExpressionFields)]
 pub struct ConditionalExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15800,7 +15800,7 @@ impl ::sittir_core::prepare::Prepare for ConditionalExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONCATENATED_STRING, words = 4)]
+#[node(kind = kind::CONCATENATED_STRING, words = 4, fields = ConcatenatedStringFields)]
 pub struct ConcatenatedStringNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15854,7 +15854,7 @@ impl ::sittir_core::prepare::Prepare for ConcatenatedStringNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING, words = 14)]
+#[node(kind = kind::STRING, words = 14, fields = StringFields)]
 pub struct StringNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15912,7 +15912,7 @@ impl ::sittir_core::prepare::Prepare for StringNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CONTENT, words = 4)]
+#[node(kind = kind::STRING_CONTENT, words = 4, fields = StringContentFields)]
 pub struct StringContentNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -15961,7 +15961,7 @@ impl ::sittir_core::prepare::Prepare for StringContentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTERPOLATION, layout = [kind::LBRACE, kind::RBRACE], words = 18)]
+#[node(kind = kind::INTERPOLATION, layout = [kind::LBRACE, kind::RBRACE], words = 18, fields = InterpolationFields)]
 pub struct InterpolationNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16050,7 +16050,7 @@ impl ::sittir_core::render::Render for NotEscapeSequenceNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FORMAT_SPECIFIER, layout = [kind::COLON], words = 4)]
+#[node(kind = kind::FORMAT_SPECIFIER, layout = [kind::COLON], words = 4, fields = FormatSpecifierFields)]
 pub struct FormatSpecifierNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16100,7 +16100,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_CONVERSION, text, words = 2)]
+#[node(kind = kind::TYPE_CONVERSION, text, words = 2, fields = TypeConversionFields)]
 pub struct TypeConversionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16122,7 +16122,7 @@ impl ::sittir_core::options::Edged for TypeConversionNode {
 
 impl ::sittir_core::render::Render for TypeConversionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_conversion(self, w))
     }
 }
 
@@ -16146,7 +16146,7 @@ impl ::sittir_core::prepare::Prepare for TypeConversionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IDENTIFIER, folded = [kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD], text, words = 2)]
+#[node(kind = kind::IDENTIFIER, folded = [kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD], text, words = 2, fields = IdentifierFields)]
 pub struct IdentifierNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16168,7 +16168,7 @@ impl ::sittir_core::options::Edged for IdentifierNode {
 
 impl ::sittir_core::render::Render for IdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_identifier(self, w))
     }
 }
 
@@ -16336,7 +16336,7 @@ impl ::sittir_core::render::Render for NoneNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AWAIT, layout = [kind::AWAIT_KEYWORD], words = 7)]
+#[node(kind = kind::AWAIT, layout = [kind::AWAIT_KEYWORD], words = 7, fields = AwaitFields)]
 pub struct AwaitNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16385,7 +16385,7 @@ impl ::sittir_core::prepare::Prepare for AwaitNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 6)]
+#[node(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 6, fields = CommentFields)]
 pub struct CommentNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16529,7 +16529,7 @@ impl ::sittir_core::render::Render for KeywordSeparatorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SIMPLE_STATEMENTS_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::SIMPLE_STATEMENTS_ELEMENTS, item = item, words = 4, fields = SimpleStatementsElementsFields)]
 pub struct SimpleStatementsElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16589,7 +16589,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBJECTS, item = subject, words = 4)]
+#[node(kind = kind::SUBJECTS, item = subject, words = 4, fields = SubjectsFields)]
 pub struct SubjectsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16649,7 +16649,7 @@ impl ::sittir_core::prepare::Prepare for SubjectsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CASE_PATTERNS, item = item, words = 4)]
+#[node(kind = kind::CASE_PATTERNS, item = item, words = 4, fields = CasePatternsFields)]
 pub struct CasePatternsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16709,7 +16709,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WITH_CLAUSE_WITH_ITEMS, item = item, words = 4)]
+#[node(kind = kind::WITH_CLAUSE_WITH_ITEMS, item = item, words = 4, fields = WithClauseWithItemsFields)]
 pub struct WithClauseWithItemsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16768,7 +16768,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPES, item = item, words = 4)]
+#[node(kind = kind::TYPES, item = item, words = 4, fields = TypesFields)]
 pub struct TypesNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16828,7 +16828,7 @@ impl ::sittir_core::prepare::Prepare for TypesNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENT_LIST_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::ARGUMENT_LIST_ELEMENTS, item = item, words = 4, fields = ArgumentListElementsFields)]
 pub struct ArgumentListElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16888,7 +16888,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST_PATTERN_CASE_PATTERNS, item = item, words = 4)]
+#[node(kind = kind::LIST_PATTERN_CASE_PATTERNS, item = item, words = 4, fields = ListPatternCasePatternsFields)]
 pub struct ListPatternCasePatternsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -16948,7 +16948,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DICT_PATTERN_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::DICT_PATTERN_ELEMENTS, item = item, words = 4, fields = DictPatternElementsFields)]
 pub struct DictPatternElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17008,7 +17008,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBSCRIPTS, item = subscript, words = 4)]
+#[node(kind = kind::SUBSCRIPTS, item = subscript, words = 4, fields = SubscriptsFields)]
 pub struct SubscriptsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17068,7 +17068,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DICTIONARY_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::DICTIONARY_ELEMENTS, item = item, words = 4, fields = DictionaryElementsFields)]
 pub struct DictionaryElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17128,7 +17128,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SLICE_GROUP, layout = [kind::COLON], words = 7)]
+#[node(kind = kind::SLICE_GROUP, layout = [kind::COLON], words = 7, fields = SliceGroupFields)]
 pub struct SliceGroupNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17177,7 +17177,7 @@ impl ::sittir_core::prepare::Prepare for SliceGroupNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FORMAT_SPECIFIER_TEXT, text, words = 2)]
+#[node(kind = kind::FORMAT_SPECIFIER_TEXT, text, words = 2, fields = FormatSpecifierTextFields)]
 pub struct FormatSpecifierTextNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17199,7 +17199,7 @@ impl ::sittir_core::options::Edged for FormatSpecifierTextNode {
 
 impl ::sittir_core::render::Render for FormatSpecifierTextNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(89)); w.text(&self.text) })
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_format_specifier_text(self, w))
     }
 }
 
@@ -17223,7 +17223,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierTextNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TUPLE_PATTERN_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::_TUPLE_PATTERN_ELEMENTS, item = item, words = 4, fields = TuplePatternElementsFields)]
 pub struct TuplePatternElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17283,7 +17283,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TUPLE_ELEMENTS, item = item, words = 4)]
+#[node(kind = kind::_TUPLE_ELEMENTS, item = item, words = 4, fields = TupleElementsFields)]
 pub struct TupleElementsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17343,7 +17343,7 @@ impl ::sittir_core::prepare::Prepare for TupleElementsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXCEPT_CLAUSE_EXCEPTION_AS, layout = [kind::AS_KEYWORD], words = 12)]
+#[node(kind = kind::EXCEPT_CLAUSE_EXCEPTION_AS, layout = [kind::AS_KEYWORD], words = 12, fields = ExceptClauseExceptionAsFields)]
 pub struct ExceptClauseExceptionAsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17396,7 +17396,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CASE_TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::CASE_TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = CaseTuplePatternFields)]
 pub struct CaseTuplePatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17445,7 +17445,7 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CASE_LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
+#[node(kind = kind::CASE_LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = CaseListPatternFields)]
 pub struct CaseListPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17494,7 +17494,7 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_PRINT_ARGUMENTS, item = item, words = 4)]
+#[node(kind = kind::_PRINT_ARGUMENTS, item = item, words = 4, fields = PrintArgumentsFields)]
 pub struct PrintArgumentsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17554,7 +17554,7 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_PRINT_CHEVRON_ARGUMENTS, item = item, words = 4)]
+#[node(kind = kind::_PRINT_CHEVRON_ARGUMENTS, item = item, words = 4, fields = PrintChevronArgumentsFields)]
 pub struct PrintChevronArgumentsNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17614,7 +17614,7 @@ impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD, kind::COMMA], words = 12)]
+#[node(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD, kind::COMMA], words = 12, fields = PrintStatementChevronFields)]
 pub struct PrintStatementChevronNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17667,7 +17667,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PRINT_STATEMENT_PLAIN, min_depth = 2, layout = [kind::PRINT_KEYWORD], words = 7)]
+#[node(kind = kind::PRINT_STATEMENT_PLAIN, min_depth = 2, layout = [kind::PRINT_KEYWORD], words = 7, fields = PrintStatementPlainFields)]
 pub struct PrintStatementPlainNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17764,7 +17764,7 @@ impl ::sittir_core::render::Render for WildcardPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_PARENTHESIZED_IMPORT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::_PARENTHESIZED_IMPORT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParenthesizedImportListFields)]
 pub struct ParenthesizedImportListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17813,7 +17813,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedImportListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMPREHENSION_CLAUSES, words = 4)]
+#[node(kind = kind::COMPREHENSION_CLAUSES, words = 4, fields = ComprehensionClausesFields)]
 pub struct ComprehensionClausesNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17866,7 +17866,7 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_HEX, interior = "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$", words = 10)]
+#[node(kind = kind::INTEGER_HEX, interior = "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$", words = 10, fields = IntegerHexFields)]
 pub struct IntegerHexNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17918,7 +17918,7 @@ impl ::sittir_core::prepare::Prepare for IntegerHexNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_OCTAL, interior = "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$", words = 10)]
+#[node(kind = kind::INTEGER_OCTAL, interior = "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$", words = 10, fields = IntegerOctalFields)]
 pub struct IntegerOctalNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -17970,7 +17970,7 @@ impl ::sittir_core::prepare::Prepare for IntegerOctalNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_BINARY, interior = "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$", words = 10)]
+#[node(kind = kind::INTEGER_BINARY, interior = "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$", words = 10, fields = IntegerBinaryFields)]
 pub struct IntegerBinaryNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18022,7 +18022,7 @@ impl ::sittir_core::prepare::Prepare for IntegerBinaryNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_DECIMAL_LONG, text, words = 2)]
+#[node(kind = kind::INTEGER_DECIMAL_LONG, text, words = 2, fields = IntegerDecimalLongFields)]
 pub struct IntegerDecimalLongNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18044,7 +18044,7 @@ impl ::sittir_core::options::Edged for IntegerDecimalLongNode {
 
 impl ::sittir_core::render::Render for IntegerDecimalLongNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(93)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(93)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_decimal_long(self, w))
     }
 }
 
@@ -18068,7 +18068,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalLongNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_DECIMAL_IMAGINARY, text, words = 2)]
+#[node(kind = kind::INTEGER_DECIMAL_IMAGINARY, text, words = 2, fields = IntegerDecimalImaginaryFields)]
 pub struct IntegerDecimalImaginaryNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18090,7 +18090,7 @@ impl ::sittir_core::options::Edged for IntegerDecimalImaginaryNode {
 
 impl ::sittir_core::render::Render for IntegerDecimalImaginaryNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(94)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(94)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_decimal_imaginary(self, w))
     }
 }
 
@@ -18114,7 +18114,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalImaginaryNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_DECIMAL_PLAIN, text, words = 2)]
+#[node(kind = kind::INTEGER_DECIMAL_PLAIN, text, words = 2, fields = IntegerDecimalPlainFields)]
 pub struct IntegerDecimalPlainNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18136,7 +18136,7 @@ impl ::sittir_core::options::Edged for IntegerDecimalPlainNode {
 
 impl ::sittir_core::render::Render for IntegerDecimalPlainNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(95)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(95)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_decimal_plain(self, w))
     }
 }
 
@@ -18160,7 +18160,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalPlainNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 22)]
+#[node(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 22, fields = FloatPointFields)]
 pub struct FloatPointNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18224,7 +18224,7 @@ impl ::sittir_core::prepare::Prepare for FloatPointNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 22)]
+#[node(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 22, fields = FloatLeadingPointFields)]
 pub struct FloatLeadingPointNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18288,7 +18288,7 @@ impl ::sittir_core::prepare::Prepare for FloatLeadingPointNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$", words = 18)]
+#[node(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$", words = 18, fields = FloatScientificFields)]
 pub struct FloatScientificNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18348,7 +18348,7 @@ impl ::sittir_core::prepare::Prepare for FloatScientificNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 6)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 6, fields = EscapeSequenceUnicodeFixedFields)]
 pub struct EscapeSequenceUnicodeFixedNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18396,7 +18396,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 6)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 6, fields = EscapeSequenceUnicodeWideFields)]
 pub struct EscapeSequenceUnicodeWideNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18444,7 +18444,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 6)]
+#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 6, fields = EscapeSequenceHexFields)]
 pub struct EscapeSequenceHexNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18492,7 +18492,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 6)]
+#[node(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 6, fields = EscapeSequenceOctalFields)]
 pub struct EscapeSequenceOctalNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18540,7 +18540,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 6)]
+#[node(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 6, fields = EscapeSequenceLineBreakFields)]
 pub struct EscapeSequenceLineBreakNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18588,7 +18588,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 6)]
+#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 6, fields = EscapeSequenceSimpleFields)]
 pub struct EscapeSequenceSimpleNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18636,7 +18636,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 6)]
+#[node(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 6, fields = EscapeSequenceNamedFields)]
 pub struct EscapeSequenceNamedNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18684,7 +18684,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_CONTINUATION_NEWLINE, text, words = 2)]
+#[node(kind = kind::LINE_CONTINUATION_NEWLINE, text, words = 2, fields = LineContinuationNewlineFields)]
 pub struct LineContinuationNewlineNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18706,7 +18706,7 @@ impl ::sittir_core::options::Edged for LineContinuationNewlineNode {
 
 impl ::sittir_core::render::Render for LineContinuationNewlineNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(106)); w.text(&self.text) })
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_continuation_newline(self, w))
     }
 }
 
@@ -18758,7 +18758,7 @@ impl ::sittir_core::render::Render for LineContinuationNulNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SIMPLE_PATTERN_NEGATIVE, words = 8)]
+#[node(kind = kind::SIMPLE_PATTERN_NEGATIVE, words = 8, fields = SimplePatternNegativeFields)]
 pub struct SimplePatternNegativeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18811,7 +18811,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXCEPT_CLAUSE_EXCEPTION_LIST, words = 4)]
+#[node(kind = kind::EXCEPT_CLAUSE_EXCEPTION_LIST, words = 4, fields = ExceptClauseExceptionListFields)]
 pub struct ExceptClauseExceptionListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18867,7 +18867,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXCEPT_CLAUSE_EXCEPTION, words = 7)]
+#[node(kind = kind::EXCEPT_CLAUSE_EXCEPTION, words = 7, fields = ExceptClauseExceptionFields)]
 pub struct ExceptClauseExceptionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18915,7 +18915,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSIGNMENT_EQ, layout = [kind::EQ], words = 12)]
+#[node(kind = kind::ASSIGNMENT_EQ, layout = [kind::EQ], words = 12, fields = AssignmentEqFields)]
 pub struct AssignmentEqNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -18968,7 +18968,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSIGNMENT_TYPE, layout = [kind::COLON], words = 12)]
+#[node(kind = kind::ASSIGNMENT_TYPE, layout = [kind::COLON], words = 12, fields = AssignmentTypeFields)]
 pub struct AssignmentTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19021,7 +19021,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSIGNMENT_TYPED, layout = [kind::COLON, kind::EQ], words = 17)]
+#[node(kind = kind::ASSIGNMENT_TYPED, layout = [kind::COLON, kind::EQ], words = 17, fields = AssignmentTypedFields)]
 pub struct AssignmentTypedNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19078,7 +19078,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = item, words = 4)]
+#[node(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = item, words = 4, fields = ExpressionStatementTupleFields)]
 pub struct ExpressionStatementTupleNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19138,7 +19138,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WITH_CLAUSE_BARE, item = item, words = 4)]
+#[node(kind = kind::WITH_CLAUSE_BARE, item = item, words = 4, fields = WithClauseBareFields)]
 pub struct WithClauseBareNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19197,7 +19197,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseBareNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WITH_CLAUSE_PAREN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+#[node(kind = kind::WITH_CLAUSE_PAREN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = WithClauseParenFields)]
 pub struct WithClauseParenNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19246,7 +19246,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseParenNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK_BLOCK, layout = [kind::_INDENT, kind::_DEDENT], words = 4)]
+#[node(kind = kind::MATCH_BLOCK_BLOCK, layout = [kind::_INDENT, kind::_DEDENT], words = 4, fields = MatchBlockBlockFields)]
 pub struct MatchBlockBlockNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19300,7 +19300,7 @@ impl ::sittir_core::prepare::Prepare for MatchBlockBlockNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK_EMPTY, layout = [kind::_NEWLINE], words = 7)]
+#[node(kind = kind::MATCH_BLOCK_EMPTY, layout = [kind::_NEWLINE], words = 7, fields = MatchBlockEmptyFields)]
 pub struct MatchBlockEmptyNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19348,7 +19348,7 @@ impl ::sittir_core::prepare::Prepare for MatchBlockEmptyNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUITE_INLINE, min_depth = 2, layout = [kind::_NEWLINE], words = 7)]
+#[node(kind = kind::SUITE_INLINE, min_depth = 2, layout = [kind::_NEWLINE], words = 7, fields = SuiteInlineFields)]
 pub struct SuiteInlineNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19397,7 +19397,7 @@ impl ::sittir_core::prepare::Prepare for SuiteInlineNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUITE_BLOCK, layout = [kind::_INDENT], words = 7)]
+#[node(kind = kind::SUITE_BLOCK, layout = [kind::_INDENT], words = 7, fields = SuiteBlockFields)]
 pub struct SuiteBlockNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19446,7 +19446,7 @@ impl ::sittir_core::prepare::Prepare for SuiteBlockNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUITE_EMPTY, layout = [kind::_NEWLINE], words = 7)]
+#[node(kind = kind::SUITE_EMPTY, layout = [kind::_NEWLINE], words = 7, fields = SuiteEmptyFields)]
 pub struct SuiteEmptyNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19494,7 +19494,7 @@ impl ::sittir_core::prepare::Prepare for SuiteEmptyNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_COMPARISON_OPERATOR_COMPARATOR, words = 12)]
+#[node(kind = kind::_COMPARISON_OPERATOR_COMPARATOR, words = 12, fields = ComparisonOperatorComparatorFields)]
 pub struct ComparisonOperatorComparatorNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19551,7 +19551,7 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_YIELD_FROM_CLAUSE, layout = [kind::FROM_KEYWORD], words = 7)]
+#[node(kind = kind::_YIELD_FROM_CLAUSE, layout = [kind::FROM_KEYWORD], words = 7, fields = YieldFromClauseFields)]
 pub struct YieldFromClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19600,7 +19600,7 @@ impl ::sittir_core::prepare::Prepare for YieldFromClauseNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_START, text, words = 2)]
+#[node(kind = kind::STRING_START, text, words = 2, fields = StringStartFields)]
 pub struct StringStartNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19622,7 +19622,7 @@ impl ::sittir_core::options::Edged for StringStartNode {
 
 impl ::sittir_core::render::Render for StringStartNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(118)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(118)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_start(self, w))
     }
 }
 
@@ -19646,7 +19646,7 @@ impl ::sittir_core::prepare::Prepare for StringStartNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_STRING_FRAGMENT, text, words = 2)]
+#[node(kind = kind::_STRING_FRAGMENT, text, words = 2, fields = StringFragmentFields)]
 pub struct StringFragmentNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19668,7 +19668,7 @@ impl ::sittir_core::options::Edged for StringFragmentNode {
 
 impl ::sittir_core::render::Render for StringFragmentNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(119)); w.text(&self.text) })
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_fragment(self, w))
     }
 }
 
@@ -19692,7 +19692,7 @@ impl ::sittir_core::prepare::Prepare for StringFragmentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_INTERPOLATION, text, words = 2)]
+#[node(kind = kind::ESCAPE_INTERPOLATION, text, words = 2, fields = EscapeInterpolationFields)]
 pub struct EscapeInterpolationNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19714,7 +19714,7 @@ impl ::sittir_core::options::Edged for EscapeInterpolationNode {
 
 impl ::sittir_core::render::Render for EscapeInterpolationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(120)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(120)); w.text(&self.text) })
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(120)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_interpolation(self, w))
     }
 }
 
@@ -19738,7 +19738,7 @@ impl ::sittir_core::prepare::Prepare for EscapeInterpolationNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_END, text, words = 2)]
+#[node(kind = kind::STRING_END, text, words = 2, fields = StringEndFields)]
 pub struct StringEndNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19760,7 +19760,7 @@ impl ::sittir_core::options::Edged for StringEndNode {
 
 impl ::sittir_core::render::Render for StringEndNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(121)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(121)); w.text(&self.text) })
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(121)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_end(self, w))
     }
 }
 
@@ -20008,7 +20008,7 @@ impl ::sittir_core::render::Render for DoubleBlanklineNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_NAMES, display, content = content, words = 7)]
+#[node(kind = kind::_NAMES, display, content = content, words = 7, fields = NamesFields)]
 pub struct NamesNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -20056,7 +20056,7 @@ impl ::sittir_core::prepare::Prepare for NamesNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_AS_PATTERN_TARGET, display, content = content, wraps_hidden, words = 7)]
+#[node(kind = kind::_AS_PATTERN_TARGET, display, content = content, wraps_hidden, words = 7, fields = AsPatternTargetFields)]
 pub struct AsPatternTargetNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -20104,7 +20104,7 @@ impl ::sittir_core::prepare::Prepare for AsPatternTargetNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAT_EXPRESSION, display, content = content, words = 7)]
+#[node(kind = kind::_FORMAT_EXPRESSION, display, content = content, words = 7, fields = FormatExpressionFields)]
 pub struct FormatExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -24479,63 +24479,63 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
 
 
 
-fn render_module(node: &ModuleNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_module<N: ModuleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let statements = ListView {
-        items: &node.statements,
+        items: node.statements(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.statements_separator_space.unwrap_or(KindId::BLANK),
+        after: node.statements_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_statements"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
     };
-    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
+    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     statements.render(w)?;
-    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_simple_statements(node: &SimpleStatementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = &node.elements;
-    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+fn render_simple_statements<N: SimpleStatementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = node.elements();
+    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
-    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(129), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_import_statement(node: &ImportStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let names = &node.names;
-    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_import_statement<N: ImportStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let names = node.names();
+    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_names", ::sittir_core::types::ItemIndex(0), w, |w| names.render(w))?;
-    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_names", ::sittir_core::types::ItemIndex(0), w, |w| names.render(w))?;
+    w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_import_prefix(t: &ImportPrefixNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_import_prefix<N: ImportPrefixFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(t.text())
 }
 
-fn render_relative_import(node: &RelativeImportNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = View::new(&node.name, "{}");
-    let prefix = &node.prefix;
-    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
-    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::After, node.layout.edges().after);
+fn render_relative_import<N: RelativeImportFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = View::new(node.name(), "{}");
+    let prefix = node.prefix();
+    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    w.edge(::sittir_core::types::KindId(132), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_future_import_statement(node: &FutureImportStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_future_import_statement<N: FutureImportStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("from")?;
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER);
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE);
@@ -24544,111 +24544,111 @@ fn render_future_import_statement(node: &FutureImportStatementNode, w: &mut dyn 
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE);
     w.text("import")?;
     w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_import_from_statement(node: &ImportFromStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    let module_name = &node.module_name;
-    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_import_from_statement<N: ImportFromStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    let module_name = node.module_name();
+    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("from")?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_module_name", ::sittir_core::types::ItemIndex(0), w, |w| module_name.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_module_name", ::sittir_core::types::ItemIndex(0), w, |w| module_name.render(w))?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE);
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    w.edge(::sittir_core::types::KindId(134), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_import_list(node: &ImportListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_import_list<N: ImportListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = ListView {
-        items: &node.name,
+        items: node.name(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.name_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.name_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.name_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.name_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_name"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_name"),
     };
     name.render(w)?;
     Ok(())
 }
 
-fn render_aliased_import(node: &AliasedImportNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alias = &node.alias;
-    let name = &node.name;
-    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_aliased_import<N: AliasedImportFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alias = node.alias();
+    let name = node.name();
+    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
-    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
+    w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_print_statement(node: &PrintStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_print_statement<N: PrintStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_chevron(node: &ChevronNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_chevron<N: ChevronFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text(">>")?;
     w.site_at(options::SITE_CHEVRON_GT_GT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_assert_statement(node: &AssertStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_assert_statement<N: AssertStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = ListView {
-        items: &node.expression,
+        items: node.expression(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.expression_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.expression_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.expression_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.expression_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_expression"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_expression"),
     };
-    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("assert")?;
     w.site_at(options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER);
     expression.render(w)?;
-    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(140), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_expression_statement(node: &ExpressionStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_expression_statement<N: ExpressionStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_named_expression(node: &NamedExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_named_expression<N: NamedExpressionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_BEFORE);
     w.text(":=")?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -24657,145 +24657,145 @@ fn render_named_expression_lhs(node: &NamedExpressionLhsNode, w: &mut dyn ::sitt
     Ok(())
 }
 
-fn render_return_statement(node: &ReturnStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expressions = View::new(&node.expressions, "{}");
-    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_return_statement<N: ReturnStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expressions = View::new(node.expressions(), "{}");
+    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("return")?;
     w.site_at(options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expressions", ::sittir_core::types::ItemIndex(0), w, |w| expressions.render(w))?;
-    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expressions", ::sittir_core::types::ItemIndex(0), w, |w| expressions.render(w))?;
+    w.edge(::sittir_core::types::KindId(144), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_delete_statement(node: &DeleteStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expressions = &node.expressions;
-    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_delete_statement<N: DeleteStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expressions = node.expressions();
+    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("del")?;
     w.site_at(options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expressions", ::sittir_core::types::ItemIndex(0), w, |w| expressions.render(w))?;
-    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expressions", ::sittir_core::types::ItemIndex(0), w, |w| expressions.render(w))?;
+    w.edge(::sittir_core::types::KindId(145), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_raise_statement(node: &RaiseStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let cause = View::new(&node.cause, "{}");
-    let expressions = View::new(&node.expressions, "{}");
-    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_raise_statement<N: RaiseStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let cause = View::new(node.cause(), "{}");
+    let expressions = View::new(node.expressions(), "{}");
+    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("raise")?;
     w.site_at(options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expressions", ::sittir_core::types::ItemIndex(0), w, |w| expressions.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expressions", ::sittir_core::types::ItemIndex(0), w, |w| expressions.render(w))?;
     if cause.is_present() {
         w.site_at(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_BEFORE);
         w.text("from")?;
         w.site_at(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_cause", ::sittir_core::types::ItemIndex(0), w, |w| cause.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_cause", ::sittir_core::types::ItemIndex(0), w, |w| cause.render(w))?;
     }
-    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(146), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_if_statement(node: &IfStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_if_statement<N: IfStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = ListView {
-        items: &node.alternative,
+        items: node.alternative(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.alternative_separator_space.unwrap_or(KindId::BLANK),
+        after: node.alternative_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_alternative"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_alternative"),
     };
-    let condition = &node.condition;
-    let consequence = &node.consequence;
-    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    let condition = node.condition();
+    let consequence = node.consequence();
+    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("if")?;
     w.site_at(options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
     w.site_at(options::SITE_IF_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_IF_STATEMENT_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_consequence", ::sittir_core::types::ItemIndex(0), w, |w| consequence.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_consequence", ::sittir_core::types::ItemIndex(0), w, |w| consequence.render(w))?;
     alternative.render(w)?;
-    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_elif_clause(node: &ElifClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let condition = &node.condition;
-    let consequence = &node.consequence;
-    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_elif_clause<N: ElifClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let condition = node.condition();
+    let consequence = node.consequence();
+    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("elif")?;
     w.site_at(options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
     w.site_at(options::SITE_ELIF_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ELIF_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_consequence", ::sittir_core::types::ItemIndex(0), w, |w| consequence.render(w))?;
-    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_consequence", ::sittir_core::types::ItemIndex(0), w, |w| consequence.render(w))?;
+    w.edge(::sittir_core::types::KindId(151), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_else_clause(node: &ElseClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_else_clause<N: ElseClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("else")?;
     w.site_at(options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER);
     w.site_at(options::SITE_ELSE_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ELSE_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_match_statement(node: &MatchStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let subjects = &node.subjects;
-    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_match_statement<N: MatchStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let subjects = node.subjects();
+    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("match")?;
     w.site_at(options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_subjects", ::sittir_core::types::ItemIndex(0), w, |w| subjects.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_subjects", ::sittir_core::types::ItemIndex(0), w, |w| subjects.render(w))?;
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_match_block(node: &MatchBlockNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_match_block<N: MatchBlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_case_clause(node: &CaseClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let case_patterns = &node.case_patterns;
-    let consequence = &node.consequence;
-    let guard = View::new(&node.guard, "{}");
-    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_case_clause<N: CaseClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let case_patterns = node.case_patterns();
+    let consequence = node.consequence();
+    let guard = View::new(node.guard(), "{}");
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("case")?;
     w.site_at(options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_case_patterns", ::sittir_core::types::ItemIndex(0), w, |w| case_patterns.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_guard", ::sittir_core::types::ItemIndex(0), w, |w| guard.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_case_patterns", ::sittir_core::types::ItemIndex(0), w, |w| case_patterns.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_guard", ::sittir_core::types::ItemIndex(0), w, |w| guard.render(w))?;
     w.site_at(options::SITE_CASE_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_CASE_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_consequence", ::sittir_core::types::ItemIndex(0), w, |w| consequence.render(w))?;
-    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_consequence", ::sittir_core::types::ItemIndex(0), w, |w| consequence.render(w))?;
+    w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_for_statement(node: &ForStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alternative = View::new(&node.alternative, "{}");
-    let async_ = View::new(&node.async_, "async");
-    let body = &node.body;
-    let left = &node.left;
-    let right = &node.right;
-    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_for_statement<N: ForStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alternative = View::new(node.alternative(), "{}");
+    let async_ = View::new(node.async_(), "async");
+    let body = node.body();
+    let left = node.left();
+    let right = node.right();
+    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_FOR_STATEMENT_ASYNC_AFTER);
@@ -24803,73 +24803,73 @@ fn render_for_statement(node: &ForStatementNode, w: &mut dyn ::sittir_core::rend
     w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_BEFORE);
     w.text("for")?;
     w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_FOR_STATEMENT_IN_KEYWORD_BEFORE);
     w.text("in")?;
     w.site_at(options::SITE_FOR_STATEMENT_IN_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.site_at(options::SITE_FOR_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FOR_STATEMENT_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_alternative", ::sittir_core::types::ItemIndex(0), w, |w| alternative.render(w))?;
-    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alternative", ::sittir_core::types::ItemIndex(0), w, |w| alternative.render(w))?;
+    w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_while_statement(node: &WhileStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alternative = View::new(&node.alternative, "{}");
-    let body = &node.body;
-    let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_while_statement<N: WhileStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alternative = View::new(node.alternative(), "{}");
+    let body = node.body();
+    let condition = node.condition();
+    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("while")?;
     w.site_at(options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
     w.site_at(options::SITE_WHILE_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_WHILE_STATEMENT_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_alternative", ::sittir_core::types::ItemIndex(0), w, |w| alternative.render(w))?;
-    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alternative", ::sittir_core::types::ItemIndex(0), w, |w| alternative.render(w))?;
+    w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_try_statement(node: &TryStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let else_clause = View::new(&node.else_clause, "{}");
+fn render_try_statement<N: TryStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let else_clause = View::new(node.else_clause(), "{}");
     let except_clauses = ListView {
-        items: &node.except_clauses,
+        items: node.except_clauses(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.except_clauses_separator_space.unwrap_or(KindId::BLANK),
+        after: node.except_clauses_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_except_clauses"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_except_clauses"),
     };
-    let finally_clause = View::new(&node.finally_clause, "{}");
-    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    let finally_clause = View::new(node.finally_clause(), "{}");
+    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("try")?;
     w.site_at(options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER);
     w.site_at(options::SITE_TRY_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_TRY_STATEMENT_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     except_clauses.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_else_clause", ::sittir_core::types::ItemIndex(0), w, |w| else_clause.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_finally_clause", ::sittir_core::types::ItemIndex(0), w, |w| finally_clause.render(w))?;
-    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_else_clause", ::sittir_core::types::ItemIndex(0), w, |w| else_clause.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_finally_clause", ::sittir_core::types::ItemIndex(0), w, |w| finally_clause.render(w))?;
+    w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_except_clause(node: &ExceptClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let exception = View::new(&node.exception, "{}");
-    let group = View::new(&node.group, "*");
-    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_except_clause<N: ExceptClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let exception = View::new(node.exception(), "{}");
+    let group = View::new(node.group(), "*");
+    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("except")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
     if group.is_present() {
@@ -24877,33 +24877,33 @@ fn render_except_clause(node: &ExceptClauseNode, w: &mut dyn ::sittir_core::rend
         group.render(w)?;
         w.site_at(options::SITE_EXCEPT_CLAUSE_GROUP_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_exception", ::sittir_core::types::ItemIndex(0), w, |w| exception.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exception", ::sittir_core::types::ItemIndex(0), w, |w| exception.render(w))?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_finally_clause(node: &FinallyClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let block = &node.block;
-    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_finally_clause<N: FinallyClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let block = node.block();
+    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("finally")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER);
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_block", ::sittir_core::types::ItemIndex(0), w, |w| block.render(w))?;
-    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_block", ::sittir_core::types::ItemIndex(0), w, |w| block.render(w))?;
+    w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_with_statement(node: &WithStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let async_ = View::new(&node.async_, "async");
-    let body = &node.body;
-    let with_clause = &node.with_clause;
-    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_with_statement<N: WithStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let async_ = View::new(node.async_(), "async");
+    let body = node.body();
+    let with_clause = node.with_clause();
+    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_WITH_STATEMENT_ASYNC_AFTER);
@@ -24911,29 +24911,29 @@ fn render_with_statement(node: &WithStatementNode, w: &mut dyn ::sittir_core::re
     w.site_at(options::SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE);
     w.text("with")?;
     w.site_at(options::SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_with_clause", ::sittir_core::types::ItemIndex(0), w, |w| with_clause.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_with_clause", ::sittir_core::types::ItemIndex(0), w, |w| with_clause.render(w))?;
     w.site_at(options::SITE_WITH_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_WITH_STATEMENT_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_with_item(node: &WithItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let value = &node.value;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+fn render_with_item<N: WithItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let value = node.value();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     Ok(())
 }
 
-fn render_function_definition(node: &FunctionDefinitionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let async_ = View::new(&node.async_, "async");
-    let body = &node.body;
-    let name = &node.name;
-    let parameters = &node.parameters;
-    let return_type = View::new(&node.return_type, "{}");
-    let type_parameters = View::new(&node.type_parameters, "{}");
-    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_function_definition<N: FunctionDefinitionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let async_ = View::new(node.async_(), "async");
+    let body = node.body();
+    let name = node.name();
+    let parameters = node.parameters();
+    let return_type = View::new(node.return_type(), "{}");
+    let type_parameters = View::new(node.type_parameters(), "{}");
+    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_FUNCTION_DEFINITION_ASYNC_AFTER);
@@ -24941,1008 +24941,1008 @@ fn render_function_definition(node: &FunctionDefinitionNode, w: &mut dyn ::sitti
     w.site_at(options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_BEFORE);
     w.text("def")?;
     w.site_at(options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_parameters", ::sittir_core::types::ItemIndex(0), w, |w| type_parameters.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_parameters", ::sittir_core::types::ItemIndex(0), w, |w| type_parameters.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
     if return_type.is_present() {
         w.site_at(options::SITE_FUNCTION_DEFINITION_DASH_GT_BEFORE);
         w.text("->")?;
         w.site_at(options::SITE_FUNCTION_DEFINITION_DASH_GT_AFTER);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_return_type", ::sittir_core::types::ItemIndex(0), w, |w| return_type.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_return_type", ::sittir_core::types::ItemIndex(0), w, |w| return_type.render(w))?;
     }
     w.site_at(options::SITE_FUNCTION_DEFINITION_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FUNCTION_DEFINITION_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_parameters(node: &ParametersNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_parameters<N: ParametersFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(node.elements(), "{}");
+    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_PARAMETERS_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_lambda_parameters(node: &LambdaParametersNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let parameters_elements = &node.parameters_elements;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters_elements", ::sittir_core::types::ItemIndex(0), w, |w| parameters_elements.render(w))?;
+fn render_lambda_parameters<N: LambdaParametersFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let parameters_elements = node.parameters_elements();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters_elements", ::sittir_core::types::ItemIndex(0), w, |w| parameters_elements.render(w))?;
     Ok(())
 }
 
-fn render_list_splat(node: &ListSplatNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_list_splat<N: ListSplatFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_STAR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_dictionary_splat(node: &DictionarySplatNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_dictionary_splat<N: DictionarySplatFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_STAR_STAR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_global_statement(node: &GlobalStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_global_statement<N: GlobalStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let names = ListView {
-        items: &node.names,
+        items: node.names(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.names_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.names_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.names_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.names_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_names"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_names"),
     };
-    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("global")?;
     w.site_at(options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_nonlocal_statement(node: &NonlocalStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_nonlocal_statement<N: NonlocalStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let names = ListView {
-        items: &node.names,
+        items: node.names(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.names_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.names_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.names_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.names_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_names"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_names"),
     };
-    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("nonlocal")?;
     w.site_at(options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER);
     names.render(w)?;
-    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_exec_statement(node: &ExecStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let code = &node.code;
+fn render_exec_statement<N: ExecStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let code = node.code();
     let in_clause = ListView {
-        items: &node.in_clause,
+        items: node.in_clause(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.in_clause_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.in_clause_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.in_clause_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.in_clause_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_in_clause"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_in_clause"),
     };
-    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("exec")?;
     w.site_at(options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_code", ::sittir_core::types::ItemIndex(0), w, |w| code.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_code", ::sittir_core::types::ItemIndex(0), w, |w| code.render(w))?;
     if in_clause.is_present() {
         w.site_at(options::SITE_EXEC_STATEMENT_IN_KEYWORD_BEFORE);
         w.text("in")?;
         w.site_at(options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER);
         in_clause.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_type_alias_statement(node: &TypeAliasStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let right = &node.right;
-    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_type_alias_statement<N: TypeAliasStatementFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let right = node.right();
+    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("type")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
-    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_class_definition(node: &ClassDefinitionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let name = &node.name;
-    let superclasses = View::new(&node.superclasses, "{}");
-    let type_parameters = View::new(&node.type_parameters, "{}");
-    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_class_definition<N: ClassDefinitionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let name = node.name();
+    let superclasses = View::new(node.superclasses(), "{}");
+    let type_parameters = View::new(node.type_parameters(), "{}");
+    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("class")?;
     w.site_at(options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_parameters", ::sittir_core::types::ItemIndex(0), w, |w| type_parameters.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_superclasses", ::sittir_core::types::ItemIndex(0), w, |w| superclasses.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_parameters", ::sittir_core::types::ItemIndex(0), w, |w| type_parameters.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_superclasses", ::sittir_core::types::ItemIndex(0), w, |w| superclasses.render(w))?;
     w.site_at(options::SITE_CLASS_DEFINITION_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_CLASS_DEFINITION_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_type_parameter(node: &TypeParameterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let types = &node.types;
-    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_type_parameter<N: TypeParameterFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let types = node.types();
+    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_TYPE_PARAMETER_LBRACK_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_types", ::sittir_core::types::ItemIndex(0), w, |w| types.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_types", ::sittir_core::types::ItemIndex(0), w, |w| types.render(w))?;
     w.site_at(options::SITE_TYPE_PARAMETER_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_parenthesized_list_splat(node: &ParenthesizedListSplatNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_parenthesized_list_splat<N: ParenthesizedListSplatFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_argument_list(node: &ArgumentListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let arguments = View::new(&node.arguments, "{}");
-    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_argument_list<N: ArgumentListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let arguments = View::new(node.arguments(), "{}");
+    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_ARGUMENT_LIST_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
     w.site_at(options::SITE_ARGUMENT_LIST_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_decorated_definition(node: &DecoratedDefinitionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_decorated_definition<N: DecoratedDefinitionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let decorator = ListView {
-        items: &node.decorator,
+        items: node.decorator(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
+        after: node.decorator_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_decorator"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_decorator"),
     };
-    let definition = &node.definition;
-    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    let definition = node.definition();
+    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     decorator.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_definition", ::sittir_core::types::ItemIndex(0), w, |w| definition.render(w))?;
-    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_definition", ::sittir_core::types::ItemIndex(0), w, |w| definition.render(w))?;
+    w.edge(::sittir_core::types::KindId(177), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_decorator(node: &DecoratorNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_decorator<N: DecoratorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("@")?;
     w.site_at(options::SITE_DECORATOR_AT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
-    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(178), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_block(node: &BlockNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_block<N: BlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let statements = ListView {
-        items: &node.statements,
+        items: node.statements(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.statements_separator_space.unwrap_or(KindId::BLANK),
+        after: node.statements_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_statements"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
     };
-    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     statements.render(w)?;
     if statements.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.dedent(::sittir_core::layout_kinds::LayoutKinds::NONE);
-    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(179), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_expression_list(node: &ExpressionListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_expression_list<N: ExpressionListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: ::sittir_core::view::SlotItems::count(&node.item()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_dotted_name(node: &DottedNameNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_dotted_name<N: DottedNameFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let names = ListView {
-        items: &node.names,
+        items: node.names(),
         template: "{}",
         token: ".",
         separators: None,
-        before: node.names_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.names_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.names_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.names_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_names"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_names"),
     };
     names.render(w)?;
     Ok(())
 }
 
-fn render_case_pattern(node: &CasePatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_case_pattern<N: CasePatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_simple_pattern(node: &SimplePatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_simple_pattern<N: SimplePatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_case_as_pattern(node: &CaseAsPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let case_pattern = &node.case_pattern;
-    let identifier = &node.identifier;
-    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_case_pattern", ::sittir_core::types::ItemIndex(0), w, |w| case_pattern.render(w))?;
+fn render_case_as_pattern<N: CaseAsPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let case_pattern = node.case_pattern();
+    let identifier = node.identifier();
+    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_case_pattern", ::sittir_core::types::ItemIndex(0), w, |w| case_pattern.render(w))?;
     w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_identifier", ::sittir_core::types::ItemIndex(0), w, |w| identifier.render(w))?;
-    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_identifier", ::sittir_core::types::ItemIndex(0), w, |w| identifier.render(w))?;
+    w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_union_pattern(node: &UnionPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_union_pattern<N: UnionPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let patterns = ListView {
-        items: &node.patterns,
+        items: node.patterns(),
         template: "{}",
         token: "|",
         separators: None,
-        before: node.patterns_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.patterns_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.patterns_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.patterns_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_patterns"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_patterns"),
     };
     patterns.render(w)?;
     Ok(())
 }
 
-fn render_dict_pattern(node: &DictPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_dict_pattern<N: DictPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(node.elements(), "{}");
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_DICT_PATTERN_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_DICT_PATTERN_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_key_value_pattern(node: &KeyValuePatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let key = &node.key;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_key", ::sittir_core::types::ItemIndex(0), w, |w| key.render(w))?;
+fn render_key_value_pattern<N: KeyValuePatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let key = node.key();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_key", ::sittir_core::types::ItemIndex(0), w, |w| key.render(w))?;
     w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_keyword_pattern(node: &KeywordPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_keyword_pattern<N: KeywordPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_KEYWORD_PATTERN_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_KEYWORD_PATTERN_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_splat_pattern(node: &SplatPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+fn render_splat_pattern<N: SplatPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let operator = node.operator();
+    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_SPLAT_PATTERN_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
-    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    w.edge(::sittir_core::types::KindId(189), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_class_pattern(node: &ClassPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let arguments = View::new(&node.arguments, "{}");
-    let name = &node.name;
-    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_class_pattern<N: ClassPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let arguments = View::new(node.arguments(), "{}");
+    let name = node.name();
+    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_CLASS_PATTERN_LPAREN_BEFORE);
     w.text("(")?;
     w.site_at(options::SITE_CLASS_PATTERN_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
     w.site_at(options::SITE_CLASS_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(190), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_complex_pattern(node: &ComplexPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let imaginary = &node.imaginary;
-    let operator = &node.operator;
-    let real = &node.real;
-    let sign = View::new(&node.sign, "-");
-    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_complex_pattern<N: ComplexPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let imaginary = node.imaginary();
+    let operator = node.operator();
+    let real = node.real();
+    let sign = View::new(node.sign(), "-");
+    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if sign.is_present() {
         sign.render(w)?;
         w.site_at(options::SITE_COMPLEX_PATTERN_SIGN_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_real", ::sittir_core::types::ItemIndex(0), w, |w| real.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_real", ::sittir_core::types::ItemIndex(0), w, |w| real.render(w))?;
     w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_BEFORE);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
-    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
+    w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_parameters_elements(node: &ParametersElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_parameters_elements<N: ParametersElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_patterns(node: &PatternsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_patterns<N: PatternsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_tuple_pattern(node: &TuplePatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_tuple_pattern<N: TuplePatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(node.elements(), "{}");
+    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_PATTERN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_list_pattern(node: &ListPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let patterns = View::new(&node.patterns, "{}");
-    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_list_pattern<N: ListPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let patterns = View::new(node.patterns(), "{}");
+    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_PATTERN_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_patterns", ::sittir_core::types::ItemIndex(0), w, |w| patterns.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_patterns", ::sittir_core::types::ItemIndex(0), w, |w| patterns.render(w))?;
     w.site_at(options::SITE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_default_parameter(node: &DefaultParameterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_default_parameter<N: DefaultParameterFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_typed_default_parameter(node: &TypedDefaultParameterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let type_ = &node.type_;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_typed_default_parameter<N: TypedDefaultParameterFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let type_ = node.type_();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_list_splat_pattern(node: &ListSplatPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let target = &node.target;
-    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_list_splat_pattern<N: ListSplatPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let target = node.target();
+    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_target", ::sittir_core::types::ItemIndex(0), w, |w| target.render(w))?;
-    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_target", ::sittir_core::types::ItemIndex(0), w, |w| target.render(w))?;
+    w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_dictionary_splat_pattern(node: &DictionarySplatPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let target = &node.target;
-    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_dictionary_splat_pattern<N: DictionarySplatPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let target = node.target();
+    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_target", ::sittir_core::types::ItemIndex(0), w, |w| target.render(w))?;
-    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_target", ::sittir_core::types::ItemIndex(0), w, |w| target.render(w))?;
+    w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_as_pattern(node: &AsPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alias = &node.alias;
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+fn render_as_pattern<N: AsPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alias = node.alias();
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
     w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
-    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
+    w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_not_operator(node: &NotOperatorNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let argument = &node.argument;
-    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_not_operator<N: NotOperatorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let argument = node.argument();
+    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("not")?;
     w.site_at(options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
-    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
+    w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_boolean_operator(node: &BooleanOperatorNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let operator = &node.operator;
-    let right = &node.right;
-    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+fn render_boolean_operator<N: BooleanOperatorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let operator = node.operator();
+    let right = node.right();
+    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_BEFORE);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
-    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(207), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_binary_operator(node: &BinaryOperatorNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let operator = &node.operator;
-    let right = &node.right;
-    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+fn render_binary_operator<N: BinaryOperatorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let operator = node.operator();
+    let right = node.right();
+    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_BEFORE);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
-    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_unary_operator(node: &UnaryOperatorNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let argument = &node.argument;
-    let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+fn render_unary_operator<N: UnaryOperatorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let argument = node.argument();
+    let operator = node.operator();
+    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
-    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
+    w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_comparison_operator(node: &ComparisonOperatorNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_comparison_operator<N: ComparisonOperatorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let comparators = ListView {
-        items: &node.comparators,
+        items: node.comparators(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.comparators_separator_space.unwrap_or(KindId::BLANK),
+        after: node.comparators_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_comparators"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_comparators"),
     };
-    let left = &node.left;
-    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    let left = node.left();
+    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     comparators.render(w)?;
-    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(212), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_lambda(node: &LambdaNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let parameters = View::new(&node.parameters, "{}");
-    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_lambda<N: LambdaFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let parameters = View::new(node.parameters(), "{}");
+    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("lambda")?;
     w.site_at(options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
     w.site_at(options::SITE_LAMBDA_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_LAMBDA_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let parameters = View::new(&node.parameters, "{}");
-    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_lambda_within_for_in_clause<N: LambdaWithinForInClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let parameters = View::new(node.parameters(), "{}");
+    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("lambda")?;
     w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_parameters", ::sittir_core::types::ItemIndex(0), w, |w| parameters.render(w))?;
     w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_augmented_assignment(node: &AugmentedAssignmentNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let operator = &node.operator;
-    let right = &node.right;
-    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+fn render_augmented_assignment<N: AugmentedAssignmentFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let operator = node.operator();
+    let right = node.right();
+    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_BEFORE);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
-    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_pattern_list(node: &PatternListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_pattern_list<N: PatternListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: ::sittir_core::view::SlotItems::count(&node.item()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_yield(node: &YieldNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = View::new(&node.content, "{}");
-    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_yield<N: YieldFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = View::new(node.content(), "{}");
+    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("yield")?;
     w.site_at(options::SITE_YIELD_YIELD_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    w.edge(::sittir_core::types::KindId(219), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_attribute(node: &AttributeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let attribute = &node.attribute;
-    let object = &node.object;
-    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
+fn render_attribute<N: AttributeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let attribute = node.attribute();
+    let object = node.object();
+    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_attribute", ::sittir_core::types::ItemIndex(0), w, |w| attribute.render(w))?;
-    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_attribute", ::sittir_core::types::ItemIndex(0), w, |w| attribute.render(w))?;
+    w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_subscript(node: &SubscriptNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let subscripts = &node.subscripts;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+fn render_subscript<N: SubscriptFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let subscripts = node.subscripts();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_subscripts", ::sittir_core::types::ItemIndex(0), w, |w| subscripts.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_subscripts", ::sittir_core::types::ItemIndex(0), w, |w| subscripts.render(w))?;
     w.site_at(options::SITE_SUBSCRIPT_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_slice(node: &SliceNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let start = View::new(&node.start, "{}");
-    let step = View::new(&node.step, "{}");
-    let stop = View::new(&node.stop, "{}");
-    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
+fn render_slice<N: SliceFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let start = View::new(node.start(), "{}");
+    let step = View::new(node.step(), "{}");
+    let stop = View::new(node.stop(), "{}");
+    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
     w.site_at(options::SITE_SLICE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_SLICE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_stop", ::sittir_core::types::ItemIndex(0), w, |w| stop.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_step", ::sittir_core::types::ItemIndex(0), w, |w| step.render(w))?;
-    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_stop", ::sittir_core::types::ItemIndex(0), w, |w| stop.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_step", ::sittir_core::types::ItemIndex(0), w, |w| step.render(w))?;
+    w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_call(node: &CallNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let arguments = &node.arguments;
-    let function = &node.function;
-    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_function", ::sittir_core::types::ItemIndex(0), w, |w| function.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
-    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::After, node.layout.edges().after);
+fn render_call<N: CallFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let arguments = node.arguments();
+    let function = node.function();
+    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_function", ::sittir_core::types::ItemIndex(0), w, |w| function.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_arguments", ::sittir_core::types::ItemIndex(0), w, |w| arguments.render(w))?;
+    w.edge(::sittir_core::types::KindId(223), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_typed_parameter(node: &TypedParameterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_typed_parameter<N: TypedParameterFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let type_ = node.type_();
+    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
-    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
+    w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_type(node: &TypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_type<N: TypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_splat_type(node: &SplatTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let operator = &node.operator;
-    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
+fn render_splat_type<N: SplatTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let operator = node.operator();
+    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_SPLAT_TYPE_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
-    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_generic_type(node: &GenericTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let type_parameter = &node.type_parameter;
-    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_parameter", ::sittir_core::types::ItemIndex(0), w, |w| type_parameter.render(w))?;
-    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, node.layout.edges().after);
+fn render_generic_type<N: GenericTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let type_parameter = node.type_parameter();
+    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_parameter", ::sittir_core::types::ItemIndex(0), w, |w| type_parameter.render(w))?;
+    w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_union_type(node: &UnionTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let right = &node.right;
-    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+fn render_union_type<N: UnionTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let right = node.right();
+    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_UNION_TYPE_PIPE_BEFORE);
     w.text("|")?;
     w.site_at(options::SITE_UNION_TYPE_PIPE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
-    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_constrained_type(node: &ConstrainedTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let base_type = &node.base_type;
-    let constraint = &node.constraint;
-    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_base_type", ::sittir_core::types::ItemIndex(0), w, |w| base_type.render(w))?;
+fn render_constrained_type<N: ConstrainedTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let base_type = node.base_type();
+    let constraint = node.constraint();
+    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_base_type", ::sittir_core::types::ItemIndex(0), w, |w| base_type.render(w))?;
     w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_constraint", ::sittir_core::types::ItemIndex(0), w, |w| constraint.render(w))?;
-    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_constraint", ::sittir_core::types::ItemIndex(0), w, |w| constraint.render(w))?;
+    w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_member_type(node: &MemberTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let base_type = &node.base_type;
-    let name = &node.name;
-    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_base_type", ::sittir_core::types::ItemIndex(0), w, |w| base_type.render(w))?;
+fn render_member_type<N: MemberTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let base_type = node.base_type();
+    let name = node.name();
+    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_base_type", ::sittir_core::types::ItemIndex(0), w, |w| base_type.render(w))?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
-    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_keyword_argument(node: &KeywordArgumentNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+fn render_keyword_argument<N: KeywordArgumentFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let name = node.name();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_list(node: &ListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let collection_elements = View::new(&node.collection_elements, "{}");
-    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_list<N: ListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let collection_elements = View::new(node.collection_elements(), "{}");
+    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_collection_elements", ::sittir_core::types::ItemIndex(0), w, |w| collection_elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_collection_elements", ::sittir_core::types::ItemIndex(0), w, |w| collection_elements.render(w))?;
     w.site_at(options::SITE_LIST_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_set(node: &SetNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let collection_elements = &node.collection_elements;
-    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_set<N: SetFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let collection_elements = node.collection_elements();
+    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_SET_LBRACE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_collection_elements", ::sittir_core::types::ItemIndex(0), w, |w| collection_elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_collection_elements", ::sittir_core::types::ItemIndex(0), w, |w| collection_elements.render(w))?;
     w.site_at(options::SITE_SET_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_tuple(node: &TupleNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_tuple<N: TupleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(node.elements(), "{}");
+    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_TUPLE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_dictionary(node: &DictionaryNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_dictionary<N: DictionaryFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(node.elements(), "{}");
+    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_DICTIONARY_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_pair(node: &PairNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let key = &node.key;
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_key", ::sittir_core::types::ItemIndex(0), w, |w| key.render(w))?;
+fn render_pair<N: PairFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let key = node.key();
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_key", ::sittir_core::types::ItemIndex(0), w, |w| key.render(w))?;
     w.site_at(options::SITE_PAIR_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_PAIR_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_list_comprehension(node: &ListComprehensionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let clauses = &node.clauses;
-    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_list_comprehension<N: ListComprehensionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let clauses = node.clauses();
+    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
     w.site_at(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_dictionary_comprehension(node: &DictionaryComprehensionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let clauses = &node.clauses;
-    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_dictionary_comprehension<N: DictionaryComprehensionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let clauses = node.clauses();
+    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_set_comprehension(node: &SetComprehensionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let clauses = &node.clauses;
-    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_set_comprehension<N: SetComprehensionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let clauses = node.clauses();
+    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_SET_COMPREHENSION_LBRACE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
     w.site_at(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_generator_expression(node: &GeneratorExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    let clauses = &node.clauses;
-    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_generator_expression<N: GeneratorExpressionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = node.body();
+    let clauses = node.clauses();
+    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_clauses", ::sittir_core::types::ItemIndex(0), w, |w| clauses.render(w))?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_parenthesized_expression(node: &ParenthesizedExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_parenthesized_expression<N: ParenthesizedExpressionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_collection_elements(node: &CollectionElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_collection_elements<N: CollectionElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_for_in_clause(node: &ForInClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let async_ = View::new(&node.async_, "async");
-    let comma = View::new(&node.comma, ",");
-    let left = &node.left;
+fn render_for_in_clause<N: ForInClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let async_ = View::new(node.async_(), "async");
+    let comma = View::new(node.comma(), ",");
+    let left = node.left();
     let right = ListView {
-        items: &node.right,
+        items: node.right(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.right_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.right_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.right_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.right_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_right"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_right"),
     };
-    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if async_.is_present() {
         async_.render(w)?;
         w.site_at(options::SITE_FOR_IN_CLAUSE_ASYNC_AFTER);
@@ -25950,7 +25950,7 @@ fn render_for_in_clause(node: &ForInClauseNode, w: &mut dyn ::sittir_core::rende
     w.site_at(options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_BEFORE);
     w.text("for")?;
     w.site_at(options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_BEFORE);
     w.text("in")?;
     w.site_at(options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_AFTER);
@@ -25959,61 +25959,61 @@ fn render_for_in_clause(node: &ForInClauseNode, w: &mut dyn ::sittir_core::rende
         w.site_at(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE);
         comma.render(w)?;
     }
-    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_if_clause(node: &IfClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_if_clause<N: IfClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let condition = node.condition();
+    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("if")?;
     w.site_at(options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
-    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
+    w.edge(::sittir_core::types::KindId(244), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_conditional_expression(node: &ConditionalExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alternative = &node.alternative;
-    let body = &node.body;
-    let condition = &node.condition;
-    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+fn render_conditional_expression<N: ConditionalExpressionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alternative = node.alternative();
+    let body = node.body();
+    let condition = node.condition();
+    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE);
     w.text("if")?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_BEFORE);
     w.text("else")?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_alternative", ::sittir_core::types::ItemIndex(0), w, |w| alternative.render(w))?;
-    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alternative", ::sittir_core::types::ItemIndex(0), w, |w| alternative.render(w))?;
+    w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_concatenated_string(node: &ConcatenatedStringNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_concatenated_string<N: ConcatenatedStringFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let string = ListView {
-        items: &node.string,
+        items: node.string(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.string_separator_space.unwrap_or(KindId::BLANK),
+        after: node.string_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_string"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_string"),
     };
-    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     string.render(w)?;
-    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(246), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_string(node: &StringNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_string<N: StringFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
-        items: &node.content,
+        items: node.content(),
         template: "{}",
         token: "",
         separators: None,
@@ -26023,21 +26023,21 @@ fn render_string(node: &StringNode, w: &mut dyn ::sittir_core::render::RenderSin
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_content"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_content"),
     };
-    let string_end = &node.string_end;
-    let string_start = &node.string_start;
-    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_string_start", ::sittir_core::types::ItemIndex(0), w, |w| string_start.render(w))?;
+    let string_end = node.string_end();
+    let string_start = node.string_start();
+    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_start", ::sittir_core::types::ItemIndex(0), w, |w| string_start.render(w))?;
     content.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_string_end", ::sittir_core::types::ItemIndex(0), w, |w| string_end.render(w))?;
-    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_end", ::sittir_core::types::ItemIndex(0), w, |w| string_end.render(w))?;
+    w.edge(::sittir_core::types::KindId(247), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_string_content(node: &StringContentNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_string_content<N: StringContentFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: &node.elements,
+        items: node.elements(),
         template: "{}",
         token: "",
         separators: None,
@@ -26047,37 +26047,37 @@ fn render_string_content(node: &StringContentNode, w: &mut dyn ::sittir_core::re
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
     elements.render(w)?;
     Ok(())
 }
 
-fn render_interpolation(node: &InterpolationNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let debug = View::new(&node.debug, "=");
-    let expression = &node.expression;
-    let format_specifier = View::new(&node.format_specifier, "{}");
-    let type_conversion = View::new(&node.type_conversion, "{}");
-    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_interpolation<N: InterpolationFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let debug = View::new(node.debug(), "=");
+    let expression = node.expression();
+    let format_specifier = View::new(node.format_specifier(), "{}");
+    let type_conversion = View::new(node.type_conversion(), "{}");
+    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_INTERPOLATION_LBRACE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     if debug.is_present() {
         w.site_at(options::SITE_INTERPOLATION_DEBUG_BEFORE);
         debug.render(w)?;
         w.site_at(options::SITE_INTERPOLATION_DEBUG_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_conversion", ::sittir_core::types::ItemIndex(0), w, |w| type_conversion.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_format_specifier", ::sittir_core::types::ItemIndex(0), w, |w| format_specifier.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_conversion", ::sittir_core::types::ItemIndex(0), w, |w| type_conversion.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_format_specifier", ::sittir_core::types::ItemIndex(0), w, |w| format_specifier.render(w))?;
     w.site_at(options::SITE_INTERPOLATION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_format_specifier(node: &FormatSpecifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_format_specifier<N: FormatSpecifierFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: &node.elements,
+        items: node.elements(),
         template: "{}",
         token: "",
         separators: None,
@@ -26087,825 +26087,825 @@ fn render_format_specifier(node: &FormatSpecifierNode, w: &mut dyn ::sittir_core
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
     };
-    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text(":")?;
     w.site_at(options::SITE_FORMAT_SPECIFIER_COLON_AFTER);
     elements.render(w)?;
-    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_type_conversion(t: &TypeConversionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_type_conversion<N: TypeConversionFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(t.text())
 }
 
-fn render_identifier(t: &IdentifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_identifier<N: IdentifierFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(t.text())
 }
 
-fn render_await(node: &AwaitNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_await<N: AwaitFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("await")?;
     w.site_at(options::SITE_AWAIT_AWAIT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    w.edge(::sittir_core::types::KindId(256), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_comment(node: &CommentNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_comment<N: CommentFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("#")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_simple_statements_elements(node: &SimpleStatementsElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_simple_statements_elements<N: SimpleStatementsElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ";",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_subjects(node: &SubjectsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_subjects<N: SubjectsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let subject = ListView {
-        items: &node.subject,
+        items: node.subject(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.subject_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.subject_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.subject_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.subject_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_subject"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_subject"),
     };
     subject.render(w)?;
     Ok(())
 }
 
-fn render_case_patterns(node: &CasePatternsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_case_patterns<N: CasePatternsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_with_clause_with_items(node: &WithClauseWithItemsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_with_clause_with_items<N: WithClauseWithItemsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_types(node: &TypesNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_types<N: TypesFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_argument_list_elements(node: &ArgumentListElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_argument_list_elements<N: ArgumentListElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_list_pattern_case_patterns<N: ListPatternCasePatternsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_dict_pattern_elements(node: &DictPatternElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_dict_pattern_elements<N: DictPatternElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_subscripts(node: &SubscriptsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_subscripts<N: SubscriptsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let subscript = ListView {
-        items: &node.subscript,
+        items: node.subscript(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.subscript_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.subscript_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.subscript_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.subscript_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_subscript"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_subscript"),
     };
     subscript.render(w)?;
     Ok(())
 }
 
-fn render_dictionary_elements(node: &DictionaryElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_dictionary_elements<N: DictionaryElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_slice_group(node: &SliceGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = View::new(&node.expression, "{}");
-    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_slice_group<N: SliceGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = View::new(node.expression(), "{}");
+    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text(":")?;
     w.site_at(options::SITE_SLICE_GROUP_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_format_specifier_text(t: &FormatSpecifierTextNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_format_specifier_text<N: FormatSpecifierTextFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(89));
-    w.text(&t.text)
+    w.text(t.text())
 }
 
-fn render_tuple_pattern_elements(node: &TuplePatternElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_tuple_pattern_elements<N: TuplePatternElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: ::sittir_core::view::SlotItems::count(&node.item()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_tuple_elements(node: &TupleElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_tuple_elements<N: TupleElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: ::sittir_core::view::SlotItems::count(&node.item()) == 1 || node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let alias = View::new(&node.alias, "{}");
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+fn render_except_clause_exception_as<N: ExceptClauseExceptionAsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alias = View::new(node.alias(), "{}");
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     if alias.is_present() {
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE);
         w.text("as")?;
         w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_alias", ::sittir_core::types::ItemIndex(0), w, |w| alias.render(w))?;
     }
-    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_case_tuple_pattern(node: &CaseTuplePatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_case_tuple_pattern<N: CaseTuplePatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(node.elements(), "{}");
+    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_case_list_pattern(node: &CaseListPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_case_list_pattern<N: CaseListPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = View::new(node.elements(), "{}");
+    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_print_arguments(node: &PrintArgumentsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_print_arguments<N: PrintArgumentsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_print_chevron_arguments(node: &PrintChevronArgumentsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_print_chevron_arguments<N: PrintChevronArgumentsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: true,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_print_statement_chevron(node: &PrintStatementChevronNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let chevron = &node.chevron;
-    let print_chevron_arguments = View::new(&node.print_chevron_arguments, "{}");
-    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_print_statement_chevron<N: PrintStatementChevronFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let chevron = node.chevron();
+    let print_chevron_arguments = View::new(node.print_chevron_arguments(), "{}");
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_chevron", ::sittir_core::types::ItemIndex(0), w, |w| chevron.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_print_chevron_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_chevron_arguments.render(w))?;
-    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_chevron", ::sittir_core::types::ItemIndex(0), w, |w| chevron.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_print_chevron_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_chevron_arguments.render(w))?;
+    w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_print_statement_plain(node: &PrintStatementPlainNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let print_arguments = &node.print_arguments;
-    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_print_statement_plain<N: PrintStatementPlainFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let print_arguments = node.print_arguments();
+    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("print")?;
     w.site_at(options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_print_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_arguments.render(w))?;
-    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_print_arguments", ::sittir_core::types::ItemIndex(0), w, |w| print_arguments.render(w))?;
+    w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_parenthesized_import_list(node: &ParenthesizedImportListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let import_list = &node.import_list;
-    w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_parenthesized_import_list<N: ParenthesizedImportListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let import_list = node.import_list();
+    w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_import_list", ::sittir_core::types::ItemIndex(0), w, |w| import_list.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_import_list", ::sittir_core::types::ItemIndex(0), w, |w| import_list.render(w))?;
     w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_comprehension_clauses(node: &ComprehensionClausesNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_comprehension_clauses<N: ComprehensionClausesFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
-        items: &node.content,
+        items: node.content(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.content_separator_space.unwrap_or(KindId::BLANK),
+        after: node.content_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_content"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_content"),
     };
     content.render(w)?;
     Ok(())
 }
 
-fn render_integer_hex(node: &IntegerHexNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    let prefix = &node.prefix;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+fn render_integer_hex<N: IntegerHexFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    let prefix = node.prefix();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_integer_octal(node: &IntegerOctalNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    let prefix = &node.prefix;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+fn render_integer_octal<N: IntegerOctalFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    let prefix = node.prefix();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_integer_binary(node: &IntegerBinaryNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    let prefix = &node.prefix;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
+fn render_integer_binary<N: IntegerBinaryFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    let prefix = node.prefix();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_prefix", ::sittir_core::types::ItemIndex(0), w, |w| prefix.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_integer_decimal_long(t: &IntegerDecimalLongNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_integer_decimal_long<N: IntegerDecimalLongFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(t.text())
 }
 
-fn render_integer_decimal_imaginary(t: &IntegerDecimalImaginaryNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_integer_decimal_imaginary<N: IntegerDecimalImaginaryFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(t.text())
 }
 
-fn render_integer_decimal_plain(t: &IntegerDecimalPlainNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_integer_decimal_plain<N: IntegerDecimalPlainFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(t.text())
 }
 
-fn render_float_point(node: &FloatPointNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let exponent = View::new(&node.exponent, "{}");
-    let fraction = View::new(&node.fraction, "{}");
-    let imaginary = View::new(&node.imaginary, "{}");
-    let integer = &node.integer;
-    let marker = View::new(&node.marker, "{}");
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
+fn render_float_point<N: FloatPointFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let exponent = View::new(node.exponent(), "{}");
+    let fraction = View::new(node.fraction(), "{}");
+    let imaginary = View::new(node.imaginary(), "{}");
+    let integer = node.integer();
+    let marker = View::new(node.marker(), "{}");
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     w.text(".")?;
     if fraction.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_fraction", ::sittir_core::types::ItemIndex(0), w, |w| fraction.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_fraction", ::sittir_core::types::ItemIndex(0), w, |w| fraction.render(w))?;
     }
     if marker.is_present() {
         if marker.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-            ::sittir_core::layout::render_unit(node.layout.as_deref(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
+            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
         }
         if exponent.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-            ::sittir_core::layout::render_unit(node.layout.as_deref(), "_exponent", ::sittir_core::types::ItemIndex(0), w, |w| exponent.render(w))?;
+            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exponent", ::sittir_core::types::ItemIndex(0), w, |w| exponent.render(w))?;
         }
     }
     if imaginary.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
     }
     Ok(())
 }
 
-fn render_float_leading_point(node: &FloatLeadingPointNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let exponent = View::new(&node.exponent, "{}");
-    let fraction = &node.fraction;
-    let imaginary = View::new(&node.imaginary, "{}");
-    let integer = View::new(&node.integer, "{}");
-    let marker = View::new(&node.marker, "{}");
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
+fn render_float_leading_point<N: FloatLeadingPointFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let exponent = View::new(node.exponent(), "{}");
+    let fraction = node.fraction();
+    let imaginary = View::new(node.imaginary(), "{}");
+    let integer = View::new(node.integer(), "{}");
+    let marker = View::new(node.marker(), "{}");
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
     if integer.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.text(".")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_fraction", ::sittir_core::types::ItemIndex(0), w, |w| fraction.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_fraction", ::sittir_core::types::ItemIndex(0), w, |w| fraction.render(w))?;
     if marker.is_present() {
         if marker.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-            ::sittir_core::layout::render_unit(node.layout.as_deref(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
+            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
         }
         if exponent.is_present() {
             w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-            ::sittir_core::layout::render_unit(node.layout.as_deref(), "_exponent", ::sittir_core::types::ItemIndex(0), w, |w| exponent.render(w))?;
+            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exponent", ::sittir_core::types::ItemIndex(0), w, |w| exponent.render(w))?;
         }
     }
     if imaginary.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
     }
     Ok(())
 }
 
-fn render_float_scientific(node: &FloatScientificNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let exponent = &node.exponent;
-    let imaginary = View::new(&node.imaginary, "{}");
-    let integer = &node.integer;
-    let marker = &node.marker;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
+fn render_float_scientific<N: FloatScientificFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let exponent = node.exponent();
+    let imaginary = View::new(node.imaginary(), "{}");
+    let integer = node.integer();
+    let marker = node.marker();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_integer", ::sittir_core::types::ItemIndex(0), w, |w| integer.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_marker", ::sittir_core::types::ItemIndex(0), w, |w| marker.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_exponent", ::sittir_core::types::ItemIndex(0), w, |w| exponent.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_exponent", ::sittir_core::types::ItemIndex(0), w, |w| exponent.render(w))?;
     if imaginary.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_imaginary", ::sittir_core::types::ItemIndex(0), w, |w| imaginary.render(w))?;
     }
     Ok(())
 }
 
-fn render_escape_sequence_unicode_fixed(node: &EscapeSequenceUnicodeFixedNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_escape_sequence_unicode_wide(node: &EscapeSequenceUnicodeWideNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_escape_sequence_unicode_wide<N: EscapeSequenceUnicodeWideFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_escape_sequence_hex(node: &EscapeSequenceHexNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_escape_sequence_hex<N: EscapeSequenceHexFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_escape_sequence_octal(node: &EscapeSequenceOctalNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_escape_sequence_octal<N: EscapeSequenceOctalFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_escape_sequence_line_break(node: &EscapeSequenceLineBreakNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_escape_sequence_line_break<N: EscapeSequenceLineBreakFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_escape_sequence_simple(node: &EscapeSequenceSimpleNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_escape_sequence_simple<N: EscapeSequenceSimpleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_escape_sequence_named(node: &EscapeSequenceNamedNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+fn render_escape_sequence_named<N: EscapeSequenceNamedFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_line_continuation_newline(t: &LineContinuationNewlineNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_line_continuation_newline<N: LineContinuationNewlineFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(106));
-    w.text(&t.text)
+    w.text(t.text())
 }
 
-fn render_simple_pattern_negative(node: &SimplePatternNegativeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let sign = View::new(&node.sign, "-");
-    let value = &node.value;
-    w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_simple_pattern_negative<N: SimplePatternNegativeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let sign = View::new(node.sign(), "-");
+    let value = node.value();
+    w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if sign.is_present() {
         sign.render(w)?;
         w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_except_clause_exception_list(node: &ExceptClauseExceptionListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_except_clause_exception_list<N: ExceptClauseExceptionListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let value = ListView {
-        items: &node.value,
+        items: node.value(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.value_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.value_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.value_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.value_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_value"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_value"),
     };
     value.render(w)?;
     Ok(())
 }
 
-fn render_except_clause_exception(node: &ExceptClauseExceptionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_except_clause_exception<N: ExceptClauseExceptionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_assignment_eq(node: &AssignmentEqNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let right = &node.right;
-    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+fn render_assignment_eq<N: AssignmentEqFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let right = node.right();
+    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
-    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_assignment_type(node: &AssignmentTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+fn render_assignment_type<N: AssignmentTypeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let type_ = node.type_();
+    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
-    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
+    w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_assignment_typed(node: &AssignmentTypedNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let right = &node.right;
-    let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+fn render_assignment_typed<N: AssignmentTypedFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let left = node.left();
+    let right = node.right();
+    let type_ = node.type_();
+    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
-    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_expression_statement_tuple(node: &ExpressionStatementTupleNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_expression_statement_tuple<N: ExpressionStatementTupleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_with_clause_bare(node: &WithClauseBareNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_with_clause_bare<N: WithClauseBareFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
-        items: &node.item,
+        items: node.item(),
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.item_separator_space_before().unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_item"),
     };
     item.render(w)?;
     Ok(())
 }
 
-fn render_with_clause_paren(node: &WithClauseParenNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let with_items = &node.with_items;
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_with_clause_paren<N: WithClauseParenFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let with_items = node.with_items();
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_with_items", ::sittir_core::types::ItemIndex(0), w, |w| with_items.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_with_items", ::sittir_core::types::ItemIndex(0), w, |w| with_items.render(w))?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_match_block_block(node: &MatchBlockBlockNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_match_block_block<N: MatchBlockBlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = ListView {
-        items: &node.alternative,
+        items: node.alternative(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.alternative_separator_space.unwrap_or(KindId::BLANK),
+        after: node.alternative_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_alternative"),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_alternative"),
     };
-    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.indent();
     w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
+    ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     alternative.render(w)?;
     if alternative.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.dedent(::sittir_core::layout_kinds::LayoutKinds::NONE);
-    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_match_block_empty(node: &MatchBlockEmptyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_match_block_empty<N: MatchBlockEmptyFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
     Ok(())
 }
 
-fn render_suite_inline(node: &SuiteInlineNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let elements = &node.elements;
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+fn render_suite_inline<N: SuiteInlineFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let elements = node.elements();
+    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
-    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_suite_block(node: &SuiteBlockNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let block = &node.block;
-    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_suite_block<N: SuiteBlockFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let block = node.block();
+    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.indent();
     w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_block", ::sittir_core::types::ItemIndex(0), w, |w| block.render(w))?;
-    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_block", ::sittir_core::types::ItemIndex(0), w, |w| block.render(w))?;
+    w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_suite_empty(node: &SuiteEmptyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_suite_empty<N: SuiteEmptyFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE);
     Ok(())
 }
 
-fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let operators = &node.operators;
-    let primary_expression = &node.primary_expression;
-    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operators", ::sittir_core::types::ItemIndex(0), w, |w| operators.render(w))?;
+fn render_comparison_operator_comparator<N: ComparisonOperatorComparatorFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let operators = node.operators();
+    let primary_expression = node.primary_expression();
+    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operators", ::sittir_core::types::ItemIndex(0), w, |w| operators.render(w))?;
     if operators.kind_in(&*w, &[::sittir_core::types::KindId(25), ::sittir_core::types::KindId(61)]) {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::SEPARATING);
     } else {
         w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_primary_expression", ::sittir_core::types::ItemIndex(0), w, |w| primary_expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_primary_expression", ::sittir_core::types::ItemIndex(0), w, |w| primary_expression.render(w))?;
+    w.edge(::sittir_core::types::KindId(297), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_yield_from_clause(node: &YieldFromClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = &node.expression;
-    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::Before, node.layout.edges().before);
+fn render_yield_from_clause<N: YieldFromClauseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let expression = node.expression();
+    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("from")?;
     w.site_at(options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::After, node.layout.edges().after);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    w.edge(::sittir_core::types::KindId(298), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
-fn render_string_start(t: &StringStartNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_string_start<N: StringStartFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(t.text())
 }
 
-fn render_string_fragment(t: &StringFragmentNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_string_fragment<N: StringFragmentFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(119));
-    w.text(&t.text)
+    w.text(t.text())
 }
 
-fn render_escape_interpolation(t: &EscapeInterpolationNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_escape_interpolation<N: EscapeInterpolationFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(120));
-    w.text(&t.text)
+    w.text(t.text())
 }
 
-fn render_string_end(t: &StringEndNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_string_end<N: StringEndFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(121));
-    w.text(&t.text)
+    w.text(t.text())
 }
 
-fn render_names(node: &NamesNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_names<N: NamesFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_as_pattern_target(node: &AsPatternTargetNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_as_pattern_target<N: AsPatternTargetFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_format_expression(node: &FormatExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+fn render_format_expression<N: FormatExpressionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = node.content();
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 

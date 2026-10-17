@@ -189,7 +189,8 @@ function extractStructBody(src: string, structName: string): string {
  * Returns the raw text from `{` to the matching `}` (inclusive).
  */
 function extractFnBody(src: string, fnName: string): string {
-	const start = src.indexOf(`fn ${fnName}(`);
+	const named = /^fn \w+/.exec(src.slice(src.indexOf(`fn ${fnName}`)))?.[0];
+	const start = named === `fn ${fnName}` ? src.indexOf(`fn ${fnName}`) : -1;
 	if (start === -1) return '';
 	const open = src.indexOf('{', start);
 	if (open === -1) return '';
@@ -255,8 +256,8 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_const_item');
 		expect(fnBody).not.toBe('');
-		expect(fnBody).toContain('let name = &node.name;');
-		expect(fnBody).not.toContain('View::new(&node.name');
+		expect(fnBody).toContain('let name = node.name();');
+		expect(fnBody).not.toContain('View::new(node.name()');
 		expect(fnBody).not.toContain('render_identifier');
 	});
 
@@ -264,8 +265,8 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_function_item');
 		expect(fnBody).not.toBe('');
-		expect(fnBody).toContain('let body = &node.body;');
-		expect(fnBody).not.toContain('View::new(&node.body');
+		expect(fnBody).toContain('let body = node.body();');
+		expect(fnBody).not.toContain('View::new(node.body()');
 		expect(fnBody).not.toContain('render_block');
 	});
 
@@ -278,7 +279,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		const src = await getRustTemplatesRs();
 		expect(extractStructBody(src, 'ReferenceTypeNode')).toContain('pub mutable: bool,');
 		expect(extractFnBody(src, 'render_reference_type')).toContain(
-			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierNode::MutableSpecifier), "{}");'
+			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable(), MutableSpecifierNode::MutableSpecifier), "{}");'
 		);
 		expect(src).not.toContain('::napi::ValueType::Boolean');
 	});
@@ -349,10 +350,10 @@ describe('render options on nodes', () => {
 
 	it('the list view is built from the node fields and never from a separator literal', async () => {
 		const src = await getTypescriptNodeRs();
-		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
+		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements<'));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(view).toContain('before: node.item_separator_space_before.unwrap_or(KindId::BLANK),');
-		expect(view).toContain('after: node.item_separator_space_after.unwrap_or(KindId::BLANK),');
+		expect(view).toContain('before: node.item_separator_space_before().unwrap_or(KindId::BLANK),');
+		expect(view).toContain('after: node.item_separator_space_after().unwrap_or(KindId::BLANK),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
@@ -365,10 +366,10 @@ describe('render options on nodes', () => {
 		expect(body).not.toMatch(/pub \w+_(start|end): Option<KindId>,/);
 		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsNode {'));
 		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).not.toContain('lparen_after');
-		const fn = src.slice(src.indexOf('fn render_arguments('));
+		const fn = src.slice(src.indexOf('fn render_arguments<'));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).toMatch(
-			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.layout\.edges\(\)\.before\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/
+			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges\(node\.layout\(\)\)\.before\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/
 		);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionNode');
@@ -412,9 +413,9 @@ describe('render options on nodes', () => {
 		}
 		expect(src).not.toMatch(/pub (arguments|statement_block)_(before|after): Option<KindId>,/);
 		expect(src).not.toContain('self.statement_block_before.get_or_insert');
-		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
+		const blockFn = src.slice(src.indexOf('fn render_statement_block<'));
 		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(
-			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.layout\.edges\(\)\.before\);/
+			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges\(node\.layout\(\)\)\.before\);/
 		);
 		expect(src).toContain('.with_sources(ctx.sources).with_options(ctx.options)');
 		expect(src).not.toMatch(/t\.\w+_after\.get_or_insert/);
@@ -459,7 +460,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(nodeRs).not.toContain('mark_adjacent');
 		expect(nodeRs).toContain('impl ::sittir_core::render::Render for FunctionItemNode {');
 		expect(nodeRs).toContain(
-			'fn render_function_item(node: &FunctionItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
+			'fn render_function_item<N: FunctionItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
 		);
 		expect(nodeRs).toContain(
 			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
@@ -467,6 +468,29 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
 		);
+	});
+
+	it("renders each struct through a body generic over the node's fields trait", async () => {
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).toMatch(/#\[node\(kind = kind::FUNCTION_ITEM[^\n]*, fields = FunctionItemFields\)\]\npub struct FunctionItemNode \{/);
+		const from = nodeRs.indexOf('fn render_function_item<N: FunctionItemFields + ?Sized>(node: &N,');
+		expect(from).toBeGreaterThan(-1);
+		const body = nodeRs.slice(from, nodeRs.indexOf('\n}\n', from));
+		expect(body).toContain('let parameters = node.parameters();');
+		expect(body).toContain('let return_type = View::new(node.return_type(), ');
+		expect(body).toContain(
+			'::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;'
+		);
+		expect(body).toContain('::sittir_core::layout::BodyLayout::edges(node.layout()).before);');
+		const generic = [...nodeRs.matchAll(/^fn render_\w+<N: \w+Fields \+ \?Sized>\((node|t): &N,[^]*?\n\}\n/gm)].map((m) => m[0]);
+		expect(generic.length).toBeGreaterThan(100);
+		for (const fn of generic) {
+			expect(fn).not.toMatch(/&(node|t)\.\w+(?!\w*\()/);
+			expect(fn).not.toMatch(/\b(node|t)\.\w+(?!\w*\()/);
+		}
+		expect(nodeRs).toContain('fn render_identifier<N: IdentifierFields + ?Sized>(t: &N,');
+		const leaf = nodeRs.indexOf('impl ::sittir_core::render::Render for IdentifierNode {');
+		expect(nodeRs.slice(leaf, nodeRs.indexOf('\n}\n', leaf))).toContain('render_identifier(self, w)');
 	});
 
 	it('carries every slot as Coord or Node and never a bare string', async () => {
@@ -562,10 +586,10 @@ describe('the typed sink replaces the mark-based Display path', () => {
 	it('binds a list view over site ids and writes a seam site as a call', async () => {
 		const nodeRs = await getRustTemplatesRs();
 		const block = nodeRs.slice(
-			nodeRs.indexOf('fn render_block('),
-			nodeRs.indexOf('fn render_block(') + 2000
+			nodeRs.indexOf('fn render_block<'),
+			nodeRs.indexOf('fn render_block<') + 2000
 		);
-		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(KindId::BLANK\),/);
+		expect(block).toMatch(/after: node\.statements_separator_space\(\)\.unwrap_or\(KindId::BLANK\),/);
 		expect(block).toMatch(/w\.site_at\(options::SITE_\w+_LBRACE_AFTER\);/);
 		expect(block).toContain('w.text("{")?;');
 		expect(block).toContain('statements.render(w)?;');
@@ -714,7 +738,7 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemNode \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42, fields = FunctionItemFields\)\]\npub struct FunctionItemNode \{/
 		);
 		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);

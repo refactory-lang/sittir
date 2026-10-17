@@ -228,7 +228,7 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
 		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
 		expect(emitted.nodeRs.contents).not.toContain("Template<'a> {");
-		expect(emitted.nodeRs.contents).toContain('let name = &node.name;');
+		expect(emitted.nodeRs.contents).toContain('let name = node.name();');
 		expect(emitted.nodeRs.contents).not.toContain("    pub text: &'a str,");
 		expect(emitted.nodeRs.contents).not.toContain("    pub variant: &'a str,");
 		expect(emitted.nodeRs.contents).not.toContain("    pub children: ListView<'a>,");
@@ -261,8 +261,8 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			repeated.generatedIdTables
 		).nodeRs.contents;
 
-		expect(requiredRs).toContain('let identifier = &node.identifier;');
-		expect(optionalRs).toContain('let identifier = View::new(&node.identifier, "{}");');
+		expect(requiredRs).toContain('let identifier = node.identifier();');
+		expect(optionalRs).toContain('let identifier = View::new(node.identifier(), "{}");');
 		expect(optionalRs).toContain('optional_child_parent');
 		expect(repeatedRs).toContain('let identifier = ListView {');
 	});
@@ -281,7 +281,7 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			generatedIdTables
 		);
 
-		expect(emitted.nodeRs.contents).toContain('let kw_j = &node.kw_j;');
+		expect(emitted.nodeRs.contents).toContain('let kw_j = node.kw_j();');
 		expect(emitted.nodeRs.contents).not.toContain('let kw_j = ListView {');
 		assertRustRenderRuntimeBehavior();
 	}, 20_000);
@@ -297,11 +297,11 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			nodeMap,
 			generatedIdTables
 		);
-		const renderStart = emitted.nodeRs.contents.indexOf('fn render_expression(');
+		const renderStart = emitted.nodeRs.contents.indexOf('fn render_expression<');
 		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.nodeRs.contents.slice(renderStart, renderEnd);
 
-		expect(renderBody).toContain('let content = &node.content;');
+		expect(renderBody).toContain('let content = node.content();');
 		expect(renderBody).not.toContain('let content = ListView {');
 	});
 
@@ -313,7 +313,7 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			nodeMap,
 			generatedIdTables
 		);
-		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent<');
 		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.nodeRs.contents.slice(renderStart, renderEnd);
 
@@ -321,7 +321,7 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		// The slot may hold no item (its fixture name says "optional"), and an
 		// empty list is `[]`: the field is a bare `Vec`, borrowed as the items.
 		expect(emitted.nodeRs.contents).toMatch(/pub identifier: Vec</);
-		expect(renderBody).toContain('items: &node.identifier,');
+		expect(renderBody).toContain('items: node.identifier(),');
 	});
 
 	it('keeps fallback repeated unnamed children on direct Vec-backed node views', () => {
@@ -348,9 +348,9 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		);
 		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
 
-		expect(emitted.nodeRs.contents).toContain('fn render_expression(');
-		expect(emitted.nodeRs.contents).not.toContain('fn render_expression__form_identifier(');
-		expect(emitted.nodeRs.contents).not.toContain('fn render_expression__form_integer(');
+		expect(emitted.nodeRs.contents).toContain('fn render_expression<');
+		expect(emitted.nodeRs.contents).not.toContain('fn render_expression__form_identifier');
+		expect(emitted.nodeRs.contents).not.toContain('fn render_expression__form_integer');
 		expect(source).not.toContain('function renderTypedPolymorphFn(');
 		expect(source).not.toContain('function renderTypedFormFn(');
 	});
@@ -411,7 +411,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted).not.toHaveProperty('bridgeRs');
 		expect(emitted).not.toHaveProperty('dispatchRs');
 		// node.rs is the only render path — emits per-kind render functions.
-		expect(emitted.nodeRs.contents).toContain('fn render_function_item(');
+		expect(emitted.nodeRs.contents).toContain('fn render_function_item<');
 		expect(emitted.nodeRs.contents).not.toContain('TemplateContext');
 		expect(emitted.nodeRs.contents).not.toContain('pub struct RustGrammarMeta');
 		// mod.rs re-exports from node only (bridge/dispatch retired).

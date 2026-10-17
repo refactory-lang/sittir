@@ -2922,7 +2922,9 @@ written in declaration order through `buildSlotWriteCall`, with the class
 `slotClassOfShape` gives the slot's shape, or, when there are no slots, the
 node's captured text. A list slot is a `Vec` or a `NonEmptyVec`, never
 optional, so its items are iterated directly; a single slot that may be
-absent is an `Option`.
+absent is an `Option`. It reads the struct's fields directly rather than its
+fields trait, so a kind rendered this way has no body a record's view can
+share; no grammar emits one.
 
 ### `packages/codegen/src/emitters/render-module.ts::literalWrite`
 
@@ -2934,9 +2936,9 @@ identity (`isDepthText`) moves the writer's depth (`w.indent()`/
 `w.dedent()`, never a written byte); a whitespace-only value is a token
 seam (`w.token_seam(valueExpr)` — coalesces with the seams around it but,
 unlike a seam, is never dropped, since it is a token the source holds);
-anything else writes `valueExpr` as plain text. `leafTextWrite` (a leaf
-node's own `text`, shared by the typed render function and the
-node's `Render`) and every fixed literal's render function
+anything else writes `valueExpr` as plain text. `leafTextWrite` (a leaf's
+`text()`, which its typed render function writes and its node's `Render`
+calls) and every fixed literal's render function
 (`renderFixedLiteralFn`, which every unit arm calls) go through this, so a
 newline terminator renders the same whether it arrived as a kind id or as a
 node.
@@ -2962,22 +2964,20 @@ The dedent arm hands the sink the break it should merge (`w.dedent("\n")`), so t
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedLeafFn`
 
-The render function for a pattern, token or enum kind: an enum node
-writes through its own `Render`, every other leaf writes `t.text` through
-`leafTextWrite`, after the leaf's edge call (`leafEdgesCall`).
+The render function for a pattern, token or enum kind. An enum node writes
+through its own `Render` (`fn render_<kind>(t: &<Kind>Enum, w)`). Every other
+leaf is generic over its fields trait (`rustNodeFieldsTraitName`),
+`fn render_<kind><N: <Kind>Fields + ?Sized>(t: &N, w)`, and writes `t.text()`
+through `leafTextWrite` after the leaf's edge call (`leafEdgesCall`). The
+leaf's own `Render` calls it, so the native node and a record's view of it
+render through one body.
 
 ### `packages/codegen/src/emitters/render-module.ts::isImmediateLeaf`
 
-A leaf declared immediate in the grammar. The single predicate both the
-typed render function and the leaf's own `Render` impl read, so a leaf
-rendered as a child and a leaf rendered through its own `Render` agree on
-whether adjacency is marked.
-
-### `packages/codegen/src/emitters/render-module.ts::leafRenderExpr`
-
-The leaf's own `Render` body: its text write, preceded by its edge call. A
-fragment following an escape sequence inside a string is kept from the
-word-hazard space by that call.
+A leaf declared immediate in the grammar, the predicate its typed render
+function's edge call reads (`leafEdgesCall`). The leaf's own `Render` calls
+that function, so a leaf rendered as a child and one rendered through its own
+`Render` agree on whether adjacency is marked.
 
 ### `packages/codegen/src/emitters/render-module.ts::leafEdgesCall`
 
@@ -2991,9 +2991,12 @@ leading trivia seam normally before the edge applies to the leaf's own text.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFn`
 
-The one render function for a kind with a body:
-`fn render_<kind>(node: &<Kind>Node, w: &mut dyn RenderSink) -> RenderResult`,
-whose statements `buildTypedTemplateBody` produces. The node-wide fallback
+The one render function for a kind with a body, generic over the kind's
+fields trait (`rustNodeFieldsTraitName`):
+`fn render_<kind><N: <Kind>Fields + ?Sized>(node: &N, w: &mut dyn RenderSink) -> RenderResult`,
+whose statements `buildTypedTemplateBody` produces. Its node reads every
+slot, its layout and its list facts through the trait's accessors, so one
+function renders the native node and a record's view of it. The node-wide fallback
 separator comes from `MetaData.separators` for list slots whose values
 carry no per-slot separator stamp.
 
@@ -3004,8 +3007,8 @@ separator kinds by: `|kind| match kind { <id> => "<text>", ..., _ => <fallback> 
 one arm per candidate kind (`separatorCandidateKindNames`, the arms the
 wire capture reads), so the render never stores separator text and only
 spells a kind. The list's view binds it once (`<slot>_separator`) and both
-its default token (`node.separator_kind`) and each item's own separator
-(`ListView::separators`, `layout::slot_tokens`) read it. `undefined` when no
+its default token (`node.separator_kind()`) and each item's own separator
+(`ListView::separators`, `BodyLayout::slot_tokens`) read it. `undefined` when no
 candidate has a kind id, and the plain literal is the token.
 
 When the plan holds a separator site for the list, the `_ =>` fallback is
@@ -3017,35 +3020,38 @@ the template's own separator literal: the prepare walk has already set
 
 The statements of a kind's render function: one local per slot the body
 names, then the body printed by `printRustBody`.
-The locals are the views; the body's sink calls reference them by name. A
-seam is not bound as a local at all: `printRustBody` prints it directly as
-`w.site(node.<field>.unwrap_or(0))`, resolved through the field's own
-`Option<u16>`; a body naming a seam the node has no spacing site for
-is an error, like a slot naming a field the node doesn't have.
+The locals are the views; the body's sink calls reference them by name.
+Every read goes through the node's fields trait: a slot's accessor
+(`node.x()`), its layout (`node.layout()`, read through `BodyLayout`) and
+its list facts (`node.delimiter()`, `node.separator_kind()`, a spacing
+site's `node.<site>()`). A seam is not bound as a local at all:
+`printRustBody` prints it directly as a site call; a body naming a seam the
+node has no spacing site for is an error, like a slot naming a field the
+node doesn't have.
 
-A required slot with a node field is a plain reference
-(`let name = &node.name;`), since `SlotValue` is `Render` on its own.
-Every other slot is a view built from the node's field and the slot's
+A required slot with a node field is its accessor's value
+(`let name = node.name();`), since a child is `Render` on its own.
+Every other slot is a view built from the slot's accessor and the slot's
 template, `templateOf(struct.flanks.get(name))`:
 
-- optional native node slot: `View::new(&node.x, "->{}")`;
-- optional slot backed by a hoisted helper: `View::new(<lookup>, …)` where
-  the lookup is the direct field or the helper's inner field, as an
-  `Option<&SlotValue>`;
-- presence (the slot's `nodeSlotShapeOf`): `View::new(&node.x, "<keyword>")`,
+- optional native node slot: `View::new(node.x(), "->{}")`;
+- an optional slot the surface reads through a hoisted helper's inner field
+  (`backingNodeField`) is refused: a body over the node's fields trait
+  cannot reach a child's fields;
+- presence (the slot's `nodeSlotShapeOf`): `View::new(node.x(), "<keyword>")`,
   the keyword being the presence's text with the slot's flanks around it and
   no placeholder, so it is written whole when the flag is set; a presence
-  that names its kind is `View::new(Presence::new(node.x, <Kind>Node::<Variant>), "{}")`
+  that names its kind is `View::new(Presence::new(node.x(), <Kind>Node::<Variant>), "{}")`
   instead, so the keyword renders through its kind's render function (a
   named kind seats held trivia, a line-terminated one ends its line);
 - text: a plain reference when required, a view when optional;
-- list: a `ListView` literal with `items` borrowed from the node
-  (`&node.x`, a list field being never optional, or `NO_ITEMS` when
+- list: a `ListView` literal with `items` from the slot's accessor
+  (`node.x()`, a list field being never optional, or `NO_ITEMS` when
   the node has no field), the template, the separator token or the
   `separator_kind` match, `before`/`after`/`head`/`tail` from the node's
   stamped spacing sites, `leading`/`trailing` from the list's delimiter
   facts, and `units`, the node's layout under the slot's wire key
-  (`layout::list_units`), which frames each unit item by its sides.
+  (`BodyLayout::list_units`), which frames each unit item by its sides.
 
 `variant` binds when the body names it. A body that names a
 slot the node has no field for is a codegen error raised here, with
@@ -3840,6 +3846,12 @@ The native node type a slot's concrete kind is held as: `rustNodeStructName` of 
 // Field names are typically snake_case / lowercase (e.g. `body`, `type_arguments`).
 // PascalCase them so the resulting enum name reads correctly.
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::rustNodeFieldsTraitName`
+
+The name of a kind's fields trait, `<Kind>Fields`: the one spelling codegen
+stamps on the struct (`#[node(fields = …)]`, from which the derive emits the
+trait and the struct's impl of it) and bounds the kind's render function by.
 
 ### `packages/codegen/src/emitters/render-module.ts::rustNodeStructName`
 
@@ -4945,21 +4957,21 @@ had text written — false cancels an empty body's payload along with its
 own, so `{}` stays bare rather than gaining a stray blank line.
 
 Inner trivia prints at its gap: before a `slot` the printer's `innerGap`
-names, `trivia::render_inner(node.layout.trivia(), "<slot>", w)`. A
+names, `BodyLayout::render_inner(node.layout(), w)`. A
 slot under a presence gate gets it before the `if` instead, since a node
 holding inner trivia has no named child, so the gated slot is empty and its
 arm never runs. `seatedGaps` carries the gaps already printed into nested
 arms, so a gap prints once.
 
 A slot that can hold a unit (`RustBodyPrinter.unitSlot`) prints through
-`layout::render_unit(node.layout.as_deref(), "<key>", 0, w, |w| <slot>.render(w))`.
+`BodyLayout::render_unit(node.layout(), "<key>", 0, w, |w| <slot>.render(w))`.
 
 ### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.unitSlot`
 
 The wire key (`slotWireKey`) of a slot that can hold a unit, a kind its
 slot stores bare and that so carries no layout of its own; `undefined` for a
 list, a presence, or a slot with no node field. `printStatements`
-writes such a slot through `layout::render_unit`, which frames the value by
+writes such a slot through `BodyLayout::render_unit`, which frames the value by
 the sides the node's layout holds for item 0 of that slot
 (`NodeLayout::units`). A list's items are framed by its `ListView`'s
 `units`.
@@ -7208,9 +7220,9 @@ other; `elementKinds` stays the kinds the items admit.
 	 * field `value`), this field names the HELPER's node struct field
 	 * (e.g. `const_item_optional1`) that must be matched at render time.
 	 *
-	 * When set, the render fn looks the value up through the backing helper
-	 * field and then its inner field (`h.<name>`), as an `Option<&SlotValue>`
-	 * the view is built from.
+	 * When set, the kind's render body refuses the slot: a body generic
+	 * over the node's fields trait reads its own fields and cannot reach the
+	 * helper's inner field (`buildTypedTemplateBody`).
 	 */
 ```
 
@@ -12925,6 +12937,12 @@ leaf. The fields that are not slots (a list's `delimiter` and
 `separator_kind`, a spacing site's per-node value) are layout and take no
 cell.
 
+`#[node(…)]` also names the struct's fields trait (`fields = <Kind>Fields`,
+`rustNodeFieldsTraitName`), which the derive emits and the kind's render
+function is generic over. The struct's `Render` calls that function, for a
+leaf as for a compound, so the node renders through the body a record's view
+shares.
+
 #### body
 
 ```text
@@ -14184,8 +14202,9 @@ enums, `VerbatimNode`): `Ok(())`. It reads a coordinate (`READ_COORDINATE`).
 
 ```text
 /** The node expressions a list view reads its `before`, `after`, `head`
- *  and `tail` from: the node's own separator and flank fields for that slot,
- *  never a token seam site; absent means the view writes nothing there. */
+ *  and `tail` from: the accessors of the node's own separator and flank
+ *  fields for that slot (`node.<site>()`), never a token seam site; absent
+ *  means the view writes nothing there. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`

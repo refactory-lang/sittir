@@ -638,7 +638,7 @@ function printStatements(
 		if (seated.has(name) || printer.innerGap?.(name) !== true) return;
 		seated.add(name);
 		lines.push(
-			`${pad}::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;`
+			`${pad}::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;`
 		);
 	};
 	let literal = '';
@@ -690,7 +690,7 @@ function printStatements(
 				lines.push(
 					unit === undefined
 						? `${pad}${printer.field(node.name)}.render(w)?;`
-						: `${pad}::sittir_core::layout::render_unit(node.layout.as_deref(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${printer.field(node.name)}.render(w))?;`
+						: `${pad}::sittir_core::layout::BodyLayout::render_unit(node.layout(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${printer.field(node.name)}.render(w))?;`
 				);
 				break;
 			}
@@ -699,7 +699,7 @@ function printStatements(
 				const edge = printer.edge?.(node.field);
 				if (edge !== undefined) {
 					const side = edge.side === 'before' ? 'Before' : 'After';
-					lines.push(`${pad}w.edge(::sittir_core::types::KindId(${edge.kindId}), ::sittir_core::options::Side::${side}, node.layout.edges().${edge.side});`);
+					lines.push(`${pad}w.edge(::sittir_core::types::KindId(${edge.kindId}), ::sittir_core::options::Side::${side}, ::sittir_core::layout::BodyLayout::edges(node.layout()).${edge.side});`);
 				} else {
 					lines.push(`${pad}w.site_at(${printer.site(node.field)});`);
 				}
@@ -745,7 +745,7 @@ function printStatements(
 					const test =
 						arm.kinds === undefined
 							? arm.test === paddedGap
-								? `${printer.field(arm.test)}.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia())`
+								? `${printer.field(arm.test)}.is_present() || ::sittir_core::layout::BodyLayout::has_inner(node.layout())`
 								: `${printer.field(arm.test)}.is_present()`
 							: `${printer.field(arm.test)}.kind_in(&*w, ${printer.kinds(arm.kinds)})`;
 					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${test} {`);

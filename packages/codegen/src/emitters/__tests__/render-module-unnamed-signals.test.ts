@@ -83,7 +83,7 @@ describe('render-module unnamed structural signals', () => {
 		expect(parent.slots[0]!.values.every((value) => value.multiplicity === 'nonEmptyArray')).toBe(true);
 		expect(emitted).toContain('pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<MixedParentContentNodeSlot>>,');
 		expect(emitted).toContain('let identifier = ListView {');
-		expect(emitted).toContain('items: &node.content,');
+		expect(emitted).toContain('items: node.content(),');
 		expect(emitted).not.toContain('items: NO_ITEMS,');
 	});
 

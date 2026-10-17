@@ -778,7 +778,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 }
 
 function leafTextWrite(node: AssembledNode, on: string): string {
-	return literalWrite(`&${on}.text`, fixedTextOfKind(node));
+	return literalWrite(`${on}.text()`, fixedTextOfKind(node));
 }
 
 function isImmediateLeaf(node: AssembledNode): boolean {
@@ -792,19 +792,14 @@ function leafEdgesCall(node: AssembledNode, nodeMap: NodeMap, kindId: number | u
 	return undefined;
 }
 
-function leafRenderExpr(node: AssembledNode, on: string, nodeMap: NodeMap, kindId: number | undefined): string {
-	const write = leafTextWrite(node, on);
-	const edges = leafEdgesCall(node, nodeMap, kindId);
-	return edges === undefined ? write : `{ ${edges} ${write} }`;
-}
-
 function renderTypedLeafFn(node: AssembledNode, nodeMap: NodeMap, kindId: number | undefined): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustNodeStructName(node);
 	const body = node instanceof AssembledEnum ? `t.render(w)` : leafTextWrite(node, 't');
 	const edges = leafEdgesCall(node, nodeMap, kindId);
+	const params = node instanceof AssembledEnum ? `t: &${typeName}` : `<N: ${rustNodeFieldsTraitName(node)} + ?Sized>(t: &N`;
 	return [
-		`fn ${fnName}(t: &${typeName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+		`fn ${fnName}${node instanceof AssembledEnum ? `(${params}` : params}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		...(edges === undefined ? [] : [`    ${edges}`]),
 		`    ${body}`,
 		`}`,
@@ -821,7 +816,7 @@ function renderTypedBranchFn(
 	plan: RenderPlan
 ): string[] {
 	return [
-		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustNodeStructName(node)}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+		`fn ${rustTypedRenderFnName(node.typeName)}<N: ${rustNodeFieldsTraitName(node)} + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		...buildTypedTemplateBody(
 			struct,
 			meta.separators.get(node.kind) ?? '',
@@ -884,36 +879,36 @@ function buildTypedTemplateBody(
 		if (shape?.tag === 'presence') {
 			if (shape.kind !== undefined) {
 				const unit = `${rustNodeStructName(shape.kind)}::${rustNodeVariantName(shape.kind)}`;
-				bind(ident, `View::new(::sittir_core::view::Presence::new(node.${rIdent}, ${unit}), ${template})`);
+				bind(ident, `View::new(::sittir_core::view::Presence::new(node.${rIdent}(), ${unit}), ${template})`);
 				continue;
 			}
 			const keyword = `${flanks?.prefix ?? ''}${shape.text}${flanks?.suffix ?? ''}`;
-			bind(ident, `View::new(&node.${rIdent}, ${rustStringLiteral(escapeBraces(keyword))})`);
+			bind(ident, `View::new(node.${rIdent}(), ${rustStringLiteral(escapeBraces(keyword))})`);
 			continue;
 		}
 		if (shape?.tag === 'text') {
-			if (f.required) bind(ident, `&node.${rIdent}`);
-			else bind(ident, `View::new(&node.${rIdent}, ${template})`);
+			if (f.required) bind(ident, `node.${rIdent}()`);
+			else bind(ident, `View::new(node.${rIdent}(), ${template})`);
 			continue;
 		}
 		if (f.view === 'list' || f.multiple) {
-			const items = f.hasNodeField ? `&node.${rIdent}` : 'NO_ITEMS';
+			const items = f.hasNodeField ? `node.${rIdent}()` : 'NO_ITEMS';
 			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
 			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
 				separatedList?.leadingDelimiter === 'optional'
-					? 'node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING))'
+					? 'node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING))'
 					: separatedList?.leadingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
 			const trailingOption =
 				separatedList?.trailingDelimiter === 'optional'
-					? 'node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING))'
+					? 'node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING))'
 					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
 			const trailingExpr = separatedList?.singleElementNeedsTrailing
-				? `${f.hasNodeField ? `node.${rIdent}` : 'NO_ITEMS'}.len() == 1 || ${trailingOption}`
+				? `::sittir_core::view::SlotItems::count(&${f.hasNodeField ? `node.${rIdent}()` : 'NO_ITEMS'}) == 1 || ${trailingOption}`
 				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
@@ -931,8 +926,8 @@ function buildTypedTemplateBody(
 			lines.push(`        items: ${items},`);
 			lines.push(`        template: ${template},`);
 			if (separatorText !== undefined) {
-				lines.push(`        token: node.separator_kind.map_or(${fallback}, ${ident}_separator),`);
-				lines.push(`        separators: Some((::sittir_core::layout::slot_tokens(node.layout.as_deref(), ${wireKey}), ${ident}_separator)),`);
+				lines.push(`        token: node.separator_kind().map_or(${fallback}, ${ident}_separator),`);
+				lines.push(`        separators: Some((::sittir_core::layout::BodyLayout::slot_tokens(node.layout(), ${wireKey}), ${ident}_separator)),`);
 			} else {
 				lines.push(`        token: ${fieldSepLiteral},`);
 				lines.push(`        separators: None,`);
@@ -944,27 +939,23 @@ function buildTypedTemplateBody(
 			lines.push(`        head: ${spacing.head ?? 'None'},`);
 			lines.push(`        tail: ${spacing.tail ?? 'None'},`);
 			lines.push(
-				`        units: ${f.hasNodeField ? `::sittir_core::layout::list_units(node.layout.as_deref(), ${wireKey})` : 'None'},`
+				`        units: ${f.hasNodeField ? `::sittir_core::layout::BodyLayout::list_units(node.layout(), ${wireKey})` : 'None'},`
 			);
 			lines.push(`    };`);
 			continue;
 		}
 		if (f.required) {
-			bind(ident, f.hasNodeField ? `&node.${rIdent}` : '""');
+			bind(ident, f.hasNodeField ? `node.${rIdent}()` : '""');
 			continue;
 		}
 		if (f.backingNodeField) {
-			const backing = `node.${rustFieldIdent(f.backingNodeField)}.as_ref().and_then(|h| h.node())`;
-			const inner = f.backingInnerRequired ? `.map(|h| &h.${ident})` : `.and_then(|h| h.${ident}.as_ref())`;
-			const value = f.backingDirectField
-				? `node.${rustFieldIdent(f.backingDirectField)}.as_ref().or_else(|| ${backing}${inner})`
-				: `${backing}${inner}`;
-			bind(ident, `View::new(${value}, ${template})`);
-			continue;
+			throw new Error(
+				`render body for '${struct.kind}' reads slot '${f.name}' through its hidden helper '${f.backingNodeField}', which a body over the node's fields trait cannot reach`
+			);
 		}
 		bind(
 			ident,
-			f.hasNodeField ? `View::new(&node.${rIdent}, ${template})` : `View::new(None::<&str>, ${template})`
+			f.hasNodeField ? `View::new(node.${rIdent}(), ${template})` : `View::new(None::<&str>, ${template})`
 		);
 	}
 
@@ -2755,7 +2746,7 @@ function spacingFieldExprs(
 	if (node === undefined) return {};
 	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
 	const expr = (site: SpacingSite | undefined): string | undefined =>
-		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
+		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}()`;
 	const flank = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `Some(options::${site.constName})`;
 	return {
@@ -3202,7 +3193,7 @@ function renderNodeDataStruct(
 	);
 	read.records.set(structName, layout);
 	const placeOf = new Map(layout.places.map((place) => [place.field, place]));
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}`, 'struct', structName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}`, 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3235,7 +3226,7 @@ function renderNodeDataStruct(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	const body = isLeafNode ? leafRenderExpr(node, 'self', nodeMap, ownId) : `${rustTypedRenderFnName(node.typeName)}(self, w)`;
+	const body = `${rustTypedRenderFnName(node.typeName)}(self, w)`;
 	const owner = !isLeafNode || ownsTrivia(kindEntries, node.kind);
 	lines.push(`        ${layoutRenderCall('self.layout.as_deref()', ownKind, owner, body)}`);
 	lines.push(`    }`);
@@ -3674,6 +3665,10 @@ function perSlotEnumName(typeName: string, fieldName: string): string {
 	const pascalField = pascalCase(segments.join('_'));
 	const sanitized = rustTypeIdent(pascalField);
 	return `${base}${sanitized}NodeSlot`;
+}
+
+function rustNodeFieldsTraitName(node: AssembledNode): string {
+	return `${rustTypeIdent(node.typeName)}Fields`;
 }
 
 export function rustNodeStructName(node: AssembledNode): string {
