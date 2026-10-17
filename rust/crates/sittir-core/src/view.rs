@@ -265,8 +265,8 @@ pub type SeparatorText = fn(crate::types::KindId) -> &'static str;
 /// arms (`KindId::BLANK` = none) the list carries; `head`/`tail` are spacing sites the
 /// writer reads from its resolved options.
 #[derive(Debug, Clone, Copy)]
-pub struct ListView<'a, E: Slot> {
-    pub items: &'a [E],
+pub struct ListView<'a, L: SlotItems> {
+    pub items: L,
     /// The list's surrounding text, `{}` standing for the joined items.
     pub template: &'a str,
     /// Whitespace site written before the separator token.
@@ -291,6 +291,55 @@ pub struct ListView<'a, E: Slot> {
     pub units: Option<(&'a str, &'a dyn UnitFrames)>,
 }
 
+/// The items of a list slot, each handed out as a slot: a borrowed slice of
+/// a node's items, or a record's run viewing one item cell at a time.
+pub trait SlotItems: Copy {
+    type Item: Slot;
+    fn count(&self) -> usize;
+    /// The item at `index`, `None` past the last.
+    fn item(&self, index: usize) -> Option<Self::Item>;
+}
+
+impl<'s, E: Slot> SlotItems for &'s [E] {
+    type Item = &'s E;
+    fn count(&self) -> usize {
+        self.len()
+    }
+    fn item(&self, index: usize) -> Option<&'s E> {
+        self.get(index)
+    }
+}
+
+impl<'s, E: Slot, const N: usize> SlotItems for &'s [E; N] {
+    type Item = &'s E;
+    fn count(&self) -> usize {
+        N
+    }
+    fn item(&self, index: usize) -> Option<&'s E> {
+        self.get(index)
+    }
+}
+
+impl<'s, E: Slot> SlotItems for &'s Vec<E> {
+    type Item = &'s E;
+    fn count(&self) -> usize {
+        self.len()
+    }
+    fn item(&self, index: usize) -> Option<&'s E> {
+        self.get(index)
+    }
+}
+
+impl<'s, E: Slot> SlotItems for &'s crate::NonEmptyVec<E> {
+    type Item = &'s E;
+    fn count(&self) -> usize {
+        self.len()
+    }
+    fn item(&self, index: usize) -> Option<&'s E> {
+        self.get(index)
+    }
+}
+
 /// What frames a node's unit children by their sides
 /// (`layout::NodeLayout::units`).
 pub trait UnitFrames: std::fmt::Debug {
@@ -299,15 +348,15 @@ pub trait UnitFrames: std::fmt::Debug {
     fn frame_unit(&self, slot: &str, item: crate::types::ItemIndex, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult;
 }
 
-impl<E: Slot> ListView<'_, E> {
+impl<L: SlotItems> ListView<'_, L> {
     pub fn is_present(&self) -> bool {
-        !self.items.is_empty()
+        self.items.count() > 0
     }
 }
 
-impl<E: Slot> Render for ListView<'_, E> {
+impl<L: SlotItems> Render for ListView<'_, L> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-        if self.items.is_empty() {
+        if self.items.count() == 0 {
             return Ok(());
         }
         let (prefix, suffix) = split_template(self.template);
@@ -319,7 +368,7 @@ impl<E: Slot> Render for ListView<'_, E> {
             w.text(self.token)?;
             w.site(self.after);
         }
-        for (i, item) in self.items.iter().enumerate() {
+        for (i, item) in (0..self.items.count()).filter_map(|i| Some((i, self.items.item(i)?))) {
             if i > 0 {
                 let own = self.separators.and_then(|(tokens, text)| Some(text(tokens.get(i).copied().flatten()?)));
                 w.site(self.before);
