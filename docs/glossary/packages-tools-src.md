@@ -42,15 +42,39 @@ Loads the package and generated ID tables, then returns `compileGrammar`'s node 
 
 ### `packages/tools/src/sync-base.ts::syncBase`
 
-Merges the base ref into the current branch and resolves the one conflict class that is mechanical: generated files. It refuses a dirty tree, fetches when the ref names a remote, then merges without committing. A conflict outside every grammar's generated roots (`generatedRootsFor`) stops the run and is listed, with the merge left in progress for a human. When every conflict is generated, the base's side is taken. Then every grammar is verified (`verifyManifestForGrammar`), clean merges included (a merge can leave a grammar's generated files stale without conflicting), and exactly the grammars whose files conflicted or fail verification are regenerated, in one call, so the workspace is checked once after all of them; the merge is committed if regeneration stays inside the generated roots; if regeneration changes any file outside the generated roots the diff is printed and nothing is committed, because that is a real interaction between the two branches. `validation-history.jsonl` merges by union and never conflicts. The core takes the roots, a verify callback and the regenerate callback as a `SyncBaseTarget`, so it is tested against a scratch repository.
+Merges the base ref into the current branch and resolves the one conflict class that is mechanical: generated files. It refuses a dirty tree, fetches when the ref names a remote, then merges without committing. A conflict outside every grammar's generated roots (`generatedRootsFor`) stops the run and is listed, with the merge left in progress for a human. When every conflict is generated, the base's side is taken. Then every grammar is verified (`verifyManifestForGrammar`), clean merges included (a merge can leave a grammar's generated files stale without conflicting), and exactly the grammars whose files conflicted or fail verification are regenerated, forced, in one call, so the workspace is checked once after all of them; the merge is committed if regeneration stays inside the generated roots; if regeneration changes any file outside the generated roots the diff is printed and nothing is committed, because that is a real interaction between the two branches. `validation-history.jsonl` merges by union and never conflicts. The core takes the roots, a verify callback and the regenerate callback as a `SyncBaseTarget`, so it is tested against a scratch repository.
 
 ### `packages/tools/src/sync-base.ts::repoSyncTarget`
 
-The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm are verified too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that is `regenerateGrammars`, the loop `pnpm run regen:all` runs.
+The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm are verified too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that is `regenerateGrammars` with `force`, the loop `pnpm run regen:all` runs: sync-base has already decided which grammars need it.
 
 ### `packages/tools/src/regen.ts::regenerateGrammars`
 
-Regenerates `grammars` with `gen --grammar <name> --all`, each in a fresh process, in two passes. The first writes every grammar's generated files with no native build and no workspace check, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native addon, and only its last grammar runs the workspace `cargo check`. Stops at the first `gen` that fails and returns its exit status (1 when it has none), 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
+Regenerates the stale ones of `grammars` (all of them under `force`), each step in a fresh `gen` process, in two passes. The first generates every stale grammar at once (`gen --all --no-build-native --no-workspace-check`, at most `availableParallelism()` at a time, each line of output prefixed with its grammar), with no native build, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native binding in turn from the sources the first wrote (`gen --native-only`, which generates nothing), and only the last runs the workspace `cargo check`. The bindings build one at a time: they share a cargo target, and sittir-core must recompile under each grammar's napi typedef folder for its types to reach that grammar's `index.d.ts`. Returns the exit status of the first generation that failed, in grammar order, before any native build starts; otherwise that of a failed native build (1 when it has none); 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
+
+### `packages/tools/src/regen.ts::staleGrammars`
+
+The grammars that need regenerating, with a line printed for each: `skipped` with why it is fresh, or `regenerating` with why not (`staleness`). A skip never stands in for a gate: anything that gates a pull request regenerates with `force`.
+
+### `packages/tools/src/regen.ts::staleness`
+
+Why a grammar needs regenerating, or undefined when it does not: its generated files must verify against its sources (`verifyManifestForGrammar`: sources, upstream, generated files and the binary's freshness), and its native binary must have been built from the current native inputs under the `gate` profile (`nativeBuildFreshness`), the profile regeneration builds.
+
+### `packages/tools/src/regen.ts::RegenerateOptions`
+
+`force` regenerates every grammar, fresh or not: `regen:all --force` or `SITTIR_REGEN_FORCE=1`.
+
+### `packages/tools/src/regen.ts::generate`
+
+One grammar's first pass, its output prefixed with the grammar; resolves with the exit status once the process and both its streams have closed.
+
+### `packages/tools/src/regen.ts::prefixed`
+
+Copies a stream to `output` line by line, each line prefixed with the grammar, so concurrent generations stay readable.
+
+### `packages/tools/src/regen.ts::inPool`
+
+Runs `run` over `items` with at most `limit` running at once, keeping the results in item order.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::departedKindCount`
 

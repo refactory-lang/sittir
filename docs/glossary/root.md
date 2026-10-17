@@ -305,7 +305,9 @@ either way.
 // one — and the debug profile enables incremental compilation (the release
 // profile has `incremental = false`), so a codegen edit → regen recompiles
 // only the changed crate + relinks instead of a full from-scratch optimized
-// build. Keep the default `build` (`--release`) for CI / production artifacts.
+// build. The default local build is `build:gate` (optimized, no LTO, so
+// validation's deep reads keep optimized stack frames); `build` (`--release`,
+// fat LTO) is for CI and production artifacts.
 // Explicit opt-in only (--native-debug, not an env var): build-profile
 // choice affects the shared, historically-compared validate:native
 // numbers, so it must be visible in the invocation, never inherited
@@ -324,9 +326,9 @@ either way.
 // source changed since their last build.
 //
 // Skippable via --no-workspace-check: a multi-grammar driver
-// (`regen:all`) runs the check once on its LAST grammar instead of
-// once per grammar — the final check still covers the whole
-// workspace, the earlier ones were redundant.
+// (`regen:all`) runs the check once on the LAST grammar it builds
+// instead of once per grammar — the final check still covers the
+// whole workspace, the earlier ones were redundant.
 ```
 
 #### body
@@ -477,6 +479,14 @@ deleting) the prior value in `finally` — reentrant, so a call nested inside
 another (`runFullRegen` calling `runCodegen`) restores the outer call's
 value rather than clearing the flag out from under it.
 ```
+
+### `packages/codegen/src/run-codegen.ts::runNativeBuild`
+
+Builds a grammar's N-API binding from its generated sources: clears the grammar's napi typedef directories (`clearNapiTypedefs`), runs the crate's `build:gate` script (`build:debug` under `nativeDebug`), then, unless `workspaceCheck` is false, `cargo check --workspace`. Throws on either failure. `runCodegenInternal` calls it after writing the render module, and `runNativeOnly` without generating.
+
+### `packages/codegen/src/run-codegen.ts::runNativeOnly`
+
+The second half of a multi-grammar regeneration (`gen --native-only`): every grammar is already generated, so only the binding is built (`runNativeBuild`), and the generation is then recorded (`writeManifestForGrammar`), since the build rewrites the grammar's `native/index.d.ts`, a generated file. A failed build records nothing.
 
 ### `packages/codegen/src/run-codegen.ts::runCodegenInternal`
 
@@ -707,6 +717,17 @@ The regen's wasm step: sittir's `parser.wasm` from the sources `generate` just w
 ### `packages/codegen/src/grammars.ts::module`
 
 The grammar registry. The set of grammars is discovered from disk — every `packages/<name>/` holding a `grammar.sittir.ts` is a grammar — so adding a grammar package is the whole registration; no list of grammar names exists anywhere else. Package, crate and upstream locations are derived from the name here and nowhere else.
+
+### `packages/codegen/src/grammars.ts::BASE_ENTRY`
+
+The per-package file that names the upstream grammar (`base.ts`). It is the
+one place a grammar's upstream package is written down: `grammar.sittir.ts`
+imports the base from it, and the shape emitter reads its `import raw from
+'<upstream grammar.js>'` line to find the matching `src/grammar.json`, so a
+grammar's runtime base and its type-level shape cannot name different sources.
+`base.ts` is loaded by Node type stripping (through tree-sitter's grammar
+run), so it holds only erasable syntax. It is a source input of the
+generated manifest (`grammarSourceInputs`).
 
 ### `packages/codegen/src/grammars.ts::GRAMMAR_TSCONFIG`
 

@@ -1,12 +1,15 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { basename, join, relative, dirname } from 'node:path';
 import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts';
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
+import { treeSitterCliVersion } from '../transpile/tree-sitter-cli.ts';
 import {
+	BASE_ENTRY,
 	GRAMMAR_ENTRY,
 	NATIVE_LOADER,
 	REPO_ROOT,
@@ -15,6 +18,7 @@ import {
 	nativeBindingRelDir,
 	nativeCrateRelDir,
 	stableGrammars,
+	upstreamPackage,
 	type GrammarName
 } from '../grammars.ts';
 
@@ -121,6 +125,7 @@ function collectFiles(grammar: GrammarName, src: ManifestSource): string[] {
 interface GenerationPair {
 	readonly source: string;
 	readonly outputs: string;
+	readonly upstream?: string;
 }
 
 interface Manifest {
@@ -132,6 +137,8 @@ const samePair = (a: GenerationPair, b: GenerationPair): boolean => a.source ===
 
 const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
 
+const LOCKFILE = 'pnpm-lock.yaml';
+
 const VOCABULARY_SOURCE_DIR = relative(REPO_ROOT, VOCABULARY_DIR);
 
 const isVocabularyInput = (rel: string): boolean => rel.startsWith(`${VOCABULARY_SOURCE_DIR}/`) && isVocabularySource(rel.slice(VOCABULARY_SOURCE_DIR.length + 1));
@@ -142,7 +149,7 @@ const isBound = (grammar: GrammarName, src: ManifestSource): boolean => existsSy
 
 function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = relative(REPO_ROOT, grammarPackageDir(grammar));
-	const own = [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, bindingsInput(grammar)];
+	const own = [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/${BASE_ENTRY}`, `${dir}/package.json`, bindingsInput(grammar)];
 	if (!isBound(grammar, src)) return own;
 	const vocabularyDir = join(src.root, VOCABULARY_SOURCE_DIR);
 	const vocabulary = existsSync(vocabularyDir) ? vocabularySources(vocabularyDir).map((name) => `${VOCABULARY_SOURCE_DIR}/${name}`) : [];
@@ -150,7 +157,7 @@ function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[
 }
 
 export function stagedInputPathspecs(): string[] {
-	return [CODEGEN_SOURCE_DIR, PIN_FILE, VOCABULARY_SOURCE_DIR, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
+	return [CODEGEN_SOURCE_DIR, PIN_FILE, LOCKFILE, VOCABULARY_SOURCE_DIR, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
 }
 
 function isCodegenSourceInput(relPath: string): boolean {
@@ -204,9 +211,10 @@ function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource)
 	const sourceInputs = grammarSourceInputs(grammar, src);
 	const bound = isBound(grammar, src);
 	const roots = generatedRootsFor(grammar);
-	const pathspecs = [CODEGEN_SOURCE_DIR, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
+	const pathspecs = [CODEGEN_SOURCE_DIR, LOCKFILE, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
 	const matters = (rel: string): boolean =>
 		isCodegenSourceInput(rel) ||
+		rel === LOCKFILE ||
 		sourceInputs.includes(rel) ||
 		(bound && isVocabularyInput(rel)) ||
 		(!landsOnItsOwnCadence(rel) && roots.some((root) => rel === root || rel.startsWith(`${root}/`)));
@@ -221,6 +229,61 @@ function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource)
 	return perCommit[0] ?? untracked.filter(matters);
 }
 
+const UPSTREAM_SKIPPED_DIRS = new Set(['node_modules', 'bindings', 'prebuilds', 'queries', 'test', 'tests', 'examples', 'tree_sitter', '.github']);
+
+const isUpstreamSource = (name: string): boolean =>
+	name === 'package.json' || name === 'tree-sitter.json' || name === 'scanner.c' || name === 'scanner.cc' || name.endsWith('.js') || name.endsWith('.h');
+
+function upstreamFiles(dir: string, out: string[]): void {
+	for (const entry of readdirSync(dir, { withFileTypes: true })) {
+		const path = join(dir, entry.name);
+		if (entry.isDirectory()) {
+			if (!UPSTREAM_SKIPPED_DIRS.has(entry.name)) upstreamFiles(path, out);
+		} else if (isUpstreamSource(entry.name)) {
+			out.push(path);
+		}
+	}
+}
+
+function resolvePackageDir(from: string, name: string): string | undefined {
+	const paths = createRequire(join(from, 'package.json')).resolve.paths(name) ?? [];
+	const found = paths.map((nodeModules) => join(nodeModules, name)).find((dir) => existsSync(join(dir, 'package.json')));
+	return found === undefined ? undefined : realpathSync(found);
+}
+
+function grammarDependencies(dir: string): string[] {
+	const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as {
+		dependencies?: Record<string, string>;
+		peerDependencies?: Record<string, string>;
+	};
+	return Object.keys({ ...manifest.dependencies, ...manifest.peerDependencies })
+		.filter((name) => name.startsWith('tree-sitter-') && name !== 'tree-sitter-cli')
+		.sort();
+}
+
+export function upstreamDigest(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
+	const hash = createHash('sha256');
+	hash.update(`tree-sitter-cli ${treeSitterCliVersion()}\0`);
+	const grammarDir = join(src.checkout, relative(REPO_ROOT, grammarPackageDir(grammar)));
+	const pending: Array<[string, string]> = [[grammarDir, upstreamPackage(grammar)]];
+	const seen = new Set<string>();
+	while (pending.length > 0) {
+		const [from, name] = pending.shift()!;
+		const dir = resolvePackageDir(from, name);
+		if (dir === undefined || seen.has(dir)) continue;
+		seen.add(dir);
+		const files: string[] = [];
+		upstreamFiles(dir, files);
+		for (const file of files.sort()) {
+			hash.update(`${name}/${relative(dir, file)}\0`);
+			hash.update(readFileSync(file));
+			hash.update('\0');
+		}
+		for (const dependency of grammarDependencies(dir)) pending.push([dir, dependency]);
+	}
+	return hash.digest('hex');
+}
+
 export function computeSourceHash(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
 	const hash = createHash('sha256');
 	for (const rel of grammarSourceInputs(grammar, src)) {
@@ -233,6 +296,9 @@ export function computeSourceHash(grammar: GrammarName, src: ManifestSource = wo
 	}
 	hash.update('codegen\0');
 	hash.update(codegenSourceHash(src));
+	hash.update('\0');
+	hash.update('upstream\0');
+	hash.update(upstreamDigest(grammar, src));
 	hash.update('\0');
 	return hash.digest('hex');
 }
@@ -266,7 +332,7 @@ function recordGeneration(grammar: GrammarName, src: ManifestSource, files: Read
 
 export function writeManifestForGrammar(grammar: GrammarName, src: ManifestSource = worktreeSource()): void {
 	const files = hashGeneratedFiles(grammar, src);
-	recordGeneration(grammar, src, files, { source: computeSourceHash(grammar, src), outputs: outputsDigest(files) });
+	recordGeneration(grammar, src, files, { source: computeSourceHash(grammar, src), outputs: outputsDigest(files), upstream: upstreamDigest(grammar, src) });
 }
 
 export interface VerifyResult {
@@ -292,12 +358,13 @@ export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSour
 		stale: []
 	};
 	const files = hashGeneratedFiles(grammar, src);
-	const pair: GenerationPair = { source: computeSourceHash(grammar, src), outputs: outputsDigest(files) };
+	const pair: GenerationPair = { source: computeSourceHash(grammar, src), outputs: outputsDigest(files), upstream: upstreamDigest(grammar, src) };
 	const manifest = readManifest(grammar, src);
+	const recordedUpstream = manifest?.known.at(-1)?.upstream;
 
 	if (!(manifest?.known.some((known) => samePair(known, pair)) ?? false)) {
 		const differs = differencesFromTrustedCommit(grammar, src);
-		if (differs.length === 0) {
+		if (differs.length === 0 && (recordedUpstream === undefined || recordedUpstream === pair.upstream)) {
 			if (isCheckout(src)) recordGeneration(grammar, src, files, pair);
 		} else if (manifest === undefined) {
 			result.differs = differs;
@@ -315,7 +382,7 @@ export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSour
 
 	if (isCheckout(src)) {
 		for (const b of hostBinaryFreshnessFor(src.checkout, grammar)) {
-			if (b.stale) result.stale.push(`${b.rel} (older than ${b.newestInputRel})`);
+			if (b.stale) result.stale.push(`${b.rel} (${b.reason})`);
 		}
 	}
 

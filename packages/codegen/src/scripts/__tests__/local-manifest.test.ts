@@ -148,6 +148,47 @@ describe('bindings.scm as a source', () => {
 	});
 });
 
+describe('the upstream grammar as a source', () => {
+	const UPSTREAM = 'packages/python/node_modules/tree-sitter-python';
+	const NESTED = 'packages/python/node_modules/tree-sitter-javascript';
+
+	beforeEach(() => {
+		write('packages/python/base.ts', "export { default } from 'tree-sitter-python/grammar.js';\n");
+		write(`${UPSTREAM}/package.json`, JSON.stringify({ name: 'tree-sitter-python', version: '0.25.0', dependencies: { 'tree-sitter-javascript': '^0.25.0', 'node-addon-api': '^8' } }));
+		write(`${UPSTREAM}/grammar.js`, 'module.exports = grammar({ name: "python" });\n');
+		write(`${UPSTREAM}/src/scanner.c`, 'int scan;\n');
+		write(`${UPSTREAM}/src/parser.c`, 'int parse;\n');
+		write(`${NESTED}/package.json`, JSON.stringify({ name: 'tree-sitter-javascript', version: '0.25.0' }));
+		write(`${NESTED}/grammar.js`, 'module.exports = grammar({ name: "javascript" });\n');
+		regenerate();
+		commitAll('upstream installed');
+	});
+
+	for (const [what, rel, edit] of [
+		['a new upstream version', `${UPSTREAM}/package.json`, JSON.stringify({ name: 'tree-sitter-python', version: '0.25.1' })],
+		["the upstream's grammar", `${UPSTREAM}/grammar.js`, 'module.exports = grammar({ name: "python", extras: [] });\n'],
+		["the upstream's scanner", `${UPSTREAM}/src/scanner.c`, 'int scan2;\n'],
+		["a grammar the upstream builds on", `${NESTED}/grammar.js`, 'module.exports = grammar({ name: "javascript", word: null });\n'],
+		['the base entry', 'packages/python/base.ts', "export { default } from 'tree-sitter-python/grammar.js';\nexport const extra = 1;\n"]
+	] as const) {
+		it(`changes the source when ${what} changes, with nothing tracked changed`, () => {
+			write(rel, edit);
+			expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+		});
+	}
+
+	it("leaves the source alone when only the upstream's generated parser changes", () => {
+		write(`${UPSTREAM}/src/parser.c`, 'int parse2;\n');
+		expect(verify().ok).toBe(true);
+	});
+
+	it('does not trust the committed tree once the lockfile differs from it', () => {
+		dropStamp();
+		write('pnpm-lock.yaml', 'lockfileVersion: 9\n');
+		expect(verify()).toMatchObject({ ok: false, differs: ['pnpm-lock.yaml'] });
+	});
+});
+
 describe('the vocabulary as a source', () => {
 	const VOCABULARY = 'packages/types/src/vocabulary/declaration.ts';
 

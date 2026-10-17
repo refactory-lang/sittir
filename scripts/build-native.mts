@@ -3,8 +3,10 @@
 // Builds a grammar's native binding into the grammar package that ships it
 // (`packages/<grammar>/native`): the loader, its typings and the host's `.node`.
 // The crate's `build` scripts and CI both go through here, so the output
-// location has one owner. Extra flags (`--release`, `--target`, a cross flag)
-// pass through to `napi build`.
+// location has one owner. Extra flags (`--release`, `--profile gate`,
+// `--target`, a cross flag) pass through to `napi build`. Each build records
+// its profile, its native inputs and its binary's hash (`native-binary-freshness.ts`),
+// which validation and `regen:all` hold the binary to.
 //
 // A release binding is stripped. On an Apple target cargo's own stripping
 // yields a binary dyld refuses, so the binary is stripped after the build
@@ -14,7 +16,8 @@
 // which uses the right tool for a cross-compiled target.
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
-import { NATIVE_LOADER, NATIVE_TYPINGS, assertGrammar, nativeBinaryName, nativeBindingDir, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
+import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
+import { type NativeProfile, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
 const [name, ...flags] = process.argv.slice(2);
@@ -22,6 +25,7 @@ if (name === undefined) throw new Error('usage: build-native.mts <grammar> [napi
 const grammar = assertGrammar(name);
 
 const release = flags.includes('--release');
+const profile: NativeProfile = release ? 'release' : flags.includes('--profile') ? (flags[flags.indexOf('--profile') + 1] as NativeProfile) : 'dev';
 const target = flags[flags.indexOf('--target') + 1];
 const suffix = flags.includes('--target') && target !== undefined ? targetSuffix(target) : platformSuffix(hostPlatform());
 const apple = suffix.startsWith('darwin-');
@@ -39,8 +43,9 @@ run(
 	release && !apple ? { ...process.env, CARGO_PROFILE_RELEASE_STRIP: 'symbols' } : process.env
 );
 
+const binary = `${nativeBinaryName(grammar)}.${suffix}.node`;
 if (release && apple && process.platform === 'darwin') {
-	const binary = join(outDir, `${nativeBinaryName(grammar)}.${suffix}.node`);
-	run('strip', ['-x', binary], outDir);
-	run('codesign', ['--force', '--sign', '-', binary], outDir);
+	run('strip', ['-x', join(outDir, binary)], outDir);
+	run('codesign', ['--force', '--sign', '-', join(outDir, binary)], outDir);
 }
+writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary);

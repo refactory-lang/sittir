@@ -360,43 +360,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`    ${emit.libRs.path}`);
 		console.log(`    ${emit.recordsTs.path}`);
 
-		if (buildNative !== false) {
-			const nativeCrate = nativeCrateRelDir(grammar);
-			const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build';
-			console.log(
-				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
-					`${nativeBuildScript === 'build:debug' ? ' (debug + incremental)' : ''}…`
-			);
-			clearNapiTypedefs(grammar, process.cwd());
-			try {
-				execSync(`pnpm -C ${nativeCrate} run ${nativeBuildScript}`, {
-					stdio: 'inherit',
-					cwd: process.cwd()
-				});
-			} catch (e) {
-				console.error(
-					`    N-API rebuild failed for ${grammar}. Native baseline collection will use stale templates. ` +
-						`Re-run with --no-build-native to suppress this attempt, or fix the cargo build error.`
-				);
-				throw e;
-			}
-
-			if (workspaceCheck !== false) {
-				console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
-				try {
-					execSync('cargo check --workspace --features napi-bindings', {
-						stdio: 'inherit',
-						cwd: process.cwd()
-					});
-				} catch (e) {
-					console.error(
-						`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
-							`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
-					);
-					throw e;
-				}
-			}
-		}
+		if (buildNative !== false) runNativeBuild({ grammar, nativeDebug, workspaceCheck });
 	}
 
 	const renderable = validateRenderableFromNodeMap(grammar, result.nodeMap);
@@ -431,6 +395,52 @@ Done! Generated:
 `);
 
 	return result.nodeMap;
+}
+
+function runNativeBuild({ grammar, nativeDebug, workspaceCheck }: Pick<CodegenOptions, 'grammar' | 'nativeDebug' | 'workspaceCheck'>): void {
+	const nativeCrate = nativeCrateRelDir(grammar);
+	const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build:gate';
+	console.log(
+		`  → rebuilding grammar-owned N-API binding for ${grammar}` +
+			`${nativeBuildScript === 'build:debug' ? ' (debug + incremental)' : ' (gate profile)'}…`
+	);
+	clearNapiTypedefs(grammar, process.cwd());
+	try {
+		execSync(`pnpm -C ${nativeCrate} run ${nativeBuildScript}`, {
+			stdio: 'inherit',
+			cwd: process.cwd()
+		});
+	} catch (e) {
+		console.error(
+			`    N-API rebuild failed for ${grammar}. Native baseline collection will use stale templates. ` +
+				`Re-run with --no-build-native to suppress this attempt, or fix the cargo build error.`
+		);
+		throw e;
+	}
+
+	if (workspaceCheck !== false) {
+		console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
+		try {
+			execSync('cargo check --workspace --features napi-bindings', {
+				stdio: 'inherit',
+				cwd: process.cwd()
+			});
+		} catch (e) {
+			console.error(
+				`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
+					`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
+			);
+			throw e;
+		}
+	}
+}
+
+export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
+	await withInternalCodegenRun(async () => {
+		runNativeBuild(opts);
+		writeManifestForGrammar(opts.grammar);
+		console.log(`  → generation recorded in ${manifestPath(opts.grammar)}`);
+	});
 }
 
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {

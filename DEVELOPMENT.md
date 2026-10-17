@@ -55,11 +55,20 @@ Generated packages (`packages/{rust,typescript,python}/src`, `templates/`,
 regenerate.
 
 ```bash
-pnpm run regen:all            # regenerate all three grammars
+pnpm run regen:all            # regenerate every stale grammar, skipping the fresh ones
+pnpm run regen:all --force    # regenerate every grammar (also SITTIR_REGEN_FORCE=1)
 
 # One grammar via the unified sittir CLI
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 ```
+
+`regen:all` generates every stale grammar at once, then builds their native
+bindings one at a time. A grammar is skipped, with a line saying why, only
+when its generated files verify against its sources (the check below) and its
+binding was built from the current native inputs under the `gate` profile.
+Anything that gates a pull request runs with `--force`
+(`SITTIR_REGEN_FORCE=1 pnpm run validate:native`), so a skip never stands in
+for the gate's own regeneration.
 
 ### The local generated-output check
 
@@ -147,7 +156,8 @@ Each grammar's render engine is a Rust N-API crate under
 
 ```bash
 cd rust/crates/sittir-rust
-pnpm run build                # release binding, written into packages/rust/native
+pnpm run build                # release binding (fat LTO), written into packages/rust/native
+pnpm run build:gate           # gate binding (optimized, no LTO): what gen and validation build
 pnpm run build:debug          # debug binding (dev only)
 ```
 
@@ -156,8 +166,11 @@ Both go through `scripts/build-native.mts <lang>`, which writes the loader
 `packages/<lang>/native/` — the directory the grammar package ships. The loader
 and typings are committed; the binaries are git-ignored.
 
-Prefer release builds when running the validators; the validation load is
-sized for the optimized binding.
+Run the validators on an optimized binding (`gate` or `release`); the
+validation load is sized for it. Each build records its profile, its native
+inputs and its binary's hash under `node_modules/.cache/sittir/native-build/`,
+and validation refuses a binding that is not what a build from the current
+inputs wrote.
 
 Rebuild natives through `pnpm exec tsx packages/cli/src/cli.ts gen --grammar
 <lang> --all --output packages/<lang>/src` (or `pnpm run validate:native`), not

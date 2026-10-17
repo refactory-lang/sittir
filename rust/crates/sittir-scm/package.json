@@ -21,7 +21,8 @@
 	},
 	"scripts": {
 		"build": "tsx ../../../scripts/build-native.mts scm --release",
-		"build:debug": "tsx ../../../scripts/build-native.mts scm"
+		"build:debug": "tsx ../../../scripts/build-native.mts scm",
+		"build:gate": "tsx ../../../scripts/build-native.mts scm --profile gate"
 	},
 	"devDependencies": {
 		"@napi-rs/cli": "^3.0.0"

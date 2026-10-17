@@ -55,7 +55,7 @@ beforeEach(() => {
 afterEach(() => rmSync(cwd, { recursive: true, force: true }));
 
 describe('syncBase', () => {
-	it('takes the base side of a conflicted generated file, regenerates only its grammar and commits the merge', () => {
+	it('takes the base side of a conflicted generated file, regenerates only its grammar and commits the merge', async () => {
 		git('checkout', '-q', 'main');
 		write('src.txt', 'v2\n');
 		write(generatedOutput, 'regenerated from v2');
@@ -64,14 +64,14 @@ describe('syncBase', () => {
 		write(generatedOutput, 'feature output');
 		commit('feature change');
 		const t = target();
-		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(await syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
 		expect(t.regenerated).toEqual(['g']);
 		expect(readFileSync(join(cwd, generatedOutput), 'utf8')).toBe('regenerated from v2');
 		expect(git('log', '-1', '--format=%p').trim().split(' ')).toHaveLength(2);
 		expect(git('status', '--porcelain').trim()).toBe('');
 	});
 
-	it('regenerates a grammar whose generated files are stale after a clean merge, and only that one', () => {
+	it('regenerates a grammar whose generated files are stale after a clean merge, and only that one', async () => {
 		git('checkout', '-q', 'main');
 		write('src.txt', 'v2\n');
 		commit('main change');
@@ -79,13 +79,13 @@ describe('syncBase', () => {
 		write('other/extra.txt', 'feature only');
 		commit('feature change');
 		const t = target();
-		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(await syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
 		expect(t.regenerated).toEqual(['g']);
 		expect(readFileSync(join(cwd, generatedOutput), 'utf8')).toBe('regenerated from v2');
 		expect(git('log', '-1', '--format=%p').trim().split(' ')).toHaveLength(2);
 	});
 
-	it('regenerates every affected grammar in one call, so the workspace is checked once after all of them', () => {
+	it('regenerates every affected grammar in one call, so the workspace is checked once after all of them', async () => {
 		git('checkout', '-q', 'main');
 		write('src.txt', 'v2\n');
 		commit('main change');
@@ -93,11 +93,11 @@ describe('syncBase', () => {
 		write('other/extra.txt', 'feature only');
 		commit('feature change');
 		const t = target(undefined, new Set(['h']));
-		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(await syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
 		expect([t.regenerated, t.calls]).toEqual([['g', 'h'], 1]);
 	});
 
-	it('commits a clean merge whose grammars all verify without regenerating', () => {
+	it('commits a clean merge whose grammars all verify without regenerating', async () => {
 		git('checkout', '-q', 'main');
 		write('unrelated.txt', 'main\n');
 		commit('main change');
@@ -105,11 +105,11 @@ describe('syncBase', () => {
 		write('other/extra.txt', 'feature only');
 		commit('feature change');
 		const t = target();
-		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(await syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
 		expect(t.regenerated).toEqual([]);
 	});
 
-	it('stops on a conflict outside the generated roots and leaves the merge in progress', () => {
+	it('stops on a conflict outside the generated roots and leaves the merge in progress', async () => {
 		git('checkout', '-q', 'main');
 		write('src.txt', 'main\n');
 		commit('main change');
@@ -118,13 +118,13 @@ describe('syncBase', () => {
 		commit('feature change');
 		const printed: string[] = [];
 		const t = target();
-		expect(syncBase({ base: 'main', cwd }, t, (line) => printed.push(line))).toBe(1);
+		expect(await syncBase({ base: 'main', cwd }, t, (line) => printed.push(line))).toBe(1);
 		expect(printed.join('\n')).toContain('src.txt');
 		expect(t.regenerated).toEqual([]);
 		expect(existsSync(join(cwd, '.git/MERGE_HEAD'))).toBe(true);
 	});
 
-	it('does not commit when regeneration changes a file outside the generated roots', () => {
+	it('does not commit when regeneration changes a file outside the generated roots', async () => {
 		git('checkout', '-q', 'main');
 		write(generatedOutput, 'main output');
 		commit('main change');
@@ -133,13 +133,13 @@ describe('syncBase', () => {
 		commit('feature change');
 		const printed: string[] = [];
 		const t = target(() => write('src.txt', 'touched by regeneration\n'));
-		expect(syncBase({ base: 'main', cwd }, t, (line) => printed.push(line))).toBe(1);
+		expect(await syncBase({ base: 'main', cwd }, t, (line) => printed.push(line))).toBe(1);
 		expect(printed.join('\n')).toContain('src.txt');
 		expect(existsSync(join(cwd, '.git/MERGE_HEAD'))).toBe(true);
 		expect(git('log', '-1', '--format=%s').trim()).toBe('feature change');
 	});
 
-	it('removes a generated file the base deleted, and takes the base side of one it changed', () => {
+	it('removes a generated file the base deleted, and takes the base side of one it changed', async () => {
 		write('gen/gone.txt', 'v1');
 		commit('add gone');
 		git('checkout', '-q', 'main');
@@ -151,25 +151,25 @@ describe('syncBase', () => {
 		write('gen/gone.txt', 'feature edit');
 		commit('feature edits');
 		const t = target();
-		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(await syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
 		expect(existsSync(join(cwd, 'gen/gone.txt'))).toBe(false);
 		expect(t.regenerated).toEqual(['g']);
 	});
 
-	it('propagates a merge that fails without a conflict, such as a missing base ref', () => {
-		expect(() => syncBase({ base: 'no-such-ref', cwd }, target(), () => undefined)).toThrow();
+	it('propagates a merge that fails without a conflict, such as a missing base ref', async () => {
+		await expect(syncBase({ base: 'no-such-ref', cwd }, target(), () => undefined)).rejects.toThrow();
 	});
 
-	it('refuses a dirty working tree', () => {
+	it('refuses a dirty working tree', async () => {
 		write('src.txt', 'dirty\n');
 		const printed: string[] = [];
-		expect(syncBase({ base: 'main', cwd }, target(), (line) => printed.push(line))).toBe(1);
+		expect(await syncBase({ base: 'main', cwd }, target(), (line) => printed.push(line))).toBe(1);
 		expect(printed.join('\n')).toContain('uncommitted');
 	});
 
-	it('reports an up-to-date branch', () => {
+	it('reports an up-to-date branch', async () => {
 		const printed: string[] = [];
-		expect(syncBase({ base: 'main', cwd }, target(), (line) => printed.push(line))).toBe(0);
+		expect(await syncBase({ base: 'main', cwd }, target(), (line) => printed.push(line))).toBe(0);
 		expect(printed.join('\n')).toContain('up to date');
 	});
 });

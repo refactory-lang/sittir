@@ -3,10 +3,9 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { format as oxfmtFormat } from 'oxfmt';
 import { OXFMT_EFFECTIVE_CONFIG } from '../oxfmt-config.ts';
-import { grammarPackages, packageRequire, type GrammarPackage } from '../grammars.ts';
+import { BASE_ENTRY, grammarPackages, packageRequire, type GrammarPackage } from '../grammars.ts';
 
 const SHAPES_DIR = dirname(fileURLToPath(import.meta.url));
-export const BASE_ENTRY = 'base.ts';
 const BASE_IMPORT = /^import raw from '([^']+)';$/m;
 
 export function grammarShapeFile(name: string): string {

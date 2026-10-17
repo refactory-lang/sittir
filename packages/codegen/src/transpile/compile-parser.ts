@@ -4,8 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { runTreeSitterCli, treeSitterCliVersion } from './tree-sitter-cli.ts';
-import { UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, upstreamPackage, type GrammarName } from '../grammars.ts';
-import { BASE_ENTRY } from '../grammar-shapes/emit-grammar-shape.ts';
+import { BASE_ENTRY, UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, upstreamPackage, type GrammarName } from '../grammars.ts';
 
 const UPSTREAM_KEY = 'upstream.json';
 

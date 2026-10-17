@@ -33,6 +33,15 @@ strip = "none"
 lto = "fat"
 codegen-units = 1
 
+# What local generation and validation build (the crates' `build:gate`):
+# optimized like release, so validation's deep reads keep optimized stack
+# frames (`typed_read_nesting`'s ceilings hold on it), without fat LTO's
+# single-threaded link. CI and published bindings build `release`.
+[profile.gate]
+inherits = "release"
+lto = "off"
+codegen-units = 16
+
 # Centralise common dependency versions so core + render + napi stay
 # aligned. Per-crate `Cargo.toml` files pull these via
 # `{ workspace = true }` or override when pinning is required.
