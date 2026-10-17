@@ -384,7 +384,7 @@ The one anchor vocabulary shared by a portable read test's `via` step and a plan
 
 ### `packages/types/src/query.ts::SlotSubject`
 
-A slot by its number in each kind that has it, keyed by stamped kind id. The number is the slot's position among the kind's transport slots, the numbering the native read routes children by, so a plan names a slot exactly as the read does: the evaluator asks the node's kind how it finds its slots (`ReadTransport::router`: its children one at a time, a group of its token's text, or the node itself for an envelope) and keeps what lands in that number. Numbers are per kind, so a plan over several kinds, or a step that lands on several, carries one per kind, expanded when it is compiled as `is` membership is. A node of a kind the map lacks holds nothing there.
+A slot by its number in each kind that has it, keyed by stamped kind id. The number is the slot's position among the kind's native node slots, the numbering the native read routes children by, so a plan names a slot exactly as the read does: the evaluator asks the node's kind how it finds its slots (`ReadNode::router`: its children one at a time, a group of its token's text, or the node itself for an envelope) and keeps what lands in that number. Numbers are per kind, so a plan over several kinds, or a step that lands on several, carries one per kind, expanded when it is compiled as `is` membership is. A node of a kind the map lacks holds nothing there.
 
 ### `packages/types/src/query.ts::SlotRefOf`
 

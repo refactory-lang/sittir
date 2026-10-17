@@ -292,10 +292,10 @@ moving it into the linked rule, and the factory surface for composite
 separators, come later. A site is wherever the multiplicity-bearing rule
 lives, so a separated-list kind owns its own spacing and flank however
 many owners share it, and an owner kind owns the sites of a repeat inlined
-into its own rule. Each whitespace choice is one transport field on that
+into its own rule. Each whitespace choice is one node field on that
 kind, `Option<u16>` named by the site key (`elements_separator_space_before`,
 wire `_elements_separator_space_before`); the native fill writes the resolved option into every
-unset field of every transport before dispatch, so a value the wire carried
+unset field of every node before dispatch, so a value the wire carried
 wins and no owner fills another kind's fields. The emitted render function
 builds the slot's list view from those fields alone — `before`, `token`,
 `after` and the flanks — and `Joined` writes before + token + after between
@@ -305,7 +305,7 @@ list itself — and the body is emitted Rust: the template emitter builds a
 body IR from the same spaced render rules and prints one
 `write_body_<kind>` function per kind beside its typed render function, so
 the view types and the writer are the only render machinery between a
-transport and its text. There is no template engine in the render path.
+node and its text. There is no template engine in the render path.
 
 A `_newline` join writes the line break and then the current indentation
 unit repeated to the nesting depth the writer tracks from the block kinds it

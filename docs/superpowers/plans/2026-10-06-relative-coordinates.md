@@ -34,7 +34,7 @@ Task 1 adds declarations that only the snapshot step reads, so it lands with tha
 - A tree-backed coordinate holds its tree, `index`, `end`, byte range and kind; it holds no points. Points exist only in snapshot data.
 - Points keep tree-sitter's `{ row, column }`; a column counts bytes within its line. The tree's descendant index is named `index`.
 - A row is counted by `\n` only, as tree-sitter counts it; a `\r` before it stays on the row it ends.
-- Every point in snapshot data is measured from the start of the transport whose bytes contain it, and no offset is negative.
+- Every point in snapshot data is measured from the start of the node whose bytes contain it, and no offset is negative.
 - `sittir-core` holds no grammar fact.
 - Generated files are never hand-edited. Change `packages/codegen/src/**` and regenerate with `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <g> --all --output packages/<g>/src` for rust, typescript, python, scm and regex.
 - `packages/codegen/src/` carries no explanatory comments: each new declaration there gets a `###` entry in its directory's glossary under `docs/glossary/`. Rust in `sittir-core` carries doc comments.
@@ -161,7 +161,7 @@ Above the tests in `points.rs`:
 
 ```rust
 //! Points: a row and a byte column, as tree-sitter counts them. A snapshot
-//! measures each of its points from the start of the transport whose bytes
+//! measures each of its points from the start of the node whose bytes
 //! contain it; composition follows tree-sitter's `length_add`, so a column is
 //! relative only on its base's own row. A tree-backed node holds bytes, and
 //! the line table turns them into points.
@@ -600,7 +600,7 @@ Detailed against master after the one-reader step lands. The PR carries Tasks 1 
 
 4. **The closing gap reaches the reader.** Codegen stamps the closing gap on each kind with `closingGap` beside its `gap(n) = slot` attributes; the derive expands it; `sittir_core::read::place` puts an extra after the last child's tokens and before the closer there, keyed `closing`. The node surface's `inner` gains the `closing` gap on those kinds' types, and `innerGapsKeyed` counts it.
 5. **Ownership by token side.** `place` assigns each extra by the spec's three rules (trailing the previous sibling when no token lies between, leading the next when one does, the closing gap when no next sibling exists), and stops computing `same_line` and `tokens_between`. Tests: the five comment cases of verification 7, read and placed.
-6. **Joins resolved at prepare.** A resolved join per trivia entry, filled by prepare: from the source's `LineTable` (Task 1) for tree-backed entries, from an explicit whitespace entry or the defaults for built ones. `TransportTrivia::render_leading` and `render_trailing` read only the resolved join; `render_trailing`'s held entries go.
+6. **Joins resolved at prepare.** A resolved join per trivia entry, filled by prepare: from the source's `LineTable` (Task 1) for tree-backed entries, from an explicit whitespace entry or the defaults for built ones. `NodeTrivia::render_leading` and `render_trailing` read only the resolved join; `render_trailing`'s held entries go.
 7. **The stamps go.** `$sameLine` and `$tokensBetween` leave `TriviaEntry`, the wire, the types and the self-contained fixture copies; the codec and the typed reader stop carrying them.
 8. **Gates.** Verifications 7 (built), 8, 9, 10 and 11: the `trivia-placement` census and the validation rows before and after, each moved row reported to the maintainer.
 
@@ -614,9 +614,9 @@ Detailed against `feat/typed-reader` at 86894f532. The step lands as two PRs int
 
 ### What the code holds today
 
-- **Every read transport records where it came from.** That is `TransportLayout::at`, a `NodeCoordinate` with the tree, index, end and byte span. `ReadCtx::at_of` is its one source; the derive calls it for a struct's layout (`placement.into_layout(sides, __at)`) and for an envelope's (`envelope_layout(.., sides, __at)`).
-- **A full-depth read (`Depth::All`) leaves no coordinate in a slot** (`read_value`). The coordinates that remain are `at` on every transport and each trivia entry (`Entry::into_trivia` → `SlotValue::Coord`).
-- **A render fixture today is `selfContainedRenderInput`** (`packages/tools/src/validate/read-render-parse.ts`). It takes `toDetachedTransportData` through the engine's trivia view and turns every byte range into text:
+- **Every read node records where it came from.** That is `NodeLayout::at`, a `NodeCoordinate` with the tree, index, end and byte span. `ReadCtx::at_of` is its one source; the derive calls it for a struct's layout (`placement.into_layout(sides, __at)`) and for an envelope's (`envelope_layout(.., sides, __at)`).
+- **A full-depth read (`Depth::All`) leaves no coordinate in a slot** (`read_value`). The coordinates that remain are `at` on every node and each trivia entry (`Entry::into_trivia` → `SlotValue::Coord`).
+- **A render fixture today is `selfContainedRenderInput`** (`packages/tools/src/validate/read-render-parse.ts`). It takes `toDetachedNodeData` through the engine's trivia view and turns every byte range into text:
   - a leaf becomes `$text`;
   - a trivia entry becomes `{ $type, $text, $sameLine?, $tokensBetween? }`;
   - a list gap becomes `gap: { $text }`;
@@ -644,11 +644,11 @@ Detailed against `feat/typed-reader` at 86894f532. The step lands as two PRs int
 
 Accepted on review. D4's JavaScript walk covers edited ranges only.
 
-- **D1. The wire.** A snapshot node's geometry is `$_layout.span: { start: { row, column }, end: { row, column } }`; it has no `at`. A snapshot trivia entry is `{ $type, $text, span, $sameLine?, $tokensBetween? }`. In Rust, `TransportLayout` gains `span: Option<PointSpan>` and `TriviaText` gains `span: Option<PointSpan>`.
+- **D1. The wire.** A snapshot node's geometry is `$_layout.span: { start: { row, column }, end: { row, column } }`; it has no `at`. A snapshot trivia entry is `{ $type, $text, span, $sameLine?, $tokensBetween? }`. In Rust, `NodeLayout` gains `span: Option<PointSpan>` and `TriviaText` gains `span: Option<PointSpan>`.
 - **D2. One read, two origins.** A snapshot is the typed read at `Depth::All` with a snapshot context:
   - `ReadCtx` gains `snapshot: Option<SnapshotCtx>`, which holds the source's `LineTable` and the holder's start point.
   - `ReadCtx::at_of` returns an `Origin`: `Tree(NodeCoordinate)` or `Snapshot(PointSpan)`.
-  - The derive reads a node's slots under `ctx.holding(cursor)`, so each child is measured from the transport that holds it.
+  - The derive reads a node's slots under `ctx.holding(cursor)`, so each child is measured from the native node that holds it.
   - A node's own span, and its leading and trailing entries, use the incoming context: an entry is measured from its owner's holder.
   - Its inner-gap entries use the holding context: they are measured from the node that holds the gap.
   - A placed entry becomes a text entry when the context is a snapshot's.
@@ -691,15 +691,15 @@ As detailed above, unchanged. It is the PR's first commit.
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/points.rs` (napi codec for `Point` and `PointSpan`)
-- Modify: `rust/crates/sittir-core/src/layout.rs` (`TransportLayout::span`, decoded and encoded under `span`)
+- Modify: `rust/crates/sittir-core/src/layout.rs` (`NodeLayout::span`, decoded and encoded under `span`)
 - Modify: `rust/crates/sittir-core/src/trivia.rs` (`TriviaText::span`, under `span`)
-- Modify: every literal of `TransportLayout { … }` and `TriviaText { … }` (`read.rs`, `layout.rs` tests, `prepare.rs` tests, `error_read.rs`)
+- Modify: every literal of `NodeLayout { … }` and `TriviaText { … }` (`read.rs`, `layout.rs` tests, `prepare.rs` tests, `error_read.rs`)
 - Test: `rust/crates/sittir-core/src/points.rs` (unit), `packages/rust/tests/snapshot-wire.test.ts`
 
 **Interfaces:**
 - Consumes: Task 1's `Point` and `PointSpan`.
 - Produces:
-  - `TransportLayout<T>::span: Option<PointSpan>`;
+  - `NodeLayout<T>::span: Option<PointSpan>`;
   - `TriviaText::span: Option<PointSpan>`;
   - the napi codec `{ start: { row, column }, end: { row, column } }`, which decodes the same JavaScript shape it encodes.
 
@@ -754,7 +754,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Point {
 }
 ```
 
-The same pair is written for `PointSpan` over `start` and `end`. `TransportLayout`'s codec adds `span: property(env, napi_val, c"span")?` on decode and `present(env, c"span", val.span)?` on encode. Its encode doc becomes "`{ trivia?, at?, span? }`". `TriviaText`'s codec does the same.
+The same pair is written for `PointSpan` over `start` and `end`. `NodeLayout`'s codec adds `span: property(env, napi_val, c"span")?` on decode and `present(env, c"span", val.span)?` on encode. Its encode doc becomes "`{ trivia?, at?, span? }`". `TriviaText`'s codec does the same.
 
 - [ ] **Step 4: Run it to verify it passes**
 
@@ -771,7 +771,7 @@ Expected: 2 passed.
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/read.rs` (`SnapshotCtx`, `Origin`, `ReadCtx::{snapshot, holding, at_of}`, `Entry::into_trivia`, `into_layout`, `envelope_layout`)
-- Modify: `rust/crates/sittir-transport-macros/src/expand.rs` (the struct and envelope reads take children under `ctx.holding(cursor)`)
+- Modify: `rust/crates/sittir-node-macros/src/expand.rs` (the struct and envelope reads take children under `ctx.holding(cursor)`)
 - Modify: `rust/crates/sittir-core/src/engine.rs` (`ParsedTree::lines`, `ParsedTree::snapshot`, `ParsedTree::snapshot_spans`)
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`snapshot`, `snapshot_spans`)
 - Modify: `packages/common/src/engine.ts` (`NativeEngineLike`, `TreeHandle` gains `snapshot` and `snapshotSpans`), `packages/common/src/read.ts` (`TreeHandle`)
@@ -783,7 +783,7 @@ Expected: 2 passed.
 **Interfaces:**
 - Consumes: Task 1's `LineTable::point` and `Point::offset_from`; Task 9's spans.
 - Produces:
-  - `ParsedTree::snapshot<T: ReadTransport>(&self, index: u32, holder: Option<u32>) -> Result<T, ReadError>`;
+  - `ParsedTree::snapshot<T: ReadNode>(&self, index: u32, holder: Option<u32>) -> Result<T, ReadError>`;
   - napi `snapshot(treeId, index, holderByte?)`, which returns `$any | ErrorRead` like `read`, and `snapshotSpans(treeId, holderByte, ranges: number[]) -> number[]`, whose output is row and column pairs, flat;
   - `snapshotOf(value: unknown): unknown` from `@sittir/common`;
   - the node member `$snapshot`.
@@ -821,7 +821,7 @@ In `read.rs`:
 
 ```rust
 /// What a snapshot read measures with: the source's lines and the start of
-/// the transport the read is inside, from which each point it writes is
+/// the node the read is inside, from which each point it writes is
 /// measured.
 #[derive(Debug, Clone, Copy)]
 pub struct SnapshotCtx<'s> {
@@ -851,8 +851,8 @@ pub enum Origin {
         Self { snapshot: Some(SnapshotCtx { lines, holder: holder.unwrap_or(crate::points::Point::ZERO) }), ..self }
     }
 
-    /// The context a transport reads its slots under: in a snapshot, measured
-    /// from the transport's own start; otherwise this one.
+    /// The context a node reads its slots under: in a snapshot, measured
+    /// from the node's own start; otherwise this one.
     pub fn holding(&self, cursor: &TreeCursor<'_>) -> Self {
         let Some(snapshot) = self.snapshot else { return *self };
         let at = self.coordinate(&cursor.node(), index_of(cursor));
@@ -860,7 +860,7 @@ pub enum Origin {
         Self { snapshot: Some(SnapshotCtx { holder: start, ..snapshot }), ..*self }
     }
 
-    /// Where the node the cursor is on came from (`TransportLayout::at` or
+    /// Where the node the cursor is on came from (`NodeLayout::at` or
     /// `::span`).
     pub fn at_of(&self, cursor: &TreeCursor<'_>) -> Origin {
         let at = self.coordinate(&cursor.node(), index_of(cursor));
@@ -912,9 +912,9 @@ Every slot read below it then measures from this node. The layout calls take bot
 
 ```rust
     /// A snapshot of the node at `index` (`Depth::All`): every node with its
-    /// span from the transport that holds it, every leaf with its text, and
+    /// span from the node that holds it, every leaf with its text, and
     /// the node itself measured from the byte `holder`, or from its own start.
-    pub fn snapshot<T: crate::read::ReadTransport>(&self, index: u32, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
+    pub fn snapshot<T: crate::read::ReadNode>(&self, index: u32, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
         let own = || node_at_index(&self.tree, index).map(|node| node.start_byte() as u32);
         let from = holder.or_else(own).filter(|_| index != 0);
         let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).snapshot(self.lines(), from);
@@ -960,7 +960,7 @@ export function snapshotOf(value: unknown, holderByte?: number): unknown {
 }
 ```
 
-`coordinateOf`, `liveTreeOf` and `snapshotLayout` read what `toTransportData` already reads:
+`coordinateOf`, `liveTreeOf` and `snapshotLayout` read what `toNodeData` already reads:
 - a node's coordinate is `$_layout.at`, and its tree is `treeHandleOf` decoded through `engine-scope`'s tree table;
 - `snapshotLayout` keeps `trivia`, turning each coordinate entry into `{ $type, $text, span, $sameLine?, $tokensBetween? }` through one `snapshotSpans` call for the layout's entries. Its text is sliced from the tree's `source` by the shared byte slicer;
 - it drops `at`, `gap` and `flank`.
@@ -1050,12 +1050,12 @@ Gates: the step's full set (Global Constraints); validation rows identical, sinc
 **Files:**
 - Modify: `rust/crates/sittir-core/src/classify.rs` (`geometry_gap_text`, `classify_points`)
 - Modify: `rust/crates/sittir-core/src/prepare.rs` (`root_flanks` and `fill_list_gaps` take an item's span when it has no coordinate or gap)
-- Modify: `rust/crates/sittir-core/src/layout.rs` (`Layout::span`), `prepare.rs` (`Prepare::source_span`, defaulting to `None`; `SlotValue`'s reads its transport's layout)
+- Modify: `rust/crates/sittir-core/src/layout.rs` (`Layout::span`), `prepare.rs` (`Prepare::source_span`, defaulting to `None`; `SlotValue`'s reads its node's layout)
 - Docs: the doc comments of the touched functions
 - Test: `rust/crates/sittir-core/tests/classify.rs`, `rust/crates/sittir-core/tests/prepare.rs`, the census in `packages/tools/src/validate/__tests__/snapshot-census.test.ts`
 
 **Interfaces:**
-- Consumes: Task 9's `TransportLayout::span`.
+- Consumes: Task 9's `NodeLayout::span`.
 - Produces: `classify::geometry_gap_text(a: &PointSpan, b: &PointSpan) -> String`, and `classify::classify_points(a: &PointSpan, b: &PointSpan, allowed: &[u16], table: &WhitespaceTable) -> Option<u16>`, which is `classify_whitespace(&geometry_gap_text(a, b), …)`.
 
 - [ ] **Step 1: Failing tests** (`tests/classify.rs`)

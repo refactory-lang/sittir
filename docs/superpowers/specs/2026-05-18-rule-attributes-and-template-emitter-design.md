@@ -70,7 +70,7 @@ Three remaining PRs:
 
 Three architectural smells that this refactor closes:
 
-1. **Template emission violates the emitter pattern.** Every other emitter (`factories.ts`, `wrap.ts`, `from.ts`, `types.ts`, `render-module.ts`, `transport-common.ts`) iterates `nodeMap.nodes`, dispatches on `node.modelType`, and owns all string generation locally. Template emission alone delegates string generation back into compiler-side classes (`AssembledXxx.renderTemplate()`), which then call a Rule-tree-walking helper (`template-walker.ts`). The walker re-derives structural information (cardinality, optionality, separator, clause-vs-plain) at emit time that the assembly phase already learned. See `feedback_emitter_pattern_consistency.md`.
+1. **Template emission violates the emitter pattern.** Every other emitter (`factories.ts`, `wrap.ts`, `from.ts`, `types.ts`, `render-module.ts`, `node-common.ts`) iterates `nodeMap.nodes`, dispatches on `node.modelType`, and owns all string generation locally. Template emission alone delegates string generation back into compiler-side classes (`AssembledXxx.renderTemplate()`), which then call a Rule-tree-walking helper (`template-walker.ts`). The walker re-derives structural information (cardinality, optionality, separator, clause-vs-plain) at emit time that the assembly phase already learned. See `feedback_emitter_pattern_consistency.md`.
 
 2. **The translation pipeline is scar tissue.** The walker emits an intermediate format (`$NAME`, `$$$NAME`, `$NAME_CLAUSE`, plus `clauses` dict and `joinByField` metadata) that a second pass (`inlineJinjaClauses` → `translateToJinja` → spacing absorbers → brace escapes) translates into final Jinja. Two passes through ~3,000 lines of code to produce what direct emission could produce once.
 
@@ -96,7 +96,7 @@ A single gate applies to every PR. The gate is composed of three checks:
 
 2. **Snapshot diff after refactor.** Apply the PR, run `pnpm regen-all`, then `git diff --stat` against the following files. Drift is interpreted per the PR-specific rules below.
    - `packages/{rust,python,typescript}/templates/*.jinja` (canonical Jinja templates)
-   - `packages/{rust,python,typescript}/src/**` (generated TS — factories, wrap, from, types, consts, transport)
+   - `packages/{rust,python,typescript}/src/**` (generated TS — factories, wrap, from, types, consts, node)
    - `packages/{rust,python,typescript}/.sittir/*` (build artifacts)
    - `rust/crates/sittir-{rust,python,typescript}/src/render/**` (generated Rust render code)
    - `packages/{rust,python,typescript}/factory-map.json5` (generated factory map)
@@ -485,7 +485,7 @@ optimize() returns:                    │
 - Replace `deriveSlotsRaw` recursive walker with one-shot dispatch (the architectural goal — `clause` case still alive blocks final cleanup; ClauseRule deletion is PR3 scope)
 - Render-module separator: drop the node-wide `meta.separators` fallback once per-slot stamping covers all kinds
 - `assertUniversalShape` wiring as production fail-fast gate (currently `SITTIR_ASSERT_UNIVERSAL_SHAPE=1` gated)
-- Inlined-helper kinds in `types.ts` / `consts.ts` / `node-model.json5` / `transport.rs` — intentional surface for future factory-side construction; not "leakage"
+- Inlined-helper kinds in `types.ts` / `consts.ts` / `node-model.json5` / `node.rs` — intentional surface for future factory-side construction; not "leakage"
 
 ## PR2 (original design — for reference) — Canonicalization + new TemplateEmitter + deprecate derive\* (2026-05-19 THIRD REVISION)
 

@@ -316,7 +316,7 @@ either way.
 
 ```text
 // Workspace-wide compile check — codegen changes in render-module.ts
-// affect all three grammars' emitted transport.rs. Without a check
+// affect all three grammars' emitted node.rs. Without a check
 // across the whole workspace, breakage in non-targeted grammars
 // (e.g. python or typescript) would silently persist until the next
 // per-grammar regen. cargo check is incremental: a no-op for the

@@ -4,9 +4,9 @@
 
 **Goal:** Capture rule-shaped (non-literal) separators — `choice(',', ';')`, `optional(',')` — as a first-class, per-instance, verbatim-pass-through fact on the content slot they delimit, so lists with these separator shapes render byte-faithfully instead of silently dropping/misrendering the separator.
 
-**Architecture:** A four-layer pipeline. (1) **Compile-time** (`collect-slots.ts`/`node-map.ts`): when a repeated slot's separator is non-literal, capture the separator `Rule` itself (already threaded onto `RuleBase.separator.value` by PR-S's `liftSeparators`) plus the anonymous kind-ids it can parse as, onto the slot — this is the "role:'separator' + delimits" model collapsed onto its documented home (the content slot). (2) **Native reader** (`sittir-core`): a genuinely small, surgical fix — anonymous separator tokens are already fully read (span + text) by `read_children`/`read_materialized_leaf`, but `scalar_child_value` throws span+text away at JSON-serialization time for every anonymous child. Stamping the child's ordinal position (`child_index`) at the existing call site makes it survive serialization intact — no new wire concept, no new reader traversal. (3) **wrap.ts** (JS glue): span-correlate the now-preserved separator tokens in `data.$other` against the content slot's own values to derive per-instance trailing/leading presence and the actual separator kind at each gap, using the SAME `_filterWrapChildrenByKind`/`collectConcreteStorageKeys` machinery already used for ambiguous-kind wire disambiguation. (4) **Render** (`render-module.ts`/`filters.rs`/transport structs): thread the captured per-instance facts (and the Config-surface user-settable override) into `ListNonterminalView`, replacing today's hardcoded `leading: false, trailing: false`.
+**Architecture:** A four-layer pipeline. (1) **Compile-time** (`collect-slots.ts`/`node-map.ts`): when a repeated slot's separator is non-literal, capture the separator `Rule` itself (already threaded onto `RuleBase.separator.value` by PR-S's `liftSeparators`) plus the anonymous kind-ids it can parse as, onto the slot — this is the "role:'separator' + delimits" model collapsed onto its documented home (the content slot). (2) **Native reader** (`sittir-core`): a genuinely small, surgical fix — anonymous separator tokens are already fully read (span + text) by `read_children`/`read_materialized_leaf`, but `scalar_child_value` throws span+text away at JSON-serialization time for every anonymous child. Stamping the child's ordinal position (`child_index`) at the existing call site makes it survive serialization intact — no new wire concept, no new reader traversal. (3) **wrap.ts** (JS glue): span-correlate the now-preserved separator tokens in `data.$other` against the content slot's own values to derive per-instance trailing/leading presence and the actual separator kind at each gap, using the SAME `_filterWrapChildrenByKind`/`collectConcreteStorageKeys` machinery already used for ambiguous-kind wire disambiguation. (4) **Render** (`render-module.ts`/`filters.rs`/native node structs): thread the captured per-instance facts (and the Config-surface user-settable override) into `ListNonterminalView`, replacing today's hardcoded `leading: false, trailing: false`.
 
-**Tech Stack:** TypeScript (codegen emitters, compiler), Rust (native reader in `sittir-core`, transport structs + render glue in the per-grammar `sittir-<lang>` crates), tree-sitter grammars (rust/typescript/python), Jinja/askama render templates.
+**Tech Stack:** TypeScript (codegen emitters, compiler), Rust (native reader in `sittir-core`, node structs + render glue in the per-grammar `sittir-<lang>` crates), tree-sitter grammars (rust/typescript/python), Jinja/askama render templates.
 
 ## Global Constraints
 
@@ -32,8 +32,8 @@
 | `rust/crates/sittir-core/src/read_node.rs` | Stamps `child_index` on every child (fielded and anonymous) during `read_children` (Task 2) |
 | `rust/crates/sittir-core/src/types.rs` | No code change — `scalar_child_value`'s existing `child_index.is_some()` guard already does the right thing once Task 2 stamps it (verified, not touched) |
 | `packages/codegen/src/emitters/wrap.ts` | Emits `_<name>_trailing_sep`/`_<name>_leading_sep`/`_<name>_separator_kind` sibling fields for `arity==='many'` fields with a `separatorSource` (Task 3) |
-| `rust/crates/sittir-*/src/render/transport.rs` (generated) | Gains matching `Option<bool>`/`Option<u32>` sibling fields on the transport struct (Task 4, via `render-module.ts`'s `renderTransportField` caller loop) |
-| `packages/codegen/src/emitters/render-module.ts` | `buildTypedTemplateBody` reads the captured facts instead of hardcoding `false`; `renderTransportDataStruct`'s field loop emits the new sibling transport fields (Task 4) |
+| `rust/crates/sittir-*/src/render/node.rs` (generated) | Gains matching `Option<bool>`/`Option<u32>` sibling fields on the node struct (Task 4, via `render-module.ts`'s `renderNodeField` caller loop) |
+| `packages/codegen/src/emitters/render-module.ts` | `buildTypedTemplateBody` reads the captured facts instead of hardcoding `false`; `renderNodeDataStruct`'s field loop emits the new sibling node fields (Task 4) |
 | `rust/crates/sittir-core/src/filters.rs` | No code change — `ListNonterminalView`/`JoinSource` already read `leading`/`trailing` correctly; only the caller-supplied values change (verified, not touched) |
 | `packages/codegen/src/emitters/factories.ts` | Adds the `{ separator?, trailing?, leading? }` options-block surface to the Config type + factory body for `arity==='many'` fields with `separatorSource` (Task 5) |
 | `packages/typescript/overrides.ts`, `packages/codegen/src/compiler/__tests__/generate.test.ts`, `packages/codegen/src/compiler/link.ts` | End-to-end validation + pinned-test update against the `interface_body`/`object_type` case (Task 6) |
@@ -600,21 +600,21 @@ Plus a separate validator-record commit if fixtures changed.
 ## Task 4: Render path — thread captured facts into `ListNonterminalView`
 
 **Files:**
-- Modify: `packages/codegen/src/emitters/render-module.ts` (`renderTransportDataStruct`'s field loop, ~line 3225; `buildTypedTemplateBody`'s hardcoded `leading: false`/`trailing: false`, ~lines 1482-1483)
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`renderNodeDataStruct`'s field loop, ~line 3225; `buildTypedTemplateBody`'s hardcoded `leading: false`/`trailing: false`, ~lines 1482-1483)
 - Test: `packages/codegen/src/emitters/__tests__/render-module.test.ts` (or equivalent existing test file — `Glob` first)
 
 **Interfaces:**
-- Consumes: Task 3's three sibling wrap fields (by naming convention `_<name>_trailing_sep`/`_<name>_leading_sep`/`_<name>_separator_kind`), which flow into generated napi transport structs as new `Option<bool>`/`Option<u32>` fields (JS factories write these keys the same way they write `_<name>` today — no new factory-side plumbing needed beyond Task 5's Config surface).
+- Consumes: Task 3's three sibling wrap fields (by naming convention `_<name>_trailing_sep`/`_<name>_leading_sep`/`_<name>_separator_kind`), which flow into generated napi node structs as new `Option<bool>`/`Option<u32>` fields (JS factories write these keys the same way they write `_<name>` today — no new factory-side plumbing needed beyond Task 5's Config surface).
 - Produces: `ListNonterminalView.leading`/`.trailing` now receive the captured per-instance value (falling back to `false` when the slot has no `separatorSource`, i.e. today's behavior for the vast majority of slots is UNCHANGED — this is additive, zero-risk for every slot that isn't separator-shaped).
 
-- [ ] **Step 1: Write the failing test for the transport struct field**
+- [ ] **Step 1: Write the failing test for the node struct field**
 
 Add to the render-module test file (match its existing pattern for asserting on emitted Rust struct text):
 
 ```ts
-it('emits trailing_sep/leading_sep sibling fields on the transport struct for a separatorSource field', () => {
+it('emits trailing_sep/leading_sep sibling fields on the node struct for a separatorSource field', () => {
 	const node = /* fixture node with a field having arity:'many' + separatorSource, matching Task 3's fixture */;
-	const lines = renderTransportDataStruct('ObjectTypeContentTransport', node, slotModel, nodeMap);
+	const lines = renderNodeDataStruct('ObjectTypeContentNode', node, slotModel, nodeMap);
 	const text = lines.join('\n');
 	expect(text).toContain('pub content_trailing_sep: Option<bool>');
 	expect(text).toContain('pub content_leading_sep: Option<bool>');
@@ -629,13 +629,13 @@ pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-module.test.
 
 Expected: FAIL.
 
-- [ ] **Step 3: Extend `renderTransportDataStruct`'s field-emission loop**
+- [ ] **Step 3: Extend `renderNodeDataStruct`'s field-emission loop**
 
-In `packages/codegen/src/emitters/render-module.ts`, in `renderTransportDataStruct` (~line 3199+), immediately after the existing per-field loop:
+In `packages/codegen/src/emitters/render-module.ts`, in `renderNodeDataStruct` (~line 3199+), immediately after the existing per-field loop:
 
 ```ts
 			for (const field of [...slotModel.named, ...slotModel.unnamed]) {
-				lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
+				lines.push(...renderNodeField(field, node.kind, node.typeName, nodeMap));
 			}
 ```
 
@@ -652,7 +652,7 @@ add:
 			}
 ```
 
-Match the EXACT attribute-emission style `renderTransportField` already uses for a normal field (read its full body first — `js_name` attribute formatting, `pub` field declaration style, any doc-comment convention) rather than the sketch above; the sketch conveys intent, the implementer must match the established formatting exactly (this codebase's existing fields use a specific macro/attribute layout that must be replicated verbatim, not approximated).
+Match the EXACT attribute-emission style `renderNodeField` already uses for a normal field (read its full body first — `js_name` attribute formatting, `pub` field declaration style, any doc-comment convention) rather than the sketch above; the sketch conveys intent, the implementer must match the established formatting exactly (this codebase's existing fields use a specific macro/attribute layout that must be replicated verbatim, not approximated).
 
 - [ ] **Step 4: Wire `buildTypedTemplateBody` to read the captured value instead of hardcoding `false`**
 
@@ -707,7 +707,7 @@ Expected: this specific mismatch class is no longer present (or has moved furthe
 - [ ] **Step 7: Commit**
 
 ```bash
-git add packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/__tests__/render-module.test.ts packages/{rust,typescript,python}/src/wrap.ts rust/crates/sittir-*/src/render/transport.rs rust/crates/sittir-*/src/lib.rs packages/{rust,typescript,python}/.sittir/generated.manifest.json
+git add packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/__tests__/render-module.test.ts packages/{rust,typescript,python}/src/wrap.ts rust/crates/sittir-*/src/render/node.rs rust/crates/sittir-*/src/lib.rs packages/{rust,typescript,python}/.sittir/generated.manifest.json
 git commit -m "feat(codegen): thread captured trailing/leading separator facts into ListNonterminalView (PR-T Task 4)"
 ```
 

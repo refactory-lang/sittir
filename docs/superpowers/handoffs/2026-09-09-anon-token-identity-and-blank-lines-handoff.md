@@ -34,7 +34,7 @@ no rule of that name, and the grammar's own anonymous token is keyed
 `pipe_pipe`, not `||` — so the guard missed and the model gained a **second kind
 for one parser symbol**, both claiming id 63. `nameNode` then invented an
 identity for the duplicate (`||` → `Oror`, via `tokenToName`), and
-`AnyTransport`'s napi decoder resolved 63 to `Oror`: a *named* transport with no
+`AnyNode`'s napi decoder resolved 63 to `Oror`: a *named* node with no
 literal default, whose text fell through to `unwrap_or_default()` — the empty
 string.
 
@@ -143,7 +143,7 @@ separated by a blank line while statements inside a block stay at `newline`.
      what holds the property.
    - Slot-enum **definition** and **reference** are decided in two places: a
      single-arm slot emits no enum while the struct field still names one
-     (surfaced as `E0425 TemplateLiteralTypeElementsTransportSlot`).
+     (surfaced as `E0425 TemplateLiteralTypeElementsNodeSlot`).
    - `sinks.externals` conflates symbol names with literal token texts, and
      **this is not fixable at that layer** — typescript's base-grammar externals
      arrive already flattened to bare strings.

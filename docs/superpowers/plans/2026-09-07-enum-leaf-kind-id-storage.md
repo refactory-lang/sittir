@@ -4,7 +4,7 @@
 
 **Goal:** `AssembledEnum` is kind-id-stored at the model, every consumer reads the stamp, and a token tree's comma is spelled `TSKindId.Comma` with no leaf factory.
 
-**Architecture:** One stamp (`KindStorage = 'kindId'` on `AssembledEnum`), one per-value storage record carrying the member set, and four consumers that already branch on `isKindIdStored` (classifier, wrap projection, types/`fieldTypeComponents`, transport ids) extended to a member SET instead of a single id. Each task holds the byte gate and the counts.
+**Architecture:** One stamp (`KindStorage = 'kindId'` on `AssembledEnum`), one per-value storage record carrying the member set, and four consumers that already branch on `isKindIdStored` (classifier, wrap projection, types/`fieldTypeComponents`, node ids) extended to a member SET instead of a single id. Each task holds the byte gate and the counts.
 
 **Tech Stack:** TypeScript (ESM), vitest, the codegen pipeline, `validate counts`.
 
@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Branch `feat/strict-rebuild-from-source` (stacked on #272). Committed there: `8e74754fd` (examples type-checked), `46e32ebfe` (the broad supertype walk — superseded by Task 2 below; do not revert, rewrite). Uncommitted at the time of writing: the narrowed walk in `shared.ts`, transitive enum-member ids in `render-module.ts::resolveAcceptedTransportIds` (keep), a glossary edit, and a stale regen of all three grammars (will be regenerated).
+- Branch `feat/strict-rebuild-from-source` (stacked on #272). Committed there: `8e74754fd` (examples type-checked), `46e32ebfe` (the broad supertype walk — superseded by Task 2 below; do not revert, rewrite). Uncommitted at the time of writing: the narrowed walk in `shared.ts`, transitive enum-member ids in `render-module.ts::resolveAcceptedNodeIds` (keep), a glossary edit, and a stale regen of all three grammars (will be regenerated).
 - Generated outputs are never hand-edited. Regenerate with `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <g> --all --output packages/<g>/src`, all three, sequentially.
 - No explanatory comments in `packages/codegen/src/`; glossary entries in `docs/glossary/emitters.md` / `docs/glossary/compiler-model.md` (or wherever `node-map.ts` entries live — check `docs/glossary/README.md`).
 - No spec/plan/PR numbers in code or docs. Commit by pathspec; source before regen with `--no-verify`; generated separately.
@@ -23,7 +23,7 @@
 
 ### Task 1: Diagnose the rust read-render-parse loss before changing anything — DONE
 
-Cause recorded in the spec (Blast radius, "Transport arm precedence"): the `_type` supertype transport routes the primitive member ids to its `Identifier` variant (alias wire ids from `alias(choice(primitives), $.identifier)` in `_path`/`_pattern`/`_expression_except_range`), and those arms precede `PrimitiveType`'s. Repro: `sittir tool probe-kind -g rust -k parameter -s 'fn f(a: u8, b: T) {}'` → wrapped `_type: 28`, rendered `a:`. Fix lives in Task 4b.
+Cause recorded in the spec (Blast radius, "Node arm precedence"): the `_type` supertype node routes the primitive member ids to its `Identifier` variant (alias wire ids from `alias(choice(primitives), $.identifier)` in `_path`/`_pattern`/`_expression_except_range`), and those arms precede `PrimitiveType`'s. Repro: `sittir tool probe-kind -g rust -k parameter -s 'fn f(a: u8, b: T) {}'` → wrapped `_type: 28`, rendered `a:`. Fix lives in Task 4b.
 
 ---
 
@@ -32,7 +32,7 @@ Cause recorded in the spec (Blast radius, "Transport arm precedence"): the `_typ
 **Files:**
 - Modify: `packages/codegen/src/compiler/model/node-map.ts` (`AssembledEnum.storage`, `ValueStorage`, `isKindIdStored`, `fixedTextOfKind`)
 - Modify: `packages/codegen/src/emitters/shared.ts` (`classifyValueStorage`, `resolveHiddenKeywordLeaf`, `kindEnumAltIdPairs`, `enumArmsOf`, `classifyFieldStorageInfo`)
-- Modify: `packages/codegen/src/emitters/transport-projection.ts::terminalTransportLiteralForKind`, `packages/codegen/src/emitters/factories.ts::kindEnumTextMapExpr`
+- Modify: `packages/codegen/src/emitters/node-projection.ts::terminalNodeLiteralForKind`, `packages/codegen/src/emitters/factories.ts::kindEnumTextMapExpr`
 - Test: `packages/codegen/src/emitters/__tests__/enum-leaf-kind-id-storage.test.ts` (create); update `field-storage-supertype-arms.test.ts`
 
 **Interfaces:**
@@ -123,7 +123,7 @@ In `shared.ts::classifyValueStorage`, before the `isKindIdStored(target)` branch
 
 In `shared.ts::enumArmsOf`: replace the `seatEnum`/`seatKeyword` pair with one `seat(value, node)` that reads `valueStorageOf(value, nodeMap)`: `via: 'kindId'` with `members` → push each member; `via: 'kindId'` with `text` → push `{ kind: storage.kind, kindId: storage.kindId, text }` (keep `keywordRefWireIdentity` for the id, as today); otherwise a node arm. Keep the aliased-into-another-kind exclusion for supertype subtypes. Delete the `AssembledEnum` branch from `classifyFieldStorageInfo` (it now reads `enumArmsOf` only — already the case after the previous task).
 
-In `shared.ts::fieldTypeComponents`: when `storage.via === 'kindId' && storage.members`, push one `typeComponentOf({ via: 'kindId', kind: m.kind, kindId: m.kindId, text: m.text })` per member instead of one component. In `kindEnumAltIdPairs`, `resolveHiddenKeywordLeaf`, `transport-projection.ts::terminalTransportLiteralForKind`, `factories.ts::kindEnumTextMapExpr`: where `target.text` / `resolved.text` is read after `isKindIdStored`, skip `AssembledEnum` targets (they have no single text) — for `kindEnumTextMapExpr` emit one `[text, id]` row per `resolvedByText` entry instead.
+In `shared.ts::fieldTypeComponents`: when `storage.via === 'kindId' && storage.members`, push one `typeComponentOf({ via: 'kindId', kind: m.kind, kindId: m.kindId, text: m.text })` per member instead of one component. In `kindEnumAltIdPairs`, `resolveHiddenKeywordLeaf`, `node-projection.ts::terminalNodeLiteralForKind`, `factories.ts::kindEnumTextMapExpr`: where `target.text` / `resolved.text` is read after `isKindIdStored`, skip `AssembledEnum` targets (they have no single text) — for `kindEnumTextMapExpr` emit one `[text, id]` row per `resolvedByText` entry instead.
 
 - [ ] **Step 4: Run the new test and the codegen suite** — expected: PASS; any other failure is a consumer that read `.text` on an enum target; fix it the same way.
 
@@ -153,19 +153,19 @@ In `shared.ts::fieldTypeComponents`: when `storage.via === 'kindId' && storage.m
 
 ---
 
-### Task 4b: Supertype transport enums route kind-id-stored subtypes first — DONE
+### Task 4b: Supertype node enums route kind-id-stored subtypes first — DONE
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/render-module.ts` (the supertype `buildKindIdArms` loop over `validSubtypes` at ~1520, and the per-slot `enumArmsFirst` sort at ~2048)
-- Test: `packages/codegen/src/emitters/__tests__/transport-arm-precedence.test.ts` (create)
+- Test: `packages/codegen/src/emitters/__tests__/node-arm-precedence.test.ts` (create)
 
 **Interfaces:**
 - Produces: `function kindIdStoredFirst<T extends { node: AssembledNode }>(entries: readonly T[]): T[]` in `render-module.ts` — stable sort, `isKindIdStored(node)` entries first. Both builders call it; the per-slot `enumArmsFirst` sort is deleted.
 
-- [ ] **Step 1: Failing test** — build a node map with a supertype `_t` over `identifier` (pattern) and `_prim` (enum u8|bool), with `terminalAliasWireIds` mapping `identifier` → `[1, 28, 2]` (u8 aliased onto identifier elsewhere); emit the render module (find the emitter entry the existing render-module tests use, e.g. `emitRenderModule`/`emitTransportEnums`) and assert the `_TTransport` number branch has `28 => Ok(Self::Prim(` and no `28 => Ok(Self::Identifier(`.
+- [ ] **Step 1: Failing test** — build a node map with a supertype `_t` over `identifier` (pattern) and `_prim` (enum u8|bool), with `terminalAliasWireIds` mapping `identifier` → `[1, 28, 2]` (u8 aliased onto identifier elsewhere); emit the render module (find the emitter entry the existing render-module tests use, e.g. `emitRenderModule`/`emitNodeEnums`) and assert the `_TNode` number branch has `28 => Ok(Self::Prim(` and no `28 => Ok(Self::Identifier(`.
 - [ ] **Step 2: Run, expect failure** (`28 => Ok(Self::Identifier(` present).
 - [ ] **Step 3: Implement** `kindIdStoredFirst` and use it for `validSubtypes` in the supertype builder and in place of `enumArmsFirst`.
-- [ ] **Step 4: Codegen suite green; commit source** with a glossary entry for `kindIdStoredFirst` and the updated `resolveAcceptedTransportIds`/supertype-enum prose.
+- [ ] **Step 4: Codegen suite green; commit source** with a glossary entry for `kindIdStoredFirst` and the updated `resolveAcceptedNodeIds`/supertype-enum prose.
 
 ---
 
@@ -174,7 +174,7 @@ In `shared.ts::fieldTypeComponents`: when `storage.via === 'kindId' && storage.m
 - [ ] Regenerate all three grammars; capture fixture counts from the `gen` output (rust 1486 render expected).
 - [ ] Census: types diff — every `Terminal<` enum alias gone, every enum-bearing slot union lists member ids; list the kinds in the commit message.
 - [ ] Byte gate identical; `validate counts` identical to the spec floors; suites; cargo; type-check; scope boundaries.
-- [ ] If rust read-render-parse moves, the transport arm precedence (Task 4b) is the first suspect — fix at the emitter, never in generated output.
+- [ ] If rust read-render-parse moves, the node arm precedence (Task 4b) is the first suspect — fix at the emitter, never in generated output.
 - [ ] Commit generated output; update the spec status.
 
 ---

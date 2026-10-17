@@ -95,7 +95,7 @@ walker in the read and print path. `$` is the metadata namespace and `_`
 already means storage, so `$_trivia` reads as the storage form of `$trivia`
 and leaves the attach verb its name.
 
-It is a napi wire name: serde renames, transport `js_name`, the
+It is a napi wire name: serde renames, node `js_name`, the
 `FromNapiValue` decode, `index.d.ts` and the fixtures all moved, and the three
 `.node` binaries were rebuilt.
 
@@ -142,7 +142,7 @@ addressable. Verified four ways:
 - trivia on the inner value INSIDE the seat config renders right
 
 The last is the route taken. Constraint found while probing: passing trivia as
-a config KEY is **rejected by the transport** (`InvalidArg`), so a "carrier on
+a config KEY is **rejected by the node** (`InvalidArg`), so a "carrier on
 configs" is not available. The carry is guarded to a group with exactly one
 built value; anything else leaves the trivia unattached rather than guessing
 which child owns the comment.

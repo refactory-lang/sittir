@@ -101,7 +101,7 @@ A node entry:
   on its anchor's line. Read stamps it from rule 1. A builder may pass it.
 
 This closes the current mismatch: read trivia entries carry `$text`, while the
-transport expects the comment kind's `_content`. That mismatch is what leaves
+node expects the comment kind's `_content`. That mismatch is what leaves
 the two rust "Comments degenerate cases" fixtures out today.
 
 ### Storage
@@ -270,7 +270,7 @@ for design review:
 
 5. Whitespace trivia entries (runtime data): a trivia array may hold a
    `_whitespace` item (stored by kind id, like a whitespace option value)
-   alongside extra-kind node data. `TriviaTransport` gains the whitespace
+   alongside extra-kind node data. `TriviaNode` gains the whitespace
    variants.
 
 No annotation is read by the compiler for any of this. Trivia stays outside the

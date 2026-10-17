@@ -10,7 +10,7 @@
 `AssembledKeyword`, anything whose template is `{{ text }}` — the text *is* the
 node. An `identifier`'s text is its name; a `string_content`'s text is its body.
 Nothing else in the node carries the value, and an edit sets it. This is the
-role `VerbatimTransport` was minted for: a text-only carrier with no kind tag,
+role `VerbatimNode` was minted for: a text-only carrier with no kind tag,
 because every pattern-modeled variant of a slot renders identically given the
 same text, which makes the variant tag render-invisible.
 
@@ -25,7 +25,7 @@ The two roles have opposite lifecycles — content survives edits, provenance is
 destroyed by them — and the codebase pays for the conflation in three ways.
 
 **Every consumer re-derives which role is in play.** `hasStructure`,
-`isUntouchedSubtree`, and `isUnexpandedStub` in `transport-data.ts` all inspect
+`isUntouchedSubtree`, and `isUnexpandedStub` in `node-data.ts` all inspect
 storage keys to decide whether a `$text` is content or a stale capture.
 `slot.rs` repeats the judgement natively. `wrap.ts` emits `_isReadTextLeaf` to
 make it a third time. `is.ts` treats `typeof $text === 'string'` as "this is a
@@ -80,7 +80,7 @@ depth, where the deep read used to send 138 750.
 
 **`$text` means slot content, and only that.** It appears when the kind's
 template renders from text, and it survives edits because it is the value being
-edited. `VerbatimTransport` stays exactly as it is — it was always modelling
+edited. `VerbatimNode` stays exactly as it is — it was always modelling
 this role correctly.
 
 **Provenance stops being a value and becomes a coordinate.** A structural node
@@ -91,7 +91,7 @@ fully addressable natively: `(tree, span)`. No text needs to cross the boundary
 to express it.
 
 This is what makes the render short-circuit possible. When a subtree is
-untouched, the transport sends its coordinate instead of its text, and the
+untouched, the node sends its coordinate instead of its text, and the
 native renderer slices the source it still holds. The bytes never make the
 round trip — the native side talks to the native side.
 
@@ -111,11 +111,11 @@ there.
 **The readers converge.** Both stop emitting `$text` on structural nodes, so
 `SITTIR_DEBUG_TEXT` and the JS/native shape divergence go away together.
 
-### One rule at the transport
+### One rule at the node
 
 Unread and unedited are the same state as far as rendering is concerned:
 nothing here needs rebuilding, go get it from the tree. They should therefore
-have the same wire shape, and the transport should need only one test.
+have the same wire shape, and the node should need only one test.
 
 - **Unread** — a stub the reader located but never expanded. Coordinates only.
 - **Unedited** — read, but nothing below it replaced. Projects back *down* to
@@ -153,10 +153,10 @@ coordinates-only, and a deep read renders byte-identically to a shallow one.
 The read-depth suite pins that a deep parse renders the source byte for byte,
 like a shallow one.
 
-### The carrier: a coordinate or the transport
+### The carrier: a coordinate or the node
 
 `SlotValue` stays a wrapper and keeps exactly two arms, but `Node(T)` goes —
-the arm is the transport itself, and naming it `Node` invented a layer of
+the arm is the node itself, and naming it `Node` invented a layer of
 abstraction over something that needed none:
 
 ```rust
@@ -164,7 +164,7 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// The content is in the tree — resolve and slice.
     Coord(NodeCoordinate),
     /// The content is in this message.
-    Transport(T),
+    Node(T),
 }
 
 pub struct NodeCoordinate {
@@ -184,16 +184,16 @@ an error, never a re-resolution.
 
 `Verbatim(String)` is deleted. Its three meanings separate: a captured span
 becomes `Coord`, text that is genuinely the slot's content becomes a
-`VerbatimTransport` inside `Transport`, and free text in a slot admitting no
+`VerbatimNode` inside `Node`, and free text in a slot admitting no
 text kind becomes an error.
 
 The carrier is then orthogonal on one axis — **where does the content live**,
 in the tree or in this message. Text-versus-structure is a different axis and
-belongs to the transport type. `Verbatim(String)` straddled both, which is how
+belongs to the node type. `Verbatim(String)` straddled both, which is how
 it accumulated three unrelated meanings.
 
-**Why a wrapper and not a field on each transport.** Putting
-`Option<NodeCoordinate>` on every transport struct would avoid the extra type
+**Why a wrapper and not a field on each node.** Putting
+`Option<NodeCoordinate>` on every node struct would avoid the extra type
 layer, and costs far more than it saves.
 
 Storage fields are mostly **required** today — the `$`-prefixed metadata is
@@ -201,8 +201,8 @@ optional, but a slot the grammar says must be present is emitted as a bare
 type:
 
 ```rust
-pub struct ExpressionStatementTransport {
-    #[napi(js_name = "$span")]     pub transport_span: Option<Span>,   // metadata
+pub struct ExpressionStatementNode {
+    #[napi(js_name = "$span")]     pub node_span: Option<Span>,   // metadata
     #[napi(js_name = "_content")]  pub content: SlotValue<..>,         // required
 }
 ```
@@ -219,7 +219,7 @@ grammar facts downgraded to "maybe", across every struct, so that one unrelated
 state could be expressed. Requiredness here is the grammar's own statement that
 a slot must be filled, and it is worth more than a type-graph layer.
 
-The enum keeps them required, because a `Coord` never constructs a transport at
+The enum keeps them required, because a `Coord` never constructs a node at
 all. It also makes coordinate-and-storage unrepresentable rather than merely
 unlikely, and stays one mechanism where a field would be two, since enum-typed
 slots would need an arm regardless.
@@ -229,13 +229,13 @@ on the grammar crates, because the wrapper "adds a layer to an already deeply
 nested generated type graph". That is a compile-time knob, not a correctness or
 runtime cost, and it buys unrepresentable illegal states.
 
-`RenderRoot` is already `SlotValue<AnyTransport>`, so the root — the case worth
+`RenderRoot` is already `SlotValue<AnyNode>`, so the root — the case worth
 the most, since it is whole-file byte-exactness — is covered by the same arm
 with no separate path.
 
-### The transport already carries a coordinate, and ignores it
+### The node already carries a coordinate, and ignores it
 
-Every transport struct declares `$span`, `$nodeHandle` and `$childIndex`
+Every node struct declares `$span`, `$nodeHandle` and `$childIndex`
 alongside `$source` and `$named`, pulls all five off the napi object for every
 node it deserializes, and reads none of them. Consumers across the generated
 crates and `sittir-core`:
@@ -252,28 +252,28 @@ crates and `sittir-core`:
 
 So the coordinate is not about to be duplicated by the `Coord` arm — it is
 already present and already inert. The five unread fields are dropped from the
-transport structs, leaving `Coord` as the single place a coordinate exists on
+node structs, leaving `Coord` as the single place a coordinate exists on
 the render path.
 
 The read direction is unaffected: `$nodeHandle` and `$childIndex` are how the
 wrap layer drills into an unexpanded child, so the reader keeps emitting them.
-What ends is the transport declaring fields it never consults, which costs a
+What ends is the node declaring fields it never consults, which costs a
 napi property lookup per field per node.
 
-**`$source` being unread is load-bearing elsewhere.** `render_transport_parts`
-hardcodes `TransportSource::Factory`, and `resolve_render_format_from_source`
+**`$source` being unread is load-bearing elsewhere.** `render_node_parts`
+hardcodes `NodeSource::Factory`, and `resolve_render_format_from_source`
 returns tree format only when the source is *not* `Factory`. Detected per-file
 format is therefore unreachable on the native render path — only an explicit
 engine-level format ever applies. Removing the field makes that explicit rather
 than creating it, but the format path needs its own decision: either the
-transport starts carrying provenance that `render` honours, or tree format is
+node starts carrying provenance that `render` honours, or tree format is
 acknowledged as engine-level only and `extract_format` stops pretending
 otherwise. Out of scope here; named so it is not mistaken for a regression this
 spec introduces.
 
-### What this restores from `VerbatimTransport`
+### What this restores from `VerbatimNode`
 
-`VerbatimTransport` was a standalone struct carrying text with no kind tag,
+`VerbatimNode` was a standalone struct carrying text with no kind tag,
 admitted as an arm of every per-slot and supertype enum with at least one
 pattern-modeled variant. Its premise: pattern-modeled variants render
 identically given the same text, so the variant tag is render-invisible and
@@ -285,7 +285,7 @@ captured source, and free text in a slot admitting no text kind. The struct was
 retired for a mechanism that could not keep the distinction it encoded.
 
 Both come back to their proper homes here: the coordinate takes the stub case,
-`VerbatimTransport` takes text-as-content, and free text in a slot that admits
+`VerbatimNode` takes text-as-content, and free text in a slot that admits
 none becomes an error.
 
 **It also closes a regression.** `SlotValue::from_napi_value` offers the value
@@ -300,9 +300,9 @@ let error = match attempt {
 ```
 
 That is a two-way form of the variant-trial fallback chain the
-`VerbatimTransport` work deleted, whose silent first-match-wins behaviour was
+`VerbatimNode` work deleted, whose silent first-match-wins behaviour was
 the measured cause of the rust deep-AST gap — bare strings matching
-`StringLiteralTransport` and rendering as `""`. It is milder here, because the
+`StringLiteralNode` and rendering as `""`. It is milder here, because the
 fallback is gated on the value's own `$text`, but it is the same shape at a
 different level, and the gate disappears with provenance `$text` anyway.
 
@@ -312,18 +312,18 @@ trial-based:
 | wire shape | arm |
 |---|---|
 | object carrying a coordinate, no storage | `Coord` |
-| bare string, where the slot admits a text kind | `Transport(T::Verbatim(..))` |
-| object with storage | `Transport(T)` |
+| bare string, where the slot admits a text kind | `Node(T::Verbatim(..))` |
+| object with storage | `Node(T)` |
 | anything else | error |
 
 No attempt-then-fallback, and an unrecognised shape is an error rather than
 whichever arm happened to deserialize. This is the strict dispatch contract
-`VerbatimTransport` established, applied at the carrier and now workable
+`VerbatimNode` established, applied at the carrier and now workable
 because the three shapes are genuinely distinct.
 
 ### Coordinates resolve in one walk before the render
 
-A render already makes one pass over every slot of the transport before a
+A render already makes one pass over every slot of the node before a
 byte is written: the fill walk that copies the resolved option into every
 unset spacing and flank field. Resolving coordinates is the same shape of
 work — visit every slot, act on the ones that need it — so it is the same
@@ -365,7 +365,7 @@ does today.
 ### Gaps between coordinates classify into option values
 
 Render options give every list site of a kind one value: `Option<u16>` per
-site on the transport, filled from the option table when the wire left it
+site on the node, filled from the option table when the wire left it
 unset. A rebuilt node whose items are still coordinates of one tree has a
 better source for that value than the table: the bytes between the items.
 
@@ -387,7 +387,7 @@ gaps, the first seen winning a tie, and only when the wire left it unset.
 So for any list site the precedence is: the value the wire carried, then the
 class of the source gaps, then the engine's option table, then the grammar's
 default. Seated per-item seams are not classified: a seated item is a
-transport the render rebuilds, so its own span is stale and the bytes after
+node the render rebuilds, so its own span is stale and the bytes after
 it are not the gap that will be written. Comments inside a gap count as the
 bytes they are; a comment between two items of a rebuilt list is trivia the
 reader did not attach to either stub, and that loss predates this design.
@@ -416,9 +416,9 @@ let error = match attempt {
 ```
 
 That is a two-way form of the variant-trial fallback chain the
-`VerbatimTransport` work deleted, whose silent first-match-wins behaviour was
+`VerbatimNode` work deleted, whose silent first-match-wins behaviour was
 the measured cause of the rust deep-AST gap — bare strings matching
-`StringLiteralTransport` and rendering as `""`. It is milder here, because the
+`StringLiteralNode` and rendering as `""`. It is milder here, because the
 fallback is gated on the value's own `$text`, but it is the same shape at a
 different level, and the gate disappears with provenance `$text` anyway.
 
@@ -428,13 +428,13 @@ rather than trial-based:
 | wire shape | arm |
 |---|---|
 | object carrying a coordinate, no storage | `Coord` |
-| bare string, where the slot admits a text kind | `Transport(T::Verbatim(..))` |
-| object with storage | `Transport(T)` |
+| bare string, where the slot admits a text kind | `Node(T::Verbatim(..))` |
+| object with storage | `Node(T)` |
 | anything else | error |
 
 No attempt-then-fallback, and an unrecognised shape is an error rather than
 whichever arm happened to deserialize. This is the strict dispatch contract
-`VerbatimTransport` established, applied at the carrier and now workable
+`VerbatimNode` established, applied at the carrier and now workable
 because the three shapes are genuinely distinct.
 
 **This makes reading non-destructive**, which is the largest practical
@@ -495,16 +495,16 @@ the chance that someone will.
 - The root keeps whole-file coverage, but as span rather than text: `$span` is
   `0..source.len()` and the text is sliced natively at render. The tree handle
   carries the source string for callers that want it.
-- `SlotValue` keeps two arms, `Coord(NodeCoordinate)` and `Transport(T)`.
+- `SlotValue` keeps two arms, `Coord(NodeCoordinate)` and `Node(T)`.
   `Node(T)` and `Verbatim(String)` are both gone. A coordinate is the tagged
   handle and the span.
-- Transport structs drop `$span`, `$nodeHandle`, `$childIndex`, `$source` and
+- Node structs drop `$span`, `$nodeHandle`, `$childIndex`, `$source` and
   `$named` — declared today, read never. The reader keeps emitting the
   coordinate fields, which the wrap layer needs for drill-in and the
   projection needs to fold: a shallow read's leaf carries its parent's handle
   and its child index, a deep read's leaf carries the tree's tag and no
   index, and the levels between carry a span only.
-- `VerbatimTransport` returns as a node type, admitted by slot types that
+- `VerbatimNode` returns as a node type, admitted by slot types that
   accept a text kind.
 - The fill walk is the prepare walk: `Prepare::prepare(&mut self, &RenderContext)`
   resolves coordinates against the engine's live trees, classifies list gaps,
@@ -568,8 +568,8 @@ carrying the untouched-subtree case.
 - The seam classifier and the adjacency mark. A coordinate's write honours
   its position's `ADJACENT` as verbatim text does; how boundaries are
   classified does not change.
-- Tree-level render format. `render_transport_parts` hardcodes
-  `TransportSource::Factory`, so detected per-file format never reaches the
+- Tree-level render format. `render_node_parts` hardcodes
+  `NodeSource::Factory`, so detected per-file format never reaches the
   native render path; that predates this spec and needs its own decision.
 
 ## Realization notes
@@ -588,12 +588,12 @@ Measured at realization, rust grammar unless noted:
   read by one engine is refused by another with the handle and tree id in
   the error.
 - Byte axis: a shallow and a deep read of `sittir-core/src/render.rs`,
-  `packages/common/src/transport-data.ts` (typescript) and
+  `packages/common/src/node-data.ts` (typescript) and
   `tests/format-roundtrip/fixtures/python-4space.py` (python) each render
   their source byte for byte
   (`packages/tools/tests/emit/dogfood-render-bytes.test.ts`).
 - Where a render's time goes now: on a read → render loop over the 8 KB
-  file, the native call is 5.8 % of the wall and the transport decode
+  file, the native call is 5.8 % of the wall and the node decode
   (`SlotValue::from_napi_value`) 2 % of that call, down from 98.7 % of the
   call before coordinates; building the result JavaScript string is nearly
   all of the native call. The JavaScript-side projection that walks the

@@ -24,7 +24,7 @@ Whether a slot's storage can hold a node: every storage kind but `boolean`, `bit
 
 A kind expanded to the concrete kinds it can stand for: itself when it is not
 a supertype, otherwise the union over its subtypes, transitively. Shared with
-the transport emitters, which need the same closure to decide what a slot's
+the node emitters, which need the same closure to decide what a slot's
 element type can hold — one derivation, so the sites addressed against a
 generated enum and the enum's own variants cannot disagree.
 
@@ -1069,7 +1069,7 @@ True when a slot's sole required value needs no input: a literal terminal, or a 
 	 * When this pattern's sole realisation is a single fixed anonymous literal
 	 * (e.g. `_semicolon` = `choice(_automatic_semicolon, ";")` where every
 	 * non-blank, non-symbol leaf collapses to the same string), returns that
-	 * string so callers can treat this like a keyword/token for transport
+	 * string so callers can treat this like a keyword/token for node
 	 * deserialisation. Returns `undefined` for content-bearing patterns
 	 * (`identifier`, `number`, external scanner symbols, etc.).
 	 *
@@ -1702,7 +1702,7 @@ reads it back out after `assemble()` runs), so its owner is
 	 * Stamped catalog id per `enumKinds` member, keyed by kind name — same
 	 * stamped-fact discipline as `NodeRef.resolvedKindId`; absent only for a
 	 * kind with no catalog entry. Consumers that need a numeric id for one
-	 * of these kinds (transport dispatch, `$other` reclamation) read this
+	 * of these kinds (node dispatch, `$other` reclamation) read this
 	 * instead of re-deriving one via a fresh name-keyed catalog scan.
 	 */
 ```
@@ -2301,7 +2301,7 @@ dispatches on the kind id (`w.indent()` / `w.dedent(seam)` through
 `literalWrite`). A spacing sentinel (Tight) has no text at all. How the
 kind is stored does not enter into it. The fact types `engine.render`'s
 kind-id argument (the `FixedTextKindId` union, `emitTypes`) and a pattern
-leaf's kind-id arm (`renderLeafTransportNapiImpls`). A fixed-text leaf
+leaf's kind-id arm (`renderLeafNodeNapiImpls`). A fixed-text leaf
 renders from its kind id whatever its text (its unit, `collectFixedLiterals`),
 so the runtime also renders a depth token or a spacing sentinel given its id
 (nothing, on its own); the union leaves those out because no text stands
@@ -2384,7 +2384,7 @@ A surface-hidden keyword: the `_kw_*` presence markers, whose builders exist but
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isTerminalNode`
 
-Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as its kind id (a keyword, a punctuation or an enum). A terminal has text but no children; every other model type (branch, envelope, polymorph, alias, supertype, list) holds child items. The render module's leaf transports and the grammar-root check read it.
+Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as its kind id (a keyword, a punctuation or an enum). A terminal has text but no children; every other model type (branch, envelope, polymorph, alias, supertype, list) holds child items. The render module's leaf nodes and the grammar-root check read it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
@@ -2858,7 +2858,7 @@ The id is the one the parser shows for the member: a multi-token member such as 
 /** An enum-of-literals stores as a kind id: its value set is its members'
  *  ids and nothing else, so a slot holding one — directly or through a
  *  supertype — types as the member-id union, the wrap projects a read
- *  member node to its id, and the transport decodes the bare id. */
+ *  member node to its id, and the native node decodes the bare id. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.rawFactoryName`
@@ -3455,7 +3455,7 @@ baked into one, and reads its declaration here. Absent until
 ### `packages/codegen/src/compiler/model/render-rules.ts::SeatedChild`
 
 The child a seated site belongs to: the kind that occupies the position, and
-the transport field carrying that kind's own trailing edge. A seated site
+the node field carrying that kind's own trailing edge. A seated site
 writes no field of its own — the parent fills the child's.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seatedSites`
@@ -3630,7 +3630,7 @@ The catalog kinds of a list's separator token arms (`AssembledList.separatorToke
  * renders indentation, the one unseparated array of a kind is further
  * wrapped as `seq(start, array, end)` with `indent` and `dedent` among the
  * flank arms. Every choice's arms carry the preference label and the
- * resolved default exactly as a declared choice does, so sites, transport
+ * resolved default exactly as a declared choice does, so sites, node
  * fields, the native fill and the list view are all reads of the rule. A
  * grammar whose `_layout` supertype is empty gets its rules back
  * unchanged; the arms of every separator gap are that supertype's members
@@ -3662,9 +3662,9 @@ or default label, and side `seam`. A seam whose token is the kind's own
 display is the kind's edge, and its site is stamped `kindEdge` here, where
 that is known. Rule order is what the depth walk
 (`validateIndentDepth`, `DEPTH_SITES`) relies on: a flank's start precedes
-its array's sites and its end follows them. One entry per kind × transport
+its array's sites and its end follows them. One entry per kind × node
 field; two seams of one token in one kind resolving to different defaults
-is an error, since they share one transport field.
+is an error, since they share one node field.
 
 A kind edge that opens or closes with a choice of two or more tokens
 (`edgeLiterals`), where the member beside the seam is a slot with no
@@ -3677,7 +3677,7 @@ member is optional or a run has no slot to read an arm from and keeps its single
 site.
 
 After the walk it appends the seated sites (`seatedSites`), which carry no
-transport field of the kind that holds them.
+node field of the kind that holds them.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamRenderRules`
 
@@ -3692,7 +3692,7 @@ resolver's answer for the kind, falling back to the right member's
 Boundaries touching a whitespace choice (a separator's, a flank's) and
 flank wrappers are left alone; so are rules some other rule references
 with `inline: true`, since an inlined body prints into the referencing
-kind's transport, which holds no field for it. Finishes by validating the
+kind's node, which holds no field for it. Finishes by validating the
 declared defaults over every site of the result. Then every compound kind
 that owns its edges (`ownsKindEdges`) gets its kind edge seams
 (`withKindEdges`). A grammar with no layout kinds gets the spaced rules
@@ -3811,7 +3811,7 @@ The kinds whose text ends only at a line break (`lineTerminated`) and that are n
 
 Such a kind's after edge admits only the line-breaking arms and defaults to the narrowest of them. Anything written after it on its row would be read as its text.
 
-At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` and typescript's `hash_bang_line` are lexed leaves and own none. After any node of a line-terminated kind, whether a transport, a source coordinate or detached trivia text (`RenderSink::end_line_after`), the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end` with `LineHold::Terminated`). The hold is a floor, not an override: a mark without a line break never replaces it, and a wider break widens it whatever its strength, so a blank line declared after the kind or kept from the source gap survives. It also survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, a deferred run's end seam, or the owner's seam restored after its own-line trailing run.
+At render time the same fact guarantees the break, whether or not the kind owns an after edge. python's `comment` and typescript's `hash_bang_line` are lexed leaves and own none. After any node of a line-terminated kind, whether a native node, a source coordinate or detached trivia text (`RenderSink::end_line_after`), the writer holds at least one line break at trivia strength (`RenderSink::hold_line_end` with `LineHold::Terminated`). The hold is a floor, not an override: a mark without a line break never replaces it, and a wider break widens it whatever its strength, so a blank line declared after the kind or kept from the source gap survives. It also survives the end of a render, where other held seams are dropped. An entry whose span includes its own terminator, such as a rust `//!` doc comment or a python `\` continuation, has already written that break. So one break comes off whatever would follow it: its after edge, a join, a deferred run's end seam, or the owner's seam restored after its own-line trailing run.
 
 An owner's after edge belongs after its trailing entries, so the sink sets it aside while an own-line trailing run renders (`RenderSink::take_seam`) and merges it back after the run (`restore_seam`). Two line breaks merge by width whatever their strengths: the wider wins, and a break is never narrowed or added to. A blank-line separator after `fn g() {}` therefore still follows a trailing `// t`, as `fn g() {}\n// t\n\nfn h() {}`.
 
@@ -4053,7 +4053,7 @@ order (`spacingSitesOf`), a `dedent` default with no open indent before it
 is a build error naming the site, and a kind that ends with an indent
 still open is a build error naming the kind. Any site may carry either
 arm: an array flank, a kind edge, or a token seam such as `lbrace_after`
-closed by `rbrace_before`, all fields of one transport written by one
+closed by `rbrace_before`, all fields of one node written by one
 render function. The generated resolver runs the same walk over a user's
 options (`DEPTH_SITES`) and the writer asserts its depth at the end of a
 render. The walk is flat: sites in different arms of one choice count
@@ -4276,7 +4276,7 @@ aliased, else its storage name.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SpacingPart`
 
-One whitespace choice of a spaced separator, flank or seam: the transport
+One whitespace choice of a spaced separator, flank or seam: the node
 field it becomes (the site key), its label, its side, its default arm and
 the arms it admits, read from the choice's own members.
 
@@ -4810,7 +4810,7 @@ A sequence's terminals on one edge, given its members ordered from that edge inw
 
 ### `packages/codegen/src/compiler/model/trivia.ts::triviaKinds`
 
-The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, the whitespace kinds its lexical extras match (`whitespaceTriviaKinds`), every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
+The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, the whitespace kinds its lexical extras match (`whitespaceTriviaKinds`), every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia native node read it. No trivia flag is stored on nodes and no scm role decides it.
 
 The depth members (`depthTriviaKinds`) are trivia kinds too: a layout run read from a parsed tree carries its excess indentation as indent and dedent entries.
 
@@ -5012,7 +5012,7 @@ and container is made by the reader from the node's grammar symbol.
 ```text
 The alias envelope an alias-site ref displays as, if any. Slot values and
 supertype members at such a site resolve to the envelope, not the storage
-kind, so types, transports and factories agree with what the read delivers.
+kind, so types, nodes and factories agree with what the read delivers.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::resolveSlotAliasPairs`

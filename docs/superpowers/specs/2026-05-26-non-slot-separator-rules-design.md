@@ -22,7 +22,7 @@ optional separator, mixed-per-occurrence, terminator-vs-separator, per-field fla
 A **rule-shaped separator** (`choice`/`optional`/token — *not* a fixed literal) is a **child slot** with
 **`role: 'separator'`**:
 
-- **Verbatim pass-through value** — the actual separator token text (`project_verbatim_transport_pattern`'s
+- **Verbatim pass-through value** — the actual separator token text (`project_verbatim_node_pattern`'s
   text-only carrier), never a classified choice arm. "Don't know which arm; pass it through."
 - **Single-or-per-gap, stored on the content slot** — the common *uniform* case stores **one** separator
   value (the list's separator); the rare *genuine-mixing* case stores a **per-gap list** aligned to the
@@ -87,7 +87,7 @@ design empirically — it's the concrete native realization and a strong validat
   *has* one (captured `trailing_sep`/`leading_sep`; render reads the captured bool, never a constant).
 - **Native mechanism (the spec'd 3-edit fix).** "Value on the content slot" realizes natively as: (1)
   `wrap.ts` (`arity==='many'`) emits sibling `_content_trailing_sep`/`_content_leading_sep` booleans from
-  the `$children` spans relative to the sorted member array; (2) the transport struct gains two
+  the `$children` spans relative to the sorted member array; (2) the node struct gains two
   `Option<bool>` fields beside `content: Option<Vec<…>>`; (3) `render-module.ts:2287` reads
   `node.<r>_trailing_sep.unwrap_or(false)`. Mirrors the working `$$$CHILDREN` path (`render-module:1520-1522`
   reads `children.trailing_sep`) + legacy `bridge.rs:154-194 detect_field_trailing_sep`. Gate on

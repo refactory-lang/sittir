@@ -55,7 +55,7 @@
 
 - [ ] `Options`: flank sites are top-level keys by address; supertype addresses union their members.
 - [ ] `options.rs`: `SPACING_SITES` rows carry the address; `resolve` accepts a top-level address key (kind or supertype) and the `indent` string.
-- [ ] Transport: `Option<u16>` fields named by the address on the owning kind; fill from the table; `ListNonterminalView { head, tail }` written by `Joined` around a non-empty list.
+- [ ] Node: `Option<u16>` fields named by the address on the owning kind; fill from the table; `ListNonterminalView { head, tail }` written by `Joined` around a non-empty list.
 
 ### Task 6: Gates, docs, memory
 

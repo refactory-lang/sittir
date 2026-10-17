@@ -1149,5 +1149,5 @@ runtime catalog (`OptionEntry`, `OPTION_CATALOG`, `OPTION_INDEX`) is gone;
 Gates as in the global constraints; the validator, examples and the
 codegen baseline stay identical because nothing renders differently yet.
 Plan 2 stamps the injected choices on read; plan 3 materializes them as
-transport slots filled natively and consumed by the emitted render bodies.
+node slots filled natively and consumed by the emitted render bodies.
 
