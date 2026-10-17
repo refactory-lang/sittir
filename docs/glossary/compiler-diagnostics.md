@@ -398,6 +398,10 @@ The external roles that mark a zero-width layout sentinel (`indent`, `dedent`), 
 
 One blocking `hidden-terminal-nonliteral` record per `hiddenTerminalNonliteralSites` site, naming the owner and the hidden terminal (`details.target`). It runs on every stage's grammar. The override layer claims each enriched-stage record: a `visibleExternals:` entry that gives the external a visible node (rust `_block_comment_content`, typescript `_automatic_semicolon`), a rewrite that removes the bare reference, or a layout role. The final grammar must have none.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics`
+
+One blocking `eof-in-token` record per rule that holds `eof()` anywhere under a `token()` or `token.immediate()`, naming the rule as `ownerKind`. A lexical token cannot match the end of input. tree-sitter's DSL forbids the shape, and the record refuses it at evaluate (`evaluateRecords`) instead of leaving it to the parser generator.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
 
 One blocking `field-optional-delimiter` record per authored-compound slot

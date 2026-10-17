@@ -24,7 +24,8 @@ import {
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
-import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
+import { ALIAS, EOF, SYMBOL } from '../../types/rule-types.ts';
+import { isLexedBoundary, RuleWalker } from '../../dsl/rule-walker.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
@@ -488,9 +489,27 @@ export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds
 	}));
 }
 
+export function eofInTokenDiagnostics(grammar: Pick<RawGrammar, 'name' | 'rules'>): GrammarDiagnostic[] {
+	const walker = new RuleWalker<Rule<'evaluate'>>();
+	const eofInside = (rule: Rule<'evaluate'>): boolean => walker.find(rule, (inner) => inner.type === EOF) !== undefined;
+	return Object.entries(grammar.rules)
+		.filter(([, rule]) => walker.find(rule, (inner) => isLexedBoundary(inner) && eofInside(inner)) !== undefined)
+		.map(([ownerKind]) => ({
+			scope: 'grammar' as const,
+			code: 'eof-in-token',
+			severity: 'fail' as const,
+			grammar: grammar.name,
+			ownerKind,
+			message: `kind '${ownerKind}' puts eof() inside a token; a lexical token cannot match the end of input.`,
+			proposal: `Move eof() out of the token, to the end of the production that holds it.`,
+			canProceed: false
+		}));
+}
+
 export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 	return withoutOrphanedGroups(raw, [
 		...predictionRecords(raw),
+		...eofInTokenDiagnostics(raw),
 		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
 		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
 		...(raw.layerDiagnostics ?? [])

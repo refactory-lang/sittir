@@ -19,6 +19,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	IMMEDIATE_TOKEN,
 	INDENT,
@@ -59,6 +60,7 @@ export function classifyByType(
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
+		case EOF:
 			return 'terminal';
 		case TOKEN:
 		case FIELD:
@@ -110,6 +112,7 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
+		case EOF:
 			return [];
 		default:
 			return assertNever(anyRule);

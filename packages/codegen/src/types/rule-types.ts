@@ -15,3 +15,4 @@ export const ALIAS = 'ALIAS' as const;
 export const TOKEN = 'TOKEN' as const;
 export const IMMEDIATE_TOKEN = 'IMMEDIATE_TOKEN' as const;
 export const RESERVED = 'RESERVED' as const;
+export const EOF = 'EOF' as const;

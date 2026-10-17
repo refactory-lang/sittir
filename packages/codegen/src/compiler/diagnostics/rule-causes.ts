@@ -14,6 +14,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	IMMEDIATE_TOKEN,
 	INDENT,
@@ -189,6 +190,8 @@ function derivesForm(
 			case 'PREC_DYNAMIC':
 			case 'RESERVED':
 				return ends(node.content, at);
+			case EOF:
+				return [at];
 			case PATTERN:
 			case SUPERTYPE:
 			case INDENT:

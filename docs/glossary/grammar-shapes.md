@@ -146,6 +146,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Union of every compiled-grammar.json rule shape (loose any-rule alias). */
 ```
 
+### `packages/codegen/src/grammar-shapes/grammar-json.ts::EofRule`
+
+The `EOF` node tree-sitter's grammar.json holds for `eof()`.
+
 ### `packages/codegen/src/grammar-shapes/grammar-json.ts::AuthoringRule`
 
 ```text

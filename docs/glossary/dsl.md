@@ -3415,6 +3415,10 @@ The runtime's global `grammar(base, options)`, typed generic over the base: `enr
 // container would make bare `token(...)` uninstantiable).
 ```
 
+### `packages/codegen/src/dsl/authoring-globals.d.ts::eof`
+
+The global `eof()` a grammar file calls. Under tree-sitter's CLI it is tree-sitter's own builder; under sittir's evaluate it is `compiler/evaluate.ts::eof`. Both give `{ type: 'EOF' }`.
+
 ### `packages/codegen/src/dsl/rule-walker.ts::module`
 
 ```text
@@ -7040,6 +7044,10 @@ One step of a flattened production: the symbol key and, when one applies, the al
 
 The interned empty rule.
 
+### `packages/codegen/src/dsl/symbol-table.ts::END_STEP_KEY`
+
+The step key `productionsOf` gives an `EOF`: tree-sitter's built-in end symbol, which no rule or token owns.
+
 ### `packages/codegen/src/dsl/symbol-table.ts::sameShape`
 
 Structural equality of two interned values, the equality tree-sitter uses to dedupe lexical rules, productions and aliases.
@@ -7062,7 +7070,11 @@ Rewrites every `SYM` key in an interned rule.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::productionsOf`
 
-Flattens an interned rule into its productions: a `CHOICE` contributes each member's productions (deduped), a `SEQ` the cartesian product of its members', and the innermost alias applies to every step under it.
+Flattens an interned rule into its productions: a `CHOICE` contributes each member's productions (deduped), a `SEQ` the cartesian product of its members', an `EOF` one end step (`END_STEP_KEY`), and the innermost alias applies to every step under it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::completedProductions`
+
+A variable's productions as tree-sitter keeps them after `eof()`: a production with an end step anywhere but last is dropped, since it can never complete, and a trailing end step is removed (the production then needs end-of-input lookahead). It runs once per variable, on the whole rule, so an `EOF` that a later `SEQ` member follows is caught.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
 

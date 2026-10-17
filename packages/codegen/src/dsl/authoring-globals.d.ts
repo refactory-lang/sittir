@@ -17,7 +17,8 @@ import type {
 	PrecDynamicRule,
 	ReservedRule,
 	ImmediateTokenRule,
-	BlankRule
+	BlankRule,
+	EofRule
 } from '../grammar-shapes/grammar-json.ts';
 import type { GrammarResult } from './enrich.ts';
 import type { LayerOptions, PendingBase } from './layer.ts';
@@ -60,6 +61,7 @@ declare global {
 	function dedent(): StringRule<string>;
 
 	function blank(): BlankRule;
+	function eof(): EofRule;
 }
 
 export {};

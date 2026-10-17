@@ -2,6 +2,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	INDENT,
 	NEWLINE,
@@ -15,6 +16,7 @@ import {
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
+import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
 import {
@@ -202,6 +204,22 @@ function materializeInlinedBody(
 	} as Rule<'link'>;
 }
 
+export function eofLowered(rule: Rule<'link'>): Rule<'link'> {
+	const lowered = new WeakSet<object>();
+	const visit = (node: Rule<'link'>): Rule<'link'> => {
+		if (node.type === EOF) {
+			const blank = { type: CHOICE, members: [], ...(node.id === undefined ? {} : { id: node.id }) } as Rule<'link'>;
+			lowered.add(blank);
+			return blank;
+		}
+		if (node.type === SEQ && node.members.some((member) => lowered.has(member))) {
+			return { ...node, members: node.members.filter((member) => !lowered.has(member)) };
+		}
+		return node;
+	};
+	return visit(new RuleWalker<Rule<'link'>>().map(rule, visit));
+}
+
 function applyNormalizationPasses(
 	linkRules: Record<string, Rule<'link'>>,
 	ctx?: NormalizeCtx,
@@ -215,7 +233,8 @@ function applyNormalizationPasses(
 		for (const [name, rule] of Object.entries(current)) out[name] = withKindFacts(pass(rule), rule);
 		return out;
 	};
-	let rules = rebuildEach(linkRules, (rule) => collapseWrappers(rule, ctx));
+	let rules = rebuildEach(linkRules, eofLowered);
+	rules = rebuildEach(rules, (rule) => collapseWrappers(rule, ctx));
 	rules = rebuildEach(rules, (rule) => fanOutSeqChoices(rule, ctx));
 	rules = rebuildEach(rules, (rule) => factorChoiceBranches(rule, ctx));
 	rules = rebuildEach(rules, (rule) => dedupeSeqMembers(rule, ctx));

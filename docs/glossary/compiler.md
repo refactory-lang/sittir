@@ -4150,6 +4150,10 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 // Only stamp when non-default (single → undefined per combineMultiplicity).
 ```
 
+### `packages/codegen/src/compiler/normalize.ts::eofLowered`
+
+The first normalization pass: every `EOF` becomes blank, and a `SEQ` drops the members that were `EOF`, so `seq(a, eof())` normalizes as `seq(a)`. `EOF` takes no slot, has no child and renders no text, so the model sees exactly what blank gives it: a rule whose body is only `eof()` assembles as one whose body is `blank()`. Everything before normalize (the evaluated grammar, grammar.json, the symbol-table prediction) keeps `EOF` as tree-sitter does.
+
 ### `packages/codegen/src/compiler/opaque-facts.ts::opaqueFacts`
 
 ```text
@@ -7369,6 +7373,10 @@ alias target, as in tree-sitter's `alias()`.
 // A choice with no members; `isBlank` reads it and tree-sitter's BLANK as
 // the same rule.
 ```
+
+### `packages/codegen/src/compiler/evaluate.ts::eof`
+
+tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`eofLowered`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions`
 

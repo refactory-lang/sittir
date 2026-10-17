@@ -10,6 +10,7 @@ import {
 	PATTERN,
 	INDENT,
 	DEDENT,
+	EOF,
 	NEWLINE,
 	SYMBOL,
 	ALIAS,
@@ -97,6 +98,7 @@ export type Rule<Phase extends PhaseName = 'normalize'> =
 	| IndentRule<Phase>
 	| DedentRule<Phase>
 	| NewlineRule<Phase>
+	| EofRule<Phase>
 	| SymbolRule<Phase>
 	| OptionalRule<Phase>
 	| FieldRule<Phase>
@@ -282,6 +284,10 @@ export type DedentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 
 export type NewlineRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof NEWLINE;
+};
+
+export type EofRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
+	readonly type: typeof EOF;
 };
 
 export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {

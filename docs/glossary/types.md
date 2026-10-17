@@ -727,6 +727,10 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 // flattenRules. None appear in the wrapper-free views.
 ```
 
+### `packages/codegen/src/types/rule.ts::EofRule`
+
+tree-sitter's end-of-input rule, in every phase's union. It matches no text, takes no slot and has no child. Normalize lowers it to blank (`eofLowered`), so a simplified rule never holds one, and the render template gives it no text.
+
 ### `packages/codegen/src/types/rule.ts::RenderRule`
 
 ```text
