@@ -2,7 +2,7 @@
 //!
 //! [`napi_engine!`] emits the `SittirEngine` class (parse, read, render,
 //! edits) and the addon's live-tree table behind it. A grammar crate supplies only
-//! what is actually grammar-specific — its parser hook, its transport root
+//! what is actually grammar-specific — its parser hook, its node root
 //! type, and its template hash — so a change to the state machine lands in one
 //! place instead of once per grammar.
 //!
@@ -33,12 +33,12 @@
 /// Emit the `SittirEngine` napi class for one grammar.
 ///
 /// - `$grammar` — the crate's [`EngineGrammar`](crate::engine::EngineGrammar) adapter.
-/// - `$render_root` — the generated transport root type accepted by `render`.
-/// - `$any` — the grammar's any-transport: what `read` reads a node into, and
+/// - `$render_root` — the generated node root type accepted by `render`.
+/// - `$any` — the grammar's any-native node: what `read` reads a node into, and
 ///   the parent type it reads any parent's routes with.
 /// - `$options` — the grammar's `sittir_core::options::Options<Sites>` (`render::options::Options`), read through its address trie; the shape `EngineOptions.options` and `render`/`render_to_file` accept.
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
-/// - `$abi` — the render transport ABI version this crate was generated against.
+/// - `$abi` — the render node ABI version this crate was generated against.
 /// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
 #[macro_export]
 macro_rules! napi_engine {
@@ -154,7 +154,7 @@ macro_rules! napi_engine {
             }
 
             #[::napi_derive::napi(getter)]
-            pub fn native_render_transport_abi(&self) -> u32 {
+            pub fn native_render_node_abi(&self) -> u32 {
                 $abi
             }
 
@@ -200,7 +200,7 @@ macro_rules! napi_engine {
                 Ok(json)
             }
 
-            /// The node at `index` of tree `treeId` read into its transport,
+            /// The node at `index` of tree `treeId` read into its native node,
             /// `depth` levels down (one when absent, `Infinity` for all); index 0
             /// is the root. An `ERROR` node reads as its text and coordinate.
             /// Refuses a tree that is not live, an index past its last node,
@@ -255,7 +255,7 @@ macro_rules! napi_engine {
 
             /// A snapshot of the node at `index` of the live tree `treeId`: the
             /// node read at every depth into plain data with no tree, each
-            /// node with its span (`$_layout.span`) from the transport that
+            /// node with its span (`$_layout.span`) from the native node that
             /// holds it and each placed extra with its text, the node itself
             /// measured from the byte `holderByte`, or from its own start when
             /// absent. Refuses as `read` does.
@@ -444,18 +444,18 @@ macro_rules! napi_engine {
                 })
             }
 
-            /// Render a typed transport object (napi-native, numeric `$type`).
+            /// Render a typed node object (napi-native, numeric `$type`).
             ///
             /// The options a render takes are the call's own over the layer
             /// of the tree `treeId` names (`ParsedTree::inferred`), over the
             /// engine's. `treeId` is the tree the node was read from; a built
             /// node belongs to no tree and renders by the engine's options.
             #[::napi_derive::napi(
-                ts_args_type = "transport: object, treeId?: number | undefined | null, options?: object | undefined | null"
+                ts_args_type = "node: object, treeId?: number | undefined | null, options?: object | undefined | null"
             )]
             pub fn render(
                 &self,
-                transport: $render_root,
+                node: $render_root,
                 tree_id: Option<$crate::types::TreeId>,
                 options: Option<$options>,
             ) -> ::napi::Result<String> {
@@ -477,24 +477,24 @@ macro_rules! napi_engine {
                         sources: &*trees,
                         recording: None,
                     };
-                    let (_, canonical) = $render_parts(transport, &ctx).map_err(|e| {
-                        ::napi::Error::from_reason(format!("render_transport failed: {e}"))
+                    let (_, canonical) = $render_parts(node, &ctx).map_err(|e| {
+                        ::napi::Error::from_reason(format!("render_node failed: {e}"))
                     })?;
                     Ok($crate::line_endings::spell(canonical, &table.newline))
                 })
             }
 
             #[::napi_derive::napi(
-                ts_args_type = "transport: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null"
+                ts_args_type = "node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null"
             )]
             pub fn render_to_file(
                 &self,
-                transport: $render_root,
+                node: $render_root,
                 path: String,
                 tree_id: Option<$crate::types::TreeId>,
                 options: Option<$options>,
             ) -> ::napi::Result<()> {
-                let rendered = self.render(transport, tree_id, options)?;
+                let rendered = self.render(node, tree_id, options)?;
                 ::std::fs::write(&path, rendered).map_err(|e| {
                     ::napi::Error::from_reason(format!("render_to_file failed for {path}: {e}"))
                 })

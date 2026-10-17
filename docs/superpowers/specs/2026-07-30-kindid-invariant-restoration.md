@@ -93,7 +93,7 @@ from the CST (children promoted to the parent), and tree-sitter propagates an
 outer `field()` through a hidden rule to its children — so the wire shape and
 field labels are identical to today's inline form. What changes is that the
 name now has a catalog row, so every name-keyed lookup (`findEntryForKindName`,
-alias chains, transport routing) resolves.
+alias chains, node routing) resolves.
 
 Evaluate's post-pass synthesis functions become verification-only: they
 assert the rules already exist (minted by the DSL pass in both executions)
@@ -143,7 +143,7 @@ Downstream consumers read stamps instead of looking up:
   their `StringRule` (subsuming the constructor-time `findEntryForLiteralText`
   lookup that currently computes `resolvedKind`/`resolvedKindId`).
 - Emit-time resolution chains (`resolveLiteralKindId`,
-  `resolveAcceptedTransportIds`'s name-derived fallbacks) shrink to
+  `resolveAcceptedNodeIds`'s name-derived fallbacks) shrink to
   stamp-reads plus a hard assertion.
 
 The same pass emits a diagnostic listing every leaf it could NOT stamp,

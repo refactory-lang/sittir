@@ -221,7 +221,7 @@ Throws when any present binary is stale, with each one's reason. No-op when no b
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::nativeInputs`
 
-Every file a grammar's native build compiles from or is driven by, by repo-relative path, with its SHA-256: the workspace `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml` and `pnpm-lock.yaml` (the installed napi CLI); the `Cargo.toml`, `package.json` (napi configuration and build scripts), `build.rs`, `src/` and `templates/` of sittir-core, sittir-transport-macros and the grammar's crate; the build driver and every module it runs (`moduleClosure` of `BUILD_DRIVER`); the grammar's generated parser (`.sittir/src`), which the crate's `build.rs` compiles; and every file its scanners include, however far outside `.sittir/src` (`quotedIncludeClosure`; TypeScript's scanner includes the shared `packages/typescript/common/scanner.h`). A file added or removed changes the map as an edit does.
+Every file a grammar's native build compiles from or is driven by, by repo-relative path, with its SHA-256: the workspace `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml` and `pnpm-lock.yaml` (the installed napi CLI); the `Cargo.toml`, `package.json` (napi configuration and build scripts), `build.rs`, `src/` and `templates/` of the grammar's crate and of every crate it reaches through path dependencies (`crateClosure`: sittir-core and the node macros today); the build driver and every module it runs (`moduleClosure` of `BUILD_DRIVER`); the grammar's generated parser (`.sittir/src`), which the crate's `build.rs` compiles; and every file its scanners include, however far outside `.sittir/src` (`quotedIncludeClosure`; TypeScript's scanner includes the shared `packages/typescript/common/scanner.h`). A file added or removed changes the map as an edit does.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::quotedIncludeClosure`
 
@@ -238,6 +238,14 @@ What a native build is built from: the toolchain, the build configuration and th
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::nativeBuildFingerprint`
 
 The `NativeBuildFingerprint` as it is now: the toolchain (`rustc -vV` unless `setting.toolchain` names one), `nativeBuildConfig` of `setting.env` (defaulting to the process environment) and `nativeInputs`.
+
+### `packages/codegen/src/scripts/native-binary-freshness.ts::crateClosure`
+
+The repo-relative directories of the crate at `crateRel` and of every crate it reaches through `path` dependencies in its `Cargo.toml` (`PATH_DEPENDENCY`), transitively. Read from the manifests themselves, so a crate renamed, added or dropped is followed without a list to keep in step. A `path` that names no crate (a `[lib]` source path) is skipped.
+
+### `packages/codegen/src/scripts/native-binary-freshness.ts::PATH_DEPENDENCY`
+
+Matches the value of each `path = "…"` key in a `Cargo.toml`.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::BUILD_DRIVER`
 
@@ -519,7 +527,7 @@ Whether a repo-relative path is a codegen source that takes part in generation: 
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::module`
 
-Freshness of grammar-owned napi binaries (`*.node`). A binary compiles in the grammar crate's generated sources, the grammar's generated parser, sittir-core and the transport macros, under the workspace's `Cargo.toml`, `Cargo.lock` and toolchain; a binary built from any other version of them renders stale code, or segfaults mid-gate. Freshness is content, not time: the binary and its inputs must equal the stamp the build that wrote it recorded (`writeNativeBuildStamp`). The stamp also records the profile, the toolchain and the build configuration. Validation accepts any of them (`hostBinaryFreshnessFor`), so a binary built elsewhere validates wherever its stamp travels with it; a regeneration accepts only what it would build now (`nativeBuildFreshness`).
+Freshness of grammar-owned napi binaries (`*.node`). A binary compiles in the grammar crate's generated sources, the grammar's generated parser, and the crates it depends on (sittir-core and the node macros), under the workspace's `Cargo.toml`, `Cargo.lock` and toolchain; a binary built from any other version of them renders stale code, or segfaults mid-gate. Freshness is content, not time: the binary and its inputs must equal the stamp the build that wrote it recorded (`writeNativeBuildStamp`). The stamp also records the profile, the toolchain and the build configuration. Validation accepts any of them (`hostBinaryFreshnessFor`), so a binary built elsewhere validates wherever its stamp travels with it; a regeneration accepts only what it would build now (`nativeBuildFreshness`).
 
 Shared leaf module, consumed by `generated-manifest.ts` (manifest verification), `validate/common.ts` (`loadNativeEngine`), `tools/src/regen.ts` (the regeneration skip) and `scripts/build-native.mts` (the stamp). It imports only `grammars.ts` and `@sittir/common/engine` (for the host platform suffix), so no consumer picks up an import cycle.
 

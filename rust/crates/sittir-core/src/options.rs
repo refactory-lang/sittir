@@ -97,7 +97,7 @@ impl SiteSpec {
     }
 }
 
-/// One edge a transport carries: the arm, and the strength it writes at when
+/// One edge a node carries: the arm, and the strength it writes at when
 /// the stamp knows it. The render side stamps both, from the site that set the
 /// edge (the kind's own edge site, or the seat of the list that holds the
 /// node), so a seated gap writes at its own site's strength. A stamp without a
@@ -115,7 +115,7 @@ impl From<crate::slot::SeamArm> for EdgeArm {
     }
 }
 
-/// The two edges every transport carries in its base. An unset side is
+/// The two edges every node carries in its base. An unset side is
 /// filled by `prepare_edges` from the kind's edge row, or by a seat.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Edges {
@@ -124,11 +124,11 @@ pub struct Edges {
 }
 
 impl Edges {
-    /// No edge set on either side: what a transport whose base carries no edges answers.
+    /// No edge set on either side: what a node whose base carries no edges answers.
     pub const NONE: Edges = Edges { before: None, after: None };
 }
 
-/// A transport that carries its kind's edges in its base.
+/// A node that carries its kind's edges in its base.
 pub trait Edged {
     fn kind_id(&self) -> KindId;
     fn edges(&self) -> &Edges;

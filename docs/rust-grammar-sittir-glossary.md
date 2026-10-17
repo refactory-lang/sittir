@@ -150,7 +150,7 @@ Every function-valued entry in `groups:` declares a STRUCTURAL PATTERN rather
 than a rule body. Codegen creates `_<key>` as the hidden rule body and rewrites
 every matching sub-tree as `alias($._<key>, $.<key>)`, so tree-sitter emits the
 visible kind as a real CST node. Without the alias, tree-sitter inlines the
-hidden `_*` rule, the kind never appears at runtime, and the transport-side
+hidden `_*` rule, the kind never appears at runtime, and the node-side
 slot stays permanently empty.
 
 Two positions are covered entirely by this mechanism and therefore have no

@@ -442,10 +442,20 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
- "sittir-transport-macros",
+ "sittir-node-macros",
  "tree-sitter",
  "tree-sitter-python",
  "tree-sitter-rust",
+]
+
+[[package]]
+name = "sittir-node-macros"
+version = "0.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "regex",
+ "syn",
 ]
 
 [[package]]
@@ -519,16 +529,6 @@ dependencies = [
  "sittir-core",
  "tree-sitter",
  "tree-sitter-language",
-]
-
-[[package]]
-name = "sittir-transport-macros"
-version = "0.0.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "regex",
- "syn",
 ]
 
 [[package]]

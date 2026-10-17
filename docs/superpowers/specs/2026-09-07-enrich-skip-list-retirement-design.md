@@ -145,7 +145,7 @@ wrong.
 ## Verification
 
 Per entry: remove it, regenerate the grammar, run the byte gate and
-`validate counts`, and read the transport of the affected kind. A count or
+`validate counts`, and read the node of the affected kind. A count or
 a render that moves is preserved for review. Then the unit tests for A
 (relabel through path and wildcard overrides), B (mint declines on a
 fielded arm; flat spelling still applies), and C (the verbatim role

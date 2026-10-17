@@ -67,7 +67,7 @@ impl Render for Word {
 }
 
 fn node(s: &'static str) -> SlotValue<Word> {
-    SlotValue::Transport(Word(s))
+    SlotValue::Node(Word(s))
 }
 
 #[test]

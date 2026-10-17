@@ -81,7 +81,7 @@ the "after" `.node` in the shared tree was already built against napi-rs
 3.8.5. napi 3.12.4 reads a JS object field via `napi_get_named_property`
 (V8's inline-name cache) instead of 3.8.5's `Object::get(&str)`, which
 builds a JS string per key then calls `napi_get_property` — with ~4,201
-generated transport fields read one property at a time per render, that
+generated node fields read one property at a time per render, that
 version difference alone is worth +16–19% on unrelated, byte-identical
 output.
 
@@ -98,10 +98,10 @@ regression:
 Both deltas sit inside the ±3–5% run-to-run spread measured on this
 workload, so the honest reading is "no measurable regression, and likely a
 small win" rather than "8–13% slower." A sampled profile (`sample`, 8 s at
-1 ms) is the sharper instrument here: it shows `SlotValue<AnyTransport>::from_napi_value`
+1 ms) is the sharper instrument here: it shows `SlotValue<AnyNode>::from_napi_value`
 at 98.7% of a native render call, the whole render half at 2.65%, and the
 typed sink itself at 0.71% of runtime at HEAD, down from 1.81% pre-sink
-(sink self-time fell ~61% per render; `render_transport_parts` as a whole
+(sink self-time fell ~61% per render; `render_node_parts` as a whole
 fell ~35%). Every mechanism this section originally suspected — `dyn
 RenderSink` dispatch, per-call seam bookkeeping, the per-address options
 struct — is bounded by that 2.65% and is not where render time goes.
@@ -164,7 +164,7 @@ entries were retired along with it.
   parenthetical in the `body` entry under the arm-gating comment) are
   rewritten as live constraints — the Rust render engine is generated
   separately from `render-body.ts`'s IR, not derived from the retired
-  jinja templates, and a name absent from the transport struct means the
+  jinja templates, and a name absent from the node struct means the
   generated Rust body references a field that does not exist.
 - Two glossary mentions were rewritten above, not "every mention of
   jinja/askama": roughly thirty jinja/askama mentions remain across
@@ -207,11 +207,11 @@ are recorded here as next steps, not fixed in this task.
 
 ### The read path is unchanged, and was already wrong
 
-Rendering a deep `parseAndRead` node straight back through `engine.render` gives the same bytes at head as at the last pre-sink commit (measured in a temporary worktree with the same probe), so byte identity holds on that path too. Those bytes are wrong on both sides: python indentation escalates and never returns after a function body (the reader delivers `_indent`/`_dedent` as tokens the transport renders as text, so depth never moves), and typescript decorator seams and the class-body brace seam do not apply (the reader stamps no sites). The validator's counts compare no bytes on the read path, which is why neither shows up. Both belong to the source-coordinates plan's prepare walk, and a byte-level read-render check belongs beside the validator's counts.
+Rendering a deep `parseAndRead` node straight back through `engine.render` gives the same bytes at head as at the last pre-sink commit (measured in a temporary worktree with the same probe), so byte identity holds on that path too. Those bytes are wrong on both sides: python indentation escalates and never returns after a function body (the reader delivers `_indent`/`_dedent` as tokens the native node renders as text, so depth never moves), and typescript decorator seams and the class-body brace seam do not apply (the reader stamps no sites). The validator's counts compare no bytes on the read path, which is why neither shows up. Both belong to the source-coordinates plan's prepare walk, and a byte-level read-render check belongs beside the validator's counts.
 
 ### Depth tokens still carry the sentinel text on the wire
 
-The generated `FromNapiValue` for the `_indent`/`_dedent` token transports defaults `$text` to the depth text (`"\u{FDD0}\n"` / `"\u{FDD1}\n"`, six sites in `rust/crates/sittir-rust/src/render/transport.rs`, mirrored in the other grammars), and the render body reads the depth fact off that string rather than off the kind. It is the last place the retired mark encoding survives, and why the mark-absence test strips those lines. The source-coordinates plan's depth-from-coordinates work removes it; until then a depth token is a text-carrying transport whose text is never written.
+The generated `FromNapiValue` for the `_indent`/`_dedent` token nodes defaults `$text` to the depth text (`"\u{FDD0}\n"` / `"\u{FDD1}\n"`, six sites in `rust/crates/sittir-rust/src/render/node.rs`, mirrored in the other grammars), and the render body reads the depth fact off that string rather than off the kind. It is the last place the retired mark encoding survives, and why the mark-absence test strips those lines. The source-coordinates plan's depth-from-coordinates work removes it; until then a depth token is a text-carrying node whose text is never written.
 
 ## Next
 
@@ -232,11 +232,11 @@ The generated `FromNapiValue` for the `_indent`/`_dedent` token transports defau
   tree's already-built `.node`, which is exactly what produced the
   apparent 8–13% regression above). A repo-policy decision for the user,
   not made here.
-- A transport-text fast-path bug, pre-existing and not introduced by this
+- A node-text fast-path bug, pre-existing and not introduced by this
   branch: `render-module.ts:~820-825` emits an unconditional early
-  `return w.text(text)` for a leaf transport's own text, which skips the
+  `return w.text(text)` for a leaf node's own text, which skips the
   body's `w.dedent()` — for python `render_block`
-  (`transport.rs:~45500`), `render_suite_block` already opened the indent
+  (`node.rs:~45500`), `render_suite_block` already opened the indent
   before that fast path returns, so a verbatim/empty block leaks depth +1
   for the rest of the render. This is a read-path indentation escalation;
   the writer's `debug_assert_eq!(depth, 0)` in `SpacingWriter::finish`
@@ -258,8 +258,8 @@ The generated `FromNapiValue` for the `_indent`/`_dedent` token transports defau
   same edge today, so this is currently inert; folding the two into one
   derivation is worth doing before a coordinate-carrying render makes the
   difference observable.
-- Any further render-throughput work belongs in the transport crossing,
-  not the writer: `SlotValue<AnyTransport>::from_napi_value` is 98.7% of a
+- Any further render-throughput work belongs in the node crossing,
+  not the writer: `SlotValue<AnyNode>::from_napi_value` is 98.7% of a
   native render call (~4,201 generated fields read one
   `napi_get_named_property` at a time), against the sink's 0.71%. Render
   by tree handle against a resident native tree instead of
@@ -268,7 +268,7 @@ The generated `FromNapiValue` for the `_indent`/`_dedent` token transports defau
   points at — is the real lever; do not micro-optimise the sink itself
   (`#[inline]` measured ~0.2% of runtime, and a generic `Render::render<W>`
   is blocked by the `&dyn Render` uses in `sittir-core/src/render.rs` and
-  every generated `render_transport_dispatch`).
+  every generated `render_node_dispatch`).
 - `docs/superpowers/plans/2026-09-11-source-coordinates-plan.md` lands on
   this sink next: its `NodeCoordinate` needs no attached source, and
   `RenderSink::slice` reads the tree through the context — the render

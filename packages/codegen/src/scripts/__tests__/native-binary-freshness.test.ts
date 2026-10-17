@@ -38,12 +38,13 @@ beforeEach(() => {
 	write('scripts/native-args.mts', 'export const cargoArgs = [];\n');
 	write('rust/crates/sittir-core/package.json', '{}\n');
 	write('rust/crates/sittir-rust/package.json', '{"scripts":{"build:gate":"node ../../../scripts/build-native.mts rust --profile gate"}}\n');
-	write('rust/crates/sittir-core/Cargo.toml', '[package]\n');
+	write('rust/crates/sittir-core/Cargo.toml', '[package]\n[dependencies]\nsittir-node-macros = { path = "../sittir-node-macros" }\n');
 	write('rust/crates/sittir-core/build.rs', 'fn main() {}\n');
 	write('rust/crates/sittir-core/src/lib.rs', 'pub fn core() {}\n');
-	write('rust/crates/sittir-transport-macros/Cargo.toml', '[package]\n');
-	write('rust/crates/sittir-transport-macros/src/lib.rs', 'pub fn macros() {}\n');
-	write('rust/crates/sittir-rust/Cargo.toml', '[package]\n');
+	write('rust/crates/sittir-node-macros/Cargo.toml', '[package]\n');
+	write('rust/crates/sittir-node-macros/src/lib.rs', 'pub fn macros() {}\n');
+	write('rust/crates/sittir-unused/src/lib.rs', 'pub fn unused() {}\n');
+	write('rust/crates/sittir-rust/Cargo.toml', '[package]\n[dependencies]\nsittir-core = { path = "../sittir-core" }\n');
 	write('rust/crates/sittir-rust/build.rs', 'fn main() {}\n');
 	write('rust/crates/sittir-rust/src/lib.rs', 'pub fn grammar() {}\n');
 	write('packages/rust/.sittir/src/parser.c', 'int parser;\n');
@@ -66,7 +67,7 @@ describe('native build freshness', () => {
 	for (const input of [
 		'rust/crates/sittir-core/src/lib.rs',
 		'rust/crates/sittir-core/build.rs',
-		'rust/crates/sittir-transport-macros/src/lib.rs',
+		'rust/crates/sittir-node-macros/src/lib.rs',
 		'rust/crates/sittir-rust/src/lib.rs',
 		'rust/crates/sittir-rust/Cargo.toml',
 		'packages/rust/.sittir/src/parser.c',
@@ -102,6 +103,11 @@ describe('native build freshness', () => {
 		write('.cargo/config.toml', '[build]\nrustflags = ["-C", "opt-level=1"]\n');
 		writeNativeBuildStamp(root, 'rust', 'gate', BINARY, built);
 		expect(nativeBuildFreshness(root, 'rust', 'gate', current).reason).toBe('.cargo/config.toml changed since the build');
+	});
+
+	it('stays fresh when a crate the grammar crate does not depend on changes', () => {
+		write('rust/crates/sittir-unused/src/lib.rs', 'pub fn changed() {}\n');
+		expect(nativeBuildFreshness(root, 'rust', 'gate', current).fresh).toBe(true);
 	});
 
 	it('is stale once a native source is added', () => {

@@ -53,7 +53,7 @@ The spec was written against branch `029`; PR-A…PR-H have since landed, drifti
 
 ## Gate (rust-emitting PR — state both halves explicitly)
 
-PR-M is **rust-emitting** (collapsing `AssembledPolymorph` reshapes what render-module/transport emit for polymorph kinds). Per master-plan execution rule (line 22) + `feedback_verify_cargo_not_gate`, the SubagentStop native gate **no-ops after a regen** — so cargo-verify is a **manual** step.
+PR-M is **rust-emitting** (collapsing `AssembledPolymorph` reshapes what render-module/node emit for polymorph kinds). Per master-plan execution rule (line 22) + `feedback_verify_cargo_not_gate`, the SubagentStop native gate **no-ops after a regen** — so cargo-verify is a **manual** step.
 
 - **Deep read-render-parse `pnpm validate:native`, all 3 grammars: `rust 125 / ts 72 / py 76` HOLD-OR-IMPROVE.** (Carry-forward baseline, master-plan line 107. **Re-measure at PR-M start** — master may have moved.)
 - **PLUS** an independent `cargo check --workspace --features napi-bindings` + a re-count of rust-emitting changes — the gate no-ops after regen, so verify cargo yourself; never trust a self-reported "cargo passed."
@@ -88,7 +88,7 @@ Master-plan line 105 (PR-E learning): **never trust a "this is removable / it's 
 | `compiler/evaluate.ts` | Evaluate (run the DSL) | DELETE the heterogeneous-name → `VariantRule` retype (~`:330`); the all-field choice stays a plain `ChoiceRule` (factored field) — verify no `variant` retype escapes. |
 | `compiler/normalize.ts` | Normalize (PR-H renamed from optimize) | DELETE `mapPolymorphForms` (`:735`) + its 4 call sites (`:272/404/446/715`) — a plain `ChoiceRule` recurses via the normal `choice` arm. |
 | `compiler/assemble.ts` | Assemble (Model builder) | Reframe `derivePolymorphForms` (`:454`) → produce the `discriminatingSlot` marker / build `AssembledBranch` (not `AssembledPolymorph`); build `AssembledGroup` from the wire helper kind (§D), not Link's classifier. |
-| `emitters/*.ts` (**13 files** — verified via `rg "modelType === 'polymorph'\|node\.forms\|variantChildKinds" emitters/`) | per-artifact projections | **CONDITION swaps only (no body rewrite):** replace `modelType === 'polymorph'` / `node.forms` / `variantChildKinds` reads with the structural predicate (`isDiscriminatingBranch`) + the `forms` getter. Files: `types.ts`, `factories.ts`, `from.ts`, `wrap.ts`, `render-module.ts`, **`shared.ts`** (LOAD-BEARING — drives `classifyFactoryShape`/factory-mode), `templates.ts`, `node-model.ts`, `factory-map.ts`, `consts.ts`, `ir.ts`, **`test.ts`**, **`type-test.ts`**. (Note: `transport-projection.ts` did NOT appear in the current `rg` reach — re-verify at edit time; `is.ts` likewise.) |
+| `emitters/*.ts` (**13 files** — verified via `rg "modelType === 'polymorph'\|node\.forms\|variantChildKinds" emitters/`) | per-artifact projections | **CONDITION swaps only (no body rewrite):** replace `modelType === 'polymorph'` / `node.forms` / `variantChildKinds` reads with the structural predicate (`isDiscriminatingBranch`) + the `forms` getter. Files: `types.ts`, `factories.ts`, `from.ts`, `wrap.ts`, `render-module.ts`, **`shared.ts`** (LOAD-BEARING — drives `classifyFactoryShape`/factory-mode), `templates.ts`, `node-model.ts`, `factory-map.ts`, `consts.ts`, `ir.ts`, **`test.ts`**, **`type-test.ts`**. (Note: `node-projection.ts` did NOT appear in the current `rg` reach — re-verify at edit time; `is.ts` likewise.) |
 | `compiler/__tests__/*` + characterization test (NEW) | gate | NEW characterization test pinning the `forms` getter ≡ `derivePolymorphForms` for every polymorph kind; update `PolymorphRule`-referencing tests. |
 
 ---
@@ -116,7 +116,7 @@ Master-plan line 105 (PR-E learning): **never trust a "this is removable / it's 
 - [ ] Add `interface DiscriminatingSlotMarker { parentKind; discriminatingSlotName; armNames?; source: 'promoted'|'override' }` to `link.ts` (spec §B, line 1917). Purely additive metadata — does NOT yet replace anything.
 - [ ] Add `discriminatingSlot?: string` + a **derived `forms` getter** to `AssembledBranch` (`node-map.ts:2586`). The getter reconstructs forms from the discriminating choice slot's arms (generalize `structuralSlotRecordFromForms`, `:2538`, into the branch slot-merge). **`AssembledPolymorph` stays alive** — this is the "new beside old" step.
 - [ ] Run the characterization test (expect pass). Counts/byte-diff unaffected (nothing routes through the new path yet).
-- [ ] **Rust-emitting gate (the `forms` getter feeds the render/transport emit path):** regen all 3 grammars + an independent `cargo check --workspace --features napi-bindings` + re-count (the SubagentStop native gate **no-ops after regen** — manual cargo-verify required, `feedback_verify_cargo_not_gate`).
+- [ ] **Rust-emitting gate (the `forms` getter feeds the render/node emit path):** regen all 3 grammars + an independent `cargo check --workspace --features napi-bindings` + re-count (the SubagentStop native gate **no-ops after regen** — manual cargo-verify required, `feedback_verify_cargo_not_gate`).
 - [ ] Commit. Gate: `pnpm test` green; **byte-diff EMPTY** (additive, unread) + cargo check clean + counts unchanged.
 
 ### Task 2 — Migrate emitter dispatch CONDITIONS onto a structural predicate (no body rewrite)

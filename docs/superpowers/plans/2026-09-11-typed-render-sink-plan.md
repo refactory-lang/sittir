@@ -4,7 +4,7 @@
 
 **Goal:** The generated render functions write into a typed sink instead of a `fmt::Formatter`, so whitespace decisions travel as calls rather than as noncharacters parsed back out of the byte stream; and the render options cross the boundary as a generated per-kind struct instead of a JSON string matched against a path table.
 
-**Architecture:** `sittir-core` gains a `RenderSink` trait with one method per thing the spacing writer needs to know (`text`, `adjacent`, `site`, `seam`, `token_seam`, `indent`, `dedent`) and a `Render` trait every transport, view and enum implements in place of `Display`. The body printer emits one call per body node; the five mark characters, the scanner and the `seamMarked` prefixing are deleted. The options module generates one Rust struct per address branch mirroring the TypeScript `AddressedOptions` type, deserialized over napi with unknown keys refused, and a straight-line resolver that sets each site the address names; the flat `ResolvedOptions` table and the site constants stay as the resolved form the prepare walk reads. Rendered bytes do not change: this is a refactor, gated on byte identity.
+**Architecture:** `sittir-core` gains a `RenderSink` trait with one method per thing the spacing writer needs to know (`text`, `adjacent`, `site`, `seam`, `token_seam`, `indent`, `dedent`) and a `Render` trait every native node, view and enum implements in place of `Display`. The body printer emits one call per body node; the five mark characters, the scanner and the `seamMarked` prefixing are deleted. The options module generates one Rust struct per address branch mirroring the TypeScript `AddressedOptions` type, deserialized over napi with unknown keys refused, and a straight-line resolver that sets each site the address names; the flat `ResolvedOptions` table and the site constants stay as the resolved form the prepare walk reads. Rendered bytes do not change: this is a refactor, gated on byte identity.
 
 **Tech Stack:** Rust (`sittir-core`, generated `sittir-{rust,typescript,python}` crates, napi-rs), TypeScript codegen (`packages/codegen`), `@sittir/common`, vitest, cargo.
 
@@ -362,7 +362,7 @@ impl<W: std::fmt::Write + ?Sized> SpacingWriter<'_, W> {
 macro_rules! render_with_trivia {
     ($self:expr, $w:expr, $render:expr) => {
         (|| -> $crate::render::RenderResult {
-            if let Some(ref __trivia) = $self.transport_trivia_data {
+            if let Some(ref __trivia) = $self.node_trivia_data {
                 if let Some(ref __leading) = __trivia.leading {
                     for __entry in __leading {
                         $crate::render::Render::render(__entry, $w)?;
@@ -373,7 +373,7 @@ macro_rules! render_with_trivia {
                 }
             }
             $render?;
-            if let Some(ref __trivia) = $self.transport_trivia_data {
+            if let Some(ref __trivia) = $self.node_trivia_data {
                 if let Some(ref __trailing) = __trivia.trailing {
                     if !__trailing.is_empty() {
                         for __entry in __trailing {
@@ -415,7 +415,7 @@ git commit -- rust/crates/sittir-core/src/render.rs rust/crates/sittir-core/src/
 **Files:**
 - Modify: `packages/codegen/src/emitters/render-body.ts` (nodes, printer, the mark constants)
 - Modify: `packages/codegen/src/emitters/templates.ts` (`emitRule` INDENT/NEWLINE/DEDENT arms ~577–584; `emitSymbol` ~810)
-- Modify: `packages/codegen/src/emitters/render-module.ts` (`renderTypedDispatch` ~535, `renderTypedLeafFn` ~708, `renderTypedBranchFn` ~722, `renderTypedBranchFallbackFn` ~648, `leafTextWrite` ~700, `buildSlotWriteCall` ~522, `buildTypedTemplateBody` ~757–908, `armSeamSupport` ~1115, `emitPerSlotChildEnum` ~2110–2140, `emitSupertypeTransportEnum`, `emitSupertypeRenderHelper`, `renderAnyTransportWithNapiFromValue`, `renderTriviaTransportSupport`, every `impl ::std::fmt::Display for` emission, `renderTransportEntry` ~2262)
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`renderTypedDispatch` ~535, `renderTypedLeafFn` ~708, `renderTypedBranchFn` ~722, `renderTypedBranchFallbackFn` ~648, `leafTextWrite` ~700, `buildSlotWriteCall` ~522, `buildTypedTemplateBody` ~757–908, `armSeamSupport` ~1115, `emitPerSlotChildEnum` ~2110–2140, `emitSupertypeNodeEnum`, `emitSupertypeRenderHelper`, `renderAnyNodeWithNapiFromValue`, `renderTriviaNodeSupport`, every `impl ::std::fmt::Display for` emission, `renderNodeEntry` ~2262)
 - Modify: `packages/codegen/src/emitters/render-options-rs.ts` (`spacing_text` plain; `WHITESPACE`)
 - Modify: `rust/crates/sittir-core/src/spacing.rs` (delete the mark path), `rust/crates/sittir-core/src/render.rs` (nothing), `rust/crates/sittir-core/src/view.rs` (delete the compat `Display`, if Task 1 added it)
 - Modify: `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, `render-body.test.ts` (or the templates test that asserts on body nodes), `render-options-rs.test.ts`
@@ -423,32 +423,32 @@ git commit -- rust/crates/sittir-core/src/render.rs rust/crates/sittir-core/src/
 
 **Interfaces:**
 - Consumes: Task 1.
-- Produces, in every generated `transport.rs`:
+- Produces, in every generated `node.rs`:
   ```rust
-  impl ::sittir_core::render::Render for <Every transport type and enum> { fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult }
-  fn render_<kind>(node: &<Kind>Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult
-  pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError>
+  impl ::sittir_core::render::Render for <Every node type and enum> { fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult }
+  fn render_<kind>(node: &<Kind>Native node, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult
+  pub fn render_node_dispatch(node: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError>
   ```
   and in `options.rs`: `pub fn spacing_text(kind: u16) -> &'static str` returning plain text (`"\n"` for the depth arms), and `pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };`.
   Body IR: `BodyNode` gains `{ kind: 'indent' }`, `{ kind: 'dedent' }`, `{ kind: 'tokenSeam'; text }`; `WhitespaceNode` is gone; the constants `ADJACENT_MARK`, `INDENT_NEWLINE`, `DEDENT_MARK`, `SEAM_MARK`, `TOKEN_SEAM_MARK` and `seamMarked` are gone.
 
 - [ ] **Step 1: Write the failing emitter tests**
 
-In `render-module-emit.test.ts` (rust pipeline describe, `transportRs` string):
+In `render-module-emit.test.ts` (rust pipeline describe, `nodeRs` string):
 
 ```ts
 	it('renders through the typed sink and writes no mark character', () => {
-		expect(transportRs).not.toContain('impl ::std::fmt::Display for');
-		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
-		expect(transportRs).not.toContain('mark_adjacent');
-		expect(transportRs).toContain('impl ::sittir_core::render::Render for FunctionItemTransport {');
-		expect(transportRs).toContain('fn render_function_item(node: &FunctionItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {');
-		expect(transportRs).toContain('pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {');
-		expect(transportRs).toContain('::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER, &options::WHITESPACE).with_indent(indent)');
+		expect(nodeRs).not.toContain('impl ::std::fmt::Display for');
+		expect(nodeRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(nodeRs).not.toContain('mark_adjacent');
+		expect(nodeRs).toContain('impl ::sittir_core::render::Render for FunctionItemNode {');
+		expect(nodeRs).toContain('fn render_function_item(node: &FunctionItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {');
+		expect(nodeRs).toContain('pub fn render_node_dispatch(node: &dyn ::sittir_core::render::Render, indent: &str) -> Result<String, ::sittir_core::render::RenderError> {');
+		expect(nodeRs).toContain('::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER, &options::WHITESPACE).with_indent(indent)');
 	});
 
 	it('binds a list view over site ids and writes a seam site as a call', () => {
-		const block = transportRs.slice(transportRs.indexOf('fn render_block('), transportRs.indexOf('fn render_block(') + 2000);
+		const block = nodeRs.slice(nodeRs.indexOf('fn render_block('), nodeRs.indexOf('fn render_block(') + 2000);
 		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(0\),/);
 		expect(block).toMatch(/w\.site\(node\.lbrace_after\.unwrap_or\(0\)\);/);
 		expect(block).toContain('w.text("{")?;');
@@ -571,13 +571,13 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 Every emitted `impl ::std::fmt::Display for X { fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result { … } }` becomes `impl ::sittir_core::render::Render for X { fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult { … } }`, with `::std::fmt::Display::fmt(t, f)` → `t.render(w)`, `f.write_str(x)` → `w.text(x)`, `render_with_trivia!(self, f, …)` → `render_with_trivia!(self, w, …)`. Concretely:
 
 - `renderTypedLeafFn`: `fn render_<k>(t: &T, w: &mut dyn RenderSink) -> RenderResult { [w.adjacent();] <body> }` where `leafTextWrite` returns `w.token_seam(&t.text); Ok(())` for a whitespace-only fixed kind and `w.text(&t.text)` otherwise, and an enum leaf renders `t.render(w)`.
-- `renderTypedBranchFn` / `renderTypedBranchFallbackFn`: signature `(node: &X, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult`; the fallback's `f.write_str(node.transport_text…)` becomes `w.text(...)`.
+- `renderTypedBranchFn` / `renderTypedBranchFallbackFn`: signature `(node: &X, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult`; the fallback's `f.write_str(node.node_text…)` becomes `w.text(...)`.
 - `buildSlotWriteCall`: `if let Some(v) = ${expr}.node_or_write(w)? { render_x(v, w)?; }`.
 - `buildTypedTemplateBody`: the empty-slots fast path returns `w.text(text)`; `bind('variant', '""')` and text binds stay (`str: Render`); seam sites are no longer bound as strings — delete the `synthesizedSpacingSites(...).filter(s => s.side === 'seam')` bind loop, since the printer writes `w.site(node.<field>.unwrap_or(0))` directly; `ListView` literals give `before: node.<f>.unwrap_or(0)`, `after`, `head`, `tail` as ids (`0` when the site is absent) via `spacingFieldExprs`; `View::new(...)` is unchanged.
-- `renderTypedDispatch`: `AnyTransport: Render` with literal arms `w.token_seam("…")` for whitespace-only literals and `w.text("…")` otherwise; the root `render_transport_dispatch` builds `SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER, &options::WHITESPACE).with_indent(indent)`, calls `transport.render(&mut w)?`, `w.finish()?`.
+- `renderTypedDispatch`: `AnyNode: Render` with literal arms `w.token_seam("…")` for whitespace-only literals and `w.text("…")` otherwise; the root `render_node_dispatch` builds `SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER, &options::WHITESPACE).with_indent(indent)`, calls `node.render(&mut w)?`, `w.finish()?`.
 - `armSeamSupport`: `Seamed<T: Render>: Render` → `w.site(self.seam_before.unwrap_or(0)); self.value.render(w)?; w.site(self.seam_after.unwrap_or(0)); Ok(())`.
-- `emitPerSlotChildEnum`, `emitSupertypeTransportEnum`, `emitSupertypeRenderHelper`, `renderTriviaTransportSupport`: the `Render` impl arms; `{ mark_adjacent(f)?; call }` → `{ w.adjacent(); call }`; literal arms as in the dispatch.
-- `renderTransportEntry`: `render_transport_dispatch(&transport, &table.indent).map_err(...)` — `render_transport_parts` returns `Result<(TransportSource, String), ::sittir_core::render::RenderError>` and the napi `render` maps that error to a reason string as it maps the `fmt::Error` today.
+- `emitPerSlotChildEnum`, `emitSupertypeNodeEnum`, `emitSupertypeRenderHelper`, `renderTriviaNodeSupport`: the `Render` impl arms; `{ mark_adjacent(f)?; call }` → `{ w.adjacent(); call }`; literal arms as in the dispatch.
+- `renderNodeEntry`: `render_node_dispatch(&node, &table.indent).map_err(...)` — `render_node_parts` returns `Result<(NodeSource, String), ::sittir_core::render::RenderError>` and the napi `render` maps that error to a reason string as it maps the `fmt::Error` today.
 
 `render-options-rs.ts`: `spacing_text` emits `rustStringLiteral(isDepthText(w.text) ? '\n' : w.text)`; after it, the `WHITESPACE` const. The `SEAM_MARK` import goes.
 
@@ -637,7 +637,7 @@ git commit -- packages/codegen/src/emitters docs/glossary/emitters.md rust/crate
   impl FromNapiValue for Options and for every <Path>Options   // feature napi-bindings; unknown keys refused
   pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOptions, String>
   ```
-  in core: `pub fn reject_unknown_keys(obj: &::napi::bindgen_prelude::Object, allowed: &[&str], at: &str) -> ::napi::Result<()>`; and the napi engine: `EngineOptions { format: Option<String>, options: Option<$options> }`, `render(transport, tree_id: Option<f64>, options: Option<$options>)`.
+  in core: `pub fn reject_unknown_keys(obj: &::napi::bindgen_prelude::Object, allowed: &[&str], at: &str) -> ::napi::Result<()>`; and the napi engine: `EngineOptions { format: Option<String>, options: Option<$options> }`, `render(node, tree_id: Option<f64>, options: Option<$options>)`.
   The TypeScript boundary passes the `Options` object itself: `NativeEngineLike.render(node, treeId?, options?: object)`.
   `ResolvedOptions`, `SPACING_SITES`, `DELIMITER_SITES`, `DEPTH_SITES`, the site constants and `defaults()` are unchanged: the prepare walk keeps reading the flat table by constant.
 
@@ -755,7 +755,7 @@ pub fn reject_unknown_keys(obj: &::napi::bindgen_prelude::Object, allowed: &[&st
 
 - [ ] **Step 5: The engine takes the struct**
 
-`napi_engine.rs`: the macro gains `$options:ty` (after `$render_root`); `EngineOptions.options: Option<$options>`; `new` resolves `$resolve(&opts, &$defaults())`; `render(&self, transport: $render_root, tree_id: Option<f64>, options: Option<$options>)`:
+`napi_engine.rs`: the macro gains `$options:ty` (after `$render_root`); `EngineOptions.options: Option<$options>`; `new` resolves `$resolve(&opts, &$defaults())`; `render(&self, node: $render_root, tree_id: Option<f64>, options: Option<$options>)`:
 
 ```rust
                 let resolved;
@@ -845,7 +845,7 @@ export function nestedKey(segment: PreferenceSegment, kindEntries: readonly Kind
 
 `deriveAddressTables` passes its `kindEntries` at both `site.path.map(...)` and `declaredSegments.map(...)` call sites. Add the collision guard the new spelling makes possible: when a branch path or a leaf path is set a second time from segments whose `formatPreferencePath` differs from the first, throw `options: address '<path>' names two segments` (a literal whose kind name equals a sibling slot name would otherwise merge silently). `AddressBranchEntry.path` / `AddressLeafEntry.path` stay the `/`-joined nested keys (now identifier-only for literals); `canonical` and `segments` are unchanged.
 
-In `packages/codegen/src/emitters/render-options-rs.ts`: delete `segmentIdent` and its `findEntryForLiteralText` import; `fieldsOf` uses `rustFieldIdent(key)` (the shared one in `transport-common.ts`); the resolver-chain sites use `rustFieldIdent(nestedKey(segment, kindEntries))`; `structNameOf` uses `rustTypeIdent(toPascal(nestedKey(segment, kindEntries)))`. The struct names must not move (they were already built from the kind name): the generated `options.rs` diff for each grammar contains only `obj.get`/`obj.set` keys and `reject_unknown_keys` allowed lists. The `at` argument stays `formatPreferencePath(s.segments)`.
+In `packages/codegen/src/emitters/render-options-rs.ts`: delete `segmentIdent` and its `findEntryForLiteralText` import; `fieldsOf` uses `rustFieldIdent(key)` (the shared one in `node-common.ts`); the resolver-chain sites use `rustFieldIdent(nestedKey(segment, kindEntries))`; `structNameOf` uses `rustTypeIdent(toPascal(nestedKey(segment, kindEntries)))`. The struct names must not move (they were already built from the kind name): the generated `options.rs` diff for each grammar contains only `obj.get`/`obj.set` keys and `reject_unknown_keys` allowed lists. The `at` argument stays `formatPreferencePath(s.segments)`.
 
 - [ ] **Step 4: Emitter test green, then regenerate all three grammars**
 

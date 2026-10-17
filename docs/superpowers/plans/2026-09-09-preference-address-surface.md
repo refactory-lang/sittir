@@ -1111,7 +1111,7 @@ pub static SITE_PATHS: &[&str] = &[
 pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-options-rs.test.ts
 for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts gen --grammar $g --all --output packages/$g/src; done
 ```
-Expected: `options.rs` churns heavily (every `SITE_*` constant renumbers); `transport.rs` changes only where field order follows site order; **`test-fixtures.json` must not move for any grammar.**
+Expected: `options.rs` churns heavily (every `SITE_*` constant renumbers); `node.rs` changes only where field order follows site order; **`test-fixtures.json` must not move for any grammar.**
 
 - [ ] **Step 5: Verify the renumbering is behaviour-neutral**
 
@@ -1380,7 +1380,7 @@ into an element's own `<child>_after` field before descending has already
 decided it:
 
 ```rust
-impl FillOptions for SourceFileTransport {
+impl FillOptions for SourceFileNode {
     fn fill_options(&mut self, table: &ResolvedOptions) {
         …
         for item in self.statements.iter_mut().flatten() {
@@ -1400,7 +1400,7 @@ impl FillOptions for SourceFileTransport {
 ```
 
 Nothing else moves: no writer change, no `ListView` change, no body IR change,
-no new transport field. A child kind with no trailing edge of its own — a leaf,
+no new node field. A child kind with no trailing edge of its own — a leaf,
 which `ownsKindEdges` already excludes — takes no seated site, and a
 `SlotValue::Verbatim` element has no kind with which to select one.
 
@@ -1484,7 +1484,7 @@ In `spacingSitesOf`, after the walk has collected every kind edge, mint one
 seated site per (parent kind, repeat slot, admitted child kind that owns a kind
 edge), stamped with its path and carrying the child's edge arm as its default.
 The admitted kinds come from the slot's `AssembledNonterminal`, the same source
-`rustTransportSlotType` reads, so the sites and the generated slot enum cannot
+`rustNodeSlotType` reads, so the sites and the generated slot enum cannot
 disagree.
 
 - [ ] **Step 4: Run to verify passing**

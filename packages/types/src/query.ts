@@ -2,7 +2,7 @@ import type { IsBooleanKeyword } from './keyword-presence.ts';
 import type { FlagsHintOf, SlotFlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
 
 /**
- * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's transport
+ * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's node
  * slots, the numbering the native read routes children by. A node of a kind the map lacks holds nothing there.
  */
 export interface SlotSubject {

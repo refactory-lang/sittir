@@ -1,7 +1,7 @@
 import v8 from 'node:v8';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { isStorageKey, PLAIN_KINDS, toTransportData, treeTokenOf } from '@sittir/common/utils';
+import { isStorageKey, PLAIN_KINDS, toNodeData, treeTokenOf } from '@sittir/common/utils';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import python from '../../python/src/index.ts';
@@ -80,7 +80,7 @@ describe('what a node sends across the boundary carries no member', () => {
 	};
 	for (const [label, make] of Object.entries({ ...classes, ...wrapped })) {
 		it(label, () => {
-			expect(offenders(toTransportData(make() as never, PLAIN_KINDS))).toEqual([]);
+			expect(offenders(toNodeData(make() as never, PLAIN_KINDS))).toEqual([]);
 		});
 	}
 });

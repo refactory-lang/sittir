@@ -52,7 +52,7 @@ operator, `export_statement` has several) or a repeated seat gets nothing:
 And a config-shaped parent handed an inline object in a group's seat passes
 it through unbuilt (`const _content = config.content;`) while typing the seat
 as the group's Built, so the strict rebuilds spell the intended surface and
-fail both the type-check and the transport (`Missing field _operators`).
+fail both the type-check and the node (`Missing field _operators`).
 Only the forwarded parent (`buildMatchBlock`) builds its group from a config.
 
 ## Decision

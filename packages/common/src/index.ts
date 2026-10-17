@@ -1,6 +1,6 @@
 export { withMetrics, dumpMetrics } from './metrics.ts';
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
-export { detachCoordinates, detachCoordinate, treeHandleOf } from './transport-data.ts';
+export { detachCoordinates, detachCoordinate, treeHandleOf } from './node-data.ts';
 export { snapshotOf } from './snapshot.ts';
 export { byteLength, sliceSpan, sourceSpans, spanSlicer, type ByteSpan, type IndexRange, type SourceSpans } from './span.ts';
 export { type TriviaSides } from './trivia.ts';

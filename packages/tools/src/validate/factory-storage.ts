@@ -636,7 +636,7 @@ export async function validateFactoryStorage(
 		// dance is needed (the old readUntypedNodeAt-based single-node read here
 		// required exactly that, and its non-recursive nodeToConfig call
 		// left child fields as unresolved stubs — the root cause of the
-		// native transport's "Missing field" errors once render was fixed
+		// native node's "Missing field" errors once render was fixed
 		// to use the native engine).
 		const handle = await buildReadHandle(grammar, entry.source);
 		const wrappedRoot = readNode(handle) as TypedNode;

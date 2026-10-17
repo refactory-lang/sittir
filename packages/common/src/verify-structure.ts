@@ -1,7 +1,7 @@
 import type { StructureRow, StructureTable } from '@sittir/types';
 import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
-import { isRebuilt } from './transport-data.ts';
+import { isRebuilt } from './node-data.ts';
 
 export function verifyStructure(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
 	if (typeof value === 'object' && value !== null && !seen.has(value)) verifyNode(value as Record<string, unknown>, table, seen);

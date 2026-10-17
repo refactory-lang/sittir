@@ -123,7 +123,7 @@ cargo test --workspace --no-default-features   # every crate's tests, grammar cr
 
 `cargo test -p sittir-core` alone misses the grammar crates' own tests
 (`rust/crates/sittir-<lang>/tests/`), which build against the generated
-transports; `--no-default-features` is what lets their test binaries link
+nodes; `--no-default-features` is what lets their test binaries link
 without a Node runtime.
 
 `validate:native` is the primary gate for codegen-affecting work. For

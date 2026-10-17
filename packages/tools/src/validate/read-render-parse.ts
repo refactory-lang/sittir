@@ -19,13 +19,13 @@ import {
 	isStorageKey,
 	mapTriviaEntries,
 	markEdited,
-	readNode as readTransport,
+	readNode as readUntyped,
 	sidesOf,
 	spanOf,
-	toDetachedTransportData,
+	toDetachedNodeData,
 	treeOf,
 	type KindView,
-	type TransportLayout
+	type NodeDataLayout
 } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
@@ -420,7 +420,7 @@ export interface ReadRenderParseResult {
  * Derived by differencing two engine renders (with vs. without the leading
  * trivia) rather than rendering each trivia entry standalone: trivia entries
  * are embedded raw at read time (never wrapped into model shape), and only
- * the in-context `TriviaTransport` decode carries the verbatim `$text`
+ * the in-context `TriviaNode` decode carries the verbatim `$text`
  * fallback for that raw shape — a standalone root render of the same entry
  * hard-fails decoding (`Missing field _content`).
  *
@@ -430,7 +430,7 @@ export interface ReadRenderParseResult {
  * is an edit of its node (`markEdited`) holding every side it renders, the
  * stripped one an empty `leading`, so both renders print the node from its
  * storage and differ only by the leading trivia; a coordinate, which holds
- * no storage, is read into its transport first (`storageOf`). A copy keeps
+ * no storage, is read into its node first (`storageOf`). A copy keeps
  * the node's source identity. Both are measured without trailing whitespace,
  * which only the outer edge contributes.
  */
@@ -492,11 +492,11 @@ export function leadingTriviaRenderedWidth(
 	return measured.length - current.length;
 }
 
-/** A node with its storage: a coordinate read one level into its transport through the tree it holds, anything else as it is. */
+/** A node with its storage: a coordinate read one level into its native node through the tree it holds, anything else as it is. */
 function storageOf(node: AnyUntypedNode): AnyUntypedNode {
 	if (!isCoordinate(node)) return node;
 	const tree = treeOf(node);
-	return tree === undefined ? node : (readTransport(tree, node) as AnyUntypedNode);
+	return tree === undefined ? node : (readUntyped(tree, node) as AnyUntypedNode);
 }
 
 function commonPrefixLength(a: string, b: string): number {
@@ -507,7 +507,7 @@ function commonPrefixLength(a: string, b: string): number {
 
 /**
  * A render fixture's input, detached from the engine that read it: the
- * transport the render itself sends, unfolded (`toDetachedTransportData`,
+ * node the render itself sends, unfolded (`toDetachedNodeData`,
  * through `view`, the view the render read), with everything that names a tree turned into the
  * text it names. A coordinate names the tree its engine still holds, so it
  * means nothing in another process: every handle and `$childIndex` is
@@ -545,7 +545,7 @@ export function selfContainedRenderInput(
 				...(typeof record.$after === 'string' ? { $after: record.$after } : {})
 			};
 		});
-	const layoutOf = (layout: TransportLayout): Record<string, unknown> => ({
+	const layoutOf = (layout: NodeDataLayout): Record<string, unknown> => ({
 		...(layout.trivia === undefined ? {} : { trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, walkTrivia) }),
 		...(layout.slots === undefined ? {} : { slots: layout.slots }),
 		...(layout.separator === undefined ? {} : { separator: layout.separator }),
@@ -559,7 +559,7 @@ export function selfContainedRenderInput(
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
 			if (key === '$treeHandle') continue;
-			if (key === '$_layout') out.$_layout = layoutOf(raw as TransportLayout);
+			if (key === '$_layout') out.$_layout = layoutOf(raw as NodeDataLayout);
 			else out[key] = isStorageKey(key) ? walk(raw) : raw;
 		}
 		if (!hasStorage(out) && typeof out.$type === 'number' && isLeafKind(out.$type) && out.$text === undefined) {
@@ -568,7 +568,7 @@ export function selfContainedRenderInput(
 		}
 		return out;
 	};
-	return walk(toDetachedTransportData(data as AnyUntypedNode, view));
+	return walk(toDetachedNodeData(data as AnyUntypedNode, view));
 }
 
 /**
@@ -1135,7 +1135,7 @@ export async function validateReadRenderParse(
 						const at = (cand.node as AnyUntypedNode).$_layout?.at;
 						data =
 							recursive !== true && at !== undefined && handle.read
-								? (readTransport(handle, at) as AnyUntypedNode)
+								? (readUntyped(handle, at) as AnyUntypedNode)
 								: (materializeDetached(cand.node, onAccessorThrow) as AnyUntypedNode);
 					} catch (e) {
 						reportThrown({

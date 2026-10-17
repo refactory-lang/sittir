@@ -1,5 +1,5 @@
 //! Points: a row and a byte column, as tree-sitter counts them. A snapshot
-//! measures each of its points from the start of the transport whose bytes
+//! measures each of its points from the start of the node whose bytes
 //! contain it; composition follows tree-sitter's `length_add`, so a column is
 //! relative only on its base's own row. A tree-backed node holds bytes, and
 //! the line table turns them into points.

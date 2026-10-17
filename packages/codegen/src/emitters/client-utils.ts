@@ -4,7 +4,7 @@ import { whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivi
 import { compareOrdinal, keywordPresenceValue, wireRoutesOf, type WireRoutes } from './shared.ts';
 import { AssembledSupertype, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
-import { transportSlotNumbers } from './render-module.ts';
+import { nodeSlotNumbers } from './render-module.ts';
 import { layoutTriviaKindIds, listKindIds, rebuildWrapperKindIds } from './wrap.ts';
 
 export interface EmitClientUtilsConfig {
@@ -76,12 +76,12 @@ export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly Qu
 	const rows = new Map<number, readonly QuerySlotRow[]>();
 	for (const node of nodeMap.nodes.values()) {
 		if (node.kindId === undefined || node.slots.length === 0) continue;
-		const numbers = transportSlotNumbers(node, nodeMap);
+		const numbers = nodeSlotNumbers(node, nodeMap);
 		const row = node.slots.map((slot): QuerySlotRow => {
 			if (slot.propertyName === RECORDER_FLAG_KEY)
 				throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} is read as \`${RECORDER_FLAG_KEY}\`, which a where condition reserves for flags`);
 			const number = numbers.get(slot.storageName);
-			if (number === undefined) throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} has no field in its transport, so a query cannot number it`);
+			if (number === undefined) throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} has no field in its node, so a query cannot number it`);
 			const keyword = keywordPresenceValue(slot, nodeMap);
 			return keyword === undefined ? [slot.propertyName, number] : [slot.propertyName, number, keyword];
 		});

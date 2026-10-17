@@ -1,10 +1,10 @@
-# Render Options — Transport Fill Implementation Plan
+# Render Options — Node Fill Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Rendering takes the engine's options: every list slot's separator spacing and optional flank come from fields on the slot's transport, filled natively from the resolved options, and templates stop naming separators.
+**Goal:** Rendering takes the engine's options: every list slot's separator spacing and optional flank come from fields on the slot's node, filled natively from the resolved options, and templates stop naming separators.
 
-**Architecture:** Plan 3 of the render-options series. The site-preference list already in the model (`compiler/model/site-preferences.ts`) drives three generated artifacts in each render crate: spacing fields on every transport struct that owns a list slot (one per site, the injected choices as struct members), a `FillOptions` walk that writes the resolved option into every unset field after the transport is deserialized, and an `options.rs` with the site table and the resolver from the JSON options object. The emitted render function then builds its `ListNonterminalView` from the transport's fields alone, and `Joined` in `sittir-core` composes the three parts (before, token, after) per position. The template emitter writes `{{ slot }}` with no filter, so the view is the only carrier of the separator. Askama's role is unchanged: it decides where a slot renders; `Joined` decides how.
+**Architecture:** Plan 3 of the render-options series. The site-preference list already in the model (`compiler/model/site-preferences.ts`) drives three generated artifacts in each render crate: spacing fields on every node struct that owns a list slot (one per site, the injected choices as struct members), a `FillOptions` walk that writes the resolved option into every unset field after the node is deserialized, and an `options.rs` with the site table and the resolver from the JSON options object. The emitted render function then builds its `ListNonterminalView` from the node's fields alone, and `Joined` in `sittir-core` composes the three parts (before, token, after) per position. The template emitter writes `{{ slot }}` with no filter, so the view is the only carrier of the separator. Askama's role is unchanged: it decides where a slot renders; `Joined` decides how.
 
 **Tech Stack:** Rust (`sittir-core`, the three napi grammar crates, askama), TypeScript codegen (`packages/codegen/src/emitters/{render-module,templates,options}.ts`), `@sittir/common` engine boundary, vitest, cargo.
 
@@ -28,11 +28,11 @@
 ## Design decisions this plan fixes
 
 **Fields, not parameters.** The separator's spacing and the flank are values
-of the slot, so they live on the slot's transport as `Option<u16>` fields
+of the slot, so they live on the slot's node as `Option<u16>` fields
 named after the site (`elements_comma_separator_space_before`, wire key
 `_elements_comma_separator_space_before`) and `Option<u8>` `_delimiter` as
 today. A value the wire already carries wins; an unset field is filled from
-the resolved options in one walk over the transport tree before rendering.
+the resolved options in one walk over the node tree before rendering.
 The render functions, `Renderable`, `Joined` and the templates never see an
 options object. When stamps arrive as wire values later, this step is
 unchanged.
@@ -58,8 +58,8 @@ kinds render from, so `_tight`, `_space`, `_newline` have one spelling.
 
 **`SlotValue` is orthogonal.** The `$text` provenance design
 (`docs/superpowers/specs/2026-08-26-text-content-vs-source-provenance.md`)
-reshapes the carrier to `Coord | Transport(T)`. The fill walk's blanket impl
-for `SlotValue` follows the transport arm whatever it is called and does
+reshapes the carrier to `Coord | Node(T)`. The fill walk's blanket impl
+for `SlotValue` follows the node arm whatever it is called and does
 nothing for a coordinate, whose content is sliced from the tree and takes no
 options. Either design can land first; the other updates one impl and one
 test constructor.
@@ -80,7 +80,7 @@ node, only ids cross napi.
 | `rust/crates/sittir-core/src/engine.rs`, `napi_engine.rs` | engine holds its table; `render` takes per-call options |
 | `rust/crates/sittir-core/tests/filters.rs`, `tests/options.rs` (new) | flank table; fill semantics |
 | `packages/codegen/src/emitters/render-options-rs.ts` (new) | emits `options.rs`: site table, supertype members, `spacing_text`, `resolve` |
-| `packages/codegen/src/emitters/render-module.ts` | spacing fields on transports; `FillOptions` impls; views from fields; entry takes the table; filters module loses `join*` |
+| `packages/codegen/src/emitters/render-module.ts` | spacing fields on nodes; `FillOptions` impls; views from fields; entry takes the table; filters module loses `join*` |
 | `packages/codegen/src/emitters/templates.ts` | `{{ slot }}` instead of `{{ slot \| join(...) }}` |
 | `packages/codegen/src/emitters/__tests__/render-options-rs.test.ts` (new), `render-module-emit.test.ts`, `templates*.test.ts` | emitter unit tests |
 | `rust/crates/sittir-{rust,typescript,python}/src/render/options.rs` | generated |
@@ -255,7 +255,7 @@ override the view's separator with a literal are removed."
   pub trait FillOptions { fn fill_options(&mut self, table: &ResolvedOptions); }
   // blanket impls: SlotValue<T: FillOptions, const A: bool>, Vec<T>, Option<T>, Box<T>, String (no-op)
   ```
-  Task 4 emits a `FillOptions` impl for every generated transport struct and enum; Task 3 emits the site constants and `resolve`.
+  Task 4 emits a `FillOptions` impl for every generated node struct and enum; Task 3 emits the site constants and `resolve`.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -319,7 +319,7 @@ Expected: unresolved import `sittir_core::options`.
 ```rust
 //! Resolved render options and the fill walk that applies them.
 //!
-//! A transport arrives from JavaScript with its spacing and flank fields
+//! A node arrives from JavaScript with its spacing and flank fields
 //! unset unless the wire carried a value. `FillOptions` walks the tree
 //! once before rendering and writes the resolved option into every unset
 //! field, so a wire value always wins and the render functions read
@@ -388,7 +388,7 @@ git add -- rust/crates/sittir-core/src/options.rs rust/crates/sittir-core/src/li
 git commit -m "feat(native): ResolvedOptions and the FillOptions walk
 
 One kind id per spacing site and one bitflag per flank site; a walk over
-the transport tree writes them into every unset field before rendering, so
+the node tree writes them into every unset field before rendering, so
 a value the wire carried always wins."
 ```
 
@@ -400,7 +400,7 @@ a value the wire carried always wins."
 - Create: `packages/codegen/src/emitters/render-options-rs.ts`
 - Create: `packages/codegen/src/emitters/__tests__/render-options-rs.test.ts`
 - Modify: `packages/codegen/src/emitters/render-module.ts` (`RenderModuleBundle` gains `optionsRs`; `emitRenderModule` calls the new emitter; `libRsContents` / `mod.rs` emission declares `pub mod options;`)
-- Modify: `packages/codegen/src/run-codegen.ts` (write `src/render/options.rs` beside `transport.rs`)
+- Modify: `packages/codegen/src/run-codegen.ts` (write `src/render/options.rs` beside `node.rs`)
 - Modify: `docs/glossary/emitters.md`
 
 **Interfaces:**
@@ -724,7 +724,7 @@ Wire into `render-module.ts`:
 - `emitRenderModule` (line 1276) computes `const sites = collectSitePreferences({ nodeMap, kindEntries, spacingPreferences })`, `const plan = planRenderOptions(sites, kindEntries, buildSupertypeMembersMap(nodeMap), whitespaceTextFromVisibleExternals(nodeMap))`, sets `optionsRs: renderOptionsRs(plan)`, and passes `plan` on to Task 4's struct and fill emission. `RenderModuleEmitter`'s config gains `spacingPreferences` (threaded from `emitAll` the way `emitOptions` receives it) and `visibleExternals`.
 - `whitespaceTextFromVisibleExternals` maps each visible-external kind whose body is a `STRING` rule to its text; only the three whitespace kinds (`tight`, `space`, `newline`; python's `newline` is its real `_newline` and is included by name) are kept.
 - The generated `render/mod.rs` declares `pub mod options;`.
-- `run-codegen.ts` writes `result.renderModule.optionsRs` to `rust/crates/sittir-<g>/src/render/options.rs` beside `transport.rs`.
+- `run-codegen.ts` writes `result.renderModule.optionsRs` to `rust/crates/sittir-<g>/src/render/options.rs` beside `node.rs`.
 
 - [ ] **Step 4: Run the unit test and type-check**
 
@@ -742,58 +742,58 @@ git commit -m "feat(codegen): each render crate gets options.rs — site table, 
 
 ---
 
-### Task 4: Transport fields, the fill walk, and views built from fields
+### Task 4: Node fields, the fill walk, and views built from fields
 
 **Files:**
-- Modify: `packages/codegen/src/emitters/render-module.ts` — `renderTransportDataStruct` (~2792), `buildTypedTemplateBody` (~1019, the `f.view === 'list' || f.multiple` branch ~1141), `buildSeparatorKindMatchLines` (~998), `renderTransportEntry` (~2628), `renderTypedDispatch` (~724), `emitSupertypeTransportEnum` / `emitPerSlotChildEnum` / `renderAnyTransportWithNapiFromValue` (enum impls)
+- Modify: `packages/codegen/src/emitters/render-module.ts` — `renderNodeDataStruct` (~2792), `buildTypedTemplateBody` (~1019, the `f.view === 'list' || f.multiple` branch ~1141), `buildSeparatorKindMatchLines` (~998), `renderNodeEntry` (~2628), `renderTypedDispatch` (~724), `emitSupertypeNodeEnum` / `emitPerSlotChildEnum` / `renderAnyNodeWithNapiFromValue` (enum impls)
 - Modify: `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts` (new cases; the one baseline-failing case in this file stays as it is)
 
 **Interfaces:**
 - Consumes: `RenderOptionsPlan` (Task 3): for a struct of kind K, its spacing sites are `plan.spacingSites.filter(s => s.kind === publicKindName(K))`, its flank sites likewise.
-- Produces, per generated transport struct with sites:
+- Produces, per generated node struct with sites:
   ```rust
   #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_comma_separator_space_before"))]
   pub elements_comma_separator_space_before: Option<u16>,
   // … one per spacing site; `_delimiter: Option<u8>` as today
-  impl ::sittir_core::options::FillOptions for FormalParametersTransport {
+  impl ::sittir_core::options::FillOptions for FormalParametersNode {
       fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {
           self.elements_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]);
           // …
           if self.delimiter.is_none() && table.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS] != 0 { self.delimiter = Some(table.delimiter[…]); }
-          self.elements.fill_options(table);   // every slot field that holds transports
+          self.elements.fill_options(table);   // every slot field that holds nodes
       }
   }
-  pub fn render_transport_parts(mut transport: RenderRoot, table: &ResolvedOptions) -> Result<(TransportSource, String), ::askama::Error>
+  pub fn render_node_parts(mut node: RenderRoot, table: &ResolvedOptions) -> Result<(NodeSource, String), ::askama::Error>
   ```
-  and every enum (`AnyTransport`, supertype enums, per-slot child enums) gets a delegating `FillOptions` impl. Leaf and literal structs get a no-op impl.
+  and every enum (`AnyNode`, supertype enums, per-slot child enums) gets a delegating `FillOptions` impl. Leaf and literal structs get a no-op impl.
 
 - [ ] **Step 1: Write the failing emitter tests**
 
 Append to `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, using the file's existing rust-grammar fixture loader:
 
 ```ts
-describe('render options on transports', () => {
+describe('render options on nodes', () => {
 	it('a list slot gets one Option<u16> field per spacing site and a FillOptions impl', () => {
 		const emitted = emitRustGrammarRenderModule();   // the file's existing helper returning the bundle
-		expect(emitted.transport).toContain('napi(js_name = "_arguments_elements_comma_separator_space_before")');
-		expect(emitted.transport).toContain('pub arguments_elements_comma_separator_space_before: Option<u16>,');
-		expect(emitted.transport).toContain('impl ::sittir_core::options::FillOptions for ArgumentsTransport {');
-		expect(emitted.transport).toContain(
+		expect(emitted.node).toContain('napi(js_name = "_arguments_elements_comma_separator_space_before")');
+		expect(emitted.node).toContain('pub arguments_elements_comma_separator_space_before: Option<u16>,');
+		expect(emitted.node).toContain('impl ::sittir_core::options::FillOptions for ArgumentsNode {');
+		expect(emitted.node).toContain(
 			'self.arguments_elements_comma_separator_space_before.get_or_insert(table.spacing[options::SITE_ARGUMENTS_ARGUMENTS_ELEMENTS_COMMA_SEPARATOR_SPACE_BEFORE]);'
 		);
 	});
 
-	it('the list view is built from the transport fields, not a literal', () => {
+	it('the list view is built from the node fields, not a literal', () => {
 		const emitted = emitRustGrammarRenderModule();
-		expect(emitted.transport).toContain('before: options::spacing_text(node.arguments_elements_comma_separator_space_before.unwrap_or(0)),');
-		expect(emitted.transport).toContain('after: options::spacing_text(node.arguments_elements_comma_separator_space_after.unwrap_or(0)),');
-		expect(emitted.transport).not.toMatch(/ListNonterminalView \{[^}]*separator: /);
+		expect(emitted.native node).toContain('before: options::spacing_text(node.arguments_elements_comma_separator_space_before.unwrap_or(0)),');
+		expect(emitted.native node).toContain('after: options::spacing_text(node.arguments_elements_comma_separator_space_after.unwrap_or(0)),');
+		expect(emitted.node).not.toMatch(/ListNonterminalView \{[^}]*separator: /);
 	});
 
 	it('the render entry fills the tree from the table before dispatch', () => {
 		const emitted = emitRustGrammarRenderModule();
-		expect(emitted.transport).toContain('pub fn render_transport_parts(mut transport: RenderRoot, table: &::sittir_core::options::ResolvedOptions)');
-		expect(emitted.transport).toContain('transport.fill_options(table);');
+		expect(emitted.node).toContain('pub fn render_node_parts(mut node: RenderRoot, table: &::sittir_core::options::ResolvedOptions)');
+		expect(emitted.node).toContain('node.fill_options(table);');
 	});
 });
 ```
@@ -809,14 +809,14 @@ Expected: the three new cases fail; the one pre-existing baseline failure in thi
 
 In `render-module.ts`:
 
-1. **Fields.** In `renderTransportDataStruct`, after the existing `_delimiter` / `_separator` block and for every compound node, for each `site` in `plan.spacingSites` with `site.kind === publicKindName(node.kind)`:
+1. **Fields.** In `renderNodeDataStruct`, after the existing `_delimiter` / `_separator` block and for every compound node, for each `site` in `plan.spacingSites` with `site.kind === publicKindName(node.kind)`:
    ```ts
    lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(site.wireKey)}))]`);
    lines.push(`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`);
    ```
-   `_delimiter` is emitted as today for `AssembledList` nodes with an optional flank; for a compound whose list slot lives on a separate list node the flank field belongs to that list node's struct, which is also where `plan.delimiterSites` places it (its `kind` is the list kind's visible name). Thread `plan` into `renderTransportDataStruct` and `renderTransportStruct`.
+   `_delimiter` is emitted as today for `AssembledList` nodes with an optional flank; for a compound whose list slot lives on a separate list node the flank field belongs to that list node's struct, which is also where `plan.delimiterSites` places it (its `kind` is the list kind's visible name). Thread `plan` into `renderNodeDataStruct` and `renderNodeStruct`.
 
-2. **Fill impls.** After each struct's `impl RenderableTransport`, emit:
+2. **Fill impls.** After each struct's `impl RenderableNode`, emit:
    ```ts
    lines.push(`impl ::sittir_core::options::FillOptions for ${structName} {`);
    lines.push(`    fn fill_options(&mut self, table: &::sittir_core::options::ResolvedOptions) {`);
@@ -826,10 +826,10 @@ In `render-module.ts`:
      lines.push(`            self.delimiter = Some(table.delimiter[options::${site.constName}]);`);
      lines.push(`        }`);
    }
-   for (const field of transportBearingFields) lines.push(`        self.${rustFieldIdent(field.storageName)}.fill_options(table);`);
+   for (const field of nodeBearingFields) lines.push(`        self.${rustFieldIdent(field.storageName)}.fill_options(table);`);
    lines.push(`    }`, `}`, '');
    ```
-   `transportBearingFields` are the struct's slot fields whose type contains a transport (`SlotValue<…>`, `Vec<SlotValue<…>>`, `Option<…>`, boxed) — the same set `renderTransportField` types as non-primitive; primitive (`String`, `bool`, `u16`) fields are skipped. Leaf structs (`pattern`, `token`, `enum`) get `impl FillOptions for X { fn fill_options(&mut self, _: &ResolvedOptions) {} }`. Every enum emitted by `emitSupertypeTransportEnum`, `emitPerSlotChildEnum` and the `AnyTransport` enum gets a match that delegates to each variant's payload; unit variants (literals) do nothing.
+   `nodeBearingFields` are the struct's slot fields whose type contains a node (`SlotValue<…>`, `Vec<SlotValue<…>>`, `Option<…>`, boxed) — the same set `renderNodeField` types as non-primitive; primitive (`String`, `bool`, `u16`) fields are skipped. Leaf structs (`pattern`, `token`, `enum`) get `impl FillOptions for X { fn fill_options(&mut self, _: &ResolvedOptions) {} }`. Every enum emitted by `emitSupertypeNodeEnum`, `emitPerSlotChildEnum` and the `AnyNode` enum gets a match that delegates to each variant's payload; unit variants (literals) do nothing.
 
 3. **Views.** In `buildTypedTemplateBody`'s list branch, replace the `separator:` emission (both the `buildSeparatorKindMatchLines` form and the literal form) with three lines. The token stays what it is today: the separator kind match when the list has a `separatorRule`, else the field's literal separator, else `""`. Rename the match builder's output key from `separator:` to `token:`. Then:
    ```ts
@@ -841,17 +841,17 @@ In `render-module.ts`:
    For an unseparated repeat the single `empty_separator_space` site supplies `after` and `before` is `""`. `spacing_text(0)` is `""` by the match's fallback arm, which is what an unresolvable id must render as: it cannot happen after a fill, and rendering nothing is the failure that shows in output rather than a panic in a render path.
    `leading` / `trailing` stay as they are (they already read `node.delimiter`).
 
-4. **Entry.** `renderTransportEntry` becomes:
+4. **Entry.** `renderNodeEntry` becomes:
    ```rust
-   pub fn render_transport_parts(mut transport: RenderRoot, table: &::sittir_core::options::ResolvedOptions) -> Result<(TransportSource, String), ::askama::Error> {
-       transport.fill_options(table);
-       let rendered = render_transport_dispatch(&transport)?;
-       Ok((TransportSource::Factory, rendered))
+   pub fn render_node_parts(mut node: RenderRoot, table: &::sittir_core::options::ResolvedOptions) -> Result<(NodeSource, String), ::askama::Error> {
+       node.fill_options(table);
+       let rendered = render_node_dispatch(&node)?;
+       Ok((NodeSource::Factory, rendered))
    }
    ```
-   `RenderRoot` is `SlotValue<AnyTransport>`, covered by the core blanket impl once `AnyTransport: FillOptions`.
+   `RenderRoot` is `SlotValue<AnyNode>`, covered by the core blanket impl once `AnyNode: FillOptions`.
 
-5. `use super::options;` (or `use crate::render::options;`, matching how `kind_ids` is referenced in `transport.rs`) at the top of the transport module.
+5. `use super::options;` (or `use crate::render::options;`, matching how `kind_ids` is referenced in `node.rs`) at the top of the node module.
 
 - [ ] **Step 4: Run the emitter tests and type-check**
 
@@ -860,13 +860,13 @@ Expected: the three new cases pass, the baseline count for this file unchanged; 
 
 - [ ] **Step 5: Glossary and commit**
 
-Glossary entries for every new or changed declaration in `render-module.ts` (`spacingSiteFor`, the fill emission, the changed `renderTransportEntry`, `buildSeparatorKindMatchLines` now emitting `token:`).
+Glossary entries for every new or changed declaration in `render-module.ts` (`spacingSiteFor`, the fill emission, the changed `renderNodeEntry`, `buildSeparatorKindMatchLines` now emitting `token:`).
 
 ```bash
 git add -- packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts docs/glossary/emitters.md
-git commit -m "feat(codegen): transports carry their spacing sites, filled from the options before render
+git commit -m "feat(codegen): nodes carry their spacing sites, filled from the options before render
 
-Every list slot's spacing is an Option<u16> field on its transport, one
+Every list slot's spacing is an Option<u16> field on its node, one
 per site; a FillOptions walk writes the resolved option into each unset
 field, and the list view is built from the fields alone."
 ```
@@ -944,7 +944,7 @@ git commit -m "feat(codegen): templates render a repeated slot through its view;
   ```rust
   // napi
   pub struct EngineOptions { pub format: Option<String>, pub options: Option<String> }
-  pub fn render(&self, transport: RenderRoot, tree_id: Option<f64>, options: Option<String>) -> napi::Result<String>
+  pub fn render(&self, node: RenderRoot, tree_id: Option<f64>, options: Option<String>) -> napi::Result<String>
   ```
   ```ts
   export interface EngineOptions<O = object> { readonly format?: FormatRecord; readonly options?: O }
@@ -986,9 +986,9 @@ Expected: type error or runtime failure: `options` is not an accepted engine opt
 `rust/crates/sittir-core/src/napi_engine.rs`: the macro takes two more paths, `$defaults:path` and `$resolve:path`:
 - `EngineOptions { pub format: Option<String>, pub options: Option<String> }`.
 - Constructor: `let options = match opts.options { Some(json) => $resolve(&json, &$defaults()).map_err(::napi::Error::from_reason)?, None => $defaults() };` and pass it to `Engine::new`.
-- `render(&self, transport, tree_id, options: Option<String>)`: `let table = match options { Some(json) => $resolve(&json, self.engine.options()).map_err(::napi::Error::from_reason)?, None => self.engine.options().clone() }; let (source, canonical) = $render_parts(transport, &table)…`. `render_to_file` threads the same parameter.
+- `render(&self, node, tree_id, options: Option<String>)`: `let table = match options { Some(json) => $resolve(&json, self.engine.options()).map_err(::napi::Error::from_reason)?, None => self.engine.options().clone() }; let (source, canonical) = $render_parts(node, &table)…`. `render_to_file` threads the same parameter.
 
-Each grammar `lib.rs`: `sittir_core::napi_engine!(TypeScriptGrammar, RenderRoot, render_transport_parts, NATIVE_RENDER_TRANSPORT_ABI, render::options::defaults, render::options::resolve);`. Bump `NATIVE_RENDER_TRANSPORT_ABI` to `2` in all three (the transport shape changed).
+Each grammar `lib.rs`: `sittir_core::napi_engine!(TypeScriptGrammar, RenderRoot, render_node_parts, NATIVE_RENDER_NODE_ABI, render::options::defaults, render::options::resolve);`. Bump `NATIVE_RENDER_NODE_ABI` to `2` in all three (the node shape changed).
 
 - [ ] **Step 4: TypeScript side**
 
@@ -1009,7 +1009,7 @@ git commit -m "feat(engine): createEngine takes options and render takes per-cal
 
 The engine resolves the options object once at construction; a render call
 may pass another, resolved over the engine's table. Only ids reach the
-transport."
+node."
 ```
 
 ---
@@ -1035,12 +1035,12 @@ Write `render-examples.ts` in the scratchpad importing `rebuildSplice`, `rebuild
 
 - [ ] **Step 3: Re-pin and update the spec**
 
-The recorded sizes are 724 / 549 / 203 strict and 2194 / 473 / 196 loose (previously 706 / 542 / 203 and 2175 / 470 / 196); the only other pin was the rust deep-read test's canonical render, which gains the newline between top-level items. In the spec's "Render side", replace the paragraph beginning "The injected choices are ordinary slots of the transport struct" with:
+The recorded sizes are 724 / 549 / 203 strict and 2194 / 473 / 196 loose (previously 706 / 542 / 203 and 2175 / 470 / 196); the only other pin was the rust deep-read test's canonical render, which gains the newline between top-level items. In the spec's "Render side", replace the paragraph beginning "The injected choices are ordinary slots of the node struct" with:
 
 ```
-The injected choices are fields of the slot's transport, one per site,
+The injected choices are fields of the slot's node, one per site,
 carried on the wire as `_<slot>_<label>` beside `_delimiter`. Before
-dispatch the native side walks the transport once and writes the resolved
+dispatch the native side walks the node once and writes the resolved
 option into every unset field; a value the wire carried wins. The emitted
 render function builds the slot's list view from those fields alone —
 `before`, `token`, `after` and the flanks — and `Joined` writes
@@ -1067,7 +1067,7 @@ git add -- packages/rust packages/typescript packages/python rust/crates docs/su
 git diff --cached --name-only | sed -E -n '/node_modules/p' | wc -l
 git commit -m "feat(render): lists render with the declared spacing defaults; examples re-pinned
 
-Generated transports carry their spacing sites, templates name the slot,
+Generated nodes carry their spacing sites, templates name the slot,
 and the dogfood outputs now show the grammar's declared defaults."
 git push origin spec/render-options
 ```
@@ -1077,8 +1077,8 @@ Expected: the `node_modules` count is 0 before committing.
 
 ## Self-review
 
-**Spec coverage.** "Render side": fields on the transport, native fill, views from fields, templates without joins, three-part `Joined` — the writer, transport, template and re-pin work above. "Precedence" within an options object: `resolve` applies labels, then supertypes, then kinds; the stamp tier waits for the linked-rule injection and is out of scope, stated in the constraints. "Engine and boundary API": `options` once at construction and per call, only ids per node — the engine work above. "What is emitted": `options.ts` unchanged; `options.rs` added. `tree.inferOptions()`, `engine.ir`, `reformat` and indentation for newline joins belong to the later slices.
+**Spec coverage.** "Render side": fields on the native node, native fill, views from fields, templates without joins, three-part `Joined` — the writer, native node, template and re-pin work above. "Precedence" within an options object: `resolve` applies labels, then supertypes, then kinds; the stamp tier waits for the linked-rule injection and is out of scope, stated in the constraints. "Engine and boundary API": `options` once at construction and per call, only ids per node — the engine work above. "What is emitted": `options.ts` unchanged; `options.rs` added. `tree.inferOptions()`, `engine.ir`, `reformat` and indentation for newline joins belong to the later slices.
 
 **Placeholder scan.** Every code step carries code; the "if the helper is named differently" notes point at the file whose helper to use.
 
-**Type consistency.** `ResolvedOptions { spacing: Vec<u16>, delimiter: Vec<u8> }` is spelled the same in core, the emitted `options.rs`, the transport emission and the engine; site constants `SITE_<KIND>_<SLOT>_<LABEL>` / `DELIM_<KIND>_<SLOT>` in the options and transport emitters; field ident `<slot>_<label>` and wire key `_<slot>_<label>` in the emitters and the spec wording; `before` / `token` / `after` in the writer, the view and the spec; `render_transport_parts(mut transport, table)` in the transport emitter and the engine; `EngineOptions.options` as a JSON string natively and a typed object in TypeScript.
+**Type consistency.** `ResolvedOptions { spacing: Vec<u16>, delimiter: Vec<u8> }` is spelled the same in core, the emitted `options.rs`, the node emission and the engine; site constants `SITE_<KIND>_<SLOT>_<LABEL>` / `DELIM_<KIND>_<SLOT>` in the options and node emitters; field ident `<slot>_<label>` and wire key `_<slot>_<label>` in the emitters and the spec wording; `before` / `token` / `after` in the writer, the view and the spec; `render_node_parts(mut node, table)` in the node emitter and the engine; `EngineOptions.options` as a JSON string natively and a typed object in TypeScript.

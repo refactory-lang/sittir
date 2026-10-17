@@ -1,5 +1,5 @@
 //! The expansions. Each wraps its items in `const _: () = { … };` so the
-//! helper items it defines never meet the transport's own names.
+//! helper items it defines never meet the node's own names.
 
 use crate::attrs::{self, FlankAttrs, KindAttrs, Presence, SeparatorKindAttrs, SlotAttrs};
 use crate::codec;
@@ -13,7 +13,7 @@ pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
         Data::Struct(data) => structure(&input.ident, &attrs, data),
         Data::Enum(data) if attrs.choice => choice(&input.ident, &attrs, data),
         Data::Enum(data) => members(&input.ident, &attrs, data),
-        Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a transport is a struct or an enum")),
+        Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a node is a struct or an enum")),
     }
 }
 
@@ -156,7 +156,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             Fields::Unnamed(payload) if payload.unnamed.len() == 1 => {
                 let ty = &payload.unnamed[0].ty;
                 payloads.push((name, ty));
-                scalars.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadTransport>::scalar(grammar, display),));
+                scalars.push(quote!(::core::option::Option::Some(#i) => <#ty as __rt::ReadNode>::scalar(grammar, display),));
                 let (read_fn, boxed_fn, box_fn) = (format_ident!("__read_{}", i), format_ident!("__read_boxed_{}", i), format_ident!("__box_{}", i));
                 variant_fns.push(quote! {
                     #[inline(never)]
@@ -165,7 +165,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                         ctx: &__rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
-                        ::core::result::Result::Ok(#ident::#name(<#ty as __rt::ReadTransport>::read(cursor, ctx, depth)?))
+                        ::core::result::Result::Ok(#ident::#name(<#ty as __rt::ReadNode>::read(cursor, ctx, depth)?))
                     }
                     #[inline(never)]
                     fn #boxed_fn(
@@ -173,7 +173,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                         ctx: &__rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
-                        let payload = <#ty as __rt::ReadTransport>::read(cursor, ctx, depth)?;
+                        let payload = <#ty as __rt::ReadNode>::read(cursor, ctx, depth)?;
                         ::core::result::Result::Ok(#box_fn(payload))
                     }
                     #[inline(never)]
@@ -183,11 +183,11 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 });
                 read_table[at] = quote!(#read_fn);
                 boxed_table[at] = quote!(#boxed_fn);
-                routes_table[at] = quote!(<#ty as __rt::ReadTransport>::routes);
-                routers_table[at] = quote!(<#ty as __rt::ReadTransport>::router);
-                units_table[at] = quote!(<#ty as __rt::ReadTransport>::unit_id);
+                routes_table[at] = quote!(<#ty as __rt::ReadNode>::routes);
+                routers_table[at] = quote!(<#ty as __rt::ReadNode>::router);
+                units_table[at] = quote!(<#ty as __rt::ReadNode>::unit_id);
             }
-            _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
+            _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one node")),
         }
     }
     let layout_names = payloads.iter().map(|(name, _)| name);
@@ -276,7 +276,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #(#by_folded)*
                 ::core::option::Option::None
             }
-            impl __rt::ReadTransport for #ident {
+            impl __rt::ReadNode for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {
                     __variant(grammar, display).is_some()
                 }
@@ -342,7 +342,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     let kind = attrs
         .kind
         .as_ref()
-        .ok_or_else(|| syn::Error::new_spanned(ident, "an enum kind names its kind: `#[transport(kind = …)]`"))?;
+        .ok_or_else(|| syn::Error::new_spanned(ident, "an enum kind names its kind: `#[node(kind = …)]`"))?;
     let mut by_kind = Vec::new();
     let mut firsts: Vec<(&Ident, Path)> = Vec::new();
     for variant in &data.variants {
@@ -376,12 +376,12 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     #(#ids)*
                 }
             }
-            impl __rt::ReadTransport for #ident {
+            impl __rt::ReadNode for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {
                     grammar == #kind || __member(grammar, display).is_some()
                 }
                 fn takes_tagged(grammar: __Kind, display: __Kind, _named: bool) -> bool {
-                    <Self as __rt::ReadTransport>::admits(grammar, display)
+                    <Self as __rt::ReadNode>::admits(grammar, display)
                 }
                 fn scalar(grammar: __Kind, display: __Kind) -> bool {
                     __member(grammar, display).is_some()
@@ -424,7 +424,7 @@ struct Field<'a> {
 
 fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'a>>> {
     let Fields::Named(named) = &data.fields else {
-        return Err(syn::Error::new_spanned(owner, "a transport struct has named fields"));
+        return Err(syn::Error::new_spanned(owner, "a node struct has named fields"));
     };
     named
         .named
@@ -468,9 +468,9 @@ fn inner_of<'t>(ty: &'t Type, wrapper: &str) -> Option<&'t Type> {
     })
 }
 
-/// `Option<Box<…TransportLayout…>>`: the layout field, known by its type.
+/// `Option<Box<…NodeLayout…>>`: the layout field, known by its type.
 fn is_layout(ty: &Type) -> bool {
-    inner_of(ty, "Option").and_then(|boxed| inner_of(boxed, "Box")).and_then(last_segment).as_deref() == Some("TransportLayout")
+    inner_of(ty, "Option").and_then(|boxed| inner_of(boxed, "Box")).and_then(last_segment).as_deref() == Some("NodeLayout")
 }
 
 fn is_text(ty: &Type) -> bool {
@@ -487,7 +487,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     let kind = attrs
         .kind
         .as_ref()
-        .ok_or_else(|| syn::Error::new_spanned(ident, "`#[transport(kind = …)]` names the struct's kind"))?;
+        .ok_or_else(|| syn::Error::new_spanned(ident, "`#[node(kind = …)]` names the struct's kind"))?;
     let fields = fields_of(ident, data)?;
     let stamped: Vec<_> = fields
         .iter()
@@ -540,7 +540,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         .iter()
         .map(|field| match &field.key {
             Some(key) => Ok(codec::WireField { ident: field.ident, ty: field.ty, key }),
-            None => Err(syn::Error::new_spanned(field.ident, "a transport field crosses the wire under a key: `#[wire(key = \"…\")]`")),
+            None => Err(syn::Error::new_spanned(field.ident, "a node field crosses the wire under a key: `#[wire(key = \"…\")]`")),
         })
         .collect::<syn::Result<Vec<_>>>()?;
     let codec = match &attrs.text {
@@ -556,12 +556,12 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #[allow(dead_code)]
             const __LAYOUT: &[__Kind] = &[#(#layout),*];
             #items
-            impl __rt::ReadTransport for #ident {
+            impl __rt::ReadNode for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {
                     #admits
                 }
                 fn takes_tagged(grammar: __Kind, display: __Kind, named: bool) -> bool {
-                    named || <Self as __rt::ReadTransport>::admits(grammar, display)
+                    named || <Self as __rt::ReadNode>::admits(grammar, display)
                 }
                 #[allow(unused_mut, unused_variables)]
                 fn read(
@@ -570,7 +570,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let __node = cursor.node();
-                    if !<Self as __rt::ReadTransport>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
+                    if !<Self as __rt::ReadNode>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
                         return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&__node), index: __rt::index_of(cursor) });
                     }
                     #read
@@ -676,7 +676,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
     Ok(Body {
         routes: quote! {
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
-                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Interior(&__INTERIOR, &[#(#captures),*]))
+                <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Interior(&__INTERIOR, &[#(#captures),*]))
             }
         },
         items: quote! {
@@ -713,7 +713,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         let name = other.ident;
         match other.role {
             Role::Layout => quote!(#name: layout,),
-            _ if other.ident == content => quote!(#name: ::sittir_core::SlotValue::Transport(content),),
+            _ if other.ident == content => quote!(#name: ::sittir_core::SlotValue::Node(content),),
             _ => quote!(#name: ::core::default::Default::default(),),
         }
     });
@@ -735,7 +735,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     Ok(Body {
         routes: quote! {
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
-                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Envelope { wraps_hidden: #wraps_hidden, unit: <#inner as __rt::ReadTransport>::unit_id })
+                <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Envelope { wraps_hidden: #wraps_hidden, unit: <#inner as __rt::ReadNode>::unit_id })
             }
         },
         items: quote!(),
@@ -743,7 +743,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             let __at = ctx.at_of(cursor);
             let __index = __rt::index_of(cursor);
             #hidden
-            let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth);
+            let mut content = <#inner as __rt::ReadNode>::read(cursor, ctx, depth);
             #restore
             let mut content = content?;
             let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), __index, __at, ctx));
@@ -873,7 +873,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         routes: quote! {
             fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                 let __node = cursor.node();
-                if !<Self as __rt::ReadTransport>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
+                if !<Self as __rt::ReadNode>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
                     return ::core::option::Option::None;
                 }
                 let children = __rt::survey(cursor);
@@ -881,7 +881,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*] })
             }
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
-                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit))
+                <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit))
             }
         },
         items: quote! {
@@ -983,7 +983,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
                 let item = attrs
                     .item
                     .as_ref()
-                    .ok_or_else(|| syn::Error::new_spanned(name, "a list's flank needs `#[transport(item = …)]`"))?;
+                    .ok_or_else(|| syn::Error::new_spanned(name, "a list's flank needs `#[node(item = …)]`"))?;
                 let slot = slots
                     .iter()
                     .find(|(_, f, _)| f.ident == item)
@@ -1028,57 +1028,57 @@ mod tests {
     #[test]
     fn a_child_one_slot_does_not_take_is_tried_on_the_next_slot_of_its_field() {
         let out = expand(parse_quote! {
-            #[transport(kind = kind::PAIR)]
-            pub struct PairTransport {
+            #[node(kind = kind::PAIR)]
+            pub struct PairNode {
                 #[wire(key = "$_layout")]
-                pub layout: Option<Box<TransportLayout>>,
+                pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_key")]
                 #[slot(field = field::KEY)]
-                pub key: SlotValue<KeyTransport>,
+                pub key: SlotValue<KeyNode>,
                 #[wire(key = "_value")]
                 #[slot(field = field::KEY)]
-                pub value: SlotValue<ValueTransport>,
+                pub value: SlotValue<ValueNode>,
             }
         });
         assert!(has(
             &out,
-            "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<KeyTransport> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {
-                return ::core::result::Result::Ok(__rt::Route::Slot { slot: ::sittir_core::types::SlotId(0u16), scalar: <SlotValue<KeyTransport> as __rt::ReadSlot>::scalar(child.grammar, child.display) });
+            "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<KeyNode> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {
+                return ::core::result::Result::Ok(__rt::Route::Slot { slot: ::sittir_core::types::SlotId(0u16), scalar: <SlotValue<KeyNode> as __rt::ReadSlot>::scalar(child.grammar, child.display) });
             }"
         ));
         assert!(has(
             &out,
-            "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<ValueTransport> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {"
+            "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<ValueNode> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {"
         ));
     }
 
     #[test]
     fn a_presence_flag_decodes_a_missing_key_as_false() {
         let out = expand(parse_quote! {
-            #[transport(kind = kind::STATIC_ITEM)]
-            pub struct StaticItemTransport {
+            #[node(kind = kind::STATIC_ITEM)]
+            pub struct StaticItemNode {
                 #[wire(key = "$_layout")]
-                pub layout: Option<Box<TransportLayout>>,
+                pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_mutable")]
                 #[slot(field = field::MUTABLE, presence = kind::MUT)]
                 pub mutable: bool,
             }
         });
-        assert!(has(&out, "mutable: unsafe { ::sittir_core::boundary::flag(env, obj, c\"_mutable\", \"StaticItemTransport\")? },"));
+        assert!(has(&out, "mutable: unsafe { ::sittir_core::boundary::flag(env, obj, c\"_mutable\", \"StaticItemNode\")? },"));
     }
 
     #[test]
     fn a_struct_refuses_a_node_its_kind_does_not_admit_before_it_reads() {
         let out = expand(parse_quote! {
-            #[transport(kind = kind::PAIR)]
-            pub struct PairTransport {
+            #[node(kind = kind::PAIR)]
+            pub struct PairNode {
                 #[wire(key = "$_layout")]
-                pub layout: Option<Box<TransportLayout>>,
+                pub layout: Option<Box<NodeLayout>>,
             }
         });
         assert!(has(
             &out,
-            "if !<Self as __rt::ReadTransport>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
+            "if !<Self as __rt::ReadNode>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
                 return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&__node), index: __rt::index_of(cursor) });
             }"
         ));
@@ -1087,13 +1087,13 @@ mod tests {
     #[test]
     fn a_choice_of_units_builds_each_arm_from_a_kind_id_it_claims() {
         let out = expand(parse_quote! {
-            #[transport(choice)]
+            #[node(choice)]
             pub enum Terminator {
                 #[kind(kind::_AUTOMATIC_SEMICOLON)]
                 AutomaticSemicolon,
                 #[kind(kind::SEMI, display(kind::SEMI_ALIAS))]
                 Semi,
-                #[transport(blank)]
+                #[node(blank)]
                 Blank,
             }
         });
@@ -1113,10 +1113,10 @@ mod tests {
     #[test]
     fn an_edged_unit_builds_and_reads_from_its_kind_id_with_no_edge_set() {
         let out = expand(parse_quote! {
-            #[transport(choice)]
+            #[node(choice)]
             pub enum Statement {
                 #[kind(kind::EMPTY_STATEMENT)]
-                #[transport(edged)]
+                #[node(edged)]
                 EmptyStatement(::sittir_core::options::Edges),
             }
         });
@@ -1130,10 +1130,10 @@ mod tests {
     #[test]
     fn an_edged_variant_holds_its_edges() {
         let input: syn::DeriveInput = parse_quote! {
-            #[transport(choice)]
+            #[node(choice)]
             pub enum Statement {
                 #[kind(kind::EMPTY_STATEMENT)]
-                #[transport(edged)]
+                #[node(edged)]
                 EmptyStatement,
             }
         };
@@ -1143,12 +1143,12 @@ mod tests {
     #[test]
     fn a_choice_with_a_payload_arm_has_no_kind_id_constructor() {
         let out = expand(parse_quote! {
-            #[transport(choice)]
+            #[node(choice)]
             pub enum Content {
                 #[kind(kind::SEMI)]
                 Semi,
                 #[kind(kind::BLOCK)]
-                Block(BlockTransport),
+                Block(BlockNode),
             }
         });
         assert!(!has(&out, "pub fn from_kind_id"));
@@ -1157,7 +1157,7 @@ mod tests {
     #[test]
     fn a_choice_of_units_with_an_arm_no_kind_id_builds_is_refused() {
         let input: syn::DeriveInput = parse_quote! {
-            #[transport(choice)]
+            #[node(choice)]
             pub enum Terminator {
                 #[kind(kind::SEMI)]
                 Semi,

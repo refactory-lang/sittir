@@ -161,7 +161,7 @@ child would double-represent one fact. Two things were missing on the
 - **String shorthand.** The generated `$trivia` was already typed per grammar
   from the `trivia` role (`(Comment | { leading?, trailing? })[]`), and a bare
   string already RENDERED correctly: every entry crosses as
-  `SlotValue<TriviaTransport>`, whose sittir-core decoder maps a JS string to
+  `SlotValue<TriviaNode>`, whose sittir-core decoder maps a JS string to
   `SlotValue::Verbatim`, and the engine newline-terminates each entry. Only
   the TypeScript signature forbade it. `TriviaEntry = AnyNodeData | string`
   in `@sittir/types`; `buildTriviaParamType` adds `| string`. A string is

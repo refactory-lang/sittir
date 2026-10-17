@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, dirname, join, relative } from 'node:path';
+import { basename, dirname, join, normalize, relative } from 'node:path';
 import { hostPlatform, platformSuffix } from '@sittir/common/engine';
 import { moduleClosure } from './module-closure.ts';
 import { REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, type GrammarName } from '../grammars.ts';
@@ -37,7 +37,7 @@ export interface BuildSetting {
 }
 
 const STAMP_DIR = 'node_modules/.cache/sittir/native-build';
-const SHARED_CRATES = ['sittir-core', 'sittir-transport-macros'];
+const PATH_DEPENDENCY = /\bpath\s*=\s*"([^"]+)"/g;
 const WORKSPACE_INPUTS = ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'pnpm-lock.yaml'];
 const BUILD_DRIVER = 'scripts/build-native.mts';
 const CARGO_CONFIG_NAMES = ['config.toml', 'config'];
@@ -72,6 +72,18 @@ function walk(path: string, out: string[]): void {
 	}
 }
 
+function crateClosure(repoRoot: string, crateRel: string): string[] {
+	const seen = new Set<string>();
+	const visit = (rel: string): void => {
+		const manifest = join(repoRoot, rel, 'Cargo.toml');
+		if (seen.has(rel) || !existsSync(manifest)) return;
+		seen.add(rel);
+		for (const [, path] of readFileSync(manifest, 'utf8').matchAll(PATH_DEPENDENCY)) visit(normalize(join(rel, path!)));
+	};
+	visit(crateRel);
+	return [...seen];
+}
+
 function crateInputs(crateRel: string): string[] {
 	return [`${crateRel}/Cargo.toml`, `${crateRel}/package.json`, `${crateRel}/build.rs`, `${crateRel}/src`, `${crateRel}/templates`];
 }
@@ -93,8 +105,7 @@ export function nativeInputs(repoRoot: string, grammar: string): Record<string, 
 	const parserSources = join(repoRoot, relative(REPO_ROOT, grammarPackageDir(grammar)), '.sittir/src');
 	const roots = [
 		...WORKSPACE_INPUTS,
-		...SHARED_CRATES.flatMap((crate) => crateInputs(`rust/crates/${crate}`)),
-		...crateInputs(nativeCrateRelDir(grammar)),
+		...crateClosure(repoRoot, nativeCrateRelDir(grammar)).flatMap(crateInputs),
 		...moduleClosure(repoRoot, [BUILD_DRIVER])
 	];
 	const files: string[] = [];

@@ -1,4 +1,4 @@
-//! sittir-core exposes `#[napi]` boundary types (`Edit`, `Span`, transport
+//! sittir-core exposes `#[napi]` boundary types (`Edit`, `Span`, node
 //! structs) whose type definitions must land in the DEPENDENT napi crates'
 //! generated `index.d.ts`. napi-derive only writes those type defs into the
 //! CLI's per-build `NAPI_TYPE_DEF_TMP_FOLDER` while this crate's proc-macros
