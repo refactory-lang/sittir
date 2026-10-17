@@ -10,6 +10,7 @@ import {
 } from './automatic-groups.ts';
 import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
 import { EnrichCtx, enrichSymbolSource, isMintOrigin, type EnrichRuleOrigin } from './enrich-ctx.ts';
+import { ENRICH_SHAPES_KEY } from './enrich-shapes.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import {
 	distributeInlineAliasChoices,
@@ -283,6 +284,12 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	});
 	Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
 		value: automaticVariants,
+		enumerable: false,
+		writable: false,
+		configurable: true
+	});
+	Object.defineProperty(result, ENRICH_SHAPES_KEY, {
+		value: ctx.shapes.shapes,
 		enumerable: false,
 		writable: false,
 		configurable: true
@@ -1943,6 +1950,17 @@ function absorbTrailingListSeparators(members: Rule[], symbols: SymbolSource): R
 	return changed ? out : null;
 }
 
+function isLoneOptionalToken(optionalSeqBody: Rule): boolean {
+	const body = peelPrec(optionalSeqBody);
+	if (!isSeqType(body.type)) return false;
+	const members = (body as unknown as { members: Rule[] }).members;
+	if (members.length !== 2) return false;
+	const [token, tail] = members as [Rule, Rule];
+	if (!isStringType(token.type)) return false;
+	const inner = optionalContentOf(tail);
+	return inner !== undefined && isFieldType(peelPrec(inner).type);
+}
+
 function applyClauseHoist(
 	parentKind: string,
 	rule: Rule,
@@ -1963,6 +1981,7 @@ function applyClauseHoist(
 		} else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
 			const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
 			if (name !== null) {
+				ctx.shapes.record(isLoneOptionalToken(recursedSeqBody) ? 'lone-optional-token' : 'optional-sequence-inline', parentKind);
 				const symbolRef = makeGroupLiftSymbol(rule, name);
 				return withOptionalContent(rule, symbolRef);
 			}
@@ -1971,6 +1990,7 @@ function applyClauseHoist(
 			counter.opt += 1;
 			const name = visibleGroupSynthName(recursedSeqBody, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
 			if (name !== null) {
+				ctx.shapes.record(isLoneOptionalToken(recursedSeqBody) ? 'lone-optional-token' : 'optional-sequence-visible', parentKind);
 				const groupRef = makeGroupLiftSymbol(rule, name);
 				return withOptionalContent(rule, groupRef);
 			}
@@ -1992,6 +2012,7 @@ function applyClauseHoist(
 				ambientPrec,
 				enclosingFieldName
 			);
+			if (promoted !== null) ctx.shapes.record('structured-choice-arm', parentKind);
 			const final = promoted ?? recursed;
 			if (final === inner) return rule;
 			return withOptionalContent(rule, final);
@@ -2005,9 +2026,10 @@ function applyClauseHoist(
 		const absorbed = absorbTrailingListSeparators(rawMembers, ctx.sourceSymbols);
 		const members = absorbed ?? rawMembers;
 		let changed = absorbed !== null;
+		if (absorbed !== null) ctx.shapes.record('trailing-list-separator', parentKind);
 		const newMembers = members.map((m) => {
 			let out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
-			out = promoteHiddenListRef(out, ctx);
+			out = notedHiddenListRef(out, ctx, parentKind);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -2028,6 +2050,7 @@ function applyClauseHoist(
 					: seqFn(...run.info.flatMembers);
 				const name = visibleGroupSynthName(body, parentKind, ctx, counter, ambientPrec);
 				if (name === null) continue;
+				ctx.shapes.record('inline-list-run', parentKind);
 				const groupRef = makeGroupLiftSymbol(body, name);
 				const replacement = isTail ? optionalFn(groupRef) : groupRef;
 				newMembers.splice(run.start, run.size, replacement);
@@ -2042,7 +2065,7 @@ function applyClauseHoist(
 		const permutationChoice = isPermutationChoice(rule, rulesBag, ctx.kwRules, ctx.wordMatcher);
 		const selfFold = selfReferentialFoldOf(parentKind, rule) !== undefined;
 		if (permutationChoice) {
-			choiceRule = promotePermutationArmKeywords(rule, ctx);
+			choiceRule = ctx.shapes.noted('permutation-arm-keyword', parentKind, rule, promotePermutationArmKeywords(rule, ctx));
 		}
 		const members = (choiceRule as unknown as { members?: Rule[] }).members;
 		if (!Array.isArray(members)) return rule;
@@ -2065,18 +2088,24 @@ function applyClauseHoist(
 		const newMembers = members.map((m) => {
 			const out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-			const promoted =
+			const structured =
 				permutationChoice || literalOnlySplit || selfFold
 					? null
-					: (mintStructuredChoiceArm(out, armParent, ctx, armCounter, collidingLeadingNames, ambientPrec) ??
-						(fieldRoutedArms.includes(m) ? mintFieldRoutedArm(out, armParent, ctx, armCounter, ambientPrec) : null));
+					: mintStructuredChoiceArm(out, armParent, ctx, armCounter, collidingLeadingNames, ambientPrec);
+			const routed = structured !== null || permutationChoice || literalOnlySplit || selfFold || !fieldRoutedArms.includes(m)
+				? null
+				: mintFieldRoutedArm(out, armParent, ctx, armCounter, ambientPrec);
+			if (structured !== null) ctx.shapes.record('structured-choice-arm', parentKind);
+			if (routed !== null) ctx.shapes.record('field-routed-choice-arm', parentKind);
+			const promoted = structured ?? routed;
 			if (promoted !== null) lifted = true;
-			const final = promoteHiddenListRef(promoted ?? out, ctx);
+			const final = notedHiddenListRef(promoted ?? out, ctx, parentKind);
 			if (final !== m) changed = true;
 			return final;
 		});
 		const hoistedChoice = changed || choiceRule !== rule ? ({ ...choiceRule, members: newMembers } as Rule) : rule;
 		if (elementSlot === undefined || supertypeName === undefined || !lifted) return hoistedChoice;
+		ctx.shapes.record('element-choice-supertype', parentKind);
 		return makeGroupLiftSymbol(rule, registerElementSupertype(hoistedChoice, supertypeName, elementSlot, ctx));
 	}
 
@@ -2088,6 +2117,7 @@ function applyClauseHoist(
 		if (isRepeatType(rule.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
 			const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
 			if (name !== null) {
+				ctx.shapes.record('multi-slot-repeat-element', parentKind);
 				return withContent(rule, makeGroupLiftSymbol(newContent, name));
 			}
 		}
@@ -2111,6 +2141,10 @@ function applyClauseHoist(
 	}
 
 	return rule;
+}
+
+function notedHiddenListRef(member: Rule, ctx: EnrichCtx, parentKind: string): Rule {
+	return ctx.shapes.noted('hidden-list-reference', parentKind, member, promoteHiddenListRef(member, ctx));
 }
 
 function clauseHoistSynthName(

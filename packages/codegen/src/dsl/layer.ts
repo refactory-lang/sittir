@@ -1,3 +1,4 @@
+import { enrichShapeDiagnostics, enrichShapesOf, type EnrichShape } from './enrich-shapes.ts';
 import type { GrammarJson, SymbolRule } from '../grammar-shapes/grammar-json.ts';
 import type { Rule } from '../types/rule.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionRecord, type ConflictResolutionsInput } from './conflict-resolutions.ts';
@@ -260,14 +261,14 @@ function enrichFixpoint(
 	result: GrammarResult,
 	base: GrammarResult,
 	displayFamilies: DisplayFamilies
-): { readonly checked: GrammarResult; readonly changed: readonly string[] } {
+): { readonly checked: GrammarResult; readonly changed: readonly string[]; readonly shapes: readonly EnrichShape[] } {
 	const before = baseRulesOf<unknown>(result) ?? {};
 	const checked = enrich(withEnrichSidecarsOf(result, base), { displayFamilies }) as unknown as GrammarResult;
 	const after = baseRulesOf<unknown>(checked) ?? {};
 	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter(
 		(name) => JSON.stringify(before[name]) !== JSON.stringify(after[name])
 	);
-	return { checked, changed: changed.sort() };
+	return { checked, changed: changed.sort(), shapes: enrichShapesOf(checked) };
 }
 
 interface IntakeCtx {
@@ -432,7 +433,8 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 		supertypes
 	};
 	const effects = [...(ctx.inherited?.effects ?? []), ...ctx.effects];
-	const { checked, changed } = enrichFixpoint(layerResult(ctx, bodies, lists), ctx.base, displayFamiliesOf(effects));
+	const { checked, changed, shapes } = enrichFixpoint(layerResult(ctx, bodies, lists), ctx.base, displayFamiliesOf(effects));
+	ctx.diagnostics.push(...enrichShapeDiagnostics(ctx.name, shapes));
 	if (changed.length > 0)
 		ctx.diagnostics.push({
 			scope: 'grammar',
