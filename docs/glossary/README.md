@@ -23,8 +23,8 @@ One file per source directory, named by the directory path with `/` → `-`:
 Inside a file, one `###` section per declaration, qualified by its enclosing
 class / interface / enum / object literal:
 
-```
-### `packages/codegen/src/dsl/builders.ts::attributeBuilder::alias`
+````
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::constructor`
 
 ```text
 <the comment that stood above the declaration, verbatim>
@@ -35,7 +35,7 @@ class / interface / enum / object literal:
 ```text
 <a comment that stood inside the declaration's body>
 ```
-```
+````
 
 The heading is the symbol id — `<file>::<qualified name>` — and nothing
 else: no line numbers, so a heading never goes stale and joins to the code
