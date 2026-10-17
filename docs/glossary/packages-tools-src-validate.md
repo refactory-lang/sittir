@@ -297,11 +297,14 @@ Reads the whole tree once (`handle.read(0, Infinity)`) and visits every native n
 ### `packages/tools/src/validate/common.ts::buildKindToSupertypes`
 
 ```text
-Each kind's direct supertypes, inverted from the node model's supertype ->
-members table. The model is the source, not node-types.json: tree-sitter
-leaves a supertype that is also inlined out of node-types.json and lists its
-members in its place, while the model keeps every supertype the grammar
-declares, and the slot admissions the hosts are matched against name it.
+Each kind's direct supertypes, from two sources that hold different facts.
+node-types.json gives the parser's view, display names included: an alias
+site such as typescript's `this` under `primary_type` is listed as
+`this_type`, a name the model never holds. The node model gives every
+supertype the grammar declares: tree-sitter leaves a supertype that is also
+inlined out of node-types.json, so only the model still lists rust's
+_declaration_statement or python's _suite. The node-types edges come first,
+so a kind both sources list keeps the parser's order.
 ```
 
 ### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.mut_pattern`

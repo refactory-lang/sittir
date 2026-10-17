@@ -340,15 +340,18 @@ export function collectKinds(node: TS.Node): Set<string> {
 	return kinds;
 }
 
-export function buildKindToSupertypes(subtypes: Readonly<Record<string, readonly string[]>>): Map<string, string[]> {
+export function buildKindToSupertypes(
+	rawEntries: readonly { type: string; subtypes?: readonly { type: string }[] }[],
+	modelSubtypes: Readonly<Record<string, readonly string[]>>
+): Map<string, string[]> {
 	const result = new Map<string, string[]>();
-	for (const [supertype, members] of Object.entries(subtypes)) {
-		for (const member of members) {
-			const existing = result.get(member) ?? [];
-			existing.push(supertype);
-			result.set(member, existing);
-		}
-	}
+	const add = (member: string, supertype: string): void => {
+		const existing = result.get(member) ?? [];
+		if (!existing.includes(supertype)) existing.push(supertype);
+		result.set(member, existing);
+	};
+	for (const entry of rawEntries) for (const sub of entry.subtypes ?? []) add(sub.type, entry.type);
+	for (const [supertype, members] of Object.entries(modelSubtypes)) for (const member of members) add(member, supertype);
 	return result;
 }
 

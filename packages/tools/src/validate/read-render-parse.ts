@@ -907,7 +907,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 		const derived = deriveReparseHosts({
 			declared,
 			root: model.root,
-			kindToSupertypes: buildKindToSupertypes(model.subtypes),
+			kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar), model.subtypes),
 			admits,
 			kindIdsOf,
 			modelTypeOf: (kind) => model.modelTypes[kind],
@@ -939,7 +939,7 @@ export async function loadRenderReparseContext(
 		parser,
 		render: (node) => nativeEngine.render(node).toString(),
 		triviaOf: (node) => sidesOf(node),
-		kindToSupertypes: buildKindToSupertypes(model.subtypes),
+		kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar), model.subtypes),
 		adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 		root: model.root,
 		variantChildKinds: await loadVariantChildKindsByOwner(grammar),

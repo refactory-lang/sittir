@@ -103,6 +103,7 @@ import {
 	astStructuralDiff,
 	findReparsedNodeAtOffset
 } from '../validate/read-render-parse.ts';
+import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, NodeCoordinate } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
@@ -341,8 +342,9 @@ async function computeValidatorWrapDiag(
 	untypedNode: unknown,
 	rendered: string
 ): Promise<ProbeWrapDiag> {
+	const { loadRawEntries } = await load('nodeTypesLoader');
 	const { root, subtypes } = await loadNodeModel(grammar);
-	const kindToSupertypes = buildKindToSupertypes(subtypes);
+	const kindToSupertypes = buildKindToSupertypes(loadRawEntries(grammar), subtypes);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	// Parity with the validator: candidates key by the CANONICAL catalog
 	// name of the wire `$type`, so the replayed wrapper selection must too.
