@@ -457,19 +457,31 @@ A grammar's source hash: its own inputs and the lockfile (`grammarSourceInputs`)
 
 What a generation read: its source hash and the upstream digest.
 
-Every freshness record follows one rule: it fingerprints its inputs before the work that reads them and hashes its outputs after. The generation manifest records the `SourceFingerprint` taken as generation starts; the native build stamp records the `NativeBuildFingerprint` taken before cargo runs; the regeneration's completion record (`regenerateGrammars` in the tools) records the source hash and fixture sources taken as the run starts, beside the binary and fixture files hashed after it. An input edited while the work runs therefore reads as changed on the next check, never as current.
+Every freshness record follows one rule: it fingerprints its inputs before the work that reads them and hashes its outputs after. The generation manifest records the `SourceFingerprint` taken as generation starts, and a native build is recorded against the generation on record only while the generated files it built from are unchanged (`recordNativeBuild`); the native build stamp records the `NativeBuildFingerprint` taken before cargo runs; the regeneration's completion record (`regenerateGrammars` in the tools) records the source hash and fixture sources taken as the run starts, beside the binary and fixture files hashed after it. An input edited while the work runs therefore reads as changed on the next check, never as current.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::sourceFingerprint`
 
 The grammar's `SourceFingerprint` as it is now.
 
-### `packages/codegen/src/scripts/generated-manifest.ts::recordedSourceFingerprint`
+### `packages/codegen/src/scripts/generated-manifest.ts::RecordedGeneration`
 
-The `SourceFingerprint` of the grammar's newest recorded generation, or undefined when none is on record.
+The grammar's newest recorded generation: the `SourceFingerprint` it read and the hash of each generated file it wrote.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::recordedGeneration`
+
+The grammar's `RecordedGeneration`, or undefined when none is on record.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::recordNativeBuild`
+
+Records a native build of the generation on record (`generation`, read before the build started). The generated files are the build's inputs: every one outside the native binding directory must still hash as the generation wrote it, or this throws naming the first that changed and records nothing, so a generated file edited between the passes is never certified. The files in the native binding directory, which the build rewrites (`index.d.ts`, the loader), are hashed as they are now, and the pair is recorded against the generation's `SourceFingerprint`.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::outputView`
+
+A view of the checkout as it is now, so files a generation first wrote are visible when its outputs are hashed. The git-visible file set of a cached view (`worktreeSource`) dates from before the generation and would leave them out. An index snapshot is returned as is.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::writeManifestForGrammar`
 
-Records the generation that just ran: hashes every generated file git tracks or would track, and adds the pair (the source fingerprint `read` taken before the generation started, digest of those hashes) to the grammar's local manifest as its newest known-good pair. Native bindings (`*.node`) are ignored by git and so are not listed; their freshness is a separate local check against their build's stamp (`native-binary-freshness.ts`).
+Records the generation that just ran: hashes every generated file git tracks or would track, (seen through `outputView`, so a file it created counts) and adds the pair (the source fingerprint `read` taken before the generation started, digest of those hashes) to the grammar's local manifest as its newest known-good pair. Native bindings (`*.node`) are ignored by git and so are not listed; their freshness is a separate local check against their build's stamp (`native-binary-freshness.ts`).
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::recordGeneration`
 

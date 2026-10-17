@@ -6,6 +6,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
 	checkoutSource,
 	manifestPath,
+	recordNativeBuild,
+	recordedGeneration,
 	stagedInputPathspecs,
 	sourceFingerprint,
 	verifyManifestForGrammar,
@@ -37,11 +39,22 @@ const write = (rel: string, content: string): void => {
 const read = (rel: string): string => readFileSync(join(repo, rel), 'utf8');
 
 const regenerate = (editDuringGeneration?: () => void): void => {
-	const sources = sourceFingerprint(GRAMMAR, checkoutSource(repo));
+	const src = checkoutSource(repo);
+	const sources = sourceFingerprint(GRAMMAR, src);
 	write('packages/python/src/from-grammar.ts', `// ${read(GRAMMAR_SOURCE)}\n`);
 	write('packages/python/src/from-codegen.ts', `// ${read(CODEGEN_SOURCE)}\n`);
 	editDuringGeneration?.();
-	writeManifestForGrammar(GRAMMAR, sources, checkoutSource(repo));
+	writeManifestForGrammar(GRAMMAR, sources, src);
+};
+
+const NATIVE_TYPINGS = 'packages/python/native/index.d.ts';
+
+const buildNative = (editDuringBuild?: () => void): void => {
+	const src = checkoutSource(repo);
+	const generation = recordedGeneration(GRAMMAR, src)!;
+	write(NATIVE_TYPINGS, `// typings for ${read(GENERATED)}`);
+	editDuringBuild?.();
+	recordNativeBuild(GRAMMAR, generation, src);
 };
 
 const dropStamp = (): void => rmSync(join(repo, 'node_modules'), { recursive: true, force: true });
@@ -276,6 +289,28 @@ describe('the vocabulary as a source', () => {
 });
 
 describe('whether the source is the one the generated output came from', () => {
+	it('records a generated file first written during the generation, so deleting it fails', () => {
+		write(GRAMMAR_SOURCE, 'grammar two');
+		regenerate(() => write('packages/python/src/emitted-late.ts', 'late\n'));
+		rmSync(join(repo, 'packages/python/src/emitted-late.ts'));
+		expect(verify()).toMatchObject({ ok: false, missing: ['packages/python/src/emitted-late.ts'] });
+	});
+
+	it('holds after a native build that rewrites only its own typings', () => {
+		buildNative();
+		expect(verify().ok).toBe(true);
+	});
+
+	it('refuses to record a native build when a generated file changed since the generation', () => {
+		expect(() => buildNative(() => write(GENERATED, 'hand edit\n'))).toThrow(`${GENERATED} changed since the generation`);
+		expect(verify()).toMatchObject({ ok: false, modified: [GENERATED] });
+	});
+
+	it('records a native build against the source the generation read', () => {
+		buildNative(() => write(GRAMMAR_SOURCE, 'grammar edited mid-build'));
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
 	it('fails when a source input is edited while the generation runs', () => {
 		regenerate(() => write(GRAMMAR_SOURCE, 'grammar edited mid-run'));
 		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });

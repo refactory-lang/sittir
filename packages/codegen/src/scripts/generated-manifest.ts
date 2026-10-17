@@ -361,15 +361,36 @@ export function sourceFingerprint(grammar: GrammarName, src: ManifestSource = wo
 	return { source: computeSourceHash(grammar, src), upstream: upstreamDigest(grammar, src) };
 }
 
-export function recordedSourceFingerprint(grammar: GrammarName, src: ManifestSource = worktreeSource()): SourceFingerprint | undefined {
-	const last = readManifest(grammar, src)?.known.at(-1);
-	if (last === undefined) return undefined;
-	return last.upstream === undefined ? { source: last.source } : { source: last.source, upstream: last.upstream };
+export interface RecordedGeneration {
+	readonly read: SourceFingerprint;
+	readonly files: Readonly<Record<string, string>>;
+}
+
+export function recordedGeneration(grammar: GrammarName, src: ManifestSource = worktreeSource()): RecordedGeneration | undefined {
+	const manifest = readManifest(grammar, src);
+	const last = manifest?.known.at(-1);
+	if (manifest === undefined || last === undefined) return undefined;
+	const read = last.upstream === undefined ? { source: last.source } : { source: last.source, upstream: last.upstream };
+	return { read, files: manifest.files };
+}
+
+function outputView(src: ManifestSource): ManifestSource {
+	return isCheckout(src) ? checkoutSource(src.checkout) : src;
 }
 
 export function writeManifestForGrammar(grammar: GrammarName, read: SourceFingerprint, src: ManifestSource = worktreeSource()): void {
-	const files = hashGeneratedFiles(grammar, src);
-	recordGeneration(grammar, src, files, { ...read, outputs: outputsDigest(files) });
+	const now = outputView(src);
+	const files = hashGeneratedFiles(grammar, now);
+	recordGeneration(grammar, now, files, { ...read, outputs: outputsDigest(files) });
+}
+
+export function recordNativeBuild(grammar: GrammarName, generation: RecordedGeneration, src: ManifestSource = worktreeSource()): void {
+	const now = outputView(src);
+	const files = hashGeneratedFiles(grammar, now);
+	const rewritten = (rel: string): boolean => rel.startsWith(`${nativeBindingRelDir(grammar)}/`);
+	const changed = [...new Set([...Object.keys(generation.files), ...Object.keys(files)])].sort().find((rel) => !rewritten(rel) && generation.files[rel] !== files[rel]);
+	if (changed !== undefined) throw new Error(`${changed} changed since the generation of ${grammar}; regenerate it with gen --all.`);
+	recordGeneration(grammar, now, files, { ...generation.read, outputs: outputsDigest(files) });
 }
 
 export interface VerifyResult {

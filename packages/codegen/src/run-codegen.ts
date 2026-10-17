@@ -24,7 +24,7 @@ import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts
 import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
-import { manifestPath, recordedSourceFingerprint, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
+import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
 import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -439,10 +439,10 @@ function runNativeBuild({ grammar, nativeDebug, workspaceCheck }: Pick<CodegenOp
 
 export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
 	await withInternalCodegenRun(async () => {
-		const read = recordedSourceFingerprint(opts.grammar);
-		if (read === undefined) throw new Error(`No generation of ${opts.grammar} is on record to build the binding from: run gen --all first.`);
+		const generation = recordedGeneration(opts.grammar);
+		if (generation === undefined) throw new Error(`No generation of ${opts.grammar} is on record to build the binding from: run gen --all first.`);
 		runNativeBuild(opts);
-		writeManifestForGrammar(opts.grammar, read);
+		recordNativeBuild(opts.grammar, generation);
 		console.log(`  → generation recorded in ${manifestPath(opts.grammar)}`);
 	});
 }
