@@ -458,7 +458,7 @@ Whether a repo-relative path is a codegen source that takes part in generation: 
  * Freshness predicate for grammar-owned napi binaries (`*.node`).
  *
  * Askama bakes the per-kind `.jinja` templates into the binary at compile
- * time, and the transport/dispatch code is compiled from the generated
+ * time, and the native node and dispatch code is compiled from the generated
  * `src/render/*.rs` — so a `.node` older than ANY of those inputs renders
  * with stale templates or stale node logic. Historically this failed
  * SILENTLY (validators ran against the stale engine; in the worst case the

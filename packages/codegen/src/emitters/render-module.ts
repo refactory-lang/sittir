@@ -1266,9 +1266,9 @@ function foldsWithRelaxed(
 	return merged;
 }
 
-const TRANSPORT_DERIVE = '#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]';
-const TRANSPORT_DERIVE_UNIT = '#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]';
-const TRANSPORT_DERIVE_ENUM_KIND = '#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Node)]';
+const NODE_DERIVE = '#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]';
+const NODE_DERIVE_UNIT = '#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]';
+const NODE_DERIVE_ENUM_KIND = '#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Node)]';
 
 function nodeDeclaration(read: ReadPrint, derive: string, args: string, keyword: 'struct' | 'enum', name: string): string[] {
 	read.nodes.add(name);
@@ -1628,7 +1628,7 @@ function emitSupertypeNodeEnum(
 
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 
-	lines.push(...nodeDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice', 'enum', enumName));
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
@@ -2256,7 +2256,7 @@ function emitPerSlotChildEnum(
 	}
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
-	lines.push(...nodeDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice', 'enum', enumName));
 	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
@@ -2354,7 +2354,7 @@ function renderAnyNode(
 		claimedBy.set(literal.variant, [...(claimedBy.get(literal.variant) ?? []), id]);
 	}
 
-	lines.push(...nodeDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', 'AnyNode'));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice', 'enum', 'AnyNode'));
 	for (const node of payloadNodes) {
 		const variant = rustNodeVariantName(node);
 		lines.push(...variantKindLines('AnyNode', variant, node, claimedBy.get(variant) ?? [], read));
@@ -2436,7 +2436,7 @@ function renderTriviaNodeSupport(
 		continuationKinds.has(node.kind) ? TRIVIA_TEXT : rustNodeStructName(node);
 
 	const lines: string[] = [];
-	lines.push(...nodeDeclaration(read, TRANSPORT_DERIVE, 'choice, codec_only', 'enum', 'TriviaNode'));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice, codec_only', 'enum', 'TriviaNode'));
 	for (const node of extrasNodes) {
 		const variant = rustNodeVariantName(node);
 		const id = kindIdByKind.get(node.kind);
@@ -3202,7 +3202,7 @@ function renderNodeDataStruct(
 	);
 	read.records.set(structName, layout);
 	const placeOf = new Map(layout.places.map((place) => [place.field, place]));
-	lines.push(...nodeDeclaration(read, TRANSPORT_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}`, 'struct', structName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}`, 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3385,7 +3385,7 @@ function renderFixedLiteralNode(typeName: string, fixed: FixedLiteral, read: Rea
 	const ids = fixedLiteralIds(fixed);
 	admit(read, typeName, ids);
 	return [
-		...nodeDeclaration(read, TRANSPORT_DERIVE_UNIT, 'choice', 'enum', typeName),
+		...nodeDeclaration(read, NODE_DERIVE_UNIT, 'choice', 'enum', typeName),
 		...variantKindLines(typeName, fixed.variant, undefined, ids, read),
 		...fixedVariantLines(fixed),
 		'}',
@@ -3941,7 +3941,7 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	const arms = values.map((v) => ({ variant: literalToVariantName(v), ids: [enumMemberId(node, v)] }));
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	if (ownId === undefined) throw new Error(`node.rs: enum kind '${node.kind}' has no kind id`);
-	lines.push(...nodeDeclaration(read, TRANSPORT_DERIVE_ENUM_KIND, enumKindArgs(ownId, read.ctx), 'enum', enumName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE_ENUM_KIND, enumKindArgs(ownId, read.ctx), 'enum', enumName));
 	for (const arm of arms) {
 		lines.push(`    #[kind(${variantKindArgs(arm.ids, false, read.ctx)})]`);
 		lines.push(`    ${arm.variant},`);
