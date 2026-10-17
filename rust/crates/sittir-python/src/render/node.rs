@@ -5,7 +5,7 @@
 // node structs + typed dispatch (render_node_dispatch) + node
 // bridge helpers.
 
-#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
+#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]
 #![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
@@ -23606,8 +23606,6 @@ impl ::sittir_core::prepare::SeatTarget for StatementNode {
             Self::ClassDefinition(t) => t.seat_target(table, ctx),
             Self::DecoratedDefinition(t) => t.seat_target(table, ctx),
             Self::MatchStatement(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -23631,8 +23629,6 @@ impl ::sittir_core::prepare::SeatTarget for SimpleStatementNode {
             Self::NonlocalStatement(t) => t.seat_target(table, ctx),
             Self::ExecStatement(t) => t.seat_target(table, ctx),
             Self::TypeAliasStatement(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -23649,8 +23645,6 @@ impl ::sittir_core::prepare::SeatTarget for CompoundStatementNode {
             Self::ClassDefinition(t) => t.seat_target(table, ctx),
             Self::DecoratedDefinition(t) => t.seat_target(table, ctx),
             Self::MatchStatement(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -23666,7 +23660,6 @@ impl ::sittir_core::prepare::SeatTarget for ParameterNode {
             Self::KeywordSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(258)).map(|site| (edges, site)),
             Self::PositionalSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(257)).map(|site| (edges, site)),
             Self::DictionarySplatPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23680,7 +23673,6 @@ impl ::sittir_core::prepare::SeatTarget for PatternNode {
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             Self::TuplePattern(t) => t.seat_target(table, ctx),
             Self::ListPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23697,7 +23689,6 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionNode {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23728,7 +23719,6 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionNode {
             Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23738,7 +23728,6 @@ impl ::sittir_core::prepare::SeatTarget for ImportListNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::AliasedImport(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23749,8 +23738,6 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementContentNodeSlot {
         match self {
             Self::PrintStatementChevron(t) => t.seat_target(table, ctx),
             Self::PrintStatementPlain(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -23792,7 +23779,6 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementContentNodeSlot {
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23830,7 +23816,6 @@ impl ::sittir_core::prepare::SeatTarget for ReturnStatementExpressionsNodeSlot {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23841,8 +23826,6 @@ impl ::sittir_core::prepare::SeatTarget for IfStatementAlternativeNodeSlot {
         match self {
             Self::ElifClause(t) => t.seat_target(table, ctx),
             Self::ElseClause(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -23855,7 +23838,6 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementLeftNodeSlot {
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             Self::TuplePattern(t) => t.seat_target(table, ctx),
             Self::ListPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23865,7 +23847,6 @@ impl ::sittir_core::prepare::SeatTarget for ExecStatementCodeNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::String(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23876,8 +23857,6 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatContentNodeSlo
         match self {
             Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
             Self::ListSplat(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -23887,8 +23866,6 @@ impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionDefinitionNodeSlo
         match self {
             Self::ClassDefinition(t) => t.seat_target(table, ctx),
             Self::FunctionDefinition(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -23898,7 +23875,6 @@ impl ::sittir_core::prepare::SeatTarget for CasePatternContentNodeSlot {
         match self {
             Self::CaseAsPattern(t) => t.seat_target(table, ctx),
             Self::KeywordPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23920,7 +23896,6 @@ impl ::sittir_core::prepare::SeatTarget for SimplePatternContentNodeSlot {
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)).map(|site| (edges, site)),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23930,7 +23905,6 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::TuplePattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23941,7 +23915,6 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTargetNodeSlot {
         match self {
             Self::Subscript(t) => t.seat_target(table, ctx),
             Self::Attribute(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -23980,7 +23953,6 @@ impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseBodyNodeSlot 
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::LambdaWithinForInClause(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24023,7 +23995,6 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentRightNodeSlot {
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24061,7 +24032,6 @@ impl ::sittir_core::prepare::SeatTarget for YieldContentNodeSlot {
             Self::ConditionalExpression(t) => t.seat_target(table, ctx),
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24071,7 +24041,6 @@ impl ::sittir_core::prepare::SeatTarget for CallArgumentsNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::GeneratorExpression(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24082,7 +24051,6 @@ impl ::sittir_core::prepare::SeatTarget for TypedParameterNameNodeSlot {
         match self {
             Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             Self::DictionarySplatPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24125,7 +24093,6 @@ impl ::sittir_core::prepare::SeatTarget for TypeContentNodeSlot {
             Self::UnionType(t) => t.seat_target(table, ctx),
             Self::ConstrainedType(t) => t.seat_target(table, ctx),
             Self::MemberType(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24164,7 +24131,6 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionExpressionNod
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24205,7 +24171,6 @@ impl ::sittir_core::prepare::SeatTarget for CollectionElementsItemNodeSlot {
             Self::Yield(t) => t.seat_target(table, ctx),
             Self::ListSplat(t) => t.seat_target(table, ctx),
             Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24244,7 +24209,6 @@ impl ::sittir_core::prepare::SeatTarget for InterpolationExpressionNodeSlot {
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::Yield(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24286,7 +24250,6 @@ impl ::sittir_core::prepare::SeatTarget for ArgumentListElementsItemNodeSlot {
             Self::DictionarySplat(t) => t.seat_target(table, ctx),
             Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
             Self::KeywordArgument(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24297,8 +24260,6 @@ impl ::sittir_core::prepare::SeatTarget for DictPatternElementsItemNodeSlot {
         match self {
             Self::KeyValuePattern(t) => t.seat_target(table, ctx),
             Self::SplatPattern(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -24336,7 +24297,6 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptsSubscriptNodeSlot {
             Self::NamedExpression(t) => t.seat_target(table, ctx),
             Self::AsPattern(t) => t.seat_target(table, ctx),
             Self::Slice(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }
@@ -24347,8 +24307,6 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryElementsItemNodeSlot {
         match self {
             Self::Pair(t) => t.seat_target(table, ctx),
             Self::DictionarySplat(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -24358,8 +24316,6 @@ impl ::sittir_core::prepare::SeatTarget for ComprehensionClausesContentNodeSlot 
         match self {
             Self::ForInClause(t) => t.seat_target(table, ctx),
             Self::IfClause(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
         }
     }
 }
@@ -24471,7 +24427,6 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AssignmentType(t) => t.seat_target(table, ctx),
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
             _ => None,
         }
     }

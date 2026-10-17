@@ -15,6 +15,9 @@ unsafe extern "C" {
 }
 
 /// The generated `.sittir` TypeScript parser.
+// SAFETY: `tree_sitter_typescript` is the generated parser's entry point, compiled
+// and linked by build.rs; it returns the parser's static `TSLanguage`, which is
+// the pointer `LanguageFn::from_raw` expects.
 pub const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_typescript) };
 
 pub fn language() -> tree_sitter::Language {

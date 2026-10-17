@@ -425,6 +425,7 @@ impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for Box<NodeLayout<T>>
 {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         Ok(Box::new(unsafe { NodeLayout::from_napi_value(env, napi_val)? }))
     }
 }
@@ -432,6 +433,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for Box<NodeLayout<T>> {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { NodeLayout::to_napi_value(env, *val) }
     }
 }
@@ -445,6 +447,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         use crate::boundary::property;
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             Ok(Self {
                 trivia: property(env, napi_val, c"trivia")?,
@@ -478,6 +481,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
     /// `{ slot, item, leading?, trailing?, inner? }`.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::property;
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             Ok(Self {
                 slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a unit's sides name its slot"))?,
@@ -493,6 +497,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// `{ slot, item, leading?, trailing?, inner? }`, each side only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"slot", Some(val.slot))?,
@@ -510,6 +515,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlotLayout {
     /// `{ slot, before?, after?, separator? }`.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::property;
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             Ok(Self {
                 slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a slot's layout names its slot"))?,
@@ -527,6 +533,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlotLayout {
     /// `{ slot, before?, after?, separator? }`, each class only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"slot", Some(val.slot))?,
@@ -543,6 +550,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for LayoutWork {
     /// `{ regionNodes, siblingItems }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"regionNodes", Some(val.region_nodes))?,
@@ -557,6 +565,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for StoredLayout {
     /// `{ deviations, slots, separators }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"deviations", Some(val.deviations))?,
@@ -573,6 +582,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// The edges never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"trivia", val.trivia)?,
@@ -603,8 +613,7 @@ mod tests {
     #[derive(Debug, Clone, PartialEq)]
     struct MockTrivia(String);
 
-    #[cfg(feature = "napi-bindings")]
-    crate::trivia::refuse_napi_decode!(MockTrivia);
+    crate::refuse_napi_codec!(MockTrivia);
 
     impl crate::trivia::TriviaSeam for MockTrivia {
         fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {

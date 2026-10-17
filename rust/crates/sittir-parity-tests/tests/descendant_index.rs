@@ -2,7 +2,7 @@
 //! its start node and adds that node's index; these tests hold that rule to
 //! tree-sitter over whole sources, so it calls the cursor's numbering
 //! directly rather than through `sittir_core::read`.
-#![allow(clippy::disallowed_methods)]
+#![allow(clippy::disallowed_methods, reason = "these tests hold sittir_core::read to the cursor numbering tree-sitter gives directly")]
 
 use tree_sitter::{Language, Node, Parser, Tree};
 

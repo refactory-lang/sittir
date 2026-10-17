@@ -25,7 +25,7 @@ pub const DEBUG_READ_CHECKS: bool = cfg!(feature = "read-debug-checks");
 
 /// The kind `node` has in the grammar, the key of every flag, edge and seat
 /// table. The one call of `Node::grammar_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Node::grammar_id`, which clippy.toml disallows outside this module")]
 pub fn grammar_id(node: &Node<'_>) -> KindId {
     KindId(node.grammar_id())
 }
@@ -34,40 +34,40 @@ pub fn grammar_id(node: &Node<'_>) -> KindId {
 /// else the grammar id. Tables are keyed on the grammar id (`grammar_id`),
 /// never on this one; the display id is for the places that carry an alias
 /// envelope. The one call of `Node::kind_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Node::kind_id`, which clippy.toml disallows outside this module")]
 pub fn display_id(node: &Node<'_>) -> KindId {
     KindId(node.kind_id())
 }
 
 /// The field the cursor's child is tagged with in its parent, none when it is
 /// unfielded. The one call of `TreeCursor::field_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::field_id`, which clippy.toml disallows outside this module")]
 pub fn field_id(cursor: &TreeCursor<'_>) -> Option<FieldId> {
     cursor.field_id().map(|field| FieldId(field.get()))
 }
 
 /// `node`'s first child tagged with `field`. The one call of
 /// `Node::child_by_field_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Node::child_by_field_id`, which clippy.toml disallows outside this module")]
 pub fn child_by_field<'t>(node: &Node<'t>, field: FieldId) -> Option<Node<'t>> {
     node.child_by_field_id(field.get())
 }
 
 /// The grammar's name for `field`. The one call of `Language::field_name_for_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Language::field_name_for_id`, which clippy.toml disallows outside this module")]
 pub fn field_name(language: &Language, field: FieldId) -> Option<&str> {
     language.field_name_for_id(field.get())
 }
 
 /// The grammar's name for `kind`. The one call of `Language::node_kind_for_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Language::node_kind_for_id`, which clippy.toml disallows outside this module")]
 pub fn kind_name(language: &Language, kind: KindId) -> Option<&str> {
     language.node_kind_for_id(kind.get())
 }
 
 /// The kind the grammar names `name`, named or anonymous; `KindId::BLANK`
 /// when it names none. The one call of `Language::id_for_node_kind`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Language::id_for_node_kind`, which clippy.toml disallows outside this module")]
 pub fn kind_named(language: &Language, name: &str, named: bool) -> KindId {
     KindId(language.id_for_node_kind(name, named))
 }
@@ -430,7 +430,7 @@ impl<'s> ReadCtx<'s> {
 
 /// The index of the node the cursor is on: its descendant index from the
 /// tree's root, which `TreeCursor::goto_descendant` reaches again.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::descendant_index`, which clippy.toml disallows outside this module")]
 pub fn index_of(cursor: &TreeCursor<'_>) -> NodeIndex {
     NodeIndex(cursor.descendant_index() as u32)
 }
@@ -438,14 +438,14 @@ pub fn index_of(cursor: &TreeCursor<'_>) -> NodeIndex {
 /// How many preorder positions the cursor's node lies past the node the
 /// cursor was created at: a node's index is its subtree root's index plus
 /// this. The one other call of `TreeCursor::descendant_index`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::descendant_index`, which clippy.toml disallows outside this module")]
 pub fn offset_of(cursor: &TreeCursor<'_>) -> u32 {
     cursor.descendant_index() as u32
 }
 
 /// Moves a cursor created at the tree's root to the node at `index`. The one
 /// call of `TreeCursor::goto_descendant`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
 pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) {
     cursor.goto_descendant(index.index());
 }
