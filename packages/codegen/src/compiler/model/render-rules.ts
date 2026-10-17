@@ -6,7 +6,7 @@ import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-ty
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
-import { slotElementKinds } from '../../emitters/transport-common.ts';
+import { slotElementKinds } from '../../emitters/node-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
 import { addressSites, resolveLabels, type PreferenceOrigin } from './site-addresses.ts';

@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, EngineIdentity, Rendered, TriviaFacts } from '@sittir/types';
 import type { EngineHandle, LiveEngine } from '../../src/engine-scope.ts';
-import { holdReadTree } from '../../src/transport-data.ts';
+import { holdReadTree } from '../../src/node-data.ts';
 import { mintTreeToken } from '../../src/tree-token.ts';
 
 /** `data` marked as a read gives what it returns: read provenance and a tree token. */

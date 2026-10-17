@@ -11,7 +11,7 @@ export const probeKind: CommandModule = {
 			.option('-k, --kind <kind>', 'Find first node of this kind and probe it')
 			.option('--range <start,end>', 'Probe node at byte range start,end')
 			.option('--no-render', 'Skip the render pass')
-			.option('--no-wrap', 'Read the transport unwrapped (skip the grammar wrap)')
+			.option('--no-wrap', 'Read the node unwrapped (skip the grammar wrap)')
 			.option('--reparse', 'Render → re-parse → include reparsed CST')
 			.option(
 				'--validator-reparse',

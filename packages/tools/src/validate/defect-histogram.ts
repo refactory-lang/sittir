@@ -8,8 +8,8 @@ export interface DefectHistogramOptions {
  *
  * The strict entry gate cascades: one broken nested slot fails every entry
  * whose render includes it, so raw failure counts over-represent single
- * mechanisms. Render/transport errors carry an inner→outer frame chain
- * (`... on XTransport._slot on YTransport._slot ...`); the DEEPEST frame
+ * mechanisms. Render/node errors carry an inner→outer frame chain
+ * (`... on XNode._slot on YNode._slot ...`); the DEEPEST frame
  * (the first `on` clause) names the defect, so the signature keeps the
  * error head plus that frame and drops the enclosing path. Re-parse and
  * offset-lookup errors carry no chain — they collapse to their error

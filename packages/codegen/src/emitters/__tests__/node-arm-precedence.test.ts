@@ -45,7 +45,7 @@ function makeNodeMap() {
 	return { ...makeNodeMapWith(nodes), terminalAliasWireIds: new Map([['identifier', [1, 28]]]) };
 }
 
-describe('supertype transport arm precedence', () => {
+describe('supertype node arm precedence', () => {
 	it('routes an enum member id to the enum variant even when a pattern subtype also wears it', () => {
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: { identifier: 1, u8: 28, bool: 2, _t: 50, _prim: 51, param: 60 },
@@ -57,8 +57,8 @@ describe('supertype transport arm precedence', () => {
 			emittedTemplates({ param: slot('type') }),
 			makeNodeMap(),
 			generatedIdTables
-		).transportRs.contents;
-		expect(emitted).toContain('    #[kind(kind::IDENTIFIER)]\n    Identifier(IdentifierTransport),');
+		).nodeRs.contents;
+		expect(emitted).toContain('    #[kind(kind::IDENTIFIER)]\n    Identifier(IdentifierNode),');
 		expect(emitted).toContain('    #[kind(kind::_PRIM, kind::U8, kind::BOOL)]\n    Prim(PrimEnum),');
 	});
 });

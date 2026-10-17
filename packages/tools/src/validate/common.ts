@@ -40,7 +40,7 @@ import {
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -240,9 +240,9 @@ export async function buildReadHandle(grammar: string, source: string): Promise<
 	return readNativeTree(await loadNativeEngine(grammar), source).tree;
 }
 
-/** Where a native search found a node: its coordinate when it has one, and the transport as the whole-tree read holds it, or neither for the root. */
+/** Where a native search found a node: its coordinate when it has one, and the native node as the whole-tree read holds it, or neither for the root. */
 export interface NativeNodeCoords {
-	coordinate?: TransportCoordinate;
+	coordinate?: NodeCoordinate;
 	embeddedData?: AnyUntypedNode;
 }
 
@@ -418,7 +418,7 @@ async function wrapExportOf<K extends keyof GrammarModules['wrap.ts']>(
 /** The grammar's wrapped read: the root (or the node a coordinate names) read `depth` levels down (one when absent) and wrapped. */
 export async function readNodeOf(
 	grammar: string
-): Promise<((tree: TreeHandle, coordinate?: TransportCoordinate, depth?: number) => unknown) | null> {
+): Promise<((tree: TreeHandle, coordinate?: NodeCoordinate, depth?: number) => unknown) | null> {
 	const [wrapNode, hydrate] = await Promise.all([wrapExportOf(grammar, 'wrapNode'), wrapExportOf(grammar, 'hydrate')]);
 	if (wrapNode === null || hydrate === null) return null;
 	return (tree, coordinate, depth) => {

@@ -17,9 +17,9 @@ describe('emitRenderEngine', () => {
 		expect(ts).toContain('throw new Error');
 	});
 
-	it('does not thread deprecated native transport projection through createNativeEngine', () => {
-		expect(output).not.toContain("import { toNativeRenderTransport } from './utils.js'");
-		expect(output).not.toContain('toNativeRenderTransport,');
+	it('does not thread deprecated native node projection through createNativeEngine', () => {
+		expect(output).not.toContain("import { toNativeRenderNode } from './utils.js'");
+		expect(output).not.toContain('toNativeRenderNode,');
 	});
 
 	it('types the diagnostics root as the data projection of the root kind', () => {

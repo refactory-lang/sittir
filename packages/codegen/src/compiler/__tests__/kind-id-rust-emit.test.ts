@@ -227,7 +227,7 @@ describe('emitKindIdRust', () => {
 		expect(out).toContain('pub const CALL_EXPRESSION: KindId = KindId(17);');
 		expect(out).toContain('pub const IDENTIFIER: KindId = KindId(3);');
 		// _field_identifier is in generatedIdTables.kindIds (catalog superset);
-		// emitKindIdRust sources from the catalog so AnyTransport dispatch matches.
+		// emitKindIdRust sources from the catalog so AnyNode dispatch matches.
 		// Hidden alias-source kinds with parser symbols are included (Phase B coverage fix).
 		expect(out).toContain('pub const _FIELD_IDENTIFIER: KindId = KindId(4);');
 	});

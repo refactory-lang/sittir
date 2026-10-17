@@ -6,7 +6,7 @@ import {
 	type AssembledNode,
 	type AssembledNonterminal
 } from './model/node-map.ts';
-import { classifySlot, buildSupertypeTransportSet } from '../emitters/transport-common.ts';
+import { classifySlot, buildSupertypeNodeSet } from '../emitters/node-common.ts';
 
 export interface SCCAnalysis {
 	readonly sccId: ReadonlyMap<string, number>;
@@ -14,7 +14,7 @@ export interface SCCAnalysis {
 	sameSCC(kindA: string, kindB: string): boolean;
 }
 
-export function computeTransportSCC(nodeMap: NodeMap): SCCAnalysis {
+export function computeNodeSCC(nodeMap: NodeMap): SCCAnalysis {
 	const adjacency = buildSingularAdjacency(nodeMap);
 	const { sccId, sccs } = tarjanSCC(adjacency);
 
@@ -54,7 +54,7 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 		outs.add(to);
 	};
 
-	const supertypeMap = buildSupertypeTransportSet(nodeMap);
+	const supertypeMap = buildSupertypeNodeSet(nodeMap);
 
 	const kindOfTypeName = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {

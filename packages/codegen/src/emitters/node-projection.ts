@@ -22,8 +22,8 @@ import { interiorOf } from './interior.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
-import { rustFieldIdent } from './transport-common.ts';
-import type { TransportSlotShape } from './render-module.ts';
+import { rustFieldIdent } from './node-common.ts';
+import type { NodeSlotShape } from './render-module.ts';
 
 const SCALAR_STORAGE: ReadonlySet<string> = new Set(['boolean', 'bitflag', 'kindEnum', 'mixedEnum']);
 
@@ -32,7 +32,7 @@ function isScalarStorage(slot: AssembledNonterminal): boolean {
 	return info !== undefined && SCALAR_STORAGE.has(info.kind) && info.enumKindsById.size > 0;
 }
 
-export interface TransportLiteral {
+export interface NodeLiteral {
 	readonly kind: string;
 	readonly text: string;
 	readonly resolvedKindId?: number;
@@ -40,25 +40,25 @@ export interface TransportLiteral {
 	readonly enumKind?: string;
 }
 
-export interface TransportProjection {
+export interface NodeProjection {
 	readonly nodes: readonly AssembledNode[];
-	readonly literals: readonly TransportLiteral[];
+	readonly literals: readonly NodeLiteral[];
 	readonly nodeKinds: ReadonlySet<string>;
 	readonly wireIds: ReadonlyMap<string, readonly number[]>;
 }
 
-export function collectTransportProjection(nodeMap: NodeMap): TransportProjection {
-	const nodes = collectTransportNodes(nodeMap);
+export function collectNodeProjection(nodeMap: NodeMap): NodeProjection {
+	const nodes = collectNodeNodes(nodeMap);
 	const nodeKinds = new Set(nodes.map((node) => node.kind));
-	const { literals, wireIds } = collectTransportLiterals(nodes, nodeMap, nodeKinds);
+	const { literals, wireIds } = collectNodeLiterals(nodes, nodeMap, nodeKinds);
 	return { nodes, literals, nodeKinds, wireIds };
 }
 
-function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
+function collectNodeNodes(nodeMap: NodeMap): AssembledNode[] {
 	const nodes: AssembledNode[] = [];
-	const seenTypeNames = supertypeTransportTypeNames(nodeMap);
+	const seenTypeNames = supertypeNodeTypeNames(nodeMap);
 	for (const [, node] of nodeMap.nodes) {
-		if (!isConcreteTransportNode(node)) continue;
+		if (!isConcreteNodeNode(node)) continue;
 		if (seenTypeNames.has(node.typeName)) continue;
 		seenTypeNames.add(node.typeName);
 		nodes.push(node);
@@ -66,7 +66,7 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 	return nodes;
 }
 
-function isConcreteTransportNode(node: AssembledNode): boolean {
+function isConcreteNodeNode(node: AssembledNode): boolean {
 	switch (node.modelType) {
 		case 'pattern':
 		case 'keyword':
@@ -85,15 +85,15 @@ function isConcreteTransportNode(node: AssembledNode): boolean {
 	}
 }
 
-function collectTransportLiterals(
+function collectNodeLiterals(
 	nodes: readonly AssembledNode[],
 	nodeMap: NodeMap,
 	nodeKinds: ReadonlySet<string>
-): { literals: TransportLiteral[]; wireIds: Map<string, number[]> } {
-	const literals: TransportLiteral[] = [];
+): { literals: NodeLiteral[]; wireIds: Map<string, number[]> } {
+	const literals: NodeLiteral[] = [];
 	const wireIds = new Map<string, number[]>();
 	const seen = new Set<string>();
-	const add = (literal: TransportLiteral, skipIfNodeKind: boolean): void => {
+	const add = (literal: NodeLiteral, skipIfNodeKind: boolean): void => {
 		if (literal.resolvedKindId !== undefined) {
 			const ids = wireIds.get(literal.kind);
 			if (ids === undefined) wireIds.set(literal.kind, [literal.resolvedKindId]);
@@ -108,18 +108,18 @@ function collectTransportLiterals(
 
 	for (const node of nodes) {
 		for (const field of node.slots) {
-			for (const { literal, fromKind } of fieldTransportLiterals(field, nodeMap)) add(literal, fromKind);
+			for (const { literal, fromKind } of fieldNodeLiterals(field, nodeMap)) add(literal, fromKind);
 		}
 	}
 	return { literals, wireIds };
 }
 
-function fieldTransportLiterals(
+function fieldNodeLiterals(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap
-): Array<{ literal: TransportLiteral; fromKind: boolean }> {
+): Array<{ literal: NodeLiteral; fromKind: boolean }> {
 	return fieldTypeComponents(field, nodeMap).flatMap(
-		(component): Array<{ literal: TransportLiteral; fromKind: boolean }> => {
+		(component): Array<{ literal: NodeLiteral; fromKind: boolean }> => {
 			if (component.kind === 'literal') {
 				return [
 					{
@@ -133,13 +133,13 @@ function fieldTransportLiterals(
 					}
 				];
 			}
-			const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
+			const literal = terminalNodeLiteralForKind(component.rawKind, nodeMap);
 			return literal === undefined ? [] : [{ literal, fromKind: true }];
 		}
 	);
 }
 
-function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {
+function supertypeNodeTypeNames(nodeMap: NodeMap): Set<string> {
 	const names = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
 		if (node instanceof AssembledSupertype) names.add(node.typeName);
@@ -147,7 +147,7 @@ function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {
 	return names;
 }
 
-function terminalTransportLiteralForKind(kind: string, nodeMap: NodeMap): TransportLiteral | undefined {
+function terminalNodeLiteralForKind(kind: string, nodeMap: NodeMap): NodeLiteral | undefined {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined) return undefined;
 	const target = storageTargetOf(node, nodeMap);
@@ -167,11 +167,11 @@ export function readNames(kindEntries: readonly KindEnumEntry[], fieldIds: reado
 	return {
 		kind(id) {
 			const name = kinds.get(id);
-			if (name === undefined) throw new Error(`transport read facts: kind id ${id} has no constant in kind_ids.rs`);
+			if (name === undefined) throw new Error(`node read facts: kind id ${id} has no constant in kind_ids.rs`);
 			return name;
 		},
 		field(name) {
-			if (!fields.has(name)) throw new Error(`transport read facts: '${name}' is not in parser.c's field table`);
+			if (!fields.has(name)) throw new Error(`node read facts: '${name}' is not in parser.c's field table`);
 			return `field::${fieldConstName(name)}`;
 		}
 	};
@@ -206,7 +206,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 	};
 	const layoutString = (rule: { readonly value: string; readonly resolvedKindId?: number }): number => {
 		const stamped = rule.resolvedKindId;
-		if (stamped === undefined) throw new Error(`transport.rs: '${node.kind}' layout token ${JSON.stringify(rule.value)} has no stamped kind id`);
+		if (stamped === undefined) throw new Error(`node.rs: '${node.kind}' layout token ${JSON.stringify(rule.value)} has no stamped kind id`);
 		return stamped;
 	};
 	const externals = new Set((ctx.nodeMap.externals ?? []).flatMap((entry) => (entry.type === SYMBOL ? [entry.name] : [])));
@@ -225,7 +225,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 				const fixed = field === undefined ? rule.literal !== undefined || externals.has(rule.name) || (fixedLeaf && !slotKinds.has(rule.name)) : fixedLeaf;
 				if (fixed) {
 					const id = rule.kindId;
-					if (id === undefined) throw new Error(`transport.rs: '${node.kind}' layout symbol '${rule.name}' has no stamped kind id`);
+					if (id === undefined) throw new Error(`node.rs: '${node.kind}' layout symbol '${rule.name}' has no stamped kind id`);
 					add(id);
 				}
 				return;
@@ -247,7 +247,7 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 	return flagged ? canonicalSeparatedListField(node) : undefined;
 }
 
-export function transportArgs(
+export function nodeArgs(
 	node: AssembledNode,
 	ownId: number | undefined,
 	ctx: ReadFactsCtx,
@@ -257,7 +257,7 @@ export function transportArgs(
 		const wraps = node.slots.some((slot) => slotKindNames(slot).some((name) => ctx.nodeMap.nodes.get(name) instanceof AssembledSupertype));
 		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}`;
 	}
-	if (ownId === undefined) throw new Error(`transport read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
+	if (ownId === undefined) throw new Error(`node read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
 	const folded = foldedTokens(ownId, ctx);
 	const kind = `kind = ${ctx.names.kind(ownId)}${folded.length === 0 ? '' : `, folded = [${folded.map((id) => ctx.names.kind(id)).join(', ')}]`}`;
 	if (isTextLeaf(node)) {
@@ -286,7 +286,7 @@ export interface PresenceKeyword {
 }
 
 export function presenceKeyword(
-	shape: Extract<TransportSlotShape, { readonly tag: 'presence' }>,
+	shape: Extract<NodeSlotShape, { readonly tag: 'presence' }>,
 	owner: AssembledNode,
 	slot: AssembledNonterminal,
 	ctx: ReadFactsCtx
@@ -299,7 +299,7 @@ export function presenceKeyword(
 		return { id: marker.resolvedKindId, envelope: false };
 	}
 	const keyword = shape.kind === undefined ? undefined : findKindEntry(ctx.kindEntries, shape.kind.kind);
-	if (keyword === undefined) throw new Error(`transport read facts: ${owner.kind}.${slot.name}'s keyword has no stamped parser symbol`);
+	if (keyword === undefined) throw new Error(`node read facts: ${owner.kind}.${slot.name}'s keyword has no stamped parser symbol`);
 	return { id: keyword.id, envelope: false };
 }
 
@@ -309,7 +309,7 @@ function presenceIsAliased(value: AssembledNonterminal['values'][number], ctx: R
 	return shown?.anon !== true || shown.literalText !== value.value;
 }
 
-export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape: TransportSlotShape, ctx: ReadFactsCtx): string {
+export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape: NodeSlotShape, ctx: ReadFactsCtx): string {
 	const args: string[] = [];
 	const routes = queryRoutesOf(slot, ctx.nodeMap);
 	if (routes.fields.length > 0) {
@@ -383,7 +383,7 @@ export function assertOneUntaggedSlot(
 			if (shared === undefined) continue;
 			const name = kindEntries.find((entry) => entry.id === shared)?.kind ?? '?';
 			throw new Error(
-				`transport read facts: ${kind} has two slots, '${slots[i]!.name}' and '${slots[j]!.name}', that take an untagged ${name} (kind ${shared}); the reader could not choose between them`
+				`node read facts: ${kind} has two slots, '${slots[i]!.name}' and '${slots[j]!.name}', that take an untagged ${name} (kind ${shared}); the reader could not choose between them`
 			);
 		}
 	}

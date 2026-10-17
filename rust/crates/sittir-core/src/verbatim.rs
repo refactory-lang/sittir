@@ -5,17 +5,17 @@
 use crate::render::{Render, RenderResult, RenderSink};
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct VerbatimTransport {
+pub struct VerbatimNode {
     pub text: String,
 }
 
-impl Render for VerbatimTransport {
+impl Render for VerbatimNode {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         w.text(&self.text)
     }
 }
 
-impl crate::prepare::Prepare for VerbatimTransport {
+impl crate::prepare::Prepare for VerbatimNode {
     fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         Ok(())
     }
@@ -23,9 +23,9 @@ impl crate::prepare::Prepare for VerbatimTransport {
 
 /// A string, or an object carrying `$text` (the form an `ERROR` node crosses in).
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VerbatimTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for VerbatimNode {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        if unsafe { crate::slot::transport_value_type(env, napi_val)? } == ::napi::ValueType::String {
+        if unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::String {
             return Ok(Self { text: unsafe { String::from_napi_value(env, napi_val)? } });
         }
         let text = unsafe { crate::boundary::property::<String>(env, napi_val, c"$text")? }
@@ -36,7 +36,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VerbatimTransport {
 
 /// The string.
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VerbatimTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for VerbatimNode {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         unsafe { <String as ::napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.text) }
     }

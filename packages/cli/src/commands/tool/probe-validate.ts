@@ -15,7 +15,7 @@ export const probeValidate: CommandModule = {
 			.option('--trace', 'Emit full multi-lane trace')
 			.option('--pretty', 'Pretty-print JSON output')
 			.option('--no-render', 'Skip the render pass')
-			.option('--no-wrap', 'Read the transport unwrapped (skip the grammar wrap)')
+			.option('--no-wrap', 'Read the node unwrapped (skip the grammar wrap)')
 			.action(
 				async (opts: {
 					grammar?: string;

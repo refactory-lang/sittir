@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PLAIN_KINDS, toTransportData } from '../src/transport-data.ts';
+import { PLAIN_KINDS, toNodeData } from '../src/node-data.ts';
 import { isDataKey, isEmptyNode, isNode } from '../src/utils.ts';
 
 const LIST_ITEMS = Symbol('items');
@@ -36,8 +36,8 @@ describe('a node is selected by key', () => {
 		}
 	});
 
-	it('toTransportData copies storage and $ metadata and nothing else', () => {
-		expect(toTransportData(newShapeList() as never, PLAIN_KINDS)).toEqual({ $type: 7, $source: 2, $named: true, _elements: ['a', 'b'] });
+	it('toNodeData copies storage and $ metadata and nothing else', () => {
+		expect(toNodeData(newShapeList() as never, PLAIN_KINDS)).toEqual({ $type: 7, $source: 2, $named: true, _elements: ['a', 'b'] });
 	});
 
 	it('reads only the keys it selects, so a getter that throws is never called', () => {
@@ -48,7 +48,7 @@ describe('a node is selected by key', () => {
 			},
 			enumerable: true
 		});
-		expect(() => toTransportData(owner as never, PLAIN_KINDS)).not.toThrow();
+		expect(() => toNodeData(owner as never, PLAIN_KINDS)).not.toThrow();
 	});
 
 	it('isEmptyNode and isNode agree for a node with every member enumerable', () => {

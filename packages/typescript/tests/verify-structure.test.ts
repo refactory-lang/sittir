@@ -20,6 +20,6 @@ describe('verifyStructure', () => {
 
 	it('trusts the types by default: the build and the rebuild stand, and the render refuses them natively', () => {
 		expect(() => (trusting.build.expressionStatement.strict as unknown as () => { $render(): string })().$render()).toThrow('Missing field `_expression`');
-		expect(() => declaration(trusting).$with.declarators().$render()).toThrow(/a repeat1 list holds no item on LexicalDeclarationTransport\._declarators/);
+		expect(() => declaration(trusting).$with.declarators().$render()).toThrow(/a repeat1 list holds no item on LexicalDeclarationNode\._declarators/);
 	});
 });

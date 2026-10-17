@@ -338,7 +338,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		const emit = renderModule.emit;
 		await writeFile(emit.hashRs.path, emit.hashRs.contents);
 		await writeFile(emit.hashTs.path, emit.hashTs.contents);
-		await writeFile(emit.transportRs.path, emit.transportRs.contents);
+		await writeFile(emit.nodeRs.path, emit.nodeRs.contents);
 		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
 		await writeFile(emit.recordsTs.path, emit.recordsTs.contents);
@@ -355,7 +355,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`  → Rust render module regenerated for ${grammar}:`);
 		console.log(`    ${emit.hashRs.path}`);
 		console.log(`    ${emit.hashTs.path}`);
-		console.log(`    ${emit.transportRs.path}`);
+		console.log(`    ${emit.nodeRs.path}`);
 		console.log(`    ${emit.optionsRs.path}`);
 		console.log(`    ${emit.libRs.path}`);
 		console.log(`    ${emit.recordsTs.path}`);

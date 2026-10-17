@@ -31,7 +31,7 @@ export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 		: D
 	: D;
 const _wrap = (data: object, tree: TreeHandle): unknown => wrapNode(data as _UntypedNode, tree);
-/** A stored value as an accessor returns it: a coordinate read `depth` levels down and wrapped, a transport wrapped, anything else as it is. */
+/** A stored value as an accessor returns it: a coordinate read `depth` levels down and wrapped, a node wrapped, anything else as it is. */
 export function hydrate<T>(value: T, tree: TreeHandle, depth?: number): ParsedOfData<T> {
 	return hydrateWith(value, tree, _wrap, depth) as ParsedOfData<T>;
 }
@@ -762,7 +762,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type ProgramTree = T.ParsedByKindId[TSKindId.Program] & ParsedRoot;
 
-/** Wrap a transport into its kind's node: the transport as it crossed, with the kind's members attached. */
+/** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */
 export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle

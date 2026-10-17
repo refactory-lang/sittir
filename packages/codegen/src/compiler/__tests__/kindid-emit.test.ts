@@ -89,12 +89,12 @@ describe('KindId emission', () => {
 		expect(contents).toContain('export function kindIdFromName(');
 		// The CONCRETE interface uses numeric discriminant.
 		expect(contents).toContain('export interface CallExpression {');
-		// Transport sub-interfaces (for Rust serde) intentionally retain string
+		// Node sub-interfaces (for Rust serde) intentionally retain string
 		// $type — they are top-level exports inside the namespace, NOT inside
 		// the concrete interface. Verify the concrete interface has numeric $type:
 		expect(contents).toContain('  readonly $type: TSKindId.CallExpression;');
 		// The top-level concrete interface block has 2-space-indented $type with
-		// TSKindId — no string literal there. The Transport namespace may still
+		// TSKindId — no string literal there. The Node namespace may still
 		// emit a string $type but that is intentional and acceptable.
 		expect(contents).toContain('CallExpression = 17,');
 		expect(contents).toContain('Identifier = 3,');

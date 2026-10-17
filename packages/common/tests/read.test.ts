@@ -6,7 +6,7 @@ import { decodeIndex, decodeTree, isCoordinate, readNode } from '../src/read.ts'
 const rs = await createEngine(rust);
 
 describe('the JavaScript read', () => {
-	it('reads a coordinate past the depth into the transport it names', () => {
+	it('reads a coordinate past the depth into the node it names', () => {
 		const { root, tree } = rs.diagnostics.parseAndRead('fn f(a: u8) {}');
 		const statements = (root as unknown as { _statements: unknown[] })._statements;
 		expect(statements.every(isCoordinate)).toBe(true);
@@ -33,7 +33,7 @@ describe('the JavaScript read', () => {
 		expect([decodeTree(handle), decodeIndex(handle)]).toEqual([5, 17]);
 	});
 
-	it('takes a transport for no coordinate: its own coordinate is nested in its layout', () => {
+	it('takes a node for no coordinate: its own coordinate is nested in its layout', () => {
 		const { root } = rs.diagnostics.parseAndRead('fn f() {}');
 		expect(isCoordinate(root)).toBe(false);
 		expect(isCoordinate((root as unknown as { $_layout: { at: unknown } }).$_layout.at)).toBe(true);

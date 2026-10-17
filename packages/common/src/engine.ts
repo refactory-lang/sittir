@@ -13,7 +13,7 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, sourceHandleOf, toTransportData, type KindView } from './transport-data.ts';
+import { holdReadTree, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
@@ -90,7 +90,7 @@ export interface BaselineRun {
 	readonly tabs?: number;
 }
 
-export interface NativeEngineLike<TTransport = unknown> {
+export interface NativeEngineLike<TNode = unknown> {
 	/**
 	 * Parse `source` and keep its tree.
 	 *
@@ -99,22 +99,22 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 */
 	parse(source: string): string;
 	/**
-	 * Read the node at descendant `index` of tree `treeId` into its transport, `depth` levels down
+	 * Read the node at descendant `index` of tree `treeId` into its native node, `depth` levels down
 	 * (one when absent, `Infinity` for every level); index 0 is the root.
 	 *
 	 * @throws when the tree is not live, `index` is past its last node, or the grammar's model has no
 	 *   route for a child, naming the kind, the child and the index.
 	 */
-	read(treeId: number, index: number, depth?: number): TTransport;
+	read(treeId: number, index: number, depth?: number): TNode;
 	/**
 	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
 	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
-	 * the transport that holds it, each placed extra with its text, and the node itself measured from the
+	 * the native node that holds it, each placed extra with its text, and the node itself measured from the
 	 * byte `holderByte`, or from its own start when absent.
 	 *
 	 * @throws as {@link read} does.
 	 */
-	snapshot(treeId: number, index: number, holderByte?: number | null): TTransport;
+	snapshot(treeId: number, index: number, holderByte?: number | null): TNode;
 	/**
 	 * The entries of `side` of the node at descendant `index` of tree `treeId`: the ones a write gave it,
 	 * else the ones the tree's trivia table assigns it. An extra is its coordinate, an `ERROR` its kind
@@ -204,16 +204,16 @@ export interface NativeEngineLike<TTransport = unknown> {
 		depth?: number | null
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
-	render(node: TTransport, treeId?: number, options?: object): string;
-	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
+	render(node: TNode, treeId?: number, options?: object): string;
+	renderToFile?(node: TNode, path: string, treeId?: number, options?: object): void;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
 	readonly buildProfile?: string;
 	dispose(): void;
 }
 
 export interface NativeModuleLike<
-	TTransport = unknown,
-	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
+	TNode = unknown,
+	TEngine extends NativeEngineLike<TNode> = NativeEngineLike<TNode>
 > {
 	SittirEngine: new (options?: { options?: object }) => TEngine;
 	/** Release one parsed tree of this language. Driven by GC — see `treeDisposalRegistry`. An id that names no tree is ignored. */
@@ -239,8 +239,8 @@ export type BackendStatusLike<TModule extends NativeModuleLike = NativeModuleLik
 	| JsBackendStatusLike;
 
 export interface GrammarEngineConfig<
-	TTransport = unknown,
-	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
+	TNode = unknown,
+	TModule extends NativeModuleLike<TNode> = NativeModuleLike<TNode>
 > {
 	templatesPath: string;
 	kindNames: ReadonlyMap<number, string>;
@@ -346,10 +346,10 @@ export function createNativeEngine<
 	TRoot extends AnyUntypedNode = AnyUntypedNode,
 	O extends object = RenderOptionValues,
 	IndentChar extends string = never,
-	TTransport = unknown,
-	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
+	TNode = unknown,
+	TModule extends NativeModuleLike<TNode> = NativeModuleLike<TNode>
 >(
-	config: GrammarEngineConfig<TTransport, TModule>,
+	config: GrammarEngineConfig<TNode, TModule>,
 	options?: NativeEngineOptions<O & IndentOption<string, IndentChar>>
 ): CreateNativeEngineResult<TRoot, O, IndentChar> {
 	const status = config.getActiveBackend();
@@ -369,12 +369,12 @@ export function createNativeEngine<
 			// coordinate it read in with: it crosses here, on every render
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
-			const transport = (typeof node === 'number' ? node : toTransportData(node, kindView)) as TTransport;
+			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
 			// The tree the node was read from, or rebuilt from, is the layer of
 			// options its source inferred; a built node has none.
 			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
 			const treeId = handle === undefined ? undefined : decodeTree(handle);
-			// The handle renders lazily, and the transport's coordinates are
+			// The handle renders lazily, and the data's coordinates are
 			// numbers: the tokens stayed on `node`. Both closures name `node`,
 			// so the handle holds the trees it will slice for as long as it
 			// can still render.
@@ -382,12 +382,12 @@ export function createNativeEngine<
 			return createRenderHandle(
 				() => {
 					holdsTrees();
-					return engine.render(transport, treeId, perCall);
+					return engine.render(data, treeId, perCall);
 				},
 				(path) => {
 					holdsTrees();
 					if (engine.renderToFile) {
-						engine.renderToFile(transport, path, treeId, perCall);
+						engine.renderToFile(data, path, treeId, perCall);
 						return true;
 					}
 					return false;
@@ -418,7 +418,7 @@ export function createNativeEngine<
 							release: status.native.disposeTree,
 							treeId: parsed.treeId
 						});
-						const readAt = (index: number, depth: number): TTransport => {
+						const readAt = (index: number, depth: number): TNode => {
 							const node = engine.read(parsed.treeId, index, depth);
 							holdReadTree(node, liveToken);
 							return node;

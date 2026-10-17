@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
 import { decodeIndex, type TreeHandle } from './read.ts';
-import { coordinateOf, isDataKey, isStorageKey, separatorOf, sidesOf, slotsOf, unitSidesOf } from './transport-data.ts';
+import { coordinateOf, isDataKey, isStorageKey, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf } from './tree-token.ts';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 

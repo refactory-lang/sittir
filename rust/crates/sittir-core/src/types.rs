@@ -98,7 +98,7 @@ macro_rules! id_newtype {
 
 id_newtype! {
     /// A kind id: the parser's symbol for a node or token kind, the `$type`
-    /// a transport carries. u16 is tree-sitter's own `TSSymbol` width.
+    /// a node carries. u16 is tree-sitter's own `TSSymbol` width.
     KindId(u16)
 }
 
@@ -143,7 +143,7 @@ id_newtype! {
 }
 
 id_newtype! {
-    /// A kind's slot: the slot field's position among the kind's transport
+    /// A kind's slot: the slot field's position among the kind's node
     /// slots, the number a read routes a child to.
     SlotId(u16)
 }

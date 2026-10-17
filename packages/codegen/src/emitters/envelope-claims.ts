@@ -41,7 +41,7 @@ const PROPERTY_IDENTIFIER_DISPLAY = '_property_identifier';
 
 export const ENVELOPE_PINS: Readonly<Record<string, Readonly<Record<string, EnvelopePin>>>> = {
 	typescript: {
-		'MemberExpressionPropertyTransportSlot.PropertyIdentifier': { display: PROPERTY_IDENTIFIER_DISPLAY, extras: KEYWORD_KINDS }
+		'MemberExpressionPropertyNodeSlot.PropertyIdentifier': { display: PROPERTY_IDENTIFIER_DISPLAY, extras: KEYWORD_KINDS }
 	}
 };
 

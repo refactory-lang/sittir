@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import type { TransportCoordinate } from '@sittir/types';
+import type { NodeCoordinate } from '@sittir/types';
 import { isCoordinate } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
 
@@ -42,7 +42,7 @@ describe('builders consuming parsed list coordinates', () => {
 	});
 
 	it('still refuses item coordinates that have lost their reading tree', () => {
-		const stored = (shallowList() as unknown as { readonly _item: readonly TransportCoordinate[] })._item;
+		const stored = (shallowList() as unknown as { readonly _item: readonly NodeCoordinate[] })._item;
 		const detached = stored.map(({ $treeHandle, $span, $type }) => ({ $treeHandle, $span, $type }));
 		expect(() => rendered(buildParameters(detached))).toThrow('does not hold that tree');
 	});
