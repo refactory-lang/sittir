@@ -24,7 +24,7 @@ Inside a file, one `###` section per declaration, qualified by its enclosing
 class / interface / enum / object literal:
 
 ```
-### `packages/codegen/src/dsl/builders.ts::attributeBuilder.alias`
+### `packages/codegen/src/dsl/builders.ts::attributeBuilder::alias`
 
 ```text
 <the comment that stood above the declaration, verbatim>
@@ -39,7 +39,11 @@ class / interface / enum / object literal:
 
 The heading is the symbol id — `<file>::<qualified name>` — and nothing
 else: no line numbers, so a heading never goes stale and joins to the code
-graph by identity. File-level comments (a module header) sit under
+graph by identity. Nested names join with `::` (`Owner::member`), as the
+graph spells them. The graph does not yet index class / interface fields or
+object-literal properties under their owner, so entries for those keep the
+dotted `Owner.member` form until it does; `infigraph doctor` lists them as
+unresolved meanwhile. File-level comments (a module header) sit under
 `### \`<file>::module\``.
 
 ## Looking a comment up
@@ -63,9 +67,15 @@ graph by identity. File-level comments (a module header) sit under
   then `--apply`. The run is idempotent and strips only the comment ranges.
   `scripts/comment-slop-check.sh --working` gates provenance narration and
   planning-artifact references in what remains.
-- When a declaration is renamed or moved, rename its `###` heading the same
-  way the importers are updated; a heading that resolves to no symbol is a
+- When a declaration is renamed or moved, rekey its entry the same way the
+  importers are updated: `infigraph doc-entry rekey <old> <new>` (preview
+  first, `--apply` writes). A heading that resolves to no symbol is a
   dangling entry.
+- Use infigraph's `stale_docs` to list entries whose code changed after the
+  entry, and `doc_entry` (`infigraph doc-entry`: edit, replace, create,
+  rekey, delete, ack) to change them. Add the entry for a new declaration in
+  the same commit as the code. `ack` an entry only after reading the changed
+  lines against it, never in bulk.
 - Entries are mechanical relocations, unedited and unverified, until a
   content pass rewrites them; stale prose in an entry is a reason to fix the
   entry, never to reintroduce the comment in source.

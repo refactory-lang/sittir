@@ -1010,6 +1010,33 @@ can't be unified.
 // means the `token_tree.content` slot must also accept `delim_token_tree_paren/
 ```
 
+#### body
+
+```text
+// rule typed as Rule<'link'> — a hoisted compound can carry GroupRule<'link'>
+// (pre-unwrap), SeqRule<'link'>/ChoiceRule<'link'> after
+// unwrapGroupRuleAndSimplified(), or any Rule<'link'> when constructed as
+// polymorph forms (form.content can be any Rule<'link'> type).
+```
+
+#### body
+
+```text
+// Hoisted compounds always derive a factoryName — hidden hoisted kinds emit
+// fragment factories for composition (hidden-group-factories). Polymorph
+// form compounds still use the explicitly provided factoryName so their
+// emitted name matches the form name (e.g. `rangePatternUFormLeftWithRight`),
+// not the raw kind.
+//
+// Hidden hoisted kinds (kind starts with `_`) need the leading `_` preserved
+// in the factory name so the emitted function is `_fooBar`, not `fooBar`.
+// `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
+// re-derive and prefix here when no explicit factoryName was provided. A
+// non-hoisted compound never hits this branch — `hoisted` is `undefined`
+// for an ordinary branch/envelope/polymorph, and factoryName derivation
+// falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.separator`
 
 ```text
@@ -2528,12 +2555,6 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
 // in place.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
-
-```text
-// cycle — conservative false
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch`
 
 ```text
@@ -3011,31 +3032,6 @@ display. A supertype with no row is stamped `supertype`.
 
 ```text
 // Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.constructor`
-
-```text
-// rule typed as Rule<'link'> — a hoisted compound can carry GroupRule<'link'>
-// (pre-unwrap), SeqRule<'link'>/ChoiceRule<'link'> after
-// unwrapGroupRuleAndSimplified(), or any Rule<'link'> when constructed as
-// polymorph forms (form.content can be any Rule<'link'> type).
-```
-
-```text
-// Hoisted compounds always derive a factoryName — hidden hoisted kinds emit
-// fragment factories for composition (hidden-group-factories). Polymorph
-// form compounds still use the explicitly provided factoryName so their
-// emitted name matches the form name (e.g. `rangePatternUFormLeftWithRight`),
-// not the raw kind.
-//
-// Hidden hoisted kinds (kind starts with `_`) need the leading `_` preserved
-// in the factory name so the emitted function is `_fooBar`, not `fooBar`.
-// `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
-// re-derive and prefix here when no explicit factoryName was provided. A
-// non-hoisted compound never hits this branch — `hoisted` is `undefined`
-// for an ordinary branch/envelope/polymorph, and factoryName derivation
-// falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorRule`
