@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, EngineIdentity, Rendered, TriviaFacts } from '@sittir/types';
 import type { EngineHandle, LiveEngine } from '../../src/engine-scope.ts';
-import { holdReadTree } from '../../src/transport-data.ts';
+import { holdReadTree } from '../../src/node-data.ts';
 import { mintTreeToken } from '../../src/tree-token.ts';
 
 /** `data` marked as a read gives what it returns: read provenance and a tree token. */
@@ -24,7 +24,7 @@ export function liveHandle(
 	options: { readonly render?: (node: AnyUntypedNode | number) => string; readonly trivia?: TriviaFacts } = {}
 ): EngineHandle {
 	const live: LiveEngine = {
-		language: { name: 'fake', fileTypes: [], load: () => Promise.reject(new Error('type-only')) },
+		language: { name: 'fake', fileTypes: [], is: {}, kinds: {}, load: () => Promise.reject(new Error('type-only')) },
 		renderModuleHash: 'hash',
 		options: undefined,
 		trivia: options.trivia ?? triviaFacts(),

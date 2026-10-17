@@ -23,7 +23,7 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 
 	it('produces structurally identical output via flat vs grouped', () => {
 		const irExpression = rs.build.expression;
-		// ADR-0018 Phase 2: $type must be numeric TSKindId (string $type removed in Phase D).
+		// $type must be numeric TSKindId.
 		// binary_expression.operator now carries the merged operator union, so grouped
 		// and flat IR entry points must agree when the same explicit operator is passed.
 		const leaf = { $type: rs.kinds.IntegerLiteral, $text: '1' } as any;

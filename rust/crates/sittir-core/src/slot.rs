@@ -1,10 +1,10 @@
-//! `SlotValue` — the single carrier every transport slot position holds.
+//! `SlotValue` — the single carrier every node slot position holds.
 //!
 //! A slot's content is either in the tree — a coordinate the sink slices
-//! from the source the engine still holds — or in the message, a transport
+//! from the source the engine still holds — or in the message, a node
 //! the render pipeline rebuilds from its own `_<slot>` storage. Free text is
 //! not a third shape: a slot whose members render from their own text admits
-//! a `VerbatimTransport`, and everywhere else a bare string is an error.
+//! a `VerbatimNode`, and everywhere else a bare string is an error.
 
 use crate::engine::encode_handle;
 use crate::render::{CoordinateError, SourceTable};
@@ -68,12 +68,7 @@ impl ChangedEdges {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeamArm {
     pub arm: crate::types::KindId,
-    pub strength: u8,
-    /// Close a depth before writing the arm. No fill sets it; it stays for
-    /// the niche it gives `Option<SeamArm>`, which keeps a coordinate's edges,
-    /// and so the transports that hold coordinates, within their payload
-    /// ceiling.
-    pub dedent: bool,
+    pub strength: crate::spacing::SeamStrength,
 }
 
 /// The seams a kind writes before and after itself.
@@ -102,7 +97,7 @@ impl NodeCoordinate {
     }
 
     /// The tree and the index packed as one handle: the wire's `$treeHandle`.
-    pub fn handle(&self) -> u64 {
+    pub fn handle(&self) -> crate::types::TreeHandle {
         encode_handle(self.tree, self.index)
     }
 
@@ -170,14 +165,14 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// (`RenderSink::sides`).
     Coord(NodeCoordinate),
     /// The content is in this message.
-    Transport(T),
+    Node(T),
 }
 
 impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
-    /// The transport this slot holds, or `None` when it holds a coordinate.
-    pub fn transport(&self) -> Option<&T> {
+    /// The node this slot holds, or `None` when it holds a coordinate.
+    pub fn node(&self) -> Option<&T> {
         match self {
-            Self::Transport(t) => Some(t),
+            Self::Node(t) => Some(t),
             Self::Coord(_) => None,
         }
     }
@@ -186,14 +181,14 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     pub fn coord(&self) -> Option<&NodeCoordinate> {
         match self {
             Self::Coord(coord) => Some(coord),
-            Self::Transport(_) => None,
+            Self::Node(_) => None,
         }
     }
 
-    /// The transport this slot holds, or `None` after slicing its coordinate
+    /// The node this slot holds, or `None` after slicing its coordinate
     /// into `w`. For render paths that call a concrete `render_<kind>`
     /// function directly instead of going through `Render`.
-    pub fn transport_or_write(
+    pub fn node_or_write(
         &self,
         w: &mut dyn crate::render::RenderSink,
     ) -> Result<Option<&T>, crate::render::RenderError> {
@@ -202,18 +197,18 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
                 write_coordinate(coord, ADJACENT, w)?;
                 Ok(None)
             }
-            Self::Transport(t) => Ok(Some(t)),
+            Self::Node(t) => Ok(Some(t)),
         }
     }
 }
 
-/// Two slot values are equal when they hold equal transports, or
+/// Two slot values are equal when they hold equal nodes, or
 /// coordinates naming the same node: the same tree, span and kind. A
 /// coordinate may address its node by any index its tree answers.
 impl<T: PartialEq, const ADJACENT: bool> PartialEq for SlotValue<T, ADJACENT> {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (Self::Transport(a), Self::Transport(b)) => a == b,
+            (Self::Node(a), Self::Node(b)) => a == b,
             (Self::Coord(a), Self::Coord(b)) => a.tree == b.tree && a.span == b.span && a.kind == b.kind && a.changed() == b.changed(),
             _ => false,
         }
@@ -226,7 +221,7 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
             Self::Coord(coord) => write_coordinate(coord, ADJACENT, w),
-            Self::Transport(t) => t.render(w),
+            Self::Node(t) => t.render(w),
         }
     }
 }
@@ -263,7 +258,7 @@ fn write_coordinate(
 /// # Safety
 /// `napi_val` must be a live value in `env`.
 #[cfg(feature = "napi-bindings")]
-pub unsafe fn transport_value_type(
+pub unsafe fn node_value_type(
     env: ::napi::sys::napi_env,
     napi_val: ::napi::sys::napi_value,
 ) -> ::napi::Result<::napi::ValueType> {
@@ -314,19 +309,19 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const
 {
     /// Dispatch on the wire shape: an object carrying `$treeHandle` is a
     /// coordinate (its `$span` is required), anything else is the slot's own
-    /// transport type, which decides for itself what it accepts. There is no
+    /// node type, which decides for itself what it accepts. There is no
     /// attempt-then-fallback.
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let value_type = unsafe { transport_value_type(env, napi_val)? };
+        let value_type = unsafe { node_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
             if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
                 return Ok(Self::Coord(coord));
             }
         }
-        Ok(Self::Transport(unsafe {
+        Ok(Self::Node(unsafe {
             T::from_napi_value(env, napi_val)?
         }))
     }
@@ -336,11 +331,11 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const
 impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bindgen_prelude::ToNapiValue
     for SlotValue<T, ADJACENT>
 {
-    /// A transport writes itself; a coordinate writes the object the decoder
+    /// A node writes itself; a coordinate writes the object the decoder
     /// reads back as one.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         match val {
-            Self::Transport(transport) => unsafe { T::to_napi_value(env, transport) },
+            Self::Node(node) => unsafe { T::to_napi_value(env, node) },
             Self::Coord(coord) => unsafe { coordinate_to_napi(env, coord) },
         }
     }
@@ -369,7 +364,7 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
         Some(layout) => unsafe { property::<ChangedEdges>(env, ::napi::JsValue::raw(&layout), c"changed")?.unwrap_or_default() },
         None => ChangedEdges::default(),
     };
-    let (tree, index) = crate::engine::decode_handle(handle);
+    let (tree, index) = crate::engine::decode_handle(crate::types::TreeHandle(handle));
     let writes = (changed != ChangedEdges::default()).then(|| Box::new(CoordinateWrites { changed }));
     Ok(Some(NodeCoordinate { kind, writes, ..NodeCoordinate::new(tree, index, end, span) }))
 }
@@ -382,7 +377,7 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeC
     use crate::boundary::{object_with_present, present};
     unsafe {
         object_with_present(env, &[
-            present(env, c"$treeHandle", Some(coord.handle() as f64))?,
+            present(env, c"$treeHandle", Some(coord.handle()))?,
             present(env, c"$end", Some(coord.end))?,
             present(env, c"$span", Some(coord.span))?,
             present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
@@ -390,8 +385,21 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeC
     }
 }
 
+/// `{ leading?, trailing? }`, each `true` for a changed edge.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ChangedEdges {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::property;
+        Ok(Self {
+            leading: unsafe { property::<bool>(env, napi_val, c"leading")? }.unwrap_or(false),
+            trailing: unsafe { property::<bool>(env, napi_val, c"trailing")? }.unwrap_or(false),
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::spacing::SeamStrength;
     use crate::types::KindId;
     use super::SlotValue;
     use crate::engine::encode_handle;
@@ -399,6 +407,12 @@ mod tests {
     use crate::render::{CoordinateError, SourceTable};
     use crate::slot::NodeCoordinate;
     use crate::spacing::{SpacingWriter, WordMatcher};
+
+    #[test]
+    fn an_optional_seam_arm_keeps_its_niche_in_four_bytes() {
+        assert_eq!(std::mem::size_of::<super::SeamArm>(), 4);
+        assert_eq!(std::mem::size_of::<Option<super::SeamArm>>(), 4);
+    }
     use crate::types::Span;
     use std::collections::HashMap;
     use std::sync::Arc;
@@ -468,7 +482,6 @@ mod tests {
         use crate::options::{EdgeSite, ResolvedOptions, SiteSpec};
         use crate::types::{EdgeRow, SiteId};
         use crate::prepare::{Prepare, RenderContext};
-        use crate::spacing::{SEAM_CASCADE, SEAM_DECLARED, SEAM_FALLBACK};
         const TIGHT: KindId = KindId(1);
         const SPACE: KindId = KindId(2);
         fn text_of(kind: KindId) -> &'static str {
@@ -485,9 +498,9 @@ mod tests {
         };
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: Some(SiteId(0)), after: None, before_arms: &[], after_arms: &[] }];
         static EDGE_ROWS: [Option<EdgeRow>; 10] = [None, None, None, None, None, None, None, None, None, Some(EdgeRow(0))];
-        static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SEAM_CASCADE }];
+        static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SeamStrength::Cascade }];
         let sources = Kinded(Sources(HashMap::from([(crate::types::TreeId(1), Arc::from("f()"))])));
-        let render_with = |options: &ResolvedOptions, held: u8| {
+        let render_with = |options: &ResolvedOptions, held: SeamStrength| {
             let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
                 crate::types::TreeId(1),
                 crate::types::NodeIndex(0), crate::types::NodeIndex(1),
@@ -518,10 +531,10 @@ mod tests {
         };
         // A cascade-tight edge beats the fallback space held before it, and a
         // declared space still beats the cascade.
-        assert_eq!(render_with(&with_edges, SEAM_FALLBACK), "f()");
-        assert_eq!(render_with(&with_edges, SEAM_DECLARED), "f ()");
+        assert_eq!(render_with(&with_edges, SeamStrength::Fallback), "f()");
+        assert_eq!(render_with(&with_edges, SeamStrength::Declared), "f ()");
         // A kind that owns no edge site leaves the held space alone.
-        assert_eq!(render_with(&ResolvedOptions::default(), SEAM_FALLBACK), "f ()");
+        assert_eq!(render_with(&ResolvedOptions::default(), SeamStrength::Fallback), "f ()");
     }
 
     #[test]
@@ -570,7 +583,7 @@ mod tests {
     #[test]
     fn the_unknown_tree_message_names_the_tree() {
         let err = CoordinateError::UnknownTree {
-            handle: 12_884_901_888,
+            handle: crate::types::TreeHandle(12_884_901_888),
             tree_id: crate::types::TreeId(3),
         };
         assert!(err.to_string().contains("names tree 3"), "{err}");
@@ -610,7 +623,7 @@ mod tests {
             .with_table(&TABLE)
             .with_indent("    ")
             .with_sources(&sources);
-        let held: SlotValue<Word> = SlotValue::Transport(Word("main"));
+        let held: SlotValue<Word> = SlotValue::Node(Word("main"));
         assert!(held.kind_in(&w, &[WORD_KIND]));
         assert!(!held.kind_in(&w, &[crate::types::KindId(8)]));
         let absent: Option<SlotValue<Word>> = None;
@@ -635,21 +648,21 @@ mod tests {
     }
 
     #[test]
-    fn node_renders_through_its_transport() {
-        let slot: SlotValue<Word> = SlotValue::Transport(Word("fn"));
+    fn node_renders_through_its_node() {
+        let slot: SlotValue<Word> = SlotValue::Node(Word("fn"));
         assert_eq!(rendered(&slot), "fn");
-        assert!(slot.transport().is_some());
+        assert!(slot.node().is_some());
     }
 
     #[test]
-    fn transport_or_write_writes_only_the_coordinate_case() {
+    fn node_or_write_writes_only_the_coordinate_case() {
         let sources = Sources(HashMap::from([(crate::types::TreeId(1), Arc::from("raw"))]));
         let mut buf = String::new();
         let mut w = SpacingWriter::new(&mut buf, WordMatcher::default_ident())
             .with_table(&TABLE)
             .with_sources(&sources);
-        let node: SlotValue<Word> = SlotValue::Transport(Word("fn"));
-        assert!(node.transport_or_write(&mut w).unwrap().is_some());
+        let node: SlotValue<Word> = SlotValue::Node(Word("fn"));
+        assert!(node.node_or_write(&mut w).unwrap().is_some());
         w.finish().unwrap();
         assert_eq!(buf, "");
 
@@ -662,20 +675,8 @@ mod tests {
             crate::types::NodeIndex(0), crate::types::NodeIndex(1),
             Span { start: 0, end: 3 },
         ));
-        assert!(coord.transport_or_write(&mut w2).unwrap().is_none());
+        assert!(coord.node_or_write(&mut w2).unwrap().is_none());
         w2.finish().unwrap();
         assert_eq!(buf2, "raw");
-    }
-}
-
-/// `{ leading?, trailing? }`, each `true` for a changed edge.
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ChangedEdges {
-    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::property;
-        Ok(Self {
-            leading: unsafe { property::<bool>(env, napi_val, c"leading")? }.unwrap_or(false),
-            trailing: unsafe { property::<bool>(env, napi_val, c"trailing")? }.unwrap_or(false),
-        })
     }
 }

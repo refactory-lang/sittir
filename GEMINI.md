@@ -1,3 +1,7 @@
+# Project instructions
+
+Read and follow [CLAUDE.md](CLAUDE.md). Repository instructions are maintained there for all agents.
+
 <!-- infigraph-instructions -->
 ## Infigraph — Primary Code Intelligence
 
@@ -9,27 +13,18 @@ Infigraph MCP is indexed. Use Infigraph tools FIRST for all code tasks. Read non
 3. Read files directly only for non-code files (configs, docs, manifests) or Edit tool line-number context.
 4. Which tool answers which question, every tool's parameters, subagent and verbose-tool rules: the `infigraph-tool-routing` skill (inlined below where skills aren't supported).
 
-### Session Continuity — MANDATORY
-- **On session start:** MUST call `get_latest_session` to resume prior context
-- **After context compaction:** if you see "continued from a previous conversation" or a compaction summary, IMMEDIATELY call `save_session` with whatever context survived before doing anything else
-- **MUST call `save_session` IMMEDIATELY (before responding to the user)** when ANY of these occur. No session-end signal exists — if you don't save now, context is lost forever:
-  1. **Finding** — root cause identified, discovered a bug, learned how something works
-  2. **Milestone** — bug fixed and verified, feature committed, test passing, build green
-  3. **Decision** — chose an approach, ruled something out, changed strategy
-  4. **Task done** — any pending task from a prior session is completed
-  5. **Periodic** — if you have NOT called `save_session` in the last 5 exchanges with the user, call it NOW regardless of whether anything dramatic happened. This is a hard rule, not a suggestion.
-- Do NOT defer saves ("I'll save later"). Do NOT batch them. Do NOT wait for user to ask.
-- "Later" does not exist — context compaction or session end can happen at any moment.
-- **Before `/clear`:** ALWAYS call `save_session` first — `/clear` wipes context and LM2 can only restore what was persisted. Unsaved reasoning, decisions, and in-flight work will be lost.
-- Same-day saves merge: summary/pending_tasks overwrite, decisions append, files_touched union
-- **Narrative dumps:** On every `save_session`, include `narrative` field with full session story — what was explored, found, reasoned, decided, and why. Chronological prose, not terse bullets. Written to `.infigraph/sessions/session_YYYY-MM-DD.md` and embedded for semantic search. On session start, if `get_latest_session` shows a narrative log path, read it when structured fields aren't enough context.
-
-### Session Field Guide
-- **decisions** — structured format: `Goal: X. Decision: Y. Why: Z. Invalidates-if: W.`
-- **constraints** — things that failed: `Tried: X. Failed because: Y. Do not retry unless: Z.`
-- **assumptions** — what current approach depends on: `Assumes: X. If X changes: Y.`
-- **blockers** — stuck items needing human input or external dependency
-- **narrative** — full session story: explorations, findings, reasoning, code changes, decisions in chronological order. Write as prose, not structured fields.
+### Session Continuity
+- This concise policy supersedes older generated wording that requests full-session narratives or redundant checkpoints.
+- On session start, call `get_latest_session`; read its narrative only if the compact fields are insufficient.
+- Save meaningful new findings, decisions, completed work, or blockers before responding. One save may cover several simultaneous triggers.
+- After compaction or before `/clear`, preserve unsaved context. Do not resave history already on disk.
+- Periodic backstop: after 10 user exchanges without a save, save a compact checkpoint if anything changed. Avoid no-change duplicate saves.
+- Keep routine saves around 100–250 tokens, expanding only for essential recovery details. Save silently unless there is a failure.
+- `summary` and `pending_tasks` are concise current-state snapshots, because they replace prior values. Preserve unresolved work.
+- `decisions` appends: send only new decisions, never repeat the accumulated list. `files_touched` unions: send only newly touched files.
+- Snapshot fields are replaced even when omitted: resend brief still-active `constraints`, `assumptions`, and `blockers` when they must survive. Do not duplicate resolved history.
+- `narrative` is optional: at most 100 words of new reasoning or context not captured by structured fields. Never retell the full session or duplicate prior narrative.
+- Use one real save rather than an empty availability probe. If the tool is unavailable, follow the hook's file fallback and do not claim success unless persistence succeeds.
 
 ## Infigraph — which tool answers which question
 

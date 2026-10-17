@@ -25,7 +25,7 @@ Two attempts to fix the supertype case in the classifier alone moved the
 gates, because four consumers each derive "what does this slot hold" on
 their own: the storage classifier, the wrap's text→id projection, the
 types' storage union (`fieldTypeComponents` over direct values), and the
-transport's accepted ids. The special case in the classifier is the second
+node's accepted ids. The special case in the classifier is the second
 derivation of a fact the model should stamp once.
 
 ## Decision
@@ -63,13 +63,13 @@ members' kind ids, and every consumer reads the stamp:
   gains the `$text` branch `projectKindEnumStorage` already has, guarded to
   entries whose `$type` is an enum's own symbol so an identifier spelled
   `type` is never mistaken for a keyword.
-- **Transport.** A bare member id routes to the enum's variant through
-  every supertype above it (`resolveAcceptedTransportIds` gathers member
+- **Node.** A bare member id routes to the enum's variant through
+  every supertype above it (`resolveAcceptedNodeIds` gathers member
   ids transitively — landed). The leaf's Rust enum type and its
   `FromNapiValue` number branch stay; render prints the member's text.
 - **Storage union.** `fieldTypeComponents` yields one `literal` component
   per member for a kind-id arm with members, so the emitted storage union
-  (`mixedEnumStorageTypeExpr`) and the transport's per-slot enum agree
+  (`mixedEnumStorageTypeExpr`) and the node's per-slot enum agree
   with the classifier.
 
 The walk through supertypes is then a consequence of the stamp, not a rule
@@ -90,15 +90,15 @@ in a type slot and `,` in a token tree are all the same case.
   ids. The measured failure of the second attempt (rust read-render-parse
   134 → 101, fixtures 1486 → 939) is the wrap and types disagreeing, and
   is the first thing the plan diagnoses, before any regen is trusted.
-- **Transport arm precedence (diagnosed).** tree-sitter-rust aliases the
+- **Node arm precedence (diagnosed).** tree-sitter-rust aliases the
   primitive tokens onto `identifier` in `_path`, `_pattern` and
   `_expression_except_range`, so the alias wire-id map legitimately lists
   the ids of `u8`…`char` (and `default`/`union`/`gen`) under `identifier`.
   The map is keyed by kind, not by occurrence, so the `_type` supertype
-  transport's `Identifier` variant claims those ids too, and its arms are
+  node's `Identifier` variant claims those ids too, and its arms are
   emitted before `PrimitiveType`'s: a bare member id in a type slot
   decodes as an empty identifier (`fn f(a: u8)` renders `a:`; the
-  `let x: u8`, `Vec<u8>` failures share the cause). The per-slot transport
+  `let x: u8`, `Vec<u8>` failures share the cause). The per-slot node
   enum already orders enum variants first; the supertype enum must apply
   the same rule, from one shared ordering: arms of kind-id-stored
   subtypes precede alias wire-id arms of pattern subtypes.

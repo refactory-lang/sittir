@@ -1,4 +1,4 @@
-//! An `ERROR` node read on its own. The model has no transport for it, so it
+//! An `ERROR` node read on its own. The model has no native node for it, so it
 //! crosses as the bytes it spans, its kind and where it came from.
 
 use crate::read::Origin;

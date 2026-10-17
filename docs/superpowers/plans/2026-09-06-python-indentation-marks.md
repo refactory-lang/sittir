@@ -14,7 +14,7 @@
 
 - Rust and typescript dogfood renders stay byte-identical. Python renders change only in the indentation unit (two spaces become the configured four); the new python renders are recorded in the PR.
 - Validator counts identical to the previous run (rust 149/149 207/207 134/137 1517/1517; typescript 145/145 193/193 112/114 1202/1202; python 126/126 142/142 115/116 1390/1390).
-- Generated files are never hand-edited. Regenerate python first with the native build (its old `transport.rs` is the only one that names `IndentWriter`), then rust and typescript template-only to re-stamp their manifests.
+- Generated files are never hand-edited. Regenerate python first with the native build (its old `node.rs` is the only one that names `IndentWriter`), then rust and typescript template-only to re-stamp their manifests.
 - Commit by pathspec; never stage the untracked scratch files or the two pre-existing unrelated modifications.
 
 ---

@@ -2,8 +2,8 @@
  * render-module.ts — 'separatedList' render wiring (separator-as-slot Task 5).
  *
  * Covers:
- * - renderTransportDataStruct: `delimiter`/`separator_kind`
- *   sibling transport-struct fields, gated on leadingDelimiter/trailingDelimiter/
+ * - renderNodeDataStruct: `delimiter`/`separator_kind`
+ *   sibling node-struct fields, gated on leadingDelimiter/trailingDelimiter/
  *   separatorRule exactly like wrap.ts's `emitSeparatedListWrap` wire capture.
  * - buildTypedTemplateBody: real `leading`/`trailing`/`separator` expressions
  *   in the emitted `ListView` for 'separatedList' kinds, instead
@@ -116,7 +116,7 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 	sourceArtifact: 'test'
 };
 
-describe('renderTransportDataStruct — separatedList sibling fields', () => {
+describe('renderNodeDataStruct — separatedList sibling fields', () => {
 	it('emits delimiter/separator_kind for a nonterminal separator with both flanks optional', () => {
 		const sepChoice: RenderRule = {
 			type: CHOICE,
@@ -132,9 +132,9 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
-		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).transportRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
 
-		expect(emitted).toContain('pub delimiter: Option<u8>,');
+		expect(emitted).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
 		expect(emitted).toContain('pub separator_kind: Option<KindId>,');
 		expect(emitted).toContain('wire(key = "_delimiter")');
 		expect(emitted).toContain('wire(key = "_separator")');
@@ -148,10 +148,10 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
-		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).transportRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
-		expect(emitted).toContain('pub delimiter: Option<u8>,');
+		expect(emitted).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
 	});
 
 	it('emits no sibling fields at all for a mandatory (non-optional) literal separator', () => {
@@ -162,7 +162,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 			separator: { value: { type: STRING, value: ',' } }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
-		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).transportRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
 		expect(emitted).not.toContain('pub delimiter:');
@@ -170,7 +170,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 });
 
 describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
-	it('resolves leading/trailing from the transport-struct fields and separator via a KindId match, for a nonterminal separator with both flanks optional', () => {
+	it('resolves leading/trailing from the node-struct fields and separator via a KindId match, for a nonterminal separator with both flanks optional', () => {
 		const sepChoice: RenderRule = {
 			type: CHOICE,
 			members: [
@@ -190,10 +190,10 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
-		).transportRs.contents;
+		).nodeRs.contents;
 
-		expect(emitted).toContain('leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),');
-		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
+		expect(emitted).toContain('leading: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
+		expect(emitted).toContain('trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
 		expect(emitted).toMatch(/let member_separator: fn\(KindId\) -> &'static str = \|kind\| match kind \{ KindId\(3\) => ",", KindId\(4\) => ";", _ => [^}]+ \};/);
 		expect(emitted).toContain('token: node.separator_kind.map_or(');
 		expect(emitted).toContain('separators: Some((::sittir_core::layout::slot_tokens(node.layout.as_deref(), "_member"), member_separator)),');
@@ -217,7 +217,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		const emitted = emitRenderModule('rust', emittedTemplates({ member_list: slot('member') }), nodeMap, GENERATED_ID_TABLES, {
 			renderRules: { rules: {} },
 			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
-		}).transportRs.contents;
+		}).nodeRs.contents;
 
 		expect(emitted).toContain('self.separator_kind.get_or_insert(ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
 		expect(emitted).toContain('_ => ";" };');
@@ -236,12 +236,12 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
-		).transportRs.contents;
+		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: true,');
-		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
+		expect(emitted).toContain('trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
 		// A 'mandatory' flank has no per-instance capture — no leading_sep field.
-		expect(emitted).toContain('pub delimiter: Option<u8>,');
+		expect(emitted).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
 	});
 
 	it('emits literal false/false and the plain literal separator for a mandatory literal separator (no capture fields)', () => {
@@ -257,7 +257,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
-		).transportRs.contents;
+		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: false,');
 		expect(emitted).toContain('trailing: false,');
@@ -265,7 +265,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		expect(emitted).not.toContain('separator: match node.separator_kind');
 	});
 
-	it('resolves only trailing from the transport-struct field for a literal separator with an optional trailing flank', () => {
+	it('resolves only trailing from the node-struct field for a literal separator with an optional trailing flank', () => {
 		const rule: SeparatedListElementRule = {
 			type: SYMBOL,
 			name: 'member',
@@ -278,13 +278,13 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
-		).transportRs.contents;
+		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: false,');
-		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
+		expect(emitted).toContain('trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
 	});
 
-	it('resolves only leading from the transport-struct field for a literal separator with an optional leading flank (mirror of the trailing-only case)', () => {
+	it('resolves only leading from the node-struct field for a literal separator with an optional leading flank (mirror of the trailing-only case)', () => {
 		const rule: SeparatedListElementRule = {
 			type: SYMBOL,
 			name: 'member',
@@ -297,9 +297,9 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			emittedTemplates({ member_list: slot('member') }),
 			nodeMap,
 			GENERATED_ID_TABLES
-		).transportRs.contents;
+		).nodeRs.contents;
 
-		expect(emitted).toContain('leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),');
+		expect(emitted).toContain('leading: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
 		expect(emitted).toContain('trailing: false,');
 	});
 
@@ -310,7 +310,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			emittedTemplates({ branch_with_list_field: slot('items') }),
 			nodeMap,
 			GENERATED_ID_TABLES
-		).transportRs.contents;
+		).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub delimiter:');
 		expect(emitted).not.toContain('pub separator_kind:');

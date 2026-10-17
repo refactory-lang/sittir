@@ -1,5 +1,5 @@
 /**
- * ADR-0018 Phase 2 — UntypedNode surface shape verification.
+ * UntypedNode surface shape verification.
  *
  * Verifies the de-hoisted storage contract, non-enumerable accessor functions,
  * Object.freeze, $with immutability, JSON.stringify, and unified factory/wrap
@@ -38,7 +38,7 @@ const minimalBlock = rs.build.block({ statements: [] });
 
 // ---------- factory shape ----------
 
-describe('ADR-0018 Phase 2 factory shape — branch node', () => {
+describe('Factory shape — branch node', () => {
 	// functionItem requires typed Identifier | Metavariable for name, Parameters for
 	// parameters, and Block for body. Cast config to `any` — we are testing the runtime
 	// _-storage shape, not input type validation.
@@ -112,7 +112,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 	});
 });
 
-describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
+describe('Factory shape — leaf node', () => {
 	// A leaf node is one that holds $text, e.g. identifier
 	const leaf = rs.build.identifier('x42');
 
@@ -130,7 +130,7 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 	});
 
 	// See the "CONFIRMED DEFERRED" note above the branch-node isFrozen case —
-	// freeze is deliberately not yet wired (ADR-0018 Phase 2, deferred).
+	// freeze is deliberately not yet wired.
 	it.fails('leaf: Object.isFrozen() returns true', () => {
 		expect(Object.isFrozen(leaf)).toBe(true);
 	});
@@ -142,7 +142,7 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 // per kind (the passing plain-`it` case below pins that). Still unshipped,
 // pinned by the `it.fails` cases: $with non-enumerability (it currently
 // serializes), the frozen-result contract, and JSON/Object.keys exclusion.
-describe('ADR-0018 Phase 2 — $with namespace', () => {
+describe('$with namespace', () => {
 	const original = rs.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 
 	it.fails('$with is non-enumerable on the node', () => {
@@ -180,9 +180,9 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 	});
 });
 
-// ---------- JSON serialization (SC-007) ----------
+// ---------- JSON serialization ----------
 
-describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
+describe('JSON serialization', () => {
 	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
 	it('SC-007: JSON.stringify includes $type, $source, _<field> keys', () => {
@@ -216,7 +216,7 @@ describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
 
 // ---------- container node shape ----------
 
-describe('ADR-0018 Phase 2 factory shape — container node', () => {
+describe('Factory shape — container node', () => {
 	// declarationList() is a pure container with variadic children and no named fields.
 	const container = rs.build.declarationList();
 
@@ -233,7 +233,7 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 	});
 
 	// See the "CONFIRMED DEFERRED" note above the branch-node isFrozen case —
-	// freeze is deliberately not yet wired (ADR-0018 Phase 2, deferred).
+	// freeze is deliberately not yet wired.
 	it.fails('container: Object.isFrozen() returns true', () => {
 		expect(Object.isFrozen(container)).toBe(true);
 	});
@@ -245,7 +245,7 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 
 // ---------- collision safety (SC-001) ----------
 
-describe('ADR-0018 Phase 2 — $fields absent from factory output (SC-001)', () => {
+describe('$fields absent from factory output', () => {
 	// Test a variety of node kinds to confirm $fields is never present
 	const nodes = [
 		rs.build.functionItem({ name: 'f', parameters: [], body: minimalBlock } as any),

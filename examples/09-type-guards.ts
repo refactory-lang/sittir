@@ -1,17 +1,16 @@
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+const rs = await rust.createEngine();
 
 export function summarizeTopLevelItems(source: string) {
-	const file = engine.parse(source);
+	const file = rs.parse(source);
 	const summaries: string[] = [];
 
 	for (const stmt of file.statements()) {
-		if (engine.is.functionItem(stmt)) {
-			summaries.push(`Function: ${engine.render(stmt.name())}`);
-		} else if (engine.is.structItem(stmt)) {
-			summaries.push(`Struct: ${engine.render(stmt.name())}`);
+		if (rs.is.functionItem(stmt)) {
+			summaries.push(`Function: ${rs.render(stmt.name())}`);
+		} else if (rs.is.structItem(stmt)) {
+			summaries.push(`Struct: ${rs.render(stmt.name())}`);
 		}
 	}
 

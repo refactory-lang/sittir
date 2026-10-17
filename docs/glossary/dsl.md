@@ -6515,7 +6515,7 @@ The one derivation of the kind catalog's rows from a symbol table and its gramma
 
 ### `packages/codegen/src/dsl/symbol-table.ts::ERROR_KIND_ROW`
 
-The catalog row for tree-sitter's builtin ERROR symbol (`ts_builtin_sym_error`), under `ERROR_KIND_NAME` at `ERROR_KIND_ID` from `@sittir/common/error-kind`. parser.c's symbol enum never lists it, since tree-sitter issues it and no grammar declares it, so `kindTableOfSymbolTable` adds it to every table. The TS and Rust kind tables then carry it for every grammar, and a read tree holding an ERROR stays within the ids its transports decode. The row is named, visible and neither an alias nor aux, which is how the parser shows an ERROR node.
+The catalog row for tree-sitter's builtin ERROR symbol (`ts_builtin_sym_error`), under `ERROR_KIND_NAME` at `ERROR_KIND_ID` from `@sittir/common/error-kind`. parser.c's symbol enum never lists it, since tree-sitter issues it and no grammar declares it, so `kindTableOfSymbolTable` adds it to every table. The TS and Rust kind tables then carry it for every grammar, and a read tree holding an ERROR stays within the ids its native nodes decode. The row is named, visible and neither an alias nor aux, which is how the parser shows an ERROR node.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::literalRuleValue`
 
@@ -6917,7 +6917,7 @@ kind entry) has no node: its subtypes reach the parent's slot directly,
 the way any supertype's do, so there is nothing to seat. Typescript
 `export_statement_default` is the case: a variant parent nested in
 `export_statement`'s variants, both supertypes to the parser, so link
-classifies it a supertype and its transport claims its arms.
+classifies it a supertype and its node claims its arms.
 
 Link reads it to decide whether a hidden rule is left as a hoisted form
 (`classifyHiddenRule`), assemble to classify the kind before the node exists,

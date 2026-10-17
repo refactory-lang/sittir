@@ -16,8 +16,8 @@ use crate::types::Span;
 #[derive(serde::Serialize)]
 pub struct DescendantBatch {
     pub coordinates: Vec<QueryCoordinate>,
-    pub resume: Option<Vec<u32>>,
-    pub origin: u64,
+    pub resume: Option<Vec<crate::types::ChildPosition>>,
+    pub origin: crate::types::TreeHandle,
 }
 
 /// A node a walk found, as it crosses: `{ $treeHandle, $end, $span, $type }`, its
@@ -25,7 +25,7 @@ pub struct DescendantBatch {
 #[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct QueryCoordinate {
     #[serde(rename = "$treeHandle")]
-    pub handle: u64,
+    pub handle: crate::types::TreeHandle,
     #[serde(rename = "$end")]
     pub end: crate::types::NodeIndex,
     #[serde(rename = "$span")]
@@ -45,13 +45,13 @@ impl From<NodeCoordinate> for QueryCoordinate {
 #[derive(serde::Deserialize, Clone, Copy, Debug)]
 #[serde(untagged)]
 pub enum Address {
-    Own { handle: u64 },
-    Child { parent: u64, index: u32 },
+    Own { handle: crate::types::TreeHandle },
+    Child { parent: crate::types::TreeHandle, index: crate::types::ChildPosition },
 }
 
 impl Address {
     /// A handle tagged with the tree the address names.
-    pub fn tree_handle(&self) -> u64 {
+    pub fn tree_handle(&self) -> crate::types::TreeHandle {
         match *self {
             Address::Own { handle } => handle,
             Address::Child { parent, .. } => parent,
@@ -61,7 +61,7 @@ impl Address {
 
 /// A slot by its number in each kind that has it, keyed by the kind a
 /// coordinate of the node carries (`ReadCtx::node_kind`). The number is the
-/// slot field's position among the kind's transport slots, the numbering
+/// slot field's position among the kind's node slots, the numbering
 /// `Route::Slot` uses. A node of a kind the map lacks holds nothing there.
 #[derive(serde::Deserialize, Debug, Clone, Default)]
 pub struct Slots {
@@ -78,7 +78,8 @@ fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result
         .collect()
 }
 
-/// A `where` condition over a node's slots, each slot given by its numbers.
+/// A `where` condition over a node's slots, each slot given by its numbers;
+/// an `is` leaf may test the node itself (`"self": true`) instead.
 #[derive(serde::Deserialize)]
 #[serde(tag = "op", rename_all = "lowercase")]
 pub enum PlanSpec {
@@ -97,8 +98,10 @@ pub enum PlanSpec {
         slots: Slots,
     },
     Is {
+        #[serde(rename = "self", default)]
+        own: Option<bool>,
         #[serde(flatten)]
-        slots: Slots,
+        slots: Option<Slots>,
         types: Vec<crate::types::KindId>,
     },
     Child {
@@ -128,16 +131,23 @@ pub enum Plan {
     Eq { slots: Slots, text: String },
     Match { slots: Slots, pattern: regex::Regex },
     Present { slots: Slots },
-    Is { slots: Slots, types: Vec<crate::types::KindId> },
+    Is { subject: Subject, types: Vec<crate::types::KindId> },
     Child { slots: Slots, anchor: Option<Anchor>, of: Box<Plan> },
     Not(Box<Plan>),
     And(Vec<Plan>),
     Or(Vec<Plan>),
 }
 
+/// What an `is` leaf tests the kinds of: the values a slot holds, or the
+/// node itself.
+pub enum Subject {
+    Slots(Slots),
+    Own,
+}
+
 /// What a plan reads a node with: the source, the kind a coordinate of a
 /// node carries (`ReadCtx::node_kind`), and how a node's kind finds its
-/// slots (`ReadTransport::router`).
+/// slots (`ReadNode::router`).
 pub struct QueryCtx<'a> {
     pub source: &'a str,
     pub stamp: &'a dyn Fn(&Node<'_>) -> crate::types::KindId,
@@ -164,7 +174,14 @@ impl Plan {
                 pattern: regex::Regex::new(&pattern).map_err(|e| e.to_string())?,
             },
             PlanSpec::Present { slots } => Plan::Present { slots },
-            PlanSpec::Is { slots, types } => Plan::Is { slots, types },
+            PlanSpec::Is { own, slots, types } => Plan::Is {
+                subject: match (own, slots) {
+                    (None, Some(slots)) => Subject::Slots(slots),
+                    (Some(true), None) => Subject::Own,
+                    _ => return Err("an is leaf tests a slot's values or, with `self: true`, the node itself".to_string()),
+                },
+                types,
+            },
             PlanSpec::Child { slots, anchor, of } => Plan::Child { slots, anchor, of: Box::new(Plan::compile(*of)?) },
             PlanSpec::Not { of } => Plan::Not(Box::new(Plan::compile(*of)?)),
             PlanSpec::And { of } => Plan::And(of.into_iter().map(Plan::compile).collect::<Result<_, _>>()?),
@@ -175,7 +192,8 @@ impl Plan {
     /// Whether the node the cursor is on satisfies the condition: a
     /// comparison holds when some value its slot holds has the text or
     /// matches, a presence leaf when the slot holds a value, an `is` leaf
-    /// when a node the slot holds has one of the types, and a child step
+    /// when a node the slot holds (or the node itself) has one of the
+    /// types, and a child step
     /// when its condition holds on one of the slot's nodes its anchor keeps.
     /// The cursor was created at the tree's root and ends where it started.
     pub fn holds(&self, cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>) -> bool {
@@ -183,7 +201,8 @@ impl Plan {
             Plan::Eq { slots, text } => any_hit(cursor, ctx, slots, |hit| hit.text == text),
             Plan::Match { slots, pattern } => any_hit(cursor, ctx, slots, |hit| pattern.is_match(hit.text)),
             Plan::Present { slots } => any_hit(cursor, ctx, slots, |_| true),
-            Plan::Is { slots, types } => any_hit(cursor, ctx, slots, |hit| hit.node.is_some_and(|(_, kind)| types.contains(&kind))),
+            Plan::Is { subject: Subject::Slots(slots), types } => any_hit(cursor, ctx, slots, |hit| hit.node.is_some_and(|(_, kind)| types.contains(&kind))),
+            Plan::Is { subject: Subject::Own, types } => types.contains(&(ctx.stamp)(&cursor.node())),
             Plan::Child { slots, anchor, of } => {
                 let mut held = Vec::new();
                 if !slot_hits(cursor, ctx, slots, &mut |hit| held.extend(hit.node.map(|(index, _)| index))) {
@@ -439,6 +458,31 @@ mod tests {
         assert_eq!(eval(&typed(member()), source, "parameter"), [true, false]);
         assert_eq!(eval(&typed(id("primitive_type")), source, "parameter"), [false, false], "the read stores the member, not its enum kind");
         assert_eq!(eval(&typed(id("type_identifier")), source, "parameter"), [false, true], "a slot that stores no unit keeps the stamped kind");
+    }
+
+    #[test]
+    fn an_is_leaf_on_the_node_itself_tests_its_stamped_kind() {
+        let source = "fn a(x: u8) {}\n";
+        let own = |kind: &str| plan(&format!(r#"{{"op":"is","self":true,"types":[{}]}}"#, id(kind)));
+        assert_eq!(eval(&own("parameter"), source, "parameter"), [true]);
+        assert_eq!(eval(&own("identifier"), source, "parameter"), [false]);
+        let guarded = |kind: &str| {
+            plan(&format!(
+                r#"{{"op":"child",{},"of":{{"op":"and","of":[{{"op":"is","self":true,"types":[{}]}},{{"op":"not","of":{{"op":"eq",{},"text":"i32"}}}}]}}}}"#,
+                slots(&[("function_item", 1)]),
+                id(kind),
+                slots(&[("parameter", 1)])
+            ))
+        };
+        assert_eq!(eval(&guarded("parameters"), source, "function_item"), [true], "the guard admits the child's own kind");
+        assert_eq!(eval(&guarded("parameter"), source, "function_item"), [false], "a negation under the guard reads no other kind");
+    }
+
+    #[test]
+    fn an_is_leaf_on_the_node_itself_is_refused_with_slots_or_without_self() {
+        let both = format!(r#"{{"op":"is","self":true,"types":[1],{}}}"#, slots(&[("parameter", 1)]));
+        assert!(serde_json::from_str::<PlanSpec>(&both).map_err(|e| e.to_string()).and_then(Plan::compile).is_err());
+        assert!(serde_json::from_str::<PlanSpec>(r#"{"op":"is","self":false,"types":[1]}"#).map_err(|e| e.to_string()).and_then(Plan::compile).is_err());
     }
 
     #[test]

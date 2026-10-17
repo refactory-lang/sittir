@@ -931,7 +931,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 	 * arm); values are the PARSE names (`SymbolRule.aliasedTo`, the visible label tree-sitter emits at
 	 * that arm's position, carrying its own `alias_sym_*` runtime symbol id).
 	 * Consumed by node-map's supertype value derivation (`parseKindId` stamps)
-	 * and the supertype transport-enum emitter (accepted dispatch ids) so
+	 * and the supertype node-enum emitter (accepted dispatch ids) so
 	 * runtime nodes arriving under the alias occurrence's id — enrich-minted
 	 * arms like `alias($._expression_except_range, $.expression_group1)` —
 	 * route to the storage kind's variant instead of failing as unknown.

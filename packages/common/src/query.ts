@@ -9,11 +9,10 @@ import type {
 	QuerySlots,
 	QuerySubject,
 	Recorder,
-	SlotFlagRefusal,
 	SlotRef,
 	SlotSubject,
 	StepAnchor,
-	TransportCoordinate
+	NodeCoordinate
 } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './read.ts';
@@ -30,7 +29,7 @@ export interface DescendantWalk {
 }
 
 export interface DescendantBatch {
-	readonly coordinates: readonly TransportCoordinate[];
+	readonly coordinates: readonly NodeCoordinate[];
 	readonly resume: readonly number[] | null;
 	readonly origin: number;
 }
@@ -161,17 +160,27 @@ function everySlotFlag(table: QuerySlotFlags, slot: string): ReadonlySet<string>
 
 type SlotFlagRow = QuerySlotFlags[number][string] | undefined;
 
+function anyOf(plans: readonly QueryPlan[]): QueryPlan {
+	const [only, ...rest] = plans;
+	return only !== undefined && rest.length === 0 ? only : { op: 'or', of: plans };
+}
+
+function carriedBy(context: Context, kind: number, flag: string): QueryPlan {
+	const plan = context.hooks.queryFlags[kind]?.[flag];
+	if (plan === undefined || plan === null) refuse(`query: ${kindLabel(context, kind)} has no plan for its flag ${flag}`);
+	return { op: 'and', of: [{ op: 'is', self: true, types: [kind] }, plan] };
+}
+
 function slotFlagRef(context: Context, slot: string, subject: SlotSubject, row: SlotFlagRow): (flag: string) => Cond {
 	return (flag) => {
 		if (typeof flag !== 'string') refuse(`query: ${slot}.is takes the name of a flag`);
 		const held = row?.[flag];
 		if (held === undefined) refuse(`query: no kind ${slot} holds declares the flag ${flag}`);
-		if ('kind' in held) {
-			const { kind, context: contextual } = held as SlotFlagRefusal;
-			const on = `${flag} on ${kindLabel(context, kind)}, which ${slot} holds`;
-			refuse(contextual ? `query: ${on}, depends on the node's context` : `query: ${on}, depends on that node's slots; a slot test reads only the flags a kind always carries`);
-		}
-		return cond({ op: 'is', slots: subject.slots, types: held as readonly number[] });
+		if ('kind' in held) refuse(`query: ${flag} on ${kindLabel(context, held.kind)}, which ${slot} holds, depends on the node's context`);
+		const { types, kinds } = held;
+		const always: QueryPlan[] = types.length === 0 ? [] : [{ op: 'is', slots: subject.slots, types }];
+		const carried: QueryPlan[] = kinds.length === 0 ? [] : [{ op: 'child', slots: subject.slots, of: anyOf(kinds.map((kind) => carriedBy(context, kind, flag))) }];
+		return cond(anyOf([...always, ...carried]));
 	};
 }
 
@@ -442,7 +451,7 @@ function entryOfItem(item: unknown): Entry {
 	};
 }
 
-function entryOfCoordinate(coordinate: TransportCoordinate, tree: TreeHandle, hooks: QueryHooks): Entry {
+function entryOfCoordinate(coordinate: NodeCoordinate, tree: TreeHandle, hooks: QueryHooks): Entry {
 	return {
 		kind: coordinate.$type,
 		address: { handle: coordinate.$treeHandle },

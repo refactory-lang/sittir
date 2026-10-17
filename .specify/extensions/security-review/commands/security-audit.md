@@ -374,7 +374,7 @@ Check for:
 - X-Content-Type-Options
 - X-Frame-Options
 - X-XSS-Protection
-- Strict-Transport-Security
+- Strict-Node-Security
 - Referrer-Policy
 - Permissions-Policy
 

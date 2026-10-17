@@ -4,7 +4,7 @@
 
 **Goal:** Separator spacing is a choice written into the separator rule of every eligible repeat on the render side, with grammar defaults declared in `patches:` through the same `preference()` a declared choice uses; no annotation carries it and no owner fills a shared list.
 
-**Architecture:** One pass over the normalized rules, consumed only by the options and render emitters, rewrites each multiplicity-bearing rule's `separator.value` into `seq(choice(_tight, _space, _newline), token, choice(...))`, or into the whitespace choice alone for an unseparated repeat. The arms carry the preference label and the resolved default exactly like a declared choice. Sites, transport fields, the native fill and the list view are all reads of that rule; the site lives on the kind whose rule holds the multiplicity, so a list kind owns its own spacing and flank and every transport fills its own fields.
+**Architecture:** One pass over the normalized rules, consumed only by the options and render emitters, rewrites each multiplicity-bearing rule's `separator.value` into `seq(choice(_tight, _space, _newline), token, choice(...))`, or into the whitespace choice alone for an unseparated repeat. The arms carry the preference label and the resolved default exactly like a declared choice. Sites, node fields, the native fill and the list view are all reads of that rule; the site lives on the kind whose rule holds the multiplicity, so a list kind owns its own spacing and flank and every node fills its own fields.
 
 **Tech Stack:** TypeScript codegen (`packages/codegen`), generated Rust render crates, vitest, cargo.
 
@@ -67,7 +67,7 @@
 - Modify: `rust/crates/sittir-core/src/options.rs` (delete `ListSpacing`)
 - Test: `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`
 
-- [x] Transport struct: one `Option<u16>` field per synthesized site of the kind, named by the site key; `renderTransportField` has no spacing branch.
+- [x] Node struct: one `Option<u16>` field per synthesized site of the kind, named by the site key; `renderNodeField` has no spacing branch.
 - [x] Fill: every struct fills its own spacing fields with `get_or_insert`, a list fills its own `delimiter` when the table value is non-zero, then recurses; no `ListSpacing`.
 - [x] View: `before`/`after` read the node's own fields for the slot.
 - [x] Update the four render-module-emit cases to the list kind owning its fields.

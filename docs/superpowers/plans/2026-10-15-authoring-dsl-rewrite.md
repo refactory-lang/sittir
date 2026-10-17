@@ -28,7 +28,7 @@
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
   - Stage 1's reference was recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
-  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 2adb24cf3's: the master merge's (777411578, below Task 1.1), with Task 1.2 Step 1's accepted consequence.
+  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 913f2cfec's: Task 1.4's switch, with the two consequences the user accepted (below Task 1.4). Task 1.5 (b2259c7da) moves no output, so it is Stage 2's reference too. The master merges re-recorded it at 777411578 (below Task 1.1) and b56cee690 (below Task 1.4), and Task 1.2 Step 1's accepted consequence at 2adb24cf3.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -434,7 +434,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Regenerate: `packages/{rust,typescript,python}/grammar.bindings.ts` with `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`
 - Test: `packages/codegen/src/bindings/__tests__/grammar-bindings.test.ts`, `packages/codegen/src/bindings/__tests__/hash.test.ts`, `packages/codegen/src/transpile/__tests__/conflict-driver.test.ts`, `packages/codegen/src/transpile/__tests__/evaluate-for-derivation.test.ts`, and a new `packages/codegen/src/compiler/__tests__/layer-selection.test.ts`
 
-- [ ] **Step 1: Write the failing tests** (Review Focus 2).
+- [x] **Step 1: Write the failing tests** (Review Focus 2).
   - The printed module of a fixture with one field patch, one alias patch and one lead equals an expected string in the layer form, with `renames` as data.
   - `loadBindingsHash` reads `hash`. A module with no `hash` export is `StaleBindingsError` with the regenerate command, as today.
   - The printed module evaluates. Write it into a temp package beside a fixture `grammar.sittir.ts`, then evaluate. Port the existing record-form test at line 335.
@@ -442,10 +442,32 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - `compile` on a package whose layer `hash` is stale throws `StaleBindingsError` before any evaluation. Spy on `runLayerPass`.
   - `.sittir/grammar.js` for rust names `../grammar.bindings.ts`, and for scm names `../grammar.sittir.ts`.
   - `evaluateForDerivation` returns the baseline's `base` and `bound` hashes, read from `resolutions.json`.
-- [ ] **Step 2: Run them and confirm they fail.**
-- [ ] **Step 3: Implement and regenerate.** A name search for `SITTIR_UNBOUND`, `UNBOUND_ENV` and `sittirGrammar` (Infigraph `search` with `regex=true`) returns no hits outside the glossary's history-free text.
-- [ ] **Step 4: Run the tests, `bindings-inventory --check`, and the stage gate's `output-gate` and snapshot checks.** A difference outside the named exceptions stops the task. Report the paths, and the first differing rule or key, to brainstorm.
-- [ ] **Step 5: Glossary entries.** Commit the code, the tests and the three regenerated layers together.
+- [x] **Step 2: Run them and confirm they fail.**
+- [x] **Step 3: Implement and regenerate.** A name search for `SITTIR_UNBOUND`, `UNBOUND_ENV` and `sittirGrammar` (Infigraph `search` with `regex=true`) returns no hits outside the glossary's history-free text.
+- [x] **Step 4: Run the tests, `bindings-inventory --check`, and the stage gate's `output-gate` and snapshot checks.** A difference outside the named exceptions stops the task. Report the paths, and the first differing rule or key, to brainstorm.
+- [x] **Step 5: Glossary entries.** Commit the code, the tests and the three regenerated layers together.
+  - **Landed:** 5c20d509e (an inheriting layer rewrites its records and projects its effects) and 913f2cfec (the switch) on `feat/authoring-dsl`, with the master merge b56cee690 between them. The switch's gates are against the b56cee690 reference. The rows, the bindings inventory, the type-check, lint and the grammar type-check ratchet are equal or green. The output gate and the snapshots differ only by the two consequences the user accepted:
+    - **The lead patch site.** rust's and typescript's top layers each record one more `patchSites` entry, the lead entry at `.`, and each one's bound `grammarHash` moves in `.sittir/resolutions.json`.
+    - **The dead JSX group.** typescript's layer 1 records `bodyPatternZeroMatches: ["_jsx_opening_element_content"]`, `.sittir/grammar-diagnostics.json` gains the `body-pattern-zero-match` warning, and typescript's base and bound `grammarHash` move. A follow-up deletes the dead group from typescript's `grammar.sittir.ts`.
+
+    The reference is re-recorded at 913f2cfec: `scratchpad/handoffs/reshape-gate-manifest-913f2cfec.txt`, `reshape-snapshots-913f2cfec/` and `reshape-gate-rows-913f2cfec.txt`, whose rows equal b56cee690's. Where it differs from the steps above:
+    - **The alias-target check** moved into the alias verb here, not in Task 1.5, because deleting `sittirGrammar` removed `checkBindingPatches`' only caller. `WireLayer` carries the layer's depth. Above layer 1, an alias that flips hiddenness or names a rule of the base is the layer's `alias-target-invalid`.
+    - **The hash** is read through the pinned TypeScript reader (a new `exportedStrings` mode), not by importing the layer. The parse it shares with the vocabulary reader is `bindings/pinned-typescript.ts`.
+    - **`evaluateUnboundDsl`** goes rather than being repointed: layer 1 is `evaluateDsl` of its own file.
+    - **The scratch entry** (`transpile/scratch-entry.ts::withScratchEntry`) also serves the conflict loop's base runs, which no longer generate in the package's `.sittir/`.
+    - **The spy** counts `evaluatePackage` calls, since `runLayerPass` is called inside `layer.ts`.
+    - **A layer above the first is not path-checked by type.** Its base is a `grammar()` result, whose type names no kind, so `BaseEditsCheck` declines it before enriching it; otherwise an editor shows TS2589 at the generated layer's `wire({`. Type checks in a grammar layer file serve IntelliSense (the user's ruling), and evaluation checks the generated layer's paths, so the generated layer stays out of the grammar type-check.
+    - **For Task 1.5:** deleting `sittirGrammar` orphans `attachTextTokens`, `wireBindings`, `wireBindingEffects`, `blankDeadEnrichMints`, `attachDerivationRecords`, `applyConflictResolutions` and `applyBoundConflictResolutions`, and evaluate's fallbacks that read their keys (`getDeadEnrichMints`, `getDerivationRecords`, `getTextTokens`). They go with the removals.
+
+### The master merge during Task 1.4
+
+**Landed** on `feat/authoring-dsl`: b56cee690 merges master at 6bf9fcc6b, between Task 1.4's layer-two commit (5c20d509e) and the switch, so that the switch's gates run against current master. It brings the accepts-invalid-syntax rule cause with witness arrays, `c.<slot>.is(flag)`, a newtype for every core id domain, and tree-sitter-javascript pinned to 0.25.0 with rule-level `reserved()`.
+- The reference is re-recorded at b56cee690: `scratchpad/handoffs/reshape-gate-manifest-b56cee690.txt` (255 files), `reshape-snapshots-b56cee690/` and `reshape-gate-rows-b56cee690.txt`. Against 2adb24cf3:
+  - every grammar's crate and native typings move, from the id newtypes. Every grammar's emitted package moves where master's emitters meet this branch's model: typed ids and slot flags for the receiver kinds and under the bound slot names.
+  - typescript's grammar-level outputs and evaluated grammar move, from the JavaScript pin and its grammar edits. python's evaluated grammar moves only by `witness` → `witnesses`. rust's, regex's and scm's are unchanged.
+  - the three bindings layers are unchanged.
+  - the rows equal 2adb24cf3's, except typescript cov 204 → 206: master's own delta, 201 → 203 from the base.
+- Three counts and one test compose both sides. The typescript list-setter census is 31, and the typescript ir entry ceiling is 217 (213 at the base, plus two builders from each side). master's reserved-properties test names the bound slot `optionalChain`.
 
 ### Task 1.5: removals, and the stage gate
 
@@ -460,10 +482,16 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - `packages/codegen/src/dsl/__tests__/bindings-layer.test.ts`, into `layer.test.ts`
   - `packages/codegen/src/compiler/__tests__/post-evaluate-invariant.test.ts`, whose `bindingEffects` and `leadFrom` now come from the projections
 
-- [ ] **Step 1:** Delete, migrate, and run the full suite as its own call. Any new failure is isolated with stash-and-rerun before it is accepted as pre-existing.
-- [ ] **Step 2:** Regenerate all five grammars with `pnpm run validate:native`, which generates.
-- [ ] **Step 3: Run the stage gate** (above): output-gate, snapshots and rows.
-- [ ] **Step 4:** Run the standing gates. Commit, with the stage gate's numbers in the message.
+- [x] **Step 1:** Delete, migrate, and run the full suite as its own call. Any new failure is isolated with stash-and-rerun before it is accepted as pre-existing.
+- [x] **Step 2:** Regenerate all five grammars with `pnpm run validate:native`, which generates.
+- [x] **Step 3: Run the stage gate** (above): output-gate, snapshots and rows.
+- [x] **Step 4:** Run the standing gates. Commit, with the stage gate's numbers in the message.
+  - **Landed:** b2259c7da on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **Already gone:** `BINDING_SET`, `markBindingSet`, `isBindingSet`, `wireWithBindingEffects` and `recordingBindingEffects` went with the inheriting layer's commit (5c20d509e), and `checkBindingPatches` with the switch. `transform` had no `isBindingSet` branch left, and `wireRecordBindingEffect` already recorded in every layer.
+    - **Also gone:** `rename`, `Rename`, `leadIssue`, `wireBindings` and `wireBindingEffects`, and the sidecars nothing attaches since the switch: the text-token, dead-mint and derivation-record keys with their attach and get functions, and the two functions that applied the conflict resolutions. `evaluate` reads those facts from the layer record only.
+    - **The derivation's lead check** applies each lead with the lead verb over one verb context, through `refusalOf`, in place of `leadIssue`.
+    - **The authoring `prec`, `token` and `reserved`** read the DSL runtime when they are called. Folding `bindings-layer.test.ts` into `layer.test.ts` showed that the facade, imported outside a DSL window, captured `undefined` for every grammar evaluated after it.
+    - **Tests:** beyond the three the steps name, `lead.test.ts`, `dead-enrich-mints.test.ts` and `conflict-resolutions.test.ts` lose the deleted functions' unit tests, and `dead-enrich-mints.test.ts` tests the layer's dead mints in their place.
 
 ---
 
@@ -478,8 +506,12 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Modify: `packages/codegen/src/compiler/types.ts` (`desugarDivergences` goes; the pass's pattern injection fills `bodyPatternZeroMatches`), `packages/codegen/src/compiler/link.ts`, `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts` (`fromDesugarDivergence` goes)
 - Test: `packages/codegen/src/compiler/__tests__/evaluate.test.ts` (the two `desugarDivergences` cases go), `packages/codegen/src/compiler/__tests__/grammar-diagnostics.test.ts`, `packages/codegen/src/compiler/__tests__/post-evaluate-invariant.test.ts`
 
-- [ ] **Step 1:** Port `evaluate.test.ts`'s `_orphan_group` case into a layer test. A `groups:` entry whose body matches nothing reports `bodyPatternZeroMatches`, from the one pass.
-- [ ] **Step 2:** Delete, then run the suite and the stage gate. A rule that moves means the two implementations diverged: stop and report the rule. Commit.
+- [x] **Step 1:** Port `evaluate.test.ts`'s `_orphan_group` case into a layer test. A `groups:` entry whose body matches nothing reports `bodyPatternZeroMatches`, from the one pass.
+- [x] **Step 2:** Delete, then run the suite and the stage gate. A rule that moves means the two implementations diverged: stop and report the rule. Commit.
+  - **Landed:** 67d3809ca on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The stage's `desugarDivergences` exception went unused, since no grammar's evaluated grammar carried the key. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **Also gone:** `evaluateRulesAndInjectSynthetics` itself, since `grammarFn` now only evaluates the rule callbacks, and the record the copies fed: `desugarDivergences`, `DesugarDivergenceEvent`, `link`'s rename of it, and `fromDesugarDivergence` with its descriptions.
+    - **The unmatched groups:** the pass's pattern injection did not yet find a `groups:` entry that matches nothing; only evaluate's copy did. `wire.ts`'s `unmatchedGroupPatterns` finds them over the layer's final rules. `completeLayer` leaves them on the wire context (`WireContext.bodyPatternZeroMatches`), and `grammarFn` appends them to the base's.
+    - **Not in the record's records yet:** the pending base takes the record's records (`completePendingRecords`), so the enriched stage, which evaluates the base without the layer's config, showed the layer's own finding. The stage gate caught it through typescript's grammar hash. Task 2.2, which moves every record into the layer record, has to keep a layer's own records off its pending base.
 
 ### Task 2.2: the record replaces evaluate's inheritance
 
@@ -491,16 +523,28 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Test: the snapshots. Every key of every grammar's evaluated grammar is unchanged.
 - Test (Review Focus 4, a layer's own records): over a fixture chain, a `field()` entry in layer 1 leaves layer 1's own `options` as written, while the same entry in layer 2 rewrites the inherited option path. Both are read from the evaluated grammar.
 
-- [ ] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
-- [ ] **Step 2: Each config callback once** (spec §1.3). With the drains gone, wire's readers of `groups`, `visibleExternals` and `renderAs` take what its entry evaluated, so each callback runs once per evaluation. Extend `layer.test.ts`'s spy test to the three.
-- [ ] **Step 3:** Run the suite and the stage gate. Commit.
+- [x] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
+- [x] **Step 2: Each config callback once** (spec §1.3). With the drains gone, wire's readers of `groups`, `visibleExternals` and `renderAs` take what its entry evaluated, so each callback runs once per evaluation. Extend `layer.test.ts`'s spy test to the three.
+- [x] **Step 3:** Run the suite and the stage gate. Commit.
+  - **Landed:** f5a24a318 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **The own-records test** existed, reading the runtime's result, which carried the drained records. It now reads the evaluated grammar (`evaluatedGrammarOf`, the half of `importAndExtractGrammar` after the import) and the layer record, whose records were empty at depth 1, which made it fail first.
+    - **The record holds every record.** `completeLayer` merges the layer's own records (`ownRecordsOf`, read off the wire context as the drains read it) over the inherited ones, rewritten through its effects, through one typed table (`RECORD_MERGES`). The pass opens its own role scope, so `externalRoles` is a record too. `completePendingRecords` and `recordsOf` go.
+    - **Render bodies keep their place.** `grammarFn` injected a layer's `renderAs` and `visibleExternals` bodies after its rules, and the layer above took them as base rules. Evaluate now inserts each layer's bodies after the rules its runtime held, which the record states (`synthesized`). Appending them all at the end moved rust's and typescript's render modules.
+    - **The stages leave the records.** The first departing layer records the stage bases (`StageBases`), which the layers above inherit unchanged, and evaluate evaluates the stages from them, so the tree-sitter run never does. `stages` leaves `LayerRecords` and `RECORD_RENAMES`, which keeps the ruling that no rename rewrites them.
+    - **The record also carries** the top layer's automatic-variant record, which `grammarFn` read off the wire context.
+    - **Each callback once** needed the layer pass, not wire's entry, to evaluate `groups:`, since intake reads the bodies before wire exists: `evaluatedConfig` evaluates `groups:`, `injects:`, `renderAs:` and `visibleExternals:` once, with the runtime's symbols, and every reader takes its values. A group mint refuses an unknown name when its body joins the rules, as the entry's evaluation did.
+    - **Fixture grammars use the authoring entry.** Two fixtures that evaluate's tests load were written with `wire.ts`'s internal two-argument `wire(config, base)`, which skips the layer pass, so their records no longer reached evaluate. They become `grammar(enrich(base), wire({ … }))`. Their enriched stage now holds enrich's `_layout` supertype, since the internal entry never ran enrich.
 
 ### Task 2.3: `injects:` and the record form of `groups:` go
 
 **Files:**
 - Modify: `packages/codegen/src/dsl/wire/wire.ts` (`WireConfig.injects`, the record arm of `GroupsConfigValue`, and the inject branch of `declaredPatterns`), `packages/codegen/src/compiler/types.ts` (`groups` holds function entries only)
 
-- [ ] **Step 1:** Confirm with Infigraph `search` that no grammar file or test fixture uses `injects:` or a record-valued `groups:` entry. Delete, run the suite and the stage gate, then commit.
+- [x] **Step 1:** Confirm with Infigraph `search` that no grammar file or test fixture uses `injects:` or a record-valued `groups:` entry. Delete, run the suite and the stage gate, then commit.
+  - **Landed:** 02b582c36 on `feat/authoring-dsl`. The search found the two forms only in their own unit tests. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite (its 6 timeouts under load pass alone) and the cargo gates are green. Where it differs from the step above:
+    - **`RawGrammar.groups` goes** rather than narrowing to function entries: it only ever held the record form, since the function form never leaves wire. Its one reader, link's group lift (`applyGroupOverrides` and its helpers), goes with it, as do the `groups` record, its rename and merge entries, the `groups-config-invalid` code and `types/rule.ts`'s `replaceAtPath`.
+    - **A hidden pattern is an authored hidden rule.** `declaredPatterns` refuses a hidden `groups:` key by naming `rules:`. `wire-injects.test.ts` becomes `wire-patterns.test.ts`, with its hidden inject case written as an authored hidden rule.
+    - **The surfacing test moves to refine.** The removed `groups-config-invalid` case was the one test of a link config issue reaching the grammar diagnostics; it now does so with an unresolvable refine form.
 
 ---
 
@@ -519,9 +563,12 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
 - Modify: the enrich inputs (`packages/codegen/src/dsl/enrich.ts`) and the completion check (`packages/codegen/src/dsl/layer.ts`). The declared families come from the layer record's alias effects: a display that two or more alias effects name.
 - Test: `packages/codegen/src/dsl/__tests__/visible-externals.test.ts`. Python's pin goes, and its completed top layer is a plain fixpoint.
 
-- [ ] **Step 1:** Change python's case to expect no change. It fails on `expression` and `_expression_within_for_in_clause`.
-- [ ] **Step 2:** Implement. The test passes, and the output gate against Stage 2's commit shows no difference.
-- [ ] **Step 3:** Commit, with the gate in the message.
+- [x] **Step 1:** Change python's case to expect no change. It fails on `expression` and `_expression_within_for_in_clause`.
+- [x] **Step 2:** Implement. The test passes, and the output gate against Stage 2's commit shows no difference.
+- [x] **Step 3:** Commit, with the gate in the message.
+  - **Landed:** 33753ae2b on `feat/authoring-dsl`. Python's completed top layer is a plain fixpoint of enrich, and the output gate against Stage 2's commit (02b582c36, whose output is the 913f2cfec reference's) shows no difference. The snapshots and rows are equal, and the bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **The narrowing is at the site.** `unaliasOverloadedDisplays` does not collect a site whose display and storage symbol a declared family names (`DisplayFamilies`), so its count never sees the family, and a storage it splits is never minted a family's display.
+    - **`enrichFixpoint` takes the record** (its sidecars and its effect log) and passes the families the log declares (`verbs/effects.ts::displayFamiliesOf`), so the families have one derivation where the check runs. There is no completion check yet, so the two callers are intake's check over a completed layer, which passes its base's families, and the tests.
 
 ### Task 3.1
 
@@ -536,6 +583,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - A top layer whose created rule enrich would change reports `layer-not-enrich-fixpoint` naming that layer and rule.
   - Counted with a spy, one evaluation of the top layer runs enrich three times: layer 1's intake, layer 1's check, and layer 2's check. Layer 2's intake runs none.
 - [ ] **Step 2:** Implement, then run the suite and the gate. Commit.
+  - **Landed:** 386ca0a11 and 825ad2334 on `feat/authoring-dsl`. Against the 913f2cfec reference, each commit's own regenerated tree passes the output gate and the snapshot check with no exceptions, and its rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - Checking every layer's own result surfaced tree-sitter-c: its single layer was not enrich's fixpoint, because three detectors matched shapes that enrich itself produced later in the same run. As ruled, those stages are fixed in their own commit before the check (386ca0a11), and c's first-run output is kept. A display rule is terminal by its row or by its body, and an enriched field is transparent to the nested-repeat count and to the inline-safe repeat test.
+    - The check builds the layer's result by calling the runtime's own `grammar()` inside the pass, with the options the layer hands the runtime, so the checked enrichment carries every runtime field.
+    - `enrichSidecarsOf` and `EnrichSidecars` go: the record's `enrichment` carries the sidecars.
 
 ---
 
@@ -552,6 +603,9 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
 
 - [ ] **Step 1:** Test that an inline `edit` records the same patch sites and effects as the same entry in `edits`.
 - [ ] **Step 2:** Implement, migrate python, and run the gate. Commit.
+  - **Landed:** 9ef77c098 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal; python's migrated layer is byte-neutral. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - `edit` is exported from `dsl-authoring.ts`, as the typed view of `transform`, so `transform.ts` is unchanged. The public DSL module exports `edit` in place of `transform`.
+    - The test compares an inline `edit` with the `edits` entry for each path segment form in a bindings layer, so the projected effects are compared as well as the body and the patch sites.
 
 ### Task 4.2: `replace`, and the replacing function
 
@@ -565,6 +619,9 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - `($, member) => rule` receives the member.
   - `replace(previous, path, rule)` gives the entry's result and records the same patch sites.
 - [ ] **Step 2:** Implement and run the gate. Commit.
+  - **Landed:** 82561896b on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - A replacing function receives the `$` of the rule callback it is applied in. Wire's context carries it beside the current rule kind. Its rule then resolves as a literal entry does, so the alias-of-own-symbol case and the alias effect follow.
+    - The literal cases are characterized at the bindings layer: a literal alias over a bare symbol keeps the symbol, and over a fielded member it replaces the field. A literal alias at a choice arm records a patch site but leaves the rule unchanged; that belongs to Task 5.1, where the literal alias goes.
 
 ### Task 4.3: `variant(name, rule, options?)` and `refine(forms)`
 
@@ -577,6 +634,11 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - A re-authored rule `choice(variant('a', seq('x', $.y)), variant('b', seq('z', $.y)))` yields exactly the rules and annotations that the bare choice plus `edits: { k: { '0': variant('a'), '1': variant('b') } }` yields.
   - `refine(forms)` at `.` records the same forms as typescript's inline `interface_body` call.
 - [ ] **Step 2:** Implement and run the gate. Typescript keeps its inline `refine` call: it is one site, and needs no change. Commit.
+  - **Landed:** c4349a544 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - The direct form labels a copy of the rule under a non-enumerable symbol key. The labelled arms are lowered to `variant` entries at their paths, applied after the kind's `edits:` sets, which is the order a set applies its own variant entries in. An entry that edits inside a labelled arm therefore lands in its mint.
+    - A kind minted inside a callback had a deposit and no rule, since wire declares mint rules from the `edits:` config. The pass now appends such deposits as rules after the declared ones; this also covers an inline `edit(previous, { … variant(…) })`.
+    - The forms map in the test is `object_type`'s; typescript has no `refine` call on `interface_body`.
+    - A `refine` entry at any path but `.` is `edit-entry-invalid`, and records no patch site, as the inline call records none.
 
 ### Task 4.4: the same-site check
 
@@ -589,6 +651,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - `rules: { k: ($, p) => edit(p, { '1': field('a') }) }` with `edits: { k: { 'body:': field('b') } }`, where `body:` is member 1, conflicts.
   - Two different members do not conflict.
 - [ ] **Step 2:** Implement, then run the tests and the gate. Commit.
+  - **Landed:** c5e6b8eb8 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - Wire's context records the nodes a rule callback's verbs wrote, keyed per kind, and transform refuses an entry that resolves onto one of them, at the point it resolves. A node is the member every spelling of a path reaches, so no second path resolver is needed; `layer.ts` is unchanged, and the refusal reaches the layer's diagnostics as the other entry refusals do.
+    - The `'body:'` example can't be written yet: a field segment matches only when the rule at that level is that field, so it never names a seq member. The test spells member 1 as `'-1'` instead.
+    - A direct variant's arm counts as an inline write at that arm.
 
 ---
 
@@ -605,6 +671,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
 
 - [ ] **Step 1:** Test that python's two generated alias sites give the same rule, labels and recorded effect through `alias(name)` as through the literal form. Take the expected values from Stage 4's snapshot.
 - [ ] **Step 2:** Implement, regenerate, and run the gate. Commit.
+  - **Landed:** accea8a79 on `feat/authoring-dsl`, with the resolutions-hash change in the same commit, and 60d44a8d2, a docs-only dedupe of `docs/glossary/transpile.md`. The rows equal the 913f2cfec reference. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above and the stage gate:
+    - A symbol member is aliased in place, `alias(member, $.name)`, with no relabel, after the enrich-lift check and through enrich's field, so a choice arm keeps its variant label. A rule written as a literal `ALIAS` is now a plain replacement with no effect, and `GrammarBindingsEdit.alias` is the bound name.
+    - The stage gate is not byte-identical, as ruled. Aliasing in place leaves the alias entry's up-front placeholder mint (`_lambda_expression`) blank, and it stays in the `python.top` evaluated snapshot, following the `_kw_*` convention. `grammarHash` is now taken over the grammar tree-sitter sees (`treeSitterPruned`, the prune `grammar.json` gets), so every grammar's `resolutions.json` hash moves once; the resolution arrays are unchanged. That is the only output-gate difference, apart from python's regenerated `grammar.bindings.ts`.
+    - The hash change shares the 5.1 commit: the pre-commit check compares a commit's staged codegen source with the last regen, which covered both changes.
 
 ---
 
@@ -646,6 +716,9 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 - **Rules:** `method_definition` (class members and object literals), `method_signature` and `abstract_method_signature`. Each takes the same three arms: plain, get and set.
 - **Census:** the 11 `accessor-arity` rows, plus `async get x() {}`. A generator getter already errors, and a constructor written as a getter is an early error.
 - **Verbs:** the getter and the setter are named arms, `variant(name, rule)` (Stage 4), written with `replace` (Stage 4) and `copy()` (Stage 6). The builder-contexts table then has real accessor kinds.
+- **Excluded slots (ruled):** on all three rules, neither the getter nor the setter takes `async`, the generator `*`, type parameters, `?` or `readonly`, and the setter takes no return type. The auto-accessor (`accessor x`, the `declaration.property` claim) takes no `declare`, `readonly` or `?`. `abstract accessor x` is valid and stays. The accessor kinds then hold none of those slots, so their routes drop them, and the vocabulary disagreements stay empty. The red test gains the `?` and `readonly` accessor forms and the auto-accessor's three, with `abstract accessor x` among the valid neighbours.
+- **The getter's return type (ruled):** the getter reads its return type as `type`, through a route scoped to the getter's claim (`bindings/routes.ts::membersOf`) and the claim's `return_type: (_)? @type` capture in `packages/typescript/bindings.scm`. Member routes are per grammar kind, so the capture with no claim scope would give `declaration.method` a `type` too.
+- **The abstract auto-accessor (ruled):** `abstract accessor x: number` reads as `declaration.property.signature.abstract`, with no value, as an abstract getter does, through a claim on `public_field_definition`'s abstract arm in `packages/typescript/bindings.scm`. It rides with the getter's capture.
 
 **Before it:**
 - Merge, never rebase:
@@ -657,8 +730,9 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 **Gate:** valid input parses to identical trees, the accessor census rows close, and the standard gates.
 
 - [ ] **Step 1:** Merge, regenerate, and re-record the baseline. Report any moved file the merged commits don't explain.
-- [ ] **Step 2:** Run the acceptance test. The 12 excluded forms fail and the 10 valid neighbours pass.
-- [ ] **Step 3:** Author the three rules with the verbs. The acceptance test passes. Check the parse trees of the valid corpus and the rows against the baseline.
+- [ ] **Step 2:** Extend the acceptance test by the excluded slots above, and run it. The excluded forms fail and the valid neighbours pass.
+- [ ] **Step 3:** Author the three rules and the auto-accessor with the verbs. The acceptance test passes. Check the parse trees of the valid corpus and the rows against the baseline.
+- [ ] **Step 3b:** Scope the getter's `type` route to its claim and add the capture, and claim the abstract auto-accessor. `declaration.method` holds no `type`, the getter does, `abstract accessor x: number` reads as `declaration.property.signature.abstract` with no value, and `bindings-inventory --check` reports no disagreement.
 - [ ] **Step 4:** Commit, with the gate in the message.
 
 ---

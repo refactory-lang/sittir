@@ -2,11 +2,26 @@
 
 Typed Regex IR builders generated from the `tree-sitter-regex` grammar by `@sittir/codegen`.
 
-Regenerate:
+## Quick start
+
+Install the language package with your preferred package manager; for example:
+
+```bash
+npm install @sittir/regex
+```
+
+```ts
+import regex from '@sittir/regex';
+
+using rx = await regex.createEngine();
+const source = '[a-z]+';
+rx.parse(source, { errors: 'throw' }).$render() === source; // true
+```
+
+## Regenerating
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar regex --all --output packages/regex/src
 ```
 
-This grammar is not yet part of the default validation gates. Once it matures, add
-`"sittir": { "stable": true }` to `package.json`.
+This grammar is included in the workspace's stable grammar and validation sets.

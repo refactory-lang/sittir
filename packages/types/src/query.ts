@@ -2,7 +2,7 @@ import type { IsBooleanKeyword } from './keyword-presence.ts';
 import type { FlagsHintOf, SlotFlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
 
 /**
- * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's transport
+ * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's node
  * slots, the numbering the native read routes children by. A node of a kind the map lacks holds nothing there.
  */
 export interface SlotSubject {
@@ -23,7 +23,7 @@ export type QuerySlotEntry = readonly [accessor: string, slot: number, keyword?:
 /** Each kind's slots, by kind id. */
 export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
 
-/** The node's own text as a condition's subject, in place of a slot's. */
+/** The node itself as a condition's subject, in place of a slot: its own text, or its own kind for an `is` leaf. */
 export interface SelfText {
 	readonly self: true;
 }
@@ -37,15 +37,15 @@ export type StepAnchor = 'first' | 'last' | 'only';
 /**
  * A compiled condition, each comparison reading the subject `S`. A `where` condition reads slots only (the default) and is
  * evaluated by the native walk; a portable read test may also read the node's own text (`QueryPlan<QuerySubject>`), which only
- * `holds` evaluates. An `is` leaf tests the stamped kinds (`$type`) of its subject, and a `child` step evaluates its condition on
- * the nodes its slot holds, narrowed by its anchor.
+ * `holds` evaluates. An `is` leaf tests the kinds of the values its slot holds, or the stamped kind of the node itself, and a
+ * `child` step evaluates its condition on the nodes its slot holds, narrowed by its anchor.
  */
 export type QueryPlan<S extends QuerySubject = SlotSubject> =
 	| ({ readonly op: 'eq'; readonly text: string } & S)
 	| ({ readonly op: 'match'; readonly pattern: string } & S)
 	| ({ readonly op: 'present' } & SlotSubject)
 	| ({ readonly op: 'child'; readonly anchor?: StepAnchor; readonly of: QueryPlan<S> } & SlotSubject)
-	| ({ readonly op: 'is'; readonly types: readonly number[] } & S)
+	| ({ readonly op: 'is'; readonly types: readonly number[] } & (S | SelfText))
 	| { readonly op: 'not'; readonly of: QueryPlan<S> }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
 
@@ -53,19 +53,21 @@ export type QueryPlan<S extends QuerySubject = SlotSubject> =
 export type QueryFlags = Readonly<Record<number, Readonly<Record<string, QueryPlan | null>>>>;
 
 /**
- * A flag one kind declares in a way a slot test cannot read: through the node's own slots (`context: false`), or through its
- * context (`context: true`).
+ * How a slot test reads one flag: the types of the kinds the slot can hold that always carry it, and the stamped ids of the
+ * kinds that carry it by their own slots, each tested with its own flag plan.
  */
-export interface SlotFlagRefusal {
-	readonly kind: number;
-	readonly context: boolean;
+export interface SlotFlagTest {
+	readonly types: readonly number[];
+	readonly kinds: readonly number[];
 }
 
-/**
- * The flags the values of each kind's slots can carry, by stamped kind id and slot accessor: the types of the kinds the slot
- * can hold that always carry the flag, or the kind that declares it in a way a slot test cannot read.
- */
-export type QuerySlotFlags = Readonly<Record<number, Readonly<Record<string, Readonly<Record<string, readonly number[] | SlotFlagRefusal>>>>>>;
+/** A flag one kind the slot can hold declares through its context, which a slot test cannot read. */
+export interface SlotFlagRefusal {
+	readonly kind: number;
+}
+
+/** The flags the values of each kind's slots can carry, by stamped kind id and slot accessor. */
+export type QuerySlotFlags = Readonly<Record<number, Readonly<Record<string, Readonly<Record<string, SlotFlagTest | SlotFlagRefusal>>>>>>;
 
 declare const CONDITION: unique symbol;
 
@@ -91,10 +93,11 @@ export interface SlotRef<F extends string = never> {
 	 */
 	match(pattern: RegExp): Cond;
 	/**
-	 * Holds when a value in the slot is of a kind that always carries the vocabulary flag `flag`, such as an enum member whose
-	 * fixed text spells it.
+	 * Holds when a value in the slot carries the vocabulary flag `flag`: it is of a kind that always carries it, such as an enum
+	 * member whose fixed text spells it, or of a kind that carries it by its own slots and its slots do (rust `move` on a
+	 * closure).
 	 *
-	 * @throws When no kind the slot can hold declares `flag`, or one declares it only through its own slots or its context.
+	 * @throws When no kind the slot can hold declares `flag`, or one declares it through its context.
 	 */
 	is(flag: F): Cond;
 }

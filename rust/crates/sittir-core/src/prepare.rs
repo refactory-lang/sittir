@@ -9,7 +9,7 @@ use crate::types::{KindId, SiteId};
 use crate::render::{CoordinateError, SourceTable};
 use crate::slot::{NodeCoordinate, SeamArm, SlotValue};
 
-/// Everything a render reads that is not the transport itself.
+/// Everything a render reads that is not the node itself.
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
@@ -18,7 +18,7 @@ pub struct RenderContext<'a> {
     pub recording: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>,
 }
 
-/// Fill a transport's unset base edges from its kind's edge row; an edge the wire already set keeps its arm.
+/// Fill a node's unset base edges from its kind's edge row; an edge the wire already set keeps its arm.
 pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
     let kind = t.kind_id();
     let (before_arm, after_arm) = t.edge_arm_kinds(ctx);
@@ -42,7 +42,7 @@ impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf for SlotValue<T, ADJACE
     fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
         match self {
             SlotValue::Coord(coord) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == *kind)),
-            SlotValue::Transport(t) => arms.iter().map(|a| a.arm).find(|kind| t.kind_in(&[*kind])),
+            SlotValue::Node(t) => arms.iter().map(|a| a.arm).find(|kind| t.kind_in(&[*kind])),
         }
     }
 }
@@ -54,16 +54,17 @@ impl<X: ArmOf> ArmOf for Option<X> {
 }
 
 /// A rebuilt list's delimiter flags with its trailing flag as the list it
-/// was rebuilt from (`TransportLayout::sides`) spells it, as a read list's
+/// was rebuilt from (`NodeLayout::sides`) spells it, as a read list's
 /// are its own: the trailing flag (2) is set iff that list's last child that
 /// is not an extra is one of its `separators` (`SourceTable::last_list_child_kind`,
 /// the list's own kind being `kind`). A list rebuilt from none, or a table
 /// that cannot answer, takes `default`, the options table's. The leading
 /// flag is always `default`'s.
-pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::TransportLayout<T>>, kind: KindId, separators: &[KindId], default: u8, ctx: &RenderContext<'_>) -> u8 {
+pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::NodeLayout<T>>, kind: KindId, separators: &[KindId], default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
     let Some(source) = layout.and_then(|layout| layout.sides.as_ref()) else { return default };
     let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
-    (default & !2) | if separators.contains(&last) { 2 } else { 0 }
+    let trailing = crate::types::Delimiter::TRAILING;
+    if separators.contains(&last) { default.with(trailing) } else { default.without(trailing) }
 }
 
 /// The item at one end of a root's render, as the root's edge reads it: a
@@ -78,7 +79,7 @@ pub enum EdgeItem<'a> {
     Rebuilt,
 }
 
-/// A child position of a root transport, read for the item at either end of
+/// A child position of a root node, read for the item at either end of
 /// the render: `None` when the position holds nothing, otherwise the item
 /// (`EdgeItem`).
 pub trait EdgeItems {
@@ -156,7 +157,7 @@ pub fn outermost<'a>(item: Option<EdgeItem<'a>>, inner: Option<EdgeItem<'a>>, si
     }
 }
 
-/// A root transport's edges read from its tree's own flanks: the bytes
+/// A root node's edges read from its tree's own flanks: the bytes
 /// before its first item and after its last, when that item is still a
 /// coordinate (framed by its sides) or its inner entries' source bytes,
 /// classified into the arm the edge site admits exactly as a
@@ -198,7 +199,7 @@ pub fn root_flanks(
             }
             EdgeItem::Rebuilt => return None,
         };
-        crate::classify::classify_whitespace(&text, allowed, table).map(|arm| EdgeArm { arm, strength: None, dedent: None })
+        crate::classify::classify_whitespace(&text, allowed, table).map(|arm| EdgeArm { arm, strength: None })
     };
     Edges {
         before: flank(first, Side::Before, allowed_before),
@@ -206,7 +207,7 @@ pub fn root_flanks(
     }
 }
 
-/// Fill a transport's unset base edges from `edges`; a side the wire already
+/// Fill a node's unset base edges from `edges`; a side the wire already
 /// set keeps its arm.
 pub fn fill_edges<T: Edged + ?Sized>(t: &mut T, edges: Edges) {
     let own = t.edges_mut();
@@ -229,7 +230,7 @@ impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
 
 /// The seated site in `table` of the node a coordinate names: its own
 /// kind's, else that of the node it holds through the wrappers it is
-/// (`SourceTable::seat_through`), as a wrapper transport seats through its
+/// (`SourceTable::seat_through`), as a wrapper node seats through its
 /// content.
 pub fn coord_seat(coord: &crate::slot::NodeCoordinate, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<SiteId> {
     let seat = |kind| seat_site(table, kind);
@@ -244,7 +245,7 @@ pub fn seat_site(table: &[Option<SiteId>], kind: KindId) -> Option<SiteId> {
 /// Give every gap between two present items of a list slot the classes its
 /// stored layout holds (`layout::SlotLayout`): the side before the
 /// separator onto the earlier item's `after` edge, the side after it onto
-/// the later item's `before` edge, at slot strength (`SEAM_SLOT`), so no
+/// the later item's `before` edge, at slot strength (`SeamStrength::Slot`), so no
 /// option replaces them and a gap's own layout entry does. An edge already
 /// set keeps its arm. An absent item renders nothing, so it neither takes a
 /// gap nor parts two.
@@ -270,7 +271,7 @@ pub fn fill_slot_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
 /// entry by the item's place (`layout::SlotLayout::tokens`). The first item
 /// has no separator before it; nothing is stored when no item has one.
 pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
-    layout: &mut Option<Box<crate::layout::TransportLayout<L>>>,
+    layout: &mut Option<Box<crate::layout::NodeLayout<L>>>,
     slot: &str,
     items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,
     kind_of: fn(KindId) -> Option<KindId>,
@@ -283,7 +284,7 @@ pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
 }
 
 fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: KindId) {
-    let seam = SeamArm { arm, strength: crate::spacing::SEAM_SLOT, dedent: false };
+    let seam = SeamArm { arm, strength: crate::spacing::SeamStrength::Slot };
     match item {
         SlotValue::Coord(coord) => {
             let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
@@ -292,7 +293,7 @@ fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACE
                 Side::After => edges.after.get_or_insert(seam),
             };
         }
-        SlotValue::Transport(t) => {
+        SlotValue::Node(t) => {
             if let Some(edges) = t.gap_edges() {
                 match side {
                     Side::Before => edges.before.get_or_insert(EdgeArm::from(seam)),
@@ -318,7 +319,7 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     let last = present.len().saturating_sub(1);
     for item in present.into_iter().take(last) {
         match item {
-            SlotValue::Transport(t) => {
+            SlotValue::Node(t) => {
                 if let Some((edges, site)) = t.seat_target(table, ctx) {
                     edges.after.get_or_insert(EdgeArm::from(ctx.options.site_arm(site)));
                 }
@@ -370,7 +371,7 @@ impl SnapshotEdge {
 pub trait Prepare {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>;
 
-    /// Where this value lies, when it is a snapshot node (`TransportLayout::span`).
+    /// Where this value lies, when it is a snapshot node (`NodeLayout::span`).
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
         None
     }
@@ -405,16 +406,16 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// refused before a byte is written rather than part way through, and
     /// the sink re-resolves at write time against the same table. A
     /// coordinate whose range holds a write is read one level into its
-    /// transport (`read_coordinate`), which renders from its template, and
+    /// node (`read_coordinate`), which renders from its template, and
     /// prepared as one. Otherwise it takes its kind's edges: its stamped
     /// kind's, or, for a display kind with no edge row of its own, its
-    /// grammar kind's, the kind its transport renders by.
+    /// grammar kind's, the kind its node renders by.
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         match self {
             SlotValue::Coord(coord) => {
                 coord.resolve(ctx.sources)?;
-                if let Some(mut transport) = read_edited::<T>(coord, ctx)? {
-                    if let (Some(seated), Some(edges)) = (coord.edges, transport.gap_edges()) {
+                if let Some(mut node) = read_edited::<T>(coord, ctx)? {
+                    if let (Some(seated), Some(edges)) = (coord.edges, node.gap_edges()) {
                         if seated.before.is_some() {
                             edges.before = seated.before.map(EdgeArm::from);
                         }
@@ -422,8 +423,8 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
                             edges.after = seated.after.map(EdgeArm::from);
                         }
                     }
-                    transport.prepare(ctx)?;
-                    *self = SlotValue::Transport(transport);
+                    node.prepare(ctx)?;
+                    *self = SlotValue::Node(node);
                     return Ok(());
                 }
                 let seated = coord.edges;
@@ -439,13 +440,13 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
                 }
                 Ok(())
             }
-            SlotValue::Transport(t) => t.prepare(ctx),
+            SlotValue::Node(t) => t.prepare(ctx),
         }
     }
 
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
         match self {
-            SlotValue::Transport(t) => t.snapshot_edge(),
+            SlotValue::Node(t) => t.snapshot_edge(),
             SlotValue::Coord(_) => None,
         }
     }
@@ -454,7 +455,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// its source's.
     fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         match self {
-            SlotValue::Transport(t) => t.source_separator(ctx),
+            SlotValue::Node(t) => t.source_separator(ctx),
             SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
             SlotValue::Coord(coord) => ctx.sources.separator_before(coord),
         }
@@ -473,7 +474,7 @@ fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> R
     let read = read.with_changed(coord.index, coord.changed());
     match T::read_coordinate(tree, &read, coord.index) {
         None => Ok(None),
-        Some(Ok(transport)) => Ok(Some(transport)),
+        Some(Ok(node)) => Ok(Some(node)),
         Some(Err(error)) => Err(CoordinateError::Unread { handle: coord.handle(), detail: format!("{error:?}") }),
     }
 }
@@ -624,8 +625,8 @@ mod tests {
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources, recording: None };
-        let layout = crate::layout::TransportLayout::<String> { sides: rebuilt.then(|| coordinate(2, 7)), ..Default::default() };
-        super::source_trailing_delimiter(Some(&layout), crate::types::KindId(1), &[COMMA], default, &ctx)
+        let layout = crate::layout::NodeLayout::<String> { sides: rebuilt.then(|| coordinate(2, 7)), ..Default::default() };
+        super::source_trailing_delimiter(Some(&layout), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
     }
 
     #[test]

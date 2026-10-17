@@ -2,7 +2,7 @@
 
 import type { PortableGuard, PortableTable, QueryFlags, QuerySlotFlags } from '@sittir/types';
 import { portableSurface } from '@sittir/common/engine';
-import { TSKindId } from './types.js';
+import { TSKindId } from './kinds.js';
 import { querySlots } from './utils.js';
 
 export interface PortableIds {
@@ -6232,879 +6232,890 @@ export const queryFlags: QueryFlags = Object.freeze({
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	176: {
 		statements: {
-			async: { kind: 208, context: false },
-			byReference: { kind: 206, context: false },
-			const: { kind: 208, context: false },
-			default: { kind: 208, context: false },
-			mutable: { kind: 223, context: false },
-			static: { kind: 208, context: true },
-			unsafe: { kind: 395, context: false }
+			async: { types: [], kinds: [208] },
+			byReference: { types: [], kinds: [206] },
+			const: { types: [], kinds: [208] },
+			default: { types: [], kinds: [208] },
+			mutable: { types: [], kinds: [206, 223] },
+			static: { kind: 208 },
+			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
 		}
 	},
-	179: { content: { move: { kind: 310, context: false } } },
-	189: { content: { byte: { kind: 147, context: false }, unsigned: [59, 61, 63, 65, 67, 70] } },
+	179: { content: { move: { types: [], kinds: [310, 311] } } },
+	189: {
+		content: {
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] }
+		}
+	},
 	195: {
 		declarations: {
-			async: { kind: 208, context: false },
-			byReference: { kind: 206, context: false },
-			const: { kind: 208, context: false },
-			default: { kind: 208, context: false },
-			mutable: { kind: 223, context: false },
-			static: { kind: 208, context: true },
-			unsafe: { kind: 395, context: false }
+			async: { types: [], kinds: [208] },
+			byReference: { types: [], kinds: [206] },
+			const: { types: [], kinds: [208] },
+			default: { types: [], kinds: [208] },
+			mutable: { types: [], kinds: [206, 223] },
+			static: { kind: 208 },
+			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
 		}
 	},
 	200: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	202: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	205: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		},
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	206: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		},
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	207: {
 		value: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	208: {
 		returnType: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	209: {
 		returnType: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
-	212: { left: { exclusive: { kind: 252, context: false }, unsigned: [59, 61, 63, 65, 67, 70], writable: [389] } },
+	212: {
+		left: {
+			exclusive: { types: [], kinds: [252] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
+		}
+	},
 	216: {
 		bounds: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	217: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	218: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	220: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		},
-		default: { byte: { kind: 147, context: false } }
+		default: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } }
 	},
 	221: {
 		default: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	223: {
-		name: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } },
+		name: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } },
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		},
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
-	232: { pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
+	232: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
 	233: {
-		name: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } },
+		name: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } },
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	237: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	238: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		},
 		alias: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	240: {
 		element: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		},
 		length: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	242: {
 		returnType: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	248: {
 		left: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		},
 		right: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	251: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	252: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
-	255: { trait: { unsafe: { kind: 242, context: false } } },
-	256: { trait: { unsafe: { kind: 242, context: false } } },
+	255: { trait: { unsafe: { types: [], kinds: [242] } } },
+	256: { trait: { unsafe: { types: [], kinds: [242] } } },
 	267: {
 		argument: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	268: {
 		argument: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	270: {
 		left: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		right: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	271: {
 		left: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		right: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	272: {
 		left: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		right: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	273: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	274: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	275: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	276: {
 		function: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	279: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	285: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	286: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	287: {
 		condition: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	288: {
-		pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } },
+		pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } },
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	289: {
 		left: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		rights: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	292: {
 		subject: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	295: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	296: {
-		pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } },
+		pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } },
 		condition: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	297: {
 		condition: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	299: {
-		left: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } },
+		left: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } },
 		right: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	302: {
 		parameters: {
-			byte: { kind: 147, context: false },
-			exclusive: { kind: 326, context: false },
-			mutable: { kind: 233, context: false }
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [], kinds: [326] },
+			mutable: { types: [], kinds: [233] }
 		}
 	},
 	304: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	306: {
 		object: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		index: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	307: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	308: {
 		object: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	313: {
 		statements: {
-			async: { kind: 208, context: false },
-			byReference: { kind: 206, context: false },
-			const: { kind: 208, context: false },
-			default: { kind: 208, context: false },
-			mutable: { kind: 223, context: false },
-			static: { kind: 208, context: true },
-			unsafe: { kind: 395, context: false }
+			async: { types: [], kinds: [208] },
+			byReference: { types: [], kinds: [206] },
+			const: { types: [], kinds: [208] },
+			default: { types: [], kinds: [208] },
+			mutable: { types: [], kinds: [206, 223] },
+			static: { kind: 208 },
+			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
 		},
 		trailingExpression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
-	322: { pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
-	324: { pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
-	325: { pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
-	326: { pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
+	322: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
+	324: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
+	325: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
+	326: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
 	351: {
 		items: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	355: {
 		items: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	357: {
 		items: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: { kind: 326, context: false },
-			move: { kind: 369, context: false },
-			static: { kind: 369, context: false }
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [], kinds: [326] },
+			move: { types: [], kinds: [369, 370] },
+			static: { types: [], kinds: [369, 370] }
 		}
 	},
-	358: { items: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
-	359: { items: { byReference: { kind: 414, context: false }, mutable: { kind: 414, context: false } } },
+	358: { items: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
+	359: { items: { byReference: { types: [], kinds: [414, 415] }, mutable: { types: [], kinds: [414, 415] } } },
 	366: {
 		element: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		length: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	368: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	369: {
 		returnType: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	370: {
 		body: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	371: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	372: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	373: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	374: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	377: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	378: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	386: {
-		left: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } },
-		right: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } }
+		left: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } },
+		right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } }
 	},
-	387: { right: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
+	387: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
 	388: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	389: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	390: {
 		start: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		},
 		end: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	391: {
 		start: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	392: {
 		end: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	394: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	397: {
 		value: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
-	398: { value: { move: { kind: 310, context: false } } },
-	415: { pattern: { byte: { kind: 147, context: false }, exclusive: { kind: 326, context: false } } },
-	419: { right: { byte: { kind: 147, context: false } } },
-	420: { right: { byte: { kind: 147, context: false } } },
-	422: { left: { byte: { kind: 147, context: false } } },
+	398: { value: { move: { types: [], kinds: [310, 311] } } },
+	415: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
+	419: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
+	420: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
+	422: { left: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
 	429: {
 		content: {
-			exclusive: { kind: 252, context: false },
-			mutable: { kind: 233, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			mutable: { types: [], kinds: [232, 233] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	431: {
 		expression: {
-			async: { kind: 369, context: false },
-			byte: { kind: 147, context: false },
-			exclusive: [373],
-			move: { kind: 369, context: false },
-			raw: [371, 372],
-			static: { kind: 369, context: false },
-			writable: [372]
+			async: { types: [], kinds: [369, 370] },
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [373], kinds: [] },
+			move: { types: [], kinds: [310, 311, 369, 370] },
+			raw: { types: [371, 372], kinds: [] },
+			static: { types: [], kinds: [369, 370] },
+			writable: { types: [372], kinds: [] }
 		}
 	},
 	432: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	433: {
 		content: {
-			byte: { kind: 147, context: false },
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
 	435: {
 		type: {
-			exclusive: { kind: 252, context: false },
-			unsafe: { kind: 242, context: false },
-			unsigned: [59, 61, 63, 65, 67, 70],
-			writable: [389]
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
 		}
 	},
-	436: { content: { mutable: { kind: 435, context: false } } }
+	436: { content: { mutable: { types: [], kinds: [231, 435] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
@@ -7198,256 +7209,403 @@ declare module './types.js' {
 	interface VariadicParameter {
 		readonly __flags__?: 'mutable';
 	}
+	interface SourceFile {
+		readonly __slotFlags__?: {
+			readonly statements: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'unsafe';
+		};
+	}
+	interface ExpressionStatement {
+		readonly __slotFlags__?: { readonly content: 'move' };
+	}
 	interface NonSpecialToken {
-		readonly __slotFlags__?: { readonly content: 'unsigned' };
+		readonly __slotFlags__?: { readonly content: 'byte' | 'unsigned' };
+	}
+	interface DeclarationList {
+		readonly __slotFlags__?: {
+			readonly declarations: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'unsafe';
+		};
 	}
 	interface EnumVariant {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface FieldDeclaration {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface ConstItem {
 		readonly __slotFlags__?: {
-			readonly type: 'unsigned' | 'writable';
-			readonly value: 'exclusive' | 'raw' | 'writable';
+			readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface StaticItem {
 		readonly __slotFlags__?: {
-			readonly type: 'unsigned' | 'writable';
-			readonly value: 'exclusive' | 'raw' | 'writable';
+			readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface TypeItem {
-		readonly __slotFlags__?: { readonly value: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly value: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface FunctionItem {
-		readonly __slotFlags__?: { readonly returnType: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly returnType: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface FunctionSignatureItem {
-		readonly __slotFlags__?: { readonly returnType: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly returnType: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface WherePredicate {
-		readonly __slotFlags__?: { readonly left: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly left: 'exclusive' | 'unsigned' | 'writable' };
 	}
 	interface TraitBounds {
-		readonly __slotFlags__?: { readonly bounds: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly bounds: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface HigherRankedTraitBound {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface RemovedTraitBound {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface ConstParameter {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+			readonly default: 'byte';
+		};
 	}
 	interface TypeParameter {
-		readonly __slotFlags__?: { readonly default: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly default: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface LetDeclaration {
 		readonly __slotFlags__?: {
-			readonly type: 'unsigned' | 'writable';
-			readonly value: 'exclusive' | 'raw' | 'writable';
+			readonly name: 'byte' | 'exclusive';
+			readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
+	interface VariadicParameter {
+		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };
+	}
 	interface Parameter {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly name: 'byte' | 'exclusive';
+			readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+		};
 	}
 	interface BracketedType {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface QualifiedType {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable'; readonly alias: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+			readonly alias: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+		};
 	}
 	interface ArrayType {
 		readonly __slotFlags__?: {
-			readonly element: 'unsigned' | 'writable';
-			readonly length: 'exclusive' | 'raw' | 'writable';
+			readonly element: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+			readonly length: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface FunctionType {
-		readonly __slotFlags__?: { readonly returnType: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly returnType: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface BoundedType {
-		readonly __slotFlags__?: { readonly left: 'unsigned' | 'writable'; readonly right: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly left: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+			readonly right: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
+		};
 	}
 	interface TypeBinding {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface ReferenceType {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
+	}
+	interface AbstractType {
+		readonly __slotFlags__?: { readonly trait: 'unsafe' };
+	}
+	interface DynamicType {
+		readonly __slotFlags__?: { readonly trait: 'unsafe' };
 	}
 	interface UnaryExpression {
-		readonly __slotFlags__?: { readonly argument: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly argument: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface TryExpression {
-		readonly __slotFlags__?: { readonly argument: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly argument: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface BinaryExpression {
 		readonly __slotFlags__?: {
-			readonly left: 'exclusive' | 'raw' | 'writable';
-			readonly right: 'exclusive' | 'raw' | 'writable';
+			readonly left: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly right: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface AssignmentExpression {
 		readonly __slotFlags__?: {
-			readonly left: 'exclusive' | 'raw' | 'writable';
-			readonly right: 'exclusive' | 'raw' | 'writable';
+			readonly left: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly right: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface CompoundAssignmentExpr {
 		readonly __slotFlags__?: {
-			readonly left: 'exclusive' | 'raw' | 'writable';
-			readonly right: 'exclusive' | 'raw' | 'writable';
+			readonly left: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly right: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface TypeCastExpression {
 		readonly __slotFlags__?: {
-			readonly expression: 'exclusive' | 'raw' | 'writable';
-			readonly type: 'unsigned' | 'writable';
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable';
 		};
 	}
 	interface ReturnExpression {
-		readonly __slotFlags__?: { readonly expression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface YieldExpression {
-		readonly __slotFlags__?: { readonly expression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface CallExpression {
-		readonly __slotFlags__?: { readonly function: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly function: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface ParenthesizedExpression {
-		readonly __slotFlags__?: { readonly expression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface FieldInitializer {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface BaseFieldInitializer {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface IfExpression {
-		readonly __slotFlags__?: { readonly condition: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly condition: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface LetCondition {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly pattern: 'byte' | 'exclusive';
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface LetChain {
 		readonly __slotFlags__?: {
-			readonly left: 'exclusive' | 'raw' | 'writable';
-			readonly rights: 'exclusive' | 'raw' | 'writable';
+			readonly left: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly rights: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface MatchExpression {
-		readonly __slotFlags__?: { readonly subject: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly subject: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface LastMatchArm {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface MatchPattern {
-		readonly __slotFlags__?: { readonly condition: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly pattern: 'byte' | 'exclusive';
+			readonly condition: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface WhileExpression {
-		readonly __slotFlags__?: { readonly condition: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly condition: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface ForExpression {
-		readonly __slotFlags__?: { readonly right: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly left: 'byte' | 'exclusive';
+			readonly right: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
+	}
+	interface ClosureParameters {
+		readonly __slotFlags__?: { readonly parameters: 'byte' | 'exclusive' | 'mutable' };
 	}
 	interface BreakExpression {
-		readonly __slotFlags__?: { readonly expression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface IndexExpression {
 		readonly __slotFlags__?: {
-			readonly object: 'exclusive' | 'raw' | 'writable';
-			readonly index: 'exclusive' | 'raw' | 'writable';
+			readonly object: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly index: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface AwaitExpression {
-		readonly __slotFlags__?: { readonly expression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface FieldExpression {
-		readonly __slotFlags__?: { readonly object: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly object: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface Block {
-		readonly __slotFlags__?: { readonly trailingExpression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly statements: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'unsafe';
+			readonly trailingExpression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
+	}
+	interface MutPattern {
+		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };
+	}
+	interface RefPattern {
+		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };
+	}
+	interface CapturedPattern {
+		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };
+	}
+	interface ReferencePattern {
+		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };
 	}
 	interface Types {
-		readonly __slotFlags__?: { readonly items: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly items: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface Expressions {
-		readonly __slotFlags__?: { readonly items: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly items: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
+	}
+	interface TuplePatternElements {
+		readonly __slotFlags__?: { readonly items: 'async' | 'byte' | 'exclusive' | 'move' | 'static' };
+	}
+	interface Patterns {
+		readonly __slotFlags__?: { readonly items: 'byte' | 'exclusive' };
+	}
+	interface StructPatternElements {
+		readonly __slotFlags__?: { readonly items: 'byReference' | 'mutable' };
 	}
 	interface ArrayExpressionSemi {
 		readonly __slotFlags__?: {
-			readonly element: 'exclusive' | 'raw' | 'writable';
-			readonly length: 'exclusive' | 'raw' | 'writable';
+			readonly element: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly length: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface AttributeInput {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface ClosureExpressionBlock {
-		readonly __slotFlags__?: { readonly returnType: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly returnType: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface ClosureExpressionExpr {
-		readonly __slotFlags__?: { readonly body: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: { readonly body: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable' };
 	}
 	interface ReferenceExpressionRawConst {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface ReferenceExpressionRawMut {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface ReferenceExpressionMut {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface ReferenceExpressionBare {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface ImplItemBody {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface ImplItemSemi {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
+	}
+	interface OrPatternBinary {
+		readonly __slotFlags__?: { readonly left: 'byte' | 'exclusive'; readonly right: 'byte' | 'exclusive' };
+	}
+	interface OrPatternPrefix {
+		readonly __slotFlags__?: { readonly right: 'byte' | 'exclusive' };
 	}
 	interface PointerTypeConst {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface PointerTypeMut {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface RangeExpressionBinary {
 		readonly __slotFlags__?: {
-			readonly start: 'exclusive' | 'raw' | 'writable';
-			readonly end: 'exclusive' | 'raw' | 'writable';
+			readonly start: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly end: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface RangeExpressionPostfix {
-		readonly __slotFlags__?: { readonly start: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly start: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface RangeExpressionPrefix {
-		readonly __slotFlags__?: { readonly end: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: { readonly end: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable' };
 	}
 	interface ExpressionStatementWithSemi {
-		readonly __slotFlags__?: { readonly expression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface MatchArmWithComma {
-		readonly __slotFlags__?: { readonly value: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
+	}
+	interface MatchArmBlockEnding {
+		readonly __slotFlags__?: { readonly value: 'move' };
+	}
+	interface FieldPatternNamed {
+		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };
+	}
+	interface RangePatternPrefix {
+		readonly __slotFlags__?: { readonly right: 'byte' };
+	}
+	interface RangePatternWithLeftWithRight {
+		readonly __slotFlags__?: { readonly right: 'byte' };
+	}
+	interface RangePatternWithLeft {
+		readonly __slotFlags__?: { readonly left: 'byte' };
 	}
 	interface AttributedParameter {
-		readonly __slotFlags__?: { readonly content: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly content: 'exclusive' | 'mutable' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface AttributedArgument {
-		readonly __slotFlags__?: { readonly expression: 'exclusive' | 'raw' | 'writable' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+		};
 	}
 	interface AttributedOrderedField {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface TypeArgument {
-		readonly __slotFlags__?: { readonly content: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly content: 'byte' | 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface ReceiverParameterDeclaration {
-		readonly __slotFlags__?: { readonly type: 'unsigned' | 'writable' };
+		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
+	}
+	interface AttributedParameterReceiver {
+		readonly __slotFlags__?: { readonly content: 'mutable' };
 	}
 }

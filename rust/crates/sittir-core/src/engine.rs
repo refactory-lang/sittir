@@ -20,7 +20,7 @@ use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
 use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
-use crate::types::{KindId, NodeIndex, RunId, TreeId};
+use crate::types::{ChildPosition, KindId, NodeIndex, RunId, TreeHandle, TreeId};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -30,8 +30,8 @@ pub trait EngineGrammar: Copy {
     fn render_module_hash(self) -> &'static str;
     /// The name of a kind of this grammar, for messages that name one.
     fn kind_name(self, kind: KindId) -> &'static str;
-    /// The display ids this grammar claims a node by (`ReadTransport::shows`
-    /// of its transports), which a coordinate stamps in place of the grammar id.
+    /// The display ids this grammar claims a node by (`ReadNode::shows`
+    /// of its nodes), which a coordinate stamps in place of the grammar id.
     fn shows(self) -> fn(KindId) -> bool;
     /// Whether a node with a grammar id and a display id is a keyword the
     /// grammar relaxes into its word rule (`ReadCtx::relaxes`). A grammar that
@@ -51,7 +51,7 @@ pub trait EngineGrammar: Copy {
     fn option_tables(self) -> &'static crate::options::OptionTables;
     /// The sides of the unit children of the node at `index` of `tree`, by
     /// slot and item: the node read one level down by `ctx`
-    /// (`TransportLayout::units`). None for a grammar with no transports.
+    /// (`NodeLayout::units`). None for a grammar with no nodes.
     fn read_units(self, tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Vec<crate::layout::UnitSides<Self::Trivia>> {
         let _ = (tree, ctx, index);
         Vec::new()
@@ -60,21 +60,21 @@ pub trait EngineGrammar: Copy {
     /// `depth` levels down, from its templates under `render`
     /// (`ParsedTree::recorded`), and answers the text. Refuses a read the
     /// model has no route for, naming it, and a render that fails. A grammar
-    /// with no transports renders nothing.
+    /// with no nodes renders nothing.
     fn render_read(self, tree: &tree_sitter::Tree, index: crate::types::NodeIndex, depth: crate::read::Depth, ctx: &crate::read::ReadCtx<'_>, render: &crate::prepare::RenderContext<'_>) -> Result<String, String> {
         let _ = (tree, index, depth, ctx, render);
         Ok(String::new())
     }
     /// The children of the node at `index` of `tree` as its read routes
-    /// them (`ReadTransport::routes`); none for a node read without routes,
-    /// or a grammar with no transports.
+    /// them (`ReadNode::routes`); none for a node read without routes,
+    /// or a grammar with no nodes.
     fn slot_routes(self, tree: &tree_sitter::Tree, index: crate::types::NodeIndex) -> Option<crate::read::Routed> {
         let _ = (tree, index);
         None
     }
     /// How a node with these ids finds its slots, as its read does
-    /// (`ReadTransport::router`); none for a node read without slots, or a
-    /// grammar with no transports.
+    /// (`ReadNode::router`); none for a node read without slots, or a
+    /// grammar with no nodes.
     fn router(self, grammar: KindId, display: KindId) -> Option<crate::read::Router> {
         let _ = (grammar, display);
         None
@@ -129,8 +129,8 @@ pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, index: NodeIndex, 
 
 /// The descendant index of child `position` of the node at `index`: its own
 /// index, one for the node, and every earlier child's descendant count.
-pub fn child_index_of(node: tree_sitter::Node<'_>, index: NodeIndex, position: u32) -> NodeIndex {
-    (0..position).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| child.descendant_count() as u32))
+pub fn child_index_of(node: tree_sitter::Node<'_>, index: NodeIndex, position: ChildPosition) -> NodeIndex {
+    (0..position.get()).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| child.descendant_count() as u32))
 }
 
 /// The siblings beside a node in its own slot, taken at the outermost node
@@ -487,12 +487,13 @@ pub fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeId, f64)> {
 }
 
 /// Pack a tree id and a node index into one self-identifying handle.
-pub fn encode_handle(tree_id: TreeId, index: NodeIndex) -> u64 {
-    (u64::from(tree_id.get()) << HANDLE_INDEX_BITS) | u64::from(index.get())
+pub fn encode_handle(tree_id: TreeId, index: NodeIndex) -> TreeHandle {
+    TreeHandle((u64::from(tree_id.get()) << HANDLE_INDEX_BITS) | u64::from(index.get()))
 }
 
 /// Split a handle back into the tree that minted it and the index within it.
-pub fn decode_handle(handle: u64) -> (TreeId, NodeIndex) {
+pub fn decode_handle(handle: TreeHandle) -> (TreeId, NodeIndex) {
+    let handle = handle.get();
     (
         TreeId((handle >> HANDLE_INDEX_BITS) as u32),
         NodeIndex((handle & HANDLE_INDEX_MASK) as u32),
@@ -512,7 +513,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The node at `index` read into `T`, `depth` levels down, seating no
     /// sides; index 0 is the root.
-    pub fn read<T: crate::read::ReadTransport>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
+    pub fn read<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
         crate::read::read_at::<T>(&mut self.tree.walk(), &self.read_ctx(), index, depth)
     }
 
@@ -568,10 +569,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// A snapshot of the node at `index`, read at every depth: each node with
-    /// its span from the transport that holds it, each extra and `ERROR` of
+    /// its span from the node that holds it, each extra and `ERROR` of
     /// its sides with its text, and the node itself measured from the byte
     /// `holder`, or from its own start when absent.
-    pub fn snapshot<T: crate::read::ReadTransport>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
+    pub fn snapshot<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
         let measure = self.snapshot_measure(index, holder);
         crate::read::read_at::<T>(&mut self.tree.walk(), &self.seating_ctx().snapshot(&measure), index, crate::read::Depth::All)
     }
@@ -582,7 +583,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// out-of-tree handle lands in range and resolves to whatever node happens
     /// to sit at that index — an unrelated node returned as though it were the
     /// one asked for. The tag turns that into a refusal.
-    fn local_index(&self, handle: u64) -> Result<NodeIndex, String> {
+    fn local_index(&self, handle: TreeHandle) -> Result<NodeIndex, String> {
         let (tree_id, index) = decode_handle(handle);
         if tree_id != self.tree_id {
             return Err(format!(
@@ -594,7 +595,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Whether this tree minted `handle`.
-    pub fn owns_handle(&self, handle: u64) -> bool {
+    pub fn owns_handle(&self, handle: TreeHandle) -> bool {
         decode_handle(handle).0 == self.tree_id
     }
 
@@ -603,7 +604,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn node_at(&self, address: Address) -> Result<Option<tree_sitter::Node<'_>>, String> {
         Ok(match address {
             Address::Own { handle } => node_at_index(&self.tree, self.local_index(handle)?),
-            Address::Child { parent, index } => node_at_index(&self.tree, self.local_index(parent)?).and_then(|node| node.child(index)),
+            Address::Child { parent, index } => node_at_index(&self.tree, self.local_index(parent)?).and_then(|node| node.child(index.get())),
         })
     }
 
@@ -627,7 +628,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The descendant index of the node `address` names.
     fn index_of(&self, address: Address) -> Result<NodeIndex, String> {
         let missing = || format!("{address:?} names no node of tree {}", self.tree_id);
-        let resolve = |handle: u64| {
+        let resolve = |handle: TreeHandle| {
             let at = self.local_index(handle)?;
             node_at_index(&self.tree, at).map(|node| (at, node)).ok_or_else(missing)
         };
@@ -635,7 +636,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             Address::Own { handle } => Ok(resolve(handle)?.0),
             Address::Child { parent, index } => {
                 let (parent_index, parent_node) = resolve(parent)?;
-                parent_node.child(index).ok_or_else(missing)?;
+                parent_node.child(index.get()).ok_or_else(missing)?;
                 Ok(child_index_of(parent_node, parent_index, index))
             }
         }
@@ -656,7 +657,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         from: Address,
         kinds: &[KindId],
         plan: Option<&Plan>,
-        resume: Option<&[u32]>,
+        resume: Option<&[ChildPosition]>,
         limit: u32,
         depth: Option<u32>,
     ) -> Result<DescendantBatch, String> {
@@ -668,7 +669,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         // indexes[k]: the descendant index of the node at depth k below
         // `start`. path[k - 1]: that node's child index within its parent.
         let mut indexes: Vec<NodeIndex> = vec![index];
-        let mut path: Vec<u32> = Vec::new();
+        let mut path: Vec<ChildPosition> = Vec::new();
         let mut coordinates = Vec::new();
         let ctx = self.read_ctx();
         let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node);
@@ -682,7 +683,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 if !cursor.goto_first_child() {
                     return Err("resume path leaves the tree".to_string());
                 }
-                for _ in 0..child {
+                for _ in 0..child.get() {
                     if !cursor.goto_next_sibling() {
                         return Err("resume path leaves the tree".to_string());
                     }
@@ -715,10 +716,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// most `depth` levels down and never into an extra, keeping `indexes`
     /// and `path` in step; `false` once the walk is done. The cursor numbers
     /// from the start, whose own index is `start`.
-    fn advance(cursor: &mut tree_sitter::TreeCursor<'_>, start: NodeIndex, indexes: &mut Vec<NodeIndex>, path: &mut Vec<u32>, depth: usize) -> bool {
+    fn advance(cursor: &mut tree_sitter::TreeCursor<'_>, start: NodeIndex, indexes: &mut Vec<NodeIndex>, path: &mut Vec<ChildPosition>, depth: usize) -> bool {
         if indexes.len() <= depth && !cursor.node().is_extra() && cursor.goto_first_child() {
             indexes.push(start + crate::read::offset_of(cursor));
-            path.push(0);
+            path.push(ChildPosition(0));
             return true;
         }
         loop {
@@ -727,7 +728,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             }
             if cursor.goto_next_sibling() {
                 if let Some(last) = path.last_mut() {
-                    *last += 1;
+                    *last = ChildPosition(last.get() + 1);
                 }
                 *indexes.last_mut().expect("an index below the start") = start + crate::read::offset_of(cursor);
                 return true;
@@ -1156,7 +1157,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     fn depth_member(delta: i32) -> Option<SideEntry<G::Trivia>> {
-        <G::Trivia as crate::trivia::TriviaSeam>::depth_member(delta).map(|member| SideEntry::Layout(TriviaEntry::new(SlotValue::Transport(member))))
+        <G::Trivia as crate::trivia::TriviaSeam>::depth_member(delta).map(|member| SideEntry::Layout(TriviaEntry::new(SlotValue::Node(member))))
     }
 
     /// The entries the assignment gives `side` of the node at `index`, and
@@ -1192,20 +1193,20 @@ impl<G: EngineGrammar> ParsedTree<G> {
                             let kind = crate::read::grammar_id(&node);
                             let adjacent = Some(error_adjacency(&node, &self.source));
                             let text = TriviaText::of_source(kind, &self.source, span, adjacent, None);
-                            SideEntry::Source { entry: entry(SlotValue::Transport(G::Trivia::from_text(text))), kind, span, adjacent }
+                            SideEntry::Source { entry: entry(SlotValue::Node(G::Trivia::from_text(text))), kind, span, adjacent }
                         })
                         .into_iter()
                         .collect(),
                     Assigned::Layout { run, depth: count, .. } => {
                         let deviation = self.deviation(run);
-                        deviation.map(|member| SideEntry::Layout(entry(SlotValue::Transport(member)))).into_iter().chain(depth(count)).collect()
+                        deviation.map(|member| SideEntry::Layout(entry(SlotValue::Node(member)))).into_iter().chain(depth(count)).collect()
                     }
                     Assigned::Member(at) => node_at_index(&self.tree, at)
                         .and_then(|node| {
                             let span = Span::of(&node);
                             let kind = crate::read::grammar_id(&node);
                             let adjacent = Some(error_adjacency(&node, &self.source));
-                            let member = entry(SlotValue::Transport(G::Trivia::from_layout(TriviaText::of_source(kind, &self.source, span, adjacent, None))?));
+                            let member = entry(SlotValue::Node(G::Trivia::from_layout(TriviaText::of_source(kind, &self.source, span, adjacent, None))?));
                             Some(if member.is_layout() { SideEntry::Layout(member) } else { SideEntry::Source { entry: member, kind, span, adjacent } })
                         })
                         .into_iter()
@@ -1295,7 +1296,7 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
             let entries: Vec<_> = self.entries(coord.index, side).into_iter().map(SideEntry::into_entry).collect();
             (!entries.is_empty()).then_some(entries)
         };
-        let trivia = crate::trivia::TransportTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
+        let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
     }
 
@@ -1528,7 +1529,7 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
             let entries: Vec<_> = tree.side_entries(coord.index, side, coord.changed().on(side)).into_iter().map(SideEntry::into_entry).collect();
             (!entries.is_empty()).then_some(entries)
         };
-        let trivia = crate::trivia::TransportTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
+        let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
     }
 
@@ -1776,7 +1777,7 @@ mod tests {
     static TEST_TABLES: crate::options::OptionTables = crate::options::OptionTables {
         addresses: &[],
         allowed: |_| &[],
-        delimiter_allowed: |_| 0,
+        delimiter_allowed: |_| crate::types::Delimiter::NONE,
         depth_sites: &[],
         indent: KindId(0),
         dedent: KindId(0),
@@ -1790,6 +1791,9 @@ mod tests {
         Text(TriviaText),
         Newline,
     }
+
+    #[cfg(feature = "napi-bindings")]
+    crate::trivia::refuse_napi_decode!(TestTrivia);
 
     impl FromTriviaText for TestTrivia {
         fn from_text(text: TriviaText) -> Self {
@@ -1863,7 +1867,7 @@ mod tests {
         crate::read::kind_named(&language, name, true)
     }
 
-    fn parsed(source: &str) -> (ParsedTree<TestGrammar>, u64) {
+    fn parsed(source: &str) -> (ParsedTree<TestGrammar>, TreeHandle) {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
         let tree = engine.parse(source.to_string(), crate::types::TreeId(1)).expect("parse");
         (tree, encode_handle(crate::types::TreeId(1), crate::types::NodeIndex(0)))
@@ -1890,9 +1894,9 @@ mod tests {
             .collect()
     }
 
-    fn walk(tree: &ParsedTree<TestGrammar>, root: u64, kinds: &[KindId], plan: Option<&Plan>, limit: u32) -> Vec<QueryCoordinate> {
+    fn walk(tree: &ParsedTree<TestGrammar>, root: TreeHandle, kinds: &[KindId], plan: Option<&Plan>, limit: u32) -> Vec<QueryCoordinate> {
         let mut found = Vec::new();
-        let mut resume: Option<Vec<u32>> = None;
+        let mut resume: Option<Vec<ChildPosition>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, kinds, plan, resume.as_deref(), limit, None).expect("walk");
             assert!(batch.coordinates.len() as u32 <= limit);
@@ -2046,7 +2050,7 @@ mod tests {
         let children = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, None, u32::MAX, Some(1)).expect("walk");
         assert_eq!(texts(&tree, &children.coordinates), ["fn a() {}", "mod m { fn b() -> u8 { 0 } fn _c() {} }", "fn _d() { fn e() {} }"]);
         let mut resumed = Vec::new();
-        let mut resume: Option<Vec<u32>> = None;
+        let mut resume: Option<Vec<ChildPosition>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, resume.as_deref(), 1, Some(1)).expect("walk");
             resumed.extend(batch.coordinates);
@@ -2090,7 +2094,7 @@ mod tests {
         let leading = tree.trivia_side(f, TriviaSide::Leading);
         let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
         assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (TreeId(1), comment, 0, 4));
-        let newline = TriviaEntry::new(SlotValue::Transport(TestTrivia::Newline));
+        let newline = TriviaEntry::new(SlotValue::Node(TestTrivia::Newline));
         assert_eq!(leading[1..], *std::slice::from_ref(&newline));
         assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), []);
     }
@@ -2132,7 +2136,7 @@ mod tests {
             .flatten()
             .collect::<Vec<_>>();
         let text = TriviaText { kind: KindId(u16::MAX), text: "@@".to_owned(), span: None, before: Some(" ".to_owned()), after: Some(" ".to_owned()) };
-        assert!(sides.contains(&TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(text)))), "{sides:?}");
+        assert!(sides.contains(&TriviaEntry::new(SlotValue::Node(TestTrivia::Text(text)))), "{sides:?}");
     }
 
     #[test]
@@ -2141,7 +2145,7 @@ mod tests {
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
         let a = index_of_kind(&tree, "expression_statement", 0);
-        let written = vec![TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None, before: None, after: None })))];
+        let written = vec![TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None, before: None, after: None })))];
         tree.write_trivia_side(a, TriviaSide::Leading, written.clone());
         assert_eq!(tree.trivia_side(a, TriviaSide::Leading), written);
         assert!(tree.edited_within(NodeIndex::ROOT, false));
@@ -2176,7 +2180,7 @@ mod tests {
         let trailing = tree.trivia_side(f.index, TriviaSide::Trailing);
         let sources = table(tree);
         let sides = sources.sides(&f).expect("the function has sides");
-        let sides = sides.as_any().downcast_ref::<crate::trivia::TransportTrivia<TestTrivia>>().expect("the grammar's trivia");
+        let sides = sides.as_any().downcast_ref::<crate::trivia::NodeTrivia<TestTrivia>>().expect("the grammar's trivia");
         assert_eq!((sides.leading.as_deref(), sides.trailing.as_deref(), sides.inner.as_deref()), (Some(&leading[..]), Some(&trailing[..]), None));
     }
 

@@ -1,4 +1,4 @@
-// A node its transport stores as a unit variant or an enum member owns no
+// A node its native node stores as a unit variant or an enum member owns no
 // trivia, so an extra beside it goes to the next owner by the placement rule
 // and survives a render from the read's data.
 import { describe, expect, it } from 'vitest';

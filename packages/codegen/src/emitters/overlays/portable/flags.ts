@@ -1,4 +1,4 @@
-import type { PortableCondition, QueryPlan, QuerySubject, SlotFlagRefusal, SlotSubject } from '@sittir/types';
+import type { PortableCondition, QueryPlan, QuerySubject, SlotFlagRefusal, SlotFlagTest, SlotSubject } from '@sittir/types';
 import type { MemberRoute, SlotStep } from '../../../bindings/routes.ts';
 import type { AssembledNode, AssembledNonterminal } from '../../../compiler/model/node-map.ts';
 import { keywordTestOf, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
@@ -89,7 +89,7 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 	return plans;
 }
 
-export type SlotFlag = readonly number[] | SlotFlagRefusal;
+export type SlotFlag = SlotFlagTest | SlotFlagRefusal;
 
 export interface SlotFlagsInput {
 	readonly nodes: Iterable<AssembledNode>;
@@ -112,20 +112,24 @@ export function slotFlagsOf({ nodes, kindsOf, plans, typeOf, typesOf }: SlotFlag
 		if (node.kindId === undefined || node.slots.length === 0) continue;
 		const slots = new Map<string, Map<string, SlotFlag>>();
 		for (const slot of node.slots) {
-			const flags = new Map<string, SlotFlag>();
+			const flags = new Map<string, SlotFlagRefusal | { readonly types: Set<number>; readonly kinds: Set<number> }>();
 			for (const kind of kindsOf(slot)) {
 				for (const [flag, plan] of plans.get(kind) ?? []) {
-					const held = flags.get(flag);
-					if (held !== undefined && !Array.isArray(held)) continue;
-					if (plan === null || !isAlways(plan)) {
-						const id = typeOf(kind);
-						if (id !== undefined) flags.set(flag, { kind: id, context: plan === null });
+					const held = flags.get(flag) ?? { types: new Set<number>(), kinds: new Set<number>() };
+					if ('kind' in held) continue;
+					const id = typeOf(kind);
+					if (plan === null) {
+						if (id !== undefined) flags.set(flag, { kind: id });
 						continue;
 					}
-					flags.set(flag, [...new Set([...((held as readonly number[] | undefined) ?? []), ...typesOf(kind)])].sort((a, b) => a - b));
+					if (isAlways(plan)) for (const type of typesOf(kind)) held.types.add(type);
+					else if (id !== undefined) held.kinds.add(id);
+					flags.set(flag, held);
 				}
 			}
-			if (flags.size > 0) slots.set(slot.propertyName, new Map([...flags].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))));
+			const sorted = (ids: Set<number>): readonly number[] => [...ids].sort((a, b) => a - b);
+			const tests = [...flags].map(([flag, held]): [string, SlotFlag] => [flag, 'kind' in held ? held : { types: sorted(held.types), kinds: sorted(held.kinds) }]);
+			if (tests.length > 0) slots.set(slot.propertyName, new Map(tests.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))));
 		}
 		if (slots.size === 0) continue;
 		const claimed = rows.get(node.kindId);

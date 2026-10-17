@@ -6,10 +6,10 @@ const kinds = [
 	{ kind: 'a_keyword', id: 11 },
 	{ kind: 'b_keyword', id: 12 }
 ];
-const VARIANT = 'MemberPropertyTransportSlot.PropertyName';
+const VARIANT = 'MemberPropertyNodeSlot.PropertyName';
 const pins: Readonly<Record<string, EnvelopePin>> = { [VARIANT]: { display: 'property_name', extras: ['a_keyword', 'b_keyword'] } };
 const claims = (display: number, extras: number[]): ReadonlyMap<string, EnvelopeClaims> => new Map([[VARIANT, { display, extras }]]);
-const printed = new Set(['MemberPropertyTransportSlot']);
+const printed = new Set(['MemberPropertyNodeSlot']);
 const check = (given: Readonly<Record<string, EnvelopePin>> | undefined, actual = claims(10, [11, 12]), enums = printed, entries = kinds) =>
 	assertEnvelopeExtrasPinned('typescript', given, actual, enums, entries);
 

@@ -24,8 +24,6 @@ function fakeLanguage(name = 'fake') {
 				})
 			}
 		},
-		is: {},
-		kinds: { Leaf: 1 },
 		trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {} },
 		createNative: (opts?: { options?: FakeRenderOptions }) => {
 			created.push(opts?.options);
@@ -49,6 +47,8 @@ function fakeLanguage(name = 'fake') {
 	return {
 		language: {
 			name,
+			is: {},
+			kinds: { Leaf: 1 },
 			load: async () => {
 				loads++;
 				return hooks;
@@ -89,7 +89,7 @@ describe('createEngine', () => {
 		expect(attempts).toBe(2);
 	});
 
-	it('exposes the language, guards and kinds from the hooks', async () => {
+	it('exposes the language, and the guards and kinds of the language', async () => {
 		const e = await engineOf();
 		expect(e.language.name).toBe('fake');
 		expect(e.renderModuleHash).toBe('hash');
@@ -136,6 +136,19 @@ describe('createEngine', () => {
 		const e = await engineOf(undefined, f);
 		expect(f.natives.map((n) => n.disposed)).toEqual([false]);
 		e.dispose();
+		expect(f.natives.map((n) => n.disposed)).toEqual([true]);
+	});
+
+	it.each([false, true])('disposes its native engine when a using scope exits (throws: %s)', async (throws) => {
+		const f = fakeLanguage();
+		const leaveScope = async () => {
+			using engine = await engineOf(undefined, f);
+			expect(engine.build.leaf('inside').text).toBe('inside');
+			expect(f.natives.map((n) => n.disposed)).toEqual([false]);
+			if (throws) throw new Error('scope error');
+		};
+		if (throws) await expect(leaveScope()).rejects.toThrow('scope error');
+		else await leaveScope();
 		expect(f.natives.map((n) => n.disposed)).toEqual([true]);
 	});
 

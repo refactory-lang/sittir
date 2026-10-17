@@ -4,7 +4,7 @@
 
 **Goal:** Per-node spacing on the Rust side shrinks to base edges plus the list facts a node really carries, every other site is read from the resolved vector, and the TypeScript `Options` type is derived from the node interfaces plus one template type per kind.
 
-**Architecture:** The render sink owns the resolved options, so a site with no per-node carrier is written as `w.site(SITE)` and a stamped one as `w.site_with(arm, strength)`; that removes the adapter the per-node fields existed for. Every transport gets two base fields, `before` and `after`, filled by the same `edge_arms` lookup coordinates already use; seated element gaps fill the element's own `after` through a generated per-slot table from kind id to site, replacing the per-list match blocks. `options.rs` keeps its site tables and resolves a nested options object by walking a static address trie, so the per-address structs go. `options.ts` becomes one template type per kind and a generic `Options` in `packages/types`.
+**Architecture:** The render sink owns the resolved options, so a site with no per-node carrier is written as `w.site(SITE)` and a stamped one as `w.site_with(arm, strength)`; that removes the adapter the per-node fields existed for. Every native node gets two base fields, `before` and `after`, filled by the same `edge_arms` lookup coordinates already use; seated element gaps fill the element's own `after` through a generated per-slot table from kind id to site, replacing the per-list match blocks. `options.rs` keeps its site tables and resolves a nested options object by walking a static address trie, so the per-address structs go. `options.ts` becomes one template type per kind and a generic `Options` in `packages/types`.
 
 **Tech Stack:** Rust (sittir-core, generated render crates, napi-rs), TypeScript codegen emitters (`render-module.ts`, `render-body.ts`, `render-options-rs.ts`, `options.ts`), vitest, cargo.
 
@@ -12,10 +12,10 @@
 
 ## Global Constraints
 
-- Kind edges are two fields in every transport's shared base (spec: "Kind edges live in the transport base").
+- Kind edges are two fields in every node's shared base (spec: "Kind edges live in the node base").
 - A seated sibling gap fills the preceding element's own base `after`; the element carrier gains nothing; seat resolution is a generated per-slot table from element kind id to site index, not a match over element kinds (spec: "A sibling gap is the preceding element's own `after` edge").
 - A token seam and a list flank have no per-node carrier; render reads the resolved vector at the site (spec: "A token seam has no per-node carrier"). Flank *addresses* stay in this plan; retiring them as addresses is the spec's "What this retires" table and is not done here.
-- The list transport keeps its two separator gap fields and its `separator_kind` and `delimiter` fields: the classifier stamps them and they are list facts.
+- The list node keeps its two separator gap fields and its `separator_kind` and `delimiter` fields: the classifier stamps them and they are list facts.
 - `options.rs` reads through the dense vector; the per-address `Option<u16>` structs go (spec: "Reading").
 - `Options` in TypeScript is derived from the node interfaces plus a per-kind template type; no `AddressRoot`/`AddressBranch`/`AddressLeaf` tables (spec: "The TypeScript `Options` type is derived, not tabulated").
 - Every regenerated grammar renders byte-identical: the dogfood render-bytes fixtures, `validate:native` rows and the corpus round-trip are the gate for each Rust task; a diff is a stop-and-report, never a re-pin.
@@ -34,7 +34,7 @@
 | `rust/crates/sittir-core/src/render.rs` (modify) | `RenderSink::site(site)`; the writer holds `&ResolvedOptions`. |
 | `rust/crates/sittir-core/src/spacing.rs` (modify) | `SpacingWriter` takes the options and implements `site`. |
 | `rust/crates/sittir-core/src/prepare.rs` (modify) | `Prepare` for the base edges through `edge_arms`. |
-| `packages/codegen/src/emitters/render-module.ts` (modify) | Base fields on every transport, `Edged` impls, edge and seat fills, no seam fields, no `Seamed` wrapper. |
+| `packages/codegen/src/emitters/render-module.ts` (modify) | Base fields on every node, `Edged` impls, edge and seat fills, no seam fields, no `Seamed` wrapper. |
 | `packages/codegen/src/emitters/render-body.ts` (modify) | Seams print as `w.site(SITE)`; edges as `w.edge(...)`. |
 | `packages/codegen/src/emitters/render-options-rs.ts` (modify) | `SITE_SPECS`, `SEATS_*` tables, the address trie and the generic resolver; no per-address structs. |
 | `packages/codegen/src/emitters/options.ts` (modify) | Emits `Tok`/`Repeat`/`Sep` template types per kind and the `Options` alias over the generic. |
@@ -43,7 +43,7 @@
 
 ---
 
-### Task 1: The sink owns the options; every transport has edges
+### Task 1: The sink owns the options; every node has edges
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/options.rs` (`ResolvedOptions` at the `pub struct` block; `edge_arms`)
@@ -62,7 +62,7 @@
   // ResolvedOptions gains:
   pub sites: &'static [SiteSpec],
   pub fn site_arm(&self, site: usize) -> SeamArm   // arm = spacing[site]; strength = if arm == default { spec.strength } else { SEAM_DECLARED }
-  /// The two edges every transport carries in its base, arms only; strength comes from the edge row at write time.
+  /// The two edges every node carries in its base, arms only; strength comes from the edge row at write time.
   #[derive(Debug, Clone, Copy, Default)]
   pub struct Edges { pub before: Option<u16>, pub after: Option<u16> }
   pub trait Edged { fn kind_id(&self) -> KindId; fn edges(&self) -> &Edges; fn edges_mut(&mut self) -> &mut Edges; }
@@ -101,7 +101,7 @@ fn a_sink_writes_a_site_from_the_options_it_holds() {
 }
 
 #[test]
-fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
+fn an_edged_node_prepares_its_edges_from_the_edge_row() {
     struct Leaf { edges: Edges }
     impl Edged for Leaf { /* kind_id = KindId(3); edges / edges_mut return the field */ }
     let opts = ResolvedOptions { spacing: vec![5, 6], edges: &[EdgeSite { kind: 3, before: EdgeSlot { site: 0, default_arm: 5, strength: 2 }, after: EdgeSlot { site: 1, default_arm: 6, strength: 2 } }], sites: &[/* two specs */], ..Default::default() };
@@ -199,12 +199,12 @@ Expected: PASS. The generated crates do not compile yet (no `sites` field in the
 - [x] **Step 5: Commit**
 
 ```bash
-git commit -m "feat(core): the sink owns the resolved options; transports carry base edges filled from the edge rows" -- rust/crates/sittir-core
+git commit -m "feat(core): the sink owns the resolved options; nodes carry base edges filled from the edge rows" -- rust/crates/sittir-core
 ```
 
 ---
 
-### Task 2: Every transport carries base edges; kind-edge fields go
+### Task 2: Every node carries base edges; kind-edge fields go
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/render-module.ts` (`TRANSPORT_METADATA_FIELDS`; `prepareStructImpl` at lines 2848–2875; the struct field emission near lines 2975–3005; the `KindOf` impl emission)
@@ -214,18 +214,18 @@ git commit -m "feat(core): the sink owns the resolved options; transports carry 
 
 **Interfaces:**
 - Consumes: Task 1's `Edges`, `Edged`, `prepare_edges`, `RenderSink::edge`, `Side`, `SiteSpec`.
-- Produces: every transport struct has `pub edges: ::sittir_core::options::Edges` with napi names `$_before`/`$_after` through a manual `FromNapiValue`/`ToNapiValue` pair on `Edges` in core (both optional numbers); `impl Edged for XTransport`; kind-edge fields (`<kind>_before`, `<kind>_after`) are no longer emitted; the body prints `w.edge(KindId(N), Side::Before, node.edges.before)` where it printed `w.site_with(node.<kind>_before...)`.
+- Produces: every native node struct has `pub edges: ::sittir_core::options::Edges` with napi names `$_before`/`$_after` through a manual `FromNapiValue`/`ToNapiValue` pair on `Edges` in core (both optional numbers); `impl Edged for XNode`; kind-edge fields (`<kind>_before`, `<kind>_after`) are no longer emitted; the body prints `w.edge(KindId(N), Side::Before, node.edges.before)` where it printed `w.site_with(node.<kind>_before...)`.
 
 - [x] **Step 1: Write the failing tests**
 
 In `render-module-emit.test.ts`, with the fixture node map that file already builds for a compound kind:
 
 ```ts
-it('every transport carries base edges and no kind-edge fields', () => {
-	const rs = emitRenderModule(fixture).transportRs;
+it('every node carries base edges and no kind-edge fields', () => {
+	const rs = emitRenderModule(fixture).nodeRs;
 	expect(rs).toContain('pub edges: ::sittir_core::options::Edges,');
 	expect(rs).not.toMatch(/pub \w+_before: Option<u16>,\n/);
-	expect(rs).toContain('impl ::sittir_core::options::Edged for CallExpressionTransport');
+	expect(rs).toContain('impl ::sittir_core::options::Edged for CallExpressionNode');
 	expect(rs).toContain('::sittir_core::prepare::prepare_edges(self, ctx);');
 	expect(rs).toContain('w.edge(::sittir_core::types::KindId(');
 	expect(rs).not.toContain('call_expression_before');
@@ -252,25 +252,25 @@ Expected: FAIL on every new assertion.
 `render-module.ts`:
 
 ```ts
-const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' },
+const TRANSPORT_METADATA_FIELDS: readonly NodeMetadataField[] = [
+	{ jsName: '$_trivia', rustName: 'node_trivia_data', rustType: 'Option<NodeTrivia>' },
 	{ jsName: '$_edges', rustName: 'edges', rustType: '::sittir_core::options::Edges' }
 ];
 ```
 
 `Edges` implements `FromNapiValue` in core by reading `$_before`/`$_after` off the enclosing object is not possible through `napi(object)`; instead `Edges` is its own napi object `{ before?: number, after?: number }` under the single key `$_edges`, and `Default` when absent. Give `Edges` `#[cfg_attr(feature = "napi-bindings", napi(object))]` in core with `pub before: Option<u16>, pub after: Option<u16>`; that is the two fields the base carries.
 
-Beside the `KindOf` impl each transport already gets, emit:
+Beside the `KindOf` impl each node already gets, emit:
 
 ```rust
-impl ::sittir_core::options::Edged for XTransport {
+impl ::sittir_core::options::Edged for XNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(N) }
     fn edges(&self) -> &::sittir_core::options::Edges { &self.edges }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { &mut self.edges }
 }
 ```
 
-For a slot enum (`XSlotTransportSlot`) emit the same trait delegating to the active variant, so a seated element can be reached uniformly (Task 4 relies on it).
+For a slot enum (`XSlotNodeSlot`) emit the same trait delegating to the active variant, so a seated element can be reached uniformly (Task 4 relies on it).
 
 In `prepareStructImpl`, the first body line for a compound is `::sittir_core::prepare::prepare_edges(self, ctx);` and the two kind-edge `get_or_insert` lines are no longer generated: filter `synthesizedSpacingSites(plan, node)` with `site.side === 'seam' && parseSeamLabel(site.address)?.token === publicKindName(node.kind)` out of both the field emission and the fill emission (that predicate is `edgeSitesOf`'s own test in `render-options-rs.ts`; export it as `isKindEdge(site)` from there and use it in both files).
 
@@ -304,7 +304,7 @@ Expected: PASS, render-bytes fixtures byte-identical.
 Regenerate both, rebuild, `pnpm run validate:native`, `pnpm run validate:history | tail -4`: every row identical to the previous run.
 
 ```bash
-git commit -m "feat(render): every transport carries base edges; kind-edge fields and their fills go" -- packages/codegen/src rust/crates packages/typescript packages/rust packages/python examples
+git commit -m "feat(render): every node carries base edges; kind-edge fields and their fills go" -- packages/codegen/src rust/crates packages/typescript packages/rust packages/python examples
 ```
 
 ---
@@ -323,8 +323,8 @@ git commit -m "feat(render): every transport carries base edges; kind-edge field
 - [x] **Step 1: Write the failing tests**
 
 ```ts
-it('a token seam and a flank have no transport field and print as a sink site', () => {
-	const rs = emitRenderModule(fixture).transportRs;
+it('a token seam and a flank have no node field and print as a sink site', () => {
+	const rs = emitRenderModule(fixture).nodeRs;
 	expect(rs).not.toContain('pub lparen_after: Option<u16>,');
 	expect(rs).not.toContain('_start: Option<u16>,');
 	expect(rs).not.toContain('get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER])');
@@ -362,7 +362,7 @@ with each `w.site` line present only when that side has a site.
 
 - [x] **Step 4: Emitter tests, regenerate all three, build, full gates**
 
-Same commands as Task 2 Step 4 and 5. Expected: byte-identical fixtures, identical validation rows; `transport.rs` for typescript loses roughly 435 fields, 435 fills and 435 napi attributes.
+Same commands as Task 2 Step 4 and 5. Expected: byte-identical fixtures, identical validation rows; `node.rs` for typescript loses roughly 435 fields, 435 fills and 435 napi attributes.
 
 - [x] **Step 5: Commit**
 
@@ -381,7 +381,7 @@ git commit -m "feat(render): token seams and flanks read the resolved vector; no
 - Test: `render-module-emit.test.ts`, `rust/crates/sittir-core/tests/prepare.rs`
 
 **Interfaces:**
-- Consumes: `Edged` on transports and slot enums (Task 2), `Edges` base.
+- Consumes: `Edged` on nodes and slot enums (Task 2), `Edges` base.
 - Produces:
   ```rust
   // options.rs, per list slot with seats, sorted by kind id:
@@ -390,7 +390,7 @@ git commit -m "feat(render): token seams and flanks read the resolved vector; no
   pub fn seat_site(table: &[(u16, usize)], kind: KindId) -> Option<usize>;
   pub fn fill_seated_gaps<T: Edged>(items: &mut [Option<SlotValue<T>>], table: &[(u16, usize)], ctx: &RenderContext<'_>);
   ```
-  `fill_seated_gaps` skips the last item, skips coordinates, and for each transport element with `seat_site(table, item.kind_id())` sets `edges_mut().after.get_or_insert(ctx.options.spacing[site])`.
+  `fill_seated_gaps` skips the last item, skips coordinates, and for each node element with `seat_site(table, item.kind_id())` sets `edges_mut().after.get_or_insert(ctx.options.spacing[site])`.
 
 - [x] **Step 1: Write the failing tests**
 
@@ -401,7 +401,7 @@ Core:
 fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
     let table: &[(u16, usize)] = &[(3, 0), (4, 1)];
     let opts = ResolvedOptions { spacing: vec![70, 80], ..minimal() };
-    let mut items = vec![Some(SlotValue::Transport(Leaf::kind(3))), Some(SlotValue::Transport(Leaf::kind(4))), Some(SlotValue::Transport(Leaf::kind(3)))];
+    let mut items = vec![Some(SlotValue::Node(Leaf::kind(3))), Some(SlotValue::Node(Leaf::kind(4))), Some(SlotValue::Node(Leaf::kind(3)))];
     fill_seated_gaps(&mut items, table, &ctx(&opts));
     assert_eq!(edges_of(&items[0]).after, Some(70));
     assert_eq!(edges_of(&items[1]).after, Some(80));
@@ -415,8 +415,8 @@ Emitter:
 it('a list slot with seats gets a kind-to-site table and one fill call, no match block', () => {
 	const out = emitRenderModule(fixture);
 	expect(out.optionsRs).toContain('pub static SEATS_ARGUMENTS_ARGUMENTS: &[(u16, usize)] = &[');
-	expect(out.transportRs).toContain('::sittir_core::prepare::fill_seated_gaps(seated_items, options::SEATS_ARGUMENTS_ARGUMENTS, ctx);');
-	expect(out.transportRs).not.toContain('ArgumentsArgumentsTransportSlot::AsExpression(t) =>');
+	expect(out.nodeRs).toContain('::sittir_core::prepare::fill_seated_gaps(seated_items, options::SEATS_ARGUMENTS_ARGUMENTS, ctx);');
+	expect(out.nodeRs).not.toContain('ArgumentsArgumentsNodeSlot::AsExpression(t) =>');
 });
 ```
 
@@ -436,13 +436,13 @@ pub fn fill_seated_gaps<T: Edged>(items: &mut [Option<SlotValue<T>>], table: &[(
     let last = items.len().saturating_sub(1);
     for (at, item) in items.iter_mut().enumerate() {
         if at == last { break; }
-        let Some(SlotValue::Transport(t)) = item.as_mut() else { continue };
+        let Some(SlotValue::Node(t)) = item.as_mut() else { continue };
         if let Some(site) = seat_site(table, t.kind_id()) { t.edges_mut().after.get_or_insert(ctx.options.spacing[site]); }
     }
 }
 ```
 
-The polymorph descent today's match performs (a `parenthesized_expression` element seated by its inner form) is the `Edged` delegation Task 2 emitted on slot enums and on polymorph wrapper transports: `kind_id()` and `edges_mut()` of a wrapper delegate to its content, so the table is keyed by the inner form's kind id and no descent is generated per list. Emit that delegation for every transport whose kind is a polymorph wrapper (the same kinds `seatVariantArms` descended into: `AssembledPolymorph` with one slot).
+The polymorph descent today's match performs (a `parenthesized_expression` element seated by its inner form) is the `Edged` delegation Task 2 emitted on slot enums and on polymorph wrapper nodes: `kind_id()` and `edges_mut()` of a wrapper delegate to its content, so the table is keyed by the inner form's kind id and no descent is generated per list. Emit that delegation for every node whose kind is a polymorph wrapper (the same kinds `seatVariantArms` descended into: `AssembledPolymorph` with one slot).
 
 Emitter `seatLoops` becomes:
 

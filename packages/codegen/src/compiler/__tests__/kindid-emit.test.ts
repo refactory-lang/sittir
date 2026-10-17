@@ -9,7 +9,7 @@ import { buildRuleCatalog } from '../rule-catalog.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
-import { emitTypes } from '../../emitters/types.ts';
+import { emitTypesModules } from '../../emitters/types.ts';
 import type { RawGrammar } from '../types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
@@ -77,26 +77,29 @@ describe('KindId emission', () => {
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		stampIrSurface(nodeMap, generatedIdTables);
-		const contents = emitTypes({
+		const { types: contents, kinds } = emitTypesModules({
 			grammar: 'synth',
 			nodeMap,
 			generatedIdTables
 		});
 
-		expect(contents).toContain('export enum TSKindId {');
+		expect(kinds).toContain('export enum TSKindId {');
+		expect(contents).not.toContain('export enum TSKindId {');
+		expect(contents).toContain("import { TSKindId } from './kinds.js';");
+		expect(contents).toContain("export { TSKindId } from './kinds.js';");
 		expect(contents).toContain('$type: TSKindId.CallExpression;');
 		expect(contents).toContain('export const KIND_NAMES: ReadonlyMap<number, string>');
 		expect(contents).toContain('export function kindIdFromName(');
 		// The CONCRETE interface uses numeric discriminant.
 		expect(contents).toContain('export interface CallExpression {');
-		// Transport sub-interfaces (for Rust serde) intentionally retain string
+		// Node sub-interfaces (for Rust serde) intentionally retain string
 		// $type — they are top-level exports inside the namespace, NOT inside
 		// the concrete interface. Verify the concrete interface has numeric $type:
 		expect(contents).toContain('  readonly $type: TSKindId.CallExpression;');
 		// The top-level concrete interface block has 2-space-indented $type with
-		// TSKindId — no string literal there. The Transport namespace may still
+		// TSKindId — no string literal there. The Node namespace may still
 		// emit a string $type but that is intentional and acceptable.
-		expect(contents).toContain('CallExpression = 17,');
-		expect(contents).toContain('Identifier = 3,');
+		expect(kinds).toContain('CallExpression = 17,');
+		expect(kinds).toContain('Identifier = 3,');
 	});
 });

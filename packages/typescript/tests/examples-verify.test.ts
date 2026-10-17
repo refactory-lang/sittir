@@ -14,11 +14,6 @@ const generatedRebuild = (file: string, exportName: string) => async (): Promise
 };
 const rebuildFormatGenerated = generatedRebuild('18-dogfood-typescript.generated.ts', 'rebuildFormatGenerated');
 const rebuildFormatLoose = generatedRebuild('18-dogfood-typescript-loose.generated.ts', 'rebuildFormatLoose');
-import {
-	rebuildFormatStrict,
-	formatBoundaryStrict,
-	returnResultStrict
-} from '../../../examples/18-dogfood-typescript-strict.ts';
 import { interfaceToPythonDataclass } from '../../../examples/12-cross-language-migration.ts';
 import typescript from '@sittir/typescript';
 import { createEngine } from '@sittir/common';
@@ -33,19 +28,6 @@ describe('examples/12 cross-language migration', () => {
 	});
 	it('prints `pass` for an interface without properties', () => {
 		expect(interfaceToPythonDataclass('interface Empty {}\n')).toBe('@dataclass\nclass Empty:\n    pass');
-	});
-});
-
-// The strict surface alone, so each gap lands on the layer that owns it.
-describe('examples/18 dogfood typescript — strict factory surface', () => {
-	it('builds a function declaration and a program', () => {
-		expect(rebuildFormatStrict().$render()).toContain('function applyFormat');
-	});
-	it('composes a member expression once its separator is supplied', () => {
-		expect(formatBoundaryStrict().$render()).toBe('format.boundary');
-	});
-	it('renders a return statement with its expression', () => {
-		expect(returnResultStrict().$render()).toBe('return result;');
 	});
 });
 

@@ -417,7 +417,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type { Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
-			...(keyed ? ["import { TSKindId } from './types.js';"] : []),
+			...(keyed ? ["import { TSKindId } from './kinds.js';"] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			"import * as RAW from './factories/raw.js';",
@@ -432,7 +432,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					]
 				: ['export type ParsedOfData<D> = D;']),
 			'const _wrap = (data: object, tree: TreeHandle): unknown => wrapNode(data as _UntypedNode, tree);',
-			'/** A stored value as an accessor returns it: a coordinate read `depth` levels down and wrapped, a transport wrapped, anything else as it is. */',
+			'/** A stored value as an accessor returns it: a coordinate read `depth` levels down and wrapped, a node wrapped, anything else as it is. */',
 			'export function hydrate<T>(value: T, tree: TreeHandle, depth?: number): ParsedOfData<T> {',
 			'  return hydrateWith(value, tree, _wrap, depth) as ParsedOfData<T>;',
 			'}',
@@ -451,7 +451,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'};',
 			'',
 			...this.#rootTreeLines(rows),
-			'/** Wrap a transport into its kind\'s node: the transport as it crossed, with the kind\'s members attached. */'
+			'/** Wrap a node into its kind\'s node: the node as it crossed, with the kind\'s members attached. */'
 		);
 		if (keyed) {
 			lines.push(

@@ -5,7 +5,7 @@ Runs identical `sittir tool probe-kind` invocations in two checkouts of this
 repo (e.g. a current tree and a baseline worktree), saves both raw JSON
 outputs per fixture, diffs the rendered text, and labels each fixture
 mechanically. Used to attribute validator regressions to render vs
-transport vs measurement changes between two commits.
+node vs measurement changes between two commits.
 
 Layout expected under --root (produced by a prior collection pass):
   <root>/<grammar>/probes/<slug>/source.txt   fixture source to probe

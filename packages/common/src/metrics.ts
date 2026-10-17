@@ -25,9 +25,8 @@ const METRICS_ENABLED: boolean = process.env['SITTIR_METRICS'] === '1';
 // ---------------------------------------------------------------------------
 
 /**
- * @forFutureUse archived spec 054 (specs/archive-054-post-016-perf-tracking) —
- * SITTIR_METRICS per-render timing / FFI-cost-tracking design. Drafted,
- * not implemented; deferred, not abandoned.
+ * @forFutureUse SITTIR_METRICS per-render timing and FFI-cost tracking.
+ * Drafted, not implemented; deferred, not abandoned.
  */
 export interface PerKindMetrics {
 	readonly grammar: string;
@@ -45,9 +44,8 @@ export interface PerKindMetrics {
 }
 
 /**
- * @forFutureUse archived spec 054 (specs/archive-054-post-016-perf-tracking) —
- * SITTIR_METRICS per-render timing / FFI-cost-tracking design. Drafted,
- * not implemented; deferred, not abandoned.
+ * @forFutureUse SITTIR_METRICS per-render timing and FFI-cost tracking.
+ * Drafted, not implemented; deferred, not abandoned.
  */
 export interface FfiMetrics {
 	readonly totalCalls: number;
@@ -57,9 +55,8 @@ export interface FfiMetrics {
 }
 
 /**
- * @forFutureUse archived spec 054 (specs/archive-054-post-016-perf-tracking) —
- * SITTIR_METRICS per-render timing / FFI-cost-tracking design. Drafted,
- * not implemented; deferred, not abandoned.
+ * @forFutureUse SITTIR_METRICS per-render timing and FFI-cost tracking.
+ * Drafted, not implemented; deferred, not abandoned.
  */
 export interface MetricsFile {
 	readonly schemaVersion: 1;

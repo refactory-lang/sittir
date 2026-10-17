@@ -2,7 +2,7 @@
 
 import type { PortableGuard, PortableTable, QueryFlags, QuerySlotFlags } from '@sittir/types';
 import { portableSurface } from '@sittir/common/engine';
-import { TSKindId } from './types.js';
+import { TSKindId } from './kinds.js';
 import { querySlots } from './utils.js';
 
 export interface PortableIds {
@@ -4650,767 +4650,779 @@ export const queryFlags: QueryFlags = Object.freeze({
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	188: {
 		statements: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	204: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
-	205: { declarators: { definite: [435] } },
-	206: { declarators: { definite: [435] } },
-	207: { variableDeclarators: { definite: [435] } },
+	205: { declarators: { definite: { types: [435], kinds: [] } } },
+	206: { declarators: { definite: { types: [435], kinds: [] } } },
+	207: { variableDeclarators: { definite: { types: [435], kinds: [] } } },
 	209: {
 		statements: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	210: {
 		body: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	211: {
 		consequence: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	213: {
 		initializer: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		condition: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		increment: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		body: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	214: {
 		body: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	216: {
 		body: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	217: {
 		body: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	219: {
 		body: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	223: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	224: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	226: {
 		body: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	228: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		bodies: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	229: {
 		bodies: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249],
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [214, 247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] },
+			typeOnly: { types: [], kinds: [196, 427] }
 		}
 	},
 	235: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	236: {
 		properties: {
-			async: { kind: 291, context: false },
-			computed: { kind: 292, context: false },
-			generator: { kind: 291, context: false },
-			optional: { kind: 291, context: false },
-			override: { kind: 291, context: false },
-			privateName: { kind: 291, context: false },
-			readonly: { kind: 291, context: false },
-			static: { kind: 291, context: false }
+			async: { types: [], kinds: [291] },
+			computed: { types: [], kinds: [291, 292] },
+			generator: { types: [], kinds: [291] },
+			optional: { types: [], kinds: [291] },
+			override: { types: [], kinds: [291] },
+			privateName: { types: [], kinds: [291] },
+			readonly: { types: [], kinds: [291] },
+			static: { types: [], kinds: [291] }
 		}
 	},
-	237: { properties: { computed: { kind: 293, context: false } } },
+	237: { properties: { computed: { types: [], kinds: [293] } } },
 	238: {
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	239: {
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	240: {
 		elements: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	250: {
 		body: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	255: {
 		function: {
-			async: { kind: 246, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	256: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	257: {
 		object: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	258: {
 		object: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		index: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
-	259: { content: { optionalChain: { kind: 257, context: false }, privateName: { kind: 257, context: false } } },
+	259: { content: { optionalChain: { types: [], kinds: [257, 258] }, privateName: { types: [], kinds: [257] } } },
 	260: {
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	262: {
-		left: { optionalChain: { kind: 257, context: false }, privateName: { kind: 257, context: false } },
+		left: { optionalChain: { types: [], kinds: [257, 258] }, privateName: { types: [], kinds: [257] } },
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	265: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	266: {
 		condition: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		consequence: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		alternative: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	267: {
 		left: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	268: {
 		argument: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	270: {
 		expressions: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	273: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	282: {
 		elements: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
-	290: { lhsExpression: { optionalChain: { kind: 257, context: false }, privateName: { kind: 257, context: false } } },
+	290: { lhsExpression: { optionalChain: { types: [], kinds: [257, 258] }, privateName: { types: [], kinds: [257] } } },
 	292: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	295: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	296: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	298: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	303: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	304: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
-		type: { abstract: { kind: 343, context: false }, unique: [144] }
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
 	},
 	305: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
-		type: { abstract: { kind: 343, context: false }, unique: [144] }
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
 	},
 	306: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	309: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
-	310: { types: { abstract: { kind: 343, context: false }, unique: [144] } },
+	310: { types: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
 	311: {
 		content: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249]
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] }
 		}
 	},
 	322: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
-	323: { value: { abstract: { kind: 343, context: false }, unique: [144] } },
+	323: { value: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
 	326: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	327: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
-	329: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	330: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	331: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	332: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	340: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	341: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	343: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	345: { type: { unique: [144] } },
-	347: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	329: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	330: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	331: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	332: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	340: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	341: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	343: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	345: { type: { unique: { types: [144], kinds: [] } } },
+	347: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
 	348: {
-		left: { abstract: { kind: 343, context: false }, unique: [144] },
-		right: { abstract: { kind: 343, context: false }, unique: [144] },
-		consequence: { abstract: { kind: 343, context: false }, unique: [144] },
-		alternative: { abstract: { kind: 343, context: false }, unique: [144] }
+		left: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
+		right: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
+		consequence: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
+		alternative: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
 	},
-	350: { name: { unique: [144] }, type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	353: { index: { unique: [144] } },
-	357: { type: { unique: [144] } },
-	358: { type: { unique: [144] }, indexType: { abstract: { kind: 343, context: false }, unique: [144] } },
+	350: {
+		name: { unique: { types: [144], kinds: [] } },
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+	},
+	353: { index: { unique: { types: [144], kinds: [] } } },
+	357: { type: { unique: { types: [144], kinds: [] } } },
+	358: {
+		type: { unique: { types: [144], kinds: [] } },
+		indexType: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+	},
 	359: {
-		type: { abstract: { kind: 343, context: false }, unique: [144] },
-		alias: { abstract: { kind: 343, context: false }, unique: [144] }
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
+		alias: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
 	},
-	363: { type: { unique: [144] } },
-	364: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	372: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
-	373: { bounds: { abstract: { kind: 343, context: false }, unique: [144] } },
-	376: { type: { unique: [144] } },
-	378: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	363: { type: { unique: { types: [144], kinds: [] } } },
+	364: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	372: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	373: { bounds: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	376: { type: { unique: { types: [144], kinds: [] } } },
+	378: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
 	379: {
-		left: { abstract: { kind: 343, context: false }, unique: [144] },
-		right: { abstract: { kind: 343, context: false }, unique: [144] }
+		left: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
+		right: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
 	},
 	380: {
-		left: { abstract: { kind: 343, context: false }, unique: [144] },
-		right: { abstract: { kind: 343, context: false }, unique: [144] }
+		left: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
+		right: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
 	},
-	381: { returnType: { abstract: { kind: 343, context: false }, unique: [144] } },
-	382: { items: { typeOnly: { kind: 192, context: false } } },
-	383: { items: { typeOnly: { kind: 413, context: false } } },
-	385: { items: { optional: [327], override: { kind: 326, context: false }, readonly: { kind: 326, context: false } } },
-	389: { items: { abstract: { kind: 343, context: false }, unique: [144] } },
-	390: { items: { const: { kind: 371, context: false } } },
-	391: { items: { abstract: { kind: 343, context: false }, unique: [144] } },
-	396: { type: { abstract: { kind: 343, context: false }, unique: [144] } },
+	381: { returnType: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	382: { items: { typeOnly: { types: [], kinds: [192] } } },
+	383: { items: { typeOnly: { types: [], kinds: [413, 414] } } },
+	385: {
+		items: {
+			optional: { types: [327], kinds: [] },
+			override: { types: [], kinds: [326, 327] },
+			readonly: { types: [], kinds: [326, 327] }
+		}
+	},
+	389: { items: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	390: { items: { const: { types: [], kinds: [371] } } },
+	391: { items: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	396: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
 	397: {
 		items: {
-			abstract: { kind: 374, context: false },
-			async: { kind: 299, context: false },
-			computed: { kind: 369, context: false },
-			generator: { kind: 299, context: false },
-			optional: { kind: 369, context: false },
-			override: { kind: 369, context: false },
-			privateName: { kind: 369, context: false },
-			readonly: { kind: 369, context: false },
-			static: { kind: 369, context: false },
-			typeOnly: { kind: 427, context: false }
+			abstract: { types: [], kinds: [374] },
+			async: { types: [], kinds: [299] },
+			computed: { types: [], kinds: [299, 369] },
+			generator: { types: [], kinds: [299] },
+			optional: { types: [], kinds: [299, 369] },
+			override: { types: [], kinds: [299, 369] },
+			privateName: { types: [], kinds: [299, 369] },
+			readonly: { types: [], kinds: [299, 369, 408, 409] },
+			static: { types: [], kinds: [299, 369] },
+			typeOnly: { types: [], kinds: [427] }
 		}
 	},
 	400: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	403: {
 		left: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	405: {
 		methodDefinition: {
-			async: { kind: 291, context: false },
-			computed: { kind: 291, context: false },
-			generator: { kind: 291, context: false },
-			optional: { kind: 291, context: false },
-			override: { kind: 291, context: false },
-			privateName: { kind: 291, context: false },
-			readonly: { kind: 291, context: false },
-			static: { kind: 291, context: false }
+			async: { types: [], kinds: [291] },
+			computed: { types: [], kinds: [291] },
+			generator: { types: [], kinds: [291] },
+			optional: { types: [], kinds: [291] },
+			override: { types: [], kinds: [291] },
+			privateName: { types: [], kinds: [291] },
+			readonly: { types: [], kinds: [291] },
+			static: { types: [], kinds: [291] }
 		}
 	},
 	406: {
 		methodSignature: {
-			async: { kind: 299, context: false },
-			computed: { kind: 299, context: false },
-			generator: { kind: 299, context: false },
-			optional: { kind: 299, context: false },
-			override: { kind: 299, context: false },
-			privateName: { kind: 299, context: false },
-			readonly: { kind: 299, context: false },
-			static: { kind: 299, context: false }
+			async: { types: [], kinds: [299] },
+			computed: { types: [], kinds: [299] },
+			generator: { types: [], kinds: [299] },
+			optional: { types: [], kinds: [299] },
+			override: { types: [], kinds: [299] },
+			privateName: { types: [], kinds: [299] },
+			readonly: { types: [], kinds: [299] },
+			static: { types: [], kinds: [299] }
 		}
 	},
 	407: {
 		member: {
-			abstract: { kind: 296, context: false },
-			async: { kind: 299, context: false },
-			computed: { kind: 300, context: false },
-			declare: { kind: 296, context: false },
-			definite: { kind: 296, context: false },
-			generator: { kind: 300, context: false },
-			optional: { kind: 300, context: false },
-			override: { kind: 300, context: false },
-			privateName: { kind: 300, context: false },
-			readonly: { kind: 408, context: false },
-			static: { kind: 299, context: false }
+			abstract: { types: [], kinds: [296] },
+			async: { types: [], kinds: [299] },
+			computed: { types: [], kinds: [296, 299, 300] },
+			declare: { types: [], kinds: [296] },
+			definite: { types: [], kinds: [296] },
+			generator: { types: [], kinds: [299, 300] },
+			optional: { types: [], kinds: [296, 299, 300] },
+			override: { types: [], kinds: [296, 299, 300] },
+			privateName: { types: [], kinds: [296, 299, 300] },
+			readonly: { types: [], kinds: [296, 299, 408, 409] },
+			static: { types: [], kinds: [296, 299] }
 		}
 	},
-	408: { indexType: { abstract: { kind: 343, context: false }, unique: [144] } },
+	408: { indexType: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
 	411: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	415: {
 		expression: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	417: {
 		function: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	418: {
 		function: {
-			async: { kind: 246, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	419: {
 		function: {
-			async: { kind: 246, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	422: {
 		argument: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	423: {
 		argument: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	428: {
 		content: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249]
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] }
 		}
 	},
 	432: {
 		content: {
-			abstract: [312],
-			async: { kind: 247, context: false },
-			const: { kind: 320, context: false },
-			generator: [249]
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] }
 		}
 	},
 	433: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	434: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	438: {
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	439: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		},
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	440: {
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	441: {
 		right: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
 	443: {
 		value: {
-			async: { kind: 246, context: false },
-			disposable: { kind: 260, context: false },
-			generator: [248],
-			optionalChain: { kind: 258, context: false },
-			privateName: { kind: 257, context: false }
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [419], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
 		}
 	},
-	445: { receiver: { override: { kind: 443, context: false }, readonly: { kind: 443, context: false } } }
+	445: { receiver: { override: { types: [], kinds: [443] }, readonly: { types: [], kinds: [443] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
@@ -5542,10 +5554,12 @@ declare module './types.js' {
 		readonly __flags__?: 'definite';
 	}
 	interface Program {
-		readonly __slotFlags__?: { readonly statements: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly statements: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface ExpressionStatement {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface VariableDeclaration {
 		readonly __slotFlags__?: { readonly declarators: 'definite' };
@@ -5557,189 +5571,259 @@ declare module './types.js' {
 		readonly __slotFlags__?: { readonly variableDeclarators: 'definite' };
 	}
 	interface StatementBlock {
-		readonly __slotFlags__?: { readonly statements: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly statements: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface ElseClause {
-		readonly __slotFlags__?: { readonly body: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface IfStatement {
-		readonly __slotFlags__?: { readonly consequence: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly consequence: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface ForStatement {
 		readonly __slotFlags__?: {
-			readonly initializer: 'generator';
-			readonly condition: 'generator';
-			readonly increment: 'generator';
-			readonly body: 'abstract' | 'generator';
+			readonly initializer: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly condition: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly increment: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly';
 		};
 	}
 	interface ForInStatement {
-		readonly __slotFlags__?: { readonly body: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface WhileStatement {
-		readonly __slotFlags__?: { readonly body: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface DoStatement {
-		readonly __slotFlags__?: { readonly body: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface WithStatement {
-		readonly __slotFlags__?: { readonly body: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface ReturnStatement {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface ThrowStatement {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface LabeledStatement {
-		readonly __slotFlags__?: { readonly body: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface SwitchCase {
-		readonly __slotFlags__?: { readonly value: 'generator'; readonly bodies: 'abstract' | 'generator' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly bodies: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly';
+		};
 	}
 	interface SwitchDefault {
-		readonly __slotFlags__?: { readonly bodies: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly bodies: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface YieldExpression {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
+	}
+	interface Object {
+		readonly __slotFlags__?: {
+			readonly properties:
+				| 'async'
+				| 'computed'
+				| 'generator'
+				| 'optional'
+				| 'override'
+				| 'privateName'
+				| 'readonly'
+				| 'static';
+		};
+	}
+	interface ObjectPattern {
+		readonly __slotFlags__?: { readonly properties: 'computed' };
 	}
 	interface AssignmentPattern {
-		readonly __slotFlags__?: { readonly right: 'generator' };
+		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ObjectAssignmentPattern {
-		readonly __slotFlags__?: { readonly right: 'generator' };
+		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface Array {
-		readonly __slotFlags__?: { readonly elements: 'generator' };
+		readonly __slotFlags__?: {
+			readonly elements: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface ArrowFunction {
-		readonly __slotFlags__?: { readonly body: 'generator' };
+		readonly __slotFlags__?: { readonly body: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface NewExpression {
-		readonly __slotFlags__?: { readonly function: 'generator' };
+		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface AwaitExpression {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface MemberExpression {
-		readonly __slotFlags__?: { readonly object: 'generator' };
+		readonly __slotFlags__?: {
+			readonly object: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface SubscriptExpression {
-		readonly __slotFlags__?: { readonly object: 'generator'; readonly index: 'generator' };
+		readonly __slotFlags__?: {
+			readonly object: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly index: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
+	}
+	interface LhsExpression {
+		readonly __slotFlags__?: { readonly content: 'optionalChain' | 'privateName' };
 	}
 	interface AssignmentExpression {
-		readonly __slotFlags__?: { readonly right: 'generator' };
+		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface AugmentedAssignmentExpression {
-		readonly __slotFlags__?: { readonly right: 'generator' };
+		readonly __slotFlags__?: {
+			readonly left: 'optionalChain' | 'privateName';
+			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface SpreadElement {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface TernaryExpression {
 		readonly __slotFlags__?: {
-			readonly condition: 'generator';
-			readonly consequence: 'generator';
-			readonly alternative: 'generator';
+			readonly condition: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly consequence: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly alternative: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
 		};
 	}
 	interface BinaryExpression {
-		readonly __slotFlags__?: { readonly left: 'generator'; readonly right: 'generator' };
+		readonly __slotFlags__?: {
+			readonly left: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface UnaryExpression {
-		readonly __slotFlags__?: { readonly argument: 'generator' };
+		readonly __slotFlags__?: {
+			readonly argument: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface SequenceExpression {
-		readonly __slotFlags__?: { readonly expressions: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expressions: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface TemplateSubstitution {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface Arguments {
-		readonly __slotFlags__?: { readonly elements: 'generator' };
+		readonly __slotFlags__?: {
+			readonly elements: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
+	}
+	interface RestPattern {
+		readonly __slotFlags__?: { readonly lhsExpression: 'optionalChain' | 'privateName' };
 	}
 	interface Pair {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ComputedPropertyName {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface PublicFieldDefinition {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface NonNullExpression {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface TypeAssertion {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface AsExpression {
-		readonly __slotFlags__?: { readonly expression: 'generator'; readonly type: 'unique' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly type: 'abstract' | 'unique';
+		};
 	}
 	interface SatisfiesExpression {
-		readonly __slotFlags__?: { readonly expression: 'generator'; readonly type: 'unique' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly type: 'abstract' | 'unique';
+		};
 	}
 	interface InstantiationExpression {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface ExtendsClauseSingle {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ImplementsClause {
-		readonly __slotFlags__?: { readonly types: 'unique' };
+		readonly __slotFlags__?: { readonly types: 'abstract' | 'unique' };
 	}
 	interface AmbientDeclaration {
-		readonly __slotFlags__?: { readonly content: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly content: 'abstract' | 'async' | 'const' | 'generator' };
 	}
 	interface EnumAssignment {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface TypeAliasDeclaration {
-		readonly __slotFlags__?: { readonly value: 'unique' };
+		readonly __slotFlags__?: { readonly value: 'abstract' | 'unique' };
 	}
 	interface RequiredParameter {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface OptionalParameter {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface OmittingTypeAnnotation {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface AddingTypeAnnotation {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface OptingTypeAnnotation {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface TypeAnnotation {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface OptionalType {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface RestType {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface ConstructorType {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface TemplateType {
 		readonly __slotFlags__?: { readonly type: 'unique' };
 	}
 	interface InferType {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface ConditionalType {
 		readonly __slotFlags__?: {
-			readonly left: 'unique';
-			readonly right: 'unique';
-			readonly consequence: 'unique';
-			readonly alternative: 'unique';
+			readonly left: 'abstract' | 'unique';
+			readonly right: 'abstract' | 'unique';
+			readonly consequence: 'abstract' | 'unique';
+			readonly alternative: 'abstract' | 'unique';
 		};
 	}
 	interface TypePredicate {
-		readonly __slotFlags__?: { readonly name: 'unique'; readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly name: 'unique'; readonly type: 'abstract' | 'unique' };
 	}
 	interface TypeQuerySubscriptExpression {
 		readonly __slotFlags__?: { readonly index: 'unique' };
@@ -5748,105 +5832,190 @@ declare module './types.js' {
 		readonly __slotFlags__?: { readonly type: 'unique' };
 	}
 	interface LookupType {
-		readonly __slotFlags__?: { readonly type: 'unique'; readonly indexType: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'unique'; readonly indexType: 'abstract' | 'unique' };
 	}
 	interface MappedTypeClause {
-		readonly __slotFlags__?: { readonly type: 'unique'; readonly alias: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique'; readonly alias: 'abstract' | 'unique' };
 	}
 	interface FlowMaybeType {
 		readonly __slotFlags__?: { readonly type: 'unique' };
 	}
 	interface ParenthesizedType {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface DefaultType {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface Constraint {
-		readonly __slotFlags__?: { readonly bounds: 'unique' };
+		readonly __slotFlags__?: { readonly bounds: 'abstract' | 'unique' };
 	}
 	interface ArrayType {
 		readonly __slotFlags__?: { readonly type: 'unique' };
 	}
 	interface ReadonlyType {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
 	}
 	interface UnionType {
-		readonly __slotFlags__?: { readonly left: 'unique'; readonly right: 'unique' };
+		readonly __slotFlags__?: { readonly left: 'abstract' | 'unique'; readonly right: 'abstract' | 'unique' };
 	}
 	interface IntersectionType {
-		readonly __slotFlags__?: { readonly left: 'unique'; readonly right: 'unique' };
+		readonly __slotFlags__?: { readonly left: 'abstract' | 'unique'; readonly right: 'abstract' | 'unique' };
 	}
 	interface FunctionType {
-		readonly __slotFlags__?: { readonly returnType: 'unique' };
+		readonly __slotFlags__?: { readonly returnType: 'abstract' | 'unique' };
+	}
+	interface ExportSpecifiers {
+		readonly __slotFlags__?: { readonly items: 'typeOnly' };
+	}
+	interface ImportSpecifiers {
+		readonly __slotFlags__?: { readonly items: 'typeOnly' };
 	}
 	interface FormalParametersElements {
-		readonly __slotFlags__?: { readonly items: 'optional' };
+		readonly __slotFlags__?: { readonly items: 'optional' | 'override' | 'readonly' };
 	}
 	interface Types {
-		readonly __slotFlags__?: { readonly items: 'unique' };
+		readonly __slotFlags__?: { readonly items: 'abstract' | 'unique' };
+	}
+	interface TypeParametersElements {
+		readonly __slotFlags__?: { readonly items: 'const' };
 	}
 	interface TupleTypeMembers {
-		readonly __slotFlags__?: { readonly items: 'unique' };
+		readonly __slotFlags__?: { readonly items: 'abstract' | 'unique' };
 	}
 	interface AmbientDeclarationModule {
-		readonly __slotFlags__?: { readonly type: 'unique' };
+		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
+	}
+	interface ObjectTypeContent {
+		readonly __slotFlags__?: {
+			readonly items:
+				| 'abstract'
+				| 'async'
+				| 'computed'
+				| 'generator'
+				| 'optional'
+				| 'override'
+				| 'privateName'
+				| 'readonly'
+				| 'static'
+				| 'typeOnly';
+		};
 	}
 	interface ExportStatementEqualsExport {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface BinaryExpressionIn {
-		readonly __slotFlags__?: { readonly left: 'generator'; readonly right: 'generator' };
+		readonly __slotFlags__?: {
+			readonly left: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
+	}
+	interface ClassBodyMemberMethod {
+		readonly __slotFlags__?: {
+			readonly methodDefinition:
+				| 'async'
+				| 'computed'
+				| 'generator'
+				| 'optional'
+				| 'override'
+				| 'privateName'
+				| 'readonly'
+				| 'static';
+		};
+	}
+	interface ClassBodyMemberMethodSig {
+		readonly __slotFlags__?: {
+			readonly methodSignature:
+				| 'async'
+				| 'computed'
+				| 'generator'
+				| 'optional'
+				| 'override'
+				| 'privateName'
+				| 'readonly'
+				| 'static';
+		};
+	}
+	interface ClassBodyMemberDeclaration {
+		readonly __slotFlags__?: {
+			readonly member:
+				| 'abstract'
+				| 'async'
+				| 'computed'
+				| 'declare'
+				| 'definite'
+				| 'generator'
+				| 'optional'
+				| 'override'
+				| 'privateName'
+				| 'readonly'
+				| 'static';
+		};
 	}
 	interface IndexSignatureColon {
-		readonly __slotFlags__?: { readonly indexType: 'unique' };
+		readonly __slotFlags__?: { readonly indexType: 'abstract' | 'unique' };
 	}
 	interface YieldExpressionDelegate {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface ParenthesizedExpressionTyped {
-		readonly __slotFlags__?: { readonly expression: 'generator' };
+		readonly __slotFlags__?: {
+			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface CallExpressionCall {
-		readonly __slotFlags__?: { readonly function: 'generator' };
+		readonly __slotFlags__?: {
+			readonly function: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface CallExpressionTemplateCall {
-		readonly __slotFlags__?: { readonly function: 'generator' };
+		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface CallExpressionMember {
-		readonly __slotFlags__?: { readonly function: 'generator' };
+		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface UpdateExpressionPostfix {
-		readonly __slotFlags__?: { readonly argument: 'generator' };
+		readonly __slotFlags__?: {
+			readonly argument: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface UpdateExpressionPrefix {
-		readonly __slotFlags__?: { readonly argument: 'generator' };
+		readonly __slotFlags__?: {
+			readonly argument: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface ExportStatementDefaultDeclaration {
-		readonly __slotFlags__?: { readonly content: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly content: 'abstract' | 'async' | 'const' | 'generator' };
 	}
 	interface ExportStatementDefaultDeclarationDefaultKw {
-		readonly __slotFlags__?: { readonly content: 'abstract' | 'generator' };
+		readonly __slotFlags__?: { readonly content: 'abstract' | 'async' | 'const' | 'generator' };
 	}
 	interface ExportStatementDefaultDeclarationDefaultKwValue {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface VariableDeclaratorPlain {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ForHeaderLhs {
-		readonly __slotFlags__?: { readonly right: 'generator' };
+		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ForHeaderVarKind {
-		readonly __slotFlags__?: { readonly value: 'generator'; readonly right: 'generator' };
+		readonly __slotFlags__?: {
+			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
+		};
 	}
 	interface ForHeaderLetConstKind {
-		readonly __slotFlags__?: { readonly right: 'generator' };
+		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ForHeaderUsingKind {
-		readonly __slotFlags__?: { readonly right: 'generator' };
+		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ReceiverParameterDeclaration {
-		readonly __slotFlags__?: { readonly value: 'generator' };
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
+	}
+	interface FormalParametersElementsReceiver {
+		readonly __slotFlags__?: { readonly receiver: 'override' | 'readonly' };
 	}
 }

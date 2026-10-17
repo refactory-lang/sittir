@@ -56,7 +56,7 @@ describe('engine', () => {
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 
-	it('reads the root and every coordinate through the native read, passing its transports through', async () => {
+	it('reads the root and every coordinate through the native read, passing its nodes through', async () => {
 		const reads: [number, number, number][] = [];
 		const coordinate = (index: number, start: number, end: number, $type: number) => ({ $treeHandle: index, $span: { start, end }, $type });
 		vi.doMock('../src/backend.js', () => ({

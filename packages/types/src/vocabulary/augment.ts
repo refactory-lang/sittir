@@ -984,6 +984,11 @@ declare module './declaration.ts' {
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Property<G>['computed']>;
 			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Property<G>['decorators']>;
 			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Property<G>['definite']>;
+			readonly optionality?: gate.In<
+				G,
+				features.OptionalMembers,
+				optionalMembers.Declaration.Property<G>['optionality']
+			>;
 			readonly override?: gate.In<G, features.ExplicitOverrides, explicitOverrides.Declaration.Property<G>['override']>;
 			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Declaration.Property<G>['privateName']>;
 			readonly static?: gate.In<G, features.Classes, classes.Declaration.Property<G>['static']>;

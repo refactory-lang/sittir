@@ -2,7 +2,7 @@
 
 import type { PortableGuard, PortableTable, QueryFlags, QuerySlotFlags } from '@sittir/types';
 import { portableSurface } from '@sittir/common/engine';
-import { TSKindId } from './types.js';
+import { TSKindId } from './kinds.js';
 import { querySlots } from './utils.js';
 
 export interface PortableIds {
@@ -2793,13 +2793,13 @@ export const queryFlags: QueryFlags = Object.freeze({
 } satisfies QueryFlags);
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
-	127: { statements: { async: { kind: 156, context: false }, static: { kind: 164, context: true } } },
-	158: { handlers: { group: { kind: 159, context: false } } },
-	177: { definition: { async: { kind: 164, context: false }, static: { kind: 164, context: true } } },
-	179: { statements: { async: { kind: 156, context: false }, static: { kind: 164, context: true } } },
-	247: { contents: { debug: { kind: 249, context: false } } },
-	281: { contents: { async: { kind: 243, context: false } } },
-	335: { content: { debug: { kind: 249, context: false } } }
+	127: { statements: { async: { types: [], kinds: [156, 161, 164] }, static: { kind: 164 } } },
+	158: { handlers: { group: { types: [], kinds: [159] } } },
+	177: { definition: { async: { types: [], kinds: [164] }, static: { kind: 164 } } },
+	179: { statements: { async: { types: [], kinds: [156, 161, 164] }, static: { kind: 164 } } },
+	247: { contents: { debug: { types: [], kinds: [249] } } },
+	281: { contents: { async: { types: [], kinds: [243] } } },
+	335: { content: { debug: { types: [], kinds: [249] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
@@ -2820,5 +2820,26 @@ declare module './types.js' {
 	}
 	interface WithStatement {
 		readonly __flags__?: 'async';
+	}
+	interface Module {
+		readonly __slotFlags__?: { readonly statements: 'async' };
+	}
+	interface TryStatement {
+		readonly __slotFlags__?: { readonly handlers: 'group' };
+	}
+	interface DecoratedDefinition {
+		readonly __slotFlags__?: { readonly definition: 'async' };
+	}
+	interface Block {
+		readonly __slotFlags__?: { readonly statements: 'async' };
+	}
+	interface String {
+		readonly __slotFlags__?: { readonly contents: 'debug' };
+	}
+	interface ComprehensionClauses {
+		readonly __slotFlags__?: { readonly contents: 'async' };
+	}
+	interface FormatExpression {
+		readonly __slotFlags__?: { readonly content: 'debug' };
 	}
 }

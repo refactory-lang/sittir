@@ -29,7 +29,7 @@ pub struct ResolvedOptions {
     /// Per spacing site, in generated site order: the resolved arm and the strength it writes at.
     pub spacing: Vec<crate::slot::SeamArm>,
     /// `Delimiter` bitflag per flank site, in generated site order; 0 leaves the field unset.
-    pub delimiter: Vec<u8>,
+    pub delimiter: Vec<crate::types::Delimiter>,
     /// The indentation unit the writer repeats once per depth after a newline.
     pub indent: String,
     /// The spelling every line break of a render takes.
@@ -41,7 +41,7 @@ pub struct ResolvedOptions {
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
-    pub kind_flags: &'static [u8],
+    pub kind_flags: &'static [KindFlags],
     /// Per kind id of a wrapper, the way its seat passes through to the node
     /// it holds; none for any other kind (`prepare::fill_seated_gaps`).
     pub seat_wrappers: &'static [Option<SeatPath>],
@@ -56,35 +56,48 @@ pub enum SeatPath {
     Field(crate::types::FieldId),
 }
 
-/// The parser's anonymous kind: a token, never an owner of trivia.
-pub const KIND_ANON: u8 = 1;
-/// A kind whose text ends only at a line break, and is not the end of an
-/// enclosing kind that does: the node written after it starts a new line.
-pub const KIND_LINE_TERMINATED: u8 = 2;
-/// A kind whose rule ends in the grammar's declared newline token, which its
-/// span leaves out, and is not the end of an enclosing kind that does: the
-/// node written after it starts a new line.
-pub const KIND_LINE_BREAK_TERMINATED: u8 = 4;
-/// The grammar's root kind: its edges are the render's own flanks, written
-/// at the start and the end of a render instead of dropped there.
-pub const KIND_ROOT: u8 = 8;
+/// A kind's flags in the kind flag table, as a set.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct KindFlags(pub u8);
+
+impl KindFlags {
+    pub const NONE: Self = Self(0);
+    /// The parser's anonymous kind: a token, never an owner of trivia.
+    pub const ANON: Self = Self(1);
+    /// A kind whose text ends only at a line break, and is not the end of an
+    /// enclosing kind that does: the node written after it starts a new line.
+    pub const LINE_TERMINATED: Self = Self(1 << 1);
+    /// A kind whose rule ends in the grammar's declared newline token, which
+    /// its span leaves out, and is not the end of an enclosing kind that does:
+    /// the node written after it starts a new line.
+    pub const LINE_BREAK_TERMINATED: Self = Self(1 << 2);
+    /// The grammar's root kind: its edges are the render's own flanks, written
+    /// at the start and the end of a render instead of dropped there.
+    pub const ROOT: Self = Self(1 << 3);
+
+    /// Whether the set holds any flag of `other`.
+    pub const fn has(self, other: Self) -> bool {
+        self.0 & other.0 != 0
+    }
+}
+
 
 /// One spacing site's default arm and the strength a default carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SiteSpec {
     pub default_arm: KindId,
-    pub strength: u8,
+    pub strength: crate::spacing::SeamStrength,
 }
 
 impl SiteSpec {
     /// `arm` at this site: the default's strength when it is the default, declared otherwise.
     pub fn seam(&self, arm: KindId) -> crate::slot::SeamArm {
-        let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SEAM_DECLARED };
-        crate::slot::SeamArm { arm, strength, dedent: false }
+        let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SeamStrength::Declared };
+        crate::slot::SeamArm { arm, strength }
     }
 }
 
-/// One edge a transport carries: the arm, and the strength it writes at when
+/// One edge a node carries: the arm, and the strength it writes at when
 /// the stamp knows it. The render side stamps both, from the site that set the
 /// edge (the kind's own edge site, or the seat of the list that holds the
 /// node), so a seated gap writes at its own site's strength. A stamp without a
@@ -93,19 +106,16 @@ impl SiteSpec {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdgeArm {
     pub arm: KindId,
-    pub strength: Option<u8>,
-    /// Close a depth before the arm (`SeamArm::dedent`). The wire never
-    /// sends it.
-    pub dedent: Option<bool>,
+    pub strength: Option<crate::spacing::SeamStrength>,
 }
 
 impl From<crate::slot::SeamArm> for EdgeArm {
     fn from(seam: crate::slot::SeamArm) -> Self {
-        EdgeArm { arm: seam.arm, strength: Some(seam.strength), dedent: seam.dedent.then_some(true) }
+        EdgeArm { arm: seam.arm, strength: Some(seam.strength) }
     }
 }
 
-/// The two edges every transport carries in its base. An unset side is
+/// The two edges every node carries in its base. An unset side is
 /// filled by `prepare_edges` from the kind's edge row, or by a seat.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Edges {
@@ -114,11 +124,11 @@ pub struct Edges {
 }
 
 impl Edges {
-    /// No edge set on either side: what a transport whose base carries no edges answers.
+    /// No edge set on either side: what a node whose base carries no edges answers.
     pub const NONE: Edges = Edges { before: None, after: None };
 }
 
-/// A transport that carries its kind's edges in its base.
+/// A node that carries its kind's edges in its base.
 pub trait Edged {
     fn kind_id(&self) -> KindId;
     fn edges(&self) -> &Edges;
@@ -176,7 +186,7 @@ impl ResolvedOptions {
     }
 
     /// The `Delimiter` bitflag resolved for a flank site.
-    pub fn delimiter_at(&self, site: FlankId) -> u8 {
+    pub fn delimiter_at(&self, site: FlankId) -> crate::types::Delimiter {
         self.delimiter[site.index()]
     }
 
@@ -184,7 +194,7 @@ impl ResolvedOptions {
     /// declared strength even when it is the site's default: the caller chose
     /// it, so it must win a seam merge the default would lose.
     pub fn set_arm(&mut self, site: SiteId, arm: KindId) {
-        self.spacing[site.index()] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED, dedent: false };
+        self.spacing[site.index()] = crate::slot::SeamArm { arm, strength: crate::spacing::SeamStrength::Declared };
     }
 
     /// What one side of a kind's edge writes: the stamp when one is set (at its
@@ -220,15 +230,15 @@ impl ResolvedOptions {
     fn edge_seam(&self, site: SiteId, stamped: Option<EdgeArm>) -> Option<crate::slot::SeamArm> {
         let site = site.index();
         Some(match stamped {
-            Some(EdgeArm { arm, strength: Some(strength), dedent }) => crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) },
-            Some(EdgeArm { arm, strength: None, dedent }) => crate::slot::SeamArm { dedent: dedent == Some(true), ..self.sites[site].seam(arm) },
+            Some(EdgeArm { arm, strength: Some(strength) }) => crate::slot::SeamArm { arm, strength },
+            Some(EdgeArm { arm, strength: None }) => self.sites[site].seam(arm),
             None => self.spacing[site],
         })
     }
 
     /// Whether `kind` carries `flag` in the kind flag table.
-    pub fn kind_has(&self, kind: KindId, flag: u8) -> bool {
-        self.kind_flags.get(kind.index()).is_some_and(|flags| flags & flag != 0)
+    pub fn kind_has(&self, kind: KindId, flag: crate::options::KindFlags) -> bool {
+        self.kind_flags.get(kind.index()).is_some_and(|flags| flags.has(flag))
     }
 
     /// The spacing sites of `kind`'s edge row, before and after it: `None` on a
@@ -272,7 +282,7 @@ impl AddressNode {
 pub struct OptionTables {
     pub addresses: &'static [AddressNode],
     pub allowed: fn(SiteId) -> &'static [KindId],
-    pub delimiter_allowed: fn(FlankId) -> u8,
+    pub delimiter_allowed: fn(FlankId) -> crate::types::Delimiter,
     pub depth_sites: &'static [(&'static str, &'static [SiteId])],
     pub indent: KindId,
     pub dedent: KindId,
@@ -418,8 +428,8 @@ impl<S: OptionSites> Options<S> {
         }
         for (site, value) in &self.delimiter {
             let allowed = (tables.delimiter_allowed)(site.site);
-            match u8::try_from(*value) {
-                Ok(bits) if bits & !allowed == 0 => table.delimiter[site.site.index()] = bits,
+            match u8::try_from(*value).map(crate::types::Delimiter) {
+                Ok(flags) if flags.within(allowed) => table.delimiter[site.site.index()] = flags,
                 _ => return Err(format!("options: {} does not admit delimiter {value} (allowed bits: {allowed})", site.path)),
             }
         }

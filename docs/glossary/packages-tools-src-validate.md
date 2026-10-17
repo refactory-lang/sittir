@@ -231,12 +231,12 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords`
 
-`coordinate` is the node's own coordinate (`$_layout.at`, or the node itself when the walk met it unread); `embeddedData` is the transport as the whole-tree read holds it. A trivia entry read whole can carry data and no coordinate. The root is `{}`.
+`coordinate` is the node's own coordinate (`$_layout.at`, or the node itself when the walk met it unread); `embeddedData` is the native node as the whole-tree read holds it. A trivia entry read whole can carry data and no coordinate. The root is `{}`.
 
 
 ### `packages/tools/src/validate/common.ts::coordsOf`
 
-What `walkNativeForKind` records for a node it visits: an unread coordinate as the coordinate alone, a transport as its stamped `at` beside the transport itself, and a transport with no `at` (a trivia entry the read handed over whole) as its data alone.
+What `walkNativeForKind` records for a node it visits: an unread coordinate as the coordinate alone, a native node as its stamped `at` beside the native node itself, and a native node with no `at` (a trivia entry the read handed over whole) as its data alone.
 
 
 ### `packages/tools/src/validate/common.ts::isUnitModelType`
@@ -276,7 +276,7 @@ The first `walkNativeForKind` candidate, narrowed to `span` when the caller pass
 
 ### `packages/tools/src/validate/common.ts::walkNativeForKind`
 
-Reads the whole tree once (`handle.read(0, Infinity)`) and visits every transport in document order, each node's trivia entries (leading, trailing and inner) before its slot children. A coordinate met on the way (a child the read left unread) is read whole through `readNode` before its children are visited. Each candidate carries `coordsOf` the node: its own coordinate and the transport as the whole-tree read holds it, so a caller uses the data without reading it again; the root is `{}`, which `readNativeAt` reads as index 0. Empty for a handle with no native read.
+Reads the whole tree once (`handle.read(0, Infinity)`) and visits every native node in document order, each node's trivia entries (leading, trailing and inner) before its slot children. A coordinate met on the way (a child the read left unread) is read whole through `readNode` before its children are visited. Each candidate carries `coordsOf` the node: its own coordinate and the native node as the whole-tree read holds it, so a caller uses the data without reading it again; the root is `{}`, which `readNativeAt` reads as index 0. Empty for a handle with no native read.
 
 
 ### `packages/tools/src/validate/common.ts::findFirst`
@@ -1071,7 +1071,7 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.kindNameFromId`
 
 ```text
-/** Resolver for numeric $type → string kind name; every read transport
+/** Resolver for numeric $type → string kind name; every read node
 	 * carries a numeric $type. */
 ```
 
@@ -1739,7 +1739,7 @@ A grammar's generated `hydrate`, or `null` when the grammar has no wrap module, 
 
 ### `packages/tools/src/validate/common.ts::storedChildren`
 
-Every node a transport stores in its `_` slots, list items included, in key order: the children `walkNativeForKind` descends into. A kind id or a text value is not a node and is skipped.
+Every node a native node stores in its `_` slots, list items included, in key order: the children `walkNativeForKind` descends into. A kind id or a text value is not a node and is skipped.
 
 ### `packages/tools/src/validate/common.ts::sideEntries`
 
