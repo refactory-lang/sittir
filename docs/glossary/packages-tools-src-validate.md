@@ -297,9 +297,11 @@ Reads the whole tree once (`handle.read(0, Infinity)`) and visits every transpor
 ### `packages/tools/src/validate/common.ts::buildKindToSupertypes`
 
 ```text
-// ---------------------------------------------------------------------------
-// Supertype-based reparse wrapping
-// ---------------------------------------------------------------------------
+Each kind's direct supertypes, inverted from the node model's supertype ->
+members table. The model is the source, not node-types.json: tree-sitter
+leaves a supertype that is also inlined out of node-types.json and lists its
+members in its place, while the model keeps every supertype the grammar
+declares, and the slot admissions the hosts are matched against name it.
 ```
 
 ### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.mut_pattern`
