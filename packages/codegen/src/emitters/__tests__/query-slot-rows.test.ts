@@ -19,7 +19,7 @@ const withSlot = (field: string) =>
 	}).nodeMap;
 
 describe('querySlotRows', () => {
-	it('numbers each slot of a kind by its transport field', () => {
+	it('numbers each slot of a kind by its node field', () => {
 		const rows = [...querySlotRows(withSlot('target')).values()];
 		expect(rows).toEqual([[['target', 0]]]);
 	});

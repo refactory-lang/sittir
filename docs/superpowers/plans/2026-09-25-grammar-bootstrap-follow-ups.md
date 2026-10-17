@@ -66,26 +66,26 @@ kind is the same shape seen from the other side.
   diagnostic at assemble (kind, slot, arm paths, proposing `variant()` on
   each arm) would replace the late emitter error.
 
-## 3. Variant arms without a distinguishing field emit mismatched transport types
+## 3. Variant arms without a distinguishing field emit mismatched node types
 
 With only the two `variant()` patches on scm's `named_node_group` (no
 `field('last')`), the native crate fails to compile:
 
 ```text
 error[E0308]: mismatched types
-  --> rust/crates/sittir-scm/src/render/transport.rs
-   expected `Vec<SlotValue<NamedNodeGroupContentTransportSlot, false>>`, found `SlotValue<_, _>`
+  --> rust/crates/sittir-scm/src/render/node.rs
+   expected `Vec<SlotValue<NamedNodeGroupContentNodeSlot, false>>`, found `SlotValue<_, _>`
 ```
 
 The trailing unfielded `X` in the anchored-last arm is one `content` value,
-while the emitted `content` transport slot type is a `Vec`. The cause of the
+while the emitted `content` node slot type is a `Vec`. The cause of the
 arity disagreement hasn't been traced. The shipped grammar avoids it with
 `field('last')`, which takes `X` out of `content`.
 
 - Reproduce: drop `'1/1/1/0': field('last')` from
   `packages/scm/grammar.sittir.ts`, regenerate scm, then run
   `cargo check --workspace`.
-- Fix direction: the slot's transport type has to take its arity per arm
+- Fix direction: the slot's node type has to take its arity per arm
   (or the slot has to split per arm) when variant arms give it different
   multiplicities; alternatively, assemble should reject the shape with a
   diagnostic before the crate is emitted.

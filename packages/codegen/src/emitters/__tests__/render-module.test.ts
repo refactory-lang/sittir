@@ -3,7 +3,7 @@ import { emitHashFiles } from '../render-module.ts';
 import type { BundleFile } from '../bundle-hash.ts';
 
 const sample: BundleFile[] = [
-	{ filename: 'transport.rs', content: 'fn render_a() {}' },
+	{ filename: 'node.rs', content: 'fn render_a() {}' },
 	{ filename: 'options.rs', content: 'pub fn defaults() {}' }
 ];
 

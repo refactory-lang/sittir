@@ -1,4 +1,4 @@
-// A read transport crosses with its present slots in the model's slot order,
+// A read node crosses with its present slots in the model's slot order,
 // whichever of them are optional, and with no key for an absent one.
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
@@ -18,7 +18,7 @@ function firstStatement(source: string): object {
 	}
 }
 
-describe('a read transport', () => {
+describe('a read node', () => {
 	it('writes a present optional slot between required ones, in slot order', () => {
 		expect(Object.keys(firstStatement('fn f() -> u8 {}'))).toEqual(['$type', '$_layout', '_name', '_parameters', '_return_type', '_body']);
 	});

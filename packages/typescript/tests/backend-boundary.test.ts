@@ -61,7 +61,7 @@ describe('engine render boundary', () => {
 		expect(() => render(identifier)).toThrow(/native render boom/);
 	});
 
-	it('passes a plain transport object to native render', async () => {
+	it('passes a plain node object to native render', async () => {
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -86,7 +86,7 @@ describe('engine render boundary', () => {
 		);
 	});
 
-	it('does not pre-validate payloads against a JS transport contract', async () => {
+	it('does not pre-validate payloads against a JS node contract', async () => {
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${Object.keys(node).length}`);
 		mockNativeBackend(
 			class {
@@ -108,7 +108,7 @@ describe('engine render boundary', () => {
 		expect(renderSpy).toHaveBeenCalledWith(invalidNode);
 	});
 
-	it('falls back when native render transport ABI is stale', async () => {
+	it('falls back when native render node ABI is stale', async () => {
 		vi.doMock('node:module', () => ({
 			createRequire: () => () => ({
 				SittirEngine: class {
@@ -122,7 +122,7 @@ describe('engine render boundary', () => {
 		const { getActiveBackend } = await import('../src/backend.ts');
 		expect(getActiveBackend()).toMatchObject({
 			name: 'js',
-			reason: 'native render transport ABI mismatch'
+			reason: 'native render node ABI mismatch'
 		});
 	});
 });

@@ -66,7 +66,7 @@ function makeOptionalUnnamedHelperNodeMap(): NodeMap {
 }
 
 describe('render-module unnamed structural signals', () => {
-	it('keeps unnamed repeated choice aliases wired to transport storage via isUnnamed', () => {
+	it('keeps unnamed repeated choice aliases wired to node storage via isUnnamed', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedUnnamedChoiceNodeMap);
 		const parent = nodeMap.nodes.get('mixed_parent');
 		expect(parent?.modelType).toBe('branch');
@@ -78,10 +78,10 @@ describe('render-module unnamed structural signals', () => {
 			emittedTemplates({ mixed_parent: slot('identifier') }),
 			nodeMap,
 			generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
 		expect(parent.slots[0]!.values.every((value) => value.multiplicity === 'nonEmptyArray')).toBe(true);
-		expect(emitted).toContain('pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<MixedParentContentTransportSlot>>,');
+		expect(emitted).toContain('pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<MixedParentContentNodeSlot>>,');
 		expect(emitted).toContain('let identifier = ListView {');
 		expect(emitted).toContain('items: &node.content,');
 		expect(emitted).not.toContain('items: NO_ITEMS,');
@@ -101,13 +101,13 @@ describe('render-module unnamed structural signals', () => {
 			emittedTemplates({ parent_helper: slot('value') }),
 			nodeMap,
 			generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
-		const start = emitted.indexOf('pub struct ParentHelperTransport');
+		const start = emitted.indexOf('pub struct ParentHelperNode');
 		const end = emitted.indexOf('}', start);
 		const structBody = emitted.slice(start, end);
-		expect(structBody).toContain('pub helper: Option<::sittir_core::SlotValue<HelperTransport>>,');
-		expect(structBody).toContain('pub value: Option<::sittir_core::SlotValue<IdentifierTransport>>,');
+		expect(structBody).toContain('pub helper: Option<::sittir_core::SlotValue<HelperNode>>,');
+		expect(structBody).toContain('pub value: Option<::sittir_core::SlotValue<IdentifierNode>>,');
 		expect(structBody).not.toContain('pub integer:');
 	});
 });

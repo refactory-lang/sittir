@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Every seam in a render rule that touches a punctuation literal is a spacing site named by the token (`lparen_before`, `rparen_after`), owned by the kind that holds it, materialized on the transport like a separator site, and written through a root writer that coalesces adjacent seam whitespace to the wider.
+**Goal:** Every seam in a render rule that touches a punctuation literal is a spacing site named by the token (`lparen_before`, `rparen_after`), owned by the kind that holds it, materialized on the node like a separator site, and written through a root writer that coalesces adjacent seam whitespace to the wider.
 
-**Architecture:** A second function in the render-rules module runs after the template emitter's seam-stamping dry run and injects `choice(_tight, _space, _newline)` between the members of every seq where one member is a punctuation literal, its default arm read from the stamp (`space` where the body already baked a space, `tight` otherwise) and overridden by the grammar's `patches:` defaults. The body IR gains a `seam` node that prints as `{<site>}`; the render module binds each seam local from the transport's site field; every option-driven whitespace string (`spacing_text`) now carries an in-band seam mark, and the `SpacingWriter` holds the marked payload and merges consecutive payloads by width before writing.
+**Architecture:** A second function in the render-rules module runs after the template emitter's seam-stamping dry run and injects `choice(_tight, _space, _newline)` between the members of every seq where one member is a punctuation literal, its default arm read from the stamp (`space` where the body already baked a space, `tight` otherwise) and overridden by the grammar's `patches:` defaults. The body IR gains a `seam` node that prints as `{<site>}`; the render module binds each seam local from the native node's site field; every option-driven whitespace string (`spacing_text`) now carries an in-band seam mark, and the `SpacingWriter` holds the marked payload and merges consecutive payloads by width before writing.
 
 **Tech Stack:** TypeScript codegen (`packages/codegen`), `sittir-core` writer and options, generated Rust render crates, vitest, cargo.
 
@@ -32,7 +32,7 @@
 | `packages/codegen/src/emitters/render-body.ts` | `SeamNode`, `seam()`, `SEAM_MARK`; every node switch gains the case |
 | `packages/codegen/src/emitters/templates.ts` | seam parts held across a boundary in `emitRule`'s seq join; guards in `pickConditionalKey`, `renderRuleEdge`, `scanArmBody` |
 | `packages/codegen/src/emitters/emit.ts` | pass order: separators, stamp, seams |
-| `packages/codegen/src/emitters/render-module.ts` | seam locals bound from the transport; `references` covers seams; `render_transport_dispatch` calls `finish` |
+| `packages/codegen/src/emitters/render-module.ts` | seam locals bound from the node; `references` covers seams; `render_node_dispatch` calls `finish` |
 | `packages/codegen/src/emitters/render-options-rs.ts` | marked `spacing_text`; `LABEL_COUNT`; label vector in `defaults()` and `resolve()` |
 | `packages/tools/src/validate/render-bodies.ts`, `packages/codegen/src/emitters/__tests__/support/show-body.ts` | the `seam` case in the two body consumers outside codegen proper |
 
@@ -949,14 +949,14 @@ git commit -m "feat(templates): the body IR carries token seams; the seq join ho
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/emit.ts:99-136`
-- Modify: `packages/codegen/src/emitters/render-module.ts` (`render_transport_dispatch` :681-690, `buildTypedTemplateBody` :905-992, `spacingFieldExprs` :2507)
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`render_node_dispatch` :681-690, `buildTypedTemplateBody` :905-992, `spacingFieldExprs` :2507)
 - Modify: `packages/codegen/src/emitters/render-options-rs.ts` (`renderOptionsRs`, `RESOLVER_BODY`)
 - Modify: `rust/crates/sittir-core/src/options.rs` (`ResolvedOptions.labels`)
 - Test: `packages/codegen/src/emitters/__tests__/render-options-rs.test.ts`, `render-module-emit.test.ts`, `emitter-options.test.ts`
 
 **Interfaces:**
 - Consumes: `seamRenderRules` (Task 3); `SEAM_MARK`, `rustStringLiteral`, `references(...).seams` (Task 4); `SpacingWriter::finish` (Task 2).
-- Produces: generated `options::spacing_text(id)` returns `"\u{FDD2}"`, `"\u{FDD2} "`, `"\u{FDD2}\n"` for the text kinds and the unchanged `INDENT_NEWLINE`/`DEDENT_NEWLINE` constants; `pub const LABEL_COUNT: usize`; `ResolvedOptions { spacing, delimiter, labels: Vec<Option<u16>>, indent }`; `defaults()` sets `labels: vec![None; LABEL_COUNT]`; `resolve` sets `table.labels[i] = Some(id)` for a top-level label key; every seam site of a kind is a transport field, filled by `fill_options`, and bound in the render function as `let <site> = options::spacing_text(node.<site>.unwrap_or(0));`.
+- Produces: generated `options::spacing_text(id)` returns `"\u{FDD2}"`, `"\u{FDD2} "`, `"\u{FDD2}\n"` for the text kinds and the unchanged `INDENT_NEWLINE`/`DEDENT_NEWLINE` constants; `pub const LABEL_COUNT: usize`; `ResolvedOptions { spacing, delimiter, labels: Vec<Option<u16>>, indent }`; `defaults()` sets `labels: vec![None; LABEL_COUNT]`; `resolve` sets `table.labels[i] = Some(id)` for a top-level label key; every seam site of a kind is a native node field, filled by `fill_options`, and bound in the render function as `let <site> = options::spacing_text(node.<site>.unwrap_or(0));`.
 
 - [x] **Step 1: Write the failing tests**
 
@@ -986,7 +986,7 @@ Add a seam site to `sites` and assert its plan row:
 	});
 ```
 
-`render-module-emit.test.ts`: copy the shape of `a separated-list transport carries its own spacing and flank fields, named by the site key` (line 373) into a new case whose plan holds one seam site (`side: 'seam'`) on a compound kind whose body is `concat(text('fn'), seam('lparen_before'), text('('), slot('x'), text(')'))`, asserting:
+`render-module-emit.test.ts`: copy the shape of `a separated-list node carries its own spacing and flank fields, named by the site key` (line 373) into a new case whose plan holds one seam site (`side: 'seam'`) on a compound kind whose body is `concat(text('fn'), seam('lparen_before'), text('('), slot('x'), text(')'))`, asserting:
 
 ```ts
 		expect(body).toContain('#[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]');
@@ -1019,7 +1019,7 @@ Every later consumer (`RenderModuleEmitter`, `emitOptions`) keeps reading `rende
 
 - [x] **Step 4: `render-module.ts`**
 
-`render_transport_dispatch`: after the `write_fmt` line push `    w.finish()?;`.
+`render_node_dispatch`: after the `write_fmt` line push `    w.finish()?;`.
 
 `buildTypedTemplateBody`: after the field loop and before `const refs = references(struct.body);`:
 
@@ -1070,7 +1070,7 @@ Expected: PASS (codegen at its known baseline; any new failure isolated by stash
 - [x] **Step 7: Commit**
 
 ```bash
-git commit -m "feat(render): seam sites bound from the transport; every option whitespace is seam-marked; label values kept in the resolved table" -- packages/codegen/src/emitters/emit.ts packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/render-options-rs.ts rust/crates/sittir-core/src/options.rs packages/codegen/src/emitters/__tests__/render-options-rs.test.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts packages/codegen/src/emitters/__tests__/emitter-options.test.ts
+git commit -m "feat(render): seam sites bound from the node; every option whitespace is seam-marked; label values kept in the resolved table" -- packages/codegen/src/emitters/emit.ts packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/render-options-rs.ts rust/crates/sittir-core/src/options.rs packages/codegen/src/emitters/__tests__/render-options-rs.test.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts packages/codegen/src/emitters/__tests__/emitter-options.test.ts
 ```
 
 ---
@@ -1095,7 +1095,7 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src --skip-ts-chain
 ```
 
-Expected: each gen writes its files; the final two succeed end to end. A `render body for '<kind>' names '<site>', which its transport has no slot for` error means a seam landed in a kind that gets no transport: stop and review which rule it came from (the inlined-helper skip in `seamRenderRules` is the first suspect).
+Expected: each gen writes its files; the final two succeed end to end. A `render body for '<kind>' names '<site>', which its node has no slot for` error means a seam landed in a kind that gets no node: stop and review which rule it came from (the inlined-helper skip in `seamRenderRules` is the first suspect).
 
 - [x] **Step 2: Byte gate**
 

@@ -1,15 +1,15 @@
 //! What a record's cell must hold for each slot type: the check behind the
-//! layout codegen stamps on a transport's slots (`#[slot(word = …, …)]`).
+//! layout codegen stamps on a node's slots (`#[slot(word = …, …)]`).
 //! Codegen is the one source of every word, width and bit; the derive
 //! asserts, per slot, that the slot's type fits the cell stamped for it, and
 //! computes nothing else.
 //!
-//! A derived interior transport accepts a four-word text cell:
+//! A derived interior node accepts a four-word text cell:
 //!
 //! ```
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
-//! #[derive(sittir_core::Transport)]
-//! #[transport(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! #[derive(sittir_core::Node)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
 //! struct Example {
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 4)]
@@ -21,8 +21,8 @@
 //!
 //! ```compile_fail
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
-//! #[derive(sittir_core::Transport)]
-//! #[transport(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! #[derive(sittir_core::Node)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
 //! struct Example {
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 3)]
@@ -34,8 +34,8 @@
 //!
 //! ```compile_fail
 //! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
-//! #[derive(sittir_core::Transport)]
-//! #[transport(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! #[derive(sittir_core::Node)]
+//! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
 //! struct Example {
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 1, width = 4)]

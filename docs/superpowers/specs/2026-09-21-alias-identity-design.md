@@ -43,7 +43,7 @@ real rule with an authored body), #214 (validator compares display names).
 
 | identity | source of truth | what keys on it |
 | --- | --- | --- |
-| storage kind | `grammar_id()`; the rule (or literal symbol) that parsed the node | `$type`, transport structs, factories, wrap dispatch, spacing sites, options addresses |
+| storage kind | `grammar_id()`; the rule (or literal symbol) that parsed the node | `$type`, native node structs, factories, wrap dispatch, spacing sites, options addresses |
 | display kind | `kind_id()`; the alias target at the site, else the storage kind | node-types, `bindings.scm` queries, the validator's `type`, the display union in the typed surface |
 
 A display kind that is only ever an alias target (`property_identifier`,
@@ -156,7 +156,7 @@ ask:
   node-types spelling.
 - **Identifier for a storage kind**: the storage kind's own name, hidden
   prefix included, through the existing identifier casing
-  (`_as_pattern` → `_AsPattern…`, as the transport already spells hidden
+  (`_as_pattern` → `_AsPattern…`, as the node already spells hidden
   structs). Used by struct names, spacing-site keys, wrap function names.
 
 A spacing site is keyed by storage kind. `case_as_pattern` then works from
@@ -292,7 +292,7 @@ The treatment is identical for every storage shape:
 | over terminals | the AssembledEnum of the storage kinds, or the leaf | rust `doc_comment` over its external comment contents |
 | over a leaf and terminals | the union of both | `PropertyIdentifier { $type: 458, content: Identifier \| TSKindId.DeclareKeyword \| … }` |
 
-The envelope has its own struct, wrap function, transport, factory and
+The envelope has its own struct, wrap function, node, factory and
 render template; the template writes the content. It has no `ir` key (user
 ruling): the `ir` surface names kinds a user constructs, and an envelope is
 reached through the storage it wraps. `is.<display>()` narrows to the
@@ -303,7 +303,7 @@ fact in *Global constraints*: the native read stamps `KindId(kind_id())` for
 an aliased node and places the `KindId(grammar_id())` node in `content`;
 for an unaliased node the two ids coincide and nothing changes. One rule,
 no exception: an aliased node is always an envelope over its storage node.
-The storage node keeps its own identity inside the envelope, so transport
+The storage node keeps its own identity inside the envelope, so native node
 structs, spacing sites and options addresses stay keyed by storage kind.
 The validator (§3.6) is unaffected: it compares parse trees.
 

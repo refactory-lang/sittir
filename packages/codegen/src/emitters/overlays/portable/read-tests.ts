@@ -2,7 +2,7 @@ import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubj
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
 import { comparesOwnText, slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
-import { transportSlotNumbers } from '../../render-module.ts';
+import { nodeSlotNumbers } from '../../render-module.ts';
 import { keywordPresenceValue } from '../../shared.ts';
 
 export type SlotSubjectOf = (kind: string, slot: string) => SlotSubject | undefined;
@@ -16,7 +16,7 @@ export const slotSubjectOf =
 	(kind, name) => {
 		const node = nodeMap.nodes.get(kind);
 		const slot = node?.slots.find((s) => s.name === name);
-		const number = node === undefined || slot === undefined ? undefined : transportSlotNumbers(node, nodeMap).get(slot.storageName);
+		const number = node === undefined || slot === undefined ? undefined : nodeSlotNumbers(node, nodeMap).get(slot.storageName);
 		return node?.kindId === undefined || number === undefined ? undefined : { slots: { [node.kindId]: number } };
 	};
 

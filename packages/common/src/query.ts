@@ -12,7 +12,7 @@ import type {
 	SlotRef,
 	SlotSubject,
 	StepAnchor,
-	TransportCoordinate
+	NodeCoordinate
 } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './read.ts';
@@ -29,7 +29,7 @@ export interface DescendantWalk {
 }
 
 export interface DescendantBatch {
-	readonly coordinates: readonly TransportCoordinate[];
+	readonly coordinates: readonly NodeCoordinate[];
 	readonly resume: readonly number[] | null;
 	readonly origin: number;
 }
@@ -451,7 +451,7 @@ function entryOfItem(item: unknown): Entry {
 	};
 }
 
-function entryOfCoordinate(coordinate: TransportCoordinate, tree: TreeHandle, hooks: QueryHooks): Entry {
+function entryOfCoordinate(coordinate: NodeCoordinate, tree: TreeHandle, hooks: QueryHooks): Entry {
 	return {
 		kind: coordinate.$type,
 		address: { handle: coordinate.$treeHandle },

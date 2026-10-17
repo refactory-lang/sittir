@@ -334,7 +334,7 @@ git commit -m "feat(compiler): an inline alias distributes over its arms; link b
 - Shared displays: the kind that owns its display (`ownsItsDisplay`) holds the options hint home; any other collision throws. The visible-twin merge in `emitOptionsHints` is gone.
 - Whitespace arms are stamped on each `whitespaceChoice` member (`annotations.arm`) and read back by `partOf`/`seamChoiceDefault`; `whitespaceSymbolsOf` maps arm to member symbol from the `_whitespace` supertype.
 - `admitsNoExtras` names a lexical kind by structure (`isLexicalSymbol`: an external, or a rule lexical all the way down), not by the `_`-reprefix name bridge.
-- `isDisplayedLiteral` reads `aliasTargetOf`. `collectAliasedHiddenKinds` and its plumbing are retired: every entry it held was a non-node kind, which `acceptedTransportKinds` never consulted (byte-identical).
+- `isDisplayedLiteral` reads `aliasTargetOf`. `collectAliasedHiddenKinds` and its plumbing are retired: every entry it held was a non-node kind, which `acceptedNodeKinds` never consulted (byte-identical).
 - No `storageIdentifier`: nothing needed one.
 
 **Output moves (reviewed and accepted):** python `(parameters)/parameter…` → `(parameters_elements)/parameter…`; typescript `_number` owns its edges as `unary_expression_number` (five sites, three seated); display-sharing `Edged` ids (typescript fragments → `string_fragment` 109, `_ternary_qmark` → 126; rust `raw_string_literal_content` → 155).
@@ -833,7 +833,7 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 - [x] definedBy 'enrich'.
 - [x] Test: an upstream-fielded choice gets no automatic stamp.
 - [x] Test: a patch-added field() strips enrich's automatic variants on that slot, while an authored variant() on it survives.
-- [x] Gates: rows identical; options addresses unmoved; types.ts, factory signatures and transport unmoved; storage gate unchanged; lint 0 (by count); suite; cargo. Node-model may move only by new polymorphVariants childKind entries (report the count per grammar); any modelType change or factorySlots/shape/field move stops.
+- [x] Gates: rows identical; options addresses unmoved; types.ts, factory signatures and node unmoved; storage gate unchanged; lint 0 (by count); suite; cargo. Node-model may move only by new polymorphVariants childKind entries (report the count per grammar); any modelType change or factorySlots/shape/field move stops.
 - [x] Report the arm diff per grammar before committing, with every ir-path change named.
 - [x] Nested arms recurse: each arm's child carries its own arms under it, with no depth cap; only a kind-keyed cycle guard stops it. The tools' printing surface mounts arm printers at every depth too.
 - [x] rust: `variant('scope')` on pub's group reference; the in_path patches apply before it and `crate`/`pub` after. Target: `ir.visibilityModifier.pub.scope.inPath`, used by examples/01.
@@ -864,7 +864,7 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 
 **Follow-up:** shared-slot choice lowering emits non-exclusive if-tests, so a slot shared by two choice arms renders twice. Add a blocking shared-slot-choice diagnostic first, then fix the lowering. Repro in the same follow-ups doc.
 
-**Follow-up:** variant arms on a shared slot produce a Rust transport arity mismatch (E0308: `Vec<SlotValue>` vs `SlotValue`). Observed only; the cause is not traced. Repro in the same follow-ups doc.
+**Follow-up:** variant arms on a shared slot produce a Rust node arity mismatch (E0308: `Vec<SlotValue>` vs `SlotValue`). Observed only; the cause is not traced. Repro in the same follow-ups doc.
 
 ### Task 7b: A built node carries the alias envelope its read shows
 
@@ -882,13 +882,13 @@ Run this right after Task 7a. A registered choice option (`terminator`, `quotes:
 
 Facts:
 - Factory: `registeredSlotSource`'s `registeredOption === 'choice'` branch emits `options?.<key>` with no default. This is deliberate: the render-time chain is meant to own resolution.
-- Transport: the slot's field is a required `SlotValue<…TransportSlot>` (for example `LexicalDeclarationTransport.terminator`). The napi decode rejects an absent value with "Missing field `_terminator`".
+- Node: the slot's field is a required `SlotValue<…NodeSlot>` (for example `LexicalDeclarationNode.terminator`). The napi decode rejects an absent value with "Missing field `_terminator`".
 - Prepare: the kind's `Prepare` impl fills only spacing seams from `ctx.options.spacing[SITE_…]`. It never fills the registered slot.
 - Render: `render_<kind>` renders the slot as given.
-- The site exists (`SITE_LEXICAL_DECLARATION_TERMINATOR`, its option row with admitted kind ids, and a `sites[]` default arm), but nothing in transport or render reads it.
-- Reproduces with `ir.returnStatement.strict(id('r')).$render()`. The same factory and transport shapes are at HEAD, where a `.semi`-style arm form filling the slot hid the defect.
+- The site exists (`SITE_LEXICAL_DECLARATION_TERMINATOR`, its option row with admitted kind ids, and a `sites[]` default arm), but nothing in node or render reads it.
+- Reproduces with `ir.returnStatement.strict(id('r')).$render()`. The same factory and node shapes are at HEAD, where a `.semi`-style arm form filling the slot hid the defect.
 
-- [x] Transport emitter: a registered-choice slot's field is `Option<SlotValue<…>>`.
+- [x] Node emitter: a registered-choice slot's field is `Option<SlotValue<…>>`.
 - [x] Prepare: an absent registered-choice slot is filled from the option chain (per-tree, then engine, then the grammar default), i.e. the site's resolved arm.
 - [x] A kind-id → slot constructor is generated for each registered-choice slot enum. Prepare uses it to build the value from the resolved arm.
 - [x] Render reads the filled value; no other change.

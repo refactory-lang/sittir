@@ -49,7 +49,7 @@ export type {
 	ByteSpan,
 	UntypedNodeOf,
 	NodeLayout,
-	TransportCoordinate,
+	NodeCoordinate,
 	NodeMemberValue,
 	TemplateRule,
 	TemplateRuleObject,

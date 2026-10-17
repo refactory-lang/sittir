@@ -242,7 +242,7 @@ match node.field_name_for_child(i) {
 
 **Tests** — mechanical updates to test files that assert on emitted code shape:
 - `packages/codegen/src/__tests__/wrap-variant-emit.test.ts`
-- `packages/codegen/src/__tests__/native-transport-emit.test.ts` (6 sites)
+- `packages/codegen/src/__tests__/native-node-emit.test.ts` (6 sites)
 - `packages/codegen/src/__tests__/slot-model.test.ts` (2 sites)
 - `packages/codegen/src/__tests__/polymorph-hoist-scalar.test.ts`
 - `packages/codegen/src/__tests__/factory-roundtrip-harness.test.ts` (3 sites)

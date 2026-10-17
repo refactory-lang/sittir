@@ -1,4 +1,4 @@
-import { computeTransportSCC } from './scc.ts';
+import { computeNodeSCC } from './scc.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 import { compileGrammar, assertCompilation, type Compilation } from './compile.ts';
 
@@ -117,7 +117,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
-		nodeMap.scc = computeTransportSCC(nodeMap);
+		nodeMap.scc = computeNodeSCC(nodeMap);
 
 		const emitted = emitAll({
 			grammar: cfg.grammar,
