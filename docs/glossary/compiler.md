@@ -9263,7 +9263,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.constructor`
+### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx::constructor`
 
 #### body
 
@@ -10119,7 +10119,7 @@ lexical), passed through from the owning node's derive ctx so slots resolve
 alias envelopes the same way element and value derivation does.
 ```
 
-### `packages/codegen/src/compiler/link.ts::LinkCtx.sourceSymbols`
+### `packages/codegen/src/compiler/link.ts::LinkCtx::sourceSymbols`
 
 The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar.predictedKinds`), asked through `catalogSymbolSource`, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 

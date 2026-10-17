@@ -9231,7 +9231,7 @@ The keyword kinds among a slot's literal values, through
 undefined for a slot whose values are all keywords or all punctuation. It is
 the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 
-### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter::constructor`
 
 #### body
 
@@ -11236,11 +11236,11 @@ Throws when one of the node's accessors or options has the name of a `ReadonlyAr
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.structure`
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::structure`
 
 The structure table the emitter recorded while emitting builders: each emitted compound's or list's row, by kind id. A kind without a builder or a kind id has no row. The language utils print it as `structure`.
 
-### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.constructor`
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::constructor`
 
 #### body
 
@@ -12107,7 +12107,7 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::FromEmitter.finalize`
+### `packages/codegen/src/emitters/from.ts::FromEmitter::finalize`
 
 #### body
 
@@ -12288,7 +12288,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.rootTreeTypeName`
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::rootTreeTypeName`
 
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
@@ -12300,7 +12300,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::finalize`
 
 Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfData` (a node's `$type` mapped to its wrapped surface through `T.ParsedByKindId`, the data type itself for a grammar with no kind catalog), the hydrate helpers, every per-kind wrap function, the `_wrapTable` dispatch table and `wrapNode`.
 
@@ -12357,13 +12357,13 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitLeaf`
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter::emitLeaf`
 
 ```text
 // No per-node accumulation needed — emitRenderModule reads the full nodeMap.
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitBranch`
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter::emitBranch`
 
 ```text
 // 'list' participates in this scan uniformly alongside 'branch' (no-op
