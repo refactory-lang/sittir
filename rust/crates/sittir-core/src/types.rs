@@ -19,6 +19,7 @@ macro_rules! id_newtype {
         #[cfg(feature = "napi-bindings")]
         impl napi::bindgen_prelude::ToNapiValue for $name {
             unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+                // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
                 unsafe { <$repr as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.0) }
             }
         }
@@ -29,6 +30,7 @@ macro_rules! id_newtype {
         #[cfg(feature = "napi-bindings")]
         impl napi::bindgen_prelude::ToNapiValue for $name {
             unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+                // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
                 unsafe { <$wire as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.0 as $wire) }
             }
         }
@@ -76,6 +78,7 @@ macro_rules! id_newtype {
         #[cfg(feature = "napi-bindings")]
         impl napi::bindgen_prelude::FromNapiValue for $name {
             unsafe fn from_napi_value(env: napi::sys::napi_env, val: napi::sys::napi_value) -> napi::Result<Self> {
+                // SAFETY: napi calls `from_napi_value` with `val` live in `env`.
                 let value = unsafe { <f64 as napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, val) }?;
                 crate::napi_engine::checked_whole::<$repr>(value, stringify!($name)).map(Self)
             }
@@ -277,6 +280,7 @@ impl napi::bindgen_prelude::FromNapiValue for Source {
         env: napi::sys::napi_env,
         val: napi::sys::napi_value,
     ) -> napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `val` live in `env`.
         let n: u8 = crate::napi_engine::checked_whole(unsafe { f64::from_napi_value(env, val) }?, "Source")?;
         match n {
             0 => Ok(Source::Ts),
@@ -323,7 +327,7 @@ pub struct Span {
 impl Span {
     /// The bytes `node` spans. tree-sitter keeps offsets as `uint32_t`, so
     /// the narrowing loses nothing.
-    #[allow(clippy::disallowed_methods)]
+    #[allow(clippy::disallowed_methods, reason = "wraps `Node::start_byte` and `Node::end_byte`, which clippy.toml disallows outside `Span::of`")]
     pub fn of(node: &tree_sitter::Node<'_>) -> Self {
         Self { start: node.start_byte() as u32, end: node.end_byte() as u32 }
     }
@@ -343,9 +347,12 @@ impl Span {
 #[cfg(feature = "napi-bindings")]
 impl napi::bindgen_prelude::FromNapiValue for Span {
     unsafe fn from_napi_value(env: napi::sys::napi_env, napi_val: napi::sys::napi_value) -> napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
         Ok(Self {
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             start: unsafe { crate::boundary::required_whole(env, obj, c"start", "Span")? },
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             end: unsafe { crate::boundary::required_whole(env, obj, c"end", "Span")? },
         })
     }
@@ -354,6 +361,7 @@ impl napi::bindgen_prelude::FromNapiValue for Span {
 #[cfg(feature = "napi-bindings")]
 impl napi::bindgen_prelude::ToNapiValue for Span {
     unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             crate::boundary::object_with(env, &[
                 (c"start", u32::to_napi_value(env, val.start)?),

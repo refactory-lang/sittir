@@ -42,6 +42,9 @@ tree-sitter-language = { workspace = true }
 [build-dependencies]
 napi-build = "2"
 cc = { workspace = true }
+
+[lints]
+workspace = true
 `
 		},
 		{
@@ -165,6 +168,9 @@ unsafe extern "C" {
 }
 
 /// The generated \`.sittir\` ${v.Name} parser.
+// SAFETY: \`tree_sitter_${v.name}\` is the generated parser's entry point, compiled
+// and linked by build.rs; it returns the parser's static \`TSLanguage\`, which is
+// the pointer \`LanguageFn::from_raw\` expects.
 pub const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_${v.name}) };
 
 pub fn language() -> tree_sitter::Language {

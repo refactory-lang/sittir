@@ -77,7 +77,7 @@ Carried forward unchanged:
 
 ### 1.2 Where the halves meet
 
-The runtime's `grammar(base, options)` reads in this order (tree-sitter 0.26.9's `dsl.js`):
+The runtime's `grammar(base, options)` reads in this order (tree-sitter 0.27.1's `dsl.js`):
 1. the base's `name`;
 2. the base's `externals`, which it passes to `options.externals`;
 3. the keys of `options.rules` and of the base's rules, from which it builds `$`. The externals come first because `$` must know their names;
@@ -101,7 +101,7 @@ The externals callback is therefore the one point where a layer sees its base be
 The two halves share only that handle. No state is ambient: two layers evaluated in one process, or one layer evaluated twice, never share a pending base.
 
 **Guards.** The hook rests on the order in which tree-sitter's `dsl.js` calls the callbacks. That order is internal to tree-sitter, so a change to it must fail loudly, never skip the pass:
-- `options.rules` throws if it is read before the pass has run. The message names the tree-sitter version the order was verified against (0.26.9).
+- `options.rules` throws if it is read before the pass has run. The message names the tree-sitter version the order was verified against (0.27.1).
 - The handle is consumed once. The externals callback refuses a handle it has already consumed, so the pass cannot run twice.
 - `enrich(base)` refuses a base that carries a handle no pass consumed.
 - A test runs the pinned CLI over a fixture chain and asserts the pass ran once, before `$` was built. Bumping tree-sitter's version fails that test until the order is verified again.

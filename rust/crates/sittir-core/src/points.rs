@@ -67,6 +67,7 @@ impl PointSpan {
 impl ::napi::bindgen_prelude::FromNapiValue for Point {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::{object, required_whole};
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             let obj = object(env, napi_val)?;
             Ok(Point { row: required_whole(env, obj, c"row", "a span point")?, column: required_whole(env, obj, c"column", "a span point")? })
@@ -78,6 +79,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Point {
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for Point {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { crate::boundary::object_with(env, &[(c"row", u32::to_napi_value(env, val.row)?), (c"column", u32::to_napi_value(env, val.column)?)]) }
     }
 }
@@ -87,6 +89,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Point {
 impl ::napi::bindgen_prelude::FromNapiValue for PointSpan {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::{object, required};
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             let obj = object(env, napi_val)?;
             Ok(PointSpan { start: required(env, obj, c"start", "a span")?, end: required(env, obj, c"end", "a span")? })
@@ -98,6 +101,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointSpan {
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for PointSpan {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { crate::boundary::object_with(env, &[(c"start", Point::to_napi_value(env, val.start)?), (c"end", Point::to_napi_value(env, val.end)?)]) }
     }
 }

@@ -26,3 +26,6 @@ tree-sitter-language = { workspace = true }
 [build-dependencies]
 napi-build = "2"
 cc = { workspace = true }
+
+[lints]
+workspace = true

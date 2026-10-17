@@ -10,6 +10,16 @@ members = ["rust/crates/*"]
 # which is why the workspace manifest lives at the repo root while the
 # grammar-owned native crates live under `rust/crates/sittir-{lang}`.
 
+[workspace.lints.clippy]
+allow_attributes_without_reason = "warn"
+clone_on_ref_ptr = "warn"
+dbg_macro = "warn"
+debug_assert_with_mut_call = "warn"
+redundant_clone = "warn"
+todo = "warn"
+undocumented_unsafe_blocks = "warn"
+unimplemented = "warn"
+
 [workspace.package]
 version = "0.0.0"
 edition = "2021"

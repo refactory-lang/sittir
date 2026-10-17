@@ -15,7 +15,9 @@ pub unsafe fn property<V: ::napi::bindgen_prelude::FromNapiValue>(
     obj: ::napi::sys::napi_value,
     key: &'static ::std::ffi::CStr,
 ) -> ::napi::Result<Option<V>> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
     unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? }
+        // SAFETY: `value` was just read from `obj`, so it is live in `env`.
         .map(|value| unsafe { V::from_napi_value(env, value) })
         .transpose()
 }
@@ -33,7 +35,9 @@ pub unsafe fn required<V: ::napi::bindgen_prelude::FromNapiValue>(
     key: &'static ::std::ffi::CStr,
     owner: &'static str,
 ) -> ::napi::Result<V> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
     let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
+    // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
     unsafe { ::napi::bindgen_prelude::from_raw_required_field(env, raw, owner, key_name(key)) }
 }
 
@@ -50,6 +54,7 @@ pub unsafe fn required_whole<T: TryFrom<u64>>(
     key: &'static ::std::ffi::CStr,
     owner: &'static str,
 ) -> ::napi::Result<T> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
     let value: f64 = unsafe { required(env, obj, key, owner)? };
     crate::napi_engine::checked_whole(value, Field(owner, key))
 }
@@ -66,6 +71,7 @@ pub unsafe fn property_whole<T: TryFrom<u64>>(
     key: &'static ::std::ffi::CStr,
     owner: &'static str,
 ) -> ::napi::Result<Option<T>> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
     unsafe { property::<f64>(env, obj, key)? }.map(|value| crate::napi_engine::checked_whole(value, Field(owner, key))).transpose()
 }
 
@@ -92,7 +98,9 @@ pub unsafe fn optional<V: ::napi::bindgen_prelude::FromNapiValue>(
     key: &'static ::std::ffi::CStr,
     owner: &'static str,
 ) -> ::napi::Result<Option<V>> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
     let raw = unsafe { ::napi::bindgen_prelude::get_named_property_raw(env, obj, key.as_ptr())? };
+    // SAFETY: `raw` was just read from `obj`, so it is live in `env`.
     unsafe { ::napi::bindgen_prelude::from_raw_optional_field(env, raw, owner, key_name(key)) }
 }
 
@@ -108,6 +116,7 @@ pub unsafe fn flag(
     key: &'static ::std::ffi::CStr,
     owner: &'static str,
 ) -> ::napi::Result<bool> {
+    // SAFETY: this fn requires `obj` to be live in `env`.
     Ok(unsafe { optional::<bool>(env, obj, key, owner)? }.unwrap_or(false))
 }
 
@@ -117,6 +126,7 @@ pub unsafe fn flag(
 /// `value` must be a live value in `env`.
 #[cfg(feature = "napi-bindings")]
 pub unsafe fn object(env: ::napi::sys::napi_env, value: ::napi::sys::napi_value) -> ::napi::Result<::napi::sys::napi_value> {
+    // SAFETY: this fn requires `value` to be live in `env`.
     let obj = unsafe { <::napi::bindgen_prelude::Object as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, value)? };
     Ok(::napi::JsValue::raw(&obj))
 }
@@ -130,6 +140,7 @@ pub unsafe fn object_with(
     env: ::napi::sys::napi_env,
     fields: &[(&::std::ffi::CStr, ::napi::sys::napi_value)],
 ) -> ::napi::Result<::napi::sys::napi_value> {
+    // SAFETY: this fn requires every value to be live in `env`.
     unsafe { object_from(env, fields.iter().copied()) }
 }
 
@@ -144,6 +155,7 @@ pub unsafe fn present<V: ::napi::bindgen_prelude::ToNapiValue>(
     key: &'static ::std::ffi::CStr,
     value: Option<V>,
 ) -> ::napi::Result<Option<(&'static ::std::ffi::CStr, ::napi::sys::napi_value)>> {
+    // SAFETY: this fn requires `env` to be live.
     present_with(key, value, |value| unsafe { V::to_napi_value(env, value) })
 }
 
@@ -169,6 +181,7 @@ pub unsafe fn object_with_present(
     env: ::napi::sys::napi_env,
     fields: &[Option<(&::std::ffi::CStr, ::napi::sys::napi_value)>],
 ) -> ::napi::Result<::napi::sys::napi_value> {
+    // SAFETY: this fn requires every value to be live in `env`.
     unsafe { object_from(env, fields.iter().flatten().copied()) }
 }
 
@@ -188,6 +201,7 @@ pub unsafe fn define_present(
         return Ok(());
     }
     ::napi::check_status!(
+        // SAFETY: this fn requires `obj` and every present value to be live in `env`.
         unsafe { ::napi::sys::napi_define_properties(env, obj, descriptors.len(), descriptors.as_ptr()) },
         "failed to define the object's fields"
     )
@@ -198,6 +212,7 @@ unsafe fn object_from<'k>(
     env: ::napi::sys::napi_env,
     fields: impl Iterator<Item = (&'k ::std::ffi::CStr, ::napi::sys::napi_value)>,
 ) -> ::napi::Result<::napi::sys::napi_value> {
+    // SAFETY: its callers, `object_with` and `object_with_present`, require every value to be live in `env`.
     unsafe { ::napi::bindgen_prelude::create_object_with_properties(env, &descriptors(fields)) }
 }
 

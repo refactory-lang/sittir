@@ -676,6 +676,13 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
     - The stage gate is not byte-identical, as ruled. Aliasing in place leaves the alias entry's up-front placeholder mint (`_lambda_expression`) blank, and it stays in the `python.top` evaluated snapshot, following the `_kw_*` convention. `grammarHash` is now taken over the grammar tree-sitter sees (`treeSitterPruned`, the prune `grammar.json` gets), so every grammar's `resolutions.json` hash moves once; the resolution arrays are unchanged. That is the only output-gate difference, apart from python's regenerated `grammar.bindings.ts`.
     - The hash change shares the 5.1 commit: the pre-commit check compares a commit's staged codegen source with the last regen, which covered both changes.
 
+### The master merges after Task 5.1
+
+**Landed** on `feat/authoring-dsl`: 3d41b7a2f merges master at 04bd0dc55, where the typed model is named `Node`, and f79b0223d merges master at b43780cd6, tree-sitter 0.27.1 and the dependency update. They are separate merges so that the rows the CLI moves are measured on their own. Both are gated against the 913f2cfec reference:
+- 3d41b7a2f: every generated file that moves is explained by the merged commits. The rename, `render/transport.rs` → `render/node.rs`, and master's new `descriptor.ts` and `kinds.ts` carry this branch's kinds and slots. The rows are unchanged. Master's two new `query-slot-is` tests read this branch's slot names (rust `let_declaration`'s `name`; typescript `member_expression`'s `optionalChain`).
+- f79b0223d: only `.sittir` parser artifacts move, and each `resolutions.json` moves in its `grammarHash` only, which includes the CLI version. python cov moves 147 → 149, 0.27.1's own: its `node-types.json` lists `as_pattern_target` and `match_block`, and leaves out the inlined supertypes. Master at b43780cd6 reads the same. `VERIFIED_TREE_SITTER` pins 0.27.1 after 0.27.1's `dsl.js` was checked to keep the call order. It moves to `dsl/shared.ts`, so `wire`'s refusals name it too.
+- From here, a gate against the 913f2cfec reference expects these differences, and "byte-identical to Stage 5's commit" means equal to f79b0223d.
+
 ---
 
 ## Stage 6: paths that enter rules, and `copy()` for authors

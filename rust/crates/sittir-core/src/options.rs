@@ -503,27 +503,27 @@ pub fn option_number(key: &str, value: f64) -> Result<u32, String> {
 #[cfg(feature = "napi-bindings")]
 impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
     fn keys(&self) -> Result<Vec<String>, String> {
-        ::napi::bindgen_prelude::Object::keys(self).map_err(|e| e.reason.clone())
+        ::napi::bindgen_prelude::Object::keys(self).map_err(|e| e.reason)
     }
 
     fn object(&self, key: &str) -> Result<Option<Self>, String> {
-        self.get::<Option<Self>>(key).map(Option::flatten).map_err(|e| e.reason.clone())
+        self.get::<Option<Self>>(key).map(Option::flatten).map_err(|e| e.reason)
     }
 
     fn number(&self, key: &str) -> Result<Option<u32>, String> {
-        let value = self.get::<Option<f64>>(key).map(Option::flatten).map_err(|e| e.reason.clone())?;
+        let value = self.get::<Option<f64>>(key).map(Option::flatten).map_err(|e| e.reason)?;
         value.map(|v| option_number(key, v)).transpose()
     }
 
     fn string(&self, key: &str) -> Result<Option<String>, String> {
-        self.get::<Option<String>>(key).map(Option::flatten).map_err(|e| e.reason.clone())
+        self.get::<Option<String>>(key).map(Option::flatten).map_err(|e| e.reason)
     }
 
     fn is_null(&self, key: &str) -> Result<bool, String> {
-        let value = self.get::<::napi::Unknown>(key).map_err(|e| e.reason.clone())?;
+        let value = self.get::<::napi::Unknown>(key).map_err(|e| e.reason)?;
         match value {
             None => Ok(false),
-            Some(value) => value.get_type().map(|t| t == ::napi::ValueType::Null).map_err(|e| e.reason.clone()),
+            Some(value) => value.get_type().map(|t| t == ::napi::ValueType::Null).map_err(|e| e.reason),
         }
     }
 }
@@ -531,6 +531,7 @@ impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
 #[cfg(feature = "napi-bindings")]
 impl<S: OptionSites> ::napi::bindgen_prelude::FromNapiValue for Options<S> {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
         Self::read(&obj).map_err(::napi::Error::from_reason)
     }

@@ -296,6 +296,8 @@ jobs:
         run: cargo check --workspace
       - name: Clippy (warnings denied)
         run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
+      - name: Clippy with napi bindings (warnings denied)
+        run: cargo clippy --workspace --all-targets -- -D warnings
       - name: Typed reader debug diagnostics
         run: cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
 
@@ -468,7 +470,7 @@ jobs:
       # host); the failure path is the build step above.
       - name: cargo test parity (native targets only)
         if: matrix.cross == false
-        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
+        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --nocapture
       # `if: !cancelled()` — without this, a failure in either test step
       # above skips this step entirely by
       # GitHub Actions' default fail-fast-within-job behavior, even

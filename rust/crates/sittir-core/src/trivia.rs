@@ -299,19 +299,27 @@ impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std:
 }
 
 /// A test's trivia type, which never crosses the boundary: decoding one from
-/// JavaScript refuses.
-#[cfg(all(test, feature = "napi-bindings"))]
-macro_rules! refuse_napi_decode {
+/// JavaScript or encoding one to it refuses. Expands to nothing when this
+/// crate is built without napi bindings, like a derived node's codec
+/// (`napi_codec!`).
+#[doc(hidden)]
+#[macro_export]
+macro_rules! refuse_napi_codec {
     ($trivia:ty) => {
-        impl ::napi::bindgen_prelude::FromNapiValue for $trivia {
-            unsafe fn from_napi_value(_: ::napi::sys::napi_env, _: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-                Err(::napi::Error::from_reason(concat!(stringify!($trivia), " does not cross the boundary")))
+        $crate::napi_codec! {
+            impl $crate::__napi::bindgen_prelude::FromNapiValue for $trivia {
+                unsafe fn from_napi_value(_: $crate::__napi::sys::napi_env, _: $crate::__napi::sys::napi_value) -> $crate::__napi::Result<Self> {
+                    Err($crate::__napi::Error::from_reason(concat!(stringify!($trivia), " does not cross the boundary")))
+                }
+            }
+            impl $crate::__napi::bindgen_prelude::ToNapiValue for $trivia {
+                unsafe fn to_napi_value(_: $crate::__napi::sys::napi_env, _: Self) -> $crate::__napi::Result<$crate::__napi::sys::napi_value> {
+                    Err($crate::__napi::Error::from_reason(concat!(stringify!($trivia), " does not cross the boundary")))
+                }
             }
         }
     };
 }
-#[cfg(all(test, feature = "napi-bindings"))]
-pub(crate) use refuse_napi_decode;
 
 /// Trivia that frames what a node renders: its leading entries before, its
 /// trailing entries after.
@@ -502,6 +510,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         Ok(Self::new(unsafe { SlotValue::from_napi_value(env, napi_val)? }))
     }
 }
@@ -516,8 +525,11 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
     ) -> ::napi::Result<Self> {
         use crate::boundary::property;
         Ok(Self {
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             leading: unsafe { property(env, napi_val, c"leading")? },
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             trailing: unsafe { property(env, napi_val, c"trailing")? },
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             inner: unsafe { property(env, napi_val, c"inner")? },
         })
     }
@@ -528,9 +540,13 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     /// `{ leading?, trailing?, inner? }`, each only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         let leading = unsafe { present(env, c"leading", val.leading)? };
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         let trailing = unsafe { present(env, c"trailing", val.trailing)? };
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         let inner = unsafe { present(env, c"inner", val.inner)? };
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { object_with_present(env, &[leading, trailing, inner]) }
     }
 }
@@ -539,6 +555,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
     /// The value's own form.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { SlotValue::to_napi_value(env, val.value) }
     }
 }
@@ -547,12 +564,18 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
         Ok(Self {
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             kind: unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? },
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             span: unsafe { crate::boundary::property(env, obj, c"span")? },
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             before: unsafe { crate::boundary::property(env, obj, c"$before")? },
+            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             after: unsafe { crate::boundary::property(env, obj, c"$after")? },
         })
     }
@@ -563,6 +586,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
 impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             object_with_present(env, &[
                 present(env, c"$type", Some(val.kind.0))?,
