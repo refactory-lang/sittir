@@ -46,6 +46,7 @@ pub trait TriviaSeam {
         0
     }
 
+    #[must_use]
     fn depth_member(_delta: i32) -> Option<Self>
     where
         Self: Sized,
@@ -159,6 +160,7 @@ pub struct TriviaText {
 impl TriviaText {
     /// The entry of `kind` with `text` and nothing else: no place in a
     /// snapshot and no adjacency.
+    #[must_use]
     pub fn of(kind: KindId, text: &str) -> Self {
         Self { kind, text: text.to_owned(), span: None, before: None, after: None }
     }
@@ -166,6 +168,7 @@ impl TriviaText {
     /// Whether the entry writes itself verbatim with its adjacency, in place
     /// of any seam: an `ERROR` always, any other entry when it carries an
     /// adjacency.
+    #[must_use]
     pub fn verbatim(&self) -> bool {
         self.kind == KindId::ERROR || self.before.is_some() || self.after.is_some()
     }
@@ -173,6 +176,7 @@ impl TriviaText {
     /// The entry of `kind` spanning `span` of `source`, with the in-line runs
     /// `adjacent` names before and after it (an `ERROR`'s), and `at` where a
     /// snapshot places it.
+    #[must_use]
     pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<(crate::types::Span, crate::types::Span)>, at: Option<crate::points::PointSpan>) -> Self {
         let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.range()].to_owned());
         let (before, after) = adjacent.map_or((None, None), |(before, after)| (slice(before), slice(after)));
@@ -487,6 +491,7 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
 }
 
 /// Whether a node's trivia holds inner entries.
+#[must_use]
 pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> bool {
     trivia.is_some_and(|trivia| trivia.inner.as_ref().is_some_and(|entries| !entries.is_empty()))
 }

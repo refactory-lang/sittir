@@ -172,6 +172,7 @@ unsafe extern "C" {
 // the pointer \`LanguageFn::from_raw\` expects.
 pub const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_${v.name}) };
 
+#[must_use]
 pub fn language() -> tree_sitter::Language {
     LANGUAGE.into()
 }

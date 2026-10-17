@@ -7,6 +7,7 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]
 #![allow(clippy::large_enum_variant, reason = "Choice payload sizes are checked by the generated pinned ceiling assertions")]
+#![allow(clippy::unnecessary_wraps, clippy::trivially_copy_pass_by_ref, clippy::needless_pass_by_value, reason = "each generated function role has one signature: a render function takes its node by reference and returns RenderResult, and a conversion into AnyNode takes its node by value, whatever one body needs")]
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
@@ -3788,7 +3789,7 @@ impl ::sittir_core::prepare::SeatTarget for ListElementNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::Capture(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::ListElementQuantifier { .. } => None,
         }
     }
 }
@@ -3798,7 +3799,7 @@ impl ::sittir_core::prepare::SeatTarget for ParametersElementsNodeSlot {
         match self {
             Self::Capture(t) => t.seat_target(table, ctx),
             Self::String(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -3807,7 +3808,7 @@ impl ::sittir_core::prepare::SeatTarget for MissingNodeNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::String(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -3816,7 +3817,7 @@ impl ::sittir_core::prepare::SeatTarget for AnonymousNodeNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::String(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Underscore { .. } => None,
         }
     }
 }
@@ -3832,7 +3833,7 @@ impl ::sittir_core::prepare::SeatTarget for GroupExpressionArmLeftNodeSlot {
             Self::Predicate(t) => t.seat_target(table, ctx),
             Self::List(t) => t.seat_target(table, ctx),
             Self::FieldDefinition(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::GroupExpressionArm { .. } => None,
         }
     }
 }
@@ -3870,7 +3871,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::GroupingGroup(t) => t.seat_target(table, ctx),
             Self::NamedNodePlain(t) => t.seat_target(table, ctx),
             Self::NamedNodeSupertyped(t) => t.seat_target(table, ctx),
-            _ => None,
+            Self::Program { .. } | Self::EscapeSequence { .. } | Self::Quantifier { .. } | Self::Identifier { .. } | Self::ImmediateIdentifier { .. } | Self::ImmediateString { .. } | Self::StringContent { .. } | Self::Parameters { .. } | Self::Comment { .. } | Self::PredicateType { .. } | Self::ListElementQuantifier { .. } | Self::GroupExpressionArm { .. } | Self::StringContentText { .. } | Self::NamedNodeGroupChildren { .. } | Self::NamedNodeGroupAnchoredLast { .. } | Self::Anchor { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Star { .. } | Self::Plus { .. } | Self::Qmark { .. } | Self::At { .. } | Self::Dquote { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::MissingKeyword { .. } | Self::Underscore { .. } | Self::Colon { .. } | Self::Bang { .. } | Self::Pound { .. } | Self::Dot { .. } | Self::Slash { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -4480,7 +4481,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 .with_literal_merge_pairs(&[]); // no multi-char punctuation transitions in this grammar
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
-/// carrier, so the root renders through the SAME single SpacingWriter
+/// carrier, so the root renders through the SAME single `SpacingWriter`
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
@@ -4550,7 +4551,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Pound => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
             Self::Dot => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
             Self::Slash => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
-            _ => false,
+            Self::Verbatim(_) => false,
         }
     }
 }

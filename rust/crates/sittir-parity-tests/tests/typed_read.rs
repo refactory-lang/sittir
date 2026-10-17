@@ -152,13 +152,13 @@ fn read<T: ReadNode>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Re
 struct Table<'t> {
     tree: &'t tree_sitter::Tree,
     source: &'t str,
-    table: sittir_core::trivia_table::TriviaTable,
+    trivia: sittir_core::trivia_table::TriviaTable,
 }
 
 impl<'t> Table<'t> {
     /// The table of a rust `tree`.
     fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
-        Table { tree, source, table: sittir_core::trivia_table::TriviaTable::assign(tree, source, kind::SURFACE_KINDS, 4) }
+        Table { tree, source, trivia: sittir_core::trivia_table::TriviaTable::assign(tree, source, kind::SURFACE_KINDS, 4) }
     }
 }
 
@@ -172,7 +172,7 @@ impl SideLookup for Table<'_> {
             Some(SideEntry::Source { kind: coord.kind?, span: coord.span, adjacent: None, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
         };
         let mut entries: Vec<SideEntry<NoTrivia>> = self
-            .table
+            .trivia
             .side(index, side)
             .iter()
             .filter_map(|assigned| match *assigned {
@@ -200,7 +200,7 @@ fn read_seated<T: ReadNode>(source: &str, kind: KindId, nth: usize, depth: Depth
 fn find(tree: &tree_sitter::Tree, kind: KindId, nth: usize) -> tree_sitter::TreeCursor<'_> {
     let mut cursor = tree.walk();
     let mut seen = 0;
-    for index in (0..tree.root_node().descendant_count() as u32).map(sittir_core::types::NodeIndex::new) {
+    for index in (0..sittir_core::read::descendant_count(&tree.root_node())).map(sittir_core::types::NodeIndex::new) {
         sittir_core::read::goto(&mut cursor, index);
         if sittir_core::read::grammar_id(&cursor.node()) == kind {
             if seen == nth {
@@ -693,10 +693,10 @@ fn a_token_interior_reads_its_slots_from_its_text() {
 }
 
 /// The layout an envelope's content keeps: the coordinate the envelope holds, which names the content's node, and nothing else.
-fn coordinate_only<T>(envelope: &Option<Box<sittir_core::layout::NodeLayout<T>>>) -> Option<Box<sittir_core::layout::NodeLayout<T>>> {
-    let at = envelope.as_ref().and_then(|layout| layout.at.clone());
+fn coordinate_only<T>(envelope: Option<&sittir_core::layout::NodeLayout<T>>) -> Box<sittir_core::layout::NodeLayout<T>> {
+    let at = envelope.and_then(|layout| layout.at.clone());
     assert!(at.is_some(), "the envelope holds the content's coordinate");
-    Some(Box::new(sittir_core::layout::NodeLayout { at, ..sittir_core::layout::NodeLayout::default() }))
+    Box::new(sittir_core::layout::NodeLayout { at, ..sittir_core::layout::NodeLayout::default() })
 }
 
 #[test]
@@ -707,7 +707,7 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
     let f: Named = read_seated(source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
     let Some(SlotValue::Node(NamedType::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     assert_eq!(envelope.content.node().unwrap().text, "T");
-    assert_eq!(envelope.content.node().unwrap().layout, coordinate_only(&envelope.layout));
+    assert_eq!(envelope.content.node().unwrap().layout, Some(coordinate_only(envelope.layout.as_deref())));
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19)]);
 }
 
@@ -826,7 +826,7 @@ fn an_envelope_over_a_choice_holds_the_trivia_its_content_variant_was_given() {
     let Some(SlotValue::Node(NamedTypeOfChoice::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     let Some(Name::Ident(ident)) = envelope.content.node() else { panic!("{:?}", envelope.content) };
     assert_eq!(ident.text, "T");
-    assert_eq!(ident.layout, coordinate_only(&envelope.layout));
+    assert_eq!(ident.layout, Some(coordinate_only(envelope.layout.as_deref())));
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19)]);
 }
 

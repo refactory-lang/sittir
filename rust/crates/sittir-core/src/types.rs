@@ -7,6 +7,50 @@
 
 use serde::{Deserialize, Serialize};
 
+/// A byte offset, descendant index or count that tree-sitter produced, or
+/// that lies within a source it parsed, or the length of a table with at most
+/// one entry per node of a parsed tree, as the `u32` sittir stores it.
+/// tree-sitter keeps every offset, index and count as `uint32_t`, so the
+/// value always fits.
+#[allow(clippy::cast_possible_truncation, reason = "tree-sitter keeps offsets, indices and counts as uint32_t, which bounds every value narrowed here")]
+#[must_use]
+pub const fn narrow(n: usize) -> u32 {
+    n as u32
+}
+
+/// Why a JavaScript number is not a whole number a double counts exactly.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NotWhole {
+    NotFinite,
+    Negative,
+    Fraction,
+    BeyondExact,
+}
+
+/// The largest integer a double counts exactly, `2^53 - 1`.
+pub const MAX_EXACT: f64 = 9_007_199_254_740_991.0;
+
+/// A JavaScript number read as the whole number it holds, or why it holds
+/// none. Rust's `as` saturates, reading `NaN` and any negative as 0, so every
+/// number that crosses in as an integer is checked here first.
+pub fn exact_whole(value: f64) -> Result<u64, NotWhole> {
+    if !value.is_finite() {
+        return Err(NotWhole::NotFinite);
+    }
+    if value < 0.0 {
+        return Err(NotWhole::Negative);
+    }
+    if value.fract() != 0.0 {
+        return Err(NotWhole::Fraction);
+    }
+    if value > MAX_EXACT {
+        return Err(NotWhole::BeyondExact);
+    }
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, reason = "checked above: a whole number in 0..=2^53 - 1, which u64 holds exactly")]
+    let whole = value as u64;
+    Ok(whole)
+}
+
 /// Declares a numeric id of one domain: a transparent newtype over its
 /// width, so ids of two domains never pass for each other. It crosses serde
 /// and the napi boundary as a plain number, and `index` is the one widening
@@ -15,6 +59,13 @@ use serde::{Deserialize, Serialize};
 macro_rules! id_newtype {
     ($(#[$meta:meta])* $name:ident($repr:ty)) => {
         id_newtype!(@common $(#[$meta])* $name($repr));
+
+        impl $name {
+            /// The id as an index into a table it keys.
+            pub const fn index(self) -> usize {
+                self.0 as usize
+            }
+        }
 
         #[cfg(feature = "napi-bindings")]
         impl napi::bindgen_prelude::ToNapiValue for $name {
@@ -30,8 +81,10 @@ macro_rules! id_newtype {
         #[cfg(feature = "napi-bindings")]
         impl napi::bindgen_prelude::ToNapiValue for $name {
             unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+                #[allow(clippy::cast_precision_loss, reason = "only `TreeHandle` crosses as `as $wire`, and its packed tree id and node index stay below 2^53, which a double holds exactly")]
+                let wire = val.0 as $wire;
                 // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-                unsafe { <$wire as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.0 as $wire) }
+                unsafe { <$wire as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, wire) }
             }
         }
     };
@@ -48,10 +101,6 @@ macro_rules! id_newtype {
             }
             pub const fn get(self) -> $repr {
                 self.0
-            }
-            /// The id as an index into a table it keys.
-            pub const fn index(self) -> usize {
-                self.0 as usize
             }
         }
 
@@ -168,6 +217,7 @@ impl NodeIndex {
     pub const ROOT: NodeIndex = NodeIndex(0);
 
     /// How many preorder positions `self` lies past `base`.
+    #[must_use]
     pub const fn offset_from(self, base: NodeIndex) -> u32 {
         self.0 - base.0
     }
@@ -194,21 +244,25 @@ impl Delimiter {
     pub const TRAILING: Self = Self(1 << 1);
 
     /// Whether the set holds any delimiter of `other`.
+    #[must_use]
     pub const fn has(self, other: Self) -> bool {
         self.0 & other.0 != 0
     }
 
     /// The set with `other`'s delimiters added.
+    #[must_use]
     pub const fn with(self, other: Self) -> Self {
         Self(self.0 | other.0)
     }
 
     /// The set with `other`'s delimiters removed.
+    #[must_use]
     pub const fn without(self, other: Self) -> Self {
         Self(self.0 & !other.0)
     }
 
     /// Whether every delimiter of the set is one `allowed` holds.
+    #[must_use]
     pub const fn within(self, allowed: Self) -> bool {
         self.0 & !allowed.0 == 0
     }
@@ -242,7 +296,7 @@ id_newtype! {
 /// ast-grep path; `Factory` = constructed on the TS side.
 ///
 /// Wire shape is a numeric u8: 0 = Ts, 1 = Sg, 2 = Factory.
-/// Eliminates the napi string_enum PascalCase casing mismatch that caused
+/// Eliminates the napi `string_enum` `PascalCase` casing mismatch that caused
 /// `value "ts" does not match any variant of enum Source` errors.
 ///
 /// napi `FromNapiValue`/`ToNapiValue` impls (gated on napi-bindings
@@ -328,17 +382,20 @@ impl Span {
     /// The bytes `node` spans. tree-sitter keeps offsets as `uint32_t`, so
     /// the narrowing loses nothing.
     #[allow(clippy::disallowed_methods, reason = "wraps `Node::start_byte` and `Node::end_byte`, which clippy.toml disallows outside `Span::of`")]
+    #[must_use]
     pub fn of(node: &tree_sitter::Node<'_>) -> Self {
-        Self { start: node.start_byte() as u32, end: node.end_byte() as u32 }
+        Self { start: narrow(node.start_byte()), end: narrow(node.end_byte()) }
     }
 
     /// The bytes of the whole of `source`, which tree-sitter parsed and so
     /// spans in `u32` offsets.
+    #[must_use]
     pub fn whole(source: &str) -> Self {
-        Self { start: 0, end: source.len() as u32 }
+        Self { start: 0, end: narrow(source.len()) }
     }
 
     /// The span as a range that slices its source.
+    #[must_use]
     pub fn range(self) -> std::ops::Range<usize> {
         self.start as usize..self.end as usize
     }

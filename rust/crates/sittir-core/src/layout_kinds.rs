@@ -19,34 +19,41 @@ impl LayoutKinds {
     /// The kinds that break the line.
     pub const BREAKING: Self = Self(0x78);
 
+    #[must_use]
     pub const fn from_bits(bits: u8) -> Self {
         Self(bits)
     }
 
+    #[must_use]
     pub const fn has(self, other: Self) -> bool {
         self.0 & other.0 != 0
     }
 
+    #[must_use]
     pub const fn and(self, other: Self) -> Self {
         Self(self.0 & other.0)
     }
 
+    #[must_use]
     pub const fn is_empty(self) -> bool {
         self.0 == 0
     }
 
+    #[must_use]
     pub const fn is_single(self) -> bool {
-        self.0 != 0 && self.0 & (self.0 - 1) == 0
+        self.0 != 0 && self.0.is_power_of_two()
     }
 
     /// The narrowest kind of the set: the lowest bit, since the bits run from
     /// the empty gap up through wider whitespace.
+    #[must_use]
     pub const fn narrowest(self) -> Self {
         Self(self.0 & self.0.wrapping_neg())
     }
 
     /// The seam rank of one kind: a run of spaces, then no whitespace at all,
     /// then a run by how many lines it breaks. See [`crate::spacing::SeamRank`].
+    #[must_use]
     pub fn rank(self) -> usize {
         match self {
             Self::TIGHT => 2,
@@ -58,11 +65,13 @@ impl LayoutKinds {
     }
 
     /// Whether the one kind breaks the line.
+    #[must_use]
     pub const fn breaks(self) -> bool {
         self.0 & (Self::BREAKING.0 | Self::LINE_CONTINUATION.0) != 0
     }
 
     /// The kind with one line break fewer, or none for a kind with one.
+    #[must_use]
     pub fn without_first_break(self) -> Self {
         match self {
             Self::BLANKLINE => Self::NEWLINE,
@@ -72,6 +81,7 @@ impl LayoutKinds {
     }
 
     /// The text of one kind when a writer holds no whitespace table.
+    #[must_use]
     pub fn default_text(self) -> &'static str {
         match self {
             Self::SPACE => " ",

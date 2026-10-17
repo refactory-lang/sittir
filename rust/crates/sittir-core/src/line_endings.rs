@@ -7,6 +7,7 @@ use std::fmt;
 /// The number of line breaks in `text`: `\r\n` is one, a lone `\r` is one and
 /// `\n` is one. Every count of breaks (a seam's rank, a source gap's class) goes
 /// through this function.
+#[must_use]
 pub fn logical_breaks(text: &str) -> usize {
     let bytes = text.as_bytes();
     (0..bytes.len())
@@ -18,6 +19,7 @@ pub fn logical_breaks(text: &str) -> usize {
 /// and the generated tables share. Borrows when the text holds no `\r`. Source
 /// text passes through it where it enters the writer, so line-start and
 /// indentation decisions only ever see `\n`.
+#[must_use]
 pub fn to_internal(text: &str) -> Cow<'_, str> {
     if !text.contains('\r') {
         return Cow::Borrowed(text);
@@ -31,6 +33,7 @@ pub fn to_internal(text: &str) -> Cow<'_, str> {
 /// for a source that spells its breaks `\n`. Where the text is a slice of a
 /// source, the caller applies it only when a `\n` follows in that source;
 /// a text with no source (a trivia entry's content) cannot tell, and applies it.
+#[must_use]
 pub fn without_swallowed_cr(text: &str) -> &str {
     text.strip_suffix('\r').unwrap_or(text)
 }
@@ -39,6 +42,7 @@ const BREAK_CHARS: [char; 2] = ['\r', '\n'];
 
 /// The byte range of the line of `text` that byte `at` sits on: from after the
 /// break before it to the break that ends it, whichever way breaks are spelled.
+#[must_use]
 pub fn line_bounds(text: &str, at: usize) -> (usize, usize) {
     let at = at.min(text.len());
     let start = text[..at].rfind(BREAK_CHARS).map_or(0, |i| i + 1);
@@ -47,6 +51,7 @@ pub fn line_bounds(text: &str, at: usize) -> (usize, usize) {
 }
 
 /// How many bytes follow the last break of `text`; none when it holds no break.
+#[must_use]
 pub fn bytes_after_last_break(text: &str) -> usize {
     text.rfind(BREAK_CHARS).map_or(0, |i| text.len() - i - 1)
 }
@@ -107,6 +112,11 @@ impl<W: fmt::Write + ?Sized> fmt::Write for LineEndings<'_, W> {
 /// the text of a format record's prefix or suffix is not source and has not been
 /// through `to_internal`. Returns `text` itself, without
 /// copying, when `newline` is `\n` and the text holds no `\r`.
+///
+/// # Panics
+///
+/// Never: writing to a `String` cannot fail.
+#[must_use]
 pub fn spell(text: String, newline: &str) -> String {
     if newline == "\n" && !text.contains('\r') {
         return text;

@@ -204,7 +204,7 @@ fn write_literal(text: &str, w: &mut dyn RenderSink) -> RenderResult {
     let mut rest = text;
     while let Some(at) = rest.find(['{', '}']) {
         w.text(&rest[..at])?;
-        let brace = &rest[at..at + 1];
+        let brace = &rest[at..=at];
         debug_assert!(
             rest[at + 1..].starts_with(brace),
             "unescaped brace in view template {text:?}"
@@ -300,6 +300,7 @@ pub trait UnitFrames: std::fmt::Debug {
 }
 
 impl<E: Slot> ListView<'_, E> {
+    #[must_use]
     pub fn is_present(&self) -> bool {
         !self.items.is_empty()
     }
@@ -327,7 +328,7 @@ impl<E: Slot> Render for ListView<'_, E> {
                 w.site(self.after);
             }
             match self.units {
-                Some((slot, units)) => units.frame_unit(slot, crate::types::ItemIndex(i as u32), w, &mut |w| item.write_slot("", "", w))?,
+                Some((slot, units)) => units.frame_unit(slot, crate::types::ItemIndex(crate::types::narrow(i)), w, &mut |w| item.write_slot("", "", w))?,
                 None => item.write_slot("", "", w)?,
             }
         }

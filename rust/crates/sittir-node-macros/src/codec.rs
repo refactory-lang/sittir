@@ -52,7 +52,7 @@ fn is_flag(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("bool")
 }
 
-fn gated(items: TokenStream) -> TokenStream {
+fn gated(items: &TokenStream) -> TokenStream {
     quote!(::sittir_core::napi_codec! { #items })
 }
 
@@ -125,7 +125,7 @@ pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
     let reads = field_reads(&ident.to_string(), &fields.iter().collect::<Vec<_>>())?;
     let encode = struct_encode(ident, fields)?;
     let boxed = boxed(ident);
-    Ok(gated(quote! {
+    Ok(gated(&quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };
@@ -174,33 +174,27 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
         })
         .collect();
     let reads = field_reads(&owner, &others)?;
-    let text_of_object = match fixed {
-        Some(text) => quote!(.unwrap_or_else(|| ::std::string::ToString::to_string(#text))),
-        None => quote! {
-            .ok_or_else(|| #napi::Error::from_reason(::std::format!("{}: an object carries no `{}`, and the kind has no fixed text", #owner, #text_key.to_string_lossy())))?
-        },
-    };
-    let number = match fixed {
-        Some(text) => quote! {
-            #napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(#text), #(#defaults)* }),
-        },
-        None => {
-            let names = kind_module(ident, kind)?;
-            quote! {
-                #napi::ValueType::Number => {
-                    let id = unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
-                    ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
-                        "kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id",
-                        #names::kind_name_from_id(id),
-                        #owner
-                    )))
-                }
+    let text_of_object = if let Some(text) = fixed { quote!(.unwrap_or_else(|| ::std::string::ToString::to_string(#text))) } else { quote! {
+        .ok_or_else(|| #napi::Error::from_reason(::std::format!("{}: an object carries no `{}`, and the kind has no fixed text", #owner, #text_key.to_string_lossy())))?
+    } };
+    let number = if let Some(text) = fixed { quote! {
+        #napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(#text), #(#defaults)* }),
+    } } else {
+        let names = kind_module(ident, kind)?;
+        quote! {
+            #napi::ValueType::Number => {
+                let id = unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                ::core::result::Result::Err(#napi::Error::from_reason(::std::format!(
+                    "kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id",
+                    #names::kind_name_from_id(id),
+                    #owner
+                )))
             }
         }
     };
     let encode = struct_encode(ident, fields)?;
     let boxed = boxed(ident);
-    Ok(gated(quote! {
+    Ok(gated(&quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 match unsafe { ::sittir_core::slot::node_value_type(env, napi_val)? } {
@@ -291,7 +285,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
     };
     let missing = format!("$type property missing in {owner}");
     let boxed = boxed(ident);
-    Ok(gated(quote! {
+    Ok(gated(&quote! {
         unsafe fn __decode_id(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, id: __Kind) -> #napi::Result<#ident> {
             match __variant(id, id) {
                 #(#by_index)*
@@ -336,7 +330,7 @@ pub fn members(ident: &Ident) -> TokenStream {
     let napi = napi();
     let owner = ident.to_string();
     let boxed = boxed(ident);
-    gated(quote! {
+    gated(&quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 let id = unsafe { <__Kind as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
@@ -356,8 +350,8 @@ pub fn members(ident: &Ident) -> TokenStream {
 mod tests {
     use syn::parse_quote;
 
-    fn expand(input: syn::DeriveInput) -> String {
-        crate::expand::derive(&input).expect("expands").to_string().split_whitespace().collect()
+    fn expand(input: &syn::DeriveInput) -> String {
+        crate::expand::derive(input).expect("expands").to_string().split_whitespace().collect()
     }
 
     fn has(out: &str, part: &str) -> bool {
@@ -366,7 +360,7 @@ mod tests {
 
     #[test]
     fn a_struct_reads_and_writes_each_field_by_its_key() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(kind = kind::LET_DECLARATION)]
             pub struct LetDeclarationNode {
                 #[wire(key = "$_layout")]
@@ -392,7 +386,7 @@ mod tests {
 
     #[test]
     fn a_text_leaf_decodes_its_text_a_bare_kind_id_or_an_object() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(kind = kind::SELF, text = "self")]
             pub struct SelfNode {
                 #[wire(key = "$_layout")]
@@ -408,7 +402,7 @@ mod tests {
 
     #[test]
     fn a_text_leaf_with_no_fixed_text_refuses_a_bare_kind_id() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(kind = kind::IDENTIFIER, text)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
@@ -422,7 +416,7 @@ mod tests {
             r#"::std::format!("kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id", kind::kind_name_from_id(id), "IdentifierNode")"#
         ));
         assert!(has(&out, r#""{}: expected a string, a kind id or an object, not a {}", "IdentifierNode", unsafe { ::sittir_core::slot::js_type_name(env, napi_val)? }"#));
-        assert!(has(&out, r#"an object carries no `{}`, and the kind has no fixed text"#));
+        assert!(has(&out, r"an object carries no `{}`, and the kind has no fixed text"));
     }
 
     #[test]
@@ -443,7 +437,7 @@ mod tests {
 
     #[test]
     fn a_choice_decodes_the_ids_its_variants_claim_and_refuses_the_rest() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(choice)]
             pub enum PropertyNodeSlot {
                 #[kind(kind::_PROPERTY_IDENTIFIER, display, decodes(kind::GET_KEYWORD, kind::SET_KEYWORD))]
@@ -463,7 +457,7 @@ mod tests {
 
     #[test]
     fn a_unit_variant_writes_its_first_claimed_id_and_the_blank_arm_writes_zero() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(choice)]
             pub enum StatementBlockTerminatorNodeSlot {
                 #[kind(kind::_AUTOMATIC_SEMICOLON, kind::SEMI)]
@@ -478,7 +472,7 @@ mod tests {
 
     #[test]
     fn an_error_variant_decodes_an_error_object_and_no_bare_text() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(choice, codec_only)]
             pub enum AnyNode {
                 #[kind(kind::LINE_COMMENT)]
@@ -493,7 +487,7 @@ mod tests {
 
     #[test]
     fn verbatim_and_text_variants_take_their_wire_forms_and_a_codec_only_choice_has_no_reader() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(choice, codec_only)]
             pub enum TriviaNode {
                 #[kind(kind::LINE_COMMENT)]
@@ -514,7 +508,7 @@ mod tests {
 
     #[test]
     fn an_enum_kind_decodes_a_member_id_and_writes_its_first() {
-        let out = expand(parse_quote! {
+        let out = expand(&parse_quote! {
             #[node(kind = kind::_PRIMITIVE_TYPE, spelled)]
             pub enum PrimitiveTypeEnum {
                 #[kind(kind::U8_KEYWORD)]

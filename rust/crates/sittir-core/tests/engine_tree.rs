@@ -7,9 +7,9 @@ use sittir_core::KindId;
 use sittir_core::types::Span;
 use sittir_core::{ErrorRegion, ErrorRegionKind};
 
-fn parse_tree(language: tree_sitter::Language, source: &str) -> tree_sitter::Tree {
+fn parse_tree(language: &tree_sitter::Language, source: &str) -> tree_sitter::Tree {
     let mut parser = tree_sitter::Parser::new();
-    parser.set_language(&language).expect("set language");
+    parser.set_language(language).expect("set language");
     parser.parse(source, None).expect("parse succeeds")
 }
 
@@ -54,7 +54,7 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
                 let expected = by_span[&(span.start, span.end)]
                     .iter()
                     .find(|candidate| grammar_id(candidate) == kind || display_id(candidate) == kind)
-                    .map(|found| found.id());
+                    .map(tree_sitter::Node::id);
                 let found = node_at_span(&tree, span, kind).map(|found| found.id());
                 assert_eq!(found, expected, "{} at {}..{}", node.kind(), span.start, span.end);
             }
@@ -64,11 +64,11 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
 
 #[test]
 fn a_clean_parse_has_no_error_regions() {
-    let tree = parse_tree(tree_sitter_python::LANGUAGE.into(), "def f():\n    pass\nx = 1\n");
-    assert!(sittir_core::error_regions(&tree).is_empty());
+    let tree = parse_tree(&tree_sitter_python::LANGUAGE.into(), "def f():\n    pass\nx = 1\n");
+    assert_eq!(sittir_core::error_regions(&tree), [] as [sittir_core::ErrorRegion; 0]);
 }
 
-fn regions_of(language: tree_sitter::Language, source: &str) -> Vec<ErrorRegion> {
+fn regions_of(language: &tree_sitter::Language, source: &str) -> Vec<ErrorRegion> {
     sittir_core::error_regions(&parse_tree(language, source))
 }
 
@@ -79,7 +79,7 @@ fn region(kind: ErrorRegionKind, start: u32, end: u32) -> ErrorRegion {
 #[test]
 fn a_token_the_parser_inserted_is_an_empty_missing_region() {
     assert_eq!(
-        regions_of(tree_sitter_python::LANGUAGE.into(), "def f(:\n    pass\nx = 1\n"),
+        regions_of(&tree_sitter_python::LANGUAGE.into(), "def f(:\n    pass\nx = 1\n"),
         vec![region(ErrorRegionKind::Missing, 6, 6)]
     );
 }
@@ -87,7 +87,7 @@ fn a_token_the_parser_inserted_is_an_empty_missing_region() {
 #[test]
 fn source_error_recovery_skipped_is_an_error_region() {
     assert_eq!(
-        regions_of(tree_sitter_rust::LANGUAGE.into(), "fn f() { let = 1; }\n"),
+        regions_of(&tree_sitter_rust::LANGUAGE.into(), "fn f() { let = 1; }\n"),
         vec![region(ErrorRegionKind::Error, 13, 14)]
     );
 }
@@ -95,16 +95,16 @@ fn source_error_recovery_skipped_is_an_error_region() {
 #[test]
 fn an_error_inside_an_error_is_part_of_the_outer_region() {
     assert_eq!(
-        regions_of(tree_sitter_python::LANGUAGE.into(), "x = )\ny = (\n"),
+        regions_of(&tree_sitter_python::LANGUAGE.into(), "x = )\ny = (\n"),
         vec![region(ErrorRegionKind::Error, 0, 11)]
     );
 }
 
 /// The kind name of the last child, extras aside, of the list spelled `list` in `source`, its own kind `kind`.
 fn last_list_child_of(source: &str, list: &str, kind: u16) -> Option<String> {
-    let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
-    let start = source.find(list).unwrap() as u32;
-    sittir_core::engine::last_list_child(&tree, Span { start, end: start + list.len() as u32 }, KindId(kind)).map(|child| child.kind().to_string())
+    let tree = parse_tree(&tree_sitter_rust::LANGUAGE.into(), source);
+    let start = sittir_core::types::narrow(source.find(list).unwrap());
+    sittir_core::engine::last_list_child(&tree, Span { start, end: start + sittir_core::types::narrow(list.len()) }, KindId(kind)).map(|child| child.kind().to_string())
 }
 
 #[test]
@@ -127,7 +127,7 @@ fn a_single_item_list_spanning_its_item_ends_in_that_item() {
 #[test]
 fn a_list_the_tree_holds_a_node_for_ends_in_that_node_child() {
     let source = "fn f() { g(1, 2,); }\n";
-    let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
+    let tree = parse_tree(&tree_sitter_rust::LANGUAGE.into(), source);
     let arguments = tree.root_node().descendant_for_byte_range(10, 17).unwrap();
     assert_eq!(arguments.kind(), "arguments");
     let last = sittir_core::engine::last_list_child(&tree, Span { start: 10, end: 17 }, sittir_core::read::grammar_id(&arguments)).unwrap();

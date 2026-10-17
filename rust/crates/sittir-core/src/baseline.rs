@@ -46,6 +46,7 @@ pub struct Tally {
 
 impl Tally {
     /// The tally of `s`.
+    #[must_use]
     pub fn of(s: &str) -> Self {
         s.chars().fold(Self::default(), |tally, c| match c {
             '\n' => Self { breaks: tally.breaks + 1, ..tally },
@@ -56,6 +57,7 @@ impl Tally {
     }
 
     /// What was written from `from` to this tally.
+    #[must_use]
     pub fn since(self, from: Self) -> Self {
         Self { breaks: self.breaks.saturating_sub(from.breaks), spaces: self.spaces.saturating_sub(from.spaces), tabs: self.tabs.saturating_sub(from.tabs) }
     }
@@ -67,6 +69,7 @@ impl Tally {
     /// The whitespace a gap of this tally writes, as a layout class reads it:
     /// its line breaks alone when it breaks the line, its spaces and tabs
     /// otherwise.
+    #[must_use]
     pub fn spelling(self) -> String {
         if self.breaks > 0 {
             "\n".repeat(self.breaks as usize)
@@ -97,6 +100,7 @@ impl Written {
     /// A text's item: its text without whitespace, so a template literal
     /// that writes several tokens at once (`()`, `not in`) spells those
     /// tokens' texts one after another.
+    #[must_use]
     pub fn text(text: &str) -> Self {
         Written::Text(text.chars().filter(|c| !c.is_whitespace()).collect())
     }
@@ -124,6 +128,7 @@ impl Baseline {
     /// The whitespace written in the source gap from byte `start` to byte
     /// `end`, or `None` when nothing the render wrote is anchored at either,
     /// or the render wrote nothing before it.
+    #[must_use]
     pub fn between(&self, start: u32, end: u32) -> Option<Tally> {
         let close = self.closes.get(&start);
         let open = self.opens.get(&end);
@@ -133,6 +138,7 @@ impl Baseline {
     }
 
     /// The frame the node at descendant `index` rendered in, when it did.
+    #[must_use]
     pub fn frame(&self, index: NodeIndex) -> Option<&FrameItems> {
         self.frames.get(&index)
     }
@@ -253,12 +259,9 @@ impl<'a> Recorder<'a> {
 
     /// Source text ending at `end` was written.
     pub fn close(&mut self, end: u32) {
-        match self.deferring.as_mut() {
-            Some(run) => run.closes.push((end, run.ended)),
-            None => {
-                let at = self.before_run.filter(|&(first, _)| end <= first).map_or(self.ended, |(_, ended)| ended);
-                self.closes.push((end, at));
-            }
+        if let Some(run) = self.deferring.as_mut() { run.closes.push((end, run.ended)) } else {
+            let at = self.before_run.filter(|&(first, _)| end <= first).map_or(self.ended, |(_, ended)| ended);
+            self.closes.push((end, at));
         }
     }
 
@@ -309,18 +312,15 @@ impl<'a> Recorder<'a> {
             return;
         }
         let tail = Self::tail_of(s);
-        match self.deferring.as_mut() {
-            Some(run) => {
-                run.ended = run.written.since(tail);
-                run.last_end = Some(run.ended);
-            }
-            None => {
-                self.ended = self.written.since(tail);
-                self.last_end = Some(self.ended);
-                if self.counting {
-                    if let Some(item) = self.frames.iter_mut().rev().find(|frame| frame.index.is_some()).and_then(|frame| frame.items.last_mut()) {
-                        item.after = self.ended;
-                    }
+        if let Some(run) = self.deferring.as_mut() {
+            run.ended = run.written.since(tail);
+            run.last_end = Some(run.ended);
+        } else {
+            self.ended = self.written.since(tail);
+            self.last_end = Some(self.ended);
+            if self.counting {
+                if let Some(item) = self.frames.iter_mut().rev().find(|frame| frame.index.is_some()).and_then(|frame| frame.items.last_mut()) {
+                    item.after = self.ended;
                 }
             }
         }

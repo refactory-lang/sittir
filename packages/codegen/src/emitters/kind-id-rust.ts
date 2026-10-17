@@ -121,6 +121,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[${table.displays.map(({ display, tokens }) => `(KindId(${display}), &[${tokens.map((id) => `KindId(${id})`).join(', ')}])`).join(', ')}];`);
 	lines.push('');
 	lines.push(`/// Whether a node with this grammar id and display id is a relaxed keyword (\`ReadCtx::relaxes\`).`);
+	lines.push(`#[must_use]`);
 	lines.push(`pub fn relaxes(grammar: KindId, display: KindId) -> bool {`);
 	const wordClause = table.word === undefined ? undefined : `display == KindId(${table.word.display}) && RELAXED_KEYWORDS.contains(&grammar)`;
 	const displayClause = table.displays.length === 0 ? undefined : `RELAXED_DISPLAYS.iter().any(|(shown, tokens)| *shown == display && tokens.contains(&grammar))`;
@@ -130,6 +131,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('');
 	lines.push(`/// Map a \`KindId\` back to its grammar kind string for diagnostics.`);
 	lines.push(`/// Returns \`"<unknown>"\` for ids not in this grammar's symbol table.`);
+	lines.push(`#[must_use]`);
 	lines.push(`pub fn kind_name_from_id(id: KindId) -> &'static str {`);
 	lines.push(`    match id.0 {`);
 	for (const entry of entries) {

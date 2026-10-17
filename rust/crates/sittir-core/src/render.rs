@@ -57,11 +57,13 @@ pub struct WhitespaceTable {
 impl WhitespaceTable {
     /// The gap kind a whitespace kind id is, when it is one (a depth arm or an
     /// unknown id is not).
+    #[must_use]
     pub fn gap_of(&self, id: KindId) -> Option<crate::layout_kinds::LayoutKinds> {
         self.gaps.iter().find(|(_, gap)| *gap == id).map(|(bit, _)| crate::layout_kinds::LayoutKinds(*bit))
     }
 
     /// The text the grammar spells one gap kind with.
+    #[must_use]
     pub fn text_of_gap(&self, gap: crate::layout_kinds::LayoutKinds) -> &'static str {
         match self.gaps.iter().find(|(bit, _)| *bit == gap.0) {
             Some((_, id)) => (self.text_of)(*id),
@@ -70,9 +72,13 @@ impl WhitespaceTable {
     }
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
+    #[must_use]
     pub fn leaf_edges_of(&self, kind: KindId) -> Option<(crate::layout_kinds::LayoutKinds, crate::layout_kinds::LayoutKinds)> {
         use crate::layout_kinds::LayoutKinds;
-        self.leaf_edges.get(kind.index()).copied().filter(|packed| *packed != 0).map(|packed| (LayoutKinds(packed as u8), LayoutKinds((packed >> 8) as u8)))
+        self.leaf_edges.get(kind.index()).copied().filter(|packed| *packed != 0).map(|packed| {
+            let [before, after] = packed.to_le_bytes();
+            (LayoutKinds(before), LayoutKinds(after))
+        })
     }
 }
 

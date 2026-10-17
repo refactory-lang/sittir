@@ -60,6 +60,7 @@ impl<X: ArmOf> ArmOf for Option<X> {
 /// the list's own kind being `kind`). A list rebuilt from none, or a table
 /// that cannot answer, takes `default`, the options table's. The leading
 /// flag is always `default`'s.
+#[must_use]
 pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::NodeLayout<T>>, kind: KindId, separators: &[KindId], default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
     let Some(source) = layout.and_then(|layout| layout.sides.as_ref()) else { return default };
     let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
@@ -143,6 +144,7 @@ impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
 /// The item at one end of a root once its own trivia is counted: the end item
 /// of its children, or its inner trivia (`Layout::inner_item`) when that
 /// lies beyond it on `side` or the root has no children.
+#[must_use]
 pub fn outermost<'a>(item: Option<EdgeItem<'a>>, inner: Option<EdgeItem<'a>>, side: Side) -> Option<EdgeItem<'a>> {
     match (item, inner) {
         (None, inner) => inner,
@@ -167,6 +169,7 @@ pub fn outermost<'a>(item: Option<EdgeItem<'a>>, inner: Option<EdgeItem<'a>>, si
 /// An edge item that was rebuilt, bytes that are not whitespace, or unplaced
 /// trivia on that side leave that side unset for the options and the grammar
 /// default.
+#[must_use]
 pub fn root_flanks(
     first: Option<EdgeItem<'_>>,
     last: Option<EdgeItem<'_>>,
@@ -232,12 +235,14 @@ impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
 /// kind's, else that of the node it holds through the wrappers it is
 /// (`SourceTable::seat_through`), as a wrapper node seats through its
 /// content.
+#[must_use]
 pub fn coord_seat(coord: &crate::slot::NodeCoordinate, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<SiteId> {
     let seat = |kind| seat_site(table, kind);
     coord.kind_in(ctx.sources).and_then(seat).or_else(|| ctx.sources.seat_through(coord, ctx.options.seat_wrappers, &seat))
 }
 
 /// The seated site of `kind` in a per-slot table indexed by kind id.
+#[must_use]
 pub fn seat_site(table: &[Option<SiteId>], kind: KindId) -> Option<SiteId> {
     table.get(kind.index()).copied().flatten()
 }
@@ -392,6 +397,7 @@ pub trait Prepare {
     /// The node at descendant `index` of `tree` read one level into this
     /// type (`read::read_coordinate`), when the type reads; `None` for a
     /// value no read produces.
+    #[must_use]
     fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>>
     where
         Self: Sized,
