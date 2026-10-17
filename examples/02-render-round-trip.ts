@@ -1,15 +1,14 @@
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 import { structuralShape } from './helpers.ts';
 
-const engine = await createEngine(rust);
+const rs = await rust.createEngine();
 
 export function renderMainFunction() {
-	const fn = engine.build.statement.function({
+	const fn = rs.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'main',
-		parameters: engine.build.parameters.strict(),
-		body: engine.build.block.strict(),
+		parameters: rs.build.parameters.strict(),
+		body: rs.build.block.strict(),
 	});
 	return fn.$render();
 }
@@ -25,7 +24,7 @@ export function renderMainFunction() {
  * renders canonically; everything you left alone still comes back verbatim.
  */
 export function renderUntouched(source: string) {
-	return engine.parse(source).$render();
+	return rs.parse(source).$render();
 }
 
 /**
@@ -34,9 +33,9 @@ export function renderUntouched(source: string) {
  * whichever were rebuilt from templates.
  */
 export function roundTrip(source: string) {
-	const first = engine.parse(source);
+	const first = rs.parse(source);
 	const rendered = first.$render();
-	const second = engine.parse(rendered);
+	const second = rs.parse(rendered);
 	return {
 		rendered,
 		reparsesEqual: JSON.stringify(structuralShape(first)) === JSON.stringify(structuralShape(second)),

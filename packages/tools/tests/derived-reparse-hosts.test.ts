@@ -33,6 +33,23 @@ describe('a kind with no declared host is hosted through a parent that is', () =
 		expect(hostFor('typescript', 'object_type_content', ctx)).not.toBeNull();
 	}, 120_000);
 
+	it('members of a supertype the parser inlines keep their host', async () => {
+		const python = await contextFor('python');
+		for (const kind of ['assert_statement', 'print_statement', 'import_statement', 'suite_inline']) {
+			expect(hostFor('python', kind, python), kind).not.toBeNull();
+		}
+		const rust = await contextFor('rust');
+		for (const kind of ['associated_type', 'function_signature_item']) {
+			expect(hostFor('rust', kind, rust), kind).not.toBeNull();
+		}
+	}, 120_000);
+
+	it('typescript: an alias display kind keeps its supertype host', async () => {
+		const ctx = await contextFor('typescript');
+		expect(ctx.kindToSupertypes.get('this_type')).toContain('primary_type');
+		expect(hostFor('typescript', 'this_type', ctx)).not.toBeNull();
+	}, 120_000);
+
 	it('a kind with no node of its own is excluded as hidden, not as hostless', async () => {
 		const ctx = await contextFor('python');
 		expect(hostlessReason('_simple_statements', '_simple_statements', ctx)).toBe('hidden-kind');

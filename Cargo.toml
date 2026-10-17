@@ -13,7 +13,7 @@ members = ["rust/crates/*"]
 [workspace.package]
 version = "0.0.0"
 edition = "2021"
-rust-version = "1.88"
+rust-version = "1.90"
 license = "MIT"
 repository = "https://github.com/refactory-lang/sittir"
 
@@ -39,18 +39,16 @@ codegen-units = 1
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-# tree-sitter bumped to 0.26 to resolve the ast-grep-core dep conflict:
-# ast-grep-core >=0.40 requires tree-sitter ^0.26.3 (links = "tree-sitter"
-# is a single-copy constraint, so both must resolve to the same series).
-# Grammar crates (tree-sitter-rust 0.24.2, tree-sitter-python 0.25.0,
-# tree-sitter-typescript 0.23.2) declare tree-sitter only as a
-# *dev-dependency*; their production dep is tree-sitter-language 0.1
-# (a semver-stable ABI bridge with no `links` field), so they remain
-# compatible here. The tree_sitter::Language / Parser / Tree API surface
-# we use is unchanged from 0.25 → 0.26.
-tree-sitter = "0.26"
+# tree-sitter is a single-copy crate (`links = "tree-sitter"`), so every crate
+# here resolves to this one series. Its minor version moves with the npm
+# `tree-sitter-cli` and `web-tree-sitter` pins, which generate and load the
+# parsers this crate links. Grammar crates (tree-sitter-rust,
+# tree-sitter-python, tree-sitter-typescript) declare tree-sitter only as a
+# *dev-dependency*; their production dep is tree-sitter-language 0.1 (a
+# semver-stable ABI bridge with no `links` field), so they stay compatible.
+tree-sitter = "0.27"
 tree-sitter-language = "0.1.7"
-sha2 = "0.10"
+sha2 = "0.11"
 cc = "1"
 # Insertion-order-preserving map for UntypedNode.fields (sittir-core) —
 # std::collections::HashMap's per-instance random iteration order made

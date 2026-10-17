@@ -1,15 +1,15 @@
 /**
  * Regression coverage for the `kindIdFromName` / `TSKindId` /
- * `AnyTransport::FromNapiValue` superset alignment (Phase B coverage gap).
+ * `AnyNode::FromNapiValue` superset alignment (Phase B coverage gap).
  *
  * Pre-fix, `kindIdFromName` was sourced from `nodeMap.nodes.keys()` — rule
- * roots only. The Rust napi `AnyTransport` dispatch sourced from a SUPERSET
+ * roots only. The Rust napi `AnyNode` dispatch sourced from a SUPERSET
  * that included children-only kinds (`empty_statement`, `never_type`) and
  * anonymous tokens (`anon_sym_PLUS` keyed as `PLUS`, displayName `"+"`).
  *
- * The mismatch caused `projectTransportValue` to fall through its try/catch
+ * The mismatch caused `projectNodeValue` to fall through its try/catch
  * fallback for these kinds and emit a string `$type` on the wire. Real napi
- * decoding then crashed because `AnyTransport::FromNapiValue` reads `$type`
+ * decoding then crashed because `AnyNode::FromNapiValue` reads `$type`
  * as `u16`. Mocked tests missed this because they didn't exercise real napi.
  *
  * These tests assert the post-fix invariants:

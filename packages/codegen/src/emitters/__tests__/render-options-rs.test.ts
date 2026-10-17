@@ -159,7 +159,7 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
 		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: SiteId = SiteId(2);');
 		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", &[KindId(167), KindId(168), KindId(169)]),');
-		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
+		expect(src).toContain('("formal_parameters", "elements_delimiter", Delimiter(2), Delimiter(0)),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[\n];');
 		expect(src).toContain('KindId(167) => "",');
@@ -175,7 +175,7 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[');
 		const specs = src.slice(src.indexOf('pub static SITE_SPECS'), src.indexOf('];', src.indexOf('pub static SITE_SPECS')));
 		expect(specs.split('::sittir_core::options::SiteSpec {').length - 1).toBe(plan.spacingSites.length);
-		expect(specs).toContain(`::sittir_core::options::SiteSpec { default_arm: KindId(${plan.spacingSites[0]!.defaultId}), strength: ${plan.spacingSites[0]!.strength} },`);
+		expect(specs).toContain(`::sittir_core::options::SiteSpec { default_arm: KindId(${plan.spacingSites[0]!.defaultId}), strength: ::sittir_core::spacing::SeamStrength::${plan.spacingSites[0]!.strength} },`);
 		expect(src).toContain('        spacing: ResolvedOptions::default_spacing(SITE_SPECS),');
 		expect(src).toContain('        sites: SITE_SPECS,');
 	});
@@ -185,7 +185,7 @@ describe('renderOptionsRs', () => {
 		const strengthOf = (site: SitePreference) =>
 			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust').spacingSites.find((s) => s.display === 'arguments' && s.side === 'start')?.strength;
 		expect(strengthOf(flank('preference'))).toBe(SEAM_DECLARED);
-		expect(strengthOf(flank())).toBe(0);
+		expect(strengthOf(flank())).toBe('Fallback');
 	});
 
 	it('builds a dense seat table per (kind, slot) indexed by the seated kind id, and fails on a seat whose kind has no id', () => {

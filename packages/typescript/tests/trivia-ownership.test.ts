@@ -85,8 +85,7 @@ describe('unit items keep their own comments in an array', () => {
 			['[/* A */ null, , /* B */ true];\n', '[/* A */ null,, /* B */ true]']
 		] as const) {
 			const { root, array } = arrayOf(source);
-			// `elements()` reads a hole as `undefined`, which `$with.elements` takes at runtime but not in its type.
-			expect(array.$with.elements(...(array.elements() as never[])).$render()).toBe(rebuilt);
+			expect(array.$with.elements(...array.elements()).$render()).toBe(rebuilt);
 			expect(ts.render(root.$snapshot()).toString()).toBe(`${rebuilt};\n`);
 		}
 	});

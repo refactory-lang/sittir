@@ -6,7 +6,7 @@
 
 **Goal:** Replace absolute byte spans with points relative to the parent, so a node's layout survives detaching, copying and seating, and every coordinate fact is derived instead of stamped.
 
-**Architecture:** The reader emits `$span` as two points relative to the tree-sitter parent. The render's prepare walk carries a frame (a position and its tree) from the root. It resolves each coordinate to bytes through the tree's line-start table. A coordinate or transport that the frame can't place anchors itself through its handle, at the start of the node its points are measured from. Trivia ownership encodes which side of a token a comment sits on. Detached nodes render seams from geometry through the same whitespace classifier.
+**Architecture:** The reader emits `$span` as two points relative to the tree-sitter parent. The render's prepare walk carries a frame (a position and its tree) from the root. It resolves each coordinate to bytes through the tree's line-start table. A coordinate or native node that the frame can't place anchors itself through its handle, at the start of the node its points are measured from. Trivia ownership encodes which side of a token a comment sits on. Detached nodes render seams from geometry through the same whitespace classifier.
 
 **Tech Stack:** Rust (`sittir-core`, generated grammar crates, napi), TypeScript (`@sittir/common`, `@sittir/types`, `@sittir/codegen` emitters, `@sittir/tools`), vitest, cargo test.
 
@@ -18,7 +18,7 @@
 - The column rule is tree-sitter's `length_add`. With a row offset of 0, the column adds to the parent's column. With a row offset above 0, the column is measured from its line's start.
 - No byte offsets are stored and no node carries an absolute position. Bytes are derived only where a source exists.
 - Offsets are never negative; every field is a `u32`.
-- A frame is a parent's position plus its tree. A transport with an `$anchor` anchors itself. One with only a `$span` passes the frame on. A factory-built transport leaves the frame unknown below it.
+- A frame is a parent's position plus its tree. A node with an `$anchor` anchors itself. One with only a `$span` passes the frame on. A factory-built node leaves the frame unknown below it.
 - A coordinate the frame can't place anchors through its handle. For a stub (handle plus child index), the base is the start of the handle's node. Otherwise the base is the start of the handle node's parent.
 - A tree-only handle (reserved index) never anchors. The render refuses one outside its tree's frame.
 - An edit marks the node `$edited`. It never folds or slices, and keeps its handle and span.
@@ -51,16 +51,16 @@
 | `rust/crates/sittir-core/src/engine.rs` | Tree-only handle; line starts per tree; `SourceTable::base_of`/`line_starts`; `cst`. |
 | `rust/crates/sittir-core/src/render.rs` | `SourceTable` gains the anchor and line-start methods. |
 | `rust/crates/sittir-core/src/read_node.rs` | Relative points, trivia handles, trivia ownership, closing gap. |
-| `rust/crates/sittir-core/src/prepare.rs` | `Frame`; `Prepare::prepare(ctx, frame)`; coordinate and transport anchoring. |
+| `rust/crates/sittir-core/src/prepare.rs` | `Frame`; `Prepare::prepare(ctx, frame)`; coordinate and node anchoring. |
 | `rust/crates/sittir-core/src/slot.rs` | `NodeCoordinate` carries `child_index` and the resolved byte range. |
 | `rust/crates/sittir-core/src/classify.rs` | Gaps from resolved ranges; geometry gap text for detached seams. |
 | `rust/crates/sittir-core/src/trivia.rs` | Trivia rows from points; no held entries. |
 | `rust/crates/sittir-core/src/napi_engine.rs` | `cst` and `read_detached` napi methods. |
-| `packages/codegen/src/emitters/render-module.ts` | `$span`/`$anchor` transport fields; frame-threading `prepare`. |
+| `packages/codegen/src/emitters/render-module.ts` | `$span`/`$anchor` node fields; frame-threading `prepare`. |
 | `packages/codegen/src/compiler/model/node-map.ts` | The closing gap in `innerGaps`. |
 | `packages/codegen/src/emitters/wrap.ts` | `_hasSeparatorFlank` on relative spans. |
 | `packages/common/src/points.ts` (create) | TS `Point`/`Span`, `composeSpan`, `lineStarts`, `slicePoints`. |
-| `packages/common/src/transport-data.ts` | `$edited`; `$anchor`; the fold check. |
+| `packages/common/src/node-data.ts` | `$edited`; `$anchor`; the fold check. |
 | `packages/common/src/engine.ts` | `$cst()`, `$detach()`, detach-on-dispose registry. |
 | `packages/types/src/core-types.ts` | `$span` point shape; `$edited`; `$cst()` result type. |
 | `packages/tools/src/validate/*`, `probe/kind.ts`, `exercise/*`, `scripts/collect-baseline.ts` | Consumers. |
@@ -473,7 +473,7 @@ git commit -m "feat(read): spans are points relative to the parent" -- rust/crat
 
 ---
 
-### Task 4: Transports carry their points; coordinates carry their child index
+### Task 4: Nodes carry their points; coordinates carry their child index
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/render-module.ts:3394-3397` (`TRANSPORT_METADATA_FIELDS`)
@@ -485,8 +485,8 @@ git commit -m "feat(read): spans are points relative to the parent" -- rust/crat
 **Interfaces:**
 - Produces:
   - `pub struct Anchor { pub handle: u64, pub child_index: Option<u16> }`, with napi object keys `$nodeHandle` and `$childIndex`;
-  - `pub trait Spanned { fn span(&self) -> Option<&Span>; fn anchor(&self) -> Option<&Anchor>; }`, implemented by every generated transport and by `NodeCoordinate`;
-  - every transport struct gains `span: Option<Span>` (`$span`) and `anchor: Option<Anchor>` (`$anchor`);
+  - `pub trait Spanned { fn span(&self) -> Option<&Span>; fn anchor(&self) -> Option<&Anchor>; }`, implemented by every generated node and by `NodeCoordinate`;
+  - every node struct gains `span: Option<Span>` (`$span`) and `anchor: Option<Anchor>` (`$anchor`);
   - `NodeCoordinate` gains `child_index: Option<u16>` (read from `$childIndex`) and `bytes: Option<(u32, u32)>` (runtime-only, filled by prepare).
 
 - [ ] **Step 1: Write the failing tests**
@@ -498,7 +498,7 @@ expect(body).toContain('napi(js_name = "$span")');
 expect(body).toContain('pub span: Option<::sittir_core::points::Span>');
 expect(body).toContain('napi(js_name = "$anchor")');
 expect(body).toContain('pub anchor: Option<::sittir_core::anchor::Anchor>');
-expect(transportRs).toContain('impl ::sittir_core::anchor::Spanned for FunctionItemTransport');
+expect(nodeRs).toContain('impl ::sittir_core::anchor::Spanned for FunctionItemNode');
 ```
 
 In `slot.rs` tests, add a napi-free unit test for `NodeCoordinate::new(handle, span).child_index == None` and a test that `Spanned` on a coordinate returns its span, with `anchor()` returning `Anchor { handle, child_index }`.
@@ -517,7 +517,7 @@ Expected: FAIL on the new expectations.
 { jsName: '$anchor', rustName: 'anchor', rustType: 'Option<::sittir_core::anchor::Anchor>' },
 ```
 
-- Every place that emits a per-transport metadata trait impl (find `transport_trivia_data` accessors in `render-module.ts` and follow its pattern) also emits `impl ::sittir_core::anchor::Spanned for XTransport { fn span(&self) -> Option<&::sittir_core::points::Span> { self.span.as_ref() } fn anchor(&self) -> Option<&::sittir_core::anchor::Anchor> { self.anchor.as_ref() } }`. For generated enums, emit a delegating impl the way `prepareEnumImpl` delegates.
+- Every place that emits a per-node metadata trait impl (find `node_trivia_data` accessors in `render-module.ts` and follow its pattern) also emits `impl ::sittir_core::anchor::Spanned for XNode { fn span(&self) -> Option<&::sittir_core::points::Span> { self.span.as_ref() } fn anchor(&self) -> Option<&::sittir_core::anchor::Anchor> { self.anchor.as_ref() } }`. For generated enums, emit a delegating impl the way `prepareEnumImpl` delegates.
 - `anchor.rs`:
 
 ```rust
@@ -551,7 +551,7 @@ Expected: PASS.
 - [ ] **Step 5: Commit** (generated crates included, since they are regenerated outputs)
 
 ```bash
-git commit -m "feat(render): transports carry \$span and \$anchor" -- packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts rust/crates/sittir-core/src/anchor.rs rust/crates/sittir-core/src/slot.rs rust/crates/sittir-core/src/lib.rs docs/glossary/emitters.md rust/crates/sittir-*/src packages/*/src packages/*/.sittir
+git commit -m "feat(render): nodes carry \$span and \$anchor" -- packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts rust/crates/sittir-core/src/anchor.rs rust/crates/sittir-core/src/slot.rs rust/crates/sittir-core/src/lib.rs docs/glossary/emitters.md rust/crates/sittir-*/src packages/*/src packages/*/.sittir
 ```
 
 ---
@@ -562,8 +562,8 @@ git commit -m "feat(render): transports carry \$span and \$anchor" -- packages/c
 - Modify: `rust/crates/sittir-core/src/prepare.rs` (the whole `Prepare` trait and its impls)
 - Modify: `rust/crates/sittir-core/src/slot.rs` (`resolve` L88-108 reads `bytes`)
 - Modify: `rust/crates/sittir-core/src/classify.rs` (`gap_between` L69-79)
-- Modify: `rust/crates/sittir-core/src/trivia.rs` (`TransportTrivia::prepare` L53-60)
-- Modify: `packages/codegen/src/emitters/render-module.ts` (`PREPARE_SIG` L2687, the struct `prepare` emission, `prepareEnumImpl`, `render_transport_parts`)
+- Modify: `rust/crates/sittir-core/src/trivia.rs` (`NodeTrivia::prepare` L53-60)
+- Modify: `packages/codegen/src/emitters/render-module.ts` (`PREPARE_SIG` L2687, the struct `prepare` emission, `prepareEnumImpl`, `render_node_parts`)
 - Test: `rust/crates/sittir-core/tests/prepare.rs`; `packages/tools/src/validate/__tests__/relative-positions.test.ts` (create)
 - Docs: `docs/glossary/emitters.md` (`PREPARE_SIG`, `prepareEnumImpl`)
 
@@ -604,8 +604,8 @@ fn a_tree_only_coordinate_outside_its_frame_is_refused() {
 }
 
 #[test]
-fn an_edited_transport_seated_from_another_tree_places_a_current_tree_child_correctly() {
-    // Review Focus 5: tree-B coordinate inside an edited tree-A transport inside a tree-B root
+fn an_edited_node_seated_from_another_tree_places_a_current_tree_child_correctly() {
+    // Review Focus 5: tree-B coordinate inside an edited tree-A node inside a tree-B root
     let (trees, a, b) = two_trees("fn a() {\n  foo();\n}", "fn b() {\n    bar();\n}");
     let a_block = anchor_of_expanded(&trees, a, "block");
     let b_stmt = stub_of(&trees, b, "expression_statement");
@@ -651,7 +651,7 @@ impl Frame {
         Frame { tree: Some(tree_id), start: Point::ZERO }
     }
 
-    /// The frame a transport's children are measured in: its anchor's when it
+    /// The frame a node's children are measured in: its anchor's when it
     /// has one, else the parent frame advanced by its span, else unknown.
     pub fn enter(&self, t: &dyn Spanned, sources: &dyn SourceTable) -> Result<Frame, CoordinateError> {
         match (t.anchor(), t.span()) {
@@ -695,14 +695,14 @@ pub fn place(&mut self, frame: &Frame, sources: &dyn SourceTable) -> Result<(), 
 - `resolve` slices `source[start..end]` from `self.bytes`. When `bytes` is `None`, return `BadSpan` with the detail `"coordinate was never placed"`, keeping the char-boundary check.
 - `SlotValue::prepare` for `Coord` calls `coord.place(frame, ctx.sources)?` before the kind and edges lookup it does today.
 - `Vec`/`Option`/`Box` impls pass `frame` through.
-- `TransportTrivia::prepare(ctx, frame)` passes the frame it received to every entry.
+- `NodeTrivia::prepare(ctx, frame)` passes the frame it received to every entry.
 - `gap_between(a, b, sources)` slices `source[a.bytes.1..b.bytes.0]` when both are placed and from the same tree, and returns `None` otherwise.
 
 Emitter:
 - `PREPARE_SIG` becomes `fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>, frame: &::sittir_core::prepare::Frame) -> Result<(), ::sittir_core::render::CoordinateError>`.
-- The struct body emits `self.transport_trivia_data.prepare(ctx, frame)?;` first, then `let frame = &frame.enter(self, ctx.sources)?;`, then each slot's `.prepare(ctx, frame)?`.
+- The struct body emits `self.node_trivia_data.prepare(ctx, frame)?;` first, then `let frame = &frame.enter(self, ctx.sources)?;`, then each slot's `.prepare(ctx, frame)?`.
 - `prepareEnumImpl` passes `frame` through.
-- `render_transport_parts` calls `Prepare::prepare(&mut transport, ctx, &Frame::UNKNOWN)`. The root coordinate or transport then anchors through its handle, and a root read from a tree's origin anchors at (0, 0), since its handle's node has no parent.
+- `render_node_parts` calls `Prepare::prepare(&mut node, ctx, &Frame::UNKNOWN)`. The root coordinate or native node then anchors through its handle, and a root read from a tree's origin anchors at (0, 0), since its handle's node has no parent.
 - Update the glossary entries for `PREPARE_SIG` and `prepareEnumImpl`.
 
 Regenerate every grammar, as in Task 4.
@@ -800,14 +800,14 @@ git commit -m "feat(model): compounds ending in a closer gain a closing inner ga
   - `from_napi_value` L258-285.
 - Modify: `rust/crates/sittir-core/src/types.rs` (remove `same_line`, `tokens_between` from `NodeData`, `NodeDataSer`, `NodeDataDe`, `scalar_text_leaf`, `scalar_kind_leaf`)
 - Modify: `rust/crates/sittir-core/src/engine.rs:531-532`, `macros.rs` tests L109-274
-- Modify: the render emitter where a transport renders its inner trivia: find `render_inner(` in `render-module.ts`. Emit `self.transport_trivia_data.render_inner("closing", w)` before the closing token when the kind has a closing gap.
+- Modify: the render emitter where a node renders its inner trivia: find `render_inner(` in `render-module.ts`. Emit `self.node_trivia_data.render_inner("closing", w)` before the closing token when the kind has a closing gap.
 - Test: `rust/crates/sittir-core/tests/read_node.rs` (replace the `same_line`/`tokens_between` tests at L477-582); `packages/tools/src/validate/__tests__/trivia-probes.test.ts`
 
 **Interfaces:**
 - Consumes: `Spanned` (Task 4); the closing gap key (Task 6); `Span::last_row` (Task 1).
 - Produces:
   - `TriviaEntry<T> { value: SlotValue<T> }`, with no flags;
-  - `TransportTrivia::render_leading(&self, owner: Option<&Span>, w)`;
+  - `NodeTrivia::render_leading(&self, owner: Option<&Span>, w)`;
   - `render_trailing(&self, owner: Option<&Span>, w)`.
 
 - [ ] **Step 1: Write the failing tests**
@@ -887,12 +887,12 @@ Reader (`node_trivia`):
 - Delete `same_line` and `tokens_between` everywhere (struct fields, serde, `from_napi_value`, test builders).
 
 Render (`trivia.rs`):
-- `render_leading(owner)`: an entry's join is `" "` when `owner.is_some_and(|o| entry_span.last_row() == o.start.row)`, otherwise `"\n"`. `entry_span` is `entry.value`'s `Spanned::span()`: `SlotValue` gets `Spanned` by delegating to its coordinate or transport.
+- `render_leading(owner)`: an entry's join is `" "` when `owner.is_some_and(|o| entry_span.last_row() == o.start.row)`, otherwise `"\n"`. `entry_span` is `entry.value`'s `Spanned::span()`: `SlotValue` gets `Spanned` by delegating to its coordinate or node.
 - `render_trailing(owner)`: every entry has zero tokens between it and its owner.
   - Same-line entries (`entry.start.row == owner.last_row()`) render right after the owner, joined by the seam.
   - Own-line entries render as the existing `own_line` branch does.
   - Delete the `held`/`defer_run` split and `defer_run` itself. Keep `RenderSink::defer_trailing` only if something else calls it (check with `find_all_references`); otherwise remove it and its sink implementations.
-- The generated transport render passes `self.span.as_ref()` as `owner`.
+- The generated node render passes `self.span.as_ref()` as `owner`.
 - Emitter: where a kind has a `closing` inner gap, emit `render_inner("closing", w)` immediately before the closing token's write. Add a glossary entry for the emission site.
 
 Regenerate every grammar.
@@ -988,8 +988,8 @@ pub fn classify_detached_list_gaps(
 
 Geometry can't split a same-row gap around its separator. It assumes the separator sits against the left item and classifies the rest as the after side. The before side falls to options: this is the spelling-of-whitespace limit the spec names.
 
-- In `prepare.rs`, where a list's items are classified, collect the unplaced items' spans (transports with `span()` and no `anchor()`) and call `classify_detached_list_gaps` when every item in the list is detached.
-- Root edges: the root transport's flank sites take `geometry_gap_text` between the root's start and its first child (leading), and between its last child's end and the root's end (trailing). Apply them through the same flank fill.
+- In `prepare.rs`, where a list's items are classified, collect the unplaced items' spans (nodes with `span()` and no `anchor()`) and call `classify_detached_list_gaps` when every item in the list is detached.
+- Root edges: the root node's flank sites take `geometry_gap_text` between the root's start and its first child (leading), and between its last child's end and the root's end (trailing). Apply them through the same flank fill.
 
 - [ ] **Step 4: Run to verify pass**
 
@@ -1008,10 +1008,10 @@ git commit -m "feat(classify): detached seams come from geometry through the sam
 
 **Files:**
 - Create: `packages/common/src/points.ts`
-- Modify: `packages/common/src/transport-data.ts` (all of it; see the functions listed below)
+- Modify: `packages/common/src/node-data.ts` (all of it; see the functions listed below)
 - Modify: `packages/common/src/span.ts` (becomes a thin re-export of `slicePoints`; delete `ByteSpan`)
 - Modify: the wrap emitter wherever it stores a child on an ancestor. Find those sites with `search` for `hoist` in `packages/codegen/src/emitters/wrap.ts`: each must compose the child's `$span` through `composeSpan`.
-- Test: `packages/common/tests/transport-data.test.ts`, `packages/common/tests/points.test.ts` (create)
+- Test: `packages/common/tests/node-data.test.ts`, `packages/common/tests/points.test.ts` (create)
 - Docs: `docs/glossary/packages-common-src.md`
 
 **Interfaces:**
@@ -1049,7 +1049,7 @@ describe('points', () => {
 });
 ```
 
-In `transport-data.test.ts`, add:
+In `node-data.test.ts`, add:
 
 ```ts
 it('an edited node keeps its handle and span, never folds, and crosses with an anchor', () => {
@@ -1057,15 +1057,15 @@ it('an edited node keeps its handle and span, never folds, and crosses with an a
 	const edited = markEdited(node);
 	expect(edited.$nodeHandle).toBe(7);
 	expect(edited.$edited).toBe(true);
-	const out = toTransportData(edited as never) as Record<string, unknown>;
+	const out = toNodeData(edited as never) as Record<string, unknown>;
 	expect(out.$nodeHandle).toBeUndefined();
 	expect(out.$anchor).toEqual({ $nodeHandle: 7, $childIndex: 2 });
 	expect(out.$span).toEqual(SPAN);
 });
 
-it('an untouched node with outside trivia crosses as a transport with its anchor and span', () => {
+it('an untouched node with outside trivia crosses as a native node with its anchor and span', () => {
 	const node = { $type: 5, $nodeHandle: 7, $span: SPAN, $_trivia: { leading: [comment] }, _value: leaf };
-	const out = toTransportData(node as never) as Record<string, unknown>;
+	const out = toNodeData(node as never) as Record<string, unknown>;
 	expect(out.$anchor).toEqual({ $nodeHandle: 7 });
 	expect(out.$span).toEqual(SPAN);
 });
@@ -1073,14 +1073,14 @@ it('an untouched node with outside trivia crosses as a transport with its anchor
 it('an untouched node below an edited one still folds', () => {
 	const inner = { $type: 6, $nodeHandle: 9, $span: SPAN };
 	const outer = markEdited({ $type: 5, $nodeHandle: 7, $span: SPAN, _value: inner });
-	const out = toTransportData(outer as never) as Record<string, unknown>;
+	const out = toNodeData(outer as never) as Record<string, unknown>;
 	expect(out._value).toEqual({ $type: 6, $nodeHandle: 9, $span: SPAN });
 });
 ```
 
 - [ ] **Step 2: Run to verify failure**
 
-Run: `pnpm exec vitest run packages/common/tests/points.test.ts packages/common/tests/transport-data.test.ts`
+Run: `pnpm exec vitest run packages/common/tests/points.test.ts packages/common/tests/node-data.test.ts`
 Expected: FAIL.
 
 - [ ] **Step 3: Implement**
@@ -1112,7 +1112,7 @@ export function slicePoints(source: string, base: Point, span: Span): string {
 }
 ```
 
-`transport-data.ts`:
+`node-data.ts`:
 - `markEdited(data)` returns `{ ...data, $edited: true }`, with the type `T & { readonly $edited: true }`.
 - `detachCoordinate(data)` sets `(data as Record<string, unknown>).$edited = true`.
 - `isUntouchedBelow` returns `false` for a record with `$edited === true`, and otherwise keeps its span requirement.
@@ -1137,7 +1137,7 @@ Expected: PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git commit -m "feat(common): edits mark the node; transports cross with \$span and \$anchor" -- packages/common/src packages/common/tests docs/glossary/packages-common-src.md packages/codegen/src/emitters
+git commit -m "feat(common): edits mark the node; native nodes cross with \$span and \$anchor" -- packages/common/src packages/common/tests docs/glossary/packages-common-src.md packages/codegen/src/emitters
 ```
 
 ---

@@ -43,12 +43,14 @@ import {
 	AssembledSupertype,
 	AssembledKeyword,
 	AssembledPunctuation,
+	type NodeOrTerminal,
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
 import {
 	isTerminalValue,
 	isFixedTextLeaf,
+	hasOptionalElements,
 	textStoragesOf,
 	delimiterMembersFor
 } from '../compiler/model/node-map.ts';
@@ -893,6 +895,10 @@ export interface BuiltTypeSurface {
 	readonly maxArgs: number | undefined;
 }
 
+function withHoles(f: { values: readonly NodeOrTerminal[] }, elemType: string): string {
+	return hasOptionalElements(f) ? `${elemType} | undefined` : elemType;
+}
+
 export function restSetterType(
 	f: AssembledNonterminal,
 	configType: string,
@@ -900,10 +906,12 @@ export function restSetterType(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
 	if (!isMultiple(f)) return undefined;
-	const elemType =
+	const elemType = withHoles(
+		f,
 		resolveFieldStorageInfo(f, nodeMap, kindEntries).kind === 'verbatim'
 			? constructionFieldElementType(f, nodeMap, kindEntries)
-			: `NonNullable<NonNullable<${configType}>['${f.configKey}']>[number]`;
+			: `NonNullable<NonNullable<${configType}>['${f.configKey}']>[number]`
+	);
 	if (isNonEmpty(f)) return `NonEmptyArray<${elemType}>`;
 	return `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`;
 }
@@ -934,7 +942,7 @@ function fieldCarryingBuiltTypeSurface(
 	let setters: SlotSetter[];
 	if (spreadFacts) {
 		setters = [
-			{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, surface.elementType!), optional: false, rest: true },
+			{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, withHoles(spreadFacts.slot, surface.elementType!)), optional: false, rest: true },
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	} else if (singleField) {
@@ -2614,9 +2622,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type * as T from '../types-internal.js';`);
 		lines.push(DELIMITER_IMPORT);
 		if (kindEntries) {
-			const kindIdImports = ['TSKindId'];
-			if (collectUsesKindIdFromName(nodeMap, kindEntries)) kindIdImports.push('kindIdFromName');
-			lines.push(`import { ${kindIdImports.join(', ')} } from '../types.js';`);
+			lines.push(`import { TSKindId } from '../kinds.js';`);
+			if (collectUsesKindIdFromName(nodeMap, kindEntries)) lines.push(`import { kindIdFromName } from '../types.js';`);
 		}
 		const usesElementWrap = [...nodeMap.nodes.values()].some(
 			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined

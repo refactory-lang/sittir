@@ -112,6 +112,15 @@ export type CreateEngineOptions<API extends LanguageAPI, R = API['options']> = E
 export interface Language<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly fileTypes: readonly string[];
+	/**
+	 * The language's guards, the same object as every engine's `is` (an engine of a descriptor copied from another binds the guards
+	 * to the copy instead). Each narrows a node of this language by its kind, and refuses
+	 * a node of another language or a value no engine stamped. A supertype or member guard also takes a bare kind id, and passes
+	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine.
+	 */
+	readonly is: API['is'];
+	/** The language's kind ids by name, the same object as every engine's `kinds`. */
+	readonly kinds: API['kinds'];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;
 	/**
@@ -148,8 +157,6 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly renderModuleHash: string;
 	readonly build: API['build'];
-	readonly is: API['is'];
-	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
 	readonly querySlots: QuerySlots;
 	readonly queryFlags?: QueryFlags;
@@ -224,7 +231,8 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 /** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
 
-export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> extends EngineIdentity<API> {
+export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'>
+	extends EngineIdentity<API>, Disposable {
 	readonly build: BuildSurface<API, M>;
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
@@ -266,6 +274,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
+	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
 }
 

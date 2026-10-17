@@ -831,8 +831,6 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 	if (isAliasPlaceholder(patch)) {
 		return resolveAliasPlaceholder(patch, originalMember, enclosing);
 	}
-	recordAliasEffect(patch);
-	if (isAliasOfSymbol(patch, originalMember)) return { ...(patch as object), content: originalMember } as unknown as RuntimeRule;
 	return patch as RuntimeRule;
 }
 
@@ -849,11 +847,11 @@ function recordFieldEffect(name: string, member: RuntimeRule): void {
 	if (from !== undefined && from !== `${name}:`) wireRecordBindingEffect({ kind: 'segment', owner, from, to: `${name}:` });
 }
 
-function recordAliasEffect(patch: PatchValue): void {
-	const alias = patch as { type?: unknown; named?: unknown; value?: unknown; content?: { type?: unknown; name?: unknown } };
-	if (alias.type !== 'ALIAS' || alias.named !== true || typeof alias.value !== 'string' || alias.content?.type !== 'SYMBOL' || typeof alias.content.name !== 'string') return;
-	wireRecordBindingEffect({ kind: 'alias', from: alias.content.name, to: alias.value });
-	refuseAliasTarget(alias.content.name, alias.value);
+function aliasInPlace(member: RuntimeRule, name: string): RuntimeRule {
+	const from = (member as unknown as { name: string }).name;
+	wireRecordBindingEffect({ kind: 'alias', from, to: name });
+	refuseAliasTarget(from, name);
+	return nativeRuleFn<(content: unknown, value: unknown) => RuntimeRule>('alias')(member, symbolRef(name));
 }
 
 function refuseAliasTarget(from: string, to: string): void {
@@ -866,11 +864,6 @@ function refuseAliasTarget(from: string, to: string): void {
 		message: `edits: '${owner}': alias '${from}' → '${to}': ${issue}`,
 		details: { kind: owner, from, to }
 	});
-}
-
-function isAliasOfSymbol(patch: PatchValue, member: RuntimeRule): boolean {
-	const alias = patch as { type?: unknown; content?: { type?: unknown; name?: unknown } };
-	return alias.type === 'ALIAS' && alias.content?.type === 'SYMBOL' && member.type === 'SYMBOL' && alias.content.name === (member as { name?: unknown }).name;
 }
 
 function findEnrichShapedFieldThroughTransparentWrappers(
@@ -1024,6 +1017,7 @@ function resolveAliasPlaceholder(
 	const ruleName = '_' + patch.name;
 	const lift = enrichLiftArmOf(originalMember);
 	if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
+	if (isSymbolType(originalMember.type)) return aliasInPlace(originalMember, patch.name);
 	const mint = (body: RuntimeRule): RuntimeRule => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, enclosing));
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
 		const content = contentOf(originalMember);

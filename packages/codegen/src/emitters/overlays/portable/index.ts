@@ -55,7 +55,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	});
 	const slotFlagTypes = [...slotFlags.values()].flatMap(({ node, slots }) => {
 		const readable = [...slots].flatMap(([accessor, held]) => {
-			const names = [...held].flatMap(([flag, value]) => (Array.isArray(value) ? [flag] : []));
+			const names = [...held].flatMap(([flag, value]) => ('kind' in value ? [] : [flag]));
 			return names.length === 0 ? [] : [[accessor, names] as const];
 		});
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];

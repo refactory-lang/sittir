@@ -199,7 +199,7 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('// Composition: kind × shape = concrete type via NamespaceMap.');
 	lines.push('');
 	if (kindEntries) {
-		lines.push("import { TSKindId } from './types.js';");
+		lines.push("import { TSKindId } from './kinds.js';");
 	}
 	lines.push("import type { NamespaceMap } from './types.js';");
 	if (supertypes.length > 0) lines.push("import type { NarrowTo } from '@sittir/types';");

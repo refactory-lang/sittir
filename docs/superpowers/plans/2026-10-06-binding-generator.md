@@ -10,7 +10,7 @@ Each stage is one PR off the previous one, with its own gate. Every stage also p
 - lint on touched files;
 - every Copilot comment answered.
 
-No stage touches `packages/common/src/transport-data.ts` or the native reader; the typed reader owns them.
+No stage touches `packages/common/src/node-data.ts` or the native reader; the typed reader owns them.
 
 ## Where things are today
 

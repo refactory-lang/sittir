@@ -115,7 +115,7 @@ describe('classifySClass', () => {
 			classifySClass({
 				code: 'read-render-parse-error',
 				message:
-					'render: Missing field `_left` on IfExpressionTransport._condition on ExpressionStatementTransport._content on SourceFileTransport._statements'
+					'render: Missing field `_left` on IfExpressionNode._condition on ExpressionStatementNode._content on SourceFileNode._statements'
 			})
 		).toBeUndefined();
 	});

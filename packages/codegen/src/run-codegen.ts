@@ -246,6 +246,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	rmSync(join(outDir, 'boundary.ts'), { force: true });
 	await writeFile(join(outDir, 'types.ts'), result.types);
 	await writeFile(join(outDir, 'types-internal.ts'), result.typesInternal);
+	if (result.kinds !== undefined) await writeFile(join(outDir, 'kinds.ts'), result.kinds);
 	const factoriesDir = join(outDir, 'factories');
 	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
 	rmSync(join(outDir, 'factories.ts'), { force: true });
@@ -264,6 +265,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'consts.ts'), result.consts);
 	await writeFile(join(outDir, 'options.ts'), result.options);
 	await writeFile(join(outDir, 'is.ts'), result.is);
+	await writeFile(join(outDir, 'descriptor.ts'), result.descriptor);
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
 	writeFileSync(
@@ -338,7 +340,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		const emit = renderModule.emit;
 		await writeFile(emit.hashRs.path, emit.hashRs.contents);
 		await writeFile(emit.hashTs.path, emit.hashTs.contents);
-		await writeFile(emit.transportRs.path, emit.transportRs.contents);
+		await writeFile(emit.nodeRs.path, emit.nodeRs.contents);
 		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
 		await writeFile(emit.recordsTs.path, emit.recordsTs.contents);
@@ -355,7 +357,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`  → Rust render module regenerated for ${grammar}:`);
 		console.log(`    ${emit.hashRs.path}`);
 		console.log(`    ${emit.hashTs.path}`);
-		console.log(`    ${emit.transportRs.path}`);
+		console.log(`    ${emit.nodeRs.path}`);
 		console.log(`    ${emit.optionsRs.path}`);
 		console.log(`    ${emit.libRs.path}`);
 		console.log(`    ${emit.recordsTs.path}`);

@@ -55,8 +55,8 @@ The `_type_argument` path resolves only `children` and uses
 `children.as_scalar()` for **both** `content` and `trait_bounds`, collapsing the
 two-slot unit (element + optional bounds) into one scalar (bounds unrenderable),
 and computes `children_renderables` but never uses it. **`bridge.rs` is
-`#[deprecated]`** (`render/mod.rs`; production uses `render_transport_dispatch`
-via typed transport — which renders this correctly, per the +1 AstMatch). So the
+`#[deprecated]`** (`render/mod.rs`; production uses `render_node_dispatch`
+via typed node — which renders this correctly, per the +1 AstMatch). So the
 cleanup choice is: **stop generating the deprecated bridge path entirely**
 (preferred — it's dead code), or fix its multi-slot group handling. Recommend
 deletion as part of the bridge.rs sunset.
@@ -80,5 +80,5 @@ multi-element `type_arguments` through `$with` / `from`.
 ## Pointers
 
 - Surfaced by PR #39 (branch `029-slot-grouping-diagnostic`).
-- Group mechanism: `packages/rust/overrides.ts` `type_argument` group; render path `transport.rs` (live) vs `bridge.rs` (deprecated).
+- Group mechanism: `packages/rust/overrides.ts` `type_argument` group; render path `node.rs` (live) vs `bridge.rs` (deprecated).
 - Related: [[project_slot_grouping_diagnostic]], [[project_wrap_emitter_children_typing_followup]], the visible-kind-rendering handoff `docs/superpowers/handoffs/2026-05-26-029-visible-kind-rendering-foldin.md`.

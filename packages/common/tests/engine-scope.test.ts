@@ -10,7 +10,7 @@ import {
 } from '../src/engine-scope.ts';
 
 const identity: EngineIdentity = {
-	language: { name: 'fake', fileTypes: [], load: () => Promise.reject(new Error('type-only')) },
+	language: { name: 'fake', fileTypes: [], is: {}, kinds: {}, load: () => Promise.reject(new Error('type-only')) },
 	renderModuleHash: 'hash',
 	options: {},
 	trivia: { kindName: () => undefined, kinds: new Set<string>(), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>(), layout: new Set<number>() }
@@ -72,7 +72,7 @@ describe('engine scope', () => {
 
 	it('tells one language from another by its descriptor, not its name', () => {
 		expect(sameLanguage(identity, { ...identity, options: { indent: '\t' } })).toBe(true);
-		const namesake = { ...identity, language: { name: 'fake', fileTypes: [], load: identity.language.load } };
+		const namesake = { ...identity, language: { ...identity.language } };
 		expect(sameLanguage(identity, namesake)).toBe(false);
 	});
 });

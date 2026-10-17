@@ -19,6 +19,7 @@ import type { GrammarResult } from '../enrich.ts';
 import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
 import { layerOptions, pendingBase } from '../layer.ts';
 import { layerRecordOf } from '../layer-record.ts';
+import { VERIFIED_TREE_SITTER } from '../shared.ts';
 import { lead } from '../primitives/lead.ts';
 import { SENTINEL } from './fixtures/layer-chain/sentinel.ts';
 
@@ -149,7 +150,7 @@ describe('the pending base', () => {
 describe('the hook guards', () => {
 	it('refuses a read of options.rules before the pass has run, naming the tree-sitter version the order was verified against', () => {
 		const options = layerOptions({});
-		expect(() => options.rules).toThrow(/0\.26\.9/);
+		expect(() => options.rules).toThrow(VERIFIED_TREE_SITTER);
 	});
 
 	it('refuses a second call of the externals callback with one handle', async () => {
@@ -170,8 +171,8 @@ describe('the hook guards', () => {
 	});
 
 	it('runs the pass once per layer under the pinned CLI, before tree-sitter builds $', () => {
-		expect(treeSitterCliVersion(), 'the layer hook rests on the order in which tree-sitter 0.26.9 calls the callbacks; verify that order again before moving the pin').toBe(
-			'0.26.9'
+		expect(treeSitterCliVersion(), 'the layer hook rests on the order in which the pinned tree-sitter calls the callbacks; verify that order again before moving the pin').toBe(
+			VERIFIED_TREE_SITTER
 		);
 		const { events } = cliChain();
 		const layers: string[][] = [[]];

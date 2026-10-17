@@ -1,42 +1,38 @@
-# Use case TypeScript examples
+# Examples
 
-This directory contains source-form companions to `docs/use-cases-and-examples.md`.
-They are intentionally written as TypeScript modules: imports are explicit,
-each file exports callable functions, and examples take inputs or return
-rendered source instead of appearing only as Markdown snippets.
+These modules exercise the API on `master`. They are executable TypeScript, not proposed APIs. Start with construction, parsing, and immutable edits; use the reconstruction fixtures to inspect larger generated call graphs.
 
-The directory currently serves **two roles**:
+## Handwritten examples
 
-1. **Compile-checked current examples** — these reflect the public API that is
-   available today and are included by `pnpm run type-check:examples`.
-2. **Pending target-surface examples** — these describe APIs the guide still
-   wants to land, but which are not yet wired or shipped. Today that includes
-   `template(...)`, `snippets.*`, and `engine.findAndRead(...)`. Examples that
-   depend on pattern search or templates alone are not kept here.
+| File | What it demonstrates |
+| --- | --- |
+| [01-construct-nodes.ts](01-construct-nodes.ts) | Coercing and strict construction, forms, and immutable updates |
+| [02-render-round-trip.ts](02-render-round-trip.ts) | Rendering built syntax and retaining parsed source |
+| [03-trivia.ts](03-trivia.ts) | Leading, trailing, and eligible inner comments |
+| [04-build-files.ts](04-build-files.ts) | Building a struct and a complete source file |
+| [05-render-nodes.ts](05-render-nodes.ts) | Rendering a constructed function |
+| [07-read-source.ts](07-read-source.ts) | Parsing and accessing typed source nodes |
+| [09-type-guards.ts](09-type-guards.ts) | Kind guards and narrowing |
+| [12-cross-language-migration.ts](12-cross-language-migration.ts) | An explicit TypeScript-to-Python transformation |
+| [14-format-preserving-transform.ts](14-format-preserving-transform.ts) | Replacing a parsed function name |
+| [15-generate-file.ts](15-generate-file.ts) | Building and saving a file |
+| [16-dogfooding.ts](16-dogfooding.ts) | Building source for a generated utility |
+| [23-read-query-with.ts](23-read-query-with.ts) | Parsed query views, predicates, and ancestor reconstruction |
 
-The compile-checked examples are the files `tsconfig.json` includes; the
-generated rebuilds are the files `tsconfig.generated.json` includes. The
-compile-checked examples also run: `tests/acceptance/examples-run.test.ts`
-calls every function they export and renders every node it returns, so an
-example that renders a node made outside an engine fails there. A function
-that takes an argument needs a sample input in that test.
+The numbers are stable identifiers, not a required reading order. The cross-language example explicitly maps selected constructs; it is not a general semantic translator.
 
-| File | Guide section |
-| ---- | ------------- |
-| `01-construct-nodes.ts` | Construct nodes with factories |
-| `02-render-round-trip.ts` | Render UntypedNode to source |
-| `03-trivia.ts` | Attach comments with `.$trivia()` |
-| `04-precompiled-templates.ts` | Construction templates — pre-compiled *(pending `snippets.*`)* |
-| `05-inline-templates.ts` | Construction templates — inline *(pending `template(...)`)* |
-| `07-read-source.ts` | Read source into UntypedNode |
-| `09-type-guards.ts` | Type guards |
-| `12-cross-language-migration.ts` | Cross-language migration |
-| `14-format-preserving-transform.ts` | Format-preserving transforms: rename a parsed function with `$with` |
-| `15-generate-file.ts` | Generate a file from scratch |
-| `16-dogfooding.ts` | Dogfooding |
-| `17-dogfood-rust-strict.ts` | Dogfooding — rebuild the `dogfood-rust.rs` fixture through `.strict` alone |
-| `18-dogfood-typescript-strict.ts` | Dogfooding — rebuild `common/src/format.ts` through `.strict` alone |
-| `19-dogfood-python-strict.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` through `.strict` alone |
-| `23-read-query-with.ts` | Read, query and edit a parsed file: slot accessors, `$query()` views with `where`, and `$with` |
-| `<n>-dogfood-<g>.generated.ts`, `<n>-dogfood-<g>-loose.generated.ts` | Dogfooding — the strict and loose rebuilds `pnpm run gen:examples` prints from each target; never hand-edited |
-| `20-keyword-openers-<g>*.generated.ts`, `21-list-seat-configs-rust*.generated.ts`, `22-trivia-<g>*.generated.ts` | Emitter fixtures (`packages/tools/tests/emit/__fixtures__`) rebuilt by `pnpm run gen:examples`, each on the strict and the loose surface (`-loose`); never hand-edited |
+## Generated reconstructions
+
+`*.generated.ts` files are emitted by `pnpm run gen:examples`. The dogfood files reconstruct real source targets; the keyword-opener, list-seat, and trivia files cover emitter fixtures. Each target has strict and loose versions.
+
+Do not edit these outputs. Change their source target or the factory-source emitter and regenerate.
+
+## Verification
+
+```sh
+pnpm run type-check:examples
+pnpm run type-check:generated-examples
+pnpm exec vitest run tests/acceptance/examples-run.test.ts tests/acceptance/readme-snippets.test.ts
+```
+
+`tsconfig.json` defines the handwritten compile set. The acceptance test calls every exported function in that set and renders returned nodes; a new function with arguments needs a sample input there. `tsconfig.generated.json` defines the generated set. See [Development](../DEVELOPMENT.md#everyday-checks) for setup and the documentation gates.

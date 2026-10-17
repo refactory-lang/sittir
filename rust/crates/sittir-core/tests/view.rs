@@ -2,6 +2,7 @@
 //! around it, one `ListView` over a slice with the separator parts, head and
 //! tail spacing, and the list's own template.
 
+use sittir_core::spacing::SeamStrength;
 use sittir_core::KindId;
 
 use sittir_core::render::{render_to_string, Render, RenderResult, RenderSink, WhitespaceTable};
@@ -40,8 +41,8 @@ fn rt(value: &dyn Render) -> String {
 /// a list's head and tail flanks read through the options the writer holds.
 fn rt_with_sites(value: &dyn Render) -> String {
     static SITES: &[SiteSpec] = &[
-        SiteSpec { default_arm: NEWLINE, strength: 2 },
-        SiteSpec { default_arm: NEWLINE, strength: 2 },
+        SiteSpec { default_arm: NEWLINE, strength: SeamStrength::Declared },
+        SiteSpec { default_arm: NEWLINE, strength: SeamStrength::Declared },
     ];
     let options = ResolvedOptions {
         spacing: ResolvedOptions::default_spacing(SITES),
@@ -66,7 +67,7 @@ impl Render for Word {
 }
 
 fn node(s: &'static str) -> SlotValue<Word> {
-    SlotValue::Transport(Word(s))
+    SlotValue::Node(Word(s))
 }
 
 #[test]

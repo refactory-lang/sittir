@@ -6,6 +6,7 @@ import type { EvaluatedGrammar } from '../compiler/types.ts';
 import { baseNamesOf } from '../dsl/bind.ts';
 import { layerPath, type GrammarPackage } from '../grammars.ts';
 import type { UpstreamContext } from './derive-conflicts.ts';
+import { treeSitterPruned, type TreeSitterGrammarDoc } from './prune-grammar-json.ts';
 import { treeSitterCliVersion } from './tree-sitter-cli.ts';
 
 export interface GrammarDerivationInputs extends UpstreamContext {
@@ -53,8 +54,8 @@ function byJson(left: unknown, right: unknown): number {
 	return a < b ? -1 : a > b ? 1 : 0;
 }
 
-export function grammarHash(evaluated: object, treeSitterVersion: string): string {
-	const grammar = { ...evaluated, conflicts: undefined, derivationRecords: undefined };
+export function grammarHash<G extends TreeSitterGrammarDoc>(evaluated: G, treeSitterVersion: string): string {
+	const grammar = { ...treeSitterPruned(evaluated).grammar, conflicts: undefined, derivationRecords: undefined };
 	return createHash('sha256').update(JSON.stringify(canonical({ grammar, treeSitterVersion }))).digest('hex');
 }
 

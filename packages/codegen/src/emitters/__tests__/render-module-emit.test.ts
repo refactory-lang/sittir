@@ -1,10 +1,10 @@
 /**
- * render-module-emit.test.ts — unit tests for Phase 1 typed transport emission.
+ * render-module-emit.test.ts — unit tests for Phase 1 typed node emission.
  *
  * Tests cover:
- * - `classifySlot` / `buildSupertypeTransportSet` exported helpers
+ * - `classifySlot` / `buildSupertypeNodeSet` exported helpers
  * - Phase 1: single-concrete-kind field and children slots emit typed Rust types
- * - Phase 1: render functions call typed `render_<kind>`, not `render_transport_dispatch`
+ * - Phase 1: render functions call typed `render_<kind>`, not `render_node_dispatch`
  *
  * These tests use the REAL rust grammar pipeline (evaluate → link → normalize → assemble →
  * emitRenderModule) so they exercise the full codegen path including the emitter.
@@ -12,17 +12,12 @@
 
 import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
-import { classifySlot, buildSupertypeTransportSet, type SlotClass } from '../transport-common.ts';
-import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTransportStructName, transportSlotShapeOf } from '../render-module.ts';
+import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
+import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
-import {
-	seamRenderRules,
-	spaceRenderRules,
-	spacingSitesOf,
-	whitespaceTextOf
-} from '../../compiler/model/render-rules.ts';
+import { seamRenderRules, spaceRenderRules, spacingSitesOf, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -43,9 +38,10 @@ import {
 	layoutTokenIds,
 	readNames,
 	slotArgs,
-	transportArgs,
+	nodeArgs,
 	type ReadFactsCtx
-} from '../transport-projection.ts';
+} from '../node-projection.ts';
+
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -69,10 +65,10 @@ describe('classifySlot', () => {
 });
 
 // ---------------------------------------------------------------------------
-// buildSupertypeTransportSet — exported helper
+// buildSupertypeNodeSet — exported helper
 // ---------------------------------------------------------------------------
 
-describe('buildSupertypeTransportSet', () => {
+describe('buildSupertypeNodeSet', () => {
 	it('returns empty map when no supertype nodes exist', () => {
 		const nodeMap = {
 			name: 'test',
@@ -83,7 +79,7 @@ describe('buildSupertypeTransportSet', () => {
 			externals: [],
 			word: undefined
 		} as unknown as NodeMap;
-		const result = buildSupertypeTransportSet(nodeMap);
+		const result = buildSupertypeNodeSet(nodeMap);
 		expect(result.size).toBe(0);
 	});
 });
@@ -94,10 +90,10 @@ describe('buildSupertypeTransportSet', () => {
 
 /** Cache for the rust emitRenderModule output. */
 let _rustTemplatesRs: string | undefined;
-let _typescriptTransportRs: string | undefined;
+let _typescriptNodeRs: string | undefined;
 /** The rust kind entries the cached emit was produced from. */
 let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
-/** The rust `options.rs` the cached emit produced beside its transports. */
+/** The rust `options.rs` the cached emit produced beside its nodes. */
 let _rustOptionsRs: string | undefined;
 
 const _models = new Map<string, ReturnType<typeof buildModel>>();
@@ -141,10 +137,10 @@ it('applies a seated alias address to both parser identities that share its disp
 	);
 	expect(sites).toHaveLength(2);
 	expect(new Set(sites.map((site) => nodeMap.nodes.get(site.seat!.kind)?.kindId)).size).toBe(2);
-	await expect(getTransportRsForGrammar('python')).resolves.toContain('Transport');
+	await expect(getNodeRsForGrammar('python')).resolves.toContain('Node');
 });
 
-async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
+async function getNodeRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const emit = emitRenderModule(
@@ -155,7 +151,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' |
 		{ ...grammarRenderInputs(grammar, { renderRules, visibleExternals: raw.visibleExternals, options: raw.options }), envelopePins: undefined }
 	);
 	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
-	return emit.transportRs.contents;
+	return emit.nodeRs.contents;
 }
 
 async function getRustOptionsRs(): Promise<string> {
@@ -165,17 +161,17 @@ async function getRustOptionsRs(): Promise<string> {
 
 async function getRustTemplatesRs(): Promise<string> {
 	if (_rustTemplatesRs !== undefined) return _rustTemplatesRs;
-	_rustTemplatesRs = await getTransportRsForGrammar('rust');
+	_rustTemplatesRs = await getNodeRsForGrammar('rust');
 	return _rustTemplatesRs;
 }
 
-async function getTypescriptTransportRs(): Promise<string> {
-	if (_typescriptTransportRs !== undefined) return _typescriptTransportRs;
-	_typescriptTransportRs = await getTransportRsForGrammar('typescript');
-	return _typescriptTransportRs;
+async function getTypescriptNodeRs(): Promise<string> {
+	if (_typescriptNodeRs !== undefined) return _typescriptNodeRs;
+	_typescriptNodeRs = await getNodeRsForGrammar('typescript');
+	return _typescriptNodeRs;
 }
 
-beforeAll(() => Promise.all([getRustTemplatesRs(), getTypescriptTransportRs()]), 120_000);
+beforeAll(() => Promise.all([getRustTemplatesRs(), getTypescriptNodeRs()]), 120_000);
 
 /**
  * Extract the body of a `pub struct <name>` from a Rust source file.
@@ -220,49 +216,49 @@ function extractFnBody(src: string, fnName: string): string {
 }
 
 describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
-	it('const_item.name is IdentifierTransport (single-kind concrete field)', async () => {
+	it('const_item.name is IdentifierNode (single-kind concrete field)', async () => {
 		const src = await getRustTemplatesRs();
-		const structBody = extractStructBody(src, 'ConstItemTransport');
+		const structBody = extractStructBody(src, 'ConstItemNode');
 		expect(structBody).not.toBe('');
 		// name field has kinds: ["identifier"] — single kind → concrete
-		expect(structBody).toMatch(/pub name: ::sittir_core::SlotValue<IdentifierTransport>,/);
+		expect(structBody).toMatch(/pub name: ::sittir_core::SlotValue<IdentifierNode>,/);
 	});
 
-	it('const_item.name field is NOT Box<AnyTransport>', async () => {
+	it('const_item.name field is NOT Box<AnyNode>', async () => {
 		const src = await getRustTemplatesRs();
-		const structBody = extractStructBody(src, 'ConstItemTransport');
-		// The `name` field line should not use Box<AnyTransport>
+		const structBody = extractStructBody(src, 'ConstItemNode');
+		// The `name` field line should not use Box<AnyNode>
 		const nameLine = structBody.split('\n').find((l) => l.trim().startsWith('pub name:'));
-		expect(nameLine).not.toContain('Box<AnyTransport>');
+		expect(nameLine).not.toContain('Box<AnyNode>');
 	});
 
-	it('function_item.body is BlockTransport (single-kind concrete field)', async () => {
+	it('function_item.body is BlockNode (single-kind concrete field)', async () => {
 		const src = await getRustTemplatesRs();
-		const structBody = extractStructBody(src, 'FunctionItemTransport');
+		const structBody = extractStructBody(src, 'FunctionItemNode');
 		expect(structBody).not.toBe('');
 		// body field has kinds: ["block"] — single kind → concrete
-		expect(structBody).toMatch(/pub body: ::sittir_core::SlotValue<BlockTransport>,/);
+		expect(structBody).toMatch(/pub body: ::sittir_core::SlotValue<BlockNode>,/);
 	});
 
-	it('function_item.name is FunctionItemNameTransportSlot (proper subset of _path stays heterogeneous, not collapsed)', async () => {
+	it('function_item.name is FunctionItemNameNodeSlot (proper subset of _path stays heterogeneous, not collapsed)', async () => {
 		const src = await getRustTemplatesRs();
-		const structBody = extractStructBody(src, 'FunctionItemTransport');
+		const structBody = extractStructBody(src, 'FunctionItemNode');
 		// name field has kinds: ["identifier", "metavariable"] — both are subtypes
 		// of rust's _path supertype, but _path's full resolved subtype set has
 		// 7 members (self, identifier, metavariable, super, crate,
 		// scoped_identifier, _reserved_identifier). classifySlot only collapses
 		// a slot onto the supertype type when the slot's kind set EXACTLY
 		// equals the supertype's full subtype set — a deliberate safety rule
-		// (transport-common.ts:58-67): a looser subset-collapse risked
+		// (node-common.ts:58-67): a looser subset-collapse risked
 		// FromNapiValue recursing through a wide/self-recursive supertype and
 		// overflowing the native stack. A proper-subset slot like this one
 		// falls to `heterogeneous` instead, emitting a per-slot enum of
 		// exactly its own kinds.
 		const nameLine = structBody.split('\n').find((l) => l.trim().startsWith('pub name:'));
-		expect(nameLine).toContain('FunctionItemNameTransportSlot');
-		expect(src).toContain('pub enum FunctionItemNameTransportSlot {');
-		expect(src).toContain('Identifier(IdentifierTransport),');
-		expect(src).toContain('Metavariable(MetavariableTransport),');
+		expect(nameLine).toContain('FunctionItemNameNodeSlot');
+		expect(src).toContain('pub enum FunctionItemNameNodeSlot {');
+		expect(src).toContain('Identifier(IdentifierNode),');
+		expect(src).toContain('Metavariable(MetavariableNode),');
 	});
 
 	it('render_const_item interpolates name directly as a required slot', async () => {
@@ -283,25 +279,25 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(fnBody).not.toContain('render_block');
 	});
 
-	it('a leaf transport crosses its text under `$text`', async () => {
-		const src = await getTypescriptTransportRs();
-		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
+	it('a leaf node crosses its text under `$text`', async () => {
+		const src = await getTypescriptNodeRs();
+		expect(extractStructBody(src, 'IdentifierNode')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
 		const src = await getRustTemplatesRs();
-		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub exclusive: bool,');
+		expect(extractStructBody(src, 'ReferenceTypeNode')).toContain('pub exclusive: bool,');
 		expect(extractFnBody(src, 'render_reference_type')).toContain(
-			'let exclusive = View::new(::sittir_core::view::Presence::new(node.exclusive, MutableSpecifierTransport::MutableSpecifier), "{}");'
+			'let exclusive = View::new(::sittir_core::view::Presence::new(node.exclusive, MutableSpecifierNode::MutableSpecifier), "{}");'
 		);
 		expect(src).not.toContain('::napi::ValueType::Boolean');
 	});
 
 	it('a fixed-text kind decodes its numeric kind id into its unit, which writes the kind text', async () => {
-		const src = await getTypescriptTransportRs();
-		expect(src).toContain('#[transport(choice)]\npub enum PlusTransport {\n    #[kind(kind::PLUS)]\n    Plus,\n}');
+		const src = await getTypescriptNodeRs();
+		expect(src).toContain('#[node(choice)]\npub enum PlusNode {\n    #[kind(kind::PLUS)]\n    Plus,\n}');
 		expect(src).toMatch(
-			/fn render_plus\(w: &mut dyn ::sittir_core::render::RenderSink\) -> ::sittir_core::render::RenderResult \{\n    TransportLayout::render\(None, Some\(::sittir_core::types::KindId\(\d+\)\), ::sittir_core::layout::TriviaRole::Token, w, \|w\| w\.text\("\+"\)\)/
+			/fn render_plus\(w: &mut dyn ::sittir_core::render::RenderSink\) -> ::sittir_core::render::RenderResult \{\n    NodeLayout::render\(None, Some\(::sittir_core::types::KindId\(\d+\)\), ::sittir_core::layout::TriviaRole::Token, w, \|w\| w\.text\("\+"\)\)/
 		);
 	});
 });
@@ -321,28 +317,28 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 // so pairing every variant with forms[0] would map function_type_fn_form onto
 // trait_form.
 it('variant pairing: function_type_fn_form renders through fn_form (not trait_form)', async () => {
-	const transport = await getRustTemplatesRs();
-	expect(transport).toContain('pub enum FunctionTypeContentTransportSlot {');
-	expect(transport).toMatch(/FunctionTypeContentTransportSlot::FunctionTypeFnForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
-	expect(transport).toMatch(/FunctionTypeContentTransportSlot::FunctionTypeTraitForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
+	const node = await getRustTemplatesRs();
+	expect(node).toContain('pub enum FunctionTypeContentNodeSlot {');
+	expect(node).toMatch(/FunctionTypeContentNodeSlot::FunctionTypeFnForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
+	expect(node).toMatch(/FunctionTypeContentNodeSlot::FunctionTypeTraitForm\(inner\) => inner(?:\.as_ref\(\))?\.render\(w\),/);
 });
 
-describe('render options on transports', () => {
-	it('a separated-list transport carries its own spacing and flank fields, named by the site key', async () => {
-		const src = await getTypescriptTransportRs();
-		const body = extractStructBody(src, 'FormalParametersElementsTransport');
+describe('render options on nodes', () => {
+	it('a separated-list node carries its own spacing and flank fields, named by the site key', async () => {
+		const src = await getTypescriptNodeRs();
+		const body = extractStructBody(src, 'FormalParametersElementsNode');
 		expect(body).toContain('wire(key = "_item_separator_space_before")');
 		expect(body).toContain('pub item_separator_space_before: Option<KindId>,');
 		expect(body).toContain('wire(key = "_item_separator_space_after")');
 		expect(body).toContain('pub item_separator_space_after: Option<KindId>,');
-		expect(body).toContain('pub delimiter: Option<u8>,');
+		expect(body).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
 		expect(src).not.toContain('ListSpacing');
 	});
 
 	it('a list fills its own fields from its own site indices; its owner only recurses', async () => {
-		const src = await getTypescriptTransportRs();
+		const src = await getTypescriptNodeRs();
 		const listImpl = src.slice(
-			src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransport {')
+			src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersElementsNode {')
 		);
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
@@ -354,15 +350,15 @@ describe('render options on transports', () => {
 		expect(listFill).toMatch(
 			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(self\.layout\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\)\);/
 		);
-		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
+		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersNode {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
 		expect(ownerFill).toContain('self.elements.prepare(ctx)?;');
 		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
 		expect(ownerFill).not.toContain('lparen_after');
 	});
 
-	it('the list view is built from the transport fields and never from a separator literal', async () => {
-		const src = await getTypescriptTransportRs();
+	it('the list view is built from the node fields and never from a separator literal', async () => {
+		const src = await getTypescriptNodeRs();
 		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(view).toContain('before: node.item_separator_space_before.unwrap_or(KindId::BLANK),');
@@ -371,13 +367,13 @@ describe('render options on transports', () => {
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
 
-	it('a token seam has no transport field and is written from the resolved options at its site', async () => {
-		const src = await getTypescriptTransportRs();
-		const body = extractStructBody(src, 'ArgumentsTransport');
+	it('a token seam has no node field and is written from the resolved options at its site', async () => {
+		const src = await getTypescriptNodeRs();
+		const body = extractStructBody(src, 'ArgumentsNode');
 		expect(body).not.toContain('wire(key = "_lparen_after")');
 		expect(body).not.toContain('pub lparen_after: Option<KindId>,');
 		expect(body).not.toMatch(/pub \w+_(start|end): Option<KindId>,/);
-		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsTransport {'));
+		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsNode {'));
 		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).not.toContain('lparen_after');
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
@@ -385,7 +381,7 @@ describe('render options on transports', () => {
 			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.layout\.edges\(\)\.before\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/
 		);
 		expect(src).toContain('    w.finish()?;');
-		const binary = extractStructBody(src, 'BinaryExpressionTransport');
+		const binary = extractStructBody(src, 'BinaryExpressionNode');
 		expect(binary).not.toContain('pub operator_before: Option<KindId>,');
 		expect(binary).not.toContain('pub operator_after: Option<KindId>,');
 		expect(src).not.toContain('pub struct Seamed<T>');
@@ -396,11 +392,11 @@ describe('render options on transports', () => {
 	});
 
 	it('a literal arm of a per-slot child enum writes its owner-kind seam sites around the literal from the resolved options', async () => {
-		const src = await getTypescriptTransportRs();
-		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorTransportSlot {'));
+		const src = await getTypescriptNodeRs();
+		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorNodeSlot {'));
 		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/^    Semi,$/m);
 		const render = src.slice(
-			src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {')
+			src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorNodeSlot {')
 		);
 		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
 			/Semi => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = render_semi\(w\);/
@@ -408,18 +404,18 @@ describe('render options on transports', () => {
 	});
 
 	it('the render entry prepares the tree through the context before dispatch', async () => {
-		const src = await getTypescriptTransportRs();
-		expect(src).toContain('pub fn render_transport_parts(');
+		const src = await getTypescriptNodeRs();
+		expect(src).toContain('pub fn render_node_parts(');
 		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
-		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;');
+		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;');
 	});
 
-	it('every transport carries base edges in its layout; a kind edge is prepared from its edge row and written through the sink', async () => {
-		const src = await getTypescriptTransportRs();
-		for (const name of ['ArgumentsTransport', 'StatementBlockTransport']) {
+	it('every node carries base edges in its layout; a kind edge is prepared from its edge row and written through the sink', async () => {
+		const src = await getTypescriptNodeRs();
+		for (const name of ['ArgumentsNode', 'StatementBlockNode']) {
 			const body = extractStructBody(src, name);
 			expect(body).toContain('wire(key = "$_layout")');
-			expect(body).toContain('pub layout: Option<Box<TransportLayout>>,');
+			expect(body).toContain('pub layout: Option<Box<NodeLayout>>,');
 			expect(src).toContain(`impl ::sittir_core::options::Edged for ${name} {`);
 			const prepare = src.slice(src.indexOf(`impl ::sittir_core::prepare::Prepare for ${name} {`));
 			expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('::sittir_core::prepare::prepare_edges(self, ctx);');
@@ -439,106 +435,105 @@ describe('the typed sink replaces the mark-based Display path', () => {
 	it('reads a keyword the grammar aliases to its word rule as the word rule', async () => {
 		// rust aliases the `default` keyword to `identifier`: the expression slot
 		// holds no keyword arm for it, and the identifier arm folds its token in.
-		const transportRs = await getRustTemplatesRs();
-		const from = transportRs.indexOf('pub enum ExpressionTransport {');
+		const nodeRs = await getRustTemplatesRs();
+		const from = nodeRs.indexOf('pub enum ExpressionNode {');
 		expect(from).toBeGreaterThan(-1);
-		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		const body = nodeRs.slice(from, nodeRs.indexOf('\n}\n', from));
 		expect(_rustKindEntries?.some((entry) => entry.kind === '_reserved_identifier')).toBe(false);
 		expect(body).not.toContain('\n    DefaultKeyword,');
 		expect(body).toContain('folded(kind::DEFAULT_KEYWORD)');
-		expect(body).toContain('\n    #[transport(verbatim)]\n    Verbatim(VerbatimTransport),');
+		expect(body).toContain('\n    #[node(verbatim)]\n    Verbatim(VerbatimNode),');
 	});
 
 	it("gives a list slot's gaps its stored layout before the list site and the seats fill them", async () => {
-		const transportRs = await getRustTemplatesRs();
-		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
+		const nodeRs = await getRustTemplatesRs();
+		const from = nodeRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsNode {');
 		expect(from).toBeGreaterThan(-1);
-		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		const body = nodeRs.slice(from, nodeRs.indexOf('\n}\n', from));
 		expect(body).toContain(
 			'::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));'
 		);
 		// The stored layout is set first: the list site and the seats fill only the gaps it left unset.
 		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.site_arm('));
 		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('fill_seated_gaps'));
-		expect(transportRs).not.toContain('fill_list_gaps');
-		expect(transportRs).not.toContain('fn source_gap(');
-		expect(transportRs).not.toContain('classify_list_gaps');
-		expect(transportRs).not.toContain('leading_seam');
-		expect(transportRs).not.toMatch(/let separated_\w+ = \{/);
+		expect(nodeRs).not.toContain('fill_list_gaps');
+		expect(nodeRs).not.toContain('fn source_gap(');
+		expect(nodeRs).not.toContain('classify_list_gaps');
+		expect(nodeRs).not.toContain('leading_seam');
+		expect(nodeRs).not.toMatch(/let separated_\w+ = \{/);
 	});
 	it('renders through the typed sink and writes no mark character', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).not.toContain('impl ::std::fmt::Display for');
-		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
-		expect(transportRs).not.toContain('mark_adjacent');
-		expect(transportRs).toContain('impl ::sittir_core::render::Render for FunctionItemTransport {');
-		expect(transportRs).toContain(
-			'fn render_function_item(node: &FunctionItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).not.toContain('impl ::std::fmt::Display for');
+		expect(nodeRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(nodeRs).not.toContain('mark_adjacent');
+		expect(nodeRs).toContain('impl ::sittir_core::render::Render for FunctionItemNode {');
+		expect(nodeRs).toContain(
+			'fn render_function_item(node: &FunctionItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
 		);
-		expect(transportRs).toContain(
-			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+		expect(nodeRs).toContain(
+			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
-		expect(transportRs).toContain(
+		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
 		);
 	});
 
-	it('carries every slot as Coord or Transport and never a bare string', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).not.toContain('SlotValue::Node(');
-		expect(transportRs).not.toContain('SlotValue::Verbatim(');
-		expect(transportRs).toContain('SlotValue::Transport(');
+	it('carries every slot as Coord or Node and never a bare string', async () => {
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).not.toContain('SlotValue::Verbatim(');
+		expect(nodeRs).toContain('SlotValue::Node(');
 	});
 
-	it('declares no inert metadata on transports', async () => {
-		const transportRs = await getRustTemplatesRs();
+	it('declares no inert metadata on nodes', async () => {
+		const nodeRs = await getRustTemplatesRs();
 		for (const field of [
-			'transport_span',
-			'transport_node_handle',
-			'transport_child_index',
-			'transport_source',
-			'transport_named',
-			'transport_trivia_data',
+			'node_span',
+			'node_node_handle',
+			'node_child_index',
+			'node_source',
+			'node_named',
+			'node_trivia_data',
 			'edges',
 			'source_gap',
 			'source_flank'
 		]) {
-			expect(transportRs).not.toContain(`pub ${field}:`);
+			expect(nodeRs).not.toContain(`pub ${field}:`);
 		}
-		expect(transportRs).toContain('pub layout: Option<Box<TransportLayout>>');
-		expect(transportRs).not.toContain('pub transport_text: Option<String>');
+		expect(nodeRs).toContain('pub layout: Option<Box<NodeLayout>>');
+		expect(nodeRs).not.toContain('pub node_text: Option<String>');
 	});
 
 	it('reads a depth token off its kind and not off a sentinel default', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
-		expect(transportRs).toContain('{ w.dedent(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) }');
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(nodeRs).toContain('{ w.dedent(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) }');
 	});
 
-	it('prepares every transport through the render context and renders with its sources', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).not.toContain('FillOptions');
-		expect(transportRs).toContain('impl ::sittir_core::prepare::Prepare for FunctionItemTransport {');
-		expect(transportRs).toContain(
+	it('prepares every node through the render context and renders with its sources', async () => {
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).not.toContain('FillOptions');
+		expect(nodeRs).toContain('impl ::sittir_core::prepare::Prepare for FunctionItemNode {');
+		expect(nodeRs).toContain(
 			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
 		);
-		expect(transportRs).toContain('.get_or_insert(ctx.options.site_arm(options::');
-		expect(transportRs).toContain(
-			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+		expect(nodeRs).toContain('.get_or_insert(ctx.options.site_arm(options::');
+		expect(nodeRs).toContain(
+			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
-		expect(transportRs).toContain(
+		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'
 		);
-		expect(transportRs).toContain('let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);');
+		expect(nodeRs).toContain('let document = ::sittir_core::view::KindTest::kind_in(node, &w, kind::ROOT_KINDS);');
 	});
 
 	it('admits verbatim text only where a slot admits a pattern kind', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).toContain('use ::sittir_core::VerbatimTransport;');
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).toContain('use ::sittir_core::VerbatimNode;');
 		// FunctionItem.name admits identifier and metavariable, both pattern-modeled.
-		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
+		expect(nodeRs).toMatch(/pub enum FunctionItemNameNodeSlot \{[^}]*Verbatim\(VerbatimNode\),/s);
 		// EnumVariant.body admits two field lists and no pattern kind.
-		expect(transportRs).toMatch(/pub enum EnumVariantBodyTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
+		expect(nodeRs).toMatch(/pub enum EnumVariantBodyNodeSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 
 	it('seats a wrapper through a SeatPath: its unfielded content, or the child its field tags', async () => {
@@ -555,7 +550,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 	});
 
 	it('fills seated sibling gaps through one dense per-slot kind table and a core call; no per-list match block', async () => {
-		const transportRs = await getRustTemplatesRs();
+		const nodeRs = await getRustTemplatesRs();
 		const optionsRs = await getRustOptionsRs();
 		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[Option<SiteId>] = &['));
 		const cells = table
@@ -565,20 +560,20 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			.filter(Boolean);
 		expect(cells.filter((c) => c !== 'None').length).toBeGreaterThan(0);
 		expect(cells.every((c) => c === 'None' || /^Some\(SiteId\(\d+\)\)$/.test(c))).toBe(true);
-		expect(transportRs).toContain(
+		expect(nodeRs).toContain(
 			'::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx);'
 		);
-		expect(transportRs).not.toContain('let seated_last');
-		expect(transportRs).not.toContain('edges_mut().after.get_or_insert');
-		expect(transportRs).toContain('impl ::sittir_core::prepare::SeatTarget for AttributeItemTransport {');
-		expect(transportRs).toContain('::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(');
+		expect(nodeRs).not.toContain('let seated_last');
+		expect(nodeRs).not.toContain('edges_mut().after.get_or_insert');
+		expect(nodeRs).toContain('impl ::sittir_core::prepare::SeatTarget for AttributeItemNode {');
+		expect(nodeRs).toContain('::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(');
 	});
 
 	it('binds a list view over site ids and writes a seam site as a call', async () => {
-		const transportRs = await getRustTemplatesRs();
-		const block = transportRs.slice(
-			transportRs.indexOf('fn render_block('),
-			transportRs.indexOf('fn render_block(') + 2000
+		const nodeRs = await getRustTemplatesRs();
+		const block = nodeRs.slice(
+			nodeRs.indexOf('fn render_block('),
+			nodeRs.indexOf('fn render_block(') + 2000
 		);
 		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(KindId::BLANK\),/);
 		expect(block).toMatch(/w\.site_at\(options::SITE_\w+_LBRACE_AFTER\);/);
@@ -587,7 +582,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 	});
 });
 
-describe('transport read facts', () => {
+describe('node read facts', () => {
 	let model: Awaited<ReturnType<typeof modelFor>>;
 	let ctx: ReadFactsCtx;
 	beforeAll(async () => {
@@ -604,25 +599,25 @@ describe('transport read facts', () => {
 	}, 120_000);
 
 	const node = (struct: string): AssembledNode => {
-		const found = [...model.nodeMap.nodes.values()].find((n) => rustTransportStructName(n) === struct);
+		const found = [...model.nodeMap.nodes.values()].find((n) => rustNodeStructName(n) === struct);
 		if (found === undefined) throw new Error(`no kind emits ${struct}`);
 		return found;
 	};
 	const ownId = (n: AssembledNode): number => findKindEntry(model.kindEntries, n.kind)!.id;
 	const args = (struct: string): string => {
 		const n = node(struct);
-		return transportArgs(n, ownId(n), ctx, n.slots);
+		return nodeArgs(n, ownId(n), ctx, n.slots);
 	};
 	const slot = (struct: string, storageName: string) => node(struct).slots.find((s) => s.storageName === storageName)!;
-	const shape = (s: AssembledNonterminal) => transportSlotShapeOf(s, model.nodeMap);
+	const shape = (s: AssembledNonterminal) => nodeSlotShapeOf(s, model.nodeMap);
 
 	it('lists the tokens a kind writes itself as its layout', () => {
-		expect(args('FunctionItemTransport')).toBe('kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT]');
+		expect(args('FunctionItemNode')).toBe('kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT]');
 	});
 
 	it('reads a layout token from its stamp and refuses one with none', () => {
-		const n = node('UseBoundsTransport');
-		expect(() => transportArgs(n, ownId(n), ctx, n.slots)).not.toThrow();
+		const n = node('UseBoundsNode');
+		expect(() => nodeArgs(n, ownId(n), ctx, n.slots)).not.toThrow();
 		const unstamped = { kind: 'use_bounds', lexedInterior: false, renderRule: { type: 'STRING', value: '<' } };
 		expect(() => layoutTokenIds(unstamped as unknown as AbstractAssembledCompound, ctx, [])).toThrow(
 			/'use_bounds' layout token "<" has no stamped kind id/
@@ -630,40 +625,38 @@ describe('transport read facts', () => {
 	});
 
 	it('gives a parameter branch its tokens and no list forwarding depth or named inner gap', () => {
-		expect(args('ParametersTransport')).toBe(
-			'kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN]'
-		);
+		expect(args('ParametersNode')).toBe('kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN]');
 	});
 
 	it('selects list reading from its item slot and preserves its separator and optional flank', () => {
-		const list = node('ParametersElementsTransport') as AssembledList;
-		expect(args('ParametersElementsTransport')).toBe('kind = kind::PARAMETERS_ELEMENTS, item = item');
-		expect(slotArgs(slot('ParametersElementsTransport', 'item'), list, shape(slot('ParametersElementsTransport', 'item')), ctx)).toBe('field = field::ITEM, separator = kind::COMMA');
+		const list = node('ParametersElementsNode') as AssembledList;
+		expect(args('ParametersElementsNode')).toBe('kind = kind::PARAMETERS_ELEMENTS, item = item');
+		expect(slotArgs(slot('ParametersElementsNode', 'item'), list, shape(slot('ParametersElementsNode', 'item')), ctx)).toBe('field = field::ITEM, separator = kind::COMMA');
 		expect(flankArgs(list)).toBe('trailing = 0');
 	});
 
 	it('reads a token interior by its pattern and selects envelope reading from its content slot', () => {
-		expect(args('IntegerLiteralDecimalTransport')).toBe(
+		expect(args('IntegerLiteralDecimalNode')).toBe(
 			'kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"'
 		);
-		expect(args('TypeIdentifierTransport')).toBe('kind = kind::_TYPE_IDENTIFIER, display, content = content');
+		expect(args('TypeIdentifierNode')).toBe('kind = kind::_TYPE_IDENTIFIER, display, content = content');
 	});
 
 	it('reads a leaf as its text', () => {
-		expect(args('IdentifierTransport')).toBe('kind = kind::IDENTIFIER, text');
+		expect(args('IdentifierNode')).toBe('kind = kind::IDENTIFIER, text');
 	});
 
-	it('reads as text exactly the kinds whose transport holds text', async () => {
+	it('reads as text exactly the kinds whose node holds text', async () => {
 		const src = await getRustTemplatesRs();
 		const holdsText = new Map(
 			[...src.matchAll(/^pub struct (\w+) \{\n([^}]*)^\}/gm)].map((m) => [m[1]!, /^    pub text: String,$/m.test(m[2]!)])
 		);
 		let structs = 0;
 		for (const n of model.nodeMap.nodes.values()) {
-			const holds = holdsText.get(rustTransportStructName(n));
+			const holds = holdsText.get(rustNodeStructName(n));
 			if (holds === undefined) continue;
 			structs++;
-			const reads = /^kind = [\w:]+, text\b/.test(transportArgs(n, ownId(n), ctx, n.slots));
+			const reads = /^kind = [\w:]+, text\b/.test(nodeArgs(n, ownId(n), ctx, n.slots));
 			expect(reads, n.kind).toBe(holds);
 		}
 		expect(structs).toBeGreaterThan(0);
@@ -673,12 +666,12 @@ describe('transport read facts', () => {
 		const src = await getRustTemplatesRs();
 		const mutable = model.nodeMap.nodes.get('mutable_specifier')!;
 		expect(isTextLeaf(mutable) && mutable.modelType === 'keyword').toBe(true);
-		expect(src).not.toMatch(/^pub struct MutableSpecifierTransport \{/m);
-		expect(src).toMatch(/^pub enum MutableSpecifierTransport \{\n    #\[kind\(kind::MUTABLE_SPECIFIER\)\]\n    MutableSpecifier,\n\}/m);
+		expect(src).not.toMatch(/^pub struct MutableSpecifierNode \{/m);
+		expect(src).toMatch(/^pub enum MutableSpecifierNode \{\n    #\[kind\(kind::MUTABLE_SPECIFIER\)\]\n    MutableSpecifier,\n\}/m);
 	});
 
 	it('routes a presence slot by its field and names its keyword', () => {
-		expect(slotArgs(slot('LetDeclarationTransport', 'mutable'), node('LetDeclarationTransport'), shape(slot('LetDeclarationTransport', 'mutable')), ctx)).toBe(
+		expect(slotArgs(slot('LetDeclarationNode', 'mutable'), node('LetDeclarationNode'), shape(slot('LetDeclarationNode', 'mutable')), ctx)).toBe(
 			'field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER'
 		);
 	});
@@ -694,7 +687,7 @@ describe('transport read facts', () => {
 	});
 });
 
-describe('transport read facts for an aliased presence keyword', () => {
+describe('node read facts for an aliased presence keyword', () => {
 	let model: Awaited<ReturnType<typeof modelFor>>;
 	let ctx: ReadFactsCtx;
 	beforeAll(async () => {
@@ -711,54 +704,54 @@ describe('transport read facts for an aliased presence keyword', () => {
 	}, 120_000);
 
 	const presenceArgs = (struct: string, storageName: string): string => {
-		const owner = [...model.nodeMap.nodes.values()].find((n) => rustTransportStructName(n) === struct);
+		const owner = [...model.nodeMap.nodes.values()].find((n) => rustNodeStructName(n) === struct);
 		if (owner === undefined) throw new Error(`no kind emits ${struct}`);
 		const s = owner.slots.find((each) => each.storageName === storageName)!;
-		return slotArgs(s, owner, transportSlotShapeOf(s, model.nodeMap), ctx);
+		return slotArgs(s, owner, nodeSlotShapeOf(s, model.nodeMap), ctx);
 	};
 
 	it('reads a keyword the site aliases by the display id the alias shows', () => {
-		expect(presenceArgs('TypeQuerySubscriptExpressionTransport', 'optional_chain')).toMatch(/presence = display\(kind::_OPTIONAL_CHAIN_MARKER\)$/);
+		expect(presenceArgs('TypeQuerySubscriptExpressionNode', 'optional_chain')).toMatch(/presence = display\(kind::_OPTIONAL_CHAIN_MARKER\)$/);
 	});
 
 	it('reads the same keyword slot over an unaliased kind by its grammar id', () => {
-		expect(presenceArgs('SubscriptExpressionTransport', 'optional_chain')).toMatch(/presence = kind::OPTIONAL_CHAIN$/);
+		expect(presenceArgs('SubscriptExpressionNode', 'optional_chain')).toMatch(/presence = kind::OPTIONAL_CHAIN$/);
 	});
 });
 
-describe('transport attributes', () => {
+describe('node attributes', () => {
 	it('derives the reader and states the read facts on a struct', async () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemTransport \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemNode \{/
 		);
-		expect(extractStructBody(src, 'FunctionItemTransport')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
-		expect(extractStructBody(src, 'ParametersElementsTransport')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<u8>,/);
+		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
 	});
 
 	it("gives a choice's variants the ids today's decode claims for them", async () => {
 		const src = await getRustTemplatesRs();
-		const typeEnum = src.slice(src.indexOf('pub enum TypeTransport {'));
-		expect(src).toMatch(/#\[transport\(choice\)\]\npub enum TypeTransport \{/);
-		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    #\[transport\(edged\)\]\n    NeverType\(::sittir_core::options::Edges\),/);
+		const typeEnum = src.slice(src.indexOf('pub enum TypeNode {'));
+		expect(src).toMatch(/#\[node\(choice\)\]\npub enum TypeNode \{/);
+		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    #\[node\(edged\)\]\n    NeverType\(::sittir_core::options::Edges\),/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::_PRIMITIVE_TYPE[^\]]*kind::U8_KEYWORD[^\]]*\)\]\n    PrimitiveType\(PrimitiveTypeEnum\),/);
-		expect(src).toMatch(/#\[transport\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
+		expect(src).toMatch(/#\[node\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
 	});
 
 	it('marks the blank arm of a slot that has one', async () => {
-		const src = await getTypescriptTransportRs();
-		const terminator = src.slice(src.indexOf('pub enum StatementBlockTerminatorTransportSlot {'));
-		expect(terminator).toMatch(/    #\[transport\(blank\)\]\n    Blank,/);
+		const src = await getTypescriptNodeRs();
+		const terminator = src.slice(src.indexOf('pub enum StatementBlockTerminatorNodeSlot {'));
+		expect(terminator).toMatch(/    #\[node\(blank\)\]\n    Blank,/);
 	});
 
 	it('gives a blank arm only to the choices that blank options hold', async () => {
-		const src = await getTypescriptTransportRs();
+		const src = await getTypescriptNodeRs();
 		const model = await modelFor('typescript');
 		const blankOptions = [...model.nodeMap.nodes.values()]
 			.flatMap((n) => (n instanceof AbstractAssembledCompound ? n.slots : []))
 			.filter(hasBlankArm);
-		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[transport\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
+		const blankChoices = [...src.matchAll(/pub enum (\w+) \{[^}]*\n    #\[node\(blank\)\]\n    Blank,/g)].map((m) => m[1]!);
 		const heldByBlankChoices = [...src.matchAll(/pub \w+: Option<::sittir_core::SlotValue<(\w+)>>,/g)].filter((m) => blankChoices.includes(m[1]!));
 		expect(blankOptions).toHaveLength(9);
 		expect(heldByBlankChoices).toHaveLength(blankOptions.length);
@@ -768,8 +761,8 @@ describe('transport attributes', () => {
 
 describe('a slot whose only scalar source is an enum of immediate tokens', () => {
 	it('keeps its adjacency flag and the renderer writes it', async () => {
-		const scm = await getTransportRsForGrammar('scm');
-		expect(extractStructBody(scm, 'PredicateTransport')).toContain('pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,');
+		const scm = await getNodeRsForGrammar('scm');
+		expect(extractStructBody(scm, 'PredicateNode')).toContain('pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,');
 		expect(extractFnBody(scm, 'render_predicate_type')).toContain('w.leaf_kind(');
 	}, 120_000);
 });
@@ -777,16 +770,8 @@ describe('a slot whose only scalar source is an enum of immediate tokens', () =>
 describe('every string a kind writes is stamped', () => {
 	const RENDER_ONLY: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
 	const unstampedStrings = (rule: unknown, found: Set<string> = new Set()): Set<string> => {
-		const r = rule as {
-			type?: string;
-			value?: string;
-			aliasedToId?: number;
-			resolvedKindId?: number;
-			members?: unknown[];
-			content?: unknown;
-		};
-		if (r.type === 'STRING' && r.value !== undefined && r.aliasedToId === undefined && r.resolvedKindId === undefined)
-			found.add(r.value);
+		const r = rule as { type?: string; value?: string; aliasedToId?: number; resolvedKindId?: number; members?: unknown[]; content?: unknown };
+		if (r.type === 'STRING' && r.value !== undefined && r.aliasedToId === undefined && r.resolvedKindId === undefined) found.add(r.value);
 		for (const member of r.members ?? []) unstampedStrings(member, found);
 		if (r.content !== undefined) unstampedStrings(r.content, found);
 		return found;
@@ -806,28 +791,28 @@ describe('every string a kind writes is stamped', () => {
 describe('the wire codec facts', () => {
 	it('keys every field and prints no napi codec of its own', async () => {
 		const src = await getRustTemplatesRs();
-		for (const gone of ['napi(object)', 'FromNapiValue', 'ToNapiValue', 'debug-transport', 'decodes as none of its members', 'pub struct VerbatimTransport']) {
+		for (const gone of ['napi(object)', 'FromNapiValue', 'ToNapiValue', 'debug-node', 'decodes as none of its members', 'pub struct VerbatimNode']) {
 			expect(src).not.toContain(gone);
 		}
-		expect(src).toContain('use ::sittir_core::VerbatimTransport;');
-		const item = extractStructBody(src, 'FunctionItemTransport');
-		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<Box<TransportLayout>>,/);
+		expect(src).toContain('use ::sittir_core::VerbatimNode;');
+		const item = extractStructBody(src, 'FunctionItemNode');
+		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<Box<NodeLayout>>,/);
 		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
-		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
+		expect(extractStructBody(src, 'IdentifierNode')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});
 
 	it('marks the verbatim arm of a choice that takes bare text, and the root choice its ERROR arm alone', async () => {
 		const src = await getRustTemplatesRs();
-		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),/);
-		const any = src.slice(src.indexOf('pub enum AnyTransport {'));
+		expect(src).toMatch(/    #\[node\(verbatim\)\]\n    Verbatim\(VerbatimNode\),/);
+		const any = src.slice(src.indexOf('pub enum AnyNode {'));
 		const anyBody = any.slice(0, any.indexOf('\n}'));
-		expect(anyBody).toMatch(/\n    #\[transport\(error\)\]\n    Verbatim\(VerbatimTransport\),/);
-		expect(anyBody).not.toContain('#[transport(verbatim)]');
+		expect(anyBody).toMatch(/\n    #\[node\(error\)\]\n    Verbatim\(VerbatimNode\),/);
+		expect(anyBody).not.toContain('#[node(verbatim)]');
 	});
 
 	it("states an envelope's wire ids", async () => {
-		const src = await getTypescriptTransportRs();
-		const member = src.slice(src.indexOf('pub enum MemberExpressionPropertyTransportSlot {'));
+		const src = await getTypescriptNodeRs();
+		const member = src.slice(src.indexOf('pub enum MemberExpressionPropertyNodeSlot {'));
 		const slot = member.slice(0, member.indexOf('\n}\n'));
 		expect(slot).toMatch(/    #\[kind\(kind::_PROPERTY_IDENTIFIER, display\)\]\n    PropertyIdentifier\(/);
 		expect(slot).not.toMatch(/decodes\(/);
@@ -836,9 +821,9 @@ describe('the wire codec facts', () => {
 
 	it('derives the codec alone for trivia', async () => {
 		const src = await getRustTemplatesRs();
-		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(choice, codec_only\)\]\npub enum TriviaTransport \{/);
-		expect(src).toMatch(/    #\[transport\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
-		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),\n    #\[transport\(text\)\]/);
+		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(choice, codec_only\)\]\npub enum TriviaNode \{/);
+		expect(src).toMatch(/    #\[node\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
+		expect(src).toMatch(/    #\[node\(verbatim\)\]\n    Verbatim\(VerbatimNode\),\n    #\[node\(text\)\]/);
 	});
 });
 
@@ -851,9 +836,9 @@ describe('the envelope pin gate is wired to the real pipeline', () => {
 	it('refuses a full emission that carries a pin for an enum it does not print', async () => {
 		const { raw, nodeMap, generatedIdTables, templates, renderRules } = await modelFor('typescript');
 		const inputs = grammarRenderInputs('typescript', { renderRules, visibleExternals: raw.visibleExternals, options: raw.options });
-		const stale = { ...inputs.envelopePins, 'GoneTransportSlot.Variant': { display: '_property_identifier', extras: [] } };
+		const stale = { ...inputs.envelopePins, 'GoneNodeSlot.Variant': { display: '_property_identifier', extras: [] } };
 		expect(() => emitRenderModule('typescript', templates, nodeMap, generatedIdTables, { ...inputs, envelopePins: stale })).toThrow(
-			/typescript GoneTransportSlot\.Variant pins an enum codegen does not print/
+			/typescript GoneNodeSlot\.Variant pins an enum codegen does not print/
 		);
 	}, 120_000);
 });
@@ -864,7 +849,7 @@ describe('the payload ceiling', () => {
 		expect(BOXED_PAYLOADS.rust!.length).toBeGreaterThan(0);
 		for (const name of BOXED_PAYLOADS.rust!) {
 			expect(src).toMatch(new RegExp(`\\n    \\w+\\(Box<${name}>\\),`));
-			expect(src.replace(/\npub enum TriviaTransport \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
+			expect(src.replace(/\npub enum TriviaNode \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
 		}
 	});
 
@@ -885,9 +870,9 @@ describe('the payload ceiling', () => {
 
 describe('list storage', () => {
 	it('prints a possibly-empty list as a Vec and a repeat1 list as a NonEmptyVec', async () => {
-		const rust = await getTransportRsForGrammar('python');
-		expect(rust).toContain('pub handlers: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>');
+		const rust = await getNodeRsForGrammar('python');
+		expect(rust).toContain('pub handlers: Vec<::sittir_core::SlotValue<ExceptClauseNode>>');
 		expect(rust).not.toMatch(/Option<Vec</);
-		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorTransport>>');
+		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>');
 	}, 120_000);
 });

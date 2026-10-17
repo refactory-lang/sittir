@@ -41,7 +41,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { DisplayFamilies } from './display-families.ts';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -241,9 +241,9 @@ export async function buildReadHandle(grammar: string, source: string): Promise<
 	return readNativeTree(await loadNativeEngine(grammar), source).tree;
 }
 
-/** Where a native search found a node: its coordinate when it has one, and the transport as the whole-tree read holds it, or neither for the root. */
+/** Where a native search found a node: its coordinate when it has one, and the native node as the whole-tree read holds it, or neither for the root. */
 export interface NativeNodeCoords {
-	coordinate?: TransportCoordinate;
+	coordinate?: NodeCoordinate;
 	embeddedData?: AnyUntypedNode;
 }
 
@@ -346,17 +346,17 @@ export function collectKinds(node: TS.Node, kindOf: (node: TS.Node) => string = 
 }
 
 export function buildKindToSupertypes(
-	rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[]
+	rawEntries: readonly { type: string; subtypes?: readonly { type: string }[] }[],
+	modelSubtypes: Readonly<Record<string, readonly string[]>>
 ): Map<string, string[]> {
 	const result = new Map<string, string[]>();
-	for (const entry of rawEntries) {
-		if (!entry.subtypes) continue;
-		for (const sub of entry.subtypes) {
-			const existing = result.get(sub.type) ?? [];
-			existing.push(entry.type);
-			result.set(sub.type, existing);
-		}
-	}
+	const add = (member: string, supertype: string): void => {
+		const existing = result.get(member) ?? [];
+		if (!existing.includes(supertype)) existing.push(supertype);
+		result.set(member, existing);
+	};
+	for (const entry of rawEntries) for (const sub of entry.subtypes ?? []) add(sub.type, entry.type);
+	for (const [supertype, members] of Object.entries(modelSubtypes)) for (const member of members) add(member, supertype);
 	return result;
 }
 
@@ -423,7 +423,7 @@ async function wrapExportOf<K extends keyof GrammarModules['wrap.ts']>(
 /** The grammar's wrapped read: the root (or the node a coordinate names) read `depth` levels down (one when absent) and wrapped. */
 export async function readNodeOf(
 	grammar: string
-): Promise<((tree: TreeHandle, coordinate?: TransportCoordinate, depth?: number) => unknown) | null> {
+): Promise<((tree: TreeHandle, coordinate?: NodeCoordinate, depth?: number) => unknown) | null> {
 	const [wrapNode, hydrate] = await Promise.all([wrapExportOf(grammar, 'wrapNode'), wrapExportOf(grammar, 'hydrate')]);
 	if (wrapNode === null || hydrate === null) return null;
 	return (tree, coordinate, depth) => {

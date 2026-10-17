@@ -30,21 +30,20 @@ describe('a rule entry replaces its member', () => {
 		expect(raw.bindingEffects).toEqual([]);
 	}, 60_000);
 
-	it('a literal alias over a bare symbol keeps that symbol as the alias content and records the alias', async () => {
-		const base = await evaluateTempGrammar({ extras: '', rules: bare }, '', { bindings: '' });
+	it('an ALIAS rule over a bare symbol replaces it as written, and records no alias effect', async () => {
 		const raw = await evaluateTempGrammar({ extras: '', rules: bare }, '', { bindings: `edits: { k: { '.': ${ALIAS_OF_WORD} } }` });
 		expect(raw.rules.k).toEqual({
 			type: 'ALIAS',
 			named: true,
 			value: 'shown',
-			content: { ...base.rules.k, id: 'rule:k:content' },
+			content: { type: 'SYMBOL', name: 'word', id: 'rule:k:content' },
 			id: 'rule:k:root'
 		});
 		expect(raw.patchSites).toEqual([{ ownerKind: 'k', path: '.', form: 'literal' }]);
-		expect(raw.bindingEffects).toEqual([{ kind: 'alias', from: 'word', to: 'shown' }]);
+		expect(raw.bindingEffects).toEqual([]);
 	}, 60_000);
 
-	it('a literal alias over a fielded member replaces the field', async () => {
+	it('an ALIAS rule over a fielded member replaces the field, and records no alias effect', async () => {
 		const base = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: '' });
 		const raw = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: `edits: { k: { '0': ${ALIAS_OF_WORD} } }` });
 		expect(membersOf(raw)[0]).toEqual({
@@ -56,7 +55,7 @@ describe('a rule entry replaces its member', () => {
 		});
 		expect(membersOf(raw)[2]).toEqual(membersOf(base)[2]);
 		expect(raw.patchSites).toEqual([{ ownerKind: 'k', path: '0', form: 'literal' }]);
-		expect(raw.bindingEffects).toEqual([{ kind: 'alias', from: 'word', to: 'shown' }]);
+		expect(raw.bindingEffects).toEqual([]);
 	}, 60_000);
 });
 

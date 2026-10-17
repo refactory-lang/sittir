@@ -7,6 +7,7 @@ export interface ConflictInterpretation {
 	readonly conflicting_lookahead: string;
 	readonly precedence: unknown;
 	readonly associativity: unknown;
+	readonly requires_eof_lookahead: boolean;
 }
 
 export type ConflictOffer =
@@ -27,7 +28,7 @@ export type GenerateOutcome =
 	| { readonly kind: 'error'; readonly summary: unknown };
 
 interface GenerateSummary {
-	readonly BuildTables?: { readonly Conflict?: ConflictReport };
+	readonly error?: { readonly BuildTables?: { readonly Conflict?: ConflictReport } };
 }
 
 function lastSummary(stderr: string): unknown {
@@ -45,7 +46,7 @@ export function parseGenerateOutcome(status: number | null, stderr: string): Gen
 	if (status === 0) return { kind: 'clean' };
 	const summary = lastSummary(stderr);
 	if (summary === undefined) return { kind: 'error', summary: stderr };
-	const conflict = (summary as GenerateSummary).BuildTables?.Conflict;
+	const conflict = (summary as GenerateSummary).error?.BuildTables?.Conflict;
 	return conflict ? { kind: 'conflict', report: conflict } : { kind: 'error', summary };
 }
 

@@ -24,23 +24,30 @@ const flatten = (result: ReturnType<typeof rows>) =>
 describe('slotFlagsOf', () => {
 	it('lists, per slot, the types of the kinds it can hold that always carry each flag', () => {
 		const result = rows([node(1, 'parameter', [{ propertyName: 'type', kinds: ['u8', 'i8', 'usize'] }])], { u8: { unsigned: ALWAYS }, usize: { unsigned: ALWAYS } });
-		expect(flatten(result)).toEqual({ 1: { type: { unsigned: [59, 70] } } });
+		expect(flatten(result)).toEqual({ 1: { type: { unsigned: { types: [59, 70], kinds: [] } } } });
 	});
 
 	it('expands a kind as ofType does, merging the ids', () => {
 		const result = rows([node(1, 'parameter', [{ propertyName: 'type', kinds: ['_int', 'u8'] }])], { _int: { unsigned: ALWAYS }, u8: { unsigned: ALWAYS } });
-		expect(flatten(result)).toEqual({ 1: { type: { unsigned: [59, 70] } } });
+		expect(flatten(result)).toEqual({ 1: { type: { unsigned: { types: [59, 70], kinds: [] } } } });
 	});
 
-	it('refuses a flag a kind the slot holds declares through its own slots, or its context, naming the kind', () => {
+	it('lists a kind that carries the flag by its own slots by its id, and refuses one that carries it by its context', () => {
 		const result = rows([node(2, 'let', [{ propertyName: 'value', kinds: ['closure', 'item'] }])], { closure: { move: SLOTTED }, item: { static: null } });
-		expect(flatten(result)).toEqual({ 2: { value: { move: { kind: 369, context: false }, static: { kind: 208, context: true } } } });
+		expect(flatten(result)).toEqual({ 2: { value: { move: { types: [], kinds: [369] }, static: { kind: 208 } } } });
 	});
 
-	it('lets a refusal win over the kinds that always carry the flag, whichever comes first', () => {
+	it('keeps both the kinds that always carry the flag and those that carry it by their slots, whichever comes first', () => {
 		const first = rows([node(3, 'p', [{ propertyName: 't', kinds: ['closure', 'u8'] }])], { closure: { unsigned: SLOTTED }, u8: { unsigned: ALWAYS } });
 		const last = rows([node(3, 'p', [{ propertyName: 't', kinds: ['u8', 'closure'] }])], { closure: { unsigned: SLOTTED }, u8: { unsigned: ALWAYS } });
-		expect(flatten(first)).toEqual({ 3: { t: { unsigned: { kind: 369, context: false } } } });
+		expect(flatten(first)).toEqual({ 3: { t: { unsigned: { types: [59], kinds: [369] } } } });
+		expect(flatten(last)).toEqual(flatten(first));
+	});
+
+	it('lets a context refusal win over every other kind, whichever comes first', () => {
+		const first = rows([node(3, 'p', [{ propertyName: 't', kinds: ['item', 'u8', 'closure'] }])], { item: { unsigned: null }, u8: { unsigned: ALWAYS }, closure: { unsigned: SLOTTED } });
+		const last = rows([node(3, 'p', [{ propertyName: 't', kinds: ['u8', 'closure', 'item'] }])], { item: { unsigned: null }, u8: { unsigned: ALWAYS }, closure: { unsigned: SLOTTED } });
+		expect(flatten(first)).toEqual({ 3: { t: { unsigned: { kind: 208 } } } });
 		expect(flatten(last)).toEqual(flatten(first));
 	});
 

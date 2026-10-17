@@ -1,6 +1,6 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, NodeTrivia, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toTransportData, treeHandleOf, triviaOf } from './transport-data.ts';
+import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -129,7 +129,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 		const at = tableAt(node);
 		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
-		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toTransportData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
+		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
 		return node;
 	};
 	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
@@ -522,7 +522,7 @@ export function describeValue(v: unknown): string {
 }
 
 /** Whether `v` is a node value a builder takes as one: a node, or a coordinate naming one past a read's depth. */
-export function isNodeValue(v: unknown): v is AnyUntypedNode | TransportCoordinate {
+export function isNodeValue(v: unknown): v is AnyUntypedNode | NodeCoordinate {
 	return isNode(v) || isCoordinate(v);
 }
 
@@ -569,16 +569,16 @@ function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
 	node.$_layout = { ...node.$_layout, trivia: triviaData };
 }
 
-/** How a hydrate turns a transport into its kind's node: the grammar's `wrapNode`. */
-export type WrapTransport = (data: object, tree: TreeHandle) => unknown;
+/** How a hydrate turns a native node into its kind's node: the grammar's `wrapNode`. */
+export type WrapNode = (data: object, tree: TreeHandle) => unknown;
 
 /**
  * One stored value as an accessor returns it: the node the registry holds at its index and `role`, else a
- * coordinate read `depth` levels down (one when absent) and hydrated as the transport it reads as, a
- * transport wrapped and registered (`wrapRegistered`), and anything else (a wrapped node, a kind id such as
+ * coordinate read `depth` levels down (one when absent) and hydrated as the node it reads as, a
+ * native node wrapped and registered (`wrapRegistered`), and anything else (a wrapped node, a kind id such as
  * a unit variant's, a boolean, text) as it is.
  */
-export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number, role: Role = 'node'): unknown {
+export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, depth?: number, role: Role = 'node'): unknown {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
 	if (isCoordinate(value)) {
 		const known = decodeTree(value.$treeHandle) === tree.id ? registered(tree, decodeIndex(value.$treeHandle), role) : undefined;
@@ -638,12 +638,12 @@ function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): read
 }
 
 /** The value of slot `key` of a wrapped node, hydrated by `hydrateWith` in `role` and written back into the slot. */
-export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport, role: Role = 'node'): unknown {
+export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode, role: Role = 'node'): unknown {
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
 }
 
 /** `hydrateSlotWith` for a list slot. */
-export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): readonly unknown[] {
+export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode): readonly unknown[] {
 	return hydrateSlotsBy(node, key, (value) => hydrateWith(value, tree, wrap));
 }
 
@@ -664,7 +664,7 @@ export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './eng
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, toDetachedTransportData, PLAIN_KINDS, sideOf, sidesOf, carrySource, type TransportLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './transport-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {

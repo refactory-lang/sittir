@@ -17,7 +17,7 @@ export interface BaselineRun {
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
   get renderModuleHash(): string
-  get nativeRenderTransportAbi(): number
+  get nativeRenderNodeAbi(): number
   /**
    * Compile profile baked into this binary — `"debug"` or `"release"`.
    * Validators refuse debug binaries (known segfault class) unless
@@ -34,7 +34,7 @@ export declare class SittirEngine {
    */
   parse(source: string): string
   /**
-   * The node at `index` of tree `treeId` read into its transport,
+   * The node at `index` of tree `treeId` read into its native node,
    * `depth` levels down (one when absent, `Infinity` for all); index 0
    * is the root. An `ERROR` node reads as its text and coordinate.
    * Refuses a tree that is not live, an index past its last node,
@@ -66,7 +66,7 @@ export declare class SittirEngine {
   /**
    * A snapshot of the node at `index` of the live tree `treeId`: the
    * node read at every depth into plain data with no tree, each
-   * node with its span (`$_layout.span`) from the transport that
+   * node with its span (`$_layout.span`) from the native node that
    * holds it and each placed extra with its text, the node itself
    * measured from the byte `holderByte`, or from its own start when
    * absent. Refuses as `read` does.
@@ -140,7 +140,7 @@ layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
  * a tree that is not live and a plan whose pattern the native
  * matcher cannot compile.
  */
-descendants(from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
+descendants(from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<ChildPosition> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
 /**
  * The byte offsets of the lines under the node at `index` of the
  * live tree `treeId` (its root when absent) that begin inside a
@@ -158,15 +158,15 @@ lineStartsInsideTokens(treeId: TreeId, index?: NodeIndex | undefined | null): Ar
  */
 planHolds(addresses: string, plan: string): Array<boolean>
 /**
- * Render a typed transport object (napi-native, numeric `$type`).
+ * Render a typed node object (napi-native, numeric `$type`).
  *
  * The options a render takes are the call's own over the layer
  * of the tree `treeId` names (`ParsedTree::inferred`), over the
  * engine's. `treeId` is the tree the node was read from; a built
  * node belongs to no tree and renders by the engine's options.
  */
-render(transport: object, treeId?: number | undefined | null, options?: object | undefined | null): string
-renderToFile(transport: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
+render(node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
+renderToFile(node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
 /**
  * Release the engine. It holds no state of its own past its
  * options: the trees it parsed stay in the addon's table, since
@@ -174,6 +174,10 @@ renderToFile(transport: object, path: string, treeId?: number | undefined | null
  */
 dispose(): void
 }
+
+/** A child's position under its parent as JavaScript holds it: a whole number. */
+export type ChildPosition =
+  number
 
 /**
  * Drop one tree. Called from the boundary's `FinalizationRegistry`

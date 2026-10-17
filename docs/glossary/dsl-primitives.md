@@ -688,7 +688,7 @@ Whether a site address is a list's separator default (`<slot>_separator`).
 
 The preference label of a token seam, `<token>_<before|after>`, the token
 being its catalog kind name (`lparen_before`). It is the site's field on
-the owning transport, its address under the kind, and a top-level key of
+the owning node, its address under the kind, and a top-level key of
 the grammar's `Options` type and of its `defaults`.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::LABEL_TOKEN`
@@ -708,7 +708,7 @@ keys, the render-rules seam detection, and the site collection.
 
 ```text
 /** The kind × slot option key of one site, the same string on the Options
- *  type, the grammar's defaults, the transport field and the wire:
+ *  type, the grammar's defaults, the node field and the wire:
  *  `<slot>_<label>` for a declared preference; for separator spacing the
  *  token is the slot's own and is dropped, `<slot>_separator_space` for the
  *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */

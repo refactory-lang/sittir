@@ -60,7 +60,7 @@ space into the body text, `tight` everywhere else. A seam the analysis
 leaves to the writer (runtime-varying) defaults to `tight`; the writer's
 lexical check still applies on top.
 
-Each site is one `Option<u16>` slot on the owning transport, keyed by the
+Each site is one `Option<u16>` slot on the owning node, keyed by the
 site, materialized from the resolved table by the fill walk at the dispatch
 point, and printed by the kind's render function as the seam's whitespace
 text. Nothing else in the render path changes.
@@ -77,7 +77,7 @@ kind, default `tight`. A kind whose rule is not a seq holds no literal of
 its own, so its edges are its members' edges and it gets none; a hidden
 kind whose public name a visible kind also bears leaves the key to the
 visible one. They are token seams in every other respect:
-one slot each on the kind's transport, printed at the start and end of its
+one slot each on the kind's node, printed at the start and end of its
 body, coalesced with whatever sits on the other side of the seam, so
 `parameters_after` and `block_before` on the seam between a parameter list
 and its body yield one space when either is set. Naming the edge by the kind rather than the
@@ -112,7 +112,7 @@ option; the writer asserts its depth is back where it started when the
 render ends. The brace-owning kind is the body in a tree-sitter grammar
 (`block`, `declaration_list`, `class_body`), and its edges sit outside its
 own braces, so a brace body indents from its braces: `lbrace_after:
-indent` closed by `rbrace_before: dedent`, both fields of one transport
+indent` closed by `rbrace_before: dedent`, both fields of one node
 written by one render function. A kind-scoped seam may declare a label,
 so every brace body shares one pair of top-level keys,
 `block_body_before` / `block_body_after`, and a user overrides one kind at
@@ -175,7 +175,7 @@ so an empty body renders as its bare delimiters.
 - Addressing one occurrence of a token in a kind that holds it at several
   positions; one site per kind, token and side.
 - Seams inside a rule that another rule inlines: the inlined body prints
-  into the referencing kind's transport, which holds no field for it.
+  into the referencing kind's node, which holds no field for it.
 
 ## Verification
 

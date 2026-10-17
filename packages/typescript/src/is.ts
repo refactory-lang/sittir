@@ -2,7 +2,7 @@
 // Per-grammar type guards: is.
 // Composition: kind × shape = concrete type via NamespaceMap.
 
-import { TSKindId } from './types.js';
+import { TSKindId } from './kinds.js';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
 

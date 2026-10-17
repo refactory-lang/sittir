@@ -16,7 +16,7 @@ export async function loadBindingsHash(dir: string): Promise<string | undefined>
 
 const q = (v: string): string => JSON.stringify(v);
 
-const editCall = (edit: GrammarBindingsEdit): string => ('field' in edit ? `field(${q(edit.field)})` : `alias(sym(${q(edit.alias.from)}), sym(${q(edit.alias.to)}))`);
+const editCall = (edit: GrammarBindingsEdit): string => ('field' in edit ? `field(${q(edit.field)})` : `alias(${q(edit.alias)})`);
 
 const patchSet = (patches: readonly GrammarBindingsPatch[]): string => `{ ${patches.map((p) => `${q(p.path)}: ${editCall(p.edit)}`).join(', ')} }`;
 

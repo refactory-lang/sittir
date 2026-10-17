@@ -9,10 +9,10 @@ Nothing pushed, no PR open. Sixteen commits from 6c6c3dd42 (4f4f5ef31 = inline-g
    `AssembledEnum.storage` is `'kindId'`; an enum mints no factory, coercer or `ir`
    entry; its type is the member-id union (`BooleanLiteral = TSKindId.True | TSKindId.False`).
    `ValueStorage` has a member-set arm; `isFixedTextLeaf` is the single-text guard.
-   Both transport enum builders order kind-id-stored variants first
+   Both node enum builders order kind-id-stored variants first
    (`kindIdStoredFirst`) — rust aliases the primitive tokens onto `identifier` in
    expression position, so the alias wire-id map lists `u8`'s id under `identifier`
-   grammar-wide and the `_type` transport decoded a bare 28 as an empty identifier.
+   grammar-wide and the `_type` node decoded a bare 28 as an empty identifier.
    Spec: `docs/superpowers/specs/2026-09-07-enum-leaf-kind-id-storage-design.md`.
 2. **`ir` exposes aliased pattern leaves by `userFacing`** (27f66acd8 + 41ce4d2d8):
    `ir.stringLiteralOpen`, the comment-content patterns, `templateChars`. Hidden

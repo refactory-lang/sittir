@@ -12,7 +12,7 @@ use crate::render::{Render, RenderResult, RenderSink};
 use crate::slot::SlotValue;
 use crate::types::KindId;
 
-/// What a transport answers when a body asks whether its value is one of a
+/// What a node answers when a body asks whether its value is one of a
 /// set of kinds: a generated struct answers for its own kind, a generated
 /// enum for the variant it holds.
 pub trait KindOf {
@@ -37,7 +37,7 @@ impl<T: KindOf, const ADJACENT: bool> KindTest for SlotValue<T, ADJACENT> {
     fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
         match self {
             SlotValue::Coord(coord) => w.kind_of(coord).is_some_and(|kind| kinds.contains(&kind)),
-            SlotValue::Transport(t) => t.kind_in(kinds),
+            SlotValue::Node(t) => t.kind_in(kinds),
         }
     }
 }
@@ -250,7 +250,7 @@ impl<S: Slot> Render for View<'_, S> {
     }
 }
 
-/// The items of a list slot named in a template but absent from the transport.
+/// The items of a list slot named in a template but absent from the node.
 pub const NO_ITEMS: &[&str] = &[];
 
 /// The text of a list's separator kind (`ListView::separators`).
@@ -292,11 +292,11 @@ pub struct ListView<'a, E: Slot> {
 }
 
 /// What frames a node's unit children by their sides
-/// (`layout::TransportLayout::units`).
+/// (`layout::NodeLayout::units`).
 pub trait UnitFrames: std::fmt::Debug {
     /// Writes `body`, the unit at item `item` of the slot `slot`, framed by
     /// the sides held for it, or bare when none are.
-    fn frame_unit(&self, slot: &str, item: u32, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult;
+    fn frame_unit(&self, slot: &str, item: crate::types::ItemIndex, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult;
 }
 
 impl<E: Slot> ListView<'_, E> {
@@ -327,7 +327,7 @@ impl<E: Slot> Render for ListView<'_, E> {
                 w.site(self.after);
             }
             match self.units {
-                Some((slot, units)) => units.frame_unit(slot, i as u32, w, &mut |w| item.write_slot("", "", w))?,
+                Some((slot, units)) => units.frame_unit(slot, crate::types::ItemIndex(i as u32), w, &mut |w| item.write_slot("", "", w))?,
                 None => item.write_slot("", "", w)?,
             }
         }

@@ -19,7 +19,7 @@ The next step is to remove slot debt without redesigning the external contract.
 ## Goals
 
 - Normalize codegen abstractions so named slots and the unnamed child slot follow one model.
-- Keep the native transport contract and factory storage aligned by design.
+- Keep the native node contract and factory storage aligned by design.
 - Preserve the current layering:
   - native read handles grammar-agnostic normalization
   - wrap handles grammar-specific normalization plus methods
@@ -27,16 +27,16 @@ The next step is to remove slot debt without redesigning the external contract.
 
 ## Non-Goals
 
-- Redesign the transport contract.
+- Redesign the node contract.
 - Reintroduce fake anonymous fields.
-- Add a new transport normalization shim in `@sittir/common` or `toNativeRenderTransport(...)`.
+- Add a new node normalization shim in `@sittir/common` or `toNativeRenderNode(...)`.
 - Optimize `fromPass` first at the expense of the shared slot model.
 
 ## Approaches Considered
 
-### 1. Contract-first transport cleanup
+### 1. Contract-first node cleanup
 
-Treat the transport contract as the center of gravity and refactor consumers and codegen stages to honor it directly.
+Treat the node contract as the center of gravity and refactor consumers and codegen stages to honor it directly.
 
 Pros:
 
@@ -47,7 +47,7 @@ Cons:
 
 - requires touching several pipeline stages before all debt disappears
 
-### 2. Normalizer-first transport cleanup
+### 2. Normalizer-first node cleanup
 
 Add a canonicalization pass that reshapes values before downstream consumers see them.
 
@@ -62,7 +62,7 @@ Cons:
 
 ### 3. Validator-first compatibility cleanup
 
-Leave transport as-is and first teach validators and `from()` paths to understand the current slot shapes.
+Leave node as-is and first teach validators and `from()` paths to understand the current slot shapes.
 
 Pros:
 
@@ -79,13 +79,13 @@ Use the contract-first direction, but treat the work as an internal abstraction 
 
 ## Design
 
-### 1. Transport contract
+### 1. Node contract
 
-The target shape is the native transport contract, and factory storage should align to it by design.
+The target shape is the native node contract, and factory storage should align to it by design.
 
-- Native read applies grammar-agnostic transformations that move parsed data toward the native transport / factory storage shape.
+- Native read applies grammar-agnostic transformations that move parsed data toward the native node / factory storage shape.
 - Wrap applies the remaining grammar-specific transformations, then adds getters, setters, and utility methods.
-- `toNativeRenderTransport(...)` should not be used.
+- `toNativeRenderNode(...)` should not be used.
 - Native boundary validation remains validation-only.
 
 ### 2. Canonical slot model
@@ -119,5 +119,5 @@ The likely end state is that child-specific additions to contracts and generated
 ## Expected Outcome
 
 - Less field-vs-children branching in the codegen pipeline
-- Cleaner alignment between native transport, factory storage, read, and wrap
-- A single slot model that makes future transport changes land in one path instead of two
+- Cleaner alignment between native node, factory storage, read, and wrap
+- A single slot model that makes future node changes land in one path instead of two

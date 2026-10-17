@@ -453,7 +453,7 @@ Every node also gets the key it resolved to as its `typeKey`: the key the engine
 // by classifyHiddenChoiceRule — types/rule.ts's doc comment on the
 // field). When the arm's own rule isn't ITSELF a nested SUPERTYPE, it's
 // a dedicated leaf/branch content kind (e.g. `_lhs_expression`, backed
-// by its own LhsExpressionTransport) that must survive as-is rather
+// by its own LhsExpressionNode) that must survive as-is rather
 // than being flattened to its leaf members by resolveHiddenRuleContent
 // below.
 ```
@@ -1241,7 +1241,7 @@ The classification left after every structural check: an all-text subtree is `'p
 // multiplicity lives on an ARM, not the outer choice. `deriveValuesForRule`
 // clobbers each arm with the multiplicity it is passed, so if we passed the
 // outer choice's `single` the array would be lost (e.g. python
-// `future_import_statement.name` mis-typed singular → a singular transport
+// `future_import_statement.name` mis-typed singular → a singular node
 // field while the render body expects a list → build error). Lift the
 // strongest arm multiplicity onto the choice before deriving values.
 ```
@@ -1360,7 +1360,7 @@ The classification left after every structural check: an all-text subtree is `'p
 // hardcoded space where the real separator belongs. Own/inherited separators
 // are exempt: those survive to emit time as the rule-level separator, where
 // emitListSlot's `ruleSep` path already handles the nonterminal case (e.g.
-// object_type_content renders via the transport's runtime `.separator`
+// object_type_content renders via the node's runtime `.separator`
 // field). No kind in any current grammar routes a nonterminal separator
 // through the rebuild path, so fail loudly instead of silently
 // mis-rendering if one ever does. Fix shape if this fires: thread that same
@@ -2608,7 +2608,7 @@ renders with, not the fallback an unstamped list reports.
 
 ```text
 // Prune determined slots — a required singular slot with exactly one
-// possible value leaves the slot record (no storage, transport, wrap,
+// possible value leaves the slot record (no storage, node, wrap,
 // accessor, or from() surface) and renders as template text. Runs
 // BEFORE node-model emission (so the serialized fields match the wire)
 // and before hydration — unresolved refs resolve by name here.
@@ -2643,7 +2643,7 @@ renders with, not the fallback an unstamped list reports.
 #### body
 
 ```text
-// Phase 5b¾: Compute SCC over the singular transport-reference graph.
+// Phase 5b¾: Compute SCC over the singular node-reference graph.
 // Render-module's per-slot and supertype enum emitters consult
 // `nodeMap.scc.sameSCC(variantKind, ownerKind)` to decide Box vs
 // inline for each variant — Box only when the variant can reach the
@@ -2957,7 +2957,7 @@ is a named ALIAS of a SYMBOL), computed on the evaluated rules before
 `resolveRule` flattens such aliases to plain symbols. `classifyHiddenChoiceRule`
 passes membership to `hiddenChoiceClass`, which then leaves the choice a
 polymorph: every alias target is a real CST node, and classifying the choice
-a supertype would make the transport expect transparent subtype dispatch,
+a supertype would make the node expect transparent subtype dispatch,
 which fails at decode when the reader sees the concrete kind id. A
 `variant`/`variantOf` annotation plays no part in the test; labels sit on
 almost every unfielded choice arm and do not tell a dispatch choice from an
@@ -2975,7 +2975,7 @@ ordinary union.
  *   REAL runtime CST nodes (tree-sitter exposes them under the alias target,
  *   e.g. `_with_clause_bare` → `with_clause_bare`). Even when normalized to a
  *   `repeat1` body (making `isHiddenRepeatHelper` fire) they must NOT be
- *   classified `multi` — they need their own `branch` type so the Rust transport
+ *   classified `multi` — they need their own `branch` type so the Rust node
  *   matches their concrete kind ID at decode.
  * - `visibleAliasTargets`: `target → [visibleSource, ...]` for VISIBLE→VISIBLE
  *   aliases (e.g. `alias($.delim_token_tree, $.token_tree)`). An aliased instance
@@ -3228,7 +3228,7 @@ tree has.
  * dropping it here (the old behavior) orphaned enrich-minted arms: the
  * supertype's dispatch arms only ever accepted the storage id, so every
  * runtime node arriving with the alias occurrence's id was "unknown kind
- * id" to the transport enum. Consumed by `classifyHiddenChoiceRule`, which
+ * id" to the node enum. Consumed by `classifyHiddenChoiceRule`, which
  * stamps the pairs on `SupertypeRule.subtypeParseNames` at the flatten —
  * the same stamp-at-destruction-site pattern as `variantArms`.
  *
@@ -3634,7 +3634,7 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 // normalizedRules only would desync the maps and crash assemble. The folded `_x`
 // survives as a standalone entry (its parents simply no longer reference it);
 // emitters already skip it via `inlineKinds`. Dead-duplicate cleanup of the
-// orphaned `_x` kind + its transport is a separate concern, not here.
+// orphaned `_x` kind + its node is a separate concern, not here.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::spliceFoldableRefs`
@@ -4239,11 +4239,11 @@ The single way to evaluate a real grammar package: `evaluate` of `packageSourceE
  */
 ```
 
-### `packages/codegen/src/compiler/scc.ts::computeTransportSCC`
+### `packages/codegen/src/compiler/scc.ts::computeNodeSCC`
 
 ```text
 /**
- * Compute SCCs over the singular-reference transport graph (see file
+ * Compute SCCs over the singular-reference node graph (see file
  * docstring). Returns a frozen analysis object that emitters consult
  * for their Box / inline decisions.
  */
@@ -4294,7 +4294,7 @@ The single way to evaluate a real grammar package: `evaluate` of `packageSourceE
 ```text
 /**
  * The structural singular slots on a node, i.e. slots that map to a
- * non-Vec transport struct field. Multiple-arity slots are excluded —
+ * non-Vec node struct field. Multiple-arity slots are excluded —
  * `Vec<T>` is sized regardless of `T` and therefore never propagates
  * size dependencies.
  */
@@ -4305,7 +4305,7 @@ The single way to evaluate a real grammar package: `evaluate` of `packageSourceE
 // never contributes to a real struct-size cycle. Including it in the graph
 // would falsely merge kinds into the same SCC whenever the only path
 // between them ran through a Vec — this filter keeps the graph aligned with
-// `rustTransportSlotType`'s own box-decision model.
+// `rustNodeSlotType`'s own box-decision model.
 ```
 
 ### `packages/codegen/src/compiler/scc.ts::tarjanSCC`
@@ -5057,7 +5057,7 @@ collector parameter.
  * `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
  * `-1`/`-1.0` match-pattern arm) and gain bogus `integer`/`float` entries,
  * dropping `SimplePatternNegative` from `types.ts` and its arm from
- * `transport.rs`'s dispatch table — a runtime dispatch break for `-1` literal
+ * `node.rs`'s dispatch table — a runtime dispatch break for `-1` literal
  * match patterns.
  *
  * Why: `_simple_pattern_negative`'s body is `SEQ[OPTIONAL('-'),
@@ -6084,7 +6084,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 	 * them under the alias target name). They must NOT be classified as
 	 * `multi` (inlined repeat helpers) even when their rule body is a
 	 * `repeat1` after normalization — they need their own `branch` type so
-	 * the transport can match on their kind ID at decode time.
+	 * the node can match on their kind ID at decode time.
 	 *
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
@@ -6450,7 +6450,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 
 ```text
 /**
-	 * SCC analysis over the singular transport-reference graph. Populated
+	 * SCC analysis over the singular node-reference graph. Populated
 	 * post-assemble (see `compiler/scc.ts`). Emitters consult `scc.sameSCC`
 	 * for the Box decision on per-slot / supertype enum variants — Box
 	 * only when a variant and its enum's owner kind are in the same SCC.
@@ -6901,12 +6901,12 @@ since the parser never mints the aliased node.
  * (`alias('$', $.token_tree_punctuation)`, kept by `resolveRule` as the
  * ALIAS(STRING) wrapper — it is never reduced to a bare symbol) realizes
  * the enum kind with a text the defining rule never lists — without
- * folding it in, the emitted transport enum has no variant for that text
+ * folding it in, the emitted node enum has no variant for that text
  * and every read stub carrying it fails deserialization ("unknown enum
  * payload"). Also recognizes the legacy literal-carrying-SYMBOL shape
  * (`.literal` set, `aliasedTo` the enum kind name) other producers can
  * still emit. Append the missing texts as ordinary STRING members so
- * AssembledEnum, the transport enum, and every kindEnum consumer see one
+ * AssembledEnum, the node enum, and every kindEnum consumer see one
  * uniform member list.
  */
 ```
@@ -7659,7 +7659,7 @@ adds.
 // storage identity, as for renderAs; `evaluate.ts::withRecords`),
 // replacing the external's empty-pattern placeholder; the SYMBOL→ALIAS reference rewrites carry the visible
 // parse identity. Registering under the VISIBLE name here instead
-// creates a second node colliding on the same typeName — the transport
+// creates a second node colliding on the same typeName — the native node
 // struct then emits from the empty placeholder (no render text).
 // Deliberately excluded from `renderAs` so `stampStaticRenderAs`
 // never inlines these bodies into referencing rules.
@@ -7894,7 +7894,7 @@ parser rule; only the sittir-side rule the model reads changes.
 // Removing this skip REGRESSES `type_arguments`/`type_parameters` jinja
 // (`{{ type_argument | joinWithTrailing(",") }}` → `{{ content }}…`) and
 // leaks the hidden kinds' slots (`content`/`trait_bounds`) into the LIVE
-// transport render surface — proven by delete→regen→diff, NOT a static
+// node render surface — proven by delete→regen→diff, NOT a static
 // probe (a guard-free nodeMap dump reads the derived set empty because it
 // bypasses the evaluate pipeline). The predicate is now derived on-demand
 // from `raw.rules` via `deriveComplexAliasTargetHidden` (structural
@@ -8743,10 +8743,10 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 ```text
 /**
  * compiler/scc.ts — Strongly Connected Components over the
- * "singular transport reference" graph.
+ * "singular node reference" graph.
  *
  * Purpose: replace the conservative Box-everything-non-leaf rule used by
- * render-module.ts for per-slot and supertype transport enum variants
+ * render-module.ts for per-slot and supertype node enum variants
  * with a precise rule:
  *
  *     Box variant V in enum E iff V and E's owner kind are in the same
@@ -8758,8 +8758,8 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
  * typed `Vec<T>` is sized regardless of `T` (Vec = three pointers), so
  * Vec slots never propagate size dependencies and are excluded from the
  * graph. Per-slot enums are unique per (parent_kind, slot_name) — so
- * `TuplePatternPatternTransportSlot` (used by `tuple_pattern`'s patterns
- * slot) and `ParameterPatternTransportSlot` (used by `parameter`'s
+ * `TuplePatternPatternNodeSlot` (used by `tuple_pattern`'s patterns
+ * slot) and `ParameterPatternNodeSlot` (used by `parameter`'s
  * pattern slot) are DISTINCT types, and a non-leaf variant in one need
  * not be boxed merely because its struct could indirectly contain "some
  * pattern enum" — it only matters if it can reach back to the
@@ -8768,10 +8768,10 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
  * Graph construction
  * ------------------
  * Nodes: every kind in `nodeMap.nodes`. The graph models *singular*
- * (non-Vec) transport references; Vec-shaped slots are excluded
+ * (non-Vec) node references; Vec-shaped slots are excluded
  * because `Vec<T>` has fixed size regardless of `T`.
  *
- * Slot classification follows `transport-common.ts::classifySlot`, the
+ * Slot classification follows `node-common.ts::classifySlot`, the
  * authoritative renderer-side decision:
  *   1. Single-kind slot → concrete; add edge A → k.
  *   2. Multi-kind subset of supertype S → supertype enum; add edge A → S
@@ -8784,7 +8784,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
  *
  * Supertype relay edges:
  *   - For each supertype S in the NodeMap, add S → sub for every
- *     resolved subtype `sub`. A field typed `<S>Transport` is
+ *     resolved subtype `sub`. A field typed `<S>Node` is
  *     effectively a singular reference to any subkind of S — the
  *     supertype kind acts as a relay node so per-variant SCC analysis
  *     correctly captures size cycles passing through supertype enums.

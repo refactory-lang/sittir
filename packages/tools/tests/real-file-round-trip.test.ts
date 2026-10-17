@@ -6,7 +6,7 @@
 // to bare text, typescript parameters whose identifier collapses the same way,
 // python whose block structure lives in the whitespace BETWEEN top-level
 // items, and a rust file that is mostly module documentation. All four used to
-// fail here — two by throwing at transport deserialization (no carrier could
+// fail here — two by throwing at node deserialization (no carrier could
 // hold text in a struct-typed or `Option<T>` slot), two by silently dropping
 // what sits between the root's children.
 import { readFileSync } from 'node:fs';

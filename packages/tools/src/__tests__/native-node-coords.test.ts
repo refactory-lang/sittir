@@ -29,11 +29,11 @@ describe('native node coords', () => {
 		if (!kindNameFromId) throw new Error('expected rust kindNameFromId resolver');
 
 		// NOTE: 'identifier' was dropped from this list — under the
-		// VerbatimTransport design, text-only kinds degrade to bare strings
+		// VerbatimNode design, text-only kinds degrade to bare strings
 		// in the native UntypedNode snapshot (function_item reads as
 		// `_name: "abc"`, not a nested identifier UntypedNode), so there is no
 		// identifier node to find. 'parameters' replaces it as a nested
-		// compound that survives transport.
+		// compound that survives node.
 		for (const kind of ['function_item', 'block', 'parameters'] as const) {
 			const coords = findNativeNodeId(handle, kind, kindNameFromId);
 			expect(coords).not.toBeNull();
@@ -51,11 +51,11 @@ describe('native node coords', () => {
 	it('hydrates shallow native python children to reach nested nodes', async () => {
 		const grammar = 'python';
 		// NOTE: source was 'x = 1' with a hydration target of 'identifier'.
-		// Under the VerbatimTransport design, text-only kinds degrade to
+		// Under the VerbatimNode design, text-only kinds degrade to
 		// bare strings in the native snapshot (assignment reads as
 		// `_left: "x"`, not a nested identifier UntypedNode), so 'identifier'
 		// is unfindable by design. Use a call expression instead — 'call'
-		// (depth 3) and 'argument_list' (depth 4) survive transport and
+		// (depth 3) and 'argument_list' (depth 4) survive node and
 		// exercise a deeper hydration than the original.
 		const source = 'x = f(1)';
 		const { Parser, lang } = await loadLanguageForGrammar(grammar);

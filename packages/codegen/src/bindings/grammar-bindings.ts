@@ -13,7 +13,7 @@ import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table
 
 export type GrammarBindingsEdit =
 	| { readonly field: string }
-	| { readonly alias: { readonly from: string; readonly to: string } };
+	| { readonly alias: string };
 
 export interface GrammarBindingsPatch {
 	readonly path: string;
@@ -470,7 +470,7 @@ function grammarBindingsPatches(
 		a.type === 'FIELD' && (b.type !== 'FIELD' || b.name !== a.name) ? { field: a.name as string } : undefined
 	);
 	const aliasPatches = patchesBetween(fielded, fielded, (b) =>
-		b.type === 'SYMBOL' && typeof b.name === 'string' && Object.hasOwn(aliases, b.name) ? { alias: { from: b.name, to: aliases[b.name]! } } : undefined
+		b.type === 'SYMBOL' && typeof b.name === 'string' && Object.hasOwn(aliases, b.name) ? { alias: aliases[b.name]! } : undefined
 	);
 	const at = (r: unknown): GrammarRecord =>
 		isRecord(r) && (isPrecWrapper(r as { type: string }) || isGroupAlias(r)) ? at(r.content) : isRecord(r) && isLift(r) ? at(fielded[r.name as string]) : (r as GrammarRecord);

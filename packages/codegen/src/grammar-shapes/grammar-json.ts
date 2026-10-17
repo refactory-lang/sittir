@@ -115,7 +115,7 @@ export type AuthoringRulesToRules<M extends readonly AuthoringRule[]> = M extend
 export interface GrammarJson {
 	readonly name: string;
 	readonly rules: Readonly<Record<string, GrammarRule>>;
-	readonly supertypeNames?: readonly string[];
+	readonly supertypes?: readonly string[];
 }
 
 export type PrecRuleUnion = PrecRule | PrecLeftRule | PrecRightRule | PrecDynamicRule;

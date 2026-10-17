@@ -334,7 +334,7 @@ the one authored entry fields the trailing comma at `5/0`.
 				// position (which follows the ALIAS-RESOLVED render rule's name,
 				// `parameter_list`) whenever the alias target differs from the
 				// raw symbol's stripped name — confirmed via a real cargo build
-				// failure (`ParametersTransport` has no field `parameter_list`).
+				// failure (`ParametersNode` has no field `parameter_list`).
 				// Explicitly field-wrapping each reference with the SAME name as
 				// its alias target realigns both derivations and eliminates the
 				// divergence, without touching any emitter.

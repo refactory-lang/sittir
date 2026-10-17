@@ -6,7 +6,7 @@
 
 **Architecture:** Three independent cuts, ordered safest→riskiest, each its own gated commit: (3) flat-Enum predicate, (1) Terminal clean cut, (2) TerminalValue→NodeRef value unification. Parts 1 & 3 are "byte-identical to today" (the rule-type wrappers were transparent / a flat all-string test). Part 2 is the value-model change that touches ~8 emitters + rust.
 
-**Tech stack:** TS codegen (`packages/codegen/src/{compiler,emitters}`), rust render/transport crates, `validate:native` gate.
+**Tech stack:** TS codegen (`packages/codegen/src/{compiler,emitters}`), rust render/node crates, `validate:native` gate.
 
 **Gate (every task):** RELEASE deep-AST `read-render-parseAstMatchPass` HOLD at floor **rust 111 / ts 69 / py 74** (`env -u SITTIR_NATIVE_DEBUG pnpm validate:native`) + `cargo check --workspace --features napi-bindings` green + re-count (the SubagentStop gate no-ops after regen — cargo-verify is manual, `feedback_verify_cargo_not_gate`).
 
@@ -20,7 +20,7 @@ The spec's `file:line` refs predate **PR-H** (`optimize.ts`→`normalize.ts`, co
 - **Task 1** ✅ `9b5f0621` — `EnumRule`→`ChoiceRule` collapse via `isEnumChoiceRule` predicate (assemble-time). NOTE: also reclassified ts `predefined_type` `pattern`→`enum` (the flat enum predicate now wins precedence) — gate-neutral, accepted; this is **PR-Q's entire ts deliverable** (`widening delta rust 0/ts 1/py 0`) folded in early, so PR-Q shrinks.
 - **Task 2** ✅ `3996b317` — terminal classify-by-shape; deleted `TerminalRule`/`isTerminal`/`promoteAndLogTerminalRules` + transparent `case TERMINAL` arms. BYTE-IDENTICAL (regen no-change all 3). Gate 111/69/74, cargo green. (Salvaged + re-verified after the Task-2 agent process crashed mid-task — clean regen + full gate confirmed completeness.)
 - **Task 3** ✅ — `TerminalValue`→`NodeRef` value unification, done in three gated steps (all HOLD 111/69/74):
-  - **step 1** `e35cb537` — `findGeneratedKindEntry` resolves hidden-named compound tokens (python `is not`/`not in`). Cascaded into python operator reclassification (8 leaf-kinds fold into the operator node; −1782 lines transport.rs) — intended, accepted.
+  - **step 1** `e35cb537` — `findGeneratedKindEntry` resolves hidden-named compound tokens (python `is not`/`not in`). Cascaded into python operator reclassification (8 leaf-kinds fold into the operator node; −1782 lines native node.rs) — intended, accepted.
   - **step 2a** `d070044b` — folded `TerminalValue` into a single `NodeRef` (structural `node`/`value`-presence discrimination, `kind` tag removed). **BYTE-IDENTICAL** regen.
   - **step 2b** (`node`→`kind` LSP rename) — **DEFERRED** as low-value: `value` was kept on the folded `NodeRef` (pragmatic, avoided render-rework), so the rename's rationale evaporated; cosmetic 16-file LSP rename with re-export/type-import risk, deferred indefinitely.
   - **step 3** `8a9a0982` — split `distinctStorageKinds` so a PURE-literal slot names after its resolved kind (mixed ref+literal keeps ref-naming). **BYTE-NEUTRAL**: empirically NO pure-single-literal `content` slot exists in any grammar (single literals are fielded or inlined-as-text), so the planned `'content'` source-fix had no target — kept defensively as the correct rule expression. The broad variant regressed `splat_pattern` (identifier→content) and was rejected.
@@ -39,7 +39,7 @@ The spec's `file:line` refs predate **PR-H** (`optimize.ts`→`normalize.ts`, co
 - [ ] `normalizeEnumMembers`: keep ONLY the single-literal→`StringRule` normalization; drop the `EnumRule` synthesis path.
 - [ ] `evaluate.ts`: stop emitting `EnumRule`. `link.ts`: delete the enum branch of `classifyHiddenChoiceRule`.
 - [ ] Delete `EnumRule` interface + `isEnum` + the `case ENUM`/`'enum'` rule-type arms that are now unreachable (compiler + emitters: `ir.ts`, `types.ts`, `from.ts`, `wrap.ts`, `test.ts`, `shared.ts`, `consts.ts` — `modelType === 'enum'` on the ASSEMBLED node stays; only the RULE-type `EnumRule` arms go).
-- [ ] **Verify byte-identical:** regen all 3; `git diff --stat packages/*/src packages/*/templates rust/crates/*/templates rust/crates/*/src` — the classified-enum set must be unchanged (transport enums read `AssembledEnum`, untouched). `pnpm -r typecheck`.
+- [ ] **Verify byte-identical:** regen all 3; `git diff --stat packages/*/src packages/*/templates rust/crates/*/templates rust/crates/*/src` — the classified-enum set must be unchanged (node enums read `AssembledEnum`, untouched). `pnpm -r typecheck`.
 - [ ] **Gate:** `validate:native` HOLD 111/69/74 + cargo green. Commit `feat(rule): PR-P §G — flat-enum classify at assemble, delete EnumRule`.
 
 ## Task 2 — Part 1: Terminal clean cut (byte-identical; the wrapper was transparent)
@@ -53,7 +53,7 @@ The spec's `file:line` refs predate **PR-H** (`optimize.ts`→`normalize.ts`, co
 - [ ] **Gate:** `validate:native` HOLD + cargo green. Commit `feat(rule): PR-P §G — terminal classify-by-shape, delete TerminalRule`.
 
 ## Task 3 — Part 2: TerminalValue → NodeRef value unification (the riskiest; touches all emitters + rust)
-**Files:** `compiler/node-map.ts` (`TerminalValue`, `NodeOrTerminal`, `isTerminalValue`, `isNodeRef`, `NodeRef.node`, `deriveValuesForRule` literal case), every emitter reading the value union (`consts`, `factories`, `from`, `ir`, `types`, `wrap`, `shared`, `test`, `node-model`, `render-module`), rust transport/render.
+**Files:** `compiler/node-map.ts` (`TerminalValue`, `NodeOrTerminal`, `isTerminalValue`, `isNodeRef`, `NodeRef.node`, `deriveValuesForRule` literal case), every emitter reading the value union (`consts`, `factories`, `from`, `ir`, `types`, `wrap`, `shared`, `test`, `node-model`, `render-module`), rust native transport/render.
 
 - [ ] **Materialize literals as kinds.** Each literal in a slot's `values` becomes a `NodeRef` to a catalog-only literal-kind (`parser.c` name + render value on the kind entry — every literal is a kind, #18/§4g). Confirm the literal-kind catalog entries exist (kindId-bearing); if a literal lacks a kind entry, that's a §4g prerequisite — surface, don't invent a table.
 - [ ] `deriveValuesForRule` literal case: emit a `NodeRef` (parseKind = the literal-kind, multiplicity/separator/immediate/tokenized carried onto the NodeRef) instead of a `TerminalValue`.

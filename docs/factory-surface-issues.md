@@ -20,7 +20,7 @@ signature is not evidence — see [Reading a failure](#reading-a-failure).
 
 ## Strict surface
 
-### S1 — A list envelope given a config object fails in the native transport, not at the factory
+### S1 — A list envelope given a config object fails in the native node, not at the factory
 
 **Accepted, same class as X1; the runtime message is the only defect.** An
 envelope whose one slot is a separated list takes the list's own calling
@@ -40,11 +40,11 @@ reaches the runtime, and there the wrong shape is not refused where it is
 made: the factory's `...args` dispatch sees one object argument without a
 `$type`, treats it as the first element, and stores the config object in the
 list's `_content`. Nothing checks the element shape until the render
-transport reads `$type` from it, so the failure surfaces as
+node reads `$type` from it, so the failure surfaces as
 
 ```
-$type property missing in EnumBodyElementsContentTransportSlot
-  on EnumBodyElementsTransport._content on EnumBodyTransport._enum_body_elements
+$type property missing in EnumBodyElementsContentNodeSlot
+  on EnumBodyElementsNode._content on EnumBodyNode._enum_body_elements
 ```
 
 rather than as a factory-side rejection naming the argument. If that message
@@ -91,7 +91,7 @@ Resolved by group seating on the parent: a hoisted group is reached through the 
 ### S8 — Form names the read data reaches are not on `ir` — RESOLVED
 
 Generated: python `ir.assignment.eq.strict(…)`, `ir.comparisonOperatorComparator(…)`; typescript `TSKindId.<Member>` where `ImportClause | …` is expected.
-Error: `TS2339: Property 'eq' does not exist on type …`; at render: `Cannot read properties of undefined (reading 'strict')`; typescript at render: `unknown kind id 390 in StatementTransport on ProgramTransport._statements`.
+Error: `TS2339: Property 'eq' does not exist on type …`; at render: `Cannot read properties of undefined (reading 'strict')`; typescript at render: `unknown kind id 390 in StatementNode on ProgramNode._statements`.
 
 The python half closed when the example emitter began consuming seats, which
 put `ir.assignment.eq` and `ir.comparisonOperator` on the printed surface.
@@ -105,8 +105,7 @@ by a route the census does not measure: the variant form their parent declares,
 where the entry is the CHILD's own builder namespaced under the parent
 (`ir.importStatement.clauseFrom.strict` is `F.buildImportStatementClauseFrom`),
 yielding the child kind for the caller to seat. That is the alias-form
-convention `examples/18-dogfood-typescript-strict.ts` already documents and
-spells by hand.
+convention.
 
 | kind | declared form |
 | --- | --- |
@@ -137,7 +136,7 @@ composes the mounts in slot order rather than refusing the second.
 ### S12 — A separated list's separator is printed as an element — RESOLVED
 
 Generated: typescript `ir.arguments.strict("result", TSKindId.Comma, "format")`.
-Error at render: `unknown kind id 14 in ArgumentsArgumentsTransportSlot`. The
+Error at render: `unknown kind id 14 in ArgumentsArgumentsNodeSlot`. The
 comma is the list's separator, which the list factory supplies itself, and the
 two operands print as bare text where an expression node is wanted.
 
@@ -410,7 +409,7 @@ Affects typescript (`call_expression`, `variable_declarator`, `import_statement`
 ### L6 — A list envelope's array collapses to its first string — RESOLVED
 
 A loose config that hands a list-envelope slot an array of texts stores the
-FIRST text as the envelope itself, dropping the rest; the envelope's transport
+FIRST text as the envelope itself, dropping the rest; the envelope's node
 admits no text, so the native render refuses it.
 
 ```ts
@@ -468,7 +467,7 @@ explicitly, the same answer a single slot gives.
 ### L8 — A bare boolean is not a boolean literal — RESOLVED
 
 Was: `ir.letDeclaration({ pattern: 'x', value: true })` and `arguments: [true]`
-reached the transport as a raw boolean and failed there. `_resolveScalar`
+reached the node as a raw boolean and failed there. `_resolveScalar`
 looked the boolean up in the leaf registry under the name `boolean_literal`,
 and no such row exists: rust's `boolean_literal` is an enum of two keywords,
 which the registry never carries, and typescript and python have no kind of
@@ -602,7 +601,7 @@ and names the real slot keys. Four conventions account for most confusion:
 
 - **A thin wrapper is positional.** `ir.typeAnnotation.strict(type)`, not
   `.strict({ type })`. A config bag there yields
-  `$type property missing in <X>TransportSlot`, which reads like a transport
+  `$type property missing in <X>NodeSlot`, which reads like a node
   bug.
 - **A form is `ir.<kind>.<form>.strict(…)`.** `ir.<kind>.<form>(…)` is its
   coercing twin.
@@ -618,13 +617,9 @@ and names the real slot keys. Four conventions account for most confusion:
 
 ## Where the examples stand
 
-`examples/17-dogfood-rust-strict.ts`, `18-dogfood-typescript-strict.ts` and
-`19-dogfood-python-strict.ts` each rebuild their whole target file through the
-factory surface and name a row above only where it bites (`17` marks L2). The
-hand-written loose rebuilds that once sat beside them are retired: their gap
-commentary named calling mistakes from the earlier worklist rather than surface
-limits, and the generated loose rebuilds below prove the same targets on the
-same surface with no hand-authored second derivation.
+The dogfood targets have no hand-written rebuilds. The generated strict and
+loose rebuilds below prove each target on both surfaces with no hand-authored
+second derivation.
 
 ### The generated rebuilds
 

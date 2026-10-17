@@ -41,7 +41,7 @@ import { collectSymbolRefs } from '../../util/reachable-rules.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
-import { baseRulesOf } from '../shared.ts';
+import { baseRulesOf, VERIFIED_TREE_SITTER } from '../shared.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
@@ -840,7 +840,7 @@ function evaluatedList(key: keyof WireLists, context: WireContext): DollarFn<unk
 	return function evaluatedList() {
 		if (context.lists === undefined)
 			throw new Error(
-				`wire: the runtime asked for ${key} before it called externals, where wire evaluates its lists; the call order was verified against tree-sitter 0.26.9`
+				`wire: the runtime asked for ${key} before it called externals, where wire evaluates its lists; the call order was verified against tree-sitter ${VERIFIED_TREE_SITTER}`
 			);
 		return context.lists[key];
 	};
@@ -859,7 +859,7 @@ function returnEvaluatedBodies(rules: Record<string, RuleFn>, context: WireConte
 			}
 			if (context.evaluatedBodies === undefined) {
 				throw new Error(
-					`wire: the runtime asked for '${name}' before it called externals, where wire evaluates its rules; the call order was verified against tree-sitter 0.26.9`
+					`wire: the runtime asked for '${name}' before it called externals, where wire evaluates its rules; the call order was verified against tree-sitter ${VERIFIED_TREE_SITTER}`
 				);
 			}
 			return context.evaluatedBodies.get(name);

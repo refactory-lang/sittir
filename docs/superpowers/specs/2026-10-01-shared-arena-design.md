@@ -1,4 +1,4 @@
-# Shared arena: one typed transport across the native boundary
+# Shared arena: one typed node across the native boundary
 
 **Status:** Draft for review. Written 2026-10-01; revised 2026-10-04 against master `106475358`
 for the maintainer's read-side direction, then for the maintainer's rulings on its ten open choices
@@ -7,13 +7,13 @@ the measurements below, or rulings already made.
 
 ## Direction (ruled by the maintainer, 2026-10-04)
 
-- **The transport is the single typed projection, on the native side.** A grammar's transport
+- **The node is the single typed projection, on the native side.** A grammar's node
   structs are the shape a node is read into and the shape it is rendered from.
-- **Codegen emits each transport struct from the node model with its parser mapping:** each
+- **Codegen emits each native node struct from the node model with its parser mapping:** each
   slot's type states what the slot admits and how it stores it, and attributes state the rest,
   `#[slot(field = …)]` for a child routed by its field together with every other projection fact a
   type cannot state (§ Projection facts).
-- **A proc macro expands the attributes mechanically** into the native reader (tree → transport)
+- **A proc macro expands the attributes mechanically** into the native reader (tree → node)
   and the render side's wire. One source, the model; one derivation, the generated struct and its
   attributes. The expansion makes no decision of its own.
 - **This reverses the client-side projection for reads.** The native reader stops handing the
@@ -24,6 +24,22 @@ the measurements below, or rulings already made.
 The 2026-10-01 draft's read side, a whole-tree image written at parse and projected in
 JavaScript, is withdrawn (§ Alternatives considered). Its render side, records read in place, is
 kept: records are the wire in both directions (ruling 3).
+
+## Packed AST is definitive
+
+The grammar-generated packed, immutable AST is Sittir's **canonical constructed-node representation** and its typed native interchange representation. The object-based N-API native node is a transitional compatibility and measurement path, not a competing permanent storage architecture. Performance measurements determine layout, batching, wrapper and allocation optimizations and may block a particular implementation from replacing the existing path; they do **not** reopen the choice of packed AST as the destination.
+
+**Two origins, one representation:** a generated native reader projects Tree-sitter nodes directly into typed binary records, without a JavaScript AST intermediate. This is a projection and copy of selected facts, **not** a zero-copy view of Tree-sitter's internal tree memory. Parsed source and Tree-sitter remain authoritative for untouched source-backed subtrees, with lazy record materialization and coordinate folding. Builders write immutable records directly, without first creating an object graph to serialize at render. Both feed the same native renderer. A record can be materialized later, but is published once.
+
+**Storage contract:** codegen derives kind-specific record layouts and emits identical Rust/TypeScript layout metadata. Store booleans, presence bits, fixed literals, enum/choice discriminants and suitable numeric scalars inline; use the narrowest correct width (for example `u16` for kind IDs only when the grammar's ID range fits). Optional scalar fields use presence bits or tagged inline storage. Recursive child references are fixed-size arena addresses; they do not themselves require an independent allocation. Lists are offset/length references into arena runs; strings are offset/length references into UTF-8 storage. Record headers, alignment, addressing, optional tags, capacity slack and list-run storage count toward actual footprint. The current generic five-word cell is a **prototype encoding**, not a mandated per-field physical layout. Prefer immutable, kind-specific packed layouts unless measurements or correctness require a uniform cell. Persistent records live in heap-backed arena chunks, **not on the call stack**; temporary Rust values may use stack space. Arena allocation is amortized by chunks, not necessarily allocation-free.
+
+**Immutability and sharing:** a `$with`/replacement produces a new record and shares unchanged child references. No mutable cell is required solely to support updates. Native arena ownership, reference lifetimes and any cross-arena references must remain valid as snapshots, trees and wrappers are retained or disposed. Parsed-tree trivia stays in its tree table, and a built node's trivia is in the built nodes' own native table, keyed by record address and side and outside the record, so writing a side never changes a record (§ Trivia). Explicitly distinguish mutable *ownership/registry metadata* from immutable *node contents*.
+
+**Boundary and wrappers:** an external `ArrayBuffer` exposing native UTF-8 source or arena chunks avoids copying bytes but still uses N-API for exposure and does not imply concurrent `SharedArrayBuffer` semantics. JavaScript wrapper allocation and method representation are separate from the packed AST. Prototype-based accessors can be benchmarked independently against both object and record storage; they are **not** a prerequisite for adopting records, nor automatically authorized by this decision. Avoid conflating V8 `heapUsed` with total resident/native/external memory.
+
+**Independent capability:** the packed representation is a first-class grammar-derived typed binary AST substrate for parsing, construction, inspection, editing, native rendering and future analysis. It is directly populated *from* Tree-sitter, but is not Tree-sitter's own binary tree. An in-process arena layout is not yet a stable, persisted or cross-process binary file format. Versioning, relocation, endianness and lifetime/ownership rules must be specified before claiming portable binary interchange.
+
+**Performance policy:** retain the like-for-like benchmarks (single and batch read, rebuilt native render, JS field access, text access, build/edit, retained heap, native allocation counts, external memory and RSS). Treat failures as optimization or implementation-blocking evidence, not as grounds to abandon the canonical packed format. Compare full parse → inspect → edit → render workloads, cold and warm, small and large trees, sharing and deep recursion. Retain correctness, byte parity, source/trivia fidelity, disposal and arena-growth tests as mandatory gates.
 
 ## Problem
 
@@ -85,8 +101,8 @@ Five causes.
    of the wall); the native side decodes it through per-property runtime calls. In the native call,
    V8 is 65 % and `napi_*` 11 % of the busy samples, so decoding is about three quarters of the call
    and nearly half of a rebuilt render.
-5. **The transport crate pays for that marshaling at build time.** The napi `FromNapiValue` and
-   `ToNapiValue` impls are 43.0 %, 45.1 %, 42.2 %, 44.2 % and 46.9 % of `transport.rs` for rust,
+5. **The node crate pays for that marshaling at build time.** The napi `FromNapiValue` and
+   `ToNapiValue` impls are 43.0 %, 45.1 %, 42.2 %, 44.2 % and 46.9 % of `node.rs` for rust,
    typescript, python, scm and regex (94 326, 118 311, 61 765, 11 096 and 12 753 lines). The rust
    crate rebuilds in 48.4 s with its napi code and 17.6 s without it.
 
@@ -98,8 +114,8 @@ through the one sink. This design changes how nodes reach each side, not how the
 
 - Reads stay lazy: one level unless a read asks for more, and a child past the depth read is a
   coordinate.
-- A node is projected once, natively, into its kind's transport. The transport that is read is the
-  transport that is rendered.
+- A node is projected once, natively, into its kind's native node. The native node that is read is the
+  node that is rendered.
 - The JavaScript wrap attaches members and decides nothing about storage.
 - A parsed node crosses back to native as its coordinate, with no walk.
 - Every projection decision is a fact codegen stamps as an attribute; the macro expands and decides
@@ -108,34 +124,34 @@ through the one sink. This design changes how nodes reach each side, not how the
 
 ## Design
 
-### The transport declaration
+### The node declaration
 
-Codegen emits, per kind, the transport struct it emits today, and per choice the transport enum
+Codegen emits, per kind, the node struct it emits today, and per choice the node enum
 it emits today, with attributes for the facts the reader and the wire need that the types do not
 state. Ids are the parser's numeric ids, emitted as constants under the render-module hash that
 already ties a package to its native build, so the macro looks nothing up (ruling 10):
 
 ```rust
-#[transport(kind = kind::FUNCTION_ITEM, words = 41)]
-pub struct FunctionItemTransport {
+#[node(kind = kind::FUNCTION_ITEM, words = 41)]
+pub struct FunctionItemNode {
     #[slot(field = field::VISIBILITY_MODIFIER, word = 1)]
-    pub visibility_modifier: Option<SlotValue<VisibilityModifierTransport>>,
+    pub visibility_modifier: Option<SlotValue<VisibilityModifierNode>>,
     #[slot(field = field::FUNCTION_MODIFIERS, word = 6)]
-    pub function_modifiers: Option<SlotValue<FunctionModifiersTransport>>,
+    pub function_modifiers: Option<SlotValue<FunctionModifiersNode>>,
     #[slot(field = field::NAME, word = 11)]
-    pub name: SlotValue<FunctionItemNameTransportSlot>,
+    pub name: SlotValue<FunctionItemNameNodeSlot>,
     // … type_parameters, parameters, return_type, where_clause, body
 }
 
-#[transport(kind = kind::FUNCTION_MODIFIERS, words = 3)]
-pub struct FunctionModifiersTransport {
+#[node(kind = kind::FUNCTION_MODIFIERS, words = 3)]
+pub struct FunctionModifiersNode {
     #[slot(field = field::MODIFIER, word = 1)]
-    pub modifier: Vec<SlotValue<FunctionModifiersModifierTransportSlot>>,
+    pub modifier: Vec<SlotValue<FunctionModifiersModifierNodeSlot>>,
 }
 
-#[transport(choice)]
-pub enum FunctionModifiersModifierTransportSlot {
-    #[kind(kind::EXTERN_MODIFIER)] ExternModifier(ExternModifierTransport),
+#[node(choice)]
+pub enum FunctionModifiersModifierNodeSlot {
+    #[kind(kind::EXTERN_MODIFIER)] ExternModifier(ExternModifierNode),
     #[kind(kind::ASYNC_KEYWORD)] AsyncKeyword,
     #[kind(kind::DEFAULT_KEYWORD)] DefaultKeyword,
     #[kind(kind::CONST_KEYWORD)] ConstKeyword,
@@ -145,7 +161,7 @@ pub enum FunctionModifiersModifierTransportSlot {
 
 - **The slot's type says what the slot admits and how it stores it,** once. A choice lists its
   kinds on its variants: a unit variant is a fixed literal, stored as its kind id; a variant with a
-  transport is a node, read into that transport. A supertype, an enum kind and a slot's own choice
+  native node is a node, read into that native node. A supertype, an enum kind and a slot's own choice
   are all choices; a choice is declared once for its content, whichever slots hold it. A slot that
   holds one kind has that kind's type, and a keyword's presence is a plain `bool`, false when absent,
   rendered by the keyword kind's own render function.
@@ -158,7 +174,7 @@ pub enum FunctionModifiersModifierTransportSlot {
 - **The attributes state only what the types cannot:** the field a slot routes by, the keyword a
   presence slot holds (`presence = kind::…`), the record's word offsets, a list's separator, a
   flank, a group seat, a kind's minimum depth, its layout tokens and its inner gaps, and the blank
-  arm of a blank option's choice (`#[transport(blank)]`). The macro computes none of them.
+  arm of a blank option's choice (`#[node(blank)]`). The macro computes none of them.
 - **A valued mode attribute selects the mode.** `content = field` selects an alias envelope and
   names its content; `item = field` selects a list and names its item slot. Separate `envelope`
   and `list` flags would repeat those facts and are not emitted. Neither mode is guessed from a
@@ -169,7 +185,7 @@ pub enum FunctionModifiersModifierTransportSlot {
   stamps. These checks do not derive another layout or repeat slot arity/admission metadata.
 - **Only a blank option has a blank arm.** An optional slot registered as a preference (the model's
   `hasBlankArm`; today the nine typescript `terminator` slots) chooses between a value and none.
-  Its choice carries the none as a unit variant marked `#[transport(blank)]`: an absent child reads
+  Its choice carries the none as a unit variant marked `#[node(blank)]`: an absent child reads
   as that variant, which crosses as id 0. Every other optional slot reads an absent child as
   `None`. Codegen emits the attribute from `hasBlankArm` alone. A choice is declared once for its
   content and may be shared by several slots, so a choice shared by a blank option and a slot that
@@ -177,7 +193,7 @@ pub enum FunctionModifiersModifierTransportSlot {
 - **A kind constant names the grammar id unless it is marked `display`; a token names its public
   symbol.** The parser gives a node two ids: its grammar id (`grammar_id()`, the rule that parsed
   it) and its display id (`kind_id()`, the public symbol: the alias target at its site, or the
-  symbol the parser folds a raw token into). Transports, routing and choice variants key on the
+  symbol the parser folds a raw token into). Nodes, routing and choice variants key on the
   grammar id, so a kind an attribute names is the grammar id, unmarked. The `display` flag marks
   the display id, as in `#[kind(kind::FIELD_IDENTIFIER, display)]`, and `display(kind::X)` claims
   one id by its display id alone. It is used only where the identity is the alias: an alias
@@ -187,15 +203,15 @@ pub enum FunctionModifiersModifierTransportSlot {
   folds into a named target is listed on that target by its own grammar id, `folded = [kind::X]` on
   a struct and `folded(kind::X)` on a variant, and a choice matches it after every exact claim. The macro
   picks the accessor from the flag, so the reader never decides at run time. A display union stays a
-  name: a display id has no transport.
+  name: a display id has no node.
 - **An unfielded child has exactly one slot.** In a kind's declaration, no two slots without a
   field admit the same kind, so the slot whose type admits an unfielded child's kind is one slot.
   Codegen checks this as it emits the declaration: two such slots are a codegen diagnostic naming
   the kind, both slots and the kind they share. The reader never picks between slots at run time.
-- **A kind's minimum read depth** is on its `#[transport]`: `min_depth = 2` on a list owner, whose
+- **A kind's minimum read depth** is on its `#[node]`: `min_depth = 2` on a list owner, whose
   items arrive with it. Codegen derives it from the model, once per kind. A leaf the reader spells
   or projects (`text`, `interior`) is read inline at any depth and needs none.
-- **A kind's layout tokens** are listed on its `#[transport]` (`layout = […]`): the anonymous tokens
+- **A kind's layout tokens** are listed on its `#[node]` (`layout = […]`): the anonymous tokens
   its rule writes and no slot stores. Normal routed reads skip children left after slot routing
   without consulting this list. The default-off core feature `read-debug-checks` checks the list
   to diagnose a leftover child the model omitted. This is independent of the debug/release build
@@ -203,18 +219,18 @@ pub enum FunctionModifiersModifierTransportSlot {
   kind admission. A render from data writes fixed syntax from the template, and an untouched node
   slices it from the source.
 - The edge, gap and flank fields the render side stamps today stay as they are. Trivia is not a
-  field of a transport: a parsed node's is in its tree's trivia table, and a built node's in its
+  field of a native node: a parsed node's is in its tree's trivia table, and a built node's in its
   record (§ Trivia).
 
 ### What the macro expands
 
 From one declaration, three things:
 
-- **The reader:** `ReadTransport::read(cursor, source, tree, depth) -> Self`. It walks the node's
+- **The reader:** `ReadNode::read(cursor, source, tree, depth) -> Self`. It walks the node's
   children once with a `TreeCursor` (first child, next sibling), never by index. Each child goes to
   the slot its field names, or, with no field, the one slot whose type admits its kind, and is
   stored as that type's variant for its kind: a fixed literal as its kind id, a node as its
-  transport, and the keyword a presence slot names as `true`. Extras, and `ERROR` nodes as today,
+  native node, and the keyword a presence slot names as `true`. Extras, and `ERROR` nodes as today,
   are trivia: the reader skips them, as it skips layout tokens, and the tree's trivia table holds
   them by node and side (§ Trivia). A `MISSING` node routes as its kind.
 - **Optional diagnosis of a child no route takes** (ruling 7). With `read-debug-checks`, a model
@@ -224,7 +240,7 @@ From one declaration, three things:
   Parse errors are not model gaps: the parse reports `ERROR` and `MISSING` regions in `$errors`
   as today.
 - **The kind dispatch:** `read_any(cursor, depth)`, a match on the kind id over the grammar's
-  transports, for hydrating a coordinate whose kind is known only at run time.
+  nodes, for hydrating a coordinate whose kind is known only at run time.
 - **The wire codec:** arena records (ruling 3), to JavaScript for reads and from JavaScript for
   renders. Until the record step lands, the expansion emits today's napi object form (ruling 6).
 
@@ -235,11 +251,11 @@ attributes (ruling 9).
 
 A read goes to a depth: `depth: number` replaces `ParseOptions.deep` (ruling 2). The default is 1,
 one level; `Infinity` reads everything. Within the depth, a child with structure is read into its
-transport in the same call; past it, the child is a coordinate. A leaf (a named node with no
+native node in the same call; past it, the child is a coordinate. A leaf (a named node with no
 children), a fixed literal, stored as its kind id, and a presence flag are stored inline at any
 depth. A kind's `min_depth` deepens the read of that node, so a list owner's items arrive with
 it. The depth decides only where coordinates start: the struct and its attributes are the same at
-every depth, and a slot holds `SlotValue::Transport` or `SlotValue::Coord` by that alone.
+every depth, and a slot holds `SlotValue::Node` or `SlotValue::Coord` by that alone.
 
 - **An unread child is a coordinate:** its tree, its row, its span and its kind (ruling 1). This is
   `SlotValue::Coord` with a row in place of the handle. The render side already accepts it.
@@ -271,20 +287,20 @@ Each is derived once, in codegen; a fact a type states is not repeated in an att
 | **Arity and requiredness** | the wrap's `normalizeSingularWrapSlot` and `normalizeRepeatedWrapSlot` | the field's type: `T`, `Option<T>`, `Vec<T>` or `NonEmptyVec<T>` |
 | **Keyword presence** | the wrap's `coerceBooleanKeywordStorage` | the type, `bool`, and `presence = kind::…` naming the keyword |
 | **Flag sets** | the wrap's `coerceBitflagStorage` | the type: a `Vec` of the flags' choice. No grammar has a flag set today |
-| **Kind-enum storage** | the wrap's `projectKindEnumStorage` and `projectMixedEnumStorage`, with text-to-id and alternate-id tables and the kinds read by their spelled text | the type: a choice whose unit variants are the kinds stored as ids, beside the node variants where the slot also holds nodes. An enum kind whose own node reads as the member its spelling tokens display says so once, on its own choice (`#[transport(kind = …, spelled)]`): every token must display the one member id, so a node is never read as the member its first token is. An alternate id is stated once, on the variant it folds into |
+| **Kind-enum storage** | the wrap's `projectKindEnumStorage` and `projectMixedEnumStorage`, with text-to-id and alternate-id tables and the kinds read by their spelled text | the type: a choice whose unit variants are the kinds stored as ids, beside the node variants where the slot also holds nodes. An enum kind whose own node reads as the member its spelling tokens display says so once, on its own choice (`#[node(kind = …, spelled)]`): every token must display the one member id, so a node is never read as the member its first token is. An alternate id is stated once, on the variant it folds into |
 | **Scalar storage for trivia** | `ReadModel::stores_scalar`, emitted per grammar in `kind_ids.rs` (`emitters/kind-id-rust.ts`) | typed node slots derive it from unit variants or presence flags; a routed raw-string slot retains `#[slot(scalar)]` where its type cannot express unit-side capture. Interior captures bypass routed-slot reading |
 | **`$other`** | the reader puts anonymous unfielded children there; the wrap reclaims terminals with `readTerminalFromOther` and spellings with `_spellingTokens` | routed to the slot whose type admits the token; leftovers are skipped, with an opt-in layout-list diagnostic (ruling 7) |
-| **Text leaves** | the reader's `read_leaf` captures `$text`; the wrap's `_isReadTextLeaf` and the `_spelled…` helpers tile anonymous tokens into a leaf's text | `#[transport(text)]`, which also covers a leaf spelled by its tokens: the text the leaf spans when its tokens tile it, else its fixed text (`text = "…"`) |
-| **Token interiors** | the wrap's `_projectLexed` with `projectInterior` and `TOKEN_INTERIORS` (`emitters/consts.ts`) | `#[transport(interior = …)]` |
-| **Alias envelopes** | the reader stamps `$displayType`; the wrap's `_aliasEnvelope` with `_ALIAS_ENVELOPES` and `_HIDDEN_KINDS` re-wraps | `#[transport(content = …)]` on the envelope kind, whose kind is its display id (`display`) |
+| **Text leaves** | the reader's `read_leaf` captures `$text`; the wrap's `_isReadTextLeaf` and the `_spelled…` helpers tile anonymous tokens into a leaf's text | `#[node(text)]`, which also covers a leaf spelled by its tokens: the text the leaf spans when its tokens tile it, else its fixed text (`text = "…"`) |
+| **Token interiors** | the wrap's `_projectLexed` with `projectInterior` and `TOKEN_INTERIORS` (`emitters/consts.ts`) | `#[node(interior = …)]` |
+| **Alias envelopes** | the reader stamps `$displayType`; the wrap's `_aliasEnvelope` with `_ALIAS_ENVELOPES` and `_HIDDEN_KINDS` re-wraps | `#[node(content = …)]` on the envelope kind, whose kind is its display id (`display`) |
 | **Transparent supertypes** | the wrap's `SUPERTYPE_MEMBERS`, `_filterWrapChildrenByKind`, `_firstKindKeyedWrapChild` | the slot's type: the supertype's choice, whose variants list its members once |
-| **Blank options** | the wrap's `blankFromRead` stores the blank id (0) for an absent slot the model marks `hasBlankArm`; the slot's per-slot decoder admits id 0 | `#[transport(blank)]` on the blank variant of the choice a blank option holds; any other optional slot reads absent as `None` |
+| **Blank options** | the wrap's `blankFromRead` stores the blank id (0) for an absent slot the model marks `hasBlankArm`; the slot's per-slot decoder admits id 0 | `#[node(blank)]` on the blank variant of the choice a blank option holds; any other optional slot reads absent as `None` |
 | **Delimiters and layout** | the wrap's `dropWireDelimiters`, `_hasSeparatorFlank` and `listOption` | `layout` on the kind; `separator` and `flank` on the slot |
-| **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[transport(item = …)]` |
+| **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[node(item = …)]` |
 | **Read depth per kind** | the wrap's `hydrateSelf` reads a `_LIST_OWNER_KINDS` member two levels deep | `min_depth` on the kind |
 | **Group seats** | `seatWith`, `groupField` | `group` on the slot |
 | **Trivia ownership** | the reader's `node_trivia` with the placement rule; `ReadModel::inner_gap_key` (`kind_ids.rs`); the wrap's `_wrapTrivia` and `mapTriviaEntries` | no attribute: the tree's trivia table, keyed by node and side and assigned at read from tree-sitter's convention for extras (§ Trivia). No side is named on a kind: `$trivia.inner` is a childless node's. The second trait method goes |
-| **The render projection** | `toTransportData` (fold, trivia view, detach) and the generated `FromNapiValue` decode | the wire codec; folding by coordinate (§ Render) |
+| **The render projection** | `toNodeData` (fold, trivia view, detach) and the generated `FromNapiValue` decode | the wire codec; folding by coordinate (§ Render) |
 | **Query routes** | `{ fields, kinds }` plans compiled in JavaScript from the `querySlots` table `wireRoutesOf` derives | unchanged, from the same derivation (ruling 8) |
 
 The native reader stays the only place the tree is walked, and `sittir-core` stays free of any
@@ -319,7 +335,7 @@ out. Solving the two files together gives about 4.1 KB for the node's own wrappe
 each comment wrapper.
 
 - **napi objects** are today's wire: every property crosses through a runtime call in each
-  direction. They keep `transport.rs`'s napi impls.
+  direction. They keep `node.rs`'s napi impls.
 - **JSON** costs a serialization on one side and a parse on the other; it reads no faster than
   objects and decodes 15–18 times slower than records.
 - **Arena records** are the 2026-10-01 draft's render side, now in both directions: fixed-width
@@ -328,20 +344,9 @@ each comment wrapper.
   JavaScript needs the layout too: codegen emits the JavaScript readers from the same declaration it
   writes the attributes from, so the layout has one derivation and the macro computes no offset.
 
-**Ruled: arena records** (ruling 3). They decode for a render 15–32 times faster than the other
-wires and compile smallest, and they drop the napi marshaling from every `transport.rs`. With the
-same members attached they do not read faster or hold less: a batch reads 0.2–0.4 µs a node faster,
-one node per call reads 0.2–0.7 µs slower, and a node over a record holds about 1.9 KB more. They
-land as their own step after the typed reader (ruling 6), and only with the object wire's numbers
-re-taken in the engine beside theirs.
+**Packed arena records** (ruling 3). The probe measured native render decoding 15–32 times faster than the other wires; its first record wrappers read no faster and held more heap per node, which the view's construction accounted for, not the record format. The packed immutable AST is the definitive format; the typed reader and relative coordinates precede the record cutover (ruling 6). The object wire is a temporary comparison and compatibility path.
 
-**Gate on the record step.** Its plan lands only if records match or beat napi objects on read
-time, one node per call and every match in one call, and on retained heap per node, as well as
-beating them on render decode. The 1.9 KB a node holds over a record is not its member closures
-as such: every form carries the same ones, and the views as first committed, with an empty `$with`
-and no `$trivia`, held 3 702 B against the objects' 4 949 B. How V8 builds the view's literal moves
-it, and adding member groups one at a time does not raise it monotonically (the transport probes'
-README), so the record step attacks the view's construction first.
+**Measurement and cutover readiness, not an adoption gate.** Compare single-node and batch reads, retained heap, and native render decoding against the object path under identical wrapper APIs. A slower or larger implementation calls for a documented optimization and retest, not abandonment of the packed format. Correctness, source fidelity, lifetime and memory safety are mandatory cutover conditions. The initial record wrapper's 1.9 KB overhead was sensitive to accessor/closure construction: the first view with an empty `$with` and no `$trivia` held 3 702 B against objects' 4 949 B. The view-construction study and its later V2 improvements remain relevant, but wrapper form is a separate choice from the record format.
 
 ### What the JavaScript wrap keeps
 
@@ -353,12 +358,12 @@ helpers, the enum projections, `readTerminalFromOther`, `_aliasEnvelope`, the sp
 `hydrateChild`) go from every wrap.
 
 A parsed node's literal holds a reference to its record, the buffer and offset, instead of copies
-of its slots (ruling 4); until the record step lands, it holds the transport's fields as own keys.
-A built node holds its fields, encoded into records at each render (ruling 5).
+of its slots (ruling 4); until the record step lands, it holds the node's fields as own keys.
+A built node is constructed directly into an immutable arena record (ruling 5); until the record cutover, it holds fields on its JavaScript object and crosses on the object wire.
 
 A wrapped node's heap is mostly its wrapper, not its read data: the wrapped tree holds 7–8 times
 its read data today, 2.2–2.5 KB a wrapped node (§ Problem), and a `function_item`'s own wrapper is
-about 4.1 KB beyond its read (§ The wire). The probe's members over its transport hold 6.9 KB a
+about 4.1 KB beyond its read (§ The wire). The probe's members over its node hold 6.9 KB a
 `function_item` over a record and 4.9 KB over fields, read data included. The members stay as they
 are, so what this design changes in the heap is the data and when members are made: today a node's
 members, and those of each comment it owns, are made when the node is read; here they are made when
@@ -371,14 +376,13 @@ an accessor first reaches the node (ruling 11).
   node never has a rebuilt descendant. The walk that is 95 % of today's untouched whole-read
   render goes with the record step. Until then a parsed node holds fields, and the walk stays
   until no write touches a parsed node's storage, which the trivia table brings (§ Trivia).
-- **A built node or a draft** crosses as its content: its fields encoded into records at each render
-  (ruling 5); until the record step, as today's object graph.
+- **A built node or draft** references its immutable arena record directly after cutover; a `$with` draft produces a new record sharing unchanged child addresses. Before cutover the object-backed construction and native decode remain transitional. There is no permanent built-object-to-record encoding at each render.
 - The native side reads, prepares and renders as today. The prepare walk stamps a private copy, never
   memory JavaScript can see.
 
 ### Trivia
 
-Trivia is native, keyed by node and side, and never a field of a transport. The model is
+Trivia is native, keyed by node and side, and never a field of a native node. The model is
 `2026-10-09-trivia-table-design.md`'s: a gap is the seam between two adjacent tokens, and its owner
 is the smallest node containing tokens on both sides, tree-sitter's convention for extras, derived
 and never stored. One walk at read assigns a gap's entries to a side of one of the owner's two
@@ -389,7 +393,8 @@ travel with it.
   builds it from the source and the tree, and it holds every write to the tree's trivia, each
   marking its side edited. It lands in step 3, ahead of the record wire, which it does not need;
   the arena-tables plan (`docs/superpowers/plans/2026-10-10-arena-tables.md`) holds the order.
-- **A built node's trivia** is in its record, by side, and travels with it when it is placed. It
+- **A built node's trivia** is in its own native table, keyed by the node's record address and side, outside the record. It travels with the node when the node is placed, and
+  writing a side updates the table, never the immutable record or a record that shares it. It
   lands with the record step (ruling 6.3), when built nodes get arena storage. Until then a built
   node keeps its trivia on the node, and `$trivia` reads the same on parsed and built nodes.
 - **A parsed node's record holds no trivia:** its tree's table does. Prepare resolves no trivia
@@ -397,16 +402,16 @@ travel with it.
 - **The render reads trivia from native storage only.** A node with no edited side within its
   range renders as its source bytes, and its holder prints its leading and trailing around them.
   A node with an edited side within renders from its template and children, printing each child's
-  leading before it and its trailing after it. Nothing about trivia crosses with a transport.
+  leading before it and its trailing after it. Nothing about trivia crosses with a node.
 
 ### Build cost
 
-- **Today:** `transport.rs` is 0.5–6.3 MB a grammar; the rust crate rebuilds in 48.4 s (1.95 GB peak)
+- **Today:** `node.rs` is 0.5–6.3 MB a grammar; the rust crate rebuilds in 48.4 s (1.95 GB peak)
   and in 17.6 s (857 MB) without its napi code.
 - **The expansion:** for rust's shape (395 kinds, 696 slots), the reader and the record codec compile
   in 3.6 s, about what today's `#[napi(object)]` derive alone takes (3.8 s). The first step, the
   reader with napi objects as the wire, compiles in 8.4 s: compile time rises until the record step.
-- At the record step, a grammar's `transport.rs` loses the 42–47 % of its lines that are napi
+- At the record step, a grammar's `node.rs` loses the 42–47 % of its lines that are napi
   impls, and the derive. The crate's compile time and binary size after each step are measured, not
   assumed (§ Verification).
 
@@ -418,9 +423,7 @@ members in the builder's literal — changed all three, and the maintainer ruled
 1. **Parsed nodes as views.** The per-kind prototype is ruled out. A parsed node's literal holds a
    reference to its record, which makes "a parsed node is its coordinate" true by construction
    (ruling 4).
-2. **Built-node storage.** Builders write their members in the literal and need no record to be
-   cheap, so the shared-memory chunks lose the construction argument they had. A built node keeps
-   its fields, encoded at each render, 45–56 ns a slot value (ruling 5).
+2. **Built-node storage.** Builders write immutable arena records directly, and `$with` makes a new record that shares the unchanged ones (ruling 5). Encoding object fields at render (45–56 ns a slot value) is the comparison baseline.
 3. **Which lands first.** The image is withdrawn. The typed reader lands first, the record wire
    after it, and the relative-coordinates work between them (ruling 6).
 
@@ -436,14 +439,14 @@ members in the builder's literal — changed all three, and the maintainer ruled
 - With the parsed trivia table: `TriviaEntry`'s `same_line` and `tokens_between`, the line-gap
   query (`line_gaps`, `line_gaps_of`), and the outside trivia a folded coordinate carries in
   `SlotValue::Coord`.
-- At the record step: the napi decode of `SlotValue`, and the trivia transports (`TransportTrivia`,
+- At the record step: the napi decode of `SlotValue`, and the trivia nodes (`NodeTrivia`,
   `TriviaEntry`) with built nodes' trivia on the node, which the built nodes' tables replace.
 
 **Generated, per grammar**
 
 - `stores_scalar` and `inner_gap_key` in `kind_ids.rs`, and the `ReadModel` impl in `lib.rs`.
 - At the record step: the `#[napi(object)]` attribute and every `FromNapiValue` and `ToNapiValue`
-  impl in `transport.rs`.
+  impl in `node.rs`.
 - In `wrap.ts`: every projection helper listed under § What the JavaScript wrap keeps, the
   `_ROUTES_<Kind>` tables, `_LIST_OWNER_KINDS`, and stub hydration.
 
@@ -451,8 +454,8 @@ members in the builder's literal — changed all three, and the maintainer ruled
 
 - `modelSlots`, the storage coercions and the stub machinery (`isStub`, `hydrateStub`) in `utils.ts`
   and `readUntypedNode.ts`.
-- `transport-data.ts`, at the record step: the fold walk (`canFold`, `isUntouchedBelow`,
-  `foldToCoordinate`) and `toTransportData`, replaced by the encoder for built nodes.
+- `node-data.ts`, at the record step: the fold walk (`canFold`, `isUntouchedBelow`,
+  `foldToCoordinate`) and `toNodeData`, replaced by the encoder for built nodes.
 - With the parsed trivia table: trivia on parsed wrappers (`$_layout.trivia`, the written-sides map,
   the composed-trivia cache), the line-gap composition (`lineGapsOf`), the edited-index set and the
   refusal of a write through a query.
@@ -464,8 +467,8 @@ members in the builder's literal — changed all three, and the maintainer ruled
 
 **Codegen**
 
-- `emitters/wrap.ts` emits members only. `renderTransportDataStruct` (`emitters/render-module.ts`)
-  prints the attributes from the transport projection (`emitters/transport-projection.ts`), with the
+- `emitters/wrap.ts` emits members only. `renderNodeDataStruct` (`emitters/render-module.ts`)
+  prints the attributes from the node projection (`emitters/node-projection.ts`), with the
   `#[napi(object)]` attribute gone at the record step. `emitters/kind-id-rust.ts` stops emitting the
   two read tables. `wireRoutesOf` stays the one route derivation.
 
@@ -530,7 +533,7 @@ members in the builder's literal — changed all three, and the maintainer ruled
 11. **Nothing leaks from a render.** Rendering one node twice with different options gives each
     render its own result.
 12. **Build.** Each grammar crate's compile time, peak memory and binary size, and the lines of each
-    `transport.rs`, before and after each step, with the same commands.
+    `node.rs`, before and after each step, with the same commands.
 13. **Type-check time** does not regress beyond noise.
 14. **Measurements, recorded and not asserted:** the tables in this document, re-taken at each step
     with the same files, commands and populations; the stage breakdown becomes a `sittir tool`.
@@ -544,7 +547,7 @@ members in the builder's literal — changed all three, and the maintainer ruled
 
 A proc macro (`slot-derive`) and a napi addon in
 `docs/superpowers/probes/2026-10-01-shared-arena/transport/proto/`. They bound the design and are
-not its implementation. The addon declares rust `function_item` (as `FunctionItemTransport` holds
+not its implementation. The addon declares rust `function_item` (as `FunctionItemNode` holds
 its eight slots) and `function_modifiers` through the macro, and reads them with sittir's generated
 parser. The macro expands the declaration into the cursor reader (fields
 and kinds routed, keyword tokens stored as kind ids, leaves inline, children with structure as
@@ -567,7 +570,7 @@ include them and the probe's do not (§ The wire).
 - **The tree image** (the 2026-10-01 read side): the whole tree written once at parse into a buffer
   JavaScript projects. Withdrawn: it is eager where reads must stay lazy, and it puts the projection
   in JavaScript, which the direction moves native. Its identity, the tree and the row, is kept.
-- **A derive macro on the transport structs**, which the 2026-10-01 draft rejected as a second
+- **A derive macro on the node structs**, which the 2026-10-01 draft rejected as a second
   derivation of the layout. The objection does not hold when codegen states every decision,
   offsets included, as attributes: the macro computes nothing, and codegen emits the JavaScript side
   of the layout from the same declaration. One derivation, one mechanical expansion.
@@ -601,30 +604,20 @@ raised (11).
    kind's minimum depth (a list owner brings its items) is a fact codegen stamps and the reader
    applies. The depth decides only where coordinates start, never the struct or its attributes
    (§ Laziness).
-3. **The wire is arena records,** landing only past the gate on the record step (§ The wire).
+3. **The wire is canonical packed immutable arena records,** following the measured implementation and safety/correctness cutover checks; performance numbers guide optimization, not whether the format is adopted (§ The wire; § Packed AST is definitive).
 4. **A parsed node's storage is a reference to its record** (§ What the JavaScript wrap keeps,
    § Render).
-5. **A built node's storage is fields on the object, encoded at render** (§ What the JavaScript wrap
-   keeps, § Render).
-   Superseded on 2026-10-06: arena storage holds built nodes too, written eagerly and read and
-   written by their members directly, and the object encoder is retired
-   (`2026-10-06-relative-coordinates-design.md`, § The record wire).
-6. **The typed reader lands first, on today's object wire; the record wire is a separate, measured
-   step.** Where the relative-coordinates work falls was left to this draft; placed here and
+5. **A built node's storage is an immutable arena record.** Builders write it directly; members read it, and `$with` appends a new record referencing the unchanged children. The object encoder is retired at cutover (`2026-10-06-relative-coordinates-design.md`, § The record wire).
+6. **The typed reader lands first on the transitional object wire; the definitive record format is implemented and measured in its own later step.** Where the relative-coordinates work falls was left to this draft; placed here and
    accepted in review:
    1. **The typed reader**, emitting today's napi objects: the cursor reader, tree-and-row
       coordinates, `depth`, opt-in `read-debug-checks` refusal of unrouted children, and the wrap reduced to members. Handles
       go, which settles a source-backed node's coordinate.
    2. **Relative coordinates**, re-based on rows and narrowed to what rows leave (§ Relationship to
       other designs). This settles a detached node's coordinate.
-   3. **The record wire**, laid out once against both forms: records in both directions, parsed
-      nodes over their records with no fold walk, built nodes encoded at render, and the napi impls
-      gone. It lands with the object wire's numbers re-taken beside its own, and only past the
-      gate on the record step (§ The wire).
-      Extended on 2026-10-09 (the maintainer): built nodes' trivia lands in this step, in their
-      records (§ Trivia).
-      Extended on 2026-10-10 (the maintainer): the parsed tree's table lands in this step too, ahead
-      of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with both
+   3. **The definitive record format**, laid out once for Rust and TypeScript: records in both directions, parsed nodes over lazily materialized records with no fold walk, built nodes written directly as immutable records, and the N-API object codecs removed at cutover. Object-wire measurements are re-taken beside record measurements to optimize and verify the implementation; numerical performance superiority is not a prerequisite for adoption (§ The wire; § Packed AST is definitive).
+      Built nodes' trivia lands in this step, in their own native table (§ Trivia). The parsed
+      tree's table lands in this step too, ahead of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with both
       tables is a feature of its own.
 
    Relative coordinates come after the typed reader so that they are designed against rows, not
@@ -638,7 +631,7 @@ raised (11).
 8. **Query plans are unchanged:** `where` still compiles to parser terms in JavaScript
    (§ Projection facts as attributes).
 9. **The render functions stay emitted by codegen** (§ What the macro expands).
-10. **Attribute ids are the parser's numeric ids, as generated constants** (§ The transport
+10. **Attribute ids are the parser's numeric ids, as generated constants** (§ The node
     declaration).
 11. **A child read within the depth gets its members on first access,** not with its parent. A deep
     read holds data until an accessor reaches a child, which wraps it then, and the parent keeps that
@@ -646,7 +639,7 @@ raised (11).
 
 ## Appendix A. Attributed declarations
 
-Three rust kinds as codegen would emit them from master's model (`f5ee2d734`, the typed transports),
+Three rust kinds as codegen would emit them from master's model (`f5ee2d734`, the typed nodes),
 with every fact the read needs that a type cannot state as an attribute: `function_item`; the list
 owner `parameters` with its list kind `parameters_elements`; and `binary_expression`, whose slots
 store kind ids. Ids are generated constants: `kind::` from `parser.c`'s symbol table as today, and
@@ -657,36 +650,36 @@ what its types and attributes replace today.
 ### A.1 `function_item`
 
 ```rust
-#[transport(kind = kind::FUNCTION_ITEM, words = 41, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
-pub struct FunctionItemTransport {
-    pub layout: Option<TransportLayout>,
+#[node(kind = kind::FUNCTION_ITEM, words = 41, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
+pub struct FunctionItemNode {
+    pub layout: Option<NodeLayout>,
     #[slot(field = field::VISIBILITY_MODIFIER, word = 1)]
-    pub visibility_modifier: Option<SlotValue<VisibilityModifierTransport>>,
+    pub visibility_modifier: Option<SlotValue<VisibilityModifierNode>>,
     #[slot(field = field::FUNCTION_MODIFIERS, word = 6)]
-    pub function_modifiers: Option<SlotValue<FunctionModifiersTransport>>,
+    pub function_modifiers: Option<SlotValue<FunctionModifiersNode>>,
     #[slot(field = field::NAME, word = 11)]
-    pub name: SlotValue<FunctionItemNameTransportSlot>,
+    pub name: SlotValue<FunctionItemNameNodeSlot>,
     #[slot(field = field::TYPE_PARAMETERS, word = 16)]
-    pub type_parameters: Option<SlotValue<TypeParametersTransport>>,
+    pub type_parameters: Option<SlotValue<TypeParametersNode>>,
     #[slot(field = field::PARAMETERS, word = 21)]
-    pub parameters: SlotValue<ParametersTransport>,
+    pub parameters: SlotValue<ParametersNode>,
     #[slot(field = field::RETURN_TYPE, word = 26)]
-    pub return_type: Option<SlotValue<TypeTransport>>,
+    pub return_type: Option<SlotValue<TypeNode>>,
     #[slot(field = field::WHERE_CLAUSE, word = 31)]
-    pub where_clause: Option<SlotValue<WhereClauseTransport>>,
+    pub where_clause: Option<SlotValue<WhereClauseNode>>,
     #[slot(field = field::BODY, word = 36)]
-    pub body: SlotValue<BlockTransport>,
+    pub body: SlotValue<BlockNode>,
 }
 
-#[transport(choice)]
-pub enum TypeTransport {
-    #[kind(kind::ABSTRACT_TYPE)] AbstractType(AbstractTypeTransport),
+#[node(choice)]
+pub enum TypeNode {
+    #[kind(kind::ABSTRACT_TYPE)] AbstractType(AbstractTypeNode),
     // … the `_type` supertype's other members
     #[kind(kind::NEVER_TYPE)] NeverType,
     #[kind(kind::_PRIMITIVE_TYPE)] PrimitiveType(PrimitiveTypeEnum),
 }
 
-#[transport(kind = kind::_PRIMITIVE_TYPE, spelled)]
+#[node(kind = kind::_PRIMITIVE_TYPE, spelled)]
 pub enum PrimitiveTypeEnum {
     #[kind(kind::U8_KEYWORD)] U8,
     // … `i8` through `char`, each a unit variant
@@ -707,26 +700,26 @@ pub enum PrimitiveTypeEnum {
   them; `read-debug-checks` diagnoses any other unrouted child, while normal reads skip it.
 - **Depth and trivia:** no minimum depth, and no `inner`. The doc comments before the node are its
   `leading`, assigned at read (§ Trivia); `layout` holds no trivia.
-- `FunctionItemNameTransportSlot` (identifier or metavariable) and `TypeTransport` (the `_type`
+- `FunctionItemNameNodeSlot` (identifier or metavariable) and `TypeNode` (the `_type`
   supertype) are the choices each slot admits, as codegen types them today. A supertype's members
   are its choice's variants, listed once.
 
 ### A.2 `parameters` and `parameters_elements`
 
 ```rust
-#[transport(kind = kind::PARAMETERS, words = 6, min_depth = 2,
+#[node(kind = kind::PARAMETERS, words = 6, min_depth = 2,
             layout = [kind::LPAREN, kind::RPAREN])]
-pub struct ParametersTransport {
-    pub layout: Option<TransportLayout>,
+pub struct ParametersNode {
+    pub layout: Option<NodeLayout>,
     #[slot(field = field::ELEMENTS, word = 1)]
-    pub elements: Option<SlotValue<ParametersElementsTransport>>,
+    pub elements: Option<SlotValue<ParametersElementsNode>>,
 }
 
-#[transport(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 3)]
-pub struct ParametersElementsTransport {
-    pub layout: Option<TransportLayout>,
+#[node(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 3)]
+pub struct ParametersElementsNode {
+    pub layout: Option<NodeLayout>,
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 1)]
-    pub item: Vec<SlotValue<AttributedParameterTransport>>,
+    pub item: Vec<SlotValue<AttributedParameterNode>>,
     // delimiter, item_separator_space_before, item_separator_space_after: render-option fields the
     // render side stamps from their site, as today
 }
@@ -745,25 +738,25 @@ pub struct ParametersElementsTransport {
 ### A.3 `binary_expression`
 
 ```rust
-#[transport(kind = kind::BINARY_EXPRESSION, words = 16)]
-pub struct BinaryExpressionTransport {
-    pub layout: Option<TransportLayout>,
+#[node(kind = kind::BINARY_EXPRESSION, words = 16)]
+pub struct BinaryExpressionNode {
+    pub layout: Option<NodeLayout>,
     #[slot(field = field::LEFT, word = 1)]
-    pub left: SlotValue<Box<ExpressionTransport>>,
+    pub left: SlotValue<Box<ExpressionNode>>,
     #[slot(field = field::OPERATOR, word = 6)]
-    pub operator: SlotValue<BinaryExpressionOperatorTransportSlot>,
+    pub operator: SlotValue<BinaryExpressionOperatorNodeSlot>,
     #[slot(field = field::RIGHT, word = 11)]
-    pub right: SlotValue<Box<ExpressionTransport>>,
+    pub right: SlotValue<Box<ExpressionNode>>,
 }
 
-#[transport(choice)]
-pub enum BinaryExpressionOperatorTransportSlot {
+#[node(choice)]
+pub enum BinaryExpressionOperatorNodeSlot {
     #[kind(kind::AMP_AMP)] AmpAmp,
     #[kind(kind::PIPE_PIPE)] PipePipe,
     // … the other sixteen operators, each a unit variant
 }
 
-#[transport(kind = kind::BOOLEAN_LITERAL, spelled)]
+#[node(kind = kind::BOOLEAN_LITERAL, spelled)]
 pub enum BooleanLiteralEnum {
     #[kind(kind::TRUE_KEYWORD)] True,
     #[kind(kind::FALSE_KEYWORD)] False,
@@ -793,18 +786,18 @@ pub enum BooleanLiteralEnum {
 | `separator`, `flank` | `closure_parameters` | `dropWireDelimiters` (3 sites in rust) |
 | `group` | `match_arm_with_comma.pattern`, a pattern and its guard | `seatWith`, called from `$with`, which stays a member; the read needs only the slot's `group` |
 
-## Appendix B. Generated tables under the typed transport
+## Appendix B. Generated tables under the typed node
 
 Each generated table, counted per grammar at `ccb370d67` (whose generated output is `106475358`'s), and
-what the typed transport does with it: **retired**, **folded** into an attribute, **still needed**,
+what the typed node does with it: **retired**, **folded** into an attribute, **still needed**,
 or **JS by nature**. `transport/generated-tables-census.py` in this design's probes prints the
 counts.
 
-| table | rust | typescript | python | scm | regex | under the typed transport |
+| table | rust | typescript | python | scm | regex | under the typed node |
 | --- | --- | --- | --- | --- | --- | --- |
-| `transport.rs` structs (slot fields) | 395 (696) | 400 (740) | 284 (478) | 52 (83) | 81 (101) | **folded**: they become the declarations, with the attributes added |
-| `transport.rs` napi `FromNapiValue`/`ToNapiValue` impls, lines | 40 592 | 53 338 | 26 075 | 4 902 | 5 976 | **retired** at the record step (the macro emits the object codec until then) |
-| `transport.rs` render functions, lines | 4 158 | 4 094 | 2 658 | 530 | 532 | **still needed**: they stay codegen-emitted (ruling 9) |
+| `node.rs` structs (slot fields) | 395 (696) | 400 (740) | 284 (478) | 52 (83) | 81 (101) | **folded**: they become the declarations, with the attributes added |
+| `node.rs` napi `FromNapiValue`/`ToNapiValue` impls, lines | 40 592 | 53 338 | 26 075 | 4 902 | 5 976 | **retired** at the record step (the macro emits the object codec until then) |
+| `node.rs` render functions, lines | 4 158 | 4 094 | 2 658 | 530 | 532 | **still needed**: they stay codegen-emitted (ruling 9) |
 | `kind_ids.rs` kind constants | 468 | 467 | 336 | 69 | 91 | **still needed**: the attributes name them (ruling 10) |
 | `kind_ids.rs` `kind_name_from_id`, arms | 469 | 685 | 338 | 69 | 100 | **still needed**: refusals and diagnostics name kinds (ruling 7) |
 | `kind_ids.rs` `inner_gap_key`, arms | 25 | 14 | 12 | 2 | 1 | **retired**: no gap is named on a kind (§ Trivia) |

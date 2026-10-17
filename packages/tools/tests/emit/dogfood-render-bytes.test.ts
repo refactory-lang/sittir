@@ -33,7 +33,7 @@ describe('dogfood rebuild render bytes', () => {
 // the source byte for byte.
 const READ_CASES = [
 	['rust', 'rust/crates/sittir-core/src/render.rs'],
-	['typescript', 'packages/common/src/transport-data.ts'],
+	['typescript', 'packages/common/src/node-data.ts'],
 	['python', 'tests/format-roundtrip/fixtures/python-4space.py']
 ] as const;
 

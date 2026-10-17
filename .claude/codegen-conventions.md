@@ -75,23 +75,24 @@ When a TS function body grows a 3+ line inline comment block explaining the next
 
 A JSDoc tag mirroring `@deprecated` but with the opposite intent: marks a
 symbol that is deliberately kept despite having no current caller, because
-it implements (or partially implements) an Accepted ADR or a
-drafted-but-deferred (not rejected) spec. `@deprecated` says "remove this
+it implements (or partially implements) a design that is accepted or
+drafted and deferred, not rejected. `@deprecated` says "remove this
 despite it having callers"; `@forFutureUse` says "keep this despite it
 having none."
 
-Format — always include a one-line reason naming the deferred surface (cite
-the ADR by file path, not by bare number, so the reference stays resolvable):
+Format — always include a one-line reason naming the deferred surface and
+what it waits for. Don't cite a spec, plan or ADR: those get archived or
+renamed, and the citation stops resolving. State the design itself:
 
 ```ts
 /**
- * @forFutureUse dehoisted UntypedNode surface (docs/adr/0018-dehoist-nodedata-surface.md, accepted) — $with
- * update namespace. Not yet wired into generated output; scaffolding only.
+ * @forFutureUse the `$with` update namespace on a dehoisted node surface.
+ * Not yet wired into generated output; scaffolding only.
  */
 ```
 
 Before deleting any exported symbol with zero (or test-only) callers,
 check whether it carries this tag. If it does, do not delete it as part
 of a routine dead-code sweep — its disposition (finish wiring it up, or
-formally retire it) is a decision for whoever owns the referenced
-ADR/spec, not a mechanical cleanup pass.
+formally retire it) is a decision for whoever owns the deferred design,
+not a mechanical cleanup pass.

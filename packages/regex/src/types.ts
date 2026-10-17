@@ -29,8 +29,9 @@ import type {
 	KeyRefusesEmpty,
 	SetterRefusesEmpty
 } from '@sittir/types';
+import { TSKindId } from './kinds.js';
+export { TSKindId } from './kinds.js';
 import type * as T from './types.js';
-import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
 
 export type LeafScalarMap = {
 	[TSKindId.DecimalDigits]: number | bigint;
@@ -47,103 +48,6 @@ export type LeafStringMap = {
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 };
-
-export enum TSKindId {
-	Pipe = 1,
-	AnyCharacter = 2,
-	Caret = 3,
-	EndAssertion = 4,
-	BoundaryAssertion = 5,
-	NonBoundaryAssertion = 6,
-	LparenQmark = 7,
-	Eq = 8,
-	Bang = 9,
-	Rparen = 10,
-	LparenQmarkLt = 11,
-	PatternCharacter = 12,
-	Lbrack = 13,
-	Dash = 14,
-	Rbrack = 15,
-	LbrackColon = 16,
-	ColonRbrack = 17,
-	PosixClassNameToken1 = 18,
-	BslashDash = 19,
-	ClassCharacter = 20,
-	Lparen = 21,
-	LparenQmarkPLt = 22,
-	Gt = 23,
-	LparenQmarkColon = 24,
-	Star = 25,
-	Qmark = 26,
-	Plus = 27,
-	Lbrace = 28,
-	Comma = 29,
-	Rbrace = 30,
-	Bslashk = 31,
-	Lt = 32,
-	LparenQmarkPEq = 33,
-	DecimalEscape = 34,
-	UnicodePropertyValue = 35,
-	ControlLetterEscape = 36,
-	IdentityEscape = 37,
-	GroupName = 38,
-	DecimalDigits = 39,
-	Colon = 40,
-	CharacterClassEscapeText1 = 41,
-	CharacterClassEscapeText2 = 42,
-	UnicodeCharacterEscapeText1 = 43,
-	UnicodeCharacterEscapeText2 = 44,
-	ControlEscapeText1 = 45,
-	ControlEscapeText2 = 46,
-	Tight = 47,
-	Newline = 48,
-	Blankline = 49,
-	DoubleBlankline = 50,
-	Pattern = 51,
-	Alternation = 52,
-	Term = 53,
-	StartAssertion = 54,
-	LookaroundAssertion = 55,
-	LookaheadAssertion = 56,
-	LookbehindAssertion = 57,
-	CharacterClass = 58,
-	PosixCharacterClass = 59,
-	PosixClassName = 60,
-	ClassRange = 61,
-	AnonymousCapturingGroup = 62,
-	NamedCapturingGroup = 63,
-	NonCapturingGroup = 64,
-	InlineFlagsGroup = 65,
-	Flags = 66,
-	ZeroOrMore = 67,
-	OneOrMore = 68,
-	Optional = 69,
-	CountQuantifier = 70,
-	BackreferenceEscape = 71,
-	NamedGroupBackreference = 72,
-	CharacterClassEscape = 73,
-	UnicodeCharacterEscape = 74,
-	UnicodePropertyValueExpression = 75,
-	ControlEscape = 76,
-	TermGroup = 77,
-	CountQuantifierGroup = 78,
-	CountQuantifierArm = 79,
-	CharacterClassEscapeArm = 80,
-	UnicodePropertyValueExpressionGroup = 81,
-	Negation = 82,
-	InlineFlagsGroupEnable = 83,
-	InlineFlagsGroupToggle = 84,
-	InlineFlagsGroupDisable = 85,
-	AlternationRepeat1 = 86,
-	TermRepeat1 = 87,
-	CharacterClassRepeat1 = 88,
-	Lazy = 89,
-	UnicodePropertyName = 90,
-	Error = 65535
-}
-Object.freeze(TSKindId);
-
-void (TSKindId.Error satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'pipe'],
@@ -626,7 +530,7 @@ export interface Alternation {
 	readonly $type: TSKindId.Alternation;
 	readonly _terms: NonEmptyArray<Term | undefined>;
 	readonly __slotHints__?: {
-		readonly terms: SlotHint<NonEmptyArray<T.Term>, false, true>;
+		readonly terms: SlotHint<NonEmptyArray<T.Term | undefined>, false, true>;
 	};
 	readonly terms: () => NonEmptyArray<Term | undefined>;
 }

@@ -6,6 +6,7 @@ import { grammarPackage, type GrammarName } from '../../grammars.ts';
 import { sourceChain } from '../../dsl/conflict-resolutions.ts';
 import { canonical, evaluateForDerivation, grammarHash, type GrammarDerivationInputs } from '../evaluate-for-derivation.ts';
 import { treeSitterCliVersion } from '../tree-sitter-cli.ts';
+import { treeSitterPruned } from '../prune-grammar-json.ts';
 
 interface UpstreamGrammarJson {
 	readonly rules: Record<string, unknown>;
@@ -38,6 +39,49 @@ describe('grammarHash', () => {
 
 	it('changes when a rule changes', () => {
 		expect(grammarHash({ ...grammar, rules: { a: { type: 'STRING', value: 'b' } } }, '0.26.9')).not.toBe(grammarHash(grammar, '0.26.9'));
+	});
+
+	it('ignores a hidden rule nothing reaches', () => {
+		const orphaned = { ...grammar, rules: { ...grammar.rules, _orphan: { type: 'CHOICE', members: [] } } };
+		expect(grammarHash(orphaned, '0.26.9')).toBe(grammarHash(grammar, '0.26.9'));
+	});
+
+	describe('a hidden rule a route keeps alive moves the hash when its body changes', () => {
+		const body = (value: string) => ({ type: 'STRING', value });
+		const ref = (name: string) => ({ type: 'SYMBOL', name });
+		const route = (hidden: string, changed: string, extra: Record<string, unknown>) => ({
+			name: 'g',
+			rules: { a: body('a'), [hidden]: body(changed) },
+			...extra
+		});
+		const moves = (hidden: string, extra: Record<string, unknown>) =>
+			expect(grammarHash(route(hidden, 'x', extra), '0.26.9')).not.toBe(grammarHash(route(hidden, 'y', extra), '0.26.9'));
+
+		it('a rule that a references', () => {
+			expect(grammarHash({ name: 'g', rules: { a: { type: 'SEQ', members: [body('a'), ref('_h')] }, _h: body('x') } }, '0.26.9')).not.toBe(
+				grammarHash({ name: 'g', rules: { a: { type: 'SEQ', members: [body('a'), ref('_h')] }, _h: body('y') } }, '0.26.9')
+			);
+		});
+
+		it('a rule the extras name', () => {
+			moves('_ws', { extras: [ref('_ws')] });
+		});
+
+		it('a rule the externals name', () => {
+			moves('_ext', { externals: [ref('_ext')] });
+		});
+
+		it('a rule the precedences name', () => {
+			moves('_p', { precedences: [[ref('_p'), body('a')]] });
+		});
+
+		it('a rule the supertypes name', () => {
+			moves('_s', { supertypes: ['_s'] });
+		});
+
+		it('the word rule', () => {
+			moves('_w', { word: '_w' });
+		});
 	});
 });
 
@@ -99,5 +143,22 @@ describe('evaluateForDerivation', () => {
 		const upstream = upstreamGrammarJson('python', 'tree-sitter-python/src/grammar.json');
 		const upstreamSymbols = new Set([...Object.keys(upstream.rules), ...(upstream.externals ?? []).flatMap((e) => (e.name ? [e.name] : []))]);
 		expect(Object.keys(python.sourceEdges).filter((name) => upstreamSymbols.has(name))).toEqual([]);
+	});
+});
+
+describe('treeSitterPruned', () => {
+	it('keeps the document key order and drops the pruned names from inline and conflicts', () => {
+		const doc = {
+			name: 'g',
+			rules: { a: { type: 'SYMBOL', name: '_h' }, _dead: { type: 'CHOICE', members: [] }, _h: { type: 'STRING', value: 'h' } },
+			inline: ['_dead', '_h'],
+			conflicts: [['_dead', 'a'], ['_h', 'a']]
+		};
+		const { grammar, pruned } = treeSitterPruned(doc);
+		expect(pruned).toEqual(['_dead']);
+		expect(Object.keys(grammar)).toEqual(Object.keys(doc));
+		expect(Object.keys(grammar.rules as object)).toEqual(['a', '_h']);
+		expect(grammar.inline).toEqual(['_h']);
+		expect(grammar.conflicts).toEqual([['_h', 'a']]);
 	});
 });

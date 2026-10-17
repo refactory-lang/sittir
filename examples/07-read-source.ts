@@ -1,19 +1,18 @@
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+const rs = await rust.createEngine();
 
 export function readSource(source: string) {
-	return engine.parse(source);
+	return rs.parse(source);
 }
 
 export function readFirstFunction(source: string) {
-	const file = engine.parse(source);
+	const file = rs.parse(source);
 	const first = file.statements()[0];
-	if (first === undefined || !engine.is.functionItem(first)) return undefined;
+	if (first === undefined || !rs.is.functionItem(first)) return undefined;
 
 	return {
-		name: engine.render(first.name()).toString(),
+		name: rs.render(first.name()).toString(),
 		body: first.body(),
 		statements: first.body().statements(),
 	};

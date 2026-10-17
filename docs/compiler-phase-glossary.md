@@ -325,7 +325,7 @@ consumes `node.renderRule` per kind (per-form for polymorphs) and enforces
 a slot-preservation gate (each declared slot appears exactly once in the
 output; bypass with `SITTIR_SLOT_PRESERVATION=0`). Other emitters produce
 types, factories, `.from()` resolvers, wrap functions, guards, consts, the
-`ir.*` namespace, the native render/transport Rust modules, the
+`ir.*` namespace, the native render/node Rust modules, the
 `node-model.json5` snapshot, `overrides.suggested.ts` (only when there are
 suggestions), and per-kind tests.
 

@@ -11,7 +11,7 @@
 #       parity-test data file `test-fixtures.json`.
 #   (d) Disallowed derive-macro / proc-macro crates in the Rust
 #       workspace dep graph (only `napi-derive`, `serde_derive`,
-#       `sittir-transport-macros`, and tree-sitter internals are allowed).
+#       `sittir-node-macros`, and tree-sitter internals are allowed).
 #
 # Run as a CI step under the `rust` job. Exits non-zero on the first
 # violation; the message names the offending file or crate so the
@@ -95,7 +95,7 @@ allow=(
     # Spec-named: boundary + serde + tree-sitter
     "napi-derive"              # napi 3 — `#[napi(object)]` + `#[napi]`
     "serde_derive"             # serde 1 — `#[derive(Serialize/Deserialize)]`
-    "sittir-transport-macros"  # the typed reader's `#[derive(Transport)]`: expands codegen-stamped attributes into reads
+    "sittir-node-macros"  # the typed reader's `#[derive(Node)]`: expands codegen-stamped attributes into reads
     # Tree-sitter internals (transitive — pulled in by tree-sitter and
     # the per-grammar tree-sitter-{lang} crates the napi bindings link).
     "thiserror-impl"           # tree-sitter error chain
