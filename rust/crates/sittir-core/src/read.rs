@@ -55,13 +55,13 @@ pub fn child_by_field<'t>(node: &Node<'t>, field: FieldId) -> Option<Node<'t>> {
 
 /// The grammar's name for `field`. The one call of `Language::field_name_for_id`.
 #[allow(clippy::disallowed_methods)]
-pub fn field_name(language: &Language, field: FieldId) -> Option<&'static str> {
+pub fn field_name(language: &Language, field: FieldId) -> Option<&str> {
     language.field_name_for_id(field.get())
 }
 
 /// The grammar's name for `kind`. The one call of `Language::node_kind_for_id`.
 #[allow(clippy::disallowed_methods)]
-pub fn kind_name(language: &Language, kind: KindId) -> Option<&'static str> {
+pub fn kind_name(language: &Language, kind: KindId) -> Option<&str> {
     language.node_kind_for_id(kind.get())
 }
 
