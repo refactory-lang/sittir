@@ -1370,7 +1370,7 @@ impl<G: EngineGrammar> Engine<G> {
         let root = crate::read::grammar_id(&tree.root_node());
         let inferred = crate::options::InferredOptions::infer(source, root, &self.options, self.grammar.option_tables(), whitespace);
         let indent = inferred.indent.as_deref().unwrap_or(&self.options.indent);
-        let spaces = |unit: &str| crate::types::narrow(unit.chars().filter(|&c| c == ' ').count());
+        let spaces = |unit: &str| u32::try_from(unit.chars().filter(|&c| c == ' ').count()).unwrap_or(u32::MAX);
         let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         let read_options = inferred.over(&self.options);
         Ok(ParsedTree {

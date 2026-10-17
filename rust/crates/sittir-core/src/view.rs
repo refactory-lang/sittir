@@ -328,7 +328,7 @@ impl<E: Slot> Render for ListView<'_, E> {
                 w.site(self.after);
             }
             match self.units {
-                Some((slot, units)) => units.frame_unit(slot, crate::types::ItemIndex(crate::types::narrow(i)), w, &mut |w| item.write_slot("", "", w))?,
+                Some((slot, units)) => units.frame_unit(slot, item_index(i)?, w, &mut |w| item.write_slot("", "", w))?,
                 None => item.write_slot("", "", w)?,
             }
         }
@@ -375,5 +375,24 @@ mod presence_tests {
     fn a_false_flag_renders_nothing() {
         assert_eq!(rendered(false), "");
         assert!(!View::new(Presence::new(false, Keyword), "{}").is_present());
+    }
+}
+
+/// The `ItemIndex` of a list's item at `at`. A built list is not bounded by
+/// a parsed tree, so a position past `u32::MAX` is refused rather than
+/// wrapped onto another item's trivia.
+fn item_index(at: usize) -> Result<crate::types::ItemIndex, crate::render::RenderError> {
+    u32::try_from(at).map(crate::types::ItemIndex).map_err(|_| crate::render::RenderError::ItemIndex(at))
+}
+
+#[cfg(test)]
+mod item_index_tests {
+    use super::item_index;
+
+    #[test]
+    fn a_position_past_u32_is_refused_not_wrapped() {
+        assert_eq!(item_index(7).unwrap(), crate::types::ItemIndex(7));
+        assert_eq!(item_index(u32::MAX as usize).unwrap(), crate::types::ItemIndex(u32::MAX));
+        assert!(matches!(item_index(u32::MAX as usize + 1), Err(crate::render::RenderError::ItemIndex(at)) if at == u32::MAX as usize + 1));
     }
 }

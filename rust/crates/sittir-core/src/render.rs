@@ -14,6 +14,9 @@ use crate::types::KindId;
 pub enum RenderError {
     Fmt(fmt::Error),
     Coordinate(CoordinateError),
+    /// A built list's item at this position, past the last index an
+    /// `ItemIndex` holds.
+    ItemIndex(usize),
 }
 
 impl fmt::Display for RenderError {
@@ -21,6 +24,7 @@ impl fmt::Display for RenderError {
         match self {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
+            Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
         }
     }
 }
