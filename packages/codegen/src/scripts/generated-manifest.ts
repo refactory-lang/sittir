@@ -8,7 +8,7 @@ import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { moduleClosure } from './module-closure.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
-import { treeSitterCliVersion } from '../transpile/tree-sitter-cli.ts';
+import { ensureWasmToolchain, treeSitterToolchainIdentity } from '../transpile/tree-sitter-cli.ts';
 import {
 	BASE_ENTRY,
 	GRAMMAR_ENTRY,
@@ -285,7 +285,7 @@ function grammarDependencies(dir: string): string[] {
 
 export function upstreamDigest(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
 	const hash = createHash('sha256');
-	hash.update(`tree-sitter-cli ${treeSitterCliVersion()}\0`);
+	hash.update(`${treeSitterToolchainIdentity()}\0`);
 	const grammarDir = join(src.checkout, relative(REPO_ROOT, grammarPackageDir(grammar)));
 	const pending: Array<[string, string]> = [[grammarDir, upstreamPackage(grammar)]];
 	const seen = new Set<string>();
@@ -358,6 +358,7 @@ export interface SourceFingerprint {
 }
 
 export function sourceFingerprint(grammar: GrammarName, src: ManifestSource = worktreeSource()): SourceFingerprint {
+	ensureWasmToolchain();
 	return { source: computeSourceHash(grammar, src), upstream: upstreamDigest(grammar, src) };
 }
 

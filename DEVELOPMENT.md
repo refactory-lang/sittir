@@ -70,7 +70,8 @@ the current rust toolchain and the current build flags (`RUSTFLAGS`,
 `CARGO_PROFILE_*`, `CC`/`CFLAGS`, any cargo config file cargo would read,
 and the like), and its last regeneration ran to the end, workspace check
 included. A run that fails anywhere regenerates those grammars again next
-time. Each of these records what it read as the work started, so a file
+time. When no grammar needs regenerating, `regen:all` still runs the
+workspace `cargo check` once, and fails when it does. Each of these records what it read as the work started, so a file
 edited while `regen:all` runs is picked up on the next run. When only the
 parity fixtures are out of date (the corpus under
 `packages/codegen/fixtures/<grammar>/`, the extractor's code, or the fixture
@@ -94,7 +95,10 @@ of a base that regenerated all pass without regenerating. Editing codegen
 source, the shared runtime it executes (any `packages/common` module codegen
 imports at run time, directly or not), a grammar, or a generated file by hand does not,
 nor does an upstream grammar or tree-sitter CLI upgrade or any other change to
-`pnpm-lock.yaml`, until you regenerate.
+`pnpm-lock.yaml`, nor a new wasi-sdk or binaryen under tree-sitter's cache
+(`~/.cache/tree-sitter`, or the directories `TREE_SITTER_WASI_SDK_PATH` and
+`TREE_SITTER_BINARYEN_PATH` name), until you regenerate. Generation installs
+a missing toolchain itself; a check without one reports the grammar stale.
 
 The file is per worktree and survives `pnpm install`. Deleting it, or
 `node_modules`, loses nothing: the tree is compared with HEAD instead.

@@ -15,9 +15,11 @@ interface Record_ {
 	fixtures: Record<string, string>;
 }
 
-const { fresh, records, inputs, sources, writeRegenRecord, clearRegenRecord } = vi.hoisted(() => {
+const { fresh, records, inputs, sources, writeRegenRecord, clearRegenRecord, runWorkspaceCheck, surfaceCalls } = vi.hoisted(() => {
 	const records = new Map<string, Record_>();
 	return {
+		surfaceCalls: [] as string[],
+		runWorkspaceCheck: vi.fn((_cwd: string) => 0),
 		fresh: new Set<string>(),
 		records,
 		inputs: new Map<string, Record<string, string>>(),
@@ -26,19 +28,22 @@ const { fresh, records, inputs, sources, writeRegenRecord, clearRegenRecord } = 
 		clearRegenRecord: vi.fn((_cwd: string, grammar: string) => records.delete(grammar))
 	};
 });
-vi.mock('../codegen-surface.ts', () => ({
-	load: async (name: string) =>
-		name === 'generatedManifest'
-			? {
-					verifyManifestForGrammar: (grammar: string) => ({ ok: fresh.has(grammar), sourceChanged: !fresh.has(grammar), missing: [], modified: [], extra: [], differs: [], stale: [] }),
-					computeSourceHash: (grammar: string) => sources.get(grammar) ?? `source of ${grammar}`
-				}
-			: {
-					nativeBuildFreshness: (_root: string, grammar: string, profile: string) =>
-						fresh.has(grammar) ? { fresh: true, reason: `built from the current native inputs (${profile})` } : { fresh: false, reason: 'no native binary' },
-					nativeBuildStamp: (_root: string, grammar: string) => ({ binarySha256: `binary of ${grammar}` })
-				}
-}));
+vi.mock('../codegen-surface.ts', () => {
+	const surface: Record<string, unknown> = {
+		workspaceCheck: { runWorkspaceCheck },
+		treeSitterCli: { ensureWasmToolchain: () => surfaceCalls.push('ensureWasmToolchain') },
+		generatedManifest: {
+			verifyManifestForGrammar: (grammar: string) => (surfaceCalls.push('verifyManifestForGrammar'), { ok: fresh.has(grammar), sourceChanged: !fresh.has(grammar), missing: [], modified: [], extra: [], differs: [], stale: [] }),
+			computeSourceHash: (grammar: string) => (surfaceCalls.push('computeSourceHash'), sources.get(grammar) ?? `source of ${grammar}`)
+		},
+		nativeBinaryFreshness: {
+			nativeBuildFreshness: (_root: string, grammar: string, profile: string) =>
+				fresh.has(grammar) ? { fresh: true, reason: `built from the current native inputs (${profile})` } : { fresh: false, reason: 'no native binary' },
+			nativeBuildStamp: (_root: string, grammar: string) => ({ binarySha256: `binary of ${grammar}` })
+		}
+	};
+	return { load: async (name: string) => surface[name] };
+});
 vi.mock('../fixture-inputs.ts', () => {
 	const fixtureSources = async (_root: string, grammar: string) => inputs.get(grammar) ?? { [`corpus of ${grammar}`]: 'v1' };
 	const fixtureOutputs = async (_root: string, grammar: string) => ({ [`fixtures of ${grammar}`]: 'extracted' });
@@ -87,6 +92,8 @@ beforeEach(() => {
 	sources.clear();
 	writeRegenRecord.mockClear();
 	clearRegenRecord.mockClear();
+	runWorkspaceCheck.mockReset().mockReturnValue(0);
+	surfaceCalls.length = 0;
 	delete process.env.SITTIR_REGEN_FORCE;
 	spawn.mockReset().mockImplementation(fakeChild);
 	spawnSync.mockReset().mockReturnValue({ status: 0 });
@@ -157,13 +164,52 @@ describe('regen:all sequencing', () => {
 		expect(write).toHaveBeenCalledWith('[rust] regenerating: its sources changed since the last generation\n');
 	});
 
-	it('runs nothing when every grammar is fresh', async () => {
+	it('runs only the workspace check when every grammar is fresh', async () => {
 		finished('rust', 'typescript', 'python');
 		vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 		await import('../scripts/regen-all.ts');
 		expect(spawn).not.toHaveBeenCalled();
 		expect(spawnSync).not.toHaveBeenCalled();
+		expect(runWorkspaceCheck.mock.calls).toEqual([['/repo']]);
 	});
+
+	it('exits with the status of a failed workspace check when every grammar is fresh', async () => {
+		finished('rust', 'typescript', 'python');
+		runWorkspaceCheck.mockReturnValue(101);
+		vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		const exit = vi.spyOn(process, 'exit').mockImplementation(() => {
+			throw new Error('exit');
+		});
+		await expect(import('../scripts/regen-all.ts')).rejects.toThrow('exit');
+		expect(exit).toHaveBeenCalledWith(101);
+	});
+
+	it('leaves the workspace check to the last native build when a grammar regenerates', async () => {
+		finished('typescript', 'python');
+		vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(1);
+		children[0]!.finish(0);
+		await run;
+		expect((spawnSync.mock.calls[0]![1] as string[]).includes('--no-workspace-check')).toBe(false);
+		expect(runWorkspaceCheck).not.toHaveBeenCalled();
+	});
+
+	for (const force of [false, true]) {
+		it(`installs a missing wasm toolchain once, before any grammar's sources are fingerprinted${force ? ', under SITTIR_REGEN_FORCE' : ''}`, async () => {
+			finished('rust', 'typescript', 'python');
+			if (force) process.env.SITTIR_REGEN_FORCE = '1';
+			vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+			const run = import('../scripts/regen-all.ts');
+			if (force) {
+				await generationsStarted(3);
+				for (const child of children) child.finish(0);
+			}
+			await run;
+			expect(surfaceCalls[0]).toBe('ensureWasmToolchain');
+			expect(surfaceCalls.filter((call) => call === 'ensureWasmToolchain')).toHaveLength(1);
+		});
+	}
 
 	it('regenerates every grammar under SITTIR_REGEN_FORCE, fresh or not', async () => {
 		finished('rust', 'typescript', 'python');
@@ -256,6 +302,7 @@ describe('regen:all when only what the fixtures come from changed', () => {
 		children[0]!.finish(0);
 		await run;
 		expect(spawnSync).not.toHaveBeenCalled();
+		expect(runWorkspaceCheck.mock.calls).toEqual([['/repo']]);
 		expect(write).toHaveBeenCalledWith('[typescript] re-extracting fixtures: corpus of typescript changed since the fixtures were extracted\n');
 		expect(write).toHaveBeenCalledWith('[typescript] extracted\n');
 		expect(writeRegenRecord.mock.calls.map((call) => [call[1], call[2]])).toEqual([

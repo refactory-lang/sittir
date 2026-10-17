@@ -469,7 +469,7 @@ Every freshness record follows one rule: it fingerprints its inputs before the w
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::sourceFingerprint`
 
-The grammar's `SourceFingerprint` as it is now.
+The grammar's `SourceFingerprint` as it is now, after installing a missing wasm toolchain (`ensureWasmToolchain`) so the fingerprint names the toolchain that will build the parsers.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::RecordedGeneration`
 
@@ -667,7 +667,7 @@ Whether a grammar ships a `bindings.scm` in the source being verified, which mak
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::upstreamDigest`
 
-What the grammar's upstream contributes to generation, as one digest: the tree-sitter CLI version, then the upstream grammar package (`upstreamPackage`) and, transitively, every `tree-sitter-*` grammar it depends on (tree-sitter-typescript builds on tree-sitter-javascript), each by its upstream sources (`isUpstreamSource`). It is read from the checkout's installed packages, so a dependency bump that has not been regenerated fails verification, as a source edit does.
+What the grammar's upstream contributes to generation, as one digest: what builds the parsers (`treeSitterToolchainIdentity`: the tree-sitter CLI version and each wasm toolchain's), then the upstream grammar package (`upstreamPackage`) and, transitively, every `tree-sitter-*` grammar it depends on (tree-sitter-typescript builds on tree-sitter-javascript), each by its upstream sources (`isUpstreamSource`). It is read from the checkout's installed packages, so a dependency bump that has not been regenerated fails verification, as a source edit does.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::LOCKFILE`
 
@@ -752,3 +752,11 @@ The entries under `root` and every file they load at run time, transitively, thr
 ### `packages/codegen/src/scripts/generated-manifest.ts::stagedInputPathspecs`
 
 The paths the pre-commit check snapshots from the index before it verifies: the codegen source, the shared runtime package (`packages/common`, from which the source hash reads the files generation runs), `bootstrap.json`, `pnpm-lock.yaml`, the vocabulary, and every grammar's package and native crate. It covers every path `grammarSourceInputs` and `generatedRootsFor` can name, so a staged snapshot hashes the same inputs a working-tree check does; a source input left out of it reads as absent and fails a just-regenerated grammar as changed.
+
+### `packages/codegen/src/scripts/workspace-check.ts::WORKSPACE_CHECK`
+
+The command that checks every workspace crate compiles together, as an argument list: `cargo check --workspace --features napi-bindings`. It catches an emitter change that breaks a grammar other than the one just built. Without `--all-targets`, so the parity-test crate's test targets are not part of it.
+
+### `packages/codegen/src/scripts/workspace-check.ts::runWorkspaceCheck`
+
+Runs `WORKSPACE_CHECK` in `cwd` with inherited output and returns its exit status (1 when it has none), printing a diagnostic when it fails. A native build runs it after building its binding unless told not to (`runNativeBuild`), and `regenerateGrammars` runs it once itself when no grammar was regenerated, since no native build ran it then.

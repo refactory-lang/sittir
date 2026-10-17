@@ -55,6 +55,8 @@ const MODULES = {
 	emittersShared: '../../codegen/src/emitters/shared.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 	moduleClosure: '../../codegen/src/scripts/module-closure.ts',
+	workspaceCheck: '../../codegen/src/scripts/workspace-check.ts',
+	treeSitterCli: '../../codegen/src/transpile/tree-sitter-cli.ts',
 	indexSnapshot: '../../codegen/src/scripts/index-snapshot.ts',
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
 	generate: '../../codegen/src/compiler/generate.ts',
@@ -99,6 +101,8 @@ export interface CodegenSurface {
 	emittersShared: typeof import('../../codegen/src/emitters/shared.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
 	moduleClosure: typeof import('../../codegen/src/scripts/module-closure.ts');
+	workspaceCheck: typeof import('../../codegen/src/scripts/workspace-check.ts');
+	treeSitterCli: typeof import('../../codegen/src/transpile/tree-sitter-cli.ts');
 	indexSnapshot: typeof import('../../codegen/src/scripts/index-snapshot.ts');
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
 	generate: typeof import('../../codegen/src/compiler/generate.ts');

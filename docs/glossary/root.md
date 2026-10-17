@@ -484,7 +484,7 @@ value rather than clearing the flag out from under it.
 
 ### `packages/codegen/src/run-codegen.ts::runNativeBuild`
 
-Builds a grammar's N-API binding from its generated sources: clears the grammar's napi typedef directories (`clearNapiTypedefs`), runs the crate's `build:gate` script (`build:debug` under `nativeDebug`), then, unless `workspaceCheck` is false, `cargo check --workspace`. Throws on either failure. `runCodegenInternal` calls it after writing the render module, and `runNativeOnly` without generating.
+Builds a grammar's N-API binding from its generated sources: clears the grammar's napi typedef directories (`clearNapiTypedefs`), runs the crate's `build:gate` script (`build:debug` under `nativeDebug`), then, unless `workspaceCheck` is false, the workspace check (`runWorkspaceCheck`). Throws on either failure. `runCodegenInternal` calls it after writing the render module, and `runNativeOnly` without generating.
 
 ### `packages/codegen/src/run-codegen.ts::runNativeOnly`
 

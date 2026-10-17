@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	checkoutSource,
 	manifestPath,
@@ -15,6 +15,12 @@ import {
 	type VerifyResult
 } from '../generated-manifest.ts';
 import { withIndexSnapshot } from '../index-snapshot.ts';
+import { ensureWasmToolchain, treeSitterToolchainIdentity } from '../../transpile/tree-sitter-cli.ts';
+
+vi.mock('../../transpile/tree-sitter-cli.ts', async (importOriginal) => {
+	const real = await importOriginal<typeof import('../../transpile/tree-sitter-cli.ts')>();
+	return { ...real, ensureWasmToolchain: vi.fn(real.ensureWasmToolchain), treeSitterToolchainIdentity: vi.fn(real.treeSitterToolchainIdentity) };
+});
 
 const GRAMMAR = 'python';
 const GRAMMAR_SOURCE = 'packages/python/grammar.sittir.ts';
@@ -23,6 +29,7 @@ const CODEGEN_TEST = 'packages/codegen/src/__tests__/emit.test.ts';
 const GENERATED = 'packages/python/src/from-codegen.ts';
 
 let repo: string;
+let toolchainCache: string;
 
 const git = (...args: string[]): string =>
 	execFileSync(
@@ -79,7 +86,20 @@ const mergeMasterUncommitted = (): void => {
 	}
 };
 
+const installToolchain = (dir: string, version: string): void => {
+	mkdirSync(dir, { recursive: true });
+	writeFileSync(join(dir, '.version'), version);
+};
+
+const toolchainVersion = (name: string): string => join(toolchainCache, 'tree-sitter', name, '.version');
+
 beforeEach(() => {
+	toolchainCache = mkdtempSync(join(tmpdir(), 'sittir-toolchain-'));
+	vi.stubEnv('XDG_CACHE_HOME', toolchainCache);
+	vi.stubEnv('TREE_SITTER_WASI_SDK_PATH', undefined);
+	vi.stubEnv('TREE_SITTER_BINARYEN_PATH', undefined);
+	installToolchain(join(toolchainCache, 'tree-sitter', 'wasi-sdk'), '34.0');
+	installToolchain(join(toolchainCache, 'tree-sitter', 'binaryen'), '132');
 	repo = mkdtempSync(join(tmpdir(), 'sittir-stamp-'));
 	git('init', '-q', '-b', 'master');
 	write('.gitignore', 'node_modules\n');
@@ -93,6 +113,44 @@ beforeEach(() => {
 
 afterEach(() => {
 	rmSync(repo, { recursive: true, force: true });
+	rmSync(toolchainCache, { recursive: true, force: true });
+	vi.unstubAllEnvs();
+});
+
+describe('the wasm toolchain the parsers are built with', () => {
+	it('changes the source when a toolchain is replaced by another version', () => {
+		writeFileSync(toolchainVersion('binaryen'), '133');
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
+	it('reads a missing toolchain version as a changed source, never as fresh, and does not throw', () => {
+		rmSync(toolchainVersion('wasi-sdk'));
+		expect(verify).not.toThrow();
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
+	it('is installed when missing before a generation fingerprints its sources', () => {
+		vi.mocked(ensureWasmToolchain).mockClear();
+		vi.mocked(treeSitterToolchainIdentity).mockClear();
+		sourceFingerprint(GRAMMAR, checkoutSource(repo));
+		expect(ensureWasmToolchain).toHaveBeenCalledOnce();
+		expect(vi.mocked(ensureWasmToolchain).mock.invocationCallOrder[0]!).toBeLessThan(vi.mocked(treeSitterToolchainIdentity).mock.invocationCallOrder[0]!);
+	});
+
+	it('is only read when a generation is verified', () => {
+		vi.mocked(ensureWasmToolchain).mockClear();
+		verify();
+		expect(ensureWasmToolchain).not.toHaveBeenCalled();
+	});
+
+	it('is the one TREE_SITTER_WASI_SDK_PATH names when it is set', () => {
+		const own = join(toolchainCache, 'own-sdk');
+		installToolchain(own, '35.0');
+		vi.stubEnv('TREE_SITTER_WASI_SDK_PATH', own);
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+		regenerate();
+		expect(verify().ok).toBe(true);
+	});
 });
 
 describe('the record of a generation', () => {

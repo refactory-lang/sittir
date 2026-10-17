@@ -120,6 +120,7 @@ async function inPool<T, R>(items: readonly T[], limit: number, run: (item: T) =
 }
 
 export async function regenerateGrammars(grammars: readonly string[], cwd: string, opts: RegenerateOptions = {}): Promise<number> {
+	(await load('treeSitterCli')).ensureWasmToolchain();
 	const { regenerate: stale, reextract } = opts.force === true ? { regenerate: [...grammars], reextract: [] } : await pendingWork(grammars, cwd);
 	const before = new Map<string, RunInputs>();
 	for (const grammar of [...stale, ...reextract]) before.set(grammar, await runInputs(grammar, cwd));
@@ -136,6 +137,10 @@ export async function regenerateGrammars(grammars: readonly string[], cwd: strin
 	const extracted = await inPool(reextract, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--post-generate-only']));
 	const extractionFailed = extracted.find((status) => status !== 0);
 	if (extractionFailed !== undefined) return extractionFailed;
+	if (stale.length === 0) {
+		const checked = (await load('workspaceCheck')).runWorkspaceCheck(cwd);
+		if (checked !== 0) return checked;
+	}
 	for (const grammar of [...stale, ...reextract]) {
 		const record = await recordAfter(grammar, cwd, before.get(grammar)!);
 		if (record !== undefined) writeRegenRecord(cwd, grammar, record);

@@ -30,6 +30,7 @@ import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
+import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
 import { compareOrdinal } from './emitters/shared.ts';
 
@@ -421,19 +422,8 @@ function runNativeBuild({ grammar, nativeDebug, workspaceCheck }: Pick<CodegenOp
 	}
 
 	if (workspaceCheck !== false) {
-		console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
-		try {
-			execSync('cargo check --workspace --features napi-bindings', {
-				stdio: 'inherit',
-				cwd: process.cwd()
-			});
-		} catch (e) {
-			console.error(
-				`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
-					`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
-			);
-			throw e;
-		}
+		const status = runWorkspaceCheck(process.cwd());
+		if (status !== 0) throw new Error(`${WORKSPACE_CHECK.join(' ')} exited with ${status}`);
 	}
 }
 

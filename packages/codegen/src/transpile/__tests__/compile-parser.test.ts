@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { appendFileSync, cpSync, existsSync, mkdtempSync, rmSync, statSync } from 'node:fs';
+import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { Language, Parser } from 'web-tree-sitter';
 import { buildUpstreamWasm, ensureParserWasm, upstreamKeyOf, withUpstreamGrammar } from '../compile-parser.ts';
@@ -52,6 +52,29 @@ describe('ensureParserWasm', () => {
 			appendFileSync(header!, '\n// changed\n');
 			expect(upstreamKeyOf(dir, scannerFiles)).not.toBe(before);
 		});
+	}, 300_000);
+
+	it('keys the upstream judge on the version of each wasm toolchain that builds it', () => {
+		const cache = mkdtempSync(join(tmpdir(), 'sittir-toolchain-'));
+		const version = (name: string, value: string): void => {
+			mkdirSync(join(cache, 'tree-sitter', name), { recursive: true });
+			writeFileSync(join(cache, 'tree-sitter', name, '.version'), value);
+		};
+		vi.stubEnv('XDG_CACHE_HOME', cache);
+		vi.stubEnv('TREE_SITTER_WASI_SDK_PATH', undefined);
+		vi.stubEnv('TREE_SITTER_BINARYEN_PATH', undefined);
+		try {
+			version('wasi-sdk', '34.0');
+			version('binaryen', '132');
+			withUpstreamGrammar(realPythonDir, (dir, scannerFiles) => {
+				const before = upstreamKeyOf(dir, scannerFiles);
+				version('binaryen', '133');
+				expect(upstreamKeyOf(dir, scannerFiles)).not.toBe(before);
+			});
+		} finally {
+			vi.unstubAllEnvs();
+			rmSync(cache, { recursive: true, force: true });
+		}
 	}, 300_000);
 
 	it('leaves a present parser.wasm untouched', () => {
