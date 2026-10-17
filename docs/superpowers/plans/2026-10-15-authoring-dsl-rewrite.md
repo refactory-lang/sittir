@@ -713,6 +713,12 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - Spec §4.3's typescript literal split gives a hidden copy of `method_definition`, aliased `constructor_declaration`, whose name is the literal.
   - `copy()` outside the pass is `edit-entry-invalid`.
 - [ ] **Step 2:** Implement, then delete `splitGrammar`. Run the suite and the gate. Commit.
+  - **Landed:** c92203b76 on `feat/authoring-dsl`. Against f79b0223d no generated file moves, every evaluated-grammar snapshot equals Task 5.1's, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - "Gives the rules `splitGrammar` gives" is equality under the parse projection: a hidden copy aliased to N counts as rule N, the alias is dropped, and `splitFrom`, the lists and the options are compared under the same renaming. The projection is the test helper `dsl/__tests__/_parse-projection.ts`. The expected values were pinned from `splitGrammar` at c5e6b8eb8, before it was deleted.
+    - Copies are wire deposits (`wire.ts::wireCopy`), and the copy effect sits in the wire context, so a copy inherits its source's options through `splitFrom` and `inheritSplitOptions`. Part copies and the copy references live in `wire.ts` and `primitives/copy.ts`; `verbs/copy.ts` is unchanged. `cloneToward` and `fieldReferences` are deleted with `splitGrammar` instead of moving: entering a path makes the clones, and a path's `name:` segment names the container field, so neither has a caller.
+    - A copy keeps its members' `variantOf` stamps, and a replacement inside a copy carries the label of the arm it replaced.
+    - `(kind)` looks through a field enrich synthesized, and skips only one an author or a layer wrote.
+    - Alias effects rewrite `(from)` segments and leave `_labels` heads alone, as spec §1.7's effect table says, so a named copy leaves its source's labels.
 
 ---
 
