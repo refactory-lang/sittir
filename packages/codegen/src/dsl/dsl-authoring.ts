@@ -4,7 +4,8 @@ import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
 import { refine as refineImpl, type FormMap, type RefinePlaceholder } from './primitives/refine.ts';
-import { replace as replaceImpl, transform } from './transform/transform.ts';
+import { edit as editImpl, replace as replaceImpl } from './transform/transform.ts';
+import { copy as copyImpl } from './primitives/copy.ts';
 import type { PatchMap } from './wire/wire.ts';
 import type {
 	FieldRule,
@@ -68,7 +69,12 @@ export const refine = refineImpl as unknown as AuthoringRefine;
 interface AuthoringEdit {
 	<R extends AuthoringRule>(previous: R, ...sets: readonly PatchMap[]): R;
 }
-export const edit = transform as unknown as AuthoringEdit;
+export const edit = editImpl as unknown as AuthoringEdit;
+
+interface AuthoringCopy {
+	(source: string | SymbolRule<string>, path?: string): AuthoringRule;
+}
+export const copy = copyImpl as unknown as AuthoringCopy;
 
 type AuthoringReplacement = AuthoringRule | (($: Readonly<Record<string, SymbolRule<string>>>, member: GrammarRule) => AuthoringRule);
 interface AuthoringReplace {

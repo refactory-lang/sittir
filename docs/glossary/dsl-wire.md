@@ -915,6 +915,8 @@ body-pattern substitution.
 
 `baseSupertypeNames` is the base grammar's supertypes list (`baseSupertypeNamesOf`): the one fact the rename path reads to tell a supertype lift from a hoisted group.
 
+`activeEntryPath` is the path of the entry applying now (`wireWithPatchSites`). `copies` holds each copy the layer made, by name, with its effect (`wireCopy`); `copyReferences` maps each reference `copy()` or a path returned to its copy, and `copyDepth` counts the copy edits applying now (`insideCopy`).
+
 ### `packages/codegen/src/dsl/wire/wire.ts::authoredFieldSites`
 
 The sites each kind's authored patches mark with `field()`, each an index path and the field's name, read from `edits:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values, and an element supertype knows its slot's authored name, before any patch is applied.
@@ -1019,9 +1021,67 @@ Records a patch-chosen name on an enrich lift (`liftNames`) and credits the lift
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireWithPatchSites`
 
-Runs a patch application with the given sites as the active ones (`WireContext.activePatchSites`) and restores
-the prior set after, so a nested `transform()` credits its own sites. Outside a wire context it only runs the
-function.
+Runs a patch application with the given sites as the active ones (`WireContext.activePatchSites`), and with the entry's path as the active entry path a copy's origin names (`wireCopy`). It restores both after, so a nested `transform()` credits its own sites. Outside a wire context it only runs the function.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireCopyRequest`
+
+A copy to make or reuse: its source, the part copied (`.` for the whole rule), and whether a path or a `copy()` call asks for it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireCopy`
+
+The context's copy of a source part, made or reused, with `edit` applied to its body; returns the copy's name. The context is the rule kind being evaluated, and the name is `verbs/copy.ts::copyNameOf`'s. A copy is made only during a layer pass; elsewhere it is `edit-entry-invalid`. Its body is the source's (a deposit before the base's), or the selected part (`copyPartOf`). The body is a deposit, so the layer gains it as a rule, and the copy effect is recorded once, with the path or `copy()` origin that makes it inherit its source's options. One copy per source, part and context: a second request edits the same body. A name the grammar already has, or a second source for one name, is `rule-name-taken` (`refuseCopyName`), and a source the grammar lacks is `edit-site-missing`; a refused copy returns `undefined`. The edit runs inside the copy (`insideCopy`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireCopyBody`
+
+The body the context's copy of a source part has, or would start from: the copy's when it exists, otherwise the source's for a whole copy. It makes nothing, so a walk can look before it copies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireCopySource`
+
+The source of a copy the context made, or `undefined` for a name that is no copy.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireCopyReference`
+
+The copy a reference `copy()` or a path returned stands for, by identity.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireNoteCopyReference`
+
+Notes a reference as standing for a copy, so `alias`, `edit` and `replace` act on the copy.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireEditCopy`
+
+Applies `edit` to a copy's body, inside the copy.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireInsideCopy`
+
+Runs `fn` inside a copy (`insideCopy`), for a walk that edits a body before the copy is made.
+
+### `packages/codegen/src/dsl/wire/wire.ts::insideCopy`
+
+Runs `fn` with the context's copy depth raised, so `wireIsInsideCopy` holds for the edits it applies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireIsInsideCopy`
+
+Whether the edit applying now edits a copy's body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::sourceBodyOf`
+
+A source rule's body as the context holds it: its deposit, or else the base's body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::sameCopy`
+
+Whether a request reuses the copy a name already holds. A request for another source or part under the same name is refused (`refuseCopyName`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::refuseCopyName`
+
+The `rule-name-taken` refusal of a copy, naming the kind, the source, the part and the name.
+
+### `packages/codegen/src/dsl/wire/wire.ts::freshCopyBody`
+
+The body a new copy starts from, or the refusal: a name the base, the layer's `rules:` or a deposit already has is `rule-name-taken`, and a source with no body is `edit-site-missing`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::copyPartOf`
+
+A part of a source's body, reached by index and field segments only (`edit-entry-invalid` otherwise). A path that reaches no part is `edit-site-missing`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::recordLiftClaim`
 

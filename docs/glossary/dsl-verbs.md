@@ -96,7 +96,7 @@ An options path under a rename. Its head is a kind when `kindHead` (a top-level 
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::renameOptionPaths`
 
-An options record with every path key renamed, recursively, leaving preference values alone. The keys under `LABELS_KEY` are addresses whose heads are kinds. Two keys renaming to one path is an error.
+An options record with every path key renamed, recursively, leaving preference values alone. The keys under `LABELS_KEY` are addresses whose heads are kinds; with `labelHeads` false the heads stay, as an alias rewrites only `(from)` segments. Two keys renaming to one path is an error.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::SegmentRewrite`
 
@@ -164,7 +164,7 @@ Every record `RECORD_RENAMES` names, under a kind rename, with the field names t
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::rewriteInherited`
 
-The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind heads), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
+The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind or label heads, so a named copy leaves its source's labels where they are), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::LeadCopies`
 

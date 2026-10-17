@@ -204,6 +204,6 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', options, undefined, { bindings, renames: { let_item: 'binding' } });
 		const block = raw.options as Record<string, Record<string, unknown>>;
 		expect(Object.keys(block.let_item ?? {}).sort()).toEqual(['name:/before', 'terminator:/before']);
-		expect(Object.keys(block._labels ?? {})).toEqual(['callee/x:/separator']);
+		expect(Object.keys(block._labels ?? {})).toEqual(['identifier/x:/separator']);
 	}, 120_000);
 });

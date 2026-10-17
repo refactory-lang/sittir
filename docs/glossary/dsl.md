@@ -2335,12 +2335,19 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::edit`
 
-The authoring name of `transform/transform.ts::transform`: `edit(previous, ...sets)` applies each set, keyed by path as an `edits:` entry is, to the rule a `rules:` callback received. It is the same application as the kind's `edits:` entry, which the layer lowers to `edit(result, edits[K])` after the callback, so it records the same patch sites and effects. `transform` stays the internal name the lowering calls.
-
+The authoring view of `transform/transform.ts::edit`: `edit(previous, ...sets)` applies each set, keyed by path as an `edits:` entry is, to the rule a `rules:` callback received, or to a copy's body when `previous` is a reference `copy()` returned. It is the same application as the kind's `edits:` entry, which the layer lowers to `transform(result, edits[K])` after the callback, so it records the same patch sites and effects.
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::replace`
 
-The authoring view of `transform/transform.ts::replace`: `replace(previous, path, rule)`, where `rule` is a rule or `($, member) => rule`, replaces the member at `path` in a rule a `rules:` callback holds. It is the inline spelling of a replacing `edits:` entry and records the same patch site and effects.
+The authoring view of `transform/transform.ts::replace`: `replace(previous, path, rule)`, where `rule` is a rule or `($, member) => rule`, replaces the member at `path` in a rule a `rules:` callback holds, or in a copy's body when `previous` is a reference `copy()` returned. It is the inline spelling of a replacing `edits:` entry and records the same patch site and effects.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringCopy`
+
+`copy(source, path?)`'s authoring signature: a kind's name or `$.name`, and a part path.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::copy`
+
+The authoring view of `primitives/copy.ts::copy`.
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringAlias`
 
@@ -2826,6 +2833,10 @@ display (`armDisplayOf`, `labelOf` with the owner's `supertypeOwners`
 membership) through `withAutomaticLabel`, so the name matches what the site
 now spells and the new key is recorded. Used by `resolveAliasPlaceholder`'s
 lift/mint/rename branches and `replaceInBodyRt`'s group substitution.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::carriedLabel`
+
+A replacement carrying the label of the arm it replaced, for a copy, which keeps its members' `variantOf` stamps. The label is copied as it was (`variant`, `variantOf`, `default`) and stays automatic when it was automatic, so a later layer re-derives it as it re-derives the source's. A site that has a label of its own, or an original with none, is returned as it is.
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::flagWalker`
 
@@ -7401,7 +7412,7 @@ normalizes it and laid over the base's rules. The pass evaluates the lists (`eva
 layer's effects resolved per owner, and runs the queued entries as the whole-grammar phase: the `narrow` entries
 (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`). The stage bases are the ones its
 base's record carries, or, for the first layer that departs from its base (`departsFromBase`), its source and the
-base it completed.
+base it completed. Each whole copy wire made joins the supertype and inline lists its source is in, before the queued entries run.
 
 ### `packages/codegen/src/dsl/layer.ts::departsFromBase`
 
@@ -7419,7 +7430,7 @@ What `evaluatedLists` reads: the completed base, the layer's `$` and the evaluat
 
 ### `packages/codegen/src/dsl/layer.ts::resolvedEffects`
 
-The layer's field (segment) and alias effects, resolved per owner (`verbs/effects.ts::effectsForOwners`) over the layer's grammar view: the rules as its edits leave them, with the layer's supertypes, where a field effect's reach stops.
+The layer's field (segment) and alias effects, resolved per owner (`verbs/effects.ts::effectsForOwners`) over the layer's grammar view: the rules as its edits leave them, with the layer's supertypes, where a field effect's reach stops. The copies wire made follow them (`wire/wire.ts::wireCopy`).
 
 ### `packages/codegen/src/dsl/layer.ts::normalizedBody`
 
@@ -7748,14 +7759,6 @@ Whether every visible kind that reaches a hidden host makes the same edit in the
 ### `packages/codegen/src/dsl/bind.ts::fieldWrapGrammar`
 
 The grammar with a batch of field wraps applied: each checked (`fieldWrapIssue`), each target wrapped in every host, and the owning kinds' option segments that named the child (`kind:`, or a token's quoted text) rewritten to the new `field:`.
-
-### `packages/codegen/src/dsl/bind.ts::fieldReferences`
-
-A rule with every reference to `symbol` that is not already in a field wrapped in `field`.
-
-### `packages/codegen/src/dsl/bind.ts::splitGrammar`
-
-The grammar with each placement split applied. The split kind is minted under its new name from the base kind's body. Each intermediate kind of `within`, and each hidden rule on the way that reaches the target, is cloned per outer kind with the reference replaced: a hidden rule as `<base>_<outer>`, a visible container under the name its `containers` entry gives. The outer kind then references the clones. A clone of a supertype or an inline rule is listed beside its base (`mintLists`), and a visible container is fielded where its placements reference it. `splitFrom` records each minted name's base. A split that flips hiddenness, names no placement, or mints a name the grammar already has is an error.
 
 ### `packages/codegen/src/dsl/bind.ts::baseNamesOf`
 

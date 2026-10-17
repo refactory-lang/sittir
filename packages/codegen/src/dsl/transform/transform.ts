@@ -13,6 +13,7 @@ import type { PathSegment } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
+import { editedCopy } from '../primitives/copy.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import { canonicalRuleText } from './token-forms.ts';
@@ -49,6 +50,7 @@ import {
 	wireApplyingEntries,
 	wireIsApplyingEntries,
 	wireIsInlineWrite,
+	wireIsInsideCopy,
 	wireNoteInlineWrite,
 	wireTextTokenBody,
 	wireTextTokenOf,
@@ -81,7 +83,7 @@ import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
 import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
-import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
+import { carriedLabel, relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, arm?: unknown): RuntimeRule {
 	return withAuthoredLabel(rule as RuntimeRule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) }, wireAutomaticVariants());
@@ -129,8 +131,12 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	return rule;
 }
 
+export function edit(previous: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
+	return editedCopy(previous, (body) => transform(body, ...patchSets)) ?? transform(previous, ...patchSets);
+}
+
 export function replace(previous: RuntimeRule, path: string, rule: RuntimeRule | ReplacingFn): RuntimeRule {
-	return transform(previous, { [path]: rule });
+	return edit(previous, { [path]: rule });
 }
 
 export function withDirectVariants(rule: unknown, ...sets: readonly PatchSet[]): unknown {
@@ -747,7 +753,12 @@ function replacingDollar(key: string): unknown {
 
 function resolveAt(patch: PatchValue, member: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
 	refuseSameSite(member, key);
-	return wireNoteInlineWrite(resolvePatch(patch, member, key, enclosing));
+	const resolved = resolvePatch(patch, member, key, enclosing);
+	return wireNoteInlineWrite(wireIsInsideCopy() && replacesMember(patch) ? carriedLabel(resolved, member, wireAutomaticVariants()) : resolved);
+}
+
+function replacesMember(patch: PatchValue): boolean {
+	return typeof patch === 'function' || (typeof (patch as { type?: unknown }).type === 'string' && !('__sittirPlaceholder' in patch));
 }
 
 function refuseSameSite(member: RuntimeRule, key: string): void {
@@ -848,10 +859,13 @@ function recordFieldEffect(name: string, member: RuntimeRule): void {
 }
 
 function aliasInPlace(member: RuntimeRule, name: string): RuntimeRule {
-	const from = (member as unknown as { name: string }).name;
-	wireRecordBindingEffect({ kind: 'alias', from, to: name });
-	refuseAliasTarget(from, name);
+	recordAlias((member as unknown as { name: string }).name, name);
 	return nativeRuleFn<(content: unknown, value: unknown) => RuntimeRule>('alias')(member, symbolRef(name));
+}
+
+export function recordAlias(from: string, to: string): void {
+	wireRecordBindingEffect({ kind: 'alias', from, to });
+	refuseAliasTarget(from, to);
 }
 
 function refuseAliasTarget(from: string, to: string): void {

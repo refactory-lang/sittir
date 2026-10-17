@@ -356,6 +356,38 @@ tree-sitter's CLI.
  */
 ```
 
+### `packages/codegen/src/dsl/primitives/alias.ts::alias`
+
+`alias(name)` is the placeholder an entry fills at the member it reaches (`transform/transform.ts::resolveAliasPlaceholder`). `alias(rule, value)` is the runtime's own `alias`, except on a reference `copy()` or a path returned: there the copy is shown as `value` (`copy.ts::namedCopy`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::symbol`
+
+The runtime's `sym`.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::nativeAlias`
+
+The runtime's `alias`.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::nameOf`
+
+The kind a source names: a string, or a `$` value read the way the runtime's `alias` reads one, so a name the grammar has no rule for yet still reads.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copyReference`
+
+The reference to a copy. A copy of a visible rule aliases back to its source, `alias($._copy, $.source)`, so the tree shows the source's kind; a copy of a hidden rule is `$._copy`. Shown as another name, the reference is `alias($._copy, $.shown)` and the alias `(source, shown)` is recorded (`transform/transform.ts::recordAlias`). The reference is noted as the copy's (`wire/wire.ts::wireNoteCopyReference`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copy`
+
+`copy(source, path?)`: the context's copy of `source`, or of the part `path` selects, made or reused (`wire/wire.ts::wireCopy`), and its reference (`copyReference`). It runs only during the layer pass: in a `rules:` callback, a replacing function or a helper. Called anywhere else it throws `edit-entry-invalid`. A refused copy leaves the source's own reference.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::namedCopy`
+
+`alias(reference, value)` on a copy's reference: the copy shown as `value`, replacing the alias back to its source. Any other rule, or an anonymous `value`, is `undefined`, and the runtime's `alias` applies.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::editedCopy`
+
+`edit` and `replace` on a copy's reference: the edit applies to the copy's body and the same reference comes back. Any other rule is `undefined`.
+
 ### `packages/codegen/src/dsl/primitives/refine.ts::module`
 
 ```text

@@ -337,6 +337,7 @@ function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, confi
 		symbols,
 		stageBases: inherited?.stageBases ?? (departsFromBase(wire, config) ? { name, raw: source, enriched: completed, inherited } : undefined)
 	};
+	for (const copy of wire.copies.values()) if (copy.part === '.') ctx.lists.enlist(copy.source, copy.copy);
 	applyNarrows(layer.narrows, ctx);
 	applyLeads(layer.leads, ctx);
 	return { evaluated, ctx };
@@ -360,7 +361,7 @@ function layerView(name: string, rules: Record<string, Rule>, evaluated: Omit<La
 
 function resolvedEffects(view: GrammarRecord, wire: WireContext): readonly Effect[] {
 	const own = wire.bindingEffects.filter((effect): effect is SegmentEffect | AliasEffect => effect.kind === 'segment' || effect.kind === 'alias');
-	return effectsForOwners(view, own) as readonly Effect[];
+	return effectsForOwners(view, [...own, ...wire.copies.values()]) as readonly Effect[];
 }
 
 function normalizedBody(body: unknown, name: string): Rule {

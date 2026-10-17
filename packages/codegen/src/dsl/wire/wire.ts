@@ -1,4 +1,5 @@
-import type { BindingEffect, Lead } from '../verbs/effects.ts';
+import type { BindingEffect, CopyEffect, Lead } from '../verbs/effects.ts';
+import { copyNameOf, VerbRefusal } from '../verbs/copy.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
@@ -27,7 +28,7 @@ import {
 	variantMintName,
 	type VariantPlaceholder
 } from '../primitives/variant.ts';
-import { parsePath } from '../transform/transform-path.ts';
+import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
 import { aliasOf, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, type SymbolSource } from '../rule-patterns.ts';
@@ -108,6 +109,10 @@ export interface WireContext {
 	readonly liftClaims: Map<string, Set<string>>;
 	readonly elementSupertypes: ReadonlyMap<string, string>;
 	activePatchSites: readonly string[];
+	activeEntryPath: string | null;
+	copyDepth: number;
+	readonly copies: Map<string, CopyEffect>;
+	readonly copyReferences: WeakMap<object, string>;
 	readonly source: unknown;
 	evaluatedExternals: ReadonlySet<string>;
 	evaluatedBodies?: ReadonlyMap<string, unknown>;
@@ -238,12 +243,142 @@ export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T):
 	const context = currentContext;
 	if (!context) return fn();
 	const prior = context.activePatchSites;
+	const priorPath = context.activeEntryPath;
 	context.activePatchSites = sites.map(patchSiteKey);
+	context.activeEntryPath = sites[0]?.path ?? null;
 	try {
 		return fn();
 	} finally {
 		context.activePatchSites = prior;
+		context.activeEntryPath = priorPath;
 	}
+}
+
+export interface WireCopyRequest {
+	readonly source: string;
+	readonly part: string;
+	readonly via: 'path' | 'copy';
+}
+
+export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => RuntimeRule): string | undefined {
+	const context = currentContext;
+	const owner = context?.currentRuleKind;
+	if (context?.layer === undefined || owner === null || owner === undefined)
+		throw new VerbRefusal('edit-entry-invalid', `copy('${request.source}'): a copy is made only during a layer pass: in a rule callback, a replacing function or a helper`);
+	const name = copyNameOf(request.source, request.part, owner);
+	const prior = context.copies.get(name);
+	const body = prior === undefined ? freshCopyBody(context, request, name, owner) : sameCopy(prior, request, owner) ? context.deposits.get(name) : undefined;
+	if (body === undefined) return undefined;
+	if (prior === undefined)
+		context.copies.set(name, {
+			kind: 'copy',
+			copy: name,
+			source: request.source,
+			part: request.part,
+			context: owner,
+			display: undefined,
+			admitted: undefined,
+			origin: request.via === 'path' && context.activeEntryPath !== null ? { kind: 'path', owner, path: context.activeEntryPath } : { kind: 'copy', owner }
+		});
+	context.deposits.set(name, insideCopy(context, () => edit(body)));
+	return name;
+}
+
+export function wireInsideCopy<T>(fn: () => T): T {
+	return currentContext === null ? fn() : insideCopy(currentContext, fn);
+}
+
+function insideCopy<T>(context: WireContext, fn: () => T): T {
+	context.copyDepth++;
+	try {
+		return fn();
+	} finally {
+		context.copyDepth--;
+	}
+}
+
+export function wireIsInsideCopy(): boolean {
+	return (currentContext?.copyDepth ?? 0) > 0;
+}
+
+export function wireCopyBody(source: string, part: string): RuntimeRule | undefined {
+	const context = currentContext;
+	const owner = context?.currentRuleKind;
+	if (context === null || owner === null || owner === undefined) return undefined;
+	const name = copyNameOf(source, part, owner);
+	return context.copies.has(name) ? context.deposits.get(name) : part === '.' ? sourceBodyOf(context, source) : undefined;
+}
+
+export function wireCopySource(copy: string): string | undefined {
+	return currentContext?.copies.get(copy)?.source;
+}
+
+export function wireCopyReference(rule: unknown): string | undefined {
+	return typeof rule === 'object' && rule !== null ? currentContext?.copyReferences.get(rule) : undefined;
+}
+
+export function wireNoteCopyReference<R>(rule: R, copy: string): R {
+	if (typeof rule === 'object' && rule !== null) currentContext?.copyReferences.set(rule, copy);
+	return rule;
+}
+
+export function wireEditCopy(copy: string, edit: (body: RuntimeRule) => RuntimeRule): void {
+	const context = currentContext;
+	const body = context?.deposits.get(copy);
+	if (context && body !== undefined) context.deposits.set(copy, insideCopy(context, () => edit(body)));
+}
+
+function sourceBodyOf(context: WireContext, source: string): RuntimeRule | undefined {
+	return context.deposits.get(source) ?? context.baseRuleBodies[source];
+}
+
+function sameCopy(prior: CopyEffect, request: WireCopyRequest, owner: string): boolean {
+	if (prior.source === request.source && prior.part === request.part) return true;
+	refuseCopyName(owner, request, prior.copy);
+	return false;
+}
+
+function refuseCopyName(owner: string, request: WireCopyRequest, name: string): void {
+	wireRefuse({
+		code: 'rule-name-taken',
+		ownerKind: owner,
+		message: `copy: '${request.source}' at '${request.part}' copies to '${name}', which the grammar already names`,
+		details: { kind: owner, source: request.source, part: request.part, copy: name }
+	});
+}
+
+function freshCopyBody(context: WireContext, request: WireCopyRequest, name: string, owner: string): RuntimeRule | undefined {
+	if (Object.hasOwn(context.baseRuleBodies, name) || context.authoredRuleNames.has(name) || context.deposits.has(name)) {
+		refuseCopyName(owner, request, name);
+		return undefined;
+	}
+	const source = sourceBodyOf(context, request.source);
+	if (source === undefined) {
+		wireRefuse({
+			code: 'edit-site-missing',
+			ownerKind: owner,
+			message: `copy: '${request.source}' names no rule of the grammar`,
+			details: { kind: owner, source: request.source }
+		});
+		return undefined;
+	}
+	return request.part === '.' ? source : copyPartOf(source, request, owner);
+}
+
+function copyPartOf(body: RuntimeRule, request: WireCopyRequest, owner: string): RuntimeRule | undefined {
+	const segments = parsePath(request.part);
+	const refuse = (code: string, reason: string): undefined => {
+		wireRefuse({ code, ownerKind: owner, message: `copy: '${request.source}' at '${request.part}': ${reason}`, details: { kind: owner, source: request.source, part: request.part } });
+		return undefined;
+	};
+	if (segments.some((segment) => segment.kind !== 'index' && segment.kind !== 'fieldName')) return refuse('edit-entry-invalid', 'a part is reached by index and field segments only');
+	let part: RuntimeRule | undefined;
+	try {
+		applyPath(body, segments, (member) => (part = member));
+	} catch (error) {
+		if (!(error instanceof ApplyPathSkip)) throw error;
+	}
+	return part ?? refuse('edit-site-missing', 'the path names no part of the rule');
 }
 
 function recordLiftClaim(liftName: string): void {
@@ -396,6 +531,10 @@ export function withWireContext<T>(
 		liftClaims: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
+		activeEntryPath: null,
+		copyDepth: 0,
+		copies: new Map(),
+		copyReferences: new WeakMap(),
 		source: base,
 		evaluatedExternals: new Set(),
 		layer: undefined
@@ -615,6 +754,10 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		liftClaims: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
+		activeEntryPath: null,
+		copyDepth: 0,
+		copies: new Map(),
+		copyReferences: new WeakMap(),
 		source,
 		evaluatedExternals: new Set(),
 		layer

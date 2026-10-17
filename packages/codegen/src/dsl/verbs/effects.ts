@@ -134,13 +134,13 @@ function renamePath(path: string, rename: (name: string) => string, kindHead: bo
 	return [kindHead ? rename(head) : renameSegment(head, rename, fields), ...rest.map((s) => renameSegment(s, rename, fields))].join('/');
 }
 
-function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>): unknown {
+function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>, labelHeads = true): unknown {
 	if (!isRecord(record) || isPreference(record)) return record;
 	const out: GrammarRecord = {};
 	for (const [key, value] of Object.entries(record)) {
 		const to = renamePath(key, rename, kindHead, fields);
 		if (to in out) throw new Error(`bind: options '${key}' renames to '${to}', which the options already name`);
-		out[to] = renameOptionPaths(value, rename, key === LABELS_KEY, fields);
+		out[to] = renameOptionPaths(value, rename, key === LABELS_KEY && labelHeads, fields, labelHeads);
 	}
 	return out;
 }
@@ -350,7 +350,7 @@ export function rewriteInherited(records: LayerRecords, ctx: EffectCtx): LayerRe
 	let out: GrammarRecord = { ...records };
 	if (out.options !== undefined) {
 		if (segments.length > 0) out.options = rewriteOwnedSegments(out.options, segments);
-		if (aliases.size > 0) out.options = renameOptionPaths(out.options, (name) => aliases.get(name) ?? name, false, fields);
+		if (aliases.size > 0) out.options = renameOptionPaths(out.options, (name) => aliases.get(name) ?? name, false, fields, false);
 	}
 	if (renames.size > 0) out = renameRecords(out, (name) => renames.get(name) ?? name, fields);
 	if (out.options !== undefined && Object.keys(splitFrom).length > 0) out.options = inheritSplitOptions({ options: out.options, rules: ctx.rules }, splitFrom);
