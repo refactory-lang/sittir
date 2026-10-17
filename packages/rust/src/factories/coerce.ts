@@ -4,7 +4,8 @@ import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
 import { lexedConfig, interiorPattern, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
-import { TSKindId, KIND_NAMES } from '../types.js';
+import { TSKindId } from '../kinds.js';
+import { KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type { AnyUntypedNode, Admit, NonEmptyArray, NumericInput, SiblingLeadRefusal } from '@sittir/types';
 import {

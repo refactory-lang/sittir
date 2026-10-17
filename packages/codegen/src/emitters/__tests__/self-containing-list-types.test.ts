@@ -50,6 +50,8 @@ it.each(['typescript', 'typescript6'])(
 			generatedIdTables.kindIds.set(ERROR_KIND_NAME, ERROR_KIND_ROW);
 			expect(nodeMap.nodes.get('tuple')?.modelType).toBe('list');
 			const modules = emitTypesModules({ grammar: 'synth', nodeMap, generatedIdTables, triviaKinds: ['comment'] });
+			if (modules.kinds === undefined) throw new Error('the synthetic grammar emitted no kinds module');
+			writeFileSync(join(dir, 'kinds.ts'), modules.kinds);
 			writeFileSync(join(dir, 'types.ts'), modules.types);
 			writeFileSync(join(dir, 'types-internal.ts'), modules.internal);
 			writeFileSync(

@@ -321,7 +321,7 @@ describe('render options on transports', () => {
 		expect(body).toContain('pub item_separator_space_before: Option<KindId>,');
 		expect(body).toContain('wire(key = "_item_separator_space_after")');
 		expect(body).toContain('pub item_separator_space_after: Option<KindId>,');
-		expect(body).toContain('pub delimiter: Option<u8>,');
+		expect(body).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
 		expect(src).not.toContain('ListSpacing');
 	});
 
@@ -718,7 +718,7 @@ describe('transport attributes', () => {
 			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemTransport \{/
 		);
 		expect(extractStructBody(src, 'FunctionItemTransport')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
-		expect(extractStructBody(src, 'ParametersElementsTransport')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<u8>,/);
+		expect(extractStructBody(src, 'ParametersElementsTransport')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
 	});
 
 	it("gives a choice's variants the ids today's decode claims for them", async () => {

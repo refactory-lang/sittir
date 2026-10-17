@@ -583,6 +583,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - A top layer whose created rule enrich would change reports `layer-not-enrich-fixpoint` naming that layer and rule.
   - Counted with a spy, one evaluation of the top layer runs enrich three times: layer 1's intake, layer 1's check, and layer 2's check. Layer 2's intake runs none.
 - [ ] **Step 2:** Implement, then run the suite and the gate. Commit.
+  - **Landed:** 386ca0a11 and 825ad2334 on `feat/authoring-dsl`. Against the 913f2cfec reference, each commit's own regenerated tree passes the output gate and the snapshot check with no exceptions, and its rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - Checking every layer's own result surfaced tree-sitter-c: its single layer was not enrich's fixpoint, because three detectors matched shapes that enrich itself produced later in the same run. As ruled, those stages are fixed in their own commit before the check (386ca0a11), and c's first-run output is kept. A display rule is terminal by its row or by its body, and an enriched field is transparent to the nested-repeat count and to the inline-safe repeat test.
+    - The check builds the layer's result by calling the runtime's own `grammar()` inside the pass, with the options the layer hands the runtime, so the checked enrichment carries every runtime field.
+    - `enrichSidecarsOf` and `EnrichSidecars` go: the record's `enrichment` carries the sidecars.
 
 ---
 
@@ -599,6 +603,9 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
 
 - [ ] **Step 1:** Test that an inline `edit` records the same patch sites and effects as the same entry in `edits`.
 - [ ] **Step 2:** Implement, migrate python, and run the gate. Commit.
+  - **Landed:** 9ef77c098 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal; python's migrated layer is byte-neutral. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - `edit` is exported from `dsl-authoring.ts`, as the typed view of `transform`, so `transform.ts` is unchanged. The public DSL module exports `edit` in place of `transform`.
+    - The test compares an inline `edit` with the `edits` entry for each path segment form in a bindings layer, so the projected effects are compared as well as the body and the patch sites.
 
 ### Task 4.2: `replace`, and the replacing function
 
@@ -612,6 +619,9 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - `($, member) => rule` receives the member.
   - `replace(previous, path, rule)` gives the entry's result and records the same patch sites.
 - [ ] **Step 2:** Implement and run the gate. Commit.
+  - **Landed:** 82561896b on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - A replacing function receives the `$` of the rule callback it is applied in. Wire's context carries it beside the current rule kind. Its rule then resolves as a literal entry does, so the alias-of-own-symbol case and the alias effect follow.
+    - The literal cases are characterized at the bindings layer: a literal alias over a bare symbol keeps the symbol, and over a fielded member it replaces the field. A literal alias at a choice arm records a patch site but leaves the rule unchanged; that belongs to Task 5.1, where the literal alias goes.
 
 ### Task 4.3: `variant(name, rule, options?)` and `refine(forms)`
 
@@ -624,6 +634,11 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - A re-authored rule `choice(variant('a', seq('x', $.y)), variant('b', seq('z', $.y)))` yields exactly the rules and annotations that the bare choice plus `edits: { k: { '0': variant('a'), '1': variant('b') } }` yields.
   - `refine(forms)` at `.` records the same forms as typescript's inline `interface_body` call.
 - [ ] **Step 2:** Implement and run the gate. Typescript keeps its inline `refine` call: it is one site, and needs no change. Commit.
+  - **Landed:** c4349a544 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - The direct form labels a copy of the rule under a non-enumerable symbol key. The labelled arms are lowered to `variant` entries at their paths, applied after the kind's `edits:` sets, which is the order a set applies its own variant entries in. An entry that edits inside a labelled arm therefore lands in its mint.
+    - A kind minted inside a callback had a deposit and no rule, since wire declares mint rules from the `edits:` config. The pass now appends such deposits as rules after the declared ones; this also covers an inline `edit(previous, { … variant(…) })`.
+    - The forms map in the test is `object_type`'s; typescript has no `refine` call on `interface_body`.
+    - A `refine` entry at any path but `.` is `edit-entry-invalid`, and records no patch site, as the inline call records none.
 
 ### Task 4.4: the same-site check
 
@@ -636,6 +651,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - `rules: { k: ($, p) => edit(p, { '1': field('a') }) }` with `edits: { k: { 'body:': field('b') } }`, where `body:` is member 1, conflicts.
   - Two different members do not conflict.
 - [ ] **Step 2:** Implement, then run the tests and the gate. Commit.
+  - **Landed:** c5e6b8eb8 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - Wire's context records the nodes a rule callback's verbs wrote, keyed per kind, and transform refuses an entry that resolves onto one of them, at the point it resolves. A node is the member every spelling of a path reaches, so no second path resolver is needed; `layer.ts` is unchanged, and the refusal reaches the layer's diagnostics as the other entry refusals do.
+    - The `'body:'` example can't be written yet: a field segment matches only when the rule at that level is that field, so it never names a seq member. The test spells member 1 as `'-1'` instead.
+    - A direct variant's arm counts as an inline write at that arm.
 
 ---
 

@@ -16,8 +16,8 @@ use crate::types::Span;
 #[derive(serde::Serialize)]
 pub struct DescendantBatch {
     pub coordinates: Vec<QueryCoordinate>,
-    pub resume: Option<Vec<u32>>,
-    pub origin: u64,
+    pub resume: Option<Vec<crate::types::ChildPosition>>,
+    pub origin: crate::types::TreeHandle,
 }
 
 /// A node a walk found, as it crosses: `{ $treeHandle, $end, $span, $type }`, its
@@ -25,7 +25,7 @@ pub struct DescendantBatch {
 #[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct QueryCoordinate {
     #[serde(rename = "$treeHandle")]
-    pub handle: u64,
+    pub handle: crate::types::TreeHandle,
     #[serde(rename = "$end")]
     pub end: crate::types::NodeIndex,
     #[serde(rename = "$span")]
@@ -45,13 +45,13 @@ impl From<NodeCoordinate> for QueryCoordinate {
 #[derive(serde::Deserialize, Clone, Copy, Debug)]
 #[serde(untagged)]
 pub enum Address {
-    Own { handle: u64 },
-    Child { parent: u64, index: u32 },
+    Own { handle: crate::types::TreeHandle },
+    Child { parent: crate::types::TreeHandle, index: crate::types::ChildPosition },
 }
 
 impl Address {
     /// A handle tagged with the tree the address names.
-    pub fn tree_handle(&self) -> u64 {
+    pub fn tree_handle(&self) -> crate::types::TreeHandle {
         match *self {
             Address::Own { handle } => handle,
             Address::Child { parent, .. } => parent,

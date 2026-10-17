@@ -154,7 +154,8 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	lines.push(`import * as F from './raw.js';`);
 	lines.push(`import type * as T from '../types-internal.js';`);
 	if (kindEntries) {
-		lines.push(`import { TSKindId, KIND_NAMES } from '../types.js';`);
+		lines.push(`import { TSKindId } from '../kinds.js';`);
+		lines.push(`import { KIND_NAMES } from '../types.js';`);
 	}
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);

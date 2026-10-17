@@ -71,6 +71,7 @@ export interface EmitAllResult {
 	wrap: string;
 	types: string;
 	typesInternal: string;
+	kinds: string | undefined;
 	consts: string;
 	options: string;
 	irNamespace: string;
@@ -200,7 +201,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	const wires = collectPolymorphWires(nodeMap);
 	const polymorphsOverlay = emitPolymorphsOverlay({ nodeMap, generatedIdTables, wires });
-	const { types, internal: typesInternal } = emitTypesModules({
+	const { types, internal: typesInternal, kinds } = emitTypesModules({
 		grammar,
 		nodeMap,
 		generatedIdTables,
@@ -234,6 +235,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		wrap,
 		types,
 		typesInternal,
+		kinds,
 		consts,
 		options,
 		irNamespace,

@@ -13,7 +13,7 @@ use crate::layout::TransportLayout;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
 use crate::trivia::{TransportTrivia, TriviaEntry};
 use crate::trivia_table::TriviaSide;
-use crate::types::{FieldId, KindId, NodeIndex, Span};
+use crate::types::{FieldId, ItemIndex, KindId, NodeIndex, Span};
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
 use tree_sitter::{Language, Node, TreeCursor};
@@ -851,13 +851,13 @@ pub trait ReadSlot: Sized {
     }
     /// Where the next child taken arrives, `taken` children having been
     /// taken: its item in the finished slot unless `position` moves it.
-    fn arrival(acc: &Self::Acc, taken: u32) -> u32 {
+    fn arrival(acc: &Self::Acc, taken: u32) -> ItemIndex {
         let _ = acc;
-        taken
+        ItemIndex(taken)
     }
     /// The item in the finished slot of the child that arrived at
     /// `arrival`; `None` when finishing drops it.
-    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
         let _ = acc;
         Some(arrival)
     }
@@ -977,21 +977,21 @@ impl<V> Elided<V> {
         }
     }
     /// Where the next item pushed arrives: after every item and hole so far.
-    pub fn arrival(&self) -> u32 {
-        self.items.len() as u32
+    pub fn arrival(&self) -> ItemIndex {
+        ItemIndex(self.items.len() as u32)
     }
 
     /// The position in `positions` of the item that arrived at `arrival`:
     /// its own index when no separator made a hole, else its segment's,
     /// when it is the segment's first item; `None` for a later one.
-    pub fn position(&self, arrival: u32) -> Option<u32> {
+    pub fn position(&self, arrival: ItemIndex) -> Option<ItemIndex> {
         if self.items.iter().all(Option::is_some) {
             return Some(arrival);
         }
-        let before = self.items.get(..arrival as usize)?;
+        let before = self.items.get(..arrival.index())?;
         let segment = before.iter().filter(|item| item.is_none()).count() as u32;
         let first = before.last().is_none_or(Option::is_none);
-        first.then_some(segment)
+        first.then_some(ItemIndex(segment))
     }
 
     pub fn positions(self) -> Vec<Option<V>> {
@@ -1028,10 +1028,10 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> 
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn arrival(acc: &Self::Acc, _: u32) -> u32 {
+    fn arrival(acc: &Self::Acc, _: u32) -> ItemIndex {
         acc.arrival()
     }
-    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
         acc.position(arrival)
     }
     /// An empty list is `[]`.
@@ -1053,10 +1053,10 @@ impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<Option<Slo
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn arrival(acc: &Self::Acc, _: u32) -> u32 {
+    fn arrival(acc: &Self::Acc, _: u32) -> ItemIndex {
         acc.arrival()
     }
-    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+    fn position(acc: &Self::Acc, arrival: ItemIndex) -> Option<ItemIndex> {
         acc.position(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
@@ -1181,11 +1181,6 @@ pub fn capture<F: FromCapture>(captures: &Captures<'_>, name: &str, at: SlotSite
     F::from_capture(captures.name(name).map(|m| m.as_str()), at)
 }
 
-/// A delimiter flag's bit for a leading flank.
-pub const LEADING: u8 = 1;
-/// A delimiter flag's bit for a trailing flank.
-pub const TRAILING: u8 = 2;
-
 /// A list's delimiter flags, as today's `_hasSeparatorFlank` computes them.
 /// `leading` and `trailing` are `Some(mandatory)` for each flank the kind
 /// leaves optional, with the mandatory flank tokens on the other side. A
@@ -1193,7 +1188,7 @@ pub const TRAILING: u8 = 2;
 /// that item is a unit variant, the flank is present when the list holds
 /// more anonymous unfielded tokens than the separators between its items and
 /// the mandatory flank tokens account for.
-pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> u8 {
+pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
     let item_children: Vec<(&Child, bool)> = children
         .iter()
         .zip(routes)
@@ -1212,14 +1207,15 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
         _ => others > item_children.len().saturating_sub(1) + mandatory as usize,
     };
     let Span { start, end } = Span::of(list);
-    let mut bits = 0;
+    use crate::types::Delimiter;
+    let mut flags = Delimiter::NONE;
     if leading.is_some_and(|mandatory| flank(item_children.first(), mandatory, &|child| start < child.start)) {
-        bits |= LEADING;
+        flags = flags.with(Delimiter::LEADING);
     }
     if trailing.is_some_and(|mandatory| flank(item_children.last(), mandatory, &|child| end > child.end)) {
-        bits |= TRAILING;
+        flags = flags.with(Delimiter::TRAILING);
     }
-    bits
+    flags
 }
 
 /// Read the node at `index` into `T`. The cursor was created at the tree's

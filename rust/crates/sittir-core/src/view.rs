@@ -296,7 +296,7 @@ pub struct ListView<'a, E: Slot> {
 pub trait UnitFrames: std::fmt::Debug {
     /// Writes `body`, the unit at item `item` of the slot `slot`, framed by
     /// the sides held for it, or bare when none are.
-    fn frame_unit(&self, slot: &str, item: u32, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult;
+    fn frame_unit(&self, slot: &str, item: crate::types::ItemIndex, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult;
 }
 
 impl<E: Slot> ListView<'_, E> {
@@ -327,7 +327,7 @@ impl<E: Slot> Render for ListView<'_, E> {
                 w.site(self.after);
             }
             match self.units {
-                Some((slot, units)) => units.frame_unit(slot, i as u32, w, &mut |w| item.write_slot("", "", w))?,
+                Some((slot, units)) => units.frame_unit(slot, crate::types::ItemIndex(i as u32), w, &mut |w| item.write_slot("", "", w))?,
                 None => item.write_slot("", "", w)?,
             }
         }

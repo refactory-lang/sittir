@@ -30,6 +30,17 @@ export default defineConfig({
 			}
 		},
 		{
+			// A descriptor imports its own module namespace: that namespace is
+			// the language, which its guards compare a node's engine against
+			// and its createEngine hands to the engine. It reads no export at
+			// module init. Any other module importing a descriptor still gets
+			// the cycle check.
+			files: ['packages/*/src/descriptor.ts'],
+			rules: {
+				'import/no-cycle': 'off'
+			}
+		},
+		{
 			// Each kind namespace declares an unexported `NonEmptySlots` proof
 			// that only type-check reads: it fails to compile when a non-empty
 			// list's surface accepts `[]`.

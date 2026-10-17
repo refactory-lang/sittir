@@ -902,13 +902,13 @@ function buildTypedTemplateBody(
 			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
 				separatedList?.leadingDelimiter === 'optional'
-					? 'node.delimiter.map(|d| d & 1 != 0).unwrap_or(false)'
+					? 'node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING))'
 					: separatedList?.leadingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
 			const trailingOption =
 				separatedList?.trailingDelimiter === 'optional'
-					? 'node.delimiter.map(|d| d & 2 != 0).unwrap_or(false)'
+					? 'node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING))'
 					: separatedList?.trailingDelimiter === 'mandatory'
 						? 'true'
 						: 'false';
@@ -3212,7 +3212,7 @@ function renderTransportDataStruct(
 		}
 		if (node instanceof AssembledList) {
 			if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
-				lines.push(wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<u8>,');
+				lines.push(wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<::sittir_core::types::Delimiter>,');
 			}
 			if (node.separatorRule !== undefined) {
 				lines.push(wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<KindId>,');

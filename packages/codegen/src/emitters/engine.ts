@@ -135,8 +135,9 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
-import { is, isMember, membersOf } from './is.js';
-${config.portable === true ? "import { portable, queryFlags, querySlotFlags } from './portable.js';\n" : ''}import { TSKindId, type FixedTextKindId, type TypeKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
+import { isMember, membersOf, type is } from './is.js';
+${config.portable === true ? "import { portable, queryFlags, querySlotFlags } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarTypePrefix(grammar)}Node, ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 ${triviaImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
@@ -161,8 +162,6 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	name: '${grammar}',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
-	is,
-	kinds: TSKindId,
 	trivia: ${triviaHook(config)},
 	querySlots,
 	structure,

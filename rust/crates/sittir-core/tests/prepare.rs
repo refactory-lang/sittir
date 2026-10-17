@@ -35,7 +35,7 @@ impl Prepare for List {
 }
 
 fn arms(ids: &[u16]) -> Vec<SeamArm> {
-    ids.iter().map(|&arm| SeamArm { arm: KindId(arm), strength: SEAM_DECLARED }).collect()
+    ids.iter().map(|&arm| SeamArm { arm: KindId(arm), strength: SeamStrength::Declared }).collect()
 }
 
 fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<'a> {
@@ -127,14 +127,13 @@ fn wire(arm: u16) -> EdgeArm {
     EdgeArm { arm: KindId(arm), strength: None }
 }
 
-fn stamped(arm: u16, strength: sittir_core::spacing::SeamStrength) -> EdgeArm {
+fn stamped(arm: u16, strength: SeamStrength) -> EdgeArm {
     EdgeArm { arm: KindId(arm), strength: Some(strength) }
 }
 use sittir_core::prepare::{prepare_edges, ArmOf};
 use sittir_core::render::{RenderSink, WhitespaceTable};
 use sittir_core::slot::SeamArm;
-use sittir_core::spacing::SeamStrength;
-use sittir_core::spacing::{SpacingWriter, WordMatcher, SEAM_DECLARED};
+use sittir_core::spacing::{SeamStrength, SpacingWriter, WordMatcher};
 use sittir_core::types::KindId;
 
 fn two_sites() -> &'static [SiteSpec] {
@@ -153,7 +152,7 @@ fn a_resolved_arm_carries_the_spec_strength_for_the_default_and_declared_otherwi
     let mut opts = at_defaults(two_sites());
     opts.set_arm(SiteId(1), KindId(9));
     assert_eq!(opts.site_arm(SiteId(0)), SeamArm { arm: KindId(7), strength: SeamStrength::Cascade });
-    assert_eq!(opts.site_arm(SiteId(1)), SeamArm { arm: KindId(9), strength: SEAM_DECLARED });
+    assert_eq!(opts.site_arm(SiteId(1)), SeamArm { arm: KindId(9), strength: SeamStrength::Declared });
 }
 
 fn ws_text(kind: KindId) -> &'static str {
@@ -214,7 +213,7 @@ fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
 #[test]
 fn a_wire_stamp_takes_its_site_spec_strength_and_a_render_stamp_keeps_its_own() {
     let opts = edged_options();
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(9)), None), Some(SeamArm { arm: KindId(9), strength: SEAM_DECLARED }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(9)), None), Some(SeamArm { arm: KindId(9), strength: SeamStrength::Declared }));
     assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(6)), None), Some(SeamArm { arm: KindId(6), strength: SeamStrength::Cascade }));
     assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(stamped(6, SeamStrength::Fallback)), None), Some(SeamArm { arm: KindId(6), strength: SeamStrength::Fallback }));
     assert_eq!(opts.edge_arm(KindId(3), Side::Before, None, None), Some(SeamArm { arm: KindId(5), strength: SeamStrength::Cascade }));
@@ -243,7 +242,7 @@ fn an_edge_arm_picks_its_own_site_and_any_other_arm_the_shared_one() {
     let mut opts = arm_options();
     opts.set_arm(SiteId(2), KindId(9));
     let at = |arm: Option<u16>| opts.edge_arm(KindId(3), Side::Before, None, arm.map(KindId));
-    assert_eq!(at(Some(40)), Some(SeamArm { arm: KindId(9), strength: SEAM_DECLARED }));
+    assert_eq!(at(Some(40)), Some(SeamArm { arm: KindId(9), strength: SeamStrength::Declared }));
     assert_eq!(at(Some(41)), Some(SeamArm { arm: KindId(5), strength: SeamStrength::Cascade }));
     assert_eq!(at(Some(42)), at(None));
     assert_eq!(opts.edge_arm(KindId(3), Side::After, None, Some(KindId(40))), Some(SeamArm { arm: KindId(6), strength: SeamStrength::Cascade }));
@@ -287,7 +286,7 @@ fn a_transport_prepares_the_edge_of_the_arm_its_slot_holds() {
         prepare_edges(&mut node, &ctx(&opts, &sources));
         node.edges.before
     };
-    assert_eq!(prepared(Some(SlotValue::Transport(Token(41)))), Some(stamped(9, SEAM_DECLARED)));
+    assert_eq!(prepared(Some(SlotValue::Transport(Token(41)))), Some(stamped(9, SeamStrength::Declared)));
     assert_eq!(prepared(Some(SlotValue::Transport(Token(40)))), Some(stamped(5, SeamStrength::Cascade)));
     assert_eq!(prepared(None), Some(stamped(5, SeamStrength::Cascade)));
 }
@@ -447,7 +446,7 @@ fn a_coordinate_whose_gap_its_slot_already_filled_keeps_it() {
     let sources = source_tree();
     let mut first = NodeCoordinate::new(sittir_core::types::TreeId(7), sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1), Span { start: 0, end: 6 });
     first.kind = Some(KindId(3));
-    first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: KindId(9), strength: sittir_core::spacing::SEAM_SLOT }) });
+    first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: KindId(9), strength: sittir_core::spacing::SeamStrength::Slot }) });
     let mut items = [Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(KindId(9)));
@@ -476,7 +475,7 @@ fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat_before_a_later_coor
 #[test]
 fn a_seated_coordinate_keeps_its_seat_when_it_prepares_its_kind_edges() {
     let table: &[Option<SiteId>] = &[None, None, None, Some(SiteId(1))];
-    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: KindId(5), strength: SeamStrength::Cascade }, SeamArm { arm: KindId(70), strength: SEAM_DECLARED }, SeamArm { arm: KindId(6), strength: SeamStrength::Cascade }], sites: EDGE_SPECS_3, edges: EDGE_ROWS_3, edge_rows: EDGE_ROW_OF, ..ResolvedOptions::default() };
+    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: KindId(5), strength: SeamStrength::Cascade }, SeamArm { arm: KindId(70), strength: SeamStrength::Declared }, SeamArm { arm: KindId(6), strength: SeamStrength::Cascade }], sites: EDGE_SPECS_3, edges: EDGE_ROWS_3, edge_rows: EDGE_ROW_OF, ..ResolvedOptions::default() };
     let sources = source_tree();
     let mut items = vec![parsed(3, 8, 17), parsed(3, 0, 6)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
@@ -532,10 +531,10 @@ fn filling_root_edges_keeps_a_side_the_wire_set() {
     assert_eq!(root.edges, Edges { before: Some(wire(4)), after: Some(wire(3)) });
 }
 
-static ROOT_FLAGS: &[u8] = &[0, 0, 0, sittir_core::options::KIND_ROOT];
+static ROOT_FLAGS: &[sittir_core::options::KindFlags] = &[sittir_core::options::KindFlags::NONE, sittir_core::options::KindFlags::NONE, sittir_core::options::KindFlags::NONE, sittir_core::options::KindFlags::ROOT];
 static ROOT_SPECS: &[SiteSpec] = &[SiteSpec { default_arm: KindId(1), strength: SeamStrength::Cascade }, SiteSpec { default_arm: KindId(3), strength: SeamStrength::Cascade }];
 
-fn root_render(kind_flags: &'static [u8], write: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
+fn root_render(kind_flags: &'static [sittir_core::options::KindFlags], write: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
     let opts = ResolvedOptions { edges: EDGE_ROWS, edge_rows: EDGE_ROW_OF, kind_flags, ..at_defaults(ROOT_SPECS) };
     let mut out = String::new();
     let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(&FLANKS).with_options(&opts);
@@ -569,7 +568,7 @@ fn a_root_edge_decides_its_gap_and_only_a_terminated_break_floors_it() {
         w.text("a").unwrap();
         w.hold_line_end(sittir_core::render::LineHold::Break);
         w.edge(KindId(3), Side::After, Some(wire(1)));
-        w.site_with(KindId(4), sittir_core::spacing::SEAM_TRIVIA);
+        w.site_with(KindId(4), sittir_core::spacing::SeamStrength::Trivia);
     });
     assert_eq!(replaced, "a");
     let floored = root_render(ROOT_FLAGS, |w| {
@@ -684,7 +683,7 @@ fn edge_arms(item: &Option<SlotValue<Spanned>>) -> (ArmAt, ArmAt) {
 
 #[test]
 fn a_slot_layout_gives_every_gap_between_present_items_its_classes_at_slot_strength() {
-    let strength = Some(sittir_core::spacing::SEAM_SLOT);
+    let strength = Some(sittir_core::spacing::SeamStrength::Slot);
     let mut items = [Some(spanned(at(0, 0, 0, 1), Bare, Bare)), None, Some(spanned(at(0, 3, 0, 4), Bare, Bare)), Some(spanned(at(0, 6, 0, 7), Bare, Bare))];
     fill_slot_gaps(items.iter_mut().map(Option::as_mut), Some(&slot(Some(KindId(1)), Some(KindId(3)))));
     assert_eq!(edge_arms(&items[0]), (None, Some((KindId(1), strength))));

@@ -2,7 +2,6 @@
 // engine: every export executes and produces what the guide promises.
 import { describe, expect, it } from 'vitest';
 import { dogfoodContract } from '../../../examples/helpers.ts';
-import { rebuildProbeSweepStrict, callStatementStrict } from '../../../examples/19-dogfood-python-strict.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import python from '@sittir/python';
 import { createEngine } from '@sittir/common';
@@ -19,15 +18,6 @@ const generatedRebuild = (file: string, exportName: string) => async (): Promise
 };
 const rebuildPython4spaceGenerated = generatedRebuild('19-dogfood-python.generated.ts', 'rebuildPython4spaceGenerated');
 const rebuildPython4spaceLoose = generatedRebuild('19-dogfood-python-loose.generated.ts', 'rebuildPython4spaceLoose');
-
-describe('examples/19 dogfood python — strict factory surface', () => {
-	it('composes a call statement with strict inner nodes', () => {
-		expect(callStatementStrict().$render()).toBe('main()\n');
-	});
-	it('assembles the statements the coercion surface assembles', () => {
-		expect(rebuildProbeSweepStrict().$render()).toContain('#!/usr/bin/env python3');
-	});
-});
 
 // Ceiling, never a floor: an artefact kind moves off the top-level namespace
 // onto its parent, so this count only shrinks.

@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree, and `membership`, the guards' membership test (`isMember`, `membersOf`) for a query's `ofType`. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation. A grammar with bindings (`portable`) also declares its `portable` surface and hands over `portable.ts`'s `portable` and `queryFlags`; the others carry neither.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, the guards' and kind ids' types, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree, and `membership`, the guards' membership test (`isMember`, `membersOf`) for a query's `ofType`. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation. A grammar with bindings (`portable`) also declares its `portable` surface and hands over `portable.ts`'s `portable` and `queryFlags`; the others carry neither.
 
 
 ```text
@@ -6062,20 +6062,21 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  */
 ```
 
+### `packages/codegen/src/emitters/types.ts::emitKindsModule`
+
+The grammar's `kinds.ts`: the runtime kind-id enum `TSKindId` alone, frozen, so a module that needs kind ids at run time (the guards, the descriptor) imports a few kilobytes rather than the types module. The `ERROR` kind's member (`TSKindId.Error`) is followed by a `satisfies typeof ERROR_KIND_ID` check, so a grammar whose `TSKindId` holds another value fails its own type-check; `kind_ids.rs`'s const assert is the Rust side of the same check. `types.ts` imports the enum from it and re-exports it, so `TSKindId` has one declaration, and every generated module that reads kind ids at run time imports this module.
+
 ### `packages/codegen/src/emitters/types.ts::emitKindIdEnumAndLookups`
 
 ```text
 /**
- * Emit the runtime KindID enum and bidirectional lookup helpers.
+ * Emit the kind-id lookup helpers of types.ts.
  *
  * @remarks
  * The generator stays name-first: the lookup helpers are still emitted
  * from kind names, but the runtime discriminant surface is numeric so
  * data/transport interfaces can carry `TSKindId.*` instead of string
- * literals. The `ERROR` kind's member (`TSKindId.Error`) is followed
- * by a `satisfies typeof ERROR_KIND_ID` check, so a grammar whose
- * `TSKindId` holds another value fails its own type-check; `kind_ids.rs`'s const assert is the
- * Rust side of the same check.
+ * literals; the enum itself is `emitKindsModule`'s.
  */
 ```
 
@@ -10297,9 +10298,11 @@ omits the key.
 
 ### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
-The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding; its `createEngine` imports `@sittir/common` on the first call for the same reason, and delegates to the one `createEngine` there), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; the descriptor is its only value export. It depends on the grammar's name only, not on its node list.
+The grammar's `index.ts`: the descriptor module (`emitDescriptor`) as the default export (`export * as default`), so `import rust from '@sittir/rust'` is that module's namespace, with its values and its types under one name, and the descriptor's types again by name. It depends on nothing but the file layout.
 
-The descriptor carries `fileTypes`, the model's file types, an empty list for a grammar with none.
+### `packages/codegen/src/emitters/index-file.ts::emitDescriptor`
+
+The grammar's `descriptor.ts`, the language descriptor. A namespace cannot merge with a `const`, so the descriptor is a module: its values are `name`, `fileTypes` (the model's file types, an empty list for a grammar with none), `kinds` (the grammar's `TSKindId`), `is` (the grammar's guards composed with the language check against the module itself, `languageGuards`), `load`, which imports `./api.js` on demand, and `createEngine`, which imports `@sittir/common` on the first call and delegates to the one `createEngine` there. Its types are the grammar's types, its options, `IsGuards`, the language API type and `Engine`, the engine type for a surface. At import it loads only the kind-id module, the guards and `@sittir/common/language`, so naming the language loads no factories, no wrap, no 824 KB types module and no native binding; `rust.is` and `rust.kinds` work before any engine exists, and every engine's `is` and `kinds` are these objects. The module checks itself against `Language` (`satisfies`).
 
 ### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 
@@ -13738,7 +13741,9 @@ native options table's allowed and default ids, and the factory map's
 How firmly a site's table default holds against the mark meeting it at the
 same gap: a declared value (a preference or literal-default row, a keyword's
 word-default, or a value set on the node) outranks a cascaded one (the edge
-token's face reaching the kind edge), which outranks the bare fallback.
+token's face reaching the kind edge), which outranks the bare fallback. Its
+members are the names of core's `spacing::SeamStrength` variants the emitter
+writes them as.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
 
@@ -13751,7 +13756,7 @@ given a strength.
 
 The declared strength, named once on the TypeScript side so the plan's
 fixed-strength rows (separators, list flanks) and `seamStrength`'s declared
-origins spell the same value core's `spacing::SEAM_DECLARED` holds.
+origins spell the same `spacing::SeamStrength::Declared` variant.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
@@ -13876,9 +13881,9 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 
 A row's strength is what the sink writes the site's default arm at:
 `SiteSpec` carries it into the resolved options, and `site_arm`/`edge_arm`
-use it when the arm is the default and `SEAM_DECLARED` otherwise, so a value
+use it when the arm is the default and `SeamStrength::Declared` otherwise, so a value
 set on the node counts as declared. A separator row carries
-`SEAM_DECLARED` regardless of origin: the list view writes it at declared
+`SeamStrength::Declared` regardless of origin: the list view writes it at declared
 strength, so the row states the strength render uses. A list flank row
 (`start`/`end`) takes its origin's strength like any other site: only a
 flank a grammar row or a node value declares holds its gap at declared
@@ -14063,7 +14068,7 @@ line. `SEAT_WRAPPERS` writes its `SeatPath` cells through it directly.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::denseFlags`
 
-`pub static NAME: &[u8]`, a table indexed by kind id up to the highest flagged id, `0` in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it. It is separate from `denseTable` because a flag cell's empty value is `0`, not `None`.
+`pub static NAME: &[cell]`, a table indexed by kind id up to the highest flagged id, the empty set in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it as `KindFlags(bits)` cells, and `LEAF_EDGES` as packed `u16`s. It is separate from `denseTable` because a flag cell's empty value is the empty set, not `None`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::leafEdgesTable`
 
@@ -14071,7 +14076,7 @@ Per kind id, the leaf's `LeafEdges` packed into one cell: the leading set in the
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
 
-Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends. The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends. The bit values match `sittir_core::options::KindFlags`'s constants. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 
@@ -14265,7 +14270,7 @@ layout the node's source stores for that slot (`Layout::slot`, by the slot's
 wire key). A list slot's layout holds the class most of its separator gaps
 have on each side of the separator, stored only where it differs from what
 the read-time options write. The fill gives every gap between two present
-items those classes at slot strength (`SEAM_SLOT`): the side before the
+items those classes at slot strength (`SeamStrength::Slot`): the side before the
 separator on the earlier item's `after` edge, the side after it on the later
 item's `before` edge. So an item inserted or moved into the list takes the
 slot's class, a gap's own deviation (trivia, which is stronger) keeps its
