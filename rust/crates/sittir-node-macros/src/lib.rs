@@ -8,6 +8,7 @@
 mod attrs;
 mod codec;
 mod expand;
+mod fields;
 mod record;
 
 #[proc_macro_derive(Node, attributes(node, slot, kind, flank, separator_kind, wire))]

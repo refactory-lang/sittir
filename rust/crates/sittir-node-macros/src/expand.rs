@@ -455,7 +455,7 @@ pub(crate) fn last_segment(ty: &Type) -> Option<String> {
 }
 
 /// The first type argument of `wrapper<…>`, when `ty` is one.
-fn inner_of<'t>(ty: &'t Type, wrapper: &str) -> Option<&'t Type> {
+pub(crate) fn inner_of<'t>(ty: &'t Type, wrapper: &str) -> Option<&'t Type> {
     let Type::Path(path) = ty else { return None };
     let segment = path.path.segments.last()?;
     if segment.ident != wrapper {
@@ -469,7 +469,7 @@ fn inner_of<'t>(ty: &'t Type, wrapper: &str) -> Option<&'t Type> {
 }
 
 /// `Option<Box<…NodeLayout…>>`: the layout field, known by its type.
-fn is_layout(ty: &Type) -> bool {
+pub(crate) fn is_layout(ty: &Type) -> bool {
     inner_of(ty, "Option").and_then(|boxed| inner_of(boxed, "Box")).and_then(last_segment).as_deref() == Some("NodeLayout")
 }
 
@@ -497,6 +497,10 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         })
         .collect();
     let record = crate::record::checks(ident, attrs.words, &stamped)?;
+    let fields_trait = match &attrs.fields {
+        Some(name) => crate::fields::fields_trait(ident, name, &data.fields)?,
+        None => TokenStream::new(),
+    };
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -582,6 +586,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #codec
         };
         #record
+        #fields_trait
     })
 }
 

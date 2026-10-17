@@ -35,6 +35,9 @@ pub struct KindAttrs {
     pub edged: bool,
     /// On a struct: the words of its record, which codegen stamps.
     pub words: Option<u32>,
+    /// On a struct: the name of its fields trait, which codegen stamps and
+    /// its render body is generic over.
+    pub fields: Option<Ident>,
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -164,6 +167,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "codec_only" => out.codec_only = true,
                 "edged" => out.edged = true,
                 "words" => out.words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+                "fields" => out.fields = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())
