@@ -889,7 +889,6 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 	const run = (async () => {
 		const declared = await loadReparseHosts(grammar);
 		const model = await loadNodeModel(grammar);
-		const raw = loadRawEntries(grammar);
 		const corpus: { source: string; tree: TSTree }[] = [];
 		for (const entry of loadCorpusEntries(grammar)) {
 			const tree = parser.parse(entry.source) as TSTree;
@@ -908,7 +907,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 		const derived = deriveReparseHosts({
 			declared,
 			root: model.root,
-			kindToSupertypes: buildKindToSupertypes(raw),
+			kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar), model.subtypes),
 			admits,
 			kindIdsOf,
 			modelTypeOf: (kind) => model.modelTypes[kind],
@@ -940,7 +939,7 @@ export async function loadRenderReparseContext(
 		parser,
 		render: (node) => nativeEngine.render(node).toString(),
 		triviaOf: (node) => sidesOf(node),
-		kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar)),
+		kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar), model.subtypes),
 		adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 		root: model.root,
 		variantChildKinds: await loadVariantChildKindsByOwner(grammar),

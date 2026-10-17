@@ -51,8 +51,8 @@ importers:
         specifier: ^1.60.0
         version: 1.61.0
       tree-sitter-cli:
-        specifier: ^0.26.9
-        version: 0.26.9
+        specifier: ^0.27.1
+        version: 0.27.1
       tree-sitter-javascript:
         specifier: ^0.25.0
         version: 0.25.0
@@ -81,8 +81,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.7)(vite@8.2.2(@types/node@25.6.0)(esbuild@0.28.0)(tsx@4.22.3)(yaml@2.8.3))
       web-tree-sitter:
-        specifier: ^0.26.9
-        version: 0.26.9
+        specifier: ^0.27.1
+        version: 0.27.1
 
   packages/cli:
     dependencies:
@@ -114,7 +114,7 @@ importers:
     devDependencies:
       '@ast-grep/wasm':
         specifier: ^0.42.1
-        version: 0.42.1(web-tree-sitter@0.26.9)
+        version: 0.42.1(web-tree-sitter@0.27.1)
       '@sittir/scm':
         specifier: workspace:*
         version: link:../scm
@@ -128,8 +128,8 @@ importers:
         specifier: ^0.24.1
         version: 0.24.1
       tree-sitter-cli:
-        specifier: ^0.26.9
-        version: 0.26.9
+        specifier: ^0.27.1
+        version: 0.27.1
       tree-sitter-go:
         specifier: ^0.25.0
         version: 0.25.0
@@ -143,8 +143,8 @@ importers:
         specifier: ^5.6.0
         version: 5.6.0
       web-tree-sitter:
-        specifier: ^0.26.9
-        version: 0.26.9
+        specifier: ^0.27.1
+        version: 0.27.1
 
   packages/common:
     dependencies:
@@ -236,7 +236,7 @@ importers:
     dependencies:
       '@ast-grep/wasm':
         specifier: ^0.42.1
-        version: 0.42.1(web-tree-sitter@0.26.9)
+        version: 0.42.1(web-tree-sitter@0.27.1)
       '@sittir/codegen':
         specifier: workspace:*
         version: link:../codegen
@@ -2389,8 +2389,8 @@ packages:
       tree-sitter:
         optional: true
 
-  tree-sitter-cli@0.26.9:
-    resolution: {integrity: sha512-7l+U1RmazPVe+yA/JiX80GFOILnL/j24GbawamIzNQC8UlINrcyECbaWGaG1wuq4j/m0DQTx7Uu4r0iW9Ao1BQ==}
+  tree-sitter-cli@0.27.1:
+    resolution: {integrity: sha512-WFPEjxwscCjZP9uYj0rxT2TyGBkDcXUkGTthrMpxZFGvzXEYsbC3J0633Ps8dd2mMsdsbU8oVwmQ148lLHI7Xw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
 
@@ -2595,8 +2595,8 @@ packages:
       jsdom:
         optional: true
 
-  web-tree-sitter@0.26.9:
-    resolution: {integrity: sha512-YJwSHANl6XFgeEjB8nitgj0qZYt5gkIesJ4w2srS2wcLB4GUa4xcOkM0YaMsU6WNR53YVIkDSY7Ej4pf3IXtCA==}
+  web-tree-sitter@0.27.1:
+    resolution: {integrity: sha512-qtx0VyUyNRHtL3ze7+v0hCKB/sLcAmY7ZAVp/ZK/bCj0yED8ptvNrr7Vd7DwDyKDWN9baqcUx4uaD2r2ql+6IA==}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -2621,9 +2621,9 @@ packages:
 
 snapshots:
 
-  '@ast-grep/wasm@0.42.1(web-tree-sitter@0.26.9)':
+  '@ast-grep/wasm@0.42.1(web-tree-sitter@0.27.1)':
     dependencies:
-      web-tree-sitter: 0.26.9
+      web-tree-sitter: 0.27.1
 
   '@babel/helper-string-parser@7.29.7': {}
 
@@ -4325,7 +4325,7 @@ snapshots:
       node-addon-api: 8.7.0
       node-gyp-build: 4.8.4
 
-  tree-sitter-cli@0.26.9: {}
+  tree-sitter-cli@0.27.1: {}
 
   tree-sitter-go@0.25.0:
     dependencies:
@@ -4479,7 +4479,7 @@ snapshots:
     transitivePeerDependencies:
       - msw
 
-  web-tree-sitter@0.26.9: {}
+  web-tree-sitter@0.27.1: {}
 
   webidl-conversions@3.0.1: {}
 

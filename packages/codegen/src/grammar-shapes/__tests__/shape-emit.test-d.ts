@@ -7,13 +7,8 @@ import { describe, it, expectTypeOf } from 'vitest';
 import type { RustGrammarShape } from '../grammar-shape.rust.ts';
 import type { GrammarJson, MutableDeep, SymbolRule as AuthoringSymbolRule } from '../grammar-json.ts';
 
-type NumericPrec<T> = T extends readonly (infer U)[]
-	? NumericPrec<U>[]
-	: T extends { readonly type: 'PREC' | 'PREC_LEFT' | 'PREC_RIGHT' }
-		? { [K in keyof T]: K extends 'value' ? number : NumericPrec<T[K]> }
-		: T extends object
-			? { [K in keyof T]: NumericPrec<T[K]> }
-			: T;
+type NormalizedGrammar = GrammarSchema<string>['grammar'];
+type NormalizedGrammarSubset = Pick<NormalizedGrammar, 'name' | 'rules'> & Partial<Pick<NormalizedGrammar, 'supertypes'>>;
 
 describe('grammar-shape emit literal/tuple preservation', () => {
 	type Rules = RustGrammarShape['rules'];
@@ -44,14 +39,14 @@ describe('grammar-shape emit literal/tuple preservation', () => {
 		expectTypeOf<Await['type']>().toEqualTypeOf<'PREC'>();
 	});
 
-	it('subtyping ladder: MutableDeep<GrammarJson> ⊑ tree-sitter GrammarSchema<string>', () => {
-		// GrammarJson can't extend GrammarSchema<string> directly (its readonly
+	it("subtyping ladder: MutableDeep<GrammarJson> ⊑ tree-sitter's normalized grammar", () => {
+		// GrammarJson can't extend the normalized grammar directly (its readonly
 		// containers aren't ⊑ the mutable `Rule`). MutableDeep<> strips readonly
 		// recursively, proving structural compatibility modulo readonly — the
 		// "single vocabulary, refined" claim. `RustGrammarShape` itself also
 		// flows up through this bridge.
-		expectTypeOf<NumericPrec<MutableDeep<GrammarJson>>>().toExtend<GrammarSchema<string>>();
-		expectTypeOf<NumericPrec<MutableDeep<RustGrammarShape>>>().toExtend<GrammarSchema<string>>();
+		expectTypeOf<MutableDeep<GrammarJson>>().toExtend<NormalizedGrammarSubset>();
+		expectTypeOf<MutableDeep<RustGrammarShape>>().toExtend<NormalizedGrammarSubset>();
 	});
 
 	it('SYMBOL leaf mirrors tree-sitter SymbolRule structurally (single vocabulary)', () => {
