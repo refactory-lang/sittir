@@ -17,7 +17,7 @@
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { NATIVE_LOADER, NATIVE_TYPINGS, REPO_ROOT, assertGrammar, nativeBinaryName, nativeBindingDir, nativeCrateDir } from '../packages/codegen/src/grammars.ts';
-import { type NativeProfile, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
+import { type NativeProfile, nativeBuildFingerprint, writeNativeBuildStamp } from '../packages/codegen/src/scripts/native-binary-freshness.ts';
 import { hostPlatform, platformSuffix, targetSuffix } from '../packages/common/src/native-binding.ts';
 
 const [name, ...flags] = process.argv.slice(2);
@@ -37,6 +37,7 @@ function run(command: string, args: readonly string[], cwd: string, env: NodeJS.
 
 const outDir = nativeBindingDir(grammar);
 const buildEnv = release && !apple ? { ...process.env, CARGO_PROFILE_RELEASE_STRIP: 'symbols' } : process.env;
+const built = nativeBuildFingerprint(REPO_ROOT, grammar, { env: buildEnv });
 run(
 	'pnpm',
 	['exec', 'napi', 'build', '--platform', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
@@ -49,4 +50,4 @@ if (release && apple && process.platform === 'darwin') {
 	run('strip', ['-x', join(outDir, binary)], outDir);
 	run('codesign', ['--force', '--sign', '-', join(outDir, binary)], outDir);
 }
-writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary, { env: buildEnv });
+writeNativeBuildStamp(REPO_ROOT, grammar, profile, binary, built);

@@ -7,6 +7,7 @@ import {
 	checkoutSource,
 	manifestPath,
 	stagedInputPathspecs,
+	sourceFingerprint,
 	verifyManifestForGrammar,
 	writeManifestForGrammar,
 	type VerifyResult
@@ -35,10 +36,12 @@ const write = (rel: string, content: string): void => {
 
 const read = (rel: string): string => readFileSync(join(repo, rel), 'utf8');
 
-const regenerate = (): void => {
+const regenerate = (editDuringGeneration?: () => void): void => {
+	const sources = sourceFingerprint(GRAMMAR, checkoutSource(repo));
 	write('packages/python/src/from-grammar.ts', `// ${read(GRAMMAR_SOURCE)}\n`);
 	write('packages/python/src/from-codegen.ts', `// ${read(CODEGEN_SOURCE)}\n`);
-	writeManifestForGrammar(GRAMMAR, checkoutSource(repo));
+	editDuringGeneration?.();
+	writeManifestForGrammar(GRAMMAR, sources, checkoutSource(repo));
 };
 
 const dropStamp = (): void => rmSync(join(repo, 'node_modules'), { recursive: true, force: true });
@@ -227,6 +230,14 @@ describe('the upstream grammar as a source', () => {
 		expect(verify().ok).toBe(true);
 	});
 
+	it('changes the source when only the lockfile changes, with the generation on record', () => {
+		write('pnpm-lock.yaml', "lockfileVersion: '9.0'\n");
+		regenerate();
+		commitAll('lockfile');
+		write('pnpm-lock.yaml', "lockfileVersion: '9.0'\n# a dependency moved\n");
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
 	it('does not trust the committed tree once the lockfile differs from it', () => {
 		dropStamp();
 		write('pnpm-lock.yaml', 'lockfileVersion: 9\n');
@@ -265,6 +276,11 @@ describe('the vocabulary as a source', () => {
 });
 
 describe('whether the source is the one the generated output came from', () => {
+	it('fails when a source input is edited while the generation runs', () => {
+		regenerate(() => write(GRAMMAR_SOURCE, 'grammar edited mid-run'));
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
 	it('holds for an uncommitted tree that was just regenerated', () => {
 		write(CODEGEN_SOURCE, 'codegen two');
 		regenerate();

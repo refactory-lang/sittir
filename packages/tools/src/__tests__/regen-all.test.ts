@@ -15,12 +15,13 @@ interface Record_ {
 	fixtures: Record<string, string>;
 }
 
-const { fresh, records, inputs, writeRegenRecord, clearRegenRecord } = vi.hoisted(() => {
+const { fresh, records, inputs, sources, writeRegenRecord, clearRegenRecord } = vi.hoisted(() => {
 	const records = new Map<string, Record_>();
 	return {
 		fresh: new Set<string>(),
 		records,
 		inputs: new Map<string, Record<string, string>>(),
+		sources: new Map<string, string>(),
 		writeRegenRecord: vi.fn((_cwd: string, grammar: string, record: Record_) => records.set(grammar, record)),
 		clearRegenRecord: vi.fn((_cwd: string, grammar: string) => records.delete(grammar))
 	};
@@ -30,7 +31,7 @@ vi.mock('../codegen-surface.ts', () => ({
 		name === 'generatedManifest'
 			? {
 					verifyManifestForGrammar: (grammar: string) => ({ ok: fresh.has(grammar), sourceChanged: !fresh.has(grammar), missing: [], modified: [], extra: [], differs: [], stale: [] }),
-					computeSourceHash: (grammar: string) => `source of ${grammar}`
+					computeSourceHash: (grammar: string) => sources.get(grammar) ?? `source of ${grammar}`
 				}
 			: {
 					nativeBuildFreshness: (_root: string, grammar: string, profile: string) =>
@@ -38,9 +39,11 @@ vi.mock('../codegen-surface.ts', () => ({
 					nativeBuildStamp: (_root: string, grammar: string) => ({ binarySha256: `binary of ${grammar}` })
 				}
 }));
-vi.mock('../fixture-inputs.ts', () => ({
-	fixtureInputs: async (_root: string, grammar: string) => inputs.get(grammar) ?? { [`corpus of ${grammar}`]: 'v1' }
-}));
+vi.mock('../fixture-inputs.ts', () => {
+	const fixtureSources = async (_root: string, grammar: string) => inputs.get(grammar) ?? { [`corpus of ${grammar}`]: 'v1' };
+	const fixtureOutputs = async (_root: string, grammar: string) => ({ [`fixtures of ${grammar}`]: 'extracted' });
+	return { fixtureSources, fixtureOutputs, fixtureInputs: async (root: string, grammar: string) => ({ ...(await fixtureSources(root, grammar)), ...(await fixtureOutputs(root, grammar)) }) };
+});
 vi.mock('../regen-record.ts', () => ({
 	readRegenRecord: (_cwd: string, grammar: string) => records.get(grammar),
 	writeRegenRecord,
@@ -50,7 +53,7 @@ vi.mock('../regen-record.ts', () => ({
 function finished(...grammars: string[]): void {
 	for (const grammar of grammars) {
 		fresh.add(grammar);
-		records.set(grammar, { source: `source of ${grammar}`, binarySha256: `binary of ${grammar}`, fixtures: { [`corpus of ${grammar}`]: 'v1' } });
+		records.set(grammar, { source: `source of ${grammar}`, binarySha256: `binary of ${grammar}`, fixtures: { [`corpus of ${grammar}`]: 'v1', [`fixtures of ${grammar}`]: 'extracted' } });
 	}
 }
 
@@ -81,6 +84,7 @@ beforeEach(() => {
 	fresh.clear();
 	records.clear();
 	inputs.clear();
+	sources.clear();
 	writeRegenRecord.mockClear();
 	clearRegenRecord.mockClear();
 	delete process.env.SITTIR_REGEN_FORCE;
@@ -193,9 +197,19 @@ describe('regen:all sequencing', () => {
 		expect(writeRegenRecord.mock.calls.map((call) => [call[1], call[2]])).toEqual(
 			['rust', 'typescript', 'python'].map((grammar) => [
 				grammar,
-				{ source: `source of ${grammar}`, binarySha256: `binary of ${grammar}`, fixtures: { [`corpus of ${grammar}`]: 'v1' } }
+				{ source: `source of ${grammar}`, binarySha256: `binary of ${grammar}`, fixtures: { [`corpus of ${grammar}`]: 'v1', [`fixtures of ${grammar}`]: 'extracted' } }
 			])
 		);
+	});
+
+	it('records the sources and fixture inputs as they were when the run started, so an edit during it reads as stale next time', async () => {
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(3);
+		sources.set('rust', 'source edited mid-run');
+		inputs.set('rust', { 'corpus of rust': 'edited mid-run' });
+		for (const child of children) child.finish(0);
+		await run;
+		expect(records.get('rust')).toEqual({ source: 'source of rust', binarySha256: 'binary of rust', fixtures: { 'corpus of rust': 'v1', 'fixtures of rust': 'extracted' } });
 	});
 
 	it('leaves every grammar to regenerate after a failed workspace check, so a retry cannot pass by skipping', async () => {
@@ -245,7 +259,7 @@ describe('regen:all when only what the fixtures come from changed', () => {
 		expect(write).toHaveBeenCalledWith('[typescript] re-extracting fixtures: corpus of typescript changed since the fixtures were extracted\n');
 		expect(write).toHaveBeenCalledWith('[typescript] extracted\n');
 		expect(writeRegenRecord.mock.calls.map((call) => [call[1], call[2]])).toEqual([
-			['typescript', { source: 'source of typescript', binarySha256: 'binary of typescript', fixtures: { 'corpus of typescript': 'v2' } }]
+			['typescript', { source: 'source of typescript', binarySha256: 'binary of typescript', fixtures: { 'corpus of typescript': 'v2', 'fixtures of typescript': 'extracted' } }]
 		]);
 	});
 

@@ -4,7 +4,7 @@ import { availableParallelism } from 'node:os';
 import { createInterface } from 'node:readline';
 import type { Readable, Writable } from 'node:stream';
 import { load, type CodegenSurface } from './codegen-surface.ts';
-import { fixtureInputs } from './fixture-inputs.ts';
+import { fixtureOutputs, fixtureSources } from './fixture-inputs.ts';
 import { clearRegenRecord, readRegenRecord, writeRegenRecord, type RegenRecord } from './regen-record.ts';
 
 export interface RegenerateOptions {
@@ -15,11 +15,25 @@ type GrammarName = Parameters<CodegenSurface['generatedManifest']['verifyManifes
 
 const genArgs = (grammar: string): string[] => ['exec', 'tsx', 'packages/cli/src/cli.ts', 'gen', '--grammar', grammar, '--all', '--output', `packages/${grammar}/src`];
 
-async function currentRecord(grammar: string, cwd: string): Promise<RegenRecord | undefined> {
-	const [manifest, native] = await Promise.all([load('generatedManifest'), load('nativeBinaryFreshness')]);
+interface RunInputs {
+	readonly source: string;
+	readonly fixtures: Readonly<Record<string, string>>;
+}
+
+async function runInputs(grammar: string, cwd: string): Promise<RunInputs> {
+	const manifest = await load('generatedManifest');
+	return { source: manifest.computeSourceHash(grammar as GrammarName), fixtures: await fixtureSources(cwd, grammar) };
+}
+
+async function recordAfter(grammar: string, cwd: string, before: RunInputs): Promise<RegenRecord | undefined> {
+	const native = await load('nativeBinaryFreshness');
 	const binarySha256 = native.nativeBuildStamp(cwd, grammar)?.binarySha256;
 	if (binarySha256 === undefined) return undefined;
-	return { source: manifest.computeSourceHash(grammar as GrammarName), binarySha256, fixtures: await fixtureInputs(cwd, grammar) };
+	return { source: before.source, binarySha256, fixtures: { ...before.fixtures, ...(await fixtureOutputs(cwd, grammar)) } };
+}
+
+async function currentRecord(grammar: string, cwd: string): Promise<RegenRecord | undefined> {
+	return recordAfter(grammar, cwd, await runInputs(grammar, cwd));
 }
 
 type Staleness = { readonly work: 'regenerate' | 're-extract'; readonly reason: string };
@@ -107,6 +121,8 @@ async function inPool<T, R>(items: readonly T[], limit: number, run: (item: T) =
 
 export async function regenerateGrammars(grammars: readonly string[], cwd: string, opts: RegenerateOptions = {}): Promise<number> {
 	const { regenerate: stale, reextract } = opts.force === true ? { regenerate: [...grammars], reextract: [] } : await pendingWork(grammars, cwd);
+	const before = new Map<string, RunInputs>();
+	for (const grammar of [...stale, ...reextract]) before.set(grammar, await runInputs(grammar, cwd));
 	for (const grammar of stale) clearRegenRecord(cwd, grammar);
 	const generated = await inPool(stale, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--no-build-native', '--no-workspace-check']));
 	const failed = generated.find((status) => status !== 0);
@@ -121,7 +137,7 @@ export async function regenerateGrammars(grammars: readonly string[], cwd: strin
 	const extractionFailed = extracted.find((status) => status !== 0);
 	if (extractionFailed !== undefined) return extractionFailed;
 	for (const grammar of [...stale, ...reextract]) {
-		const record = await currentRecord(grammar, cwd);
+		const record = await recordAfter(grammar, cwd, before.get(grammar)!);
 		if (record !== undefined) writeRegenRecord(cwd, grammar, record);
 	}
 	return 0;

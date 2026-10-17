@@ -471,6 +471,8 @@ either way.
 // orchestrator's post-generate validation.
 ```
 
+It takes the grammar's source fingerprint (`sourceFingerprint`) before the transpile step reads anything, and the generation is recorded against it.
+
 ### `packages/codegen/src/run-codegen.ts::withInternalCodegenRun`
 
 ```text
@@ -486,7 +488,7 @@ Builds a grammar's N-API binding from its generated sources: clears the grammar'
 
 ### `packages/codegen/src/run-codegen.ts::runNativeOnly`
 
-The second half of a multi-grammar regeneration (`gen --native-only`): every grammar is already generated, so only the binding is built (`runNativeBuild`), and the generation is then recorded (`writeManifestForGrammar`), since the build rewrites the grammar's `native/index.d.ts`, a generated file. A failed build records nothing.
+The second half of a multi-grammar regeneration (`gen --native-only`): every grammar is already generated, so only the binding is built (`runNativeBuild`), and the generation is then recorded (`writeManifestForGrammar`), since the build rewrites the grammar's `native/index.d.ts`, a generated file. It records against the source the generation on record read (`recordedSourceFingerprint`), not the source as it is now, and refuses to build when no generation is on record. A failed build records nothing.
 
 ### `packages/codegen/src/run-codegen.ts::runCodegenInternal`
 
@@ -507,6 +509,8 @@ on a thrown native-build error it's simply never reached, leaving the prior
 run's manifest in place rather than one that claims a native build that
 didn't happen.
 ```
+
+The source fingerprint it records against (`sourceFingerprint`) defaults to the one taken as it starts; `runFullRegen` passes the one it took before transpiling.
 
 ### `packages/codegen/src/polymorph-variant.ts::PolymorphVariantDescriptor`
 

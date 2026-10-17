@@ -7,6 +7,7 @@ import {
 	assertNativeBinaryFresh,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
+	nativeBuildFingerprint,
 	nativeBuildFreshness,
 	writeNativeBuildStamp
 } from '../native-binary-freshness.ts';
@@ -32,6 +33,11 @@ beforeEach(() => {
 	write('Cargo.toml', '[workspace]\n');
 	write('Cargo.lock', 'version = 4\n');
 	write('rust-toolchain.toml', '[toolchain]\nchannel = "1.90"\n');
+	write('pnpm-lock.yaml', "lockfileVersion: '9.0'\n");
+	write('scripts/build-native.mts', "import { cargoArgs } from './native-args.mts';\nexport const build = cargoArgs;\n");
+	write('scripts/native-args.mts', 'export const cargoArgs = [];\n');
+	write('rust/crates/sittir-core/package.json', '{}\n');
+	write('rust/crates/sittir-rust/package.json', '{"scripts":{"build:gate":"node ../../../scripts/build-native.mts rust --profile gate"}}\n');
 	write('rust/crates/sittir-core/Cargo.toml', '[package]\n');
 	write('rust/crates/sittir-core/build.rs', 'fn main() {}\n');
 	write('rust/crates/sittir-core/src/lib.rs', 'pub fn core() {}\n');
@@ -46,7 +52,7 @@ beforeEach(() => {
 	write('packages/rust/common/scanner.h', '#include "inner.h"\nint shared;\n');
 	write('packages/rust/common/inner.h', 'int inner;\n');
 	write(`packages/rust/native/${BINARY}`, 'binary v1');
-	writeNativeBuildStamp(root, 'rust', 'gate', BINARY, current);
+	writeNativeBuildStamp(root, 'rust', 'gate', BINARY, nativeBuildFingerprint(root, 'rust', current));
 });
 afterEach(() => rmSync(outer, { recursive: true, force: true }));
 
@@ -68,7 +74,12 @@ describe('native build freshness', () => {
 		'packages/rust/common/inner.h',
 		'Cargo.toml',
 		'Cargo.lock',
-		'rust-toolchain.toml'
+		'rust-toolchain.toml',
+		'pnpm-lock.yaml',
+		'rust/crates/sittir-core/package.json',
+		'rust/crates/sittir-rust/package.json',
+		'scripts/build-native.mts',
+		'scripts/native-args.mts'
 	]) {
 		it(`is stale once ${input} changes`, () => {
 			write(input, `${readFileSync(join(root, input), 'utf8')}changed\n`);
@@ -77,6 +88,21 @@ describe('native build freshness', () => {
 			expect(() => assertNativeBinaryFresh(root, 'rust')).toThrow(`${input} changed since the build`);
 		});
 	}
+
+	it('is stale when a native input is edited while the build runs', () => {
+		const built = nativeBuildFingerprint(root, 'rust', current);
+		write('rust/crates/sittir-rust/src/lib.rs', 'pub fn edited_mid_build() {}\n');
+		write(`packages/rust/native/${BINARY}`, 'binary v2');
+		writeNativeBuildStamp(root, 'rust', 'gate', BINARY, built);
+		expect(nativeBuildFreshness(root, 'rust', 'gate', current)).toEqual({ fresh: false, reason: 'rust/crates/sittir-rust/src/lib.rs changed since the build' });
+	});
+
+	it('is not fresh for a regeneration when cargo configuration is edited while the build runs', () => {
+		const built = nativeBuildFingerprint(root, 'rust', current);
+		write('.cargo/config.toml', '[build]\nrustflags = ["-C", "opt-level=1"]\n');
+		writeNativeBuildStamp(root, 'rust', 'gate', BINARY, built);
+		expect(nativeBuildFreshness(root, 'rust', 'gate', current).reason).toBe('.cargo/config.toml changed since the build');
+	});
 
 	it('is stale once a native source is added', () => {
 		write('rust/crates/sittir-core/src/added.rs', 'pub fn added() {}\n');
@@ -175,7 +201,7 @@ describe('binaries for other targets', () => {
 
 	it('keeps the host stamp when another target is built', () => {
 		write('packages/rust/native/sittir-rust.some-other-target.node', 'foreign');
-		writeNativeBuildStamp(root, 'rust', 'release', 'sittir-rust.some-other-target.node', current);
+		writeNativeBuildStamp(root, 'rust', 'release', 'sittir-rust.some-other-target.node', nativeBuildFingerprint(root, 'rust', current));
 		expect(nativeBuildFreshness(root, 'rust', 'gate', current).fresh).toBe(true);
 	});
 });
@@ -184,7 +210,7 @@ describe('a binary built elsewhere', () => {
 	it('validates in a checkout that receives the binary and its stamp, with no rust toolchain', () => {
 		const consumer = mkdtempSync(join(tmpdir(), 'sittir-native-consumer-'));
 		try {
-			for (const rel of ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'rust', 'packages/rust/.sittir', 'packages/rust/common']) cpSync(join(root, rel), join(consumer, rel), { recursive: true });
+			for (const rel of ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'pnpm-lock.yaml', 'scripts', 'rust', 'packages/rust/.sittir', 'packages/rust/common']) cpSync(join(root, rel), join(consumer, rel), { recursive: true });
 			cpSync(join(root, 'packages/rust/native'), join(consumer, 'packages/rust/native'), { recursive: true });
 			cpSync(join(root, 'node_modules'), join(consumer, 'node_modules'), { recursive: true });
 			expect(() => assertNativeBinaryFresh(consumer, 'rust')).not.toThrow();

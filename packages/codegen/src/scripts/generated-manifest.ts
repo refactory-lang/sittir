@@ -152,7 +152,7 @@ const isBound = (grammar: GrammarName, src: ManifestSource): boolean => existsSy
 
 function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = relative(REPO_ROOT, grammarPackageDir(grammar));
-	const own = [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/${BASE_ENTRY}`, `${dir}/package.json`, bindingsInput(grammar)];
+	const own = [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/${BASE_ENTRY}`, `${dir}/package.json`, bindingsInput(grammar), LOCKFILE];
 	if (!isBound(grammar, src)) return own;
 	const vocabularyDir = join(src.root, VOCABULARY_SOURCE_DIR);
 	const vocabulary = existsSync(vocabularyDir) ? vocabularySources(vocabularyDir).map((name) => `${VOCABULARY_SOURCE_DIR}/${name}`) : [];
@@ -233,11 +233,10 @@ function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource)
 	const bound = isBound(grammar, src);
 	const roots = generatedRootsFor(grammar);
 	const closure = runtimeClosure(src);
-	const pathspecs = [CODEGEN_SOURCE_DIR, ...closure, LOCKFILE, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
+	const pathspecs = [CODEGEN_SOURCE_DIR, ...closure, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
 	const matters = (rel: string): boolean =>
 		isCodegenSourceInput(rel) ||
 		closure.includes(rel) ||
-		rel === LOCKFILE ||
 		sourceInputs.includes(rel) ||
 		(bound && isVocabularyInput(rel)) ||
 		(!landsOnItsOwnCadence(rel) && roots.some((root) => rel === root || rel.startsWith(`${root}/`)));
@@ -353,9 +352,24 @@ function recordGeneration(grammar: GrammarName, src: ManifestSource, files: Read
 	renameSync(scratch, path);
 }
 
-export function writeManifestForGrammar(grammar: GrammarName, src: ManifestSource = worktreeSource()): void {
+export interface SourceFingerprint {
+	readonly source: string;
+	readonly upstream?: string;
+}
+
+export function sourceFingerprint(grammar: GrammarName, src: ManifestSource = worktreeSource()): SourceFingerprint {
+	return { source: computeSourceHash(grammar, src), upstream: upstreamDigest(grammar, src) };
+}
+
+export function recordedSourceFingerprint(grammar: GrammarName, src: ManifestSource = worktreeSource()): SourceFingerprint | undefined {
+	const last = readManifest(grammar, src)?.known.at(-1);
+	if (last === undefined) return undefined;
+	return last.upstream === undefined ? { source: last.source } : { source: last.source, upstream: last.upstream };
+}
+
+export function writeManifestForGrammar(grammar: GrammarName, read: SourceFingerprint, src: ManifestSource = worktreeSource()): void {
 	const files = hashGeneratedFiles(grammar, src);
-	recordGeneration(grammar, src, files, { source: computeSourceHash(grammar, src), outputs: outputsDigest(files), upstream: upstreamDigest(grammar, src) });
+	recordGeneration(grammar, src, files, { ...read, outputs: outputsDigest(files) });
 }
 
 export interface VerifyResult {

@@ -24,7 +24,7 @@ import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts
 import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
-import { manifestPath, writeManifestForGrammar } from './scripts/generated-manifest.ts';
+import { manifestPath, recordedSourceFingerprint, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
 import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -205,7 +205,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	return withInternalCodegenRun(() => runCodegenInternal(opts));
 }
 
-async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
+async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
@@ -382,7 +382,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 
-	writeManifestForGrammar(grammar);
+	writeManifestForGrammar(grammar, read);
 	console.log(`  → generation recorded in ${manifestPath(grammar)}`);
 
 	if (all && !noEmitDiff) {
@@ -439,8 +439,10 @@ function runNativeBuild({ grammar, nativeDebug, workspaceCheck }: Pick<CodegenOp
 
 export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
 	await withInternalCodegenRun(async () => {
+		const read = recordedSourceFingerprint(opts.grammar);
+		if (read === undefined) throw new Error(`No generation of ${opts.grammar} is on record to build the binding from: run gen --all first.`);
 		runNativeBuild(opts);
-		writeManifestForGrammar(opts.grammar);
+		writeManifestForGrammar(opts.grammar, read);
 		console.log(`  → generation recorded in ${manifestPath(opts.grammar)}`);
 	});
 }
@@ -451,6 +453,7 @@ export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
 
 async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
+	const read = sourceFingerprint(grammar);
 
 	if (!skipTsChain && !transpile && !tsGenerate) {
 		console.log(`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`);
@@ -461,5 +464,5 @@ async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		await compileParsers(grammar, pkg);
 	}
 
-	return runCodegen(opts);
+	return runCodegenInternal(opts, read);
 }

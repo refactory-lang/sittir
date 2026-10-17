@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync,
 import { homedir } from 'node:os';
 import { basename, dirname, join, relative } from 'node:path';
 import { hostPlatform, platformSuffix } from '@sittir/common/engine';
+import { moduleClosure } from './module-closure.ts';
 import { REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, type GrammarName } from '../grammars.ts';
 
 export type NativeProfile = 'release' | 'gate' | 'dev';
@@ -24,6 +25,12 @@ export interface HostBinaryFreshness {
 	profile?: NativeProfile;
 }
 
+export interface NativeBuildFingerprint {
+	readonly toolchain: string;
+	readonly config: Readonly<Record<string, string>>;
+	readonly inputs: Readonly<Record<string, string>>;
+}
+
 export interface BuildSetting {
 	readonly toolchain?: string;
 	readonly env?: NodeJS.ProcessEnv;
@@ -31,7 +38,8 @@ export interface BuildSetting {
 
 const STAMP_DIR = 'node_modules/.cache/sittir/native-build';
 const SHARED_CRATES = ['sittir-core', 'sittir-transport-macros'];
-const WORKSPACE_INPUTS = ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml'];
+const WORKSPACE_INPUTS = ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'pnpm-lock.yaml'];
+const BUILD_DRIVER = 'scripts/build-native.mts';
 const CARGO_CONFIG_NAMES = ['config.toml', 'config'];
 const BUILD_ENV =
 	/^(?:RUSTC|RUSTC_WRAPPER|RUSTC_WORKSPACE_WRAPPER|RUSTFLAGS|CARGO_ENCODED_RUSTFLAGS|CARGO_BUILD_(?!TARGET_DIR$).+|CARGO_PROFILE_.+|CARGO_TARGET_(?!DIR$).+|(?:HOST_|TARGET_)?(?:CC|CXX|AR|CFLAGS|CXXFLAGS|CPPFLAGS|ARFLAGS)(?:_.+)?|CRATE_CC_NO_DEFAULTS|SDKROOT|MACOSX_DEPLOYMENT_TARGET)$/;
@@ -65,7 +73,7 @@ function walk(path: string, out: string[]): void {
 }
 
 function crateInputs(crateRel: string): string[] {
-	return [`${crateRel}/Cargo.toml`, `${crateRel}/build.rs`, `${crateRel}/src`, `${crateRel}/templates`];
+	return [`${crateRel}/Cargo.toml`, `${crateRel}/package.json`, `${crateRel}/build.rs`, `${crateRel}/src`, `${crateRel}/templates`];
 }
 
 export function hostBinaryName(grammar: string): string {
@@ -86,7 +94,8 @@ export function nativeInputs(repoRoot: string, grammar: string): Record<string, 
 	const roots = [
 		...WORKSPACE_INPUTS,
 		...SHARED_CRATES.flatMap((crate) => crateInputs(`rust/crates/${crate}`)),
-		...crateInputs(nativeCrateRelDir(grammar))
+		...crateInputs(nativeCrateRelDir(grammar)),
+		...moduleClosure(repoRoot, [BUILD_DRIVER])
 	];
 	const files: string[] = [];
 	for (const root of roots) walk(join(repoRoot, root), files);
@@ -126,20 +135,16 @@ export function nativeBuildStamp(repoRoot: string, grammar: string, binary: stri
 	return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as NativeBuildStamp) : undefined;
 }
 
-export function writeNativeBuildStamp(
-	repoRoot: string,
-	grammar: string,
-	profile: NativeProfile,
-	binary: string,
-	setting: BuildSetting = {}
-): void {
-	const stamp: NativeBuildStamp = {
-		profile,
-		binarySha256: sha256(join(repoRoot, nativeBindingRelDir(grammar), binary)),
+export function nativeBuildFingerprint(repoRoot: string, grammar: string, setting: BuildSetting = {}): NativeBuildFingerprint {
+	return {
 		toolchain: setting.toolchain ?? rustToolchain(repoRoot),
 		config: nativeBuildConfig(repoRoot, grammar, setting.env ?? process.env),
 		inputs: nativeInputs(repoRoot, grammar)
 	};
+}
+
+export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint): void {
+	const stamp: NativeBuildStamp = { profile, binarySha256: sha256(join(repoRoot, nativeBindingRelDir(grammar), binary)), ...built };
 	const path = stampPath(repoRoot, grammar, binary);
 	mkdirSync(dirname(path), { recursive: true });
 	const scratch = `${path}.${process.pid}.tmp`;
