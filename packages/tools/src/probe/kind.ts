@@ -103,7 +103,6 @@ import {
 	astStructuralDiff,
 	findReparsedNodeAtOffset
 } from '../validate/read-render-parse.ts';
-import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, NodeCoordinate } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
