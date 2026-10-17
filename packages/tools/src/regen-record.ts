@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 export interface RegenRecord {
 	readonly source: string;
 	readonly binarySha256: string;
+	readonly fixtures: Readonly<Record<string, string>>;
 }
 
 const RECORD_DIR = 'node_modules/.cache/sittir/regen';

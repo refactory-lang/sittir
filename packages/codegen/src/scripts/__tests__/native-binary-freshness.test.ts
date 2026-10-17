@@ -1,8 +1,9 @@
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
+	type BuildSetting,
 	assertNativeBinaryFresh,
 	hostBinaryFreshnessFor,
 	hostBinaryName,
@@ -11,11 +12,12 @@ import {
 } from '../native-binary-freshness.ts';
 
 const TOOLCHAIN = 'rustc 1.90.0 (host: aarch64-apple-darwin)';
-const BUILD_ENV = { PATH: '/usr/bin' };
 const BINARY = hostBinaryName('rust');
-const current = { toolchain: TOOLCHAIN, env: BUILD_ENV };
 
+let outer: string;
 let root: string;
+let BUILD_ENV: NodeJS.ProcessEnv;
+let current: BuildSetting;
 
 function write(rel: string, contents: string): void {
 	mkdirSync(dirname(join(root, rel)), { recursive: true });
@@ -23,7 +25,10 @@ function write(rel: string, contents: string): void {
 }
 
 beforeEach(() => {
-	root = mkdtempSync(join(tmpdir(), 'sittir-native-freshness-'));
+	outer = mkdtempSync(join(tmpdir(), 'sittir-native-freshness-'));
+	root = join(outer, 'checkout');
+	BUILD_ENV = { PATH: '/usr/bin', CARGO_HOME: join(outer, 'cargo-home') };
+	current = { toolchain: TOOLCHAIN, env: BUILD_ENV };
 	write('Cargo.toml', '[workspace]\n');
 	write('Cargo.lock', 'version = 4\n');
 	write('rust-toolchain.toml', '[toolchain]\nchannel = "1.90"\n');
@@ -36,10 +41,14 @@ beforeEach(() => {
 	write('rust/crates/sittir-rust/build.rs', 'fn main() {}\n');
 	write('rust/crates/sittir-rust/src/lib.rs', 'pub fn grammar() {}\n');
 	write('packages/rust/.sittir/src/parser.c', 'int parser;\n');
+	write('packages/rust/.sittir/src/scanner.c', '#include "tree_sitter/parser.h"\n#include <wctype.h>\n#include "../../common/scanner.h"\n');
+	write('packages/rust/.sittir/src/tree_sitter/parser.h', 'typedef int TSLexer;\n');
+	write('packages/rust/common/scanner.h', '#include "inner.h"\nint shared;\n');
+	write('packages/rust/common/inner.h', 'int inner;\n');
 	write(`packages/rust/native/${BINARY}`, 'binary v1');
 	writeNativeBuildStamp(root, 'rust', 'gate', BINARY, current);
 });
-afterEach(() => rmSync(root, { recursive: true, force: true }));
+afterEach(() => rmSync(outer, { recursive: true, force: true }));
 
 describe('native build freshness', () => {
 	it('is fresh right after the build that stamped it', () => {
@@ -55,12 +64,14 @@ describe('native build freshness', () => {
 		'rust/crates/sittir-rust/src/lib.rs',
 		'rust/crates/sittir-rust/Cargo.toml',
 		'packages/rust/.sittir/src/parser.c',
+		'packages/rust/common/scanner.h',
+		'packages/rust/common/inner.h',
 		'Cargo.toml',
 		'Cargo.lock',
 		'rust-toolchain.toml'
 	]) {
 		it(`is stale once ${input} changes`, () => {
-			write(input, 'changed\n');
+			write(input, `${readFileSync(join(root, input), 'utf8')}changed\n`);
 			expect(hostBinaryFreshnessFor(root, 'rust')).toEqual([expect.objectContaining({ stale: true, reason: `${input} changed since the build` })]);
 			expect(nativeBuildFreshness(root, 'rust', 'gate', current)).toEqual({ fresh: false, reason: `${input} changed since the build` });
 			expect(() => assertNativeBinaryFresh(root, 'rust')).toThrow(`${input} changed since the build`);
@@ -117,6 +128,42 @@ describe('what only a rebuild cares about', () => {
 		expect(nativeBuildFreshness(root, 'rust', 'gate', current)).toEqual({ fresh: false, reason: '.cargo/config.toml changed since the build' });
 		expect(hostBinaryFreshnessFor(root, 'rust')).toEqual([expect.objectContaining({ stale: false })]);
 	});
+
+	for (const [where, path] of [
+		['in the crate it builds', 'checkout/rust/crates/sittir-rust/.cargo/config.toml'],
+		['above the checkout', '.cargo/config.toml'],
+		['in the cargo home', 'cargo-home/config.toml']
+	] as const) {
+		it(`is not fresh for a regeneration once cargo configuration ${where} changes`, () => {
+			mkdirSync(dirname(join(outer, path)), { recursive: true });
+			writeFileSync(join(outer, path), '[build]\nrustflags = ["-C", "opt-level=1"]\n');
+			expect(nativeBuildFreshness(root, 'rust', 'gate', current).reason).toBe(`${relative(root, join(outer, path))} changed since the build`);
+		});
+	}
+
+	for (const variable of [
+		'CC',
+		'CFLAGS',
+		'CXXFLAGS',
+		'CFLAGS_aarch64_apple_darwin',
+		'TARGET_CC',
+		'HOST_CFLAGS',
+		'AR',
+		'RUSTC',
+		'RUSTC_WORKSPACE_WRAPPER',
+		'CARGO_TARGET_AARCH64_APPLE_DARWIN_RUSTFLAGS',
+		'CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER'
+	]) {
+		it(`is not fresh for a regeneration once ${variable} changes`, () => {
+			expect(nativeBuildFreshness(root, 'rust', 'gate', { ...current, env: { ...BUILD_ENV, [variable]: 'changed' } }).reason).toBe(
+				`${variable} changed since the build`
+			);
+		});
+	}
+
+	it('stays fresh when only where cargo puts its output changes', () => {
+		expect(nativeBuildFreshness(root, 'rust', 'gate', { ...current, env: { ...BUILD_ENV, CARGO_TARGET_DIR: '/elsewhere', CARGO_BUILD_TARGET_DIR: '/elsewhere' } }).fresh).toBe(true);
+	});
 });
 
 describe('binaries for other targets', () => {
@@ -137,7 +184,7 @@ describe('a binary built elsewhere', () => {
 	it('validates in a checkout that receives the binary and its stamp, with no rust toolchain', () => {
 		const consumer = mkdtempSync(join(tmpdir(), 'sittir-native-consumer-'));
 		try {
-			for (const rel of ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'rust', 'packages/rust/.sittir']) cpSync(join(root, rel), join(consumer, rel), { recursive: true });
+			for (const rel of ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'rust', 'packages/rust/.sittir', 'packages/rust/common']) cpSync(join(root, rel), join(consumer, rel), { recursive: true });
 			cpSync(join(root, 'packages/rust/native'), join(consumer, 'packages/rust/native'), { recursive: true });
 			cpSync(join(root, 'node_modules'), join(consumer, 'node_modules'), { recursive: true });
 			expect(() => assertNativeBinaryFresh(consumer, 'rust')).not.toThrow();

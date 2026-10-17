@@ -153,6 +153,7 @@ describe('the shared runtime generation executes as a source', () => {
 		write(
 			'packages/common/package.json',
 			JSON.stringify({
+				name: '@sittir/common',
 				exports: {
 					'.': { types: './dist/index.d.ts', import: './dist/index.js' },
 					'./error-kind': { types: './src/error-kind.ts', import: './src/error-kind.ts' }

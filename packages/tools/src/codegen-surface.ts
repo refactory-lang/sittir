@@ -31,6 +31,8 @@
 // Relative paths (not `@sittir/codegen/...` subpaths) so no package export is
 // required. Keep in lockstep with the `CodegenSurface` literals below.
 // ---------------------------------------------------------------------------
+import { fileURLToPath } from 'node:url';
+
 const MODULES = {
 	evaluate: '../../codegen/src/compiler/evaluate.ts',
 	evaluatePackage: '../../codegen/src/compiler/evaluate-package.ts',
@@ -52,6 +54,7 @@ const MODULES = {
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	emittersShared: '../../codegen/src/emitters/shared.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
+	moduleClosure: '../../codegen/src/scripts/module-closure.ts',
 	indexSnapshot: '../../codegen/src/scripts/index-snapshot.ts',
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
 	generate: '../../codegen/src/compiler/generate.ts',
@@ -95,6 +98,7 @@ export interface CodegenSurface {
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
 	emittersShared: typeof import('../../codegen/src/emitters/shared.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
+	moduleClosure: typeof import('../../codegen/src/scripts/module-closure.ts');
 	indexSnapshot: typeof import('../../codegen/src/scripts/index-snapshot.ts');
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
 	generate: typeof import('../../codegen/src/compiler/generate.ts');
@@ -133,6 +137,11 @@ type FunctionKeys<T> = { [K in keyof T]-?: NonNullable<T[K]> extends AnyFn ? K :
  */
 function moduleUrl(module: keyof typeof MODULES): string {
 	return new URL(MODULES[module], import.meta.url).href;
+}
+
+/** The absolute paths of every codegen module this surface can load. */
+export function codegenModuleFiles(): string[] {
+	return (Object.keys(MODULES) as (keyof typeof MODULES)[]).map((module) => fileURLToPath(moduleUrl(module)));
 }
 
 export async function invoke<M extends keyof CodegenSurface, F extends FunctionKeys<CodegenSurface[M]> & string>(

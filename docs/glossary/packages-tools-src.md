@@ -50,23 +50,39 @@ The repository's `SyncBaseTarget`: every registered grammar's generated roots (s
 
 ### `packages/tools/src/regen.ts::regenerateGrammars`
 
-Regenerates the stale ones of `grammars` (all of them under `force`), each step in a fresh `gen` process, in two passes. The first generates every stale grammar at once (`gen --all --no-build-native --no-workspace-check`, at most `availableParallelism()` at a time, each line of output prefixed with its grammar), with no native build, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native binding in turn from the sources the first wrote (`gen --native-only`, which generates nothing), and only the last runs the workspace `cargo check`. The bindings build one at a time: they share a cargo target, and sittir-core must recompile under each grammar's napi typedef folder for its types to reach that grammar's `index.d.ts`. Before any work it clears the completion record (`clearRegenRecord`) of every grammar it regenerates, and it writes each one's record (`writeRegenRecord`) only after every native build and the workspace check have succeeded; a run that fails anywhere leaves those grammars to regenerate on the next run, however fresh their files look. Returns the exit status of the first generation that failed, in grammar order, before any native build starts; otherwise that of a failed native build (1 when it has none); 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
+Regenerates the stale ones of `grammars` (all of them under `force`), each step in a fresh `gen` process, in two passes. The first generates every stale grammar at once (`gen --all --no-build-native --no-workspace-check`, at most `availableParallelism()` at a time, each line of output prefixed with its grammar), with no native build, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native binding in turn from the sources the first wrote (`gen --native-only`, which generates nothing), and only the last runs the workspace `cargo check`. The bindings build one at a time: they share a cargo target, and sittir-core must recompile under each grammar's napi typedef folder for its types to reach that grammar's `index.d.ts`. Before any work it clears the completion record (`clearRegenRecord`) of every grammar it regenerates, and it writes each one's record (`writeRegenRecord`) only after every native build and the workspace check have succeeded; a run that fails anywhere leaves those grammars to regenerate on the next run, however fresh their files look. A grammar whose generation and native binary are current but whose fixtures are not (`staleness`) instead has only its parity fixtures re-extracted (`gen --all --post-generate-only`, at most `availableParallelism()` at a time, output prefixed), after the native builds; its record is written once that succeeds. Returns the exit status of the first generation that failed, in grammar order, before any native build starts; otherwise that of a failed native build (1 when it has none), then that of the first failed re-extraction; 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
 
-### `packages/tools/src/regen.ts::staleGrammars`
+### `packages/tools/src/regen.ts::pendingWork`
 
-The grammars that need regenerating, with a line printed for each: `skipped` with why it is fresh, or `regenerating` with why not (`staleness`). A skip never stands in for a gate: anything that gates a pull request regenerates with `force`.
+What each grammar needs (`staleness`), with a line printed for each: `skipped` with why it is fresh, `re-extracting fixtures` or `regenerating` with why not. A skip never stands in for a gate: anything that gates a pull request regenerates with `force`.
+
+### `packages/tools/src/regen.ts::Work`
+
+The grammars a run regenerates in full and those whose fixtures alone it re-extracts.
+
+### `packages/tools/src/regen.ts::Staleness`
+
+What a grammar needs, a full regeneration or a re-extraction of its fixtures, and why.
+
+### `packages/tools/src/regen.ts::regenerate`
+
+A `Staleness` that asks for a full regeneration, for the given reason.
+
+### `packages/tools/src/regen.ts::generationStaleness`
+
+Why a grammar's generated files or native binary are not current, or undefined when both are: its generated files must verify against its sources (`verifyManifestForGrammar`: sources, upstream, generated files and the binary's freshness), and its native binary must have been built from the current native inputs under the `gate` profile, toolchain and build configuration (`nativeBuildFreshness`), the build regeneration would run.
 
 ### `packages/tools/src/regen.ts::staleness`
 
-Why a grammar needs regenerating, or undefined when it does not: its generated files must verify against its sources (`verifyManifestForGrammar`: sources, upstream, generated files and the binary's freshness), and its native binary must have been built from the current native inputs under the `gate` profile, toolchain and build configuration (`nativeBuildFreshness`), the build regeneration would run, and its last regeneration must have finished: the completion record (`readRegenRecord`) must name the current source hash and the binary now present (`currentRecord`). Generation records the manifest, and the native build its stamp, before the workspace check and the post-generate steps run, so files and binary can both look fresh after a run that failed; only the record says the run finished.
+What a grammar needs, or undefined when it is current. A full regeneration when its generated files or native binary are not current (`generationStaleness`), or when its last regeneration did not finish: the completion record (`readRegenRecord`) must name the current source hash and the binary now present (`currentRecord`). Generation records the manifest, and the native build its stamp, before the workspace check and the post-generate steps run, so files and binary can both look fresh after a run that failed; only the record says the run finished. When all of that holds but a file parity fixture extraction reads or writes has changed since the record was written (`fixtureInputs`: the corpus, the extractor's code, the lockfile or the fixture files themselves), only the fixtures are re-extracted, with the first changed file as the reason. A record written before it carried fixtures counts as changed.
 
 ### `packages/tools/src/regen.ts::RegenerateOptions`
 
 `force` regenerates every grammar, fresh or not: `regen:all --force` or `SITTIR_REGEN_FORCE=1`.
 
-### `packages/tools/src/regen.ts::generate`
+### `packages/tools/src/regen.ts::runPrefixed`
 
-One grammar's first pass, its output prefixed with the grammar; resolves with the exit status once the process and both its streams have closed.
+Runs `gen` for one grammar with the given flags (the first pass, or a fixture re-extraction), its output prefixed with the grammar; resolves with the exit status once the process and both its streams have closed.
 
 ### `packages/tools/src/regen.ts::prefixed`
 
@@ -74,11 +90,11 @@ Copies a stream to `output` line by line, each line prefixed with the grammar, s
 
 ### `packages/tools/src/regen.ts::currentRecord`
 
-The completion record a finished regeneration of the grammar would leave now: its current source hash (`computeSourceHash`) and the SHA-256 of its host binary from that binary's build stamp. Undefined when the binary was never stamped.
+The completion record a finished regeneration of the grammar would leave now: its current source hash (`computeSourceHash`), the SHA-256 of its host binary from that binary's build stamp, and what its fixtures come from (`fixtureInputs`). Undefined when the binary was never stamped.
 
 ### `packages/tools/src/regen-record.ts::RegenRecord`
 
-What a finished regeneration of one grammar produced: the source hash it generated from and the SHA-256 of the native binary it built.
+What a finished regeneration of one grammar produced: the source hash it generated from, the SHA-256 of the native binary it built, and the content hash of each file its parity fixture extraction read or wrote (`fixtureInputs`).
 
 ### `packages/tools/src/regen-record.ts::readRegenRecord`
 
@@ -91,6 +107,26 @@ Writes the grammar's completion record, beside its destination and renamed into 
 ### `packages/tools/src/regen-record.ts::clearRegenRecord`
 
 Removes the grammar's completion record, if any.
+
+### `packages/tools/src/fixture-inputs.ts::fixtureInputs`
+
+Every file parity fixture extraction reads or writes for one grammar under `root`, with the SHA-256 of its content, by repo-relative path: the grammar's corpus (`corpusFiles`); every module extraction runs, the import closure (`moduleClosure`) of `post-generate.ts` and of each codegen module the tools load through the codegen surface (`codegenModuleFiles`), since those are loaded by a computed specifier the closure cannot follow; the lockfile, for the extractor's installed dependencies; and the extracted fixture files, so a hand edit or deletion of one counts too. Files that do not exist are left out, so an added or removed file changes the result.
+
+### `packages/tools/src/fixture-inputs.ts::corpusFiles`
+
+The repo-relative paths of every file in the grammar's corpus directory under `root`, its upstream entries and its local file alike.
+
+### `packages/tools/src/fixture-inputs.ts::EXTRACTOR`
+
+The repo-relative path of `post-generate.ts`, where parity fixture extraction starts.
+
+### `packages/tools/src/fixture-inputs.ts::LOCKFILE`
+
+`pnpm-lock.yaml`.
+
+### `packages/tools/src/codegen-surface.ts::codegenModuleFiles`
+
+The absolute path of every codegen module the surface can load (`MODULES`), so what the tools run through `load` and `invoke` can be hashed like their static imports.
 
 ### `packages/tools/src/regen.ts::inPool`
 

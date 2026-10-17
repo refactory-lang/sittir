@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { basename, dirname, join, relative } from 'node:path';
 import { hostPlatform, platformSuffix } from '@sittir/common/engine';
 import { REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, type GrammarName } from '../grammars.ts';
@@ -31,8 +32,11 @@ export interface BuildSetting {
 const STAMP_DIR = 'node_modules/.cache/sittir/native-build';
 const SHARED_CRATES = ['sittir-core', 'sittir-transport-macros'];
 const WORKSPACE_INPUTS = ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml'];
-const CARGO_CONFIG_FILES = ['.cargo/config.toml', '.cargo/config'];
-const BUILD_ENV = /^(RUSTFLAGS|RUSTC_WRAPPER|CARGO_ENCODED_RUSTFLAGS|CARGO_BUILD_.+|CARGO_PROFILE_.+)$/;
+const CARGO_CONFIG_NAMES = ['config.toml', 'config'];
+const BUILD_ENV =
+	/^(?:RUSTC|RUSTC_WRAPPER|RUSTC_WORKSPACE_WRAPPER|RUSTFLAGS|CARGO_ENCODED_RUSTFLAGS|CARGO_BUILD_(?!TARGET_DIR$).+|CARGO_PROFILE_.+|CARGO_TARGET_(?!DIR$).+|(?:HOST_|TARGET_)?(?:CC|CXX|AR|CFLAGS|CXXFLAGS|CPPFLAGS|ARFLAGS)(?:_.+)?|CRATE_CC_NO_DEFAULTS|SDKROOT|MACOSX_DEPLOYMENT_TARGET)$/;
+const SCANNER_SOURCES = ['scanner.c', 'scanner.cc'];
+const QUOTED_INCLUDE = /^\s*#include "([^"]+)"/;
 
 const toolchains = new Map<string, string>();
 
@@ -68,26 +72,48 @@ export function hostBinaryName(grammar: string): string {
 	return `${nativeBinaryName(grammar as GrammarName)}.${platformSuffix(hostPlatform())}.node`;
 }
 
+function quotedIncludeClosure(file: string, seen: Set<string>): void {
+	if (seen.has(file)) return;
+	seen.add(file);
+	for (const line of readFileSync(file, 'utf8').split('\n')) {
+		const header = QUOTED_INCLUDE.exec(line)?.[1];
+		if (header !== undefined && existsSync(join(dirname(file), header))) quotedIncludeClosure(join(dirname(file), header), seen);
+	}
+}
+
 export function nativeInputs(repoRoot: string, grammar: string): Record<string, string> {
+	const parserSources = join(repoRoot, relative(REPO_ROOT, grammarPackageDir(grammar)), '.sittir/src');
 	const roots = [
 		...WORKSPACE_INPUTS,
 		...SHARED_CRATES.flatMap((crate) => crateInputs(`rust/crates/${crate}`)),
-		...crateInputs(nativeCrateRelDir(grammar)),
-		`${relative(REPO_ROOT, grammarPackageDir(grammar))}/.sittir/src`
+		...crateInputs(nativeCrateRelDir(grammar))
 	];
 	const files: string[] = [];
 	for (const root of roots) walk(join(repoRoot, root), files);
+	walk(parserSources, files);
+	const scannerIncludes = new Set<string>();
+	for (const scanner of SCANNER_SOURCES.map((name) => join(parserSources, name)).filter((path) => existsSync(path))) {
+		quotedIncludeClosure(scanner, scannerIncludes);
+	}
 	const inputs: Record<string, string> = {};
-	for (const file of files.sort()) inputs[relative(repoRoot, file)] = sha256(file);
+	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[relative(repoRoot, file)] = sha256(file);
 	return inputs;
 }
 
-export function nativeBuildConfig(repoRoot: string, env: NodeJS.ProcessEnv): Record<string, string> {
+function cargoConfigFiles(repoRoot: string, grammar: string, env: NodeJS.ProcessEnv): string[] {
+	const dirs: string[] = [];
+	for (let dir = join(repoRoot, nativeCrateRelDir(grammar)); ; dir = dirname(dir)) {
+		dirs.push(join(dir, '.cargo'));
+		if (dirname(dir) === dir) break;
+	}
+	dirs.push(env.CARGO_HOME ?? join(homedir(), '.cargo'));
+	return [...new Set(dirs)].flatMap((dir) => CARGO_CONFIG_NAMES.map((name) => join(dir, name))).filter((path) => existsSync(path));
+}
+
+export function nativeBuildConfig(repoRoot: string, grammar: string, env: NodeJS.ProcessEnv): Record<string, string> {
 	const config: Record<string, string> = {};
 	for (const name of Object.keys(env).filter((name) => BUILD_ENV.test(name)).sort()) config[name] = env[name] ?? '';
-	for (const rel of CARGO_CONFIG_FILES) {
-		if (existsSync(join(repoRoot, rel))) config[rel] = sha256(join(repoRoot, rel));
-	}
+	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[relative(repoRoot, file)] = sha256(file);
 	return config;
 }
 
@@ -111,7 +137,7 @@ export function writeNativeBuildStamp(
 		profile,
 		binarySha256: sha256(join(repoRoot, nativeBindingRelDir(grammar), binary)),
 		toolchain: setting.toolchain ?? rustToolchain(repoRoot),
-		config: nativeBuildConfig(repoRoot, setting.env ?? process.env),
+		config: nativeBuildConfig(repoRoot, grammar, setting.env ?? process.env),
 		inputs: nativeInputs(repoRoot, grammar)
 	};
 	const path = stampPath(repoRoot, grammar, binary);
@@ -160,7 +186,7 @@ export function nativeBuildFreshness(
 	if (built.stale) return { fresh: false, reason: built.reason };
 	const stamp = nativeBuildStamp(repoRoot, grammar)!;
 	if (stamp.toolchain !== (setting.toolchain ?? rustToolchain(repoRoot))) return { fresh: false, reason: 'the rust toolchain changed since the build' };
-	const config = changedKey(stamp.config, nativeBuildConfig(repoRoot, setting.env ?? process.env));
+	const config = changedKey(stamp.config, nativeBuildConfig(repoRoot, grammar, setting.env ?? process.env));
 	if (config !== undefined) return { fresh: false, reason: `${config} changed since the build` };
 	if (stamp.profile !== profile) return { fresh: false, reason: `built under the ${stamp.profile} profile, not ${profile}` };
 	return { fresh: true, reason: `built from the current native inputs (${profile})` };
