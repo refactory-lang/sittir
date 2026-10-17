@@ -57,7 +57,7 @@ fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() 
                 sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1),
                 Span { start: 3, end: 4 },
             )),
-            SlotValue::Transport(Leaf),
+            SlotValue::Node(Leaf),
         ],
     };
     list.prepare(&ctx(&options, &sources)).unwrap();
@@ -202,7 +202,7 @@ impl Edged for Edged3 {
 }
 
 #[test]
-fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
+fn an_edged_node_prepares_its_edges_from_the_edge_row() {
     let opts = edged_options();
     let sources = Sources(HashMap::new());
     let mut leaf = Edged3 { edges: Edges::default() };
@@ -277,7 +277,7 @@ impl Edged for Armed {
 }
 
 #[test]
-fn a_transport_prepares_the_edge_of_the_arm_its_slot_holds() {
+fn a_node_prepares_the_edge_of_the_arm_its_slot_holds() {
     let mut opts = arm_options();
     opts.set_arm(SiteId(3), KindId(9));
     let sources = Sources(HashMap::new());
@@ -286,8 +286,8 @@ fn a_transport_prepares_the_edge_of_the_arm_its_slot_holds() {
         prepare_edges(&mut node, &ctx(&opts, &sources));
         node.edges.before
     };
-    assert_eq!(prepared(Some(SlotValue::Transport(Token(41)))), Some(stamped(9, SeamStrength::Declared)));
-    assert_eq!(prepared(Some(SlotValue::Transport(Token(40)))), Some(stamped(5, SeamStrength::Cascade)));
+    assert_eq!(prepared(Some(SlotValue::Node(Token(41)))), Some(stamped(9, SeamStrength::Declared)));
+    assert_eq!(prepared(Some(SlotValue::Node(Token(40)))), Some(stamped(5, SeamStrength::Cascade)));
     assert_eq!(prepared(None), Some(stamped(5, SeamStrength::Cascade)));
 }
 
@@ -317,12 +317,12 @@ impl SeatTarget for Wrapper {
 }
 
 fn seatable(kind: u16) -> Option<SlotValue<Seatable>> {
-    Some(SlotValue::Transport(Seatable { kind, edges: Edges::default() }))
+    Some(SlotValue::Node(Seatable { kind, edges: Edges::default() }))
 }
 
 fn after_of(item: &Option<SlotValue<Seatable>>) -> Option<KindId> {
     match item {
-        Some(SlotValue::Transport(t)) => t.edges.after.map(|e| e.arm),
+        Some(SlotValue::Node(t)) => t.edges.after.map(|e| e.arm),
         _ => None,
     }
 }
@@ -354,7 +354,7 @@ fn a_seated_gap_carries_its_own_sites_strength() {
     let sources = Sources(HashMap::new());
     let mut items = [seatable(3), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    let Some(SlotValue::Transport(first)) = &items[0] else { panic!() };
+    let Some(SlotValue::Node(first)) = &items[0] else { panic!() };
     assert_eq!(first.edges.after, Some(stamped(70, SeamStrength::Fallback)));
 }
 
@@ -375,7 +375,7 @@ fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = [
-        Some(SlotValue::Transport(Seatable { kind: 3, edges: Edges { before: None, after: Some(wire(1)) } })),
+        Some(SlotValue::Node(Seatable { kind: 3, edges: Edges { before: None, after: Some(wire(1)) } })),
         seatable(3),
     ];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
@@ -387,10 +387,10 @@ fn a_wrapper_not_itself_seated_seats_the_node_it_wraps_and_keeps_its_own_edges()
     let table: &[Option<SiteId>] = &[None, None, None, Some(SiteId(0))];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
-    let wrapped = || SlotValue::<Wrapper>::Transport(Wrapper { edges: Edges::default(), content: Seatable { kind: 3, edges: Edges::default() } });
+    let wrapped = || SlotValue::<Wrapper>::Node(Wrapper { edges: Edges::default(), content: Seatable { kind: 3, edges: Edges::default() } });
     let mut items = [wrapped(), wrapped()];
     fill_seated_gaps(items.iter_mut().map(Some), table, &ctx(&opts, &sources));
-    let SlotValue::Transport(first) = &items[0] else { panic!() };
+    let SlotValue::Node(first) = &items[0] else { panic!() };
     assert_eq!(first.content.edges.after.map(|e| e.arm), Some(KindId(70)));
     assert_eq!(first.edges, Edges::default());
 }
@@ -518,7 +518,7 @@ fn a_root_reads_its_flanks_from_the_bytes_around_its_first_and_last_coordinate()
 fn a_rebuilt_edge_item_or_a_flank_that_is_not_whitespace_leaves_the_edge_unset() {
     let opts = ResolvedOptions::default();
     let sources = source_tree();
-    let rebuilt_first = vec![SlotValue::Transport(Seatable { kind: 2, edges: Edges::default() }), parsed(1, 0, 6).unwrap()];
+    let rebuilt_first = vec![SlotValue::Node(Seatable { kind: 2, edges: Edges::default() }), parsed(1, 0, 6).unwrap()];
     let flanks = root_flanks(rebuilt_first.first_item(), rebuilt_first.last_item(), None, &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks.before, None);
     assert_eq!(flanks.after, None, "the bytes after `use x;` hold `fn f() {{}}`, which is not a flank");
@@ -611,7 +611,7 @@ const fn at(r0: u32, c0: u32, r1: u32, c1: u32) -> PointSpan {
 }
 
 fn spanned(span: PointSpan, leading: TriviaReach, trailing: TriviaReach) -> SlotValue<Spanned> {
-    SlotValue::Transport(Spanned { edge: SnapshotEdge { span, leading, trailing }, edges: Edges::default() })
+    SlotValue::Node(Spanned { edge: SnapshotEdge { span, leading, trailing }, edges: Edges::default() })
 }
 
 #[test]
@@ -676,7 +676,7 @@ type ArmAt = Option<(KindId, Option<SeamStrength>)>;
 
 fn edge_arms(item: &Option<SlotValue<Spanned>>) -> (ArmAt, ArmAt) {
     match item {
-        Some(SlotValue::Transport(item)) => (item.edges.before.map(|e| (e.arm, e.strength)), item.edges.after.map(|e| (e.arm, e.strength))),
+        Some(SlotValue::Node(item)) => (item.edges.before.map(|e| (e.arm, e.strength)), item.edges.after.map(|e| (e.arm, e.strength))),
         _ => (None, None),
     }
 }
@@ -695,7 +695,7 @@ fn a_slot_layout_gives_every_gap_between_present_items_its_classes_at_slot_stren
 #[test]
 fn a_slot_layout_leaves_an_edge_already_set_and_a_side_it_stores_nothing_for() {
     let mut first = spanned(at(0, 0, 0, 1), Bare, Bare);
-    if let SlotValue::Transport(item) = &mut first {
+    if let SlotValue::Node(item) = &mut first {
         item.edges.after = Some(wire(2));
     }
     let mut items = [Some(first), Some(spanned(at(0, 3, 0, 4), Bare, Bare))];

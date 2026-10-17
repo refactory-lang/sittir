@@ -13,7 +13,7 @@
 
 A separated list whose separator is a choice of literal tokens
 (`choice(',', ';')`) already captures which token a parsed instance used:
-the list kind's transport carries `_separator` as a kind id, the factory
+the list kind's node carries `_separator` as a kind id, the factory
 takes an options bag before its spread elements
 (`ir.objectTypeContent.strict({ separator, delimiter }, a, b)`), and the
 generated render matches the kind id back to its text. Four things are
@@ -82,7 +82,7 @@ The declared default flows exactly as the delimiter default does:
 - The site rides `SPACING_SITES` the way a declared preference such as
   `statement_terminator` does: one row `("object_type_content",
   "content_separator", "separator", <default id>, &[<arm ids>])`, its
-  transport field `separator_kind`, no top-level label. `defaults()` and
+  node field `separator_kind`, no top-level label. `defaults()` and
   `resolve()` need no new table: `<kind>.<slot>_separator` resolves per
   kind or supertype through the existing site lookup, the value a kind id
   the site admits.
@@ -90,7 +90,7 @@ The declared default flows exactly as the delimiter default does:
   so a parsed node keeps its token and a built one takes the resolved
   default. The render match keeps its literal arms and its fallback becomes
   unreachable in practice; it stays as the declared default's text so a
-  transport built without filling still renders.
+  node built without filling still renders.
 - The factory stamps the declared default at construction
   (`declaredSeparatorDefault`, the twin of `declaredDelimiterDefault`), so
   `_separator` is never absent on a built node: `options.separator ??

@@ -5,8 +5,8 @@ pub mod field_ids;
 pub mod hash;
 pub mod kind_ids;
 pub mod options;
-pub mod transport;
+pub mod node;
 
-pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};
+pub use node::{render_node_dispatch, render_node_parts, AnyNode, RenderRoot};
 pub use hash::RENDER_MODULE_HASH;
 pub use kind_ids::*;

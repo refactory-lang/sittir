@@ -1,4 +1,4 @@
-import type { TransportSlotShape } from './render-module.ts';
+import type { NodeSlotShape } from './render-module.ts';
 
 export const RECORD_HEADER_WORDS = 2;
 
@@ -22,7 +22,7 @@ export interface RecordLayout {
 	readonly places: readonly RecordPlace[];
 }
 
-export function slotRecordForm(shape: TransportSlotShape, multiple: boolean): RecordForm {
+export function slotRecordForm(shape: NodeSlotShape, multiple: boolean): RecordForm {
 	if (shape.tag === 'presence') return { tag: 'bit' };
 	const item = shape.tag === 'text' ? CELL_WORDS.text : CELL_WORDS.node;
 	return multiple ? { tag: 'cell', width: CELL_WORDS.list, run: item } : { tag: 'cell', width: item };

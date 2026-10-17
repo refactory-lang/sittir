@@ -460,7 +460,7 @@ Whether a repo-relative path is a codegen source that takes part in generation: 
  * Askama bakes the per-kind `.jinja` templates into the binary at compile
  * time, and the transport/dispatch code is compiled from the generated
  * `src/render/*.rs` — so a `.node` older than ANY of those inputs renders
- * with stale templates or stale transport logic. Historically this failed
+ * with stale templates or stale node logic. Historically this failed
  * SILENTLY (validators ran against the stale engine; in the worst case the
  * stale binary segfaulted mid-gate). Every native consumer should assert
  * freshness before loading the engine.

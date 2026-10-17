@@ -1,5 +1,5 @@
-//! The record layout codegen stamps on a transport: `words` on
-//! `#[transport(…)]`, and `word` with `width` (and `run`) or `bit` on each
+//! The record layout codegen stamps on a node: `words` on
+//! `#[node(…)]`, and `word` with `width` (and `run`) or `bit` on each
 //! slot's `#[slot(…)]`, beside the slot's read facts. The derive checks it and
 //! computes none of it: the stamped cells stay inside the record's words and
 //! never overlap, and each slot's type fits its cell (`sittir_core::record`),
@@ -43,7 +43,7 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
             continue;
         };
         let Some(words) = words else {
-            return Err(syn::Error::new_spanned(ident, format!("`{ident}` has a record cell, so `{owner}` states its words: `#[transport(words = …)]`")));
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}` has a record cell, so `{owner}` states its words: `#[node(words = …)]`")));
         };
         let message = format!("{owner}.{ident}: its record cell overlaps the header");
         asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
@@ -104,27 +104,27 @@ mod tests {
     #[test]
     fn each_stamped_field_asserts_its_type_fits_its_cell() {
         let out = checks(parse_quote! {
-            #[transport(words = 10)]
-            pub struct LetDeclarationTransport {
-                pub layout: Option<Box<TransportLayout>>,
+            #[node(words = 10)]
+            pub struct LetDeclarationNode {
+                pub layout: Option<Box<NodeLayout>>,
                 #[slot(word = 2, bit = 0)]
                 pub mutable: bool,
                 #[slot(word = 3, width = 5)]
-                pub pattern: SlotValue<PatternTransport>,
+                pub pattern: SlotValue<PatternNode>,
                 #[slot(word = 8, width = 2, run = 5)]
-                pub items: Vec<SlotValue<ItemTransport>>,
+                pub items: Vec<SlotValue<ItemNode>>,
             }
         })
         .expect("checks");
-        assert!(has(&out, r#"assert!(::sittir_core::record::fits_bit::<bool>(), "LetDeclarationTransport.mutable: a stamped bit holds only a presence")"#));
-        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternTransport>>(5u32, 0u32), "LetDeclarationTransport.pattern: its type needs more than its stamped record cell")"#));
-        assert!(has(&out, r#"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemTransport>>>(2u32, 5u32)"#));
+        assert!(has(&out, r#"assert!(::sittir_core::record::fits_bit::<bool>(), "LetDeclarationNode.mutable: a stamped bit holds only a presence")"#));
+        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(5u32, 0u32), "LetDeclarationNode.pattern: its type needs more than its stamped record cell")"#));
+        assert!(has(&out, r#"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(2u32, 5u32)"#));
     }
 
     #[test]
     fn a_struct_with_no_record_attribute_checks_nothing() {
         let out = checks(parse_quote! {
-            pub struct IdentifierTransport {
+            pub struct IdentifierNode {
                 pub text: String,
             }
         })
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn two_cells_sharing_a_word_are_refused_naming_the_later_field() {
         let message = refusal(parse_quote! {
-            #[transport(words = 10)]
+            #[node(words = 10)]
             pub struct S {
                 #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
@@ -153,7 +153,7 @@ mod tests {
     #[test]
     fn a_cell_past_the_record_s_words_is_refused() {
         let message = refusal(parse_quote! {
-            #[transport(words = 6)]
+            #[node(words = 6)]
             pub struct S {
                 #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
@@ -165,7 +165,7 @@ mod tests {
     #[test]
     fn a_bit_shared_or_inside_a_cell_is_refused() {
         let shared = refusal(parse_quote! {
-            #[transport(words = 4)]
+            #[node(words = 4)]
             pub struct S {
                 #[slot(word = 2, bit = 3)]
                 pub a: bool,
@@ -175,7 +175,7 @@ mod tests {
         });
         assert!(shared.contains("`b`"), "{shared}");
         let inside = refusal(parse_quote! {
-            #[transport(words = 8)]
+            #[node(words = 8)]
             pub struct S {
                 #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
@@ -200,7 +200,7 @@ mod tests {
     #[test]
     fn cell_end_overflow_is_refused_naming_the_field() {
         let message = refusal(parse_quote! {
-            #[transport(words = 10)]
+            #[node(words = 10)]
             pub struct S {
                 #[slot(word = 4294967295, width = 5)]
                 pub a: SlotValue<A>,
@@ -212,7 +212,7 @@ mod tests {
     #[test]
     fn presence_end_overflow_is_refused_naming_the_field() {
         let message = refusal(parse_quote! {
-            #[transport(words = 10)]
+            #[node(words = 10)]
             pub struct S {
                 #[slot(word = 4294967295, bit = 0)]
                 pub a: bool,
@@ -224,7 +224,7 @@ mod tests {
     #[test]
     fn a_record_slot_cannot_omit_its_stamp() {
         let message = refusal(parse_quote! {
-            #[transport(words = 7)]
+            #[node(words = 7)]
             pub struct S {
                 #[slot]
                 pub a: SlotValue<A>,

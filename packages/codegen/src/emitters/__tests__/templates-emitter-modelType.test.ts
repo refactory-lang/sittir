@@ -133,7 +133,7 @@ describe('emitBranchTemplate', () => {
 });
 
 describe('emitBranchTemplate — separatedList nonterminal separator', () => {
-	it("references the transport struct's own `.separator` field instead of a hardcoded literal when the separator is nonterminal", () => {
+	it("references the node struct's own `.separator` field instead of a hardcoded literal when the separator is nonterminal", () => {
 		// Mirrors the real shape AssembledList.renderRule carries for
 		// a rule like `object_type_content: seq(optional(choice(',', ';')),
 		// seq(member, repeat(seq(choice(',', ';'), member))), optional(choice(',', ';')))`

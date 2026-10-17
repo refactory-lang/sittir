@@ -391,19 +391,19 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 	return nodeMapWith(nodes);
 }
 
-describe('native transport emission', () => {
+describe('native node emission', () => {
 	it('boxes a pinned payload, asserts it over the ceiling, and refuses a pin no choice holds', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
 		const templates = emittedTemplates({ call_expression: slot('callee') });
-		const emitted = emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['CallExpressionTransport'] }).transportRs.contents;
-		expect(emitted).toContain('    CallExpression(Box<CallExpressionTransport>),');
-		expect(emitted).toMatch(new RegExp(`^const _: \\(\\) = assert!\\(::core::mem::size_of::<CallExpressionTransport>\\(\\) > ${PAYLOAD_CEILING_BYTES}, "`, 'm'));
-		expect(() => emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['UnheldTransport'] })).toThrow(
-			'UnheldTransport is pinned in boxed-payloads.ts but no choice holds it'
+		const emitted = emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['CallExpressionNode'] }).nodeRs.contents;
+		expect(emitted).toContain('    CallExpression(Box<CallExpressionNode>),');
+		expect(emitted).toMatch(new RegExp(`^const _: \\(\\) = assert!\\(::core::mem::size_of::<CallExpressionNode>\\(\\) > ${PAYLOAD_CEILING_BYTES}, "`, 'm'));
+		expect(() => emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['UnheldNode'] })).toThrow(
+			'UnheldNode is pinned in boxed-payloads.ts but no choice holds it'
 		);
 	});
 
-	it('emits transport-oriented Rust render support', () => {
+	it('emits node-oriented Rust render support', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
 		const emitted = emitRenderModule(
 			'rust',
@@ -412,57 +412,55 @@ describe('native transport emission', () => {
 			generatedIdTables
 		);
 
-		expect(emitted.transportRs.contents).toContain('pub enum AnyTransport');
-		expect(emitted.transportRs.contents).toContain('#[transport(choice)]\npub enum AnyTransport {');
-		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
-		expect(emitted.transportRs.contents).toContain('pub struct CallExpressionTransport');
-		expect(emitted.transportRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionTransport>,');
-		expect(emitted.transportRs.contents).toMatch(/pub enum AnyTransport \{[^}]*\n    #\[kind\(kind::SEMI\)\]\n    Semi,/);
-		expect(emitted.transportRs.contents).not.toContain('pub struct LiteralTransport');
-		// `from_transport` (2026-04-29 renderable-native-views plan, Task 4) was
-		// the interim bridge name; it was since renamed to the two functions
-		// asserted below (`render_transport_dispatch` / `render_transport_parts`)
-		// — no standalone `from_transport` symbol exists in current output.
-		expect(emitted.transportRs.contents).toContain('pub fn render_transport_dispatch');
-		expect(emitted.transportRs.contents).toContain('pub fn render_transport_parts');
-		expect(emitted.transportRs.contents).not.toContain('renderable native transport bridge pending');
+		expect(emitted.nodeRs.contents).toContain('pub enum AnyNode');
+		expect(emitted.nodeRs.contents).toContain('#[node(choice)]\npub enum AnyNode {');
+		expect(emitted.nodeRs.contents).toContain('CallExpression(CallExpressionNode),');
+		expect(emitted.nodeRs.contents).toContain('pub struct CallExpressionNode');
+		expect(emitted.nodeRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionNode>,');
+		expect(emitted.nodeRs.contents).toMatch(/pub enum AnyNode \{[^}]*\n    #\[kind\(kind::SEMI\)\]\n    Semi,/);
+		expect(emitted.nodeRs.contents).not.toContain('pub struct LiteralNode');
+		// The render entry points are `render_node_dispatch` and
+		// `render_node_parts`; no standalone `from_node` bridge exists.
+		expect(emitted.nodeRs.contents).toContain('pub fn render_node_dispatch');
+		expect(emitted.nodeRs.contents).toContain('pub fn render_node_parts');
+		expect(emitted.nodeRs.contents).not.toContain('renderable native node bridge pending');
 		// Legacy UntypedNode render shim (render_dispatch / render_nodedata_into) is
 		// retired (PR-E2 retired bridge.rs/dispatch.rs; the emitter shim is now
-		// deleted too). lib.rs uses the transport path only.
+		// deleted too). lib.rs uses the node path only.
 		expect(emitted.libRs.contents).not.toContain('render_dispatch');
 		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
 		expect(emitted.libRs.contents).toContain(
-			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};'
+			'pub use node::{render_node_dispatch, render_node_parts, AnyNode, RenderRoot};'
 		);
-		expect(emitted.transportRs.contents).not.toContain('AnyTransport::UntypedNode');
-		expect(emitted.transportRs.contents).not.toContain('node_json');
+		expect(emitted.nodeRs.contents).not.toContain('AnyNode::UntypedNode');
+		expect(emitted.nodeRs.contents).not.toContain('node_json');
 		// (No blanket "JSON" ban — a legitimate `JSON.stringify` mention now
 		// appears in an unrelated FromNapiValue error-message doc comment. The
 		// two checks above already pin the retirement of the legacy bridge.)
 	});
 
 	// Kind-named slots (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md)
-	// unified naming ACROSS emitters, including this Rust transport layer:
+	// unified naming ACROSS emitters, including this Rust node layer:
 	// unnamed positional children now use their own kind-derived field name
 	// (`_identifier`/`identifier`) instead of the generic `$children`/`children`
 	// key. The remaining cases below update field names accordingly.
-	it('emits optional children as Option<T> transport', () => {
+	it('emits optional children as Option<T> node', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalChildrenNodeMap);
 		const rust = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_parent: EMPTY }),
 			nodeMap,
 			generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
 		expect(rust).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 5)]\n    pub identifier: Option<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 5)]\n    pub identifier: Option<::sittir_core::SlotValue<IdentifierNode>>,'
 		);
 		expect(rust).not.toContain('pub identifier: Option<Vec<');
 		expect(rust).not.toContain('pub identifier: OneOrMany<');
 	});
 
-	it('emits required singular children as bare transport values', () => {
+	it('emits required singular children as bare node values', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRequiredChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -470,12 +468,12 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const start = emitted.transportRs.contents.indexOf('pub struct ChildParentTransport');
-		const end = emitted.transportRs.contents.indexOf('}', start);
-		const structBody = emitted.transportRs.contents.slice(start, end);
+		const start = emitted.nodeRs.contents.indexOf('pub struct ChildParentNode');
+		const end = emitted.nodeRs.contents.indexOf('}', start);
+		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 5)]\n    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 5)]\n    pub identifier: ::sittir_core::SlotValue<IdentifierNode>,'
 		);
 		expect(structBody).not.toContain('pub identifier: Option<');
 		expect(structBody).not.toContain('pub identifier: Vec<');
@@ -483,8 +481,8 @@ describe('native transport emission', () => {
 	});
 
 	it('falls back to a per-slot enum (expanded to concrete kinds) when a slot mixes a supertype ref with an explicit subtype ref', () => {
-		// classifySlot (transport-common.ts) only collapses a slot onto a bare
-		// `<Supertype>Transport` when the slot's kind set EXACTLY equals that
+		// classifySlot (node-common.ts) only collapses a slot onto a bare
+		// `<Supertype>Node` when the slot's kind set EXACTLY equals that
 		// supertype's full resolved subtype set — a documented, deliberate
 		// safety rule (a looser subset-collapse risked FromNapiValue recursing
 		// through a wide/self-recursive supertype and overflowing the native
@@ -501,19 +499,19 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const start = emitted.transportRs.contents.indexOf('pub struct SupertypeAliasParentTransport');
-		const end = emitted.transportRs.contents.indexOf('}', start);
-		const structBody = emitted.transportRs.contents.slice(start, end);
+		const start = emitted.nodeRs.contents.indexOf('pub struct SupertypeAliasParentNode');
+		const end = emitted.nodeRs.contents.indexOf('}', start);
+		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_content")]\n    #[slot(word = 2, width = 5)]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentTransportSlot>,'
+			'#[wire(key = "_content")]\n    #[slot(word = 2, width = 5)]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentNodeSlot>,'
 		);
-		expect(emitted.transportRs.contents).toContain('pub enum SupertypeAliasParentContentTransportSlot {');
-		expect(emitted.transportRs.contents).toContain('Identifier(IdentifierTransport),');
-		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
+		expect(emitted.nodeRs.contents).toContain('pub enum SupertypeAliasParentContentNodeSlot {');
+		expect(emitted.nodeRs.contents).toContain('Identifier(IdentifierNode),');
+		expect(emitted.nodeRs.contents).toContain('CallExpression(CallExpressionNode),');
 	});
 
-	it('emits repeated children as a NonEmptyVec transport instead of OneOrMany', () => {
+	it('emits repeated children as a NonEmptyVec node instead of OneOrMany', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -521,18 +519,18 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedParentTransport');
-		const end = emitted.transportRs.contents.indexOf('}', start);
-		const structBody = emitted.transportRs.contents.slice(start, end);
+		const start = emitted.nodeRs.contents.indexOf('pub struct RepeatedParentNode');
+		const end = emitted.nodeRs.contents.indexOf('}', start);
+		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 2, run = 5)]\n    pub identifier: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 2, run = 5)]\n    pub identifier: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierNode>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
 
-	it('emits optional repeated unnamed children as a Vec transport, an empty list being [] (same rule as named fields)', () => {
-		// rustTransportSlotType's `wrap()` applies one typing rule to named and
+	it('emits optional repeated unnamed children as a Vec node, an empty list being [] (same rule as named fields)', () => {
+		// rustNodeSlotType's `wrap()` applies one typing rule to named and
 		// unnamed slots alike: a repeat1 list is a NonEmptyVec, any other list a
 		// Vec, never optional. The sibling optional named-field case below takes
 		// the same `wrap()` call to the same shape.
@@ -543,12 +541,12 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedParentTransport');
-		const end = emitted.transportRs.contents.indexOf('}', start);
-		const structBody = emitted.transportRs.contents.slice(start, end);
+		const start = emitted.nodeRs.contents.indexOf('pub struct OptionalRepeatedParentNode');
+		const end = emitted.nodeRs.contents.indexOf('}', start);
+		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 2, run = 5)]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 2, run = 5)]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierNode>>,'
 		);
 	});
 
@@ -567,18 +565,18 @@ describe('native transport emission', () => {
 			emittedTemplates({ module: EMPTY }),
 			makeTransparentStatementWrapperNodeMap(),
 			generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
-		expect(emitted).toContain('pub enum StatementTransport {');
-		// SCC-driven Box rule (emitPerSlotChildEnum / rustTransportSlotType):
+		expect(emitted).toContain('pub enum StatementNode {');
+		// SCC-driven Box rule (emitPerSlotChildEnum / rustNodeSlotType):
 		// a variant boxes only when it shares an SCC with its owner in the
 		// singular-reference graph. This fixture's chain (module → _statement →
 		// _simple_statements → _simple_statement → expression_statement) has no
 		// cycle back to _statement, so SimpleStatements stays unboxed — a more
 		// precise replacement for the old "always Box a branch-kind variant"
 		// default, not a regression.
-		expect(emitted).toContain('SimpleStatements(SimpleStatementsTransport),');
-		expect(emitted).toContain('ExpressionStatement(ExpressionStatementTransport),');
+		expect(emitted).toContain('SimpleStatements(SimpleStatementsNode),');
+		expect(emitted).toContain('ExpressionStatement(ExpressionStatementNode),');
 		expect(emitted).toMatch(/    #\[kind\([^\n]*\)\]\n    ExpressionStatement\(/);
 	});
 
@@ -597,9 +595,9 @@ describe('native transport emission', () => {
 			emittedTemplates({ hidden_wrapper_parent: EMPTY }),
 			makeHiddenWrapperChildEnumNodeMap(),
 			generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
-		expect(emitted).toContain('pub enum HiddenWrapperParentContentTransportSlot {');
+		expect(emitted).toContain('pub enum HiddenWrapperParentContentNodeSlot {');
 		expect(emitted).toMatch(/    #\[kind\([^\n]*\)\]\n    WrappedItem\(/);
 		expect(emitted).toMatch(/    #\[kind\([^\n]*\)\]\n    Integer\(/);
 	});
@@ -620,15 +618,15 @@ describe('native transport emission', () => {
 			emittedTemplates({ object_like: EMPTY }),
 			makeSupertypeBackedChildEnumNodeMap(),
 			generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
-		expect(emitted).toContain('pub enum ObjectLikeContentTransportSlot {');
+		expect(emitted).toContain('pub enum ObjectLikeContentNodeSlot {');
 		// No SCC cycle in this fixture (object_like → pair → identifier is
 		// linear) — Pair stays unboxed, same SCC-driven rule as the
 		// transparent-wrapper case above.
-		expect(emitted).toContain('Pair(PairTransport),');
-		expect(emitted).toContain('Identifier(IdentifierTransport),');
-		expect(emitted).toContain('ReservedIdentifier(ReservedIdentifierTransport),');
+		expect(emitted).toContain('Pair(PairNode),');
+		expect(emitted).toContain('Identifier(IdentifierNode),');
+		expect(emitted).toContain('ReservedIdentifier(ReservedIdentifierNode),');
 		for (const variant of ['Pair', 'Identifier', 'ReservedIdentifier']) {
 			expect(emitted).toMatch(new RegExp(`    #\\[kind\\([^\\n]*\\)\\]\\n    ${variant}\\(`));
 		}
@@ -636,9 +634,9 @@ describe('native transport emission', () => {
 
 	it('emits per-slot typed enum for named heterogeneous fields (cleanup-rules §E1)', () => {
 		// Named heterogeneous field gets its own typed enum
-		// `<ParentTypeName><FieldName>TransportSlot` — symmetry with unnamed `$children`
+		// `<ParentTypeName><FieldName>NodeSlot` — symmetry with unnamed `$children`
 		// slots. After spec 024 cleanup-§E1, the per-slot enum is load-bearing:
-		// the struct field type IS the enum (no longer `Box<AnyTransport>`).
+		// the struct field type IS the enum (no longer `Box<AnyNode>`).
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: {
 				field_expression: 600,
@@ -653,18 +651,18 @@ describe('native transport emission', () => {
 			emittedTemplates({ field_expression: slot('field') }),
 			makeNamedHeterogeneousFieldNodeMap(),
 			generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
-		expect(emitted).toContain('pub enum FieldExpressionFieldTransportSlot {');
-		expect(emitted).toContain('FieldIdentifier(FieldIdentifierTransport),');
-		expect(emitted).toContain('IntegerLiteral(IntegerLiteralTransport),');
-		expect(emitted).not.toContain('_transport_slot_to_any');
+		expect(emitted).toContain('pub enum FieldExpressionFieldNodeSlot {');
+		expect(emitted).toContain('FieldIdentifier(FieldIdentifierNode),');
+		expect(emitted).toContain('IntegerLiteral(IntegerLiteralNode),');
+		expect(emitted).not.toContain('_node_slot_to_any');
 		// Per-slot enum is now load-bearing — struct field type IS the enum.
-		expect(emitted).toContain('pub field: ::sittir_core::SlotValue<FieldExpressionFieldTransportSlot>');
-		expect(emitted).not.toContain('Box<AnyTransport>>');
+		expect(emitted).toContain('pub field: ::sittir_core::SlotValue<FieldExpressionFieldNodeSlot>');
+		expect(emitted).not.toContain('Box<AnyNode>>');
 	});
 
-	it('emits repeated named fields as a NonEmptyVec transport instead of OneOrMany', () => {
+	it('emits repeated named fields as a NonEmptyVec node instead of OneOrMany', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedFieldNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -672,17 +670,17 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedFieldParentTransport');
-		const end = emitted.transportRs.contents.indexOf('}', start);
-		const structBody = emitted.transportRs.contents.slice(start, end);
+		const start = emitted.nodeRs.contents.indexOf('pub struct RepeatedFieldParentNode');
+		const end = emitted.nodeRs.contents.indexOf('}', start);
+		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS, word = 2, width = 2, run = 5)]\n    pub items: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS, word = 2, width = 2, run = 5)]\n    pub items: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierNode>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
 
-	it('emits optional repeated named fields as a Vec transport, an empty list being []', () => {
+	it('emits optional repeated named fields as a Vec node, an empty list being []', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedFieldNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -690,17 +688,17 @@ describe('native transport emission', () => {
 			nodeMap,
 			generatedIdTables
 		);
-		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedFieldParentTransport');
-		const end = emitted.transportRs.contents.indexOf('}', start);
-		const structBody = emitted.transportRs.contents.slice(start, end);
+		const start = emitted.nodeRs.contents.indexOf('pub struct OptionalRepeatedFieldParentNode');
+		const end = emitted.nodeRs.contents.indexOf('}', start);
+		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS, word = 2, width = 2, run = 5)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS, word = 2, width = 2, run = 5)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierNode>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
 
-	it('flattens reserved nested supertypes in Rust transport enums', () => {
+	it('flattens reserved nested supertypes in Rust node enums', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeReservedNestedSupertypeNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -709,14 +707,14 @@ describe('native transport emission', () => {
 			generatedIdTables
 		);
 
-		expect(emitted.transportRs.contents).toContain('pub enum ExpressionTransport');
-		expect(emitted.transportRs.contents).toContain('StringLiteral(StringLiteralTransport),');
-		expect(emitted.transportRs.contents).toContain('Identifier(IdentifierTransport),');
-		expect(emitted.transportRs.contents).not.toContain('Literal(Box<LiteralTransport>)');
-		expect(emitted.transportRs.contents).not.toContain('literal_transport_to_any');
+		expect(emitted.nodeRs.contents).toContain('pub enum ExpressionNode');
+		expect(emitted.nodeRs.contents).toContain('StringLiteral(StringLiteralNode),');
+		expect(emitted.nodeRs.contents).toContain('Identifier(IdentifierNode),');
+		expect(emitted.nodeRs.contents).not.toContain('Literal(Box<LiteralNode>)');
+		expect(emitted.nodeRs.contents).not.toContain('literal_node_to_any');
 	});
 
-	it('emits keyword-safe Rust transport identifiers decoded by kind id', () => {
+	it('emits keyword-safe Rust node identifiers decoded by kind id', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
 		const emitted = emitRenderModule(
 			'rust',
@@ -725,8 +723,8 @@ describe('native transport emission', () => {
 			generatedIdTables
 		);
 
-		expect(emitted.transportRs.contents).toMatch(/pub enum AnyTransport \{[^}]*\n    #\[kind\(kind::SELF\)\]\n    Self_,/);
-		expect(emitted.transportRs.contents).toContain('pub enum Self_Transport {\n    #[kind(kind::SELF)]\n    Self_,\n}');
-		expect(emitted.transportRs.contents).not.toContain('\n    Self,');
+		expect(emitted.nodeRs.contents).toMatch(/pub enum AnyNode \{[^}]*\n    #\[kind\(kind::SELF\)\]\n    Self_,/);
+		expect(emitted.nodeRs.contents).toContain('pub enum Self_Node {\n    #[kind(kind::SELF)]\n    Self_,\n}');
+		expect(emitted.nodeRs.contents).not.toContain('\n    Self,');
 	});
 });

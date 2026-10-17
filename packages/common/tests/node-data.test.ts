@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, carrySource, holdTree, PLAIN_KINDS, sideOf, toTransportData, treeHandleOf, type KindView } from '../src/transport-data.ts';
+import { markEdited, detachCoordinates, carrySource, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
 import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
 import type { Siblings } from '../src/read.ts';
 
 // A coordinate crosses only while it holds its tree, so a copy of each
 // hand-written node below is given one, the way a read gives it to what it
 // returns, and the token names a live tree, as a parse registers it.
-const project = (node: never): ReturnType<typeof toTransportData> => {
+const project = (node: never): ReturnType<typeof toNodeData> => {
 	const held = structuredClone(node);
 	const token = mintTreeToken(1);
 	registerTree(token, { id: 1 });
 	holdTree(held, token);
-	return toTransportData(held, PLAIN_KINDS);
+	return toNodeData(held, PLAIN_KINDS);
 };
 
 /** The coordinate a read gives the node at `start..end`; its handle is its start, a stand-in for its descendant index. */
@@ -25,7 +25,7 @@ const coordinate = (start: number, end: number) => at(2, start, end);
 const deep = (start: number, end: number, storage: Record<string, unknown>) => ({ $type: 4, $_layout: { at: at(4, start, end) }, ...storage });
 const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, $source: 2, $named: true, ...storage });
 
-describe('toTransportData', () => {
+describe('toNodeData', () => {
 	it('folds an unedited node with only coordinates and leaves below it to its coordinate', () => {
 		const node = { $type: 3, $_layout: { at: at(3, 0, 20) }, _name: leaf('main', 3), _body: coordinate(8, 20) };
 		expect(project(node as never)).toEqual(at(3, 0, 20));
@@ -129,10 +129,10 @@ describe('the tree token a parsed object holds', () => {
 	});
 
 	it('does not cross: a folded coordinate, a rebuilt node and a kept leaf all drop it', () => {
-		const folded = toTransportData(held({ $type: 5, $_layout: { at: at(5, 1, 2) } }) as never, PLAIN_KINDS);
+		const folded = toNodeData(held({ $type: 5, $_layout: { at: at(5, 1, 2) } }) as never, PLAIN_KINDS);
 		expect(folded).toEqual(rootAt(5, 1, 2));
 		expect(treeTokenOf(folded)).toBeUndefined();
-		const rebuilt = toTransportData(held({ $type: 1, _child: { $type: 5, $text: 'x' } }) as never, PLAIN_KINDS) as never as { _child: object };
+		const rebuilt = toNodeData(held({ $type: 1, _child: { $type: 5, $text: 'x' } }) as never, PLAIN_KINDS) as never as { _child: object };
 		expect(rebuilt).toEqual({ $type: 1, _child: { $type: 5, $text: 'x' } });
 		expect(treeTokenOf(rebuilt)).toBeUndefined();
 		expect(treeTokenOf(rebuilt._child)).toBeUndefined();
@@ -144,7 +144,7 @@ describe('the tree token a parsed object holds', () => {
 		expect(treeTokenOf(edited)).toBeUndefined();
 	});
 
-	it('is removed from transport data detached in place', () => {
+	it('is removed from node data detached in place', () => {
 		const detached = detachCoordinates(held(leaf('x', 1)));
 		expect(detached).toEqual(leaf('x', 1));
 		expect(treeTokenOf(detached)).toBeUndefined();
@@ -166,23 +166,23 @@ describe('the tree token a parsed object holds', () => {
 
 	it('is required of a bare coordinate: one that holds no tree is refused, as a child and as a trivia entry', () => {
 		const refusal = /does not hold that tree.*parse the source here/;
-		expect(() => toTransportData({ $type: 1, _child: at(5, 1, 2) } as never, PLAIN_KINDS)).toThrow(refusal);
-		expect(() => toTransportData({ $type: 1, _a: 1, $_layout: { trivia: { inner: [at(7, 0, 1)] } } } as never, PLAIN_KINDS)).toThrow(refusal);
+		expect(() => toNodeData({ $type: 1, _child: at(5, 1, 2) } as never, PLAIN_KINDS)).toThrow(refusal);
+		expect(() => toNodeData({ $type: 1, _a: 1, $_layout: { trivia: { inner: [at(7, 0, 1)] } } } as never, PLAIN_KINDS)).toThrow(refusal);
 	});
 
 	it('never folds a read node that lost its tree: it crosses as its own data, never naming a tree', () => {
 		const read = { $type: 5, $text: 'x', $_layout: { at: at(5, 1, 2) } };
-		expect(toTransportData(structuredClone(held({ ...read })) as never, PLAIN_KINDS)).toEqual({ $type: 5, $text: 'x' });
+		expect(toNodeData(structuredClone(held({ ...read })) as never, PLAIN_KINDS)).toEqual({ $type: 5, $text: 'x' });
 	});
 
 	it('is not required of built data, which names no tree', () => {
 		const built = { $type: 1, _child: { $type: 5, $text: 'x' } };
-		expect(toTransportData(built as never, PLAIN_KINDS)).toEqual(built);
+		expect(toNodeData(built as never, PLAIN_KINDS)).toEqual(built);
 	});
 
 	it('passes with a spread copy made on this thread', () => {
 		const read = held({ $type: 5, $_layout: { at: at(5, 1, 2) } });
-		expect(toTransportData({ ...read } as never, PLAIN_KINDS)).toEqual(rootAt(5, 1, 2));
+		expect(toNodeData({ ...read } as never, PLAIN_KINDS)).toEqual(rootAt(5, 1, 2));
 	});
 });
 
@@ -220,20 +220,20 @@ describe('the edges of the render root', () => {
 
 	it('are changed, since it renders with no neighbour: a built root crosses with its trivia and both edges named', () => {
 		const node = { $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
-		expect(toTransportData(node as never, PLAIN_KINDS)).toEqual({ ...node, $_layout: { trivia: node.$_layout.trivia, changed: both } });
+		expect(toNodeData(node as never, PLAIN_KINDS)).toEqual({ ...node, $_layout: { trivia: node.$_layout.trivia, changed: both } });
 	});
 
 	it("are the root's only: a node below it keeps its edges", () => {
 		const child = { $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
 		const root = { $type: 6, $source: 0, $named: true, _body: child, $_layout: { trivia: { leading: [9] } } };
-		expect(toTransportData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, $source: 0, $named: true, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
+		expect(toNodeData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, $source: 0, $named: true, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
 	});
 
 	it("are the document's when the root is its tree's root: they are not changed", () => {
 		const { token } = tableTree(14);
 		const whole = { $type: 5, $_layout: { at: at(5, 0, 9) } };
 		holdTree(whole, token);
-		expect(toTransportData(whole as never, PLAIN_KINDS)).toEqual(at(5, 0, 9));
+		expect(toNodeData(whole as never, PLAIN_KINDS)).toEqual(at(5, 0, 9));
 	});
 });
 
@@ -244,7 +244,7 @@ describe('a built node rebuilt from a parsed one', () => {
 		holdTree(read, token);
 		const draft = markEdited({ ...read, _a: 1 });
 		carrySource(read, draft);
-		const out = toTransportData(draft as never, PLAIN_KINDS) as unknown as { $_layout: Record<string, unknown> };
+		const out = toNodeData(draft as never, PLAIN_KINDS) as unknown as { $_layout: Record<string, unknown> };
 		expect(out.$_layout.sides).toEqual(at(5, 6, 7));
 	});
 });
@@ -267,7 +267,7 @@ describe("a rebuilt list item's changed edges", () => {
 	};
 	type Crossed = { $_layout?: { changed?: unknown }; _content?: Crossed; _name?: Crossed };
 	const second = (first: Record<string, unknown>, wrapper: Record<string, unknown>): Crossed =>
-		(toTransportData({ ...markEdited(owner), _item: [first, wrapper] } as never, view) as unknown as { _item: Crossed[] })._item[1]!;
+		(toNodeData({ ...markEdited(owner), _item: [first, wrapper] } as never, view) as unknown as { _item: Crossed[] })._item[1]!;
 
 	it('judges a rebuilt group around one node by the node it holds', () => {
 		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [], _content: b };

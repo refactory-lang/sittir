@@ -164,7 +164,7 @@ Increment 2 — the core. Generalize the existing `applyGroupOverrides` (link) f
 
 Only if Task 2.1 Step 6 surfaced `unknown node <keyword>` (`super`/`crate`/`type`). Expected NOT to occur (the visible-render path avoids the disjunction-gate that named keywords as variables — pre-1a `visibility_modifier` compiled), but guard for it.
 
-- [ ] Add raw-identifier escaping (`r#<name>`) — or a reserved-word rename map — at the Rust slot-name emit sites (`packages/codegen/src/emitters/render-module.ts` / `transport-common.ts`). Add a unit test for a `super`-named slot. Regen + RELEASE gate. Commit.
+- [ ] Add raw-identifier escaping (`r#<name>`) — or a reserved-word rename map — at the Rust slot-name emit sites (`packages/codegen/src/emitters/render-module.ts` / `node-common.ts`). Add a unit test for a `super`-named slot. Regen + RELEASE gate. Commit.
 
 ---
 

@@ -1,4 +1,4 @@
-// The native read: a node read by its descendant index into its transport,
+// The native read: a node read by its descendant index into its native node,
 // which names the node it came from.
 import { describe, expect, it } from 'vitest';
 import { getActiveBackend } from '../src/backend.js';

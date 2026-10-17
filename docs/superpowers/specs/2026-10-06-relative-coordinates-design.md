@@ -113,9 +113,9 @@ not registered and not `===` the original.
   are snapshotted in turn. It keeps its geometry, so a same-line trailing comment stays on its line.
 - **A built node or draft** seated inside contributes its data with no span; it renders from options.
 
-**What a point is measured from:** the start of the transport whose bytes contain it.
+**What a point is measured from:** the start of the node whose bytes contain it.
 
-- a child's, from the transport that holds it;
+- a child's, from the node that holds it;
 - a trivia entry's, from its owner's holder, since a leading entry lies before its owner;
 - an inner-gap entry's, from the node that holds the gap.
 
@@ -262,7 +262,7 @@ the table gives each of its nodes its own sides.
 ## What is removed
 
 - `$sameLine` and `$tokensBetween`, on the wire, the types and the fixtures;
-  `TransportTrivia::render_trailing`'s held entries;
+  `NodeTrivia::render_trailing`'s held entries;
 - the self-contained `$text` copies and `selfContainedRenderInput`, which `$snapshot()` replaces;
 - `adoptChild`, the parent links and `detachAncestors`; the projection walk `canFold` and
   `isUntouchedBelow`;
@@ -335,7 +335,7 @@ snapshot step lands, then is deleted.
 
 | kept as design, rewritten | superseded |
 | --- | --- |
-| the point algebra (`points.rs`); relative points, now computed at snapshot; the closing gap's model side; ownership by token side; detached seams from geometry; `$cst()`'s API and tests; `$detach()`, now `$snapshot()` | tree-only handles and the anchor lookup; one handle mint site; a handle for every deep-read node; the prepare walk's frames and anchors; `$anchor` on transports; the wrap's flanks from relative spans; `$edited` marking |
+| the point algebra (`points.rs`); relative points, now computed at snapshot; the closing gap's model side; ownership by token side; detached seams from geometry; `$cst()`'s API and tests; `$detach()`, now `$snapshot()` | tree-only handles and the anchor lookup; one handle mint site; a handle for every deep-read node; the prepare walk's frames and anchors; `$anchor` on native nodes; the wrap's flanks from relative spans; `$edited` marking |
 
 Its two tool commits (a named corpus entry for `trace-rt`; parity-fixture coverage read from the model's member kinds) are
 checked against master and, where still useful, landed on their own.

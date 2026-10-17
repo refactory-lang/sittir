@@ -19,7 +19,7 @@ napi-bindings = ["dep:napi", "dep:napi-derive"]
 
 [dependencies]
 regex = "1"
-sittir-transport-macros = { path = "../sittir-transport-macros" }
+sittir-node-macros = { path = "../sittir-node-macros" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }

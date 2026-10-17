@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { TransportCoordinate } from '@sittir/types';
+import type { NodeCoordinate } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { decodeIndex, isCoordinate, readNode, type TreeHandle } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
@@ -78,7 +78,7 @@ describe('a read node carries the whitespace before it that differs from the rea
 		const source = '\n//!\n\n/*!*/\n\n//\n\n///\nlet x;\n';
 		const { root, tree: read } = rs.diagnostics.parseAndRead(source, { depth: Infinity });
 		const tree: TreeHandle = read;
-		const coordinates: TransportCoordinate[] = [];
+		const coordinates: NodeCoordinate[] = [];
 		const visit = (value: unknown): void => {
 			if (Array.isArray(value)) return value.forEach(visit);
 			if (value === null || typeof value !== 'object') return;
@@ -88,7 +88,7 @@ describe('a read node carries the whitespace before it that differs from the rea
 			}
 			const node = value as Record<string, unknown>;
 			for (const key of Object.keys(node)) if (key.startsWith('_')) visit(node[key]);
-			const at = (node.$_layout as { at?: TransportCoordinate } | undefined)?.at;
+			const at = (node.$_layout as { at?: NodeCoordinate } | undefined)?.at;
 			if (at === undefined) return;
 			coordinates.push(at);
 			for (const side of ['leading', 'trailing'] as const) {

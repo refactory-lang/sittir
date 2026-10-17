@@ -174,23 +174,23 @@ byte-identical; what changes is the value a caller gives and gets.
 Content is the body as written in source: an escape stays escaped (`\n` is
 two characters). Formatting is the affixes and nothing else.
 
-**Two transports, one fact.** A read node of a delimited leaf is a
+**Two native nodes, one fact.** A read node of a delimited leaf is a
 coordinate until it is edited: untouched, it renders by folding its span,
-affixes and all (`VerbatimTransport`); a factory-built or edited node renders
-through the kind's typed transport, which holds content and writes the
+affixes and all (`VerbatimNode`); a factory-built or edited node renders
+through the kind's typed node, which holds content and writes the
 affixes from the rule. The two agree only if the reader strips exactly the
 literals the render rule writes — the one `renderAs` declaration, read by
 both. What follows from that:
 
 - `$text` of a read node is content. The wrap accessor, `nodeToConfig`,
   `materializeWrappedNodeData` and the strict-rebuild emitter all see
-  content and never hand an affixed string to the typed transport, where the
+  content and never hand an affixed string to the typed node, where the
   affixes would double.
 - A `$with` setter or `markEdited` detaches the coordinate; from then on
-  the typed transport renders the node from its content.
+  the typed native node renders the node from its content.
 - The Verbatim arm is never built from a factory node (it has no
   coordinate), and the typed arm is never fed a read node's whole text.
-  Slot transport enums already carry a Verbatim arm beside the typed leaf
+  Slot node enums already carry a Verbatim arm beside the typed leaf
   arm for text kinds; a delimited leaf is that same pair, with the strip
   on the read side.
 - The reader's text-capture classification gains one case beside

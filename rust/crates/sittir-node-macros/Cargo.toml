@@ -1,11 +1,11 @@
 [package]
-name = "sittir-transport-macros"
+name = "sittir-node-macros"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "The derive that expands a sittir transport declaration into its typed reader."
+description = "The derive that expands a sittir node declaration into its typed reader."
 
 [lib]
 proc-macro = true

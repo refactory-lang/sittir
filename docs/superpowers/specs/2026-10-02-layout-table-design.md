@@ -115,10 +115,10 @@ Release build, timer inside the writer from its creation to the end of `finish`,
 | rust `engine.rs` | 23,073 B | 160.6–161.7 µs | 161.8–162.8 µs | 277.9–278.2 µs | 76 µs | 6,091 | 326 | 99.7 KB |
 | rust `splice.rs` | 4,171 B | 24.7–25.6 µs | 24.7–25.5 µs | 42.8–43.1 µs | 11 µs | 883 | 45 | 15.1 KB |
 | typescript `format.ts` | 3,870 B | 24.1–24.2 µs | 24.5–24.7 µs | 44.3–44.6 µs | 12 µs | 995 | 57 | 16.7 KB |
-| typescript `transport-data.ts` | 11,856 B | 77.7–78.5 µs | 78.0–80.5 µs | 139.3–139.4 µs | 38 µs | 3,299 | 204 | 54.5 KB |
+| typescript `node-data.ts` | 11,856 B | 77.7–78.5 µs | 78.0–80.5 µs | 139.3–139.4 µs | 38 µs | 3,299 | 204 | 54.5 KB |
 
-- **Time per output byte:** 7.0 ns without the table and 11.4 ns with it on `engine.rs`; 6.7 ns and 11.7 ns on `transport-data.ts`.
-- **Memory per output byte:** 4.1 bytes on `engine.rs` and 4.6 on `transport-data.ts`, beside the output string itself. `text` is about one byte per output byte; the rest is rows, one per 3.6 to 4.0 output bytes. The prototype grows its vectors by doubling, so it allocates up to 1.4 times that (141 KB on `engine.rs`); sizing them from the transport would remove the slack.
+- **Time per output byte:** 7.0 ns without the table and 11.4 ns with it on `engine.rs`; 6.7 ns and 11.7 ns on `node-data.ts`.
+- **Memory per output byte:** 4.1 bytes on `engine.rs` and 4.6 on `node-data.ts`, beside the output string itself. `text` is about one byte per output byte; the rest is rows, one per 3.6 to 4.0 output bytes. The prototype grows its vectors by doubling, so it allocates up to 1.4 times that (141 KB on `engine.rs`); sizing them from the node would remove the slack.
 - **A whole `engine.render` call** on `engine.rs` goes from 2.80 ms to 2.97 ms (6%), because the writer is about 6% of a call; the JS projection and the napi decode are the rest.
 - **Width unset** is within measurement noise of master. To get there the table is a type parameter of the writer (`SpacingWriter<W, R: Record = NoRecord>`), so the writer without a table compiles to the code it is today. A first version that tested an `Option` at each hook was 9 to 16% slower with the width unset (176 µs against 161 µs on `engine.rs`). The three list calls remain as calls that do nothing; they do not show in the measurement.
 - **What the type parameter costs to build and ship.** Generated render bodies are not instantiated per writer: each takes `w: &mut dyn RenderSink`, so it is compiled once whichever writer is behind the sink. What is emitted twice is the writer. Release profile as in the workspace (fat LTO, one codegen unit):
@@ -352,7 +352,7 @@ render: { layout: { width: 100, breaking: 'group', indent: '\t', newline: '\n' }
 - No tab-width option (ruled 2026-10-09). Tabs are always written as `\t`, and a tab counts as 2 columns when a line is measured against `width`, fixed in the writer. A public option would read as if it changed the output. A detected width is measured with the same count, so the constant only matters against a `width` the caller sets.
 - `indent` and `newline` move into the group: `indent` from `render.indent`, and `newline` as the line-endings plan adds it there.
 
-They are not site addresses. They are accepted at engine level (`createEngine(language, { render: { layout: { width: 100 } } })`) and per call, read by `Options::read` and carried in the resolved options the writer already holds. A grammar that declares no bracket pair has no `width` key, as a grammar with no indent character has no `indent` key. The root dispatch chooses the table output when a width is set and the transport is the grammar's root kind ([Staging](#staging)).
+They are not site addresses. They are accepted at engine level (`createEngine(language, { render: { layout: { width: 100 } } })`) and per call, read by `Options::read` and carried in the resolved options the writer already holds. A grammar that declares no bracket pair has no `width` key, as a grammar with no indent character has no `indent` key. The root dispatch chooses the table output when a width is set and the node is the grammar's root kind ([Staging](#staging)).
 
 ## The conditional trailing separator
 
@@ -407,7 +407,7 @@ Lines differing from the original source, both sides counted:
 | `engine.rs` at 100 | 299 | 247 | 219 | 322 |
 | `splice.rs` at 100 | 51 | 59 | 59 | 53 |
 | `format.ts` at 120 | 21 | 9 | 9 | 23 |
-| `transport-data.ts` at 120 | 19 | 14 | 14 | 23 |
+| `node-data.ts` at 120 | 19 | 14 | 14 | 23 |
 
 ## Gates
 
@@ -457,7 +457,7 @@ It holds up. The measured variant of the prototype was rebuilt on it.
 
 ## Beside the shared-arena draft, and a later kept table
 
-- **The arena** is about how nodes are stored and cross to native. The table is downstream of the writer and reads nothing from the transport. Neither constrains the other.
+- **The arena** is about how nodes are stored and cross to native. The table is downstream of the writer and reads nothing from the native node. Neither constrains the other.
 - **A kept table** would need three things this one leaves out on purpose: which node wrote which rows (a column of node ids, which the arena's ids could supply); each seam's site and arm, to resolve it again when options change; and the writer's state at node boundaries (depth, pending seam, last character), to re-render one node's rows and splice them in. All three are added columns. Rows, seams, lists and the pass interface stay as they are.
 - **What the transient table already gives a kept one:** indentation is derived, not stored, so moving a subtree to another depth rewrites no text.
 

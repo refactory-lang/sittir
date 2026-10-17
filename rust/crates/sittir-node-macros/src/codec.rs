@@ -1,4 +1,4 @@
-//! The wire codec a transport declaration expands to, in today's napi object
+//! The wire codec a node declaration expands to, in today's napi object
 //! form: `FromNapiValue` and `ToNapiValue` for the type and for `Box` of it.
 //! Every item sits inside `::sittir_core::napi_codec!`, which keeps it only
 //! when `sittir-core` is built with napi bindings, and names napi as
@@ -140,7 +140,7 @@ pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
 /// The module a kind constant lives in: the declared `kind` path less its
 /// last segment, where the grammar's `kind_name_from_id` sits beside it.
 fn kind_module(ident: &Ident, kind: Option<&Path>) -> syn::Result<Path> {
-    let mut module = kind.cloned().ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf declares its kind: `#[transport(kind = …)]`"))?;
+    let mut module = kind.cloned().ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf declares its kind: `#[node(kind = …)]`"))?;
     if module.segments.len() < 2 {
         return Err(syn::Error::new_spanned(
             &module,
@@ -203,7 +203,7 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
     Ok(gated(quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
-                match unsafe { ::sittir_core::slot::transport_value_type(env, napi_val)? } {
+                match unsafe { ::sittir_core::slot::node_value_type(env, napi_val)? } {
                     #napi::ValueType::String => ::core::result::Result::Ok(Self {
                         text: unsafe { <::std::string::String as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? },
                         #(#defaults)*
@@ -303,7 +303,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         }
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
-                match unsafe { ::sittir_core::slot::transport_value_type(env, napi_val)? } {
+                match unsafe { ::sittir_core::slot::node_value_type(env, napi_val)? } {
                     #napi::ValueType::Number => {
                         let id = unsafe { <__Kind as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
                         unsafe { __decode_id(env, napi_val, id) }
@@ -367,108 +367,108 @@ mod tests {
     #[test]
     fn a_struct_reads_and_writes_each_field_by_its_key() {
         let out = expand(parse_quote! {
-            #[transport(kind = kind::LET_DECLARATION)]
-            pub struct LetDeclarationTransport {
+            #[node(kind = kind::LET_DECLARATION)]
+            pub struct LetDeclarationNode {
                 #[wire(key = "$_layout")]
-                pub layout: Option<Box<TransportLayout>>,
+                pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_pattern")]
                 #[slot(field = field::PATTERN)]
-                pub pattern: SlotValue<PatternTransport>,
+                pub pattern: SlotValue<PatternNode>,
                 #[wire(key = "_value")]
                 #[slot(field = field::VALUE)]
-                pub value: Option<SlotValue<ExpressionTransport>>,
+                pub value: Option<SlotValue<ExpressionNode>>,
             }
         });
         assert!(has(&out, "::sittir_core::napi_codec! {"));
         assert!(has(&out, "let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };"));
-        assert!(has(&out, r#"pattern: unsafe { ::sittir_core::boundary::required(env, obj, c"_pattern", "LetDeclarationTransport")? },"#));
-        assert!(has(&out, r#"value: unsafe { ::sittir_core::boundary::optional(env, obj, c"_value", "LetDeclarationTransport")? },"#));
+        assert!(has(&out, r#"pattern: unsafe { ::sittir_core::boundary::required(env, obj, c"_pattern", "LetDeclarationNode")? },"#));
+        assert!(has(&out, r#"value: unsafe { ::sittir_core::boundary::optional(env, obj, c"_value", "LetDeclarationNode")? },"#));
         assert!(has(&out, r#"::sittir_core::boundary::object_with_present(env, &[ ::core::option::Option::Some((c"$type", ::sittir_core::__napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)), ::sittir_core::boundary::present(env, c"$_layout", layout)?,"#));
         let order = ["c\"$type\"", "c\"$_layout\"", "c\"_pattern\"", "c\"_value\""].map(|key| out.rfind(key).expect("every key is written"));
         assert!(order.windows(2).all(|pair| pair[0] < pair[1]), "keys are written in declaration order: {order:?}");
         assert!(!has(&out, "::sittir_core::boundary::set(env, obj,"));
-        assert!(has(&out, "impl ::sittir_core::__napi::bindgen_prelude::FromNapiValue for ::std::boxed::Box<LetDeclarationTransport>"));
+        assert!(has(&out, "impl ::sittir_core::__napi::bindgen_prelude::FromNapiValue for ::std::boxed::Box<LetDeclarationNode>"));
     }
 
     #[test]
     fn a_text_leaf_decodes_its_text_a_bare_kind_id_or_an_object() {
         let out = expand(parse_quote! {
-            #[transport(kind = kind::SELF, text = "self")]
-            pub struct SelfTransport {
+            #[node(kind = kind::SELF, text = "self")]
+            pub struct SelfNode {
                 #[wire(key = "$_layout")]
-                pub layout: Option<Box<TransportLayout>>,
+                pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
         });
         assert!(has(&out, r#"::sittir_core::__napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string("self"), layout: ::core::default::Default::default(), }),"#));
-        assert!(has(&out, r#"::sittir_core::boundary::optional::<::std::string::String>(env, obj, c"$text", "SelfTransport")"#));
+        assert!(has(&out, r#"::sittir_core::boundary::optional::<::std::string::String>(env, obj, c"$text", "SelfNode")"#));
         assert!(has(&out, r#".unwrap_or_else(|| ::std::string::ToString::to_string("self"))"#));
     }
 
     #[test]
     fn a_text_leaf_with_no_fixed_text_refuses_a_bare_kind_id() {
         let out = expand(parse_quote! {
-            #[transport(kind = kind::IDENTIFIER, text)]
-            pub struct IdentifierTransport {
+            #[node(kind = kind::IDENTIFIER, text)]
+            pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
-                pub layout: Option<Box<TransportLayout>>,
+                pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
         });
         assert!(has(
             &out,
-            r#"::std::format!("kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id", kind::kind_name_from_id(id), "IdentifierTransport")"#
+            r#"::std::format!("kind id {id} ({:?}) has no fixed text: {} renders from a node, not a kind id", kind::kind_name_from_id(id), "IdentifierNode")"#
         ));
-        assert!(has(&out, r#""{}: expected a string, a kind id or an object, not a {}", "IdentifierTransport", unsafe { ::sittir_core::slot::js_type_name(env, napi_val)? }"#));
+        assert!(has(&out, r#""{}: expected a string, a kind id or an object, not a {}", "IdentifierNode", unsafe { ::sittir_core::slot::js_type_name(env, napi_val)? }"#));
         assert!(has(&out, r#"an object carries no `{}`, and the kind has no fixed text"#));
     }
 
     #[test]
     fn a_text_leaf_whose_kind_names_no_module_is_refused() {
         let input: syn::DeriveInput = parse_quote! {
-            #[transport(kind = IDENTIFIER, text)]
-            pub struct IdentifierTransport {
+            #[node(kind = IDENTIFIER, text)]
+            pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
-                pub layout: Option<Box<TransportLayout>>,
+                pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
                 pub text: String,
             }
         };
         let error = crate::expand::derive(&input).expect_err("a kind with no module");
-        assert!(error.to_string().contains("IdentifierTransport"));
+        assert!(error.to_string().contains("IdentifierNode"));
         assert!(error.to_string().contains("kind_name_from_id"));
     }
 
     #[test]
     fn a_choice_decodes_the_ids_its_variants_claim_and_refuses_the_rest() {
         let out = expand(parse_quote! {
-            #[transport(choice)]
-            pub enum PropertyTransportSlot {
+            #[node(choice)]
+            pub enum PropertyNodeSlot {
                 #[kind(kind::_PROPERTY_IDENTIFIER, display, decodes(kind::GET_KEYWORD, kind::SET_KEYWORD))]
-                PropertyIdentifier(PropertyIdentifierTransport),
+                PropertyIdentifier(PropertyIdentifierNode),
                 #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
-                PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
-                #[transport(blank)]
+                PrivatePropertyIdentifier(PrivatePropertyIdentifierNode),
+                #[node(blank)]
                 Blank,
             }
         });
         assert!(has(&out, "match __variant(id, id) { ::core::option::Option::Some(0u16) => return"));
         assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id)"));
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
-        assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyTransportSlot")"#));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(PropertyNodeSlot::Blank); }"));
+        assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyNodeSlot")"#));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
     }
 
     #[test]
     fn a_unit_variant_writes_its_first_claimed_id_and_the_blank_arm_writes_zero() {
         let out = expand(parse_quote! {
-            #[transport(choice)]
-            pub enum StatementBlockTerminatorTransportSlot {
+            #[node(choice)]
+            pub enum StatementBlockTerminatorNodeSlot {
                 #[kind(kind::_AUTOMATIC_SEMICOLON, kind::SEMI)]
                 AutomaticSemicolon,
-                #[transport(blank)]
+                #[node(blank)]
                 Blank,
             }
         });
@@ -479,43 +479,43 @@ mod tests {
     #[test]
     fn an_error_variant_decodes_an_error_object_and_no_bare_text() {
         let out = expand(parse_quote! {
-            #[transport(choice, codec_only)]
-            pub enum AnyTransport {
+            #[node(choice, codec_only)]
+            pub enum AnyNode {
                 #[kind(kind::LINE_COMMENT)]
-                LineComment(LineCommentTransport),
-                #[transport(error)]
-                Verbatim(VerbatimTransport),
+                LineComment(LineCommentNode),
+                #[node(error)]
+                Verbatim(VerbatimNode),
             }
         });
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(AnyTransport::Verbatim("));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(AnyNode::Verbatim("));
         assert!(!has(&out, "ValueType::String =>"));
     }
 
     #[test]
     fn verbatim_and_text_variants_take_their_wire_forms_and_a_codec_only_choice_has_no_reader() {
         let out = expand(parse_quote! {
-            #[transport(choice, codec_only)]
-            pub enum TriviaTransport {
+            #[node(choice, codec_only)]
+            pub enum TriviaNode {
                 #[kind(kind::LINE_COMMENT)]
-                LineComment(LineCommentTransport),
-                #[transport(verbatim)]
-                Verbatim(VerbatimTransport),
-                #[transport(text)]
+                LineComment(LineCommentNode),
+                #[node(verbatim)]
+                Verbatim(VerbatimNode),
+                #[node(text)]
                 #[kind(kind::LINE_COMMENT)]
                 Text(::sittir_core::trivia::TriviaText),
             }
         });
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(TriviaTransport::Verbatim("));
-        assert!(has(&out, "::sittir_core::__napi::ValueType::String => ::core::result::Result::Ok(TriviaTransport::Verbatim("));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(TriviaNode::Verbatim("));
+        assert!(has(&out, "::sittir_core::__napi::ValueType::String => ::core::result::Result::Ok(TriviaNode::Verbatim("));
         assert!(has(&out, r#"if [kind::LINE_COMMENT].contains(&id) && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()"#));
         assert!(!has(&out, "::core::option::Option::Some(2u16)"));
-        assert!(!out.contains("ReadTransport"));
+        assert!(!out.contains("ReadNode"));
     }
 
     #[test]
     fn an_enum_kind_decodes_a_member_id_and_writes_its_first() {
         let out = expand(parse_quote! {
-            #[transport(kind = kind::_PRIMITIVE_TYPE, spelled)]
+            #[node(kind = kind::_PRIMITIVE_TYPE, spelled)]
             pub enum PrimitiveTypeEnum {
                 #[kind(kind::U8_KEYWORD)]
                 U8,
@@ -531,10 +531,10 @@ mod tests {
     #[test]
     fn a_field_without_a_key_is_refused() {
         let input: syn::DeriveInput = parse_quote! {
-            #[transport(kind = kind::X)]
-            pub struct XTransport {
+            #[node(kind = kind::X)]
+            pub struct XNode {
                 #[slot(field = field::NAME)]
-                pub name: SlotValue<IdentifierTransport>,
+                pub name: SlotValue<IdentifierNode>,
             }
         };
         let error = crate::expand::derive(&input).expect_err("a field without a key");

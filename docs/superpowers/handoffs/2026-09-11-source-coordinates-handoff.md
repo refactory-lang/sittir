@@ -9,7 +9,7 @@ Spec, now at its end state: `docs/superpowers/specs/2026-08-26-text-content-vs-s
 ## What landed, per task
 
 - **Task 1** — `SlotValue<T, ADJACENT>` keeps two arms, `Coord(NodeCoordinate)`
-  and `Transport(T)`; `Verbatim` and `Node` are gone. The sink can `slice` a
+  and `Node(T)`; `Verbatim` and `Node` are gone. The sink can `slice` a
   coordinate through the `SourceTable` it holds; an unknown tree is
   `CoordinateError::UnknownTree` with the handle in the message.
 - **Task 2** — the word-character predicate has one source
@@ -18,11 +18,11 @@ Spec, now at its end state: `docs/superpowers/specs/2026-08-26-text-content-vs-s
 - **Task 3** — `RenderContext` (option table plus the engine's live trees) is
   an argument end to end; the `Prepare` trait resolves coordinates in the
   walk that fills sites; `FillOptions` is gone. Nothing is thread-local.
-- **Task 4** — the transport structs dropped `$span`, `$nodeHandle`,
+- **Task 4** — the node structs dropped `$span`, `$nodeHandle`,
   `$childIndex`, `$source`, `$named`; decode dispatches on wire shape
   (`$nodeHandle` present → coordinate); a trivia entry is a coordinate too.
 - **Task 5** — the projection folds by coordinate (`foldsToCoordinate` /
-  `isUntouchedBelow` in `packages/common/src/transport-data.ts`);
+  `isUntouchedBelow` in `packages/common/src/node-data.ts`);
   `markEdited` detaches the coordinate keys and leaves `$text`;
   `stripStructuralProvenance` replaced `stripStructuralNodeText`; the
   generated `isNode` and the supertype-collapse gate admit a coordinate.
@@ -38,7 +38,7 @@ Spec, now at its end state: `docs/superpowers/specs/2026-08-26-text-content-vs-s
 - **Task 8** — a rebuilt list classifies the gaps between its still-parsed
   items into option values (`classify_list_gaps`, emitted at the start of
   each `prepare` body); leaves carry a coordinate at both read depths (shallow:
-  parent handle + child index; deep: the tree's tag, no index); the transport
+  parent handle + child index; deep: the tree's tag, no index); the node
   resolver accepts every identity the parser can show as a member
   (`print`/`async`/`await` shown as `identifier`).
 - **Task 9** (this task) — process-wide tree ids; the engine-identity gate;
@@ -85,7 +85,7 @@ Spec, now at its end state: `docs/superpowers/specs/2026-08-26-text-content-vs-s
 | validate:native / history | rust 147 / 207 / 134 of 137, typescript 143 / 193 / 112 of 114, python 126 / 142 / 115 of 116 — identical to the baseline at every task |
 | parity fixtures | roundtrip 1500 / 1486 / 1361 unchanged; render 1478 / 1412 / 1313 kept, the rest left out by class (source-spelled tight lists, unreachable standalone by design) |
 | Gate 6 | `packages/rust/tests/coordinate-engine-identity.test.ts` — refused with `names tree N, which this engine does not hold` |
-| byte axis | `packages/tools/tests/emit/dogfood-render-bytes.test.ts` READ_CASES: rust `sittir-core/src/render.rs`, typescript `packages/common/src/transport-data.ts`, python `tests/format-roundtrip/fixtures/python-4space.py` — shallow and deep, byte-exact |
+| byte axis | `packages/tools/tests/emit/dogfood-render-bytes.test.ts` READ_CASES: rust `sittir-core/src/render.rs`, typescript `packages/common/src/node-data.ts`, python `tests/format-roundtrip/fixtures/python-4space.py` — shallow and deep, byte-exact |
 | Gate 8 | `packages/typescript/tests/coordinate-gaps.test.ts` — blank lines kept after an append, `(a,x,c)` stays tight after a replace |
 | cargo workspace | 134 passed (core 127) |
 | vitest | full suite green (3 568 tests; two load-only flakes noted in the Task 8 entry pass alone) |
@@ -113,9 +113,9 @@ the deep 8 KB root): the native call is 5.8 % of the wall; inside it
 `SlotValue::from_napi_value` is 7 of 328 samples (2 %, down from 98.7 % of
 the call in the sink handoff) and `napi_create_string_utf8` for the 8 KB
 result is 322 of 328. The other 94 % is JavaScript: the projection walk over
-the read tree (`toTransportData`) that decides the fold. Shallow root:
+the read tree (`toNodeData`) that decides the fold. Shallow root:
 ~70 000 renders/s; the same file read deep: ~6 300/s. The throughput lever is
-no longer the transport crossing — folding removed it — but the projection
+no longer the node crossing — folding removed it — but the projection
 walk, which visits every object of a deep read to prove nothing changed. A
 render by tree handle against the resident tree would skip that walk
 entirely; a cheaper option is an edit flag the wrap layer maintains so an
@@ -127,15 +127,15 @@ three runs, renders/sec):
 | grammar | workload | nodes | run 1 | run 2 | run 3 |
 | --- | --- | --- | --- | --- | --- |
 | rust | coordinate (corpus roots, shallow) | 137 | 567 343 | 564 310 | 559 314 |
-| rust | transport (parity render fixtures) | 1 412 | 95 134 | 100 983 | 100 004 |
+| rust | node (parity render fixtures) | 1 412 | 95 134 | 100 983 | 100 004 |
 | typescript | coordinate | 114 | 639 833 | 657 880 | 649 371 |
-| typescript | transport | 1 478 | 93 330 | 92 719 | 91 078 |
+| typescript | node | 1 478 | 93 330 | 92 719 | 91 078 |
 | python | coordinate | 116 | 612 427 | 637 619 | 611 460 |
-| python | transport | 1 313 | 118 167 | 119 598 | 116 945 |
+| python | node | 1 313 | 118 167 | 119 598 | 116 945 |
 
 Not comparable to the sink handoff's 164k / 164k / 175k: that workload was
 shallow corpus roots carrying captured text through the verbatim fast path,
-which no longer exists. The transport rows are full deep trees rebuilt from
+which no longer exists. The node rows are full deep trees rebuilt from
 templates; the coordinate rows are the slice path plus the projection walk of
 a shallow root.
 
@@ -170,8 +170,8 @@ short-circuit is corrected in this task.
   both pass alone.
 - The `sittir-parity-tests` crate is dead on master (fixture schema and stale
   const names); untouched here.
-- Per-tree render format is still out of scope; `render_transport_parts`
-  still hardcodes `TransportSource::Factory`.
+- Per-tree render format is still out of scope; `render_node_parts`
+  still hardcodes `NodeSource::Factory`.
 
 ## Next
 

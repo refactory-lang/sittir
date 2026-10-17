@@ -134,7 +134,7 @@ describe('slot structural signals', () => {
 		expect(slot?.isUnnamed).toBe(true);
 
 		// The slot's storageName is the hidden alias source (`helper`), not the
-		// alias's cosmetic display name (`obj`) — `obj` is never a real transport
+		// alias's cosmetic display name (`obj`) — `obj` is never a real node
 		// field. The template must bind to the slot that actually backs it.
 		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap });
 		expect(refersTo(templates.bodies.get('box')!, 'helper')).toBe(true);

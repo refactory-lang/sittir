@@ -5,7 +5,7 @@ use syn::parse::ParseStream;
 use syn::punctuated::Punctuated;
 use syn::{Attribute, Ident, LitInt, LitStr, Meta, Path, Token};
 
-/// `#[transport(…)]` on a struct, an enum or a variant.
+/// `#[node(…)]` on a struct, an enum or a variant.
 #[derive(Default)]
 pub struct KindAttrs {
     pub kind: Option<Path>,
@@ -143,7 +143,7 @@ fn paths(input: ParseStream) -> syn::Result<Vec<Path>> {
 
 pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
     let mut out = KindAttrs::default();
-    for attr in attrs.iter().filter(|a| a.path().is_ident("transport")) {
+    for attr in attrs.iter().filter(|a| a.path().is_ident("node")) {
         attr.parse_nested_meta(|meta| {
             match key(&meta.path).as_str() {
                 "kind" => out.kind = Some(meta.value()?.parse()?),
@@ -164,7 +164,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "codec_only" => out.codec_only = true,
                 "edged" => out.edged = true,
                 "words" => out.words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
-                _ => return Err(meta.error("unknown `transport` attribute")),
+                _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())
         })?;

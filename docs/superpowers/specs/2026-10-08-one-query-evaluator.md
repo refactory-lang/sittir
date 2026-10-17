@@ -35,7 +35,7 @@ The two sides already give different answers on the same plan:
 `holds(plan, texts)` in `common/src/query.ts` is the only evaluator. The native side stops evaluating and becomes a source of spans:
 
 - **Built nodes** reach the evaluator through their accessors, as `is` does today. Nothing crosses.
-  - To evaluate natively instead, a built node would have to be encoded as a transport and sent across on every call.
+  - To evaluate natively instead, a built node would have to be encoded as a native node and sent across on every call.
   - `is` over 2,000 built rust `binary_expression`s costs 606 ns per node in JavaScript.
   - A native call has a fixed cost of 1.0–1.3 µs (query design §5.1) before any encoding.
 - **Parsed nodes, one at a time** (`is`, a `where` after an opaque step) also go through their accessors, without crossing.

@@ -1,8 +1,8 @@
 // @generated from packages/regex/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar regex --all --output packages/regex/src
 //
-// Per-kind view structs and render bodies, AnyTransport enum + per-kind
-// transport structs + typed dispatch (render_transport_dispatch) + transport
+// Per-kind view structs and render bodies, AnyNode enum + per-kind
+// node structs + typed dispatch (render_node_dispatch) + node
 // bridge helpers.
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
@@ -16,99 +16,99 @@ use ::sittir_core::layout::Layout as _;
 use ::sittir_core::options::Edged as _;
 use super::options;
 use super::{field_ids as field, kind_ids as kind};
-use ::sittir_core::VerbatimTransport;
+use ::sittir_core::VerbatimNode;
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AnyTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum AnyNode {
     #[kind(kind::PATTERN)]
-    Pattern(PatternTransport),
+    Pattern(PatternNode),
     #[kind(kind::ALTERNATION)]
-    Alternation(AlternationTransport),
+    Alternation(AlternationNode),
     #[kind(kind::TERM)]
-    Term(TermTransport),
+    Term(TermNode),
     #[kind(kind::LOOKAROUND_ASSERTION)]
-    LookaroundAssertion(LookaroundAssertionTransport),
+    LookaroundAssertion(LookaroundAssertionNode),
     #[kind(kind::_LOOKAHEAD_ASSERTION)]
-    LookaheadAssertion(LookaheadAssertionTransport),
+    LookaheadAssertion(LookaheadAssertionNode),
     #[kind(kind::_LOOKBEHIND_ASSERTION)]
-    LookbehindAssertion(LookbehindAssertionTransport),
+    LookbehindAssertion(LookbehindAssertionNode),
     #[kind(kind::PATTERN_CHARACTER)]
-    PatternCharacter(PatternCharacterTransport),
+    PatternCharacter(PatternCharacterNode),
     #[kind(kind::CHARACTER_CLASS)]
-    CharacterClass(CharacterClassTransport),
+    CharacterClass(CharacterClassNode),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(PosixCharacterClassTransport),
+    PosixCharacterClass(PosixCharacterClassNode),
     #[kind(kind::POSIX_CLASS_NAME)]
-    PosixClassName(PosixClassNameTransport),
+    PosixClassName(PosixClassNameNode),
     #[kind(kind::CLASS_RANGE)]
-    ClassRange(Box<ClassRangeTransport>),
+    ClassRange(Box<ClassRangeNode>),
     #[kind(kind::CLASS_CHARACTER)]
-    ClassCharacter(ClassCharacterTransport),
+    ClassCharacter(ClassCharacterNode),
     #[kind(kind::ANONYMOUS_CAPTURING_GROUP)]
-    AnonymousCapturingGroup(AnonymousCapturingGroupTransport),
+    AnonymousCapturingGroup(AnonymousCapturingGroupNode),
     #[kind(kind::NAMED_CAPTURING_GROUP)]
-    NamedCapturingGroup(NamedCapturingGroupTransport),
+    NamedCapturingGroup(NamedCapturingGroupNode),
     #[kind(kind::NON_CAPTURING_GROUP)]
-    NonCapturingGroup(NonCapturingGroupTransport),
+    NonCapturingGroup(NonCapturingGroupNode),
     #[kind(kind::FLAGS)]
-    Flags(FlagsTransport),
+    Flags(FlagsNode),
     #[kind(kind::ZERO_OR_MORE)]
-    ZeroOrMore(ZeroOrMoreTransport),
+    ZeroOrMore(ZeroOrMoreNode),
     #[kind(kind::ONE_OR_MORE)]
-    OneOrMore(OneOrMoreTransport),
+    OneOrMore(OneOrMoreNode),
     #[kind(kind::OPTIONAL)]
-    Optional(OptionalTransport),
+    Optional(OptionalNode),
     #[kind(kind::COUNT_QUANTIFIER)]
-    CountQuantifier(CountQuantifierTransport),
+    CountQuantifier(CountQuantifierNode),
     #[kind(kind::BACKREFERENCE_ESCAPE)]
-    BackreferenceEscape(BackreferenceEscapeTransport),
+    BackreferenceEscape(BackreferenceEscapeNode),
     #[kind(kind::NAMED_GROUP_BACKREFERENCE)]
-    NamedGroupBackreference(NamedGroupBackreferenceTransport),
+    NamedGroupBackreference(NamedGroupBackreferenceNode),
     #[kind(kind::DECIMAL_ESCAPE)]
-    DecimalEscape(DecimalEscapeTransport),
+    DecimalEscape(DecimalEscapeNode),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(CharacterClassEscapeNode),
     #[kind(kind::UNICODE_CHARACTER_ESCAPE)]
-    UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
+    UnicodeCharacterEscape(UnicodeCharacterEscapeNode),
     #[kind(kind::UNICODE_PROPERTY_VALUE_EXPRESSION)]
-    UnicodePropertyValueExpression(UnicodePropertyValueExpressionTransport),
+    UnicodePropertyValueExpression(UnicodePropertyValueExpressionNode),
     #[kind(kind::UNICODE_PROPERTY_VALUE)]
-    UnicodePropertyValue(UnicodePropertyValueTransport),
+    UnicodePropertyValue(UnicodePropertyValueNode),
     #[kind(kind::CONTROL_ESCAPE)]
-    ControlEscape(ControlEscapeTransport),
+    ControlEscape(ControlEscapeNode),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
-    ControlLetterEscape(ControlLetterEscapeTransport),
+    ControlLetterEscape(ControlLetterEscapeNode),
     #[kind(kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
-    IdentityEscape(IdentityEscapeTransport),
+    IdentityEscape(IdentityEscapeNode),
     #[kind(kind::GROUP_NAME)]
-    GroupName(GroupNameTransport),
+    GroupName(GroupNameNode),
     #[kind(kind::DECIMAL_DIGITS)]
-    DecimalDigits(DecimalDigitsTransport),
+    DecimalDigits(DecimalDigitsNode),
     #[kind(kind::TERM_GROUP)]
-    TermGroup(Box<TermGroupTransport>),
+    TermGroup(Box<TermGroupNode>),
     #[kind(kind::COUNT_QUANTIFIER_GROUP)]
-    CountQuantifierGroup(CountQuantifierGroupTransport),
+    CountQuantifierGroup(CountQuantifierGroupNode),
     #[kind(kind::COUNT_QUANTIFIER_ARM)]
-    CountQuantifierArm(CountQuantifierArmTransport),
+    CountQuantifierArm(CountQuantifierArmNode),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_ARM)]
-    CharacterClassEscapeArm(CharacterClassEscapeArmTransport),
+    CharacterClassEscapeArm(CharacterClassEscapeArmNode),
     #[kind(kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP)]
-    UnicodePropertyValueExpressionGroup(UnicodePropertyValueExpressionGroupTransport),
+    UnicodePropertyValueExpressionGroup(UnicodePropertyValueExpressionGroupNode),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT1)]
-    CharacterClassEscapeText1(CharacterClassEscapeText1Transport),
+    CharacterClassEscapeText1(CharacterClassEscapeText1Node),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT2)]
-    CharacterClassEscapeText2(CharacterClassEscapeText2Transport),
+    CharacterClassEscapeText2(CharacterClassEscapeText2Node),
     #[kind(kind::INLINE_FLAGS_GROUP_ENABLE)]
-    InlineFlagsGroupEnable(InlineFlagsGroupEnableTransport),
+    InlineFlagsGroupEnable(InlineFlagsGroupEnableNode),
     #[kind(kind::INLINE_FLAGS_GROUP_TOGGLE)]
-    InlineFlagsGroupToggle(InlineFlagsGroupToggleTransport),
+    InlineFlagsGroupToggle(InlineFlagsGroupToggleNode),
     #[kind(kind::INLINE_FLAGS_GROUP_DISABLE)]
-    InlineFlagsGroupDisable(InlineFlagsGroupDisableTransport),
+    InlineFlagsGroupDisable(InlineFlagsGroupDisableNode),
     #[kind(kind::_LAZY, display)]
-    Lazy(LazyTransport),
+    Lazy(LazyNode),
     #[kind(kind::_UNICODE_PROPERTY_NAME, display)]
-    UnicodePropertyName(UnicodePropertyNameTransport),
+    UnicodePropertyName(UnicodePropertyNameNode),
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
     #[kind(kind::START_ASSERTION)]
@@ -181,349 +181,349 @@ pub enum AnyTransport {
     Comma,
     #[kind(kind::COLON)]
     Colon,
-    #[transport(error)]
-    Verbatim(VerbatimTransport),
+    #[node(error)]
+    Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for AnyTransport {
+impl ::sittir_core::prepare::Prepare for AnyNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            AnyTransport::Pattern(t) => t.prepare(ctx),
-            AnyTransport::Alternation(t) => t.prepare(ctx),
-            AnyTransport::Term(t) => t.prepare(ctx),
-            AnyTransport::LookaroundAssertion(t) => t.prepare(ctx),
-            AnyTransport::LookaheadAssertion(t) => t.prepare(ctx),
-            AnyTransport::LookbehindAssertion(t) => t.prepare(ctx),
-            AnyTransport::PatternCharacter(t) => t.prepare(ctx),
-            AnyTransport::CharacterClass(t) => t.prepare(ctx),
-            AnyTransport::PosixCharacterClass(t) => t.prepare(ctx),
-            AnyTransport::PosixClassName(t) => t.prepare(ctx),
-            AnyTransport::ClassRange(t) => t.prepare(ctx),
-            AnyTransport::ClassCharacter(t) => t.prepare(ctx),
-            AnyTransport::AnonymousCapturingGroup(t) => t.prepare(ctx),
-            AnyTransport::NamedCapturingGroup(t) => t.prepare(ctx),
-            AnyTransport::NonCapturingGroup(t) => t.prepare(ctx),
-            AnyTransport::Flags(t) => t.prepare(ctx),
-            AnyTransport::ZeroOrMore(t) => t.prepare(ctx),
-            AnyTransport::OneOrMore(t) => t.prepare(ctx),
-            AnyTransport::Optional(t) => t.prepare(ctx),
-            AnyTransport::CountQuantifier(t) => t.prepare(ctx),
-            AnyTransport::BackreferenceEscape(t) => t.prepare(ctx),
-            AnyTransport::NamedGroupBackreference(t) => t.prepare(ctx),
-            AnyTransport::DecimalEscape(t) => t.prepare(ctx),
-            AnyTransport::CharacterClassEscape(t) => t.prepare(ctx),
-            AnyTransport::UnicodeCharacterEscape(t) => t.prepare(ctx),
-            AnyTransport::UnicodePropertyValueExpression(t) => t.prepare(ctx),
-            AnyTransport::UnicodePropertyValue(t) => t.prepare(ctx),
-            AnyTransport::ControlEscape(t) => t.prepare(ctx),
-            AnyTransport::ControlLetterEscape(t) => t.prepare(ctx),
-            AnyTransport::IdentityEscape(t) => t.prepare(ctx),
-            AnyTransport::GroupName(t) => t.prepare(ctx),
-            AnyTransport::DecimalDigits(t) => t.prepare(ctx),
-            AnyTransport::TermGroup(t) => t.prepare(ctx),
-            AnyTransport::CountQuantifierGroup(t) => t.prepare(ctx),
-            AnyTransport::CountQuantifierArm(t) => t.prepare(ctx),
-            AnyTransport::CharacterClassEscapeArm(t) => t.prepare(ctx),
-            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.prepare(ctx),
-            AnyTransport::CharacterClassEscapeText1(t) => t.prepare(ctx),
-            AnyTransport::CharacterClassEscapeText2(t) => t.prepare(ctx),
-            AnyTransport::InlineFlagsGroupEnable(t) => t.prepare(ctx),
-            AnyTransport::InlineFlagsGroupToggle(t) => t.prepare(ctx),
-            AnyTransport::InlineFlagsGroupDisable(t) => t.prepare(ctx),
-            AnyTransport::Lazy(t) => t.prepare(ctx),
-            AnyTransport::UnicodePropertyName(t) => t.prepare(ctx),
-            AnyTransport::AnyCharacter => Ok(()),
-            AnyTransport::StartAssertion => Ok(()),
-            AnyTransport::EndAssertion => Ok(()),
-            AnyTransport::BoundaryAssertion => Ok(()),
-            AnyTransport::NonBoundaryAssertion => Ok(()),
-            AnyTransport::Negation => Ok(()),
-            AnyTransport::Tight => Ok(()),
-            AnyTransport::Newline => Ok(()),
-            AnyTransport::Blankline => Ok(()),
-            AnyTransport::DoubleBlankline => Ok(()),
-            AnyTransport::Caret => Ok(()),
-            AnyTransport::LparenQmark => Ok(()),
-            AnyTransport::Eq => Ok(()),
-            AnyTransport::Bang => Ok(()),
-            AnyTransport::Rparen => Ok(()),
-            AnyTransport::LparenQmarkLt => Ok(()),
-            AnyTransport::Lbrack => Ok(()),
-            AnyTransport::Dash => Ok(()),
-            AnyTransport::BslashDash => Ok(()),
-            AnyTransport::Rbrack => Ok(()),
-            AnyTransport::LbrackColon => Ok(()),
-            AnyTransport::ColonRbrack => Ok(()),
-            AnyTransport::Lparen => Ok(()),
-            AnyTransport::LparenQmarkPLt => Ok(()),
-            AnyTransport::Gt => Ok(()),
-            AnyTransport::LparenQmarkColon => Ok(()),
-            AnyTransport::Star => Ok(()),
-            AnyTransport::Qmark => Ok(()),
-            AnyTransport::Plus => Ok(()),
-            AnyTransport::Lbrace => Ok(()),
-            AnyTransport::Rbrace => Ok(()),
-            AnyTransport::Bslashk => Ok(()),
-            AnyTransport::Lt => Ok(()),
-            AnyTransport::LparenQmarkPEq => Ok(()),
-            AnyTransport::Comma => Ok(()),
-            AnyTransport::Colon => Ok(()),
-            AnyTransport::Verbatim(t) => t.prepare(ctx),
+            AnyNode::Pattern(t) => t.prepare(ctx),
+            AnyNode::Alternation(t) => t.prepare(ctx),
+            AnyNode::Term(t) => t.prepare(ctx),
+            AnyNode::LookaroundAssertion(t) => t.prepare(ctx),
+            AnyNode::LookaheadAssertion(t) => t.prepare(ctx),
+            AnyNode::LookbehindAssertion(t) => t.prepare(ctx),
+            AnyNode::PatternCharacter(t) => t.prepare(ctx),
+            AnyNode::CharacterClass(t) => t.prepare(ctx),
+            AnyNode::PosixCharacterClass(t) => t.prepare(ctx),
+            AnyNode::PosixClassName(t) => t.prepare(ctx),
+            AnyNode::ClassRange(t) => t.prepare(ctx),
+            AnyNode::ClassCharacter(t) => t.prepare(ctx),
+            AnyNode::AnonymousCapturingGroup(t) => t.prepare(ctx),
+            AnyNode::NamedCapturingGroup(t) => t.prepare(ctx),
+            AnyNode::NonCapturingGroup(t) => t.prepare(ctx),
+            AnyNode::Flags(t) => t.prepare(ctx),
+            AnyNode::ZeroOrMore(t) => t.prepare(ctx),
+            AnyNode::OneOrMore(t) => t.prepare(ctx),
+            AnyNode::Optional(t) => t.prepare(ctx),
+            AnyNode::CountQuantifier(t) => t.prepare(ctx),
+            AnyNode::BackreferenceEscape(t) => t.prepare(ctx),
+            AnyNode::NamedGroupBackreference(t) => t.prepare(ctx),
+            AnyNode::DecimalEscape(t) => t.prepare(ctx),
+            AnyNode::CharacterClassEscape(t) => t.prepare(ctx),
+            AnyNode::UnicodeCharacterEscape(t) => t.prepare(ctx),
+            AnyNode::UnicodePropertyValueExpression(t) => t.prepare(ctx),
+            AnyNode::UnicodePropertyValue(t) => t.prepare(ctx),
+            AnyNode::ControlEscape(t) => t.prepare(ctx),
+            AnyNode::ControlLetterEscape(t) => t.prepare(ctx),
+            AnyNode::IdentityEscape(t) => t.prepare(ctx),
+            AnyNode::GroupName(t) => t.prepare(ctx),
+            AnyNode::DecimalDigits(t) => t.prepare(ctx),
+            AnyNode::TermGroup(t) => t.prepare(ctx),
+            AnyNode::CountQuantifierGroup(t) => t.prepare(ctx),
+            AnyNode::CountQuantifierArm(t) => t.prepare(ctx),
+            AnyNode::CharacterClassEscapeArm(t) => t.prepare(ctx),
+            AnyNode::UnicodePropertyValueExpressionGroup(t) => t.prepare(ctx),
+            AnyNode::CharacterClassEscapeText1(t) => t.prepare(ctx),
+            AnyNode::CharacterClassEscapeText2(t) => t.prepare(ctx),
+            AnyNode::InlineFlagsGroupEnable(t) => t.prepare(ctx),
+            AnyNode::InlineFlagsGroupToggle(t) => t.prepare(ctx),
+            AnyNode::InlineFlagsGroupDisable(t) => t.prepare(ctx),
+            AnyNode::Lazy(t) => t.prepare(ctx),
+            AnyNode::UnicodePropertyName(t) => t.prepare(ctx),
+            AnyNode::AnyCharacter => Ok(()),
+            AnyNode::StartAssertion => Ok(()),
+            AnyNode::EndAssertion => Ok(()),
+            AnyNode::BoundaryAssertion => Ok(()),
+            AnyNode::NonBoundaryAssertion => Ok(()),
+            AnyNode::Negation => Ok(()),
+            AnyNode::Tight => Ok(()),
+            AnyNode::Newline => Ok(()),
+            AnyNode::Blankline => Ok(()),
+            AnyNode::DoubleBlankline => Ok(()),
+            AnyNode::Caret => Ok(()),
+            AnyNode::LparenQmark => Ok(()),
+            AnyNode::Eq => Ok(()),
+            AnyNode::Bang => Ok(()),
+            AnyNode::Rparen => Ok(()),
+            AnyNode::LparenQmarkLt => Ok(()),
+            AnyNode::Lbrack => Ok(()),
+            AnyNode::Dash => Ok(()),
+            AnyNode::BslashDash => Ok(()),
+            AnyNode::Rbrack => Ok(()),
+            AnyNode::LbrackColon => Ok(()),
+            AnyNode::ColonRbrack => Ok(()),
+            AnyNode::Lparen => Ok(()),
+            AnyNode::LparenQmarkPLt => Ok(()),
+            AnyNode::Gt => Ok(()),
+            AnyNode::LparenQmarkColon => Ok(()),
+            AnyNode::Star => Ok(()),
+            AnyNode::Qmark => Ok(()),
+            AnyNode::Plus => Ok(()),
+            AnyNode::Lbrace => Ok(()),
+            AnyNode::Rbrace => Ok(()),
+            AnyNode::Bslashk => Ok(()),
+            AnyNode::Lt => Ok(()),
+            AnyNode::LparenQmarkPEq => Ok(()),
+            AnyNode::Comma => Ok(()),
+            AnyNode::Colon => Ok(()),
+            AnyNode::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            AnyTransport::Pattern(t) => t.gap_edges(),
-            AnyTransport::Alternation(t) => t.gap_edges(),
-            AnyTransport::Term(t) => t.gap_edges(),
-            AnyTransport::LookaroundAssertion(t) => t.gap_edges(),
-            AnyTransport::LookaheadAssertion(t) => t.gap_edges(),
-            AnyTransport::LookbehindAssertion(t) => t.gap_edges(),
-            AnyTransport::PatternCharacter(t) => t.gap_edges(),
-            AnyTransport::CharacterClass(t) => t.gap_edges(),
-            AnyTransport::PosixCharacterClass(t) => t.gap_edges(),
-            AnyTransport::PosixClassName(t) => t.gap_edges(),
-            AnyTransport::ClassRange(t) => t.gap_edges(),
-            AnyTransport::ClassCharacter(t) => t.gap_edges(),
-            AnyTransport::AnonymousCapturingGroup(t) => t.gap_edges(),
-            AnyTransport::NamedCapturingGroup(t) => t.gap_edges(),
-            AnyTransport::NonCapturingGroup(t) => t.gap_edges(),
-            AnyTransport::Flags(t) => t.gap_edges(),
-            AnyTransport::ZeroOrMore(t) => t.gap_edges(),
-            AnyTransport::OneOrMore(t) => t.gap_edges(),
-            AnyTransport::Optional(t) => t.gap_edges(),
-            AnyTransport::CountQuantifier(t) => t.gap_edges(),
-            AnyTransport::BackreferenceEscape(t) => t.gap_edges(),
-            AnyTransport::NamedGroupBackreference(t) => t.gap_edges(),
-            AnyTransport::DecimalEscape(t) => t.gap_edges(),
-            AnyTransport::CharacterClassEscape(t) => t.gap_edges(),
-            AnyTransport::UnicodeCharacterEscape(t) => t.gap_edges(),
-            AnyTransport::UnicodePropertyValueExpression(t) => t.gap_edges(),
-            AnyTransport::UnicodePropertyValue(t) => t.gap_edges(),
-            AnyTransport::ControlEscape(t) => t.gap_edges(),
-            AnyTransport::ControlLetterEscape(t) => t.gap_edges(),
-            AnyTransport::IdentityEscape(t) => t.gap_edges(),
-            AnyTransport::GroupName(t) => t.gap_edges(),
-            AnyTransport::DecimalDigits(t) => t.gap_edges(),
-            AnyTransport::TermGroup(t) => t.gap_edges(),
-            AnyTransport::CountQuantifierGroup(t) => t.gap_edges(),
-            AnyTransport::CountQuantifierArm(t) => t.gap_edges(),
-            AnyTransport::CharacterClassEscapeArm(t) => t.gap_edges(),
-            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.gap_edges(),
-            AnyTransport::CharacterClassEscapeText1(t) => t.gap_edges(),
-            AnyTransport::CharacterClassEscapeText2(t) => t.gap_edges(),
-            AnyTransport::InlineFlagsGroupEnable(t) => t.gap_edges(),
-            AnyTransport::InlineFlagsGroupToggle(t) => t.gap_edges(),
-            AnyTransport::InlineFlagsGroupDisable(t) => t.gap_edges(),
-            AnyTransport::Lazy(t) => t.gap_edges(),
-            AnyTransport::UnicodePropertyName(t) => t.gap_edges(),
-            AnyTransport::AnyCharacter => None,
-            AnyTransport::StartAssertion => None,
-            AnyTransport::EndAssertion => None,
-            AnyTransport::BoundaryAssertion => None,
-            AnyTransport::NonBoundaryAssertion => None,
-            AnyTransport::Negation => None,
-            AnyTransport::Tight => None,
-            AnyTransport::Newline => None,
-            AnyTransport::Blankline => None,
-            AnyTransport::DoubleBlankline => None,
-            AnyTransport::Caret => None,
-            AnyTransport::LparenQmark => None,
-            AnyTransport::Eq => None,
-            AnyTransport::Bang => None,
-            AnyTransport::Rparen => None,
-            AnyTransport::LparenQmarkLt => None,
-            AnyTransport::Lbrack => None,
-            AnyTransport::Dash => None,
-            AnyTransport::BslashDash => None,
-            AnyTransport::Rbrack => None,
-            AnyTransport::LbrackColon => None,
-            AnyTransport::ColonRbrack => None,
-            AnyTransport::Lparen => None,
-            AnyTransport::LparenQmarkPLt => None,
-            AnyTransport::Gt => None,
-            AnyTransport::LparenQmarkColon => None,
-            AnyTransport::Star => None,
-            AnyTransport::Qmark => None,
-            AnyTransport::Plus => None,
-            AnyTransport::Lbrace => None,
-            AnyTransport::Rbrace => None,
-            AnyTransport::Bslashk => None,
-            AnyTransport::Lt => None,
-            AnyTransport::LparenQmarkPEq => None,
-            AnyTransport::Comma => None,
-            AnyTransport::Colon => None,
-            AnyTransport::Verbatim(t) => t.gap_edges(),
+            AnyNode::Pattern(t) => t.gap_edges(),
+            AnyNode::Alternation(t) => t.gap_edges(),
+            AnyNode::Term(t) => t.gap_edges(),
+            AnyNode::LookaroundAssertion(t) => t.gap_edges(),
+            AnyNode::LookaheadAssertion(t) => t.gap_edges(),
+            AnyNode::LookbehindAssertion(t) => t.gap_edges(),
+            AnyNode::PatternCharacter(t) => t.gap_edges(),
+            AnyNode::CharacterClass(t) => t.gap_edges(),
+            AnyNode::PosixCharacterClass(t) => t.gap_edges(),
+            AnyNode::PosixClassName(t) => t.gap_edges(),
+            AnyNode::ClassRange(t) => t.gap_edges(),
+            AnyNode::ClassCharacter(t) => t.gap_edges(),
+            AnyNode::AnonymousCapturingGroup(t) => t.gap_edges(),
+            AnyNode::NamedCapturingGroup(t) => t.gap_edges(),
+            AnyNode::NonCapturingGroup(t) => t.gap_edges(),
+            AnyNode::Flags(t) => t.gap_edges(),
+            AnyNode::ZeroOrMore(t) => t.gap_edges(),
+            AnyNode::OneOrMore(t) => t.gap_edges(),
+            AnyNode::Optional(t) => t.gap_edges(),
+            AnyNode::CountQuantifier(t) => t.gap_edges(),
+            AnyNode::BackreferenceEscape(t) => t.gap_edges(),
+            AnyNode::NamedGroupBackreference(t) => t.gap_edges(),
+            AnyNode::DecimalEscape(t) => t.gap_edges(),
+            AnyNode::CharacterClassEscape(t) => t.gap_edges(),
+            AnyNode::UnicodeCharacterEscape(t) => t.gap_edges(),
+            AnyNode::UnicodePropertyValueExpression(t) => t.gap_edges(),
+            AnyNode::UnicodePropertyValue(t) => t.gap_edges(),
+            AnyNode::ControlEscape(t) => t.gap_edges(),
+            AnyNode::ControlLetterEscape(t) => t.gap_edges(),
+            AnyNode::IdentityEscape(t) => t.gap_edges(),
+            AnyNode::GroupName(t) => t.gap_edges(),
+            AnyNode::DecimalDigits(t) => t.gap_edges(),
+            AnyNode::TermGroup(t) => t.gap_edges(),
+            AnyNode::CountQuantifierGroup(t) => t.gap_edges(),
+            AnyNode::CountQuantifierArm(t) => t.gap_edges(),
+            AnyNode::CharacterClassEscapeArm(t) => t.gap_edges(),
+            AnyNode::UnicodePropertyValueExpressionGroup(t) => t.gap_edges(),
+            AnyNode::CharacterClassEscapeText1(t) => t.gap_edges(),
+            AnyNode::CharacterClassEscapeText2(t) => t.gap_edges(),
+            AnyNode::InlineFlagsGroupEnable(t) => t.gap_edges(),
+            AnyNode::InlineFlagsGroupToggle(t) => t.gap_edges(),
+            AnyNode::InlineFlagsGroupDisable(t) => t.gap_edges(),
+            AnyNode::Lazy(t) => t.gap_edges(),
+            AnyNode::UnicodePropertyName(t) => t.gap_edges(),
+            AnyNode::AnyCharacter => None,
+            AnyNode::StartAssertion => None,
+            AnyNode::EndAssertion => None,
+            AnyNode::BoundaryAssertion => None,
+            AnyNode::NonBoundaryAssertion => None,
+            AnyNode::Negation => None,
+            AnyNode::Tight => None,
+            AnyNode::Newline => None,
+            AnyNode::Blankline => None,
+            AnyNode::DoubleBlankline => None,
+            AnyNode::Caret => None,
+            AnyNode::LparenQmark => None,
+            AnyNode::Eq => None,
+            AnyNode::Bang => None,
+            AnyNode::Rparen => None,
+            AnyNode::LparenQmarkLt => None,
+            AnyNode::Lbrack => None,
+            AnyNode::Dash => None,
+            AnyNode::BslashDash => None,
+            AnyNode::Rbrack => None,
+            AnyNode::LbrackColon => None,
+            AnyNode::ColonRbrack => None,
+            AnyNode::Lparen => None,
+            AnyNode::LparenQmarkPLt => None,
+            AnyNode::Gt => None,
+            AnyNode::LparenQmarkColon => None,
+            AnyNode::Star => None,
+            AnyNode::Qmark => None,
+            AnyNode::Plus => None,
+            AnyNode::Lbrace => None,
+            AnyNode::Rbrace => None,
+            AnyNode::Bslashk => None,
+            AnyNode::Lt => None,
+            AnyNode::LparenQmarkPEq => None,
+            AnyNode::Comma => None,
+            AnyNode::Colon => None,
+            AnyNode::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            AnyTransport::Pattern(t) => t.snapshot_edge(),
-            AnyTransport::Alternation(t) => t.snapshot_edge(),
-            AnyTransport::Term(t) => t.snapshot_edge(),
-            AnyTransport::LookaroundAssertion(t) => t.snapshot_edge(),
-            AnyTransport::LookaheadAssertion(t) => t.snapshot_edge(),
-            AnyTransport::LookbehindAssertion(t) => t.snapshot_edge(),
-            AnyTransport::PatternCharacter(t) => t.snapshot_edge(),
-            AnyTransport::CharacterClass(t) => t.snapshot_edge(),
-            AnyTransport::PosixCharacterClass(t) => t.snapshot_edge(),
-            AnyTransport::PosixClassName(t) => t.snapshot_edge(),
-            AnyTransport::ClassRange(t) => t.snapshot_edge(),
-            AnyTransport::ClassCharacter(t) => t.snapshot_edge(),
-            AnyTransport::AnonymousCapturingGroup(t) => t.snapshot_edge(),
-            AnyTransport::NamedCapturingGroup(t) => t.snapshot_edge(),
-            AnyTransport::NonCapturingGroup(t) => t.snapshot_edge(),
-            AnyTransport::Flags(t) => t.snapshot_edge(),
-            AnyTransport::ZeroOrMore(t) => t.snapshot_edge(),
-            AnyTransport::OneOrMore(t) => t.snapshot_edge(),
-            AnyTransport::Optional(t) => t.snapshot_edge(),
-            AnyTransport::CountQuantifier(t) => t.snapshot_edge(),
-            AnyTransport::BackreferenceEscape(t) => t.snapshot_edge(),
-            AnyTransport::NamedGroupBackreference(t) => t.snapshot_edge(),
-            AnyTransport::DecimalEscape(t) => t.snapshot_edge(),
-            AnyTransport::CharacterClassEscape(t) => t.snapshot_edge(),
-            AnyTransport::UnicodeCharacterEscape(t) => t.snapshot_edge(),
-            AnyTransport::UnicodePropertyValueExpression(t) => t.snapshot_edge(),
-            AnyTransport::UnicodePropertyValue(t) => t.snapshot_edge(),
-            AnyTransport::ControlEscape(t) => t.snapshot_edge(),
-            AnyTransport::ControlLetterEscape(t) => t.snapshot_edge(),
-            AnyTransport::IdentityEscape(t) => t.snapshot_edge(),
-            AnyTransport::GroupName(t) => t.snapshot_edge(),
-            AnyTransport::DecimalDigits(t) => t.snapshot_edge(),
-            AnyTransport::TermGroup(t) => t.snapshot_edge(),
-            AnyTransport::CountQuantifierGroup(t) => t.snapshot_edge(),
-            AnyTransport::CountQuantifierArm(t) => t.snapshot_edge(),
-            AnyTransport::CharacterClassEscapeArm(t) => t.snapshot_edge(),
-            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.snapshot_edge(),
-            AnyTransport::CharacterClassEscapeText1(t) => t.snapshot_edge(),
-            AnyTransport::CharacterClassEscapeText2(t) => t.snapshot_edge(),
-            AnyTransport::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
-            AnyTransport::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
-            AnyTransport::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
-            AnyTransport::Lazy(t) => t.snapshot_edge(),
-            AnyTransport::UnicodePropertyName(t) => t.snapshot_edge(),
-            AnyTransport::AnyCharacter => None,
-            AnyTransport::StartAssertion => None,
-            AnyTransport::EndAssertion => None,
-            AnyTransport::BoundaryAssertion => None,
-            AnyTransport::NonBoundaryAssertion => None,
-            AnyTransport::Negation => None,
-            AnyTransport::Tight => None,
-            AnyTransport::Newline => None,
-            AnyTransport::Blankline => None,
-            AnyTransport::DoubleBlankline => None,
-            AnyTransport::Caret => None,
-            AnyTransport::LparenQmark => None,
-            AnyTransport::Eq => None,
-            AnyTransport::Bang => None,
-            AnyTransport::Rparen => None,
-            AnyTransport::LparenQmarkLt => None,
-            AnyTransport::Lbrack => None,
-            AnyTransport::Dash => None,
-            AnyTransport::BslashDash => None,
-            AnyTransport::Rbrack => None,
-            AnyTransport::LbrackColon => None,
-            AnyTransport::ColonRbrack => None,
-            AnyTransport::Lparen => None,
-            AnyTransport::LparenQmarkPLt => None,
-            AnyTransport::Gt => None,
-            AnyTransport::LparenQmarkColon => None,
-            AnyTransport::Star => None,
-            AnyTransport::Qmark => None,
-            AnyTransport::Plus => None,
-            AnyTransport::Lbrace => None,
-            AnyTransport::Rbrace => None,
-            AnyTransport::Bslashk => None,
-            AnyTransport::Lt => None,
-            AnyTransport::LparenQmarkPEq => None,
-            AnyTransport::Comma => None,
-            AnyTransport::Colon => None,
-            AnyTransport::Verbatim(t) => t.snapshot_edge(),
+            AnyNode::Pattern(t) => t.snapshot_edge(),
+            AnyNode::Alternation(t) => t.snapshot_edge(),
+            AnyNode::Term(t) => t.snapshot_edge(),
+            AnyNode::LookaroundAssertion(t) => t.snapshot_edge(),
+            AnyNode::LookaheadAssertion(t) => t.snapshot_edge(),
+            AnyNode::LookbehindAssertion(t) => t.snapshot_edge(),
+            AnyNode::PatternCharacter(t) => t.snapshot_edge(),
+            AnyNode::CharacterClass(t) => t.snapshot_edge(),
+            AnyNode::PosixCharacterClass(t) => t.snapshot_edge(),
+            AnyNode::PosixClassName(t) => t.snapshot_edge(),
+            AnyNode::ClassRange(t) => t.snapshot_edge(),
+            AnyNode::ClassCharacter(t) => t.snapshot_edge(),
+            AnyNode::AnonymousCapturingGroup(t) => t.snapshot_edge(),
+            AnyNode::NamedCapturingGroup(t) => t.snapshot_edge(),
+            AnyNode::NonCapturingGroup(t) => t.snapshot_edge(),
+            AnyNode::Flags(t) => t.snapshot_edge(),
+            AnyNode::ZeroOrMore(t) => t.snapshot_edge(),
+            AnyNode::OneOrMore(t) => t.snapshot_edge(),
+            AnyNode::Optional(t) => t.snapshot_edge(),
+            AnyNode::CountQuantifier(t) => t.snapshot_edge(),
+            AnyNode::BackreferenceEscape(t) => t.snapshot_edge(),
+            AnyNode::NamedGroupBackreference(t) => t.snapshot_edge(),
+            AnyNode::DecimalEscape(t) => t.snapshot_edge(),
+            AnyNode::CharacterClassEscape(t) => t.snapshot_edge(),
+            AnyNode::UnicodeCharacterEscape(t) => t.snapshot_edge(),
+            AnyNode::UnicodePropertyValueExpression(t) => t.snapshot_edge(),
+            AnyNode::UnicodePropertyValue(t) => t.snapshot_edge(),
+            AnyNode::ControlEscape(t) => t.snapshot_edge(),
+            AnyNode::ControlLetterEscape(t) => t.snapshot_edge(),
+            AnyNode::IdentityEscape(t) => t.snapshot_edge(),
+            AnyNode::GroupName(t) => t.snapshot_edge(),
+            AnyNode::DecimalDigits(t) => t.snapshot_edge(),
+            AnyNode::TermGroup(t) => t.snapshot_edge(),
+            AnyNode::CountQuantifierGroup(t) => t.snapshot_edge(),
+            AnyNode::CountQuantifierArm(t) => t.snapshot_edge(),
+            AnyNode::CharacterClassEscapeArm(t) => t.snapshot_edge(),
+            AnyNode::UnicodePropertyValueExpressionGroup(t) => t.snapshot_edge(),
+            AnyNode::CharacterClassEscapeText1(t) => t.snapshot_edge(),
+            AnyNode::CharacterClassEscapeText2(t) => t.snapshot_edge(),
+            AnyNode::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
+            AnyNode::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
+            AnyNode::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
+            AnyNode::Lazy(t) => t.snapshot_edge(),
+            AnyNode::UnicodePropertyName(t) => t.snapshot_edge(),
+            AnyNode::AnyCharacter => None,
+            AnyNode::StartAssertion => None,
+            AnyNode::EndAssertion => None,
+            AnyNode::BoundaryAssertion => None,
+            AnyNode::NonBoundaryAssertion => None,
+            AnyNode::Negation => None,
+            AnyNode::Tight => None,
+            AnyNode::Newline => None,
+            AnyNode::Blankline => None,
+            AnyNode::DoubleBlankline => None,
+            AnyNode::Caret => None,
+            AnyNode::LparenQmark => None,
+            AnyNode::Eq => None,
+            AnyNode::Bang => None,
+            AnyNode::Rparen => None,
+            AnyNode::LparenQmarkLt => None,
+            AnyNode::Lbrack => None,
+            AnyNode::Dash => None,
+            AnyNode::BslashDash => None,
+            AnyNode::Rbrack => None,
+            AnyNode::LbrackColon => None,
+            AnyNode::ColonRbrack => None,
+            AnyNode::Lparen => None,
+            AnyNode::LparenQmarkPLt => None,
+            AnyNode::Gt => None,
+            AnyNode::LparenQmarkColon => None,
+            AnyNode::Star => None,
+            AnyNode::Qmark => None,
+            AnyNode::Plus => None,
+            AnyNode::Lbrace => None,
+            AnyNode::Rbrace => None,
+            AnyNode::Bslashk => None,
+            AnyNode::Lt => None,
+            AnyNode::LparenQmarkPEq => None,
+            AnyNode::Comma => None,
+            AnyNode::Colon => None,
+            AnyNode::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            AnyTransport::Pattern(t) => t.source_separator(ctx),
-            AnyTransport::Alternation(t) => t.source_separator(ctx),
-            AnyTransport::Term(t) => t.source_separator(ctx),
-            AnyTransport::LookaroundAssertion(t) => t.source_separator(ctx),
-            AnyTransport::LookaheadAssertion(t) => t.source_separator(ctx),
-            AnyTransport::LookbehindAssertion(t) => t.source_separator(ctx),
-            AnyTransport::PatternCharacter(t) => t.source_separator(ctx),
-            AnyTransport::CharacterClass(t) => t.source_separator(ctx),
-            AnyTransport::PosixCharacterClass(t) => t.source_separator(ctx),
-            AnyTransport::PosixClassName(t) => t.source_separator(ctx),
-            AnyTransport::ClassRange(t) => t.source_separator(ctx),
-            AnyTransport::ClassCharacter(t) => t.source_separator(ctx),
-            AnyTransport::AnonymousCapturingGroup(t) => t.source_separator(ctx),
-            AnyTransport::NamedCapturingGroup(t) => t.source_separator(ctx),
-            AnyTransport::NonCapturingGroup(t) => t.source_separator(ctx),
-            AnyTransport::Flags(t) => t.source_separator(ctx),
-            AnyTransport::ZeroOrMore(t) => t.source_separator(ctx),
-            AnyTransport::OneOrMore(t) => t.source_separator(ctx),
-            AnyTransport::Optional(t) => t.source_separator(ctx),
-            AnyTransport::CountQuantifier(t) => t.source_separator(ctx),
-            AnyTransport::BackreferenceEscape(t) => t.source_separator(ctx),
-            AnyTransport::NamedGroupBackreference(t) => t.source_separator(ctx),
-            AnyTransport::DecimalEscape(t) => t.source_separator(ctx),
-            AnyTransport::CharacterClassEscape(t) => t.source_separator(ctx),
-            AnyTransport::UnicodeCharacterEscape(t) => t.source_separator(ctx),
-            AnyTransport::UnicodePropertyValueExpression(t) => t.source_separator(ctx),
-            AnyTransport::UnicodePropertyValue(t) => t.source_separator(ctx),
-            AnyTransport::ControlEscape(t) => t.source_separator(ctx),
-            AnyTransport::ControlLetterEscape(t) => t.source_separator(ctx),
-            AnyTransport::IdentityEscape(t) => t.source_separator(ctx),
-            AnyTransport::GroupName(t) => t.source_separator(ctx),
-            AnyTransport::DecimalDigits(t) => t.source_separator(ctx),
-            AnyTransport::TermGroup(t) => t.source_separator(ctx),
-            AnyTransport::CountQuantifierGroup(t) => t.source_separator(ctx),
-            AnyTransport::CountQuantifierArm(t) => t.source_separator(ctx),
-            AnyTransport::CharacterClassEscapeArm(t) => t.source_separator(ctx),
-            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.source_separator(ctx),
-            AnyTransport::CharacterClassEscapeText1(t) => t.source_separator(ctx),
-            AnyTransport::CharacterClassEscapeText2(t) => t.source_separator(ctx),
-            AnyTransport::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
-            AnyTransport::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
-            AnyTransport::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
-            AnyTransport::Lazy(t) => t.source_separator(ctx),
-            AnyTransport::UnicodePropertyName(t) => t.source_separator(ctx),
-            AnyTransport::AnyCharacter => None,
-            AnyTransport::StartAssertion => None,
-            AnyTransport::EndAssertion => None,
-            AnyTransport::BoundaryAssertion => None,
-            AnyTransport::NonBoundaryAssertion => None,
-            AnyTransport::Negation => None,
-            AnyTransport::Tight => None,
-            AnyTransport::Newline => None,
-            AnyTransport::Blankline => None,
-            AnyTransport::DoubleBlankline => None,
-            AnyTransport::Caret => None,
-            AnyTransport::LparenQmark => None,
-            AnyTransport::Eq => None,
-            AnyTransport::Bang => None,
-            AnyTransport::Rparen => None,
-            AnyTransport::LparenQmarkLt => None,
-            AnyTransport::Lbrack => None,
-            AnyTransport::Dash => None,
-            AnyTransport::BslashDash => None,
-            AnyTransport::Rbrack => None,
-            AnyTransport::LbrackColon => None,
-            AnyTransport::ColonRbrack => None,
-            AnyTransport::Lparen => None,
-            AnyTransport::LparenQmarkPLt => None,
-            AnyTransport::Gt => None,
-            AnyTransport::LparenQmarkColon => None,
-            AnyTransport::Star => None,
-            AnyTransport::Qmark => None,
-            AnyTransport::Plus => None,
-            AnyTransport::Lbrace => None,
-            AnyTransport::Rbrace => None,
-            AnyTransport::Bslashk => None,
-            AnyTransport::Lt => None,
-            AnyTransport::LparenQmarkPEq => None,
-            AnyTransport::Comma => None,
-            AnyTransport::Colon => None,
-            AnyTransport::Verbatim(t) => t.source_separator(ctx),
+            AnyNode::Pattern(t) => t.source_separator(ctx),
+            AnyNode::Alternation(t) => t.source_separator(ctx),
+            AnyNode::Term(t) => t.source_separator(ctx),
+            AnyNode::LookaroundAssertion(t) => t.source_separator(ctx),
+            AnyNode::LookaheadAssertion(t) => t.source_separator(ctx),
+            AnyNode::LookbehindAssertion(t) => t.source_separator(ctx),
+            AnyNode::PatternCharacter(t) => t.source_separator(ctx),
+            AnyNode::CharacterClass(t) => t.source_separator(ctx),
+            AnyNode::PosixCharacterClass(t) => t.source_separator(ctx),
+            AnyNode::PosixClassName(t) => t.source_separator(ctx),
+            AnyNode::ClassRange(t) => t.source_separator(ctx),
+            AnyNode::ClassCharacter(t) => t.source_separator(ctx),
+            AnyNode::AnonymousCapturingGroup(t) => t.source_separator(ctx),
+            AnyNode::NamedCapturingGroup(t) => t.source_separator(ctx),
+            AnyNode::NonCapturingGroup(t) => t.source_separator(ctx),
+            AnyNode::Flags(t) => t.source_separator(ctx),
+            AnyNode::ZeroOrMore(t) => t.source_separator(ctx),
+            AnyNode::OneOrMore(t) => t.source_separator(ctx),
+            AnyNode::Optional(t) => t.source_separator(ctx),
+            AnyNode::CountQuantifier(t) => t.source_separator(ctx),
+            AnyNode::BackreferenceEscape(t) => t.source_separator(ctx),
+            AnyNode::NamedGroupBackreference(t) => t.source_separator(ctx),
+            AnyNode::DecimalEscape(t) => t.source_separator(ctx),
+            AnyNode::CharacterClassEscape(t) => t.source_separator(ctx),
+            AnyNode::UnicodeCharacterEscape(t) => t.source_separator(ctx),
+            AnyNode::UnicodePropertyValueExpression(t) => t.source_separator(ctx),
+            AnyNode::UnicodePropertyValue(t) => t.source_separator(ctx),
+            AnyNode::ControlEscape(t) => t.source_separator(ctx),
+            AnyNode::ControlLetterEscape(t) => t.source_separator(ctx),
+            AnyNode::IdentityEscape(t) => t.source_separator(ctx),
+            AnyNode::GroupName(t) => t.source_separator(ctx),
+            AnyNode::DecimalDigits(t) => t.source_separator(ctx),
+            AnyNode::TermGroup(t) => t.source_separator(ctx),
+            AnyNode::CountQuantifierGroup(t) => t.source_separator(ctx),
+            AnyNode::CountQuantifierArm(t) => t.source_separator(ctx),
+            AnyNode::CharacterClassEscapeArm(t) => t.source_separator(ctx),
+            AnyNode::UnicodePropertyValueExpressionGroup(t) => t.source_separator(ctx),
+            AnyNode::CharacterClassEscapeText1(t) => t.source_separator(ctx),
+            AnyNode::CharacterClassEscapeText2(t) => t.source_separator(ctx),
+            AnyNode::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
+            AnyNode::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
+            AnyNode::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
+            AnyNode::Lazy(t) => t.source_separator(ctx),
+            AnyNode::UnicodePropertyName(t) => t.source_separator(ctx),
+            AnyNode::AnyCharacter => None,
+            AnyNode::StartAssertion => None,
+            AnyNode::EndAssertion => None,
+            AnyNode::BoundaryAssertion => None,
+            AnyNode::NonBoundaryAssertion => None,
+            AnyNode::Negation => None,
+            AnyNode::Tight => None,
+            AnyNode::Newline => None,
+            AnyNode::Blankline => None,
+            AnyNode::DoubleBlankline => None,
+            AnyNode::Caret => None,
+            AnyNode::LparenQmark => None,
+            AnyNode::Eq => None,
+            AnyNode::Bang => None,
+            AnyNode::Rparen => None,
+            AnyNode::LparenQmarkLt => None,
+            AnyNode::Lbrack => None,
+            AnyNode::Dash => None,
+            AnyNode::BslashDash => None,
+            AnyNode::Rbrack => None,
+            AnyNode::LbrackColon => None,
+            AnyNode::ColonRbrack => None,
+            AnyNode::Lparen => None,
+            AnyNode::LparenQmarkPLt => None,
+            AnyNode::Gt => None,
+            AnyNode::LparenQmarkColon => None,
+            AnyNode::Star => None,
+            AnyNode::Qmark => None,
+            AnyNode::Plus => None,
+            AnyNode::Lbrace => None,
+            AnyNode::Rbrace => None,
+            AnyNode::Bslashk => None,
+            AnyNode::Lt => None,
+            AnyNode::LparenQmarkPEq => None,
+            AnyNode::Comma => None,
+            AnyNode::Colon => None,
+            AnyNode::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -532,9 +532,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
 }
 
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice, codec_only)]
-pub enum TriviaTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, codec_only)]
+pub enum TriviaNode {
     #[kind(kind::_TIGHT)]
     Tight,
     #[kind(kind::_NEWLINE)]
@@ -543,130 +543,130 @@ pub enum TriviaTransport {
     Blankline,
     #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-    #[transport(text)]
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
+    #[node(text)]
     #[kind(kind::ERROR)]
     Text(::sittir_core::trivia::TriviaText),
 }
 
-impl ::sittir_core::prepare::Prepare for TriviaTransport {
+impl ::sittir_core::prepare::Prepare for TriviaNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TriviaTransport::Tight => Ok(()),
-            TriviaTransport::Newline => Ok(()),
-            TriviaTransport::Blankline => Ok(()),
-            TriviaTransport::DoubleBlankline => Ok(()),
-            TriviaTransport::Verbatim(t) => t.prepare(ctx),
-            TriviaTransport::Text(t) => t.prepare(ctx),
+            TriviaNode::Tight => Ok(()),
+            TriviaNode::Newline => Ok(()),
+            TriviaNode::Blankline => Ok(()),
+            TriviaNode::DoubleBlankline => Ok(()),
+            TriviaNode::Verbatim(t) => t.prepare(ctx),
+            TriviaNode::Text(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            TriviaTransport::Tight => None,
-            TriviaTransport::Newline => None,
-            TriviaTransport::Blankline => None,
-            TriviaTransport::DoubleBlankline => None,
-            TriviaTransport::Verbatim(t) => t.gap_edges(),
-            TriviaTransport::Text(t) => t.gap_edges(),
+            TriviaNode::Tight => None,
+            TriviaNode::Newline => None,
+            TriviaNode::Blankline => None,
+            TriviaNode::DoubleBlankline => None,
+            TriviaNode::Verbatim(t) => t.gap_edges(),
+            TriviaNode::Text(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            TriviaTransport::Tight => None,
-            TriviaTransport::Newline => None,
-            TriviaTransport::Blankline => None,
-            TriviaTransport::DoubleBlankline => None,
-            TriviaTransport::Verbatim(t) => t.snapshot_edge(),
-            TriviaTransport::Text(t) => t.snapshot_edge(),
+            TriviaNode::Tight => None,
+            TriviaNode::Newline => None,
+            TriviaNode::Blankline => None,
+            TriviaNode::DoubleBlankline => None,
+            TriviaNode::Verbatim(t) => t.snapshot_edge(),
+            TriviaNode::Text(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            TriviaTransport::Tight => None,
-            TriviaTransport::Newline => None,
-            TriviaTransport::Blankline => None,
-            TriviaTransport::DoubleBlankline => None,
-            TriviaTransport::Verbatim(t) => t.source_separator(ctx),
-            TriviaTransport::Text(t) => t.source_separator(ctx),
+            TriviaNode::Tight => None,
+            TriviaNode::Newline => None,
+            TriviaNode::Blankline => None,
+            TriviaNode::DoubleBlankline => None,
+            TriviaNode::Verbatim(t) => t.source_separator(ctx),
+            TriviaNode::Text(t) => t.source_separator(ctx),
         }
     }
 }
 
-impl ::sittir_core::render::Render for TriviaTransport {
+impl ::sittir_core::render::Render for TriviaNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TriviaTransport::Tight => render_tight(w),
-            TriviaTransport::Newline => render_newline(w),
-            TriviaTransport::Blankline => render_blankline(w),
-            TriviaTransport::DoubleBlankline => render_double_blankline(w),
-            TriviaTransport::Verbatim(t) => t.render(w),
-            TriviaTransport::Text(t) => t.render(w),
+            TriviaNode::Tight => render_tight(w),
+            TriviaNode::Newline => render_newline(w),
+            TriviaNode::Blankline => render_blankline(w),
+            TriviaNode::DoubleBlankline => render_double_blankline(w),
+            TriviaNode::Verbatim(t) => t.render(w),
+            TriviaNode::Text(t) => t.render(w),
         }
     }
 }
 
-impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
+impl ::sittir_core::trivia::FromTriviaText for TriviaNode {
     fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {
-        TriviaTransport::Text(text)
+        TriviaNode::Text(text)
     }
 
     fn from_layout(text: ::sittir_core::trivia::TriviaText) -> Option<Self> {
-        if text.kind == kind::_TIGHT { return Some(TriviaTransport::Tight); }
-        if text.kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
-        if text.kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
-        if text.kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
+        if text.kind == kind::_TIGHT { return Some(TriviaNode::Tight); }
+        if text.kind == kind::_NEWLINE { return Some(TriviaNode::Newline); }
+        if text.kind == kind::_BLANKLINE { return Some(TriviaNode::Blankline); }
+        if text.kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaNode::DoubleBlankline); }
         None
     }
 }
 
-impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
+impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
     fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
         match self {
-            TriviaTransport::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
-            TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
-            TriviaTransport::Blankline => Some((::sittir_core::layout_kinds::LayoutKinds::BLANKLINE, None)),
-            TriviaTransport::DoubleBlankline => Some((::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE, None)),
+            TriviaNode::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
+            TriviaNode::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
+            TriviaNode::Blankline => Some((::sittir_core::layout_kinds::LayoutKinds::BLANKLINE, None)),
+            TriviaNode::DoubleBlankline => Some((::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE, None)),
             _ => None,
         }
     }
 }
 
-pub type TransportLayout = ::sittir_core::layout::TransportLayout<TriviaTransport>;
+pub type NodeLayout = ::sittir_core::layout::NodeLayout<TriviaNode>;
 
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum PatternContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum PatternContentNodeSlot {
     #[kind(kind::ALTERNATION)]
-    Alternation(AlternationTransport),
+    Alternation(AlternationNode),
     #[kind(kind::TERM)]
-    Term(TermTransport),
+    Term(TermNode),
 }
 
-impl ::sittir_core::prepare::Prepare for PatternContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for PatternContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            PatternContentTransportSlot::Alternation(t) => t.prepare(ctx),
-            PatternContentTransportSlot::Term(t) => t.prepare(ctx),
+            PatternContentNodeSlot::Alternation(t) => t.prepare(ctx),
+            PatternContentNodeSlot::Term(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            PatternContentTransportSlot::Alternation(t) => t.gap_edges(),
-            PatternContentTransportSlot::Term(t) => t.gap_edges(),
+            PatternContentNodeSlot::Alternation(t) => t.gap_edges(),
+            PatternContentNodeSlot::Term(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            PatternContentTransportSlot::Alternation(t) => t.snapshot_edge(),
-            PatternContentTransportSlot::Term(t) => t.snapshot_edge(),
+            PatternContentNodeSlot::Alternation(t) => t.snapshot_edge(),
+            PatternContentNodeSlot::Term(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            PatternContentTransportSlot::Alternation(t) => t.source_separator(ctx),
-            PatternContentTransportSlot::Term(t) => t.source_separator(ctx),
+            PatternContentNodeSlot::Alternation(t) => t.source_separator(ctx),
+            PatternContentNodeSlot::Term(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -674,7 +674,7 @@ impl ::sittir_core::prepare::Prepare for PatternContentTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for PatternContentTransportSlot {
+impl ::sittir_core::view::KindOf for PatternContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Alternation(inner) => inner.kind_in(kinds),
@@ -683,47 +683,47 @@ impl ::sittir_core::view::KindOf for PatternContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for PatternContentTransportSlot {
+impl ::sittir_core::render::Render for PatternContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PatternContentTransportSlot::Alternation(inner) => inner.render(w),
-            PatternContentTransportSlot::Term(inner) => inner.render(w),
+            PatternContentNodeSlot::Alternation(inner) => inner.render(w),
+            PatternContentNodeSlot::Term(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LookaroundAssertionContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LookaroundAssertionContentNodeSlot {
     #[kind(kind::_LOOKAHEAD_ASSERTION)]
-    LookaheadAssertion(LookaheadAssertionTransport),
+    LookaheadAssertion(LookaheadAssertionNode),
     #[kind(kind::_LOOKBEHIND_ASSERTION)]
-    LookbehindAssertion(LookbehindAssertionTransport),
+    LookbehindAssertion(LookbehindAssertionNode),
 }
 
-impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.prepare(ctx),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.prepare(ctx),
+            LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.prepare(ctx),
+            LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.gap_edges(),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.gap_edges(),
+            LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.gap_edges(),
+            LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.snapshot_edge(),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.snapshot_edge(),
+            LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.snapshot_edge(),
+            LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.source_separator(ctx),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.source_separator(ctx),
+            LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.source_separator(ctx),
+            LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -731,7 +731,7 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentTransportSlot
     }
 }
 
-impl ::sittir_core::view::KindOf for LookaroundAssertionContentTransportSlot {
+impl ::sittir_core::view::KindOf for LookaroundAssertionContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::LookaheadAssertion(inner) => inner.kind_in(kinds),
@@ -740,29 +740,29 @@ impl ::sittir_core::view::KindOf for LookaroundAssertionContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for LookaroundAssertionContentTransportSlot {
+impl ::sittir_core::render::Render for LookaroundAssertionContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookaroundAssertionContentTransportSlot::LookaheadAssertion(inner) => inner.render(w),
-            LookaroundAssertionContentTransportSlot::LookbehindAssertion(inner) => inner.render(w),
+            LookaroundAssertionContentNodeSlot::LookaheadAssertion(inner) => inner.render(w),
+            LookaroundAssertionContentNodeSlot::LookbehindAssertion(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LookaheadAssertionContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LookaheadAssertionContentNodeSlot {
     #[kind(kind::EQ)]
     Eq,
     #[kind(kind::BANG)]
     Bang,
 }
 
-impl ::sittir_core::prepare::Prepare for LookaheadAssertionContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for LookaheadAssertionContentNodeSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LookaheadAssertionContentTransportSlot::Eq => Ok(()),
-            LookaheadAssertionContentTransportSlot::Bang => Ok(()),
+            LookaheadAssertionContentNodeSlot::Eq => Ok(()),
+            LookaheadAssertionContentNodeSlot::Bang => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -770,7 +770,7 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionContentTransportSlot 
     }
 }
 
-impl ::sittir_core::view::KindOf for LookaheadAssertionContentTransportSlot {
+impl ::sittir_core::view::KindOf for LookaheadAssertionContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -779,17 +779,17 @@ impl ::sittir_core::view::KindOf for LookaheadAssertionContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for LookaheadAssertionContentTransportSlot {
+impl ::sittir_core::render::Render for LookaheadAssertionContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookaheadAssertionContentTransportSlot::Eq => {
+            LookaheadAssertionContentNodeSlot::Eq => {
                 w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE);
                 let written = render_eq(w);
                 written?;
                 w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER);
                 Ok(())
             }
-            LookaheadAssertionContentTransportSlot::Bang => {
+            LookaheadAssertionContentNodeSlot::Bang => {
                 w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE);
                 let written = render_bang(w);
                 written?;
@@ -800,20 +800,20 @@ impl ::sittir_core::render::Render for LookaheadAssertionContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LookbehindAssertionContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LookbehindAssertionContentNodeSlot {
     #[kind(kind::EQ)]
     Eq,
     #[kind(kind::BANG)]
     Bang,
 }
 
-impl ::sittir_core::prepare::Prepare for LookbehindAssertionContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for LookbehindAssertionContentNodeSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LookbehindAssertionContentTransportSlot::Eq => Ok(()),
-            LookbehindAssertionContentTransportSlot::Bang => Ok(()),
+            LookbehindAssertionContentNodeSlot::Eq => Ok(()),
+            LookbehindAssertionContentNodeSlot::Bang => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -821,7 +821,7 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionContentTransportSlot
     }
 }
 
-impl ::sittir_core::view::KindOf for LookbehindAssertionContentTransportSlot {
+impl ::sittir_core::view::KindOf for LookbehindAssertionContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -830,17 +830,17 @@ impl ::sittir_core::view::KindOf for LookbehindAssertionContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for LookbehindAssertionContentTransportSlot {
+impl ::sittir_core::render::Render for LookbehindAssertionContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LookbehindAssertionContentTransportSlot::Eq => {
+            LookbehindAssertionContentNodeSlot::Eq => {
                 w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE);
                 let written = render_eq(w);
                 written?;
                 w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER);
                 Ok(())
             }
-            LookbehindAssertionContentTransportSlot::Bang => {
+            LookbehindAssertionContentNodeSlot::Bang => {
                 w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE);
                 let written = render_bang(w);
                 written?;
@@ -851,80 +851,80 @@ impl ::sittir_core::render::Render for LookbehindAssertionContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum CharacterClassClassAtomsTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum CharacterClassClassAtomsNodeSlot {
     #[kind(kind::CLASS_CHARACTER, kind::DASH)]
-    ClassCharacter(ClassCharacterTransport),
+    ClassCharacter(ClassCharacterNode),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(CharacterClassEscapeNode),
     #[kind(kind::CONTROL_ESCAPE)]
-    ControlEscape(ControlEscapeTransport),
+    ControlEscape(ControlEscapeNode),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
-    ControlLetterEscape(ControlLetterEscapeTransport),
+    ControlLetterEscape(ControlLetterEscapeNode),
     #[kind(kind::IDENTITY_ESCAPE, folded(kind::BSLASH_DASH))]
-    IdentityEscape(IdentityEscapeTransport),
+    IdentityEscape(IdentityEscapeNode),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(PosixCharacterClassTransport),
+    PosixCharacterClass(PosixCharacterClassNode),
     #[kind(kind::CLASS_RANGE)]
-    ClassRange(Box<ClassRangeTransport>),
+    ClassRange(Box<ClassRangeNode>),
     #[kind(kind::BSLASH_DASH)]
     BslashDash,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsTransportSlot {
+impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.prepare(ctx),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.prepare(ctx),
-            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.prepare(ctx),
-            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.prepare(ctx),
-            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.prepare(ctx),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.prepare(ctx),
-            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.prepare(ctx),
-            CharacterClassClassAtomsTransportSlot::BslashDash => Ok(()),
-            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.prepare(ctx),
+            CharacterClassClassAtomsNodeSlot::BslashDash => Ok(()),
+            CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.gap_edges(),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.gap_edges(),
-            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.gap_edges(),
-            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.gap_edges(),
-            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.gap_edges(),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.gap_edges(),
-            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.gap_edges(),
-            CharacterClassClassAtomsTransportSlot::BslashDash => None,
-            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.gap_edges(),
+            CharacterClassClassAtomsNodeSlot::BslashDash => None,
+            CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.snapshot_edge(),
-            CharacterClassClassAtomsTransportSlot::BslashDash => None,
-            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsNodeSlot::BslashDash => None,
+            CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsTransportSlot::BslashDash => None,
-            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.source_separator(ctx),
+            CharacterClassClassAtomsNodeSlot::BslashDash => None,
+            CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -932,7 +932,7 @@ impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for CharacterClassClassAtomsTransportSlot {
+impl ::sittir_core::view::KindOf for CharacterClassClassAtomsNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ClassCharacter(inner) => inner.kind_in(kinds),
@@ -948,72 +948,72 @@ impl ::sittir_core::view::KindOf for CharacterClassClassAtomsTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for CharacterClassClassAtomsTransportSlot {
+impl ::sittir_core::render::Render for CharacterClassClassAtomsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CharacterClassClassAtomsTransportSlot::ClassCharacter(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::ControlEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::IdentityEscape(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(inner) => inner.render(w),
-            CharacterClassClassAtomsTransportSlot::ClassRange(inner) => inner.as_ref().render(w),
-            CharacterClassClassAtomsTransportSlot::BslashDash => render_bslash_dash(w),
-            CharacterClassClassAtomsTransportSlot::Verbatim(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::ClassCharacter(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::ControlEscape(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::IdentityEscape(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(inner) => inner.render(w),
+            CharacterClassClassAtomsNodeSlot::ClassRange(inner) => inner.as_ref().render(w),
+            CharacterClassClassAtomsNodeSlot::BslashDash => render_bslash_dash(w),
+            CharacterClassClassAtomsNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ClassRangeStartTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum ClassRangeStartNodeSlot {
     #[kind(kind::CLASS_CHARACTER)]
-    ClassCharacter(ClassCharacterTransport),
+    ClassCharacter(ClassCharacterNode),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(CharacterClassEscapeNode),
     #[kind(kind::CONTROL_ESCAPE)]
-    ControlEscape(ControlEscapeTransport),
+    ControlEscape(ControlEscapeNode),
     #[kind(kind::DASH)]
     Dash,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for ClassRangeStartTransportSlot {
+impl ::sittir_core::prepare::Prepare for ClassRangeStartNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ClassRangeStartTransportSlot::ClassCharacter(t) => t.prepare(ctx),
-            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.prepare(ctx),
-            ClassRangeStartTransportSlot::ControlEscape(t) => t.prepare(ctx),
-            ClassRangeStartTransportSlot::Dash => Ok(()),
-            ClassRangeStartTransportSlot::Verbatim(t) => t.prepare(ctx),
+            ClassRangeStartNodeSlot::ClassCharacter(t) => t.prepare(ctx),
+            ClassRangeStartNodeSlot::CharacterClassEscape(t) => t.prepare(ctx),
+            ClassRangeStartNodeSlot::ControlEscape(t) => t.prepare(ctx),
+            ClassRangeStartNodeSlot::Dash => Ok(()),
+            ClassRangeStartNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ClassRangeStartTransportSlot::ClassCharacter(t) => t.gap_edges(),
-            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.gap_edges(),
-            ClassRangeStartTransportSlot::ControlEscape(t) => t.gap_edges(),
-            ClassRangeStartTransportSlot::Dash => None,
-            ClassRangeStartTransportSlot::Verbatim(t) => t.gap_edges(),
+            ClassRangeStartNodeSlot::ClassCharacter(t) => t.gap_edges(),
+            ClassRangeStartNodeSlot::CharacterClassEscape(t) => t.gap_edges(),
+            ClassRangeStartNodeSlot::ControlEscape(t) => t.gap_edges(),
+            ClassRangeStartNodeSlot::Dash => None,
+            ClassRangeStartNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ClassRangeStartTransportSlot::ClassCharacter(t) => t.snapshot_edge(),
-            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
-            ClassRangeStartTransportSlot::ControlEscape(t) => t.snapshot_edge(),
-            ClassRangeStartTransportSlot::Dash => None,
-            ClassRangeStartTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            ClassRangeStartNodeSlot::ClassCharacter(t) => t.snapshot_edge(),
+            ClassRangeStartNodeSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            ClassRangeStartNodeSlot::ControlEscape(t) => t.snapshot_edge(),
+            ClassRangeStartNodeSlot::Dash => None,
+            ClassRangeStartNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            ClassRangeStartTransportSlot::ClassCharacter(t) => t.source_separator(ctx),
-            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            ClassRangeStartTransportSlot::ControlEscape(t) => t.source_separator(ctx),
-            ClassRangeStartTransportSlot::Dash => None,
-            ClassRangeStartTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            ClassRangeStartNodeSlot::ClassCharacter(t) => t.source_separator(ctx),
+            ClassRangeStartNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
+            ClassRangeStartNodeSlot::ControlEscape(t) => t.source_separator(ctx),
+            ClassRangeStartNodeSlot::Dash => None,
+            ClassRangeStartNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1021,7 +1021,7 @@ impl ::sittir_core::prepare::Prepare for ClassRangeStartTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for ClassRangeStartTransportSlot {
+impl ::sittir_core::view::KindOf for ClassRangeStartNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ClassCharacter(inner) => inner.kind_in(kinds),
@@ -1033,38 +1033,38 @@ impl ::sittir_core::view::KindOf for ClassRangeStartTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ClassRangeStartTransportSlot {
+impl ::sittir_core::render::Render for ClassRangeStartNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClassRangeStartTransportSlot::ClassCharacter(inner) => inner.render(w),
-            ClassRangeStartTransportSlot::CharacterClassEscape(inner) => inner.render(w),
-            ClassRangeStartTransportSlot::ControlEscape(inner) => inner.render(w),
-            ClassRangeStartTransportSlot::Dash => {
+            ClassRangeStartNodeSlot::ClassCharacter(inner) => inner.render(w),
+            ClassRangeStartNodeSlot::CharacterClassEscape(inner) => inner.render(w),
+            ClassRangeStartNodeSlot::ControlEscape(inner) => inner.render(w),
+            ClassRangeStartNodeSlot::Dash => {
                 w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
                 let written = render_dash(w);
                 written?;
                 w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
                 Ok(())
             }
-            ClassRangeStartTransportSlot::Verbatim(inner) => inner.render(w),
+            ClassRangeStartNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NamedCapturingGroupContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum NamedCapturingGroupContentNodeSlot {
     #[kind(kind::LPAREN_QMARK_LT)]
     LparenQmarkLt,
     #[kind(kind::LPAREN_QMARK_P_LT)]
     LparenQmarkPLt,
 }
 
-impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentNodeSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NamedCapturingGroupContentTransportSlot::LparenQmarkLt => Ok(()),
-            NamedCapturingGroupContentTransportSlot::LparenQmarkPLt => Ok(()),
+            NamedCapturingGroupContentNodeSlot::LparenQmarkLt => Ok(()),
+            NamedCapturingGroupContentNodeSlot::LparenQmarkPLt => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1072,7 +1072,7 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentTransportSlot
     }
 }
 
-impl ::sittir_core::view::KindOf for NamedCapturingGroupContentTransportSlot {
+impl ::sittir_core::view::KindOf for NamedCapturingGroupContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::LparenQmarkLt => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
@@ -1081,17 +1081,17 @@ impl ::sittir_core::view::KindOf for NamedCapturingGroupContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
+impl ::sittir_core::render::Render for NamedCapturingGroupContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NamedCapturingGroupContentTransportSlot::LparenQmarkLt => {
+            NamedCapturingGroupContentNodeSlot::LparenQmarkLt => {
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE);
                 let written = render_lparen_qmark_lt(w);
                 written?;
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER);
                 Ok(())
             }
-            NamedCapturingGroupContentTransportSlot::LparenQmarkPLt => {
+            NamedCapturingGroupContentNodeSlot::LparenQmarkPLt => {
                 w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE);
                 let written = render_lparen_qmark_plt(w);
                 written?;
@@ -1102,44 +1102,44 @@ impl ::sittir_core::render::Render for NamedCapturingGroupContentTransportSlot {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum CountQuantifierContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum CountQuantifierContentNodeSlot {
     #[kind(kind::COUNT_QUANTIFIER_ARM)]
-    CountQuantifierArm(CountQuantifierArmTransport),
+    CountQuantifierArm(CountQuantifierArmNode),
     #[kind(kind::DECIMAL_DIGITS)]
-    DecimalDigits(DecimalDigitsTransport),
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
+    DecimalDigits(DecimalDigitsNode),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for CountQuantifierContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for CountQuantifierContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.prepare(ctx),
-            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.prepare(ctx),
-            CountQuantifierContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            CountQuantifierContentNodeSlot::CountQuantifierArm(t) => t.prepare(ctx),
+            CountQuantifierContentNodeSlot::DecimalDigits(t) => t.prepare(ctx),
+            CountQuantifierContentNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.gap_edges(),
-            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.gap_edges(),
-            CountQuantifierContentTransportSlot::Verbatim(t) => t.gap_edges(),
+            CountQuantifierContentNodeSlot::CountQuantifierArm(t) => t.gap_edges(),
+            CountQuantifierContentNodeSlot::DecimalDigits(t) => t.gap_edges(),
+            CountQuantifierContentNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.snapshot_edge(),
-            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.snapshot_edge(),
-            CountQuantifierContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            CountQuantifierContentNodeSlot::CountQuantifierArm(t) => t.snapshot_edge(),
+            CountQuantifierContentNodeSlot::DecimalDigits(t) => t.snapshot_edge(),
+            CountQuantifierContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.source_separator(ctx),
-            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.source_separator(ctx),
-            CountQuantifierContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            CountQuantifierContentNodeSlot::CountQuantifierArm(t) => t.source_separator(ctx),
+            CountQuantifierContentNodeSlot::DecimalDigits(t) => t.source_separator(ctx),
+            CountQuantifierContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1147,7 +1147,7 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierContentTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for CountQuantifierContentTransportSlot {
+impl ::sittir_core::view::KindOf for CountQuantifierContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::CountQuantifierArm(inner) => inner.kind_in(kinds),
@@ -1157,60 +1157,60 @@ impl ::sittir_core::view::KindOf for CountQuantifierContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for CountQuantifierContentTransportSlot {
+impl ::sittir_core::render::Render for CountQuantifierContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CountQuantifierContentTransportSlot::CountQuantifierArm(inner) => inner.render(w),
-            CountQuantifierContentTransportSlot::DecimalDigits(inner) => inner.render(w),
-            CountQuantifierContentTransportSlot::Verbatim(inner) => inner.render(w),
+            CountQuantifierContentNodeSlot::CountQuantifierArm(inner) => inner.render(w),
+            CountQuantifierContentNodeSlot::DecimalDigits(inner) => inner.render(w),
+            CountQuantifierContentNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum CharacterClassEscapeContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum CharacterClassEscapeContentNodeSlot {
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT1)]
-    CharacterClassEscapeText1(CharacterClassEscapeText1Transport),
+    CharacterClassEscapeText1(CharacterClassEscapeText1Node),
     #[kind(kind::CHARACTER_CLASS_ESCAPE_ARM)]
-    CharacterClassEscapeArm(CharacterClassEscapeArmTransport),
+    CharacterClassEscapeArm(CharacterClassEscapeArmNode),
     #[kind(kind::UNICODE_CHARACTER_ESCAPE)]
-    UnicodeCharacterEscape(UnicodeCharacterEscapeTransport),
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
+    UnicodeCharacterEscape(UnicodeCharacterEscapeNode),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.prepare(ctx),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.prepare(ctx),
-            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.prepare(ctx),
-            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeText1(t) => t.prepare(ctx),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.prepare(ctx),
+            CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.prepare(ctx),
+            CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.gap_edges(),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.gap_edges(),
-            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.gap_edges(),
-            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.gap_edges(),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeText1(t) => t.gap_edges(),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.gap_edges(),
+            CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.gap_edges(),
+            CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.snapshot_edge(),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.snapshot_edge(),
-            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.snapshot_edge(),
-            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeText1(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeText1(t) => t.source_separator(ctx),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.source_separator(ctx),
+            CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.source_separator(ctx),
+            CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1218,7 +1218,7 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentTransportSlo
     }
 }
 
-impl ::sittir_core::view::KindOf for CharacterClassEscapeContentTransportSlot {
+impl ::sittir_core::view::KindOf for CharacterClassEscapeContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::CharacterClassEscapeText1(inner) => inner.kind_in(kinds),
@@ -1229,61 +1229,61 @@ impl ::sittir_core::view::KindOf for CharacterClassEscapeContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for CharacterClassEscapeContentTransportSlot {
+impl ::sittir_core::render::Render for CharacterClassEscapeContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(inner) => inner.render(w),
-            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(inner) => inner.render(w),
-            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(inner) => inner.render(w),
-            CharacterClassEscapeContentTransportSlot::Verbatim(inner) => inner.render(w),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeText1(inner) => inner.render(w),
+            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(inner) => inner.render(w),
+            CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(inner) => inner.render(w),
+            CharacterClassEscapeContentNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum TermGroupQuantifierTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum TermGroupQuantifierNodeSlot {
     #[kind(kind::ZERO_OR_MORE)]
-    ZeroOrMore(ZeroOrMoreTransport),
+    ZeroOrMore(ZeroOrMoreNode),
     #[kind(kind::ONE_OR_MORE)]
-    OneOrMore(OneOrMoreTransport),
+    OneOrMore(OneOrMoreNode),
     #[kind(kind::OPTIONAL)]
-    Optional(OptionalTransport),
+    Optional(OptionalNode),
     #[kind(kind::COUNT_QUANTIFIER)]
-    CountQuantifier(CountQuantifierTransport),
+    CountQuantifier(CountQuantifierNode),
 }
 
-impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
+impl ::sittir_core::prepare::Prepare for TermGroupQuantifierNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.prepare(ctx),
-            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.prepare(ctx),
-            TermGroupQuantifierTransportSlot::Optional(t) => t.prepare(ctx),
-            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.prepare(ctx),
+            TermGroupQuantifierNodeSlot::ZeroOrMore(t) => t.prepare(ctx),
+            TermGroupQuantifierNodeSlot::OneOrMore(t) => t.prepare(ctx),
+            TermGroupQuantifierNodeSlot::Optional(t) => t.prepare(ctx),
+            TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.gap_edges(),
-            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.gap_edges(),
-            TermGroupQuantifierTransportSlot::Optional(t) => t.gap_edges(),
-            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.gap_edges(),
+            TermGroupQuantifierNodeSlot::ZeroOrMore(t) => t.gap_edges(),
+            TermGroupQuantifierNodeSlot::OneOrMore(t) => t.gap_edges(),
+            TermGroupQuantifierNodeSlot::Optional(t) => t.gap_edges(),
+            TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.snapshot_edge(),
-            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.snapshot_edge(),
-            TermGroupQuantifierTransportSlot::Optional(t) => t.snapshot_edge(),
-            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.snapshot_edge(),
+            TermGroupQuantifierNodeSlot::ZeroOrMore(t) => t.snapshot_edge(),
+            TermGroupQuantifierNodeSlot::OneOrMore(t) => t.snapshot_edge(),
+            TermGroupQuantifierNodeSlot::Optional(t) => t.snapshot_edge(),
+            TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.source_separator(ctx),
-            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.source_separator(ctx),
-            TermGroupQuantifierTransportSlot::Optional(t) => t.source_separator(ctx),
-            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.source_separator(ctx),
+            TermGroupQuantifierNodeSlot::ZeroOrMore(t) => t.source_separator(ctx),
+            TermGroupQuantifierNodeSlot::OneOrMore(t) => t.source_separator(ctx),
+            TermGroupQuantifierNodeSlot::Optional(t) => t.source_separator(ctx),
+            TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1291,7 +1291,7 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for TermGroupQuantifierTransportSlot {
+impl ::sittir_core::view::KindOf for TermGroupQuantifierNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ZeroOrMore(inner) => inner.kind_in(kinds),
@@ -1302,54 +1302,54 @@ impl ::sittir_core::view::KindOf for TermGroupQuantifierTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for TermGroupQuantifierTransportSlot {
+impl ::sittir_core::render::Render for TermGroupQuantifierNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TermGroupQuantifierTransportSlot::ZeroOrMore(inner) => inner.render(w),
-            TermGroupQuantifierTransportSlot::OneOrMore(inner) => inner.render(w),
-            TermGroupQuantifierTransportSlot::Optional(inner) => inner.render(w),
-            TermGroupQuantifierTransportSlot::CountQuantifier(inner) => inner.render(w),
+            TermGroupQuantifierNodeSlot::ZeroOrMore(inner) => inner.render(w),
+            TermGroupQuantifierNodeSlot::OneOrMore(inner) => inner.render(w),
+            TermGroupQuantifierNodeSlot::Optional(inner) => inner.render(w),
+            TermGroupQuantifierNodeSlot::CountQuantifier(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum TermGroupContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum TermGroupContentNodeSlot {
     #[kind(kind::LOOKAROUND_ASSERTION)]
-    LookaroundAssertion(LookaroundAssertionTransport),
+    LookaroundAssertion(LookaroundAssertionNode),
     #[kind(kind::PATTERN_CHARACTER)]
-    PatternCharacter(PatternCharacterTransport),
+    PatternCharacter(PatternCharacterNode),
     #[kind(kind::CHARACTER_CLASS)]
-    CharacterClass(CharacterClassTransport),
+    CharacterClass(CharacterClassNode),
     #[kind(kind::POSIX_CHARACTER_CLASS)]
-    PosixCharacterClass(PosixCharacterClassTransport),
+    PosixCharacterClass(PosixCharacterClassNode),
     #[kind(kind::DECIMAL_ESCAPE)]
-    DecimalEscape(DecimalEscapeTransport),
+    DecimalEscape(DecimalEscapeNode),
     #[kind(kind::CHARACTER_CLASS_ESCAPE)]
-    CharacterClassEscape(CharacterClassEscapeTransport),
+    CharacterClassEscape(CharacterClassEscapeNode),
     #[kind(kind::CONTROL_ESCAPE)]
-    ControlEscape(ControlEscapeTransport),
+    ControlEscape(ControlEscapeNode),
     #[kind(kind::CONTROL_LETTER_ESCAPE)]
-    ControlLetterEscape(ControlLetterEscapeTransport),
+    ControlLetterEscape(ControlLetterEscapeNode),
     #[kind(kind::IDENTITY_ESCAPE, kind::BSLASH_DASH, folded(kind::BSLASH_DASH))]
-    IdentityEscape(IdentityEscapeTransport),
+    IdentityEscape(IdentityEscapeNode),
     #[kind(kind::BACKREFERENCE_ESCAPE)]
-    BackreferenceEscape(BackreferenceEscapeTransport),
+    BackreferenceEscape(BackreferenceEscapeNode),
     #[kind(kind::NAMED_GROUP_BACKREFERENCE)]
-    NamedGroupBackreference(NamedGroupBackreferenceTransport),
+    NamedGroupBackreference(NamedGroupBackreferenceNode),
     #[kind(kind::ANONYMOUS_CAPTURING_GROUP)]
-    AnonymousCapturingGroup(AnonymousCapturingGroupTransport),
+    AnonymousCapturingGroup(AnonymousCapturingGroupNode),
     #[kind(kind::NAMED_CAPTURING_GROUP)]
-    NamedCapturingGroup(NamedCapturingGroupTransport),
+    NamedCapturingGroup(NamedCapturingGroupNode),
     #[kind(kind::NON_CAPTURING_GROUP)]
-    NonCapturingGroup(NonCapturingGroupTransport),
+    NonCapturingGroup(NonCapturingGroupNode),
     #[kind(kind::INLINE_FLAGS_GROUP_ENABLE)]
-    InlineFlagsGroupEnable(InlineFlagsGroupEnableTransport),
+    InlineFlagsGroupEnable(InlineFlagsGroupEnableNode),
     #[kind(kind::INLINE_FLAGS_GROUP_TOGGLE)]
-    InlineFlagsGroupToggle(InlineFlagsGroupToggleTransport),
+    InlineFlagsGroupToggle(InlineFlagsGroupToggleNode),
     #[kind(kind::INLINE_FLAGS_GROUP_DISABLE)]
-    InlineFlagsGroupDisable(InlineFlagsGroupDisableTransport),
+    InlineFlagsGroupDisable(InlineFlagsGroupDisableNode),
     #[kind(kind::START_ASSERTION, kind::CARET)]
     StartAssertion,
     #[kind(kind::END_ASSERTION)]
@@ -1360,117 +1360,117 @@ pub enum TermGroupContentTransportSlot {
     NonBoundaryAssertion,
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for TermGroupContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for TermGroupContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::PatternCharacter(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::CharacterClass(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::DecimalEscape(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::ControlEscape(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::IdentityEscape(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.prepare(ctx),
-            TermGroupContentTransportSlot::StartAssertion => Ok(()),
-            TermGroupContentTransportSlot::EndAssertion => Ok(()),
-            TermGroupContentTransportSlot::BoundaryAssertion => Ok(()),
-            TermGroupContentTransportSlot::NonBoundaryAssertion => Ok(()),
-            TermGroupContentTransportSlot::AnyCharacter => Ok(()),
-            TermGroupContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::LookaroundAssertion(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::PatternCharacter(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::CharacterClass(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::PosixCharacterClass(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::DecimalEscape(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::CharacterClassEscape(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::ControlEscape(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::ControlLetterEscape(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::IdentityEscape(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::BackreferenceEscape(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::NamedGroupBackreference(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::AnonymousCapturingGroup(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::NamedCapturingGroup(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::NonCapturingGroup(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::InlineFlagsGroupEnable(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::InlineFlagsGroupToggle(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::InlineFlagsGroupDisable(t) => t.prepare(ctx),
+            TermGroupContentNodeSlot::StartAssertion => Ok(()),
+            TermGroupContentNodeSlot::EndAssertion => Ok(()),
+            TermGroupContentNodeSlot::BoundaryAssertion => Ok(()),
+            TermGroupContentNodeSlot::NonBoundaryAssertion => Ok(()),
+            TermGroupContentNodeSlot::AnyCharacter => Ok(()),
+            TermGroupContentNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::PatternCharacter(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::CharacterClass(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::DecimalEscape(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::ControlEscape(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::IdentityEscape(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.gap_edges(),
-            TermGroupContentTransportSlot::StartAssertion => None,
-            TermGroupContentTransportSlot::EndAssertion => None,
-            TermGroupContentTransportSlot::BoundaryAssertion => None,
-            TermGroupContentTransportSlot::NonBoundaryAssertion => None,
-            TermGroupContentTransportSlot::AnyCharacter => None,
-            TermGroupContentTransportSlot::Verbatim(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::LookaroundAssertion(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::PatternCharacter(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::CharacterClass(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::PosixCharacterClass(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::DecimalEscape(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::CharacterClassEscape(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::ControlEscape(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::ControlLetterEscape(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::IdentityEscape(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::BackreferenceEscape(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::NamedGroupBackreference(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::AnonymousCapturingGroup(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::NamedCapturingGroup(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::NonCapturingGroup(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::InlineFlagsGroupEnable(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::InlineFlagsGroupToggle(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::InlineFlagsGroupDisable(t) => t.gap_edges(),
+            TermGroupContentNodeSlot::StartAssertion => None,
+            TermGroupContentNodeSlot::EndAssertion => None,
+            TermGroupContentNodeSlot::BoundaryAssertion => None,
+            TermGroupContentNodeSlot::NonBoundaryAssertion => None,
+            TermGroupContentNodeSlot::AnyCharacter => None,
+            TermGroupContentNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::PatternCharacter(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::CharacterClass(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::DecimalEscape(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::ControlEscape(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::IdentityEscape(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
-            TermGroupContentTransportSlot::StartAssertion => None,
-            TermGroupContentTransportSlot::EndAssertion => None,
-            TermGroupContentTransportSlot::BoundaryAssertion => None,
-            TermGroupContentTransportSlot::NonBoundaryAssertion => None,
-            TermGroupContentTransportSlot::AnyCharacter => None,
-            TermGroupContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::LookaroundAssertion(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::PatternCharacter(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::CharacterClass(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::PosixCharacterClass(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::DecimalEscape(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::ControlEscape(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::ControlLetterEscape(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::IdentityEscape(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::BackreferenceEscape(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::NamedGroupBackreference(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::AnonymousCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::NamedCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::NonCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
+            TermGroupContentNodeSlot::StartAssertion => None,
+            TermGroupContentNodeSlot::EndAssertion => None,
+            TermGroupContentNodeSlot::BoundaryAssertion => None,
+            TermGroupContentNodeSlot::NonBoundaryAssertion => None,
+            TermGroupContentNodeSlot::AnyCharacter => None,
+            TermGroupContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::PatternCharacter(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::CharacterClass(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::DecimalEscape(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::ControlEscape(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::IdentityEscape(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
-            TermGroupContentTransportSlot::StartAssertion => None,
-            TermGroupContentTransportSlot::EndAssertion => None,
-            TermGroupContentTransportSlot::BoundaryAssertion => None,
-            TermGroupContentTransportSlot::NonBoundaryAssertion => None,
-            TermGroupContentTransportSlot::AnyCharacter => None,
-            TermGroupContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::LookaroundAssertion(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::PatternCharacter(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::CharacterClass(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::PosixCharacterClass(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::DecimalEscape(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::ControlEscape(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::ControlLetterEscape(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::BackreferenceEscape(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::NamedGroupBackreference(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::AnonymousCapturingGroup(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::NamedCapturingGroup(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::NonCapturingGroup(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
+            TermGroupContentNodeSlot::StartAssertion => None,
+            TermGroupContentNodeSlot::EndAssertion => None,
+            TermGroupContentNodeSlot::BoundaryAssertion => None,
+            TermGroupContentNodeSlot::NonBoundaryAssertion => None,
+            TermGroupContentNodeSlot::AnyCharacter => None,
+            TermGroupContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1478,7 +1478,7 @@ impl ::sittir_core::prepare::Prepare for TermGroupContentTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for TermGroupContentTransportSlot {
+impl ::sittir_core::view::KindOf for TermGroupContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::LookaroundAssertion(inner) => inner.kind_in(kinds),
@@ -1508,72 +1508,72 @@ impl ::sittir_core::view::KindOf for TermGroupContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for TermGroupContentTransportSlot {
+impl ::sittir_core::render::Render for TermGroupContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TermGroupContentTransportSlot::LookaroundAssertion(inner) => inner.render(w),
-            TermGroupContentTransportSlot::PatternCharacter(inner) => inner.render(w),
-            TermGroupContentTransportSlot::CharacterClass(inner) => inner.render(w),
-            TermGroupContentTransportSlot::PosixCharacterClass(inner) => inner.render(w),
-            TermGroupContentTransportSlot::DecimalEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::CharacterClassEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::ControlEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::ControlLetterEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::IdentityEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::BackreferenceEscape(inner) => inner.render(w),
-            TermGroupContentTransportSlot::NamedGroupBackreference(inner) => inner.render(w),
-            TermGroupContentTransportSlot::AnonymousCapturingGroup(inner) => inner.render(w),
-            TermGroupContentTransportSlot::NamedCapturingGroup(inner) => inner.render(w),
-            TermGroupContentTransportSlot::NonCapturingGroup(inner) => inner.render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupEnable(inner) => inner.render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupToggle(inner) => inner.render(w),
-            TermGroupContentTransportSlot::InlineFlagsGroupDisable(inner) => inner.render(w),
-            TermGroupContentTransportSlot::StartAssertion => {
+            TermGroupContentNodeSlot::LookaroundAssertion(inner) => inner.render(w),
+            TermGroupContentNodeSlot::PatternCharacter(inner) => inner.render(w),
+            TermGroupContentNodeSlot::CharacterClass(inner) => inner.render(w),
+            TermGroupContentNodeSlot::PosixCharacterClass(inner) => inner.render(w),
+            TermGroupContentNodeSlot::DecimalEscape(inner) => inner.render(w),
+            TermGroupContentNodeSlot::CharacterClassEscape(inner) => inner.render(w),
+            TermGroupContentNodeSlot::ControlEscape(inner) => inner.render(w),
+            TermGroupContentNodeSlot::ControlLetterEscape(inner) => inner.render(w),
+            TermGroupContentNodeSlot::IdentityEscape(inner) => inner.render(w),
+            TermGroupContentNodeSlot::BackreferenceEscape(inner) => inner.render(w),
+            TermGroupContentNodeSlot::NamedGroupBackreference(inner) => inner.render(w),
+            TermGroupContentNodeSlot::AnonymousCapturingGroup(inner) => inner.render(w),
+            TermGroupContentNodeSlot::NamedCapturingGroup(inner) => inner.render(w),
+            TermGroupContentNodeSlot::NonCapturingGroup(inner) => inner.render(w),
+            TermGroupContentNodeSlot::InlineFlagsGroupEnable(inner) => inner.render(w),
+            TermGroupContentNodeSlot::InlineFlagsGroupToggle(inner) => inner.render(w),
+            TermGroupContentNodeSlot::InlineFlagsGroupDisable(inner) => inner.render(w),
+            TermGroupContentNodeSlot::StartAssertion => {
                 let written = render_start_assertion(w);
                 written?;
                 w.site_at(options::SITE_TERM_GROUP_CARET_AFTER);
                 Ok(())
             }
-            TermGroupContentTransportSlot::EndAssertion => {
+            TermGroupContentNodeSlot::EndAssertion => {
                 let written = render_end_assertion(w);
                 written?;
                 w.site_at(options::SITE_TERM_GROUP_END_ASSERTION_AFTER);
                 Ok(())
             }
-            TermGroupContentTransportSlot::BoundaryAssertion => {
+            TermGroupContentNodeSlot::BoundaryAssertion => {
                 let written = render_boundary_assertion(w);
                 written?;
                 w.site_at(options::SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER);
                 Ok(())
             }
-            TermGroupContentTransportSlot::NonBoundaryAssertion => {
+            TermGroupContentNodeSlot::NonBoundaryAssertion => {
                 let written = render_non_boundary_assertion(w);
                 written?;
                 w.site_at(options::SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER);
                 Ok(())
             }
-            TermGroupContentTransportSlot::AnyCharacter => {
+            TermGroupContentNodeSlot::AnyCharacter => {
                 let written = render_any_character(w);
                 written?;
                 w.site_at(options::SITE_TERM_GROUP_ANY_CHARACTER_AFTER);
                 Ok(())
             }
-            TermGroupContentTransportSlot::Verbatim(inner) => inner.render(w),
+            TermGroupContentNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LazyContentTransportSlot {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LazyContentNodeSlot {
     #[kind(kind::QMARK)]
     Qmark,
 }
 
-impl ::sittir_core::prepare::Prepare for LazyContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for LazyContentNodeSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LazyContentTransportSlot::Qmark => Ok(()),
+            LazyContentNodeSlot::Qmark => Ok(()),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1581,7 +1581,7 @@ impl ::sittir_core::prepare::Prepare for LazyContentTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for LazyContentTransportSlot {
+impl ::sittir_core::view::KindOf for LazyContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Qmark => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
@@ -1589,44 +1589,44 @@ impl ::sittir_core::view::KindOf for LazyContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for LazyContentTransportSlot {
+impl ::sittir_core::render::Render for LazyContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LazyContentTransportSlot::Qmark => render_qmark(w),
+            LazyContentNodeSlot::Qmark => render_qmark(w),
         }
     }
 }
 
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PATTERN, words = 7)]
-pub struct PatternTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::PATTERN, words = 7)]
+pub struct PatternNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<PatternContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<PatternContentNodeSlot>,
 }
 
-impl ::sittir_core::view::KindOf for PatternTransport {
+impl ::sittir_core::view::KindOf for PatternNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for PatternTransport {
+impl ::sittir_core::options::Edged for PatternNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(51) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for PatternTransport {
+impl ::sittir_core::render::Render for PatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pattern(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pattern(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for PatternTransport {
+impl ::sittir_core::prepare::Prepare for PatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         let inner = ::sittir_core::layout::Layout::inner_item(&self.layout);
@@ -1653,39 +1653,39 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ALTERNATION, words = 4)]
-pub struct AlternationTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::ALTERNATION, words = 4)]
+pub struct AlternationNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_terms")]
     #[slot(field = field::TERMS, separator = kind::PIPE, word = 2, width = 2, run = 5)]
-    pub terms: ::sittir_core::NonEmptyVec<Option<::sittir_core::SlotValue<TermTransport>>>,
+    pub terms: ::sittir_core::NonEmptyVec<Option<::sittir_core::SlotValue<TermNode>>>,
     #[wire(key = "_terms_separator_space_before")]
     pub terms_separator_space_before: Option<KindId>,
     #[wire(key = "_terms_separator_space_after")]
     pub terms_separator_space_after: Option<KindId>,
 }
 
-impl ::sittir_core::view::KindOf for AlternationTransport {
+impl ::sittir_core::view::KindOf for AlternationNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for AlternationTransport {
+impl ::sittir_core::options::Edged for AlternationNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(52) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for AlternationTransport {
+impl ::sittir_core::render::Render for AlternationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_alternation(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_alternation(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for AlternationTransport {
+impl ::sittir_core::prepare::Prepare for AlternationNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::fill_slot_gaps(self.terms.iter_mut().map(Option::as_mut), ::sittir_core::layout::Layout::slot(&self.layout, "_terms"));
@@ -1708,37 +1708,37 @@ impl ::sittir_core::prepare::Prepare for AlternationTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TERM, words = 4)]
-pub struct TermTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::TERM, words = 4)]
+pub struct TermNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_term_group")]
     #[slot(word = 2, width = 2, run = 5)]
-    pub term_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TermGroupTransport>>,
+    pub term_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TermGroupNode>>,
     #[wire(key = "_term_group_separator_space")]
     pub term_group_separator_space: Option<KindId>,
 }
 
-impl ::sittir_core::view::KindOf for TermTransport {
+impl ::sittir_core::view::KindOf for TermNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for TermTransport {
+impl ::sittir_core::options::Edged for TermNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(53) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for TermTransport {
+impl ::sittir_core::render::Render for TermNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(53)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(53)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for TermTransport {
+impl ::sittir_core::prepare::Prepare for TermNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::fill_slot_gaps(self.term_group.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_term_group"));
@@ -1761,20 +1761,20 @@ impl ::sittir_core::prepare::Prepare for TermTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AnyCharacterTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum AnyCharacterNode {
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
 }
 
-impl ::sittir_core::view::KindOf for AnyCharacterTransport {
+impl ::sittir_core::view::KindOf for AnyCharacterNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for AnyCharacterTransport {
+impl ::sittir_core::prepare::Prepare for AnyCharacterNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -1783,26 +1783,26 @@ impl ::sittir_core::prepare::Prepare for AnyCharacterTransport {
     }
 }
 
-impl ::sittir_core::render::Render for AnyCharacterTransport {
+impl ::sittir_core::render::Render for AnyCharacterNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_any_character(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum StartAssertionTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum StartAssertionNode {
     #[kind(kind::START_ASSERTION)]
     StartAssertion,
 }
 
-impl ::sittir_core::view::KindOf for StartAssertionTransport {
+impl ::sittir_core::view::KindOf for StartAssertionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for StartAssertionTransport {
+impl ::sittir_core::prepare::Prepare for StartAssertionNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -1811,26 +1811,26 @@ impl ::sittir_core::prepare::Prepare for StartAssertionTransport {
     }
 }
 
-impl ::sittir_core::render::Render for StartAssertionTransport {
+impl ::sittir_core::render::Render for StartAssertionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_start_assertion(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum EndAssertionTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum EndAssertionNode {
     #[kind(kind::END_ASSERTION)]
     EndAssertion,
 }
 
-impl ::sittir_core::view::KindOf for EndAssertionTransport {
+impl ::sittir_core::view::KindOf for EndAssertionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for EndAssertionTransport {
+impl ::sittir_core::prepare::Prepare for EndAssertionNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -1839,26 +1839,26 @@ impl ::sittir_core::prepare::Prepare for EndAssertionTransport {
     }
 }
 
-impl ::sittir_core::render::Render for EndAssertionTransport {
+impl ::sittir_core::render::Render for EndAssertionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_end_assertion(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum BoundaryAssertionTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum BoundaryAssertionNode {
     #[kind(kind::BOUNDARY_ASSERTION)]
     BoundaryAssertion,
 }
 
-impl ::sittir_core::view::KindOf for BoundaryAssertionTransport {
+impl ::sittir_core::view::KindOf for BoundaryAssertionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for BoundaryAssertionTransport {
+impl ::sittir_core::prepare::Prepare for BoundaryAssertionNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -1867,26 +1867,26 @@ impl ::sittir_core::prepare::Prepare for BoundaryAssertionTransport {
     }
 }
 
-impl ::sittir_core::render::Render for BoundaryAssertionTransport {
+impl ::sittir_core::render::Render for BoundaryAssertionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_boundary_assertion(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NonBoundaryAssertionTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum NonBoundaryAssertionNode {
     #[kind(kind::NON_BOUNDARY_ASSERTION)]
     NonBoundaryAssertion,
 }
 
-impl ::sittir_core::view::KindOf for NonBoundaryAssertionTransport {
+impl ::sittir_core::view::KindOf for NonBoundaryAssertionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NonBoundaryAssertionTransport {
+impl ::sittir_core::prepare::Prepare for NonBoundaryAssertionNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -1895,41 +1895,41 @@ impl ::sittir_core::prepare::Prepare for NonBoundaryAssertionTransport {
     }
 }
 
-impl ::sittir_core::render::Render for NonBoundaryAssertionTransport {
+impl ::sittir_core::render::Render for NonBoundaryAssertionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_non_boundary_assertion(w)
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LOOKAROUND_ASSERTION, words = 7)]
-pub struct LookaroundAssertionTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::LOOKAROUND_ASSERTION, words = 7)]
+pub struct LookaroundAssertionNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<LookaroundAssertionContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<LookaroundAssertionContentNodeSlot>,
 }
 
-impl ::sittir_core::view::KindOf for LookaroundAssertionTransport {
+impl ::sittir_core::view::KindOf for LookaroundAssertionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for LookaroundAssertionTransport {
+impl ::sittir_core::options::Edged for LookaroundAssertionNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(55) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for LookaroundAssertionTransport {
+impl ::sittir_core::render::Render for LookaroundAssertionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookaround_assertion(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookaround_assertion(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LookaroundAssertionTransport {
+impl ::sittir_core::prepare::Prepare for LookaroundAssertionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -1949,38 +1949,38 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN], words = 12)]
-pub struct LookaheadAssertionTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN], words = 12)]
+pub struct LookaheadAssertionNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<LookaheadAssertionContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<LookaheadAssertionContentNodeSlot>,
     #[wire(key = "_pattern")]
     #[slot(word = 7, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<PatternTransport>,
+    pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
-impl ::sittir_core::view::KindOf for LookaheadAssertionTransport {
+impl ::sittir_core::view::KindOf for LookaheadAssertionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for LookaheadAssertionTransport {
+impl ::sittir_core::options::Edged for LookaheadAssertionNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(56) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for LookaheadAssertionTransport {
+impl ::sittir_core::render::Render for LookaheadAssertionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookahead_assertion(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookahead_assertion(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LookaheadAssertionTransport {
+impl ::sittir_core::prepare::Prepare for LookaheadAssertionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2002,38 +2002,38 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN], words = 12)]
-pub struct LookbehindAssertionTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN], words = 12)]
+pub struct LookbehindAssertionNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<LookbehindAssertionContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<LookbehindAssertionContentNodeSlot>,
     #[wire(key = "_pattern")]
     #[slot(word = 7, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<PatternTransport>,
+    pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
-impl ::sittir_core::view::KindOf for LookbehindAssertionTransport {
+impl ::sittir_core::view::KindOf for LookbehindAssertionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for LookbehindAssertionTransport {
+impl ::sittir_core::options::Edged for LookbehindAssertionNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(57) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for LookbehindAssertionTransport {
+impl ::sittir_core::render::Render for LookbehindAssertionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookbehind_assertion(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lookbehind_assertion(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LookbehindAssertionTransport {
+impl ::sittir_core::prepare::Prepare for LookbehindAssertionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2055,34 +2055,34 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PATTERN_CHARACTER, text, words = 2)]
-pub struct PatternCharacterTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::PATTERN_CHARACTER, text, words = 2)]
+pub struct PatternCharacterNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for PatternCharacterTransport {
+impl ::sittir_core::view::KindOf for PatternCharacterNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for PatternCharacterTransport {
+impl ::sittir_core::options::Edged for PatternCharacterNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(12) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for PatternCharacterTransport {
+impl ::sittir_core::render::Render for PatternCharacterNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
+impl ::sittir_core::prepare::Prepare for PatternCharacterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -2101,11 +2101,11 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], words = 5)]
-pub struct CharacterClassTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], words = 5)]
+pub struct CharacterClassNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_negation")]
     #[slot(presence = display(kind::_NEGATION), word = 2, bit = 0)]
     pub negation: bool,
@@ -2114,31 +2114,31 @@ pub struct CharacterClassTransport {
     pub leading: bool,
     #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS, word = 3, width = 2, run = 5)]
-    pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>,
+    pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsNodeSlot>>,
     #[wire(key = "_trailing")]
     #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER), word = 2, bit = 2)]
     pub trailing: bool,
 }
 
-impl ::sittir_core::view::KindOf for CharacterClassTransport {
+impl ::sittir_core::view::KindOf for CharacterClassNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CharacterClassTransport {
+impl ::sittir_core::options::Edged for CharacterClassNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(58) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CharacterClassTransport {
+impl ::sittir_core::render::Render for CharacterClassNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
+impl ::sittir_core::prepare::Prepare for CharacterClassNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2163,35 +2163,35 @@ impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK], words = 7)]
-pub struct PosixCharacterClassTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK], words = 7)]
+pub struct PosixCharacterClassNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_posix_class_name")]
     #[slot(field = field::POSIX_CLASS_NAME, word = 2, width = 5)]
-    pub posix_class_name: ::sittir_core::SlotValue<PosixClassNameTransport>,
+    pub posix_class_name: ::sittir_core::SlotValue<PosixClassNameNode>,
 }
 
-impl ::sittir_core::view::KindOf for PosixCharacterClassTransport {
+impl ::sittir_core::view::KindOf for PosixCharacterClassNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for PosixCharacterClassTransport {
+impl ::sittir_core::options::Edged for PosixCharacterClassNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(59) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for PosixCharacterClassTransport {
+impl ::sittir_core::render::Render for PosixCharacterClassNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_posix_character_class(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_posix_character_class(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for PosixCharacterClassTransport {
+impl ::sittir_core::prepare::Prepare for PosixCharacterClassNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2212,34 +2212,34 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::POSIX_CLASS_NAME, text, words = 2)]
-pub struct PosixClassNameTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::POSIX_CLASS_NAME, text, words = 2)]
+pub struct PosixClassNameNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for PosixClassNameTransport {
+impl ::sittir_core::view::KindOf for PosixClassNameNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for PosixClassNameTransport {
+impl ::sittir_core::options::Edged for PosixClassNameNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(60) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for PosixClassNameTransport {
+impl ::sittir_core::render::Render for PosixClassNameNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for PosixClassNameTransport {
+impl ::sittir_core::prepare::Prepare for PosixClassNameNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -2258,38 +2258,38 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 12)]
-pub struct ClassRangeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 12)]
+pub struct ClassRangeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_start")]
     #[slot(field = field::START, word = 2, width = 5)]
-    pub start: ::sittir_core::SlotValue<ClassRangeStartTransportSlot>,
+    pub start: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
     #[wire(key = "_end")]
     #[slot(field = field::END, word = 7, width = 5)]
-    pub end: ::sittir_core::SlotValue<ClassRangeStartTransportSlot>,
+    pub end: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
 }
 
-impl ::sittir_core::view::KindOf for ClassRangeTransport {
+impl ::sittir_core::view::KindOf for ClassRangeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for ClassRangeTransport {
+impl ::sittir_core::options::Edged for ClassRangeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(61) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for ClassRangeTransport {
+impl ::sittir_core::render::Render for ClassRangeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_class_range(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_class_range(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for ClassRangeTransport {
+impl ::sittir_core::prepare::Prepare for ClassRangeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2311,34 +2311,34 @@ impl ::sittir_core::prepare::Prepare for ClassRangeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CLASS_CHARACTER, text, words = 2)]
-pub struct ClassCharacterTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CLASS_CHARACTER, text, words = 2)]
+pub struct ClassCharacterNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for ClassCharacterTransport {
+impl ::sittir_core::view::KindOf for ClassCharacterNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for ClassCharacterTransport {
+impl ::sittir_core::options::Edged for ClassCharacterNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(20) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for ClassCharacterTransport {
+impl ::sittir_core::render::Render for ClassCharacterNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(20)); w.text(&self.text) })
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(20)); w.text(&self.text) })
     }
 }
 
-impl ::sittir_core::prepare::Prepare for ClassCharacterTransport {
+impl ::sittir_core::prepare::Prepare for ClassCharacterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -2357,35 +2357,35 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
-pub struct AnonymousCapturingGroupTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+pub struct AnonymousCapturingGroupNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<PatternTransport>,
+    pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
-impl ::sittir_core::view::KindOf for AnonymousCapturingGroupTransport {
+impl ::sittir_core::view::KindOf for AnonymousCapturingGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for AnonymousCapturingGroupTransport {
+impl ::sittir_core::options::Edged for AnonymousCapturingGroupNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(62) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for AnonymousCapturingGroupTransport {
+impl ::sittir_core::render::Render for AnonymousCapturingGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_anonymous_capturing_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_anonymous_capturing_group(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
+impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2406,29 +2406,29 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN], words = 17)]
-pub struct NamedCapturingGroupTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN], words = 17)]
+pub struct NamedCapturingGroupNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentNodeSlot>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME, word = 7, width = 5)]
-    pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
+    pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 12, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<PatternTransport>,
+    pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
-impl ::sittir_core::view::KindOf for NamedCapturingGroupTransport {
+impl ::sittir_core::view::KindOf for NamedCapturingGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for NamedCapturingGroupTransport {
+impl ::sittir_core::options::Edged for NamedCapturingGroupNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(63) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
@@ -2438,13 +2438,13 @@ impl ::sittir_core::options::Edged for NamedCapturingGroupTransport {
     }
 }
 
-impl ::sittir_core::render::Render for NamedCapturingGroupTransport {
+impl ::sittir_core::render::Render for NamedCapturingGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_capturing_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_capturing_group(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
+impl ::sittir_core::prepare::Prepare for NamedCapturingGroupNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2467,35 +2467,35 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN], words = 7)]
-pub struct NonCapturingGroupTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN], words = 7)]
+pub struct NonCapturingGroupNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 2, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<PatternTransport>,
+    pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
-impl ::sittir_core::view::KindOf for NonCapturingGroupTransport {
+impl ::sittir_core::view::KindOf for NonCapturingGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for NonCapturingGroupTransport {
+impl ::sittir_core::options::Edged for NonCapturingGroupNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(64) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for NonCapturingGroupTransport {
+impl ::sittir_core::render::Render for NonCapturingGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_capturing_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_capturing_group(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NonCapturingGroupTransport {
+impl ::sittir_core::prepare::Prepare for NonCapturingGroupNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2516,34 +2516,34 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FLAGS, text, words = 2)]
-pub struct FlagsTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::FLAGS, text, words = 2)]
+pub struct FlagsNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for FlagsTransport {
+impl ::sittir_core::view::KindOf for FlagsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for FlagsTransport {
+impl ::sittir_core::options::Edged for FlagsNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(66) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for FlagsTransport {
+impl ::sittir_core::render::Render for FlagsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for FlagsTransport {
+impl ::sittir_core::prepare::Prepare for FlagsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -2562,35 +2562,35 @@ impl ::sittir_core::prepare::Prepare for FlagsTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ZERO_OR_MORE, layout = [kind::STAR, kind::QMARK], words = 3)]
-pub struct ZeroOrMoreTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::ZERO_OR_MORE, layout = [kind::STAR, kind::QMARK], words = 3)]
+pub struct ZeroOrMoreNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY), word = 2, bit = 0)]
     pub lazy: bool,
 }
 
-impl ::sittir_core::view::KindOf for ZeroOrMoreTransport {
+impl ::sittir_core::view::KindOf for ZeroOrMoreNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for ZeroOrMoreTransport {
+impl ::sittir_core::options::Edged for ZeroOrMoreNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(67) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for ZeroOrMoreTransport {
+impl ::sittir_core::render::Render for ZeroOrMoreNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_zero_or_more(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_zero_or_more(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
+impl ::sittir_core::prepare::Prepare for ZeroOrMoreNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2611,35 +2611,35 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ONE_OR_MORE, layout = [kind::PLUS, kind::QMARK], words = 3)]
-pub struct OneOrMoreTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::ONE_OR_MORE, layout = [kind::PLUS, kind::QMARK], words = 3)]
+pub struct OneOrMoreNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY), word = 2, bit = 0)]
     pub lazy: bool,
 }
 
-impl ::sittir_core::view::KindOf for OneOrMoreTransport {
+impl ::sittir_core::view::KindOf for OneOrMoreNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for OneOrMoreTransport {
+impl ::sittir_core::options::Edged for OneOrMoreNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(68) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for OneOrMoreTransport {
+impl ::sittir_core::render::Render for OneOrMoreNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_one_or_more(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_one_or_more(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
+impl ::sittir_core::prepare::Prepare for OneOrMoreNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2660,35 +2660,35 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::OPTIONAL, layout = [kind::QMARK], words = 3)]
-pub struct OptionalTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::OPTIONAL, layout = [kind::QMARK], words = 3)]
+pub struct OptionalNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY), word = 2, bit = 0)]
     pub lazy: bool,
 }
 
-impl ::sittir_core::view::KindOf for OptionalTransport {
+impl ::sittir_core::view::KindOf for OptionalNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for OptionalTransport {
+impl ::sittir_core::options::Edged for OptionalNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(69) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for OptionalTransport {
+impl ::sittir_core::render::Render for OptionalNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_optional(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_optional(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for OptionalTransport {
+impl ::sittir_core::prepare::Prepare for OptionalNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2709,38 +2709,38 @@ impl ::sittir_core::prepare::Prepare for OptionalTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::QMARK], words = 8)]
-pub struct CountQuantifierTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::QMARK], words = 8)]
+pub struct CountQuantifierNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 3, width = 5)]
-    pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<CountQuantifierContentNodeSlot>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY), word = 2, bit = 0)]
     pub lazy: bool,
 }
 
-impl ::sittir_core::view::KindOf for CountQuantifierTransport {
+impl ::sittir_core::view::KindOf for CountQuantifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CountQuantifierTransport {
+impl ::sittir_core::options::Edged for CountQuantifierNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(70) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CountQuantifierTransport {
+impl ::sittir_core::render::Render for CountQuantifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CountQuantifierTransport {
+impl ::sittir_core::prepare::Prepare for CountQuantifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2762,35 +2762,35 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT], words = 7)]
-pub struct BackreferenceEscapeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT], words = 7)]
+pub struct BackreferenceEscapeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME, word = 2, width = 5)]
-    pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
+    pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
 }
 
-impl ::sittir_core::view::KindOf for BackreferenceEscapeTransport {
+impl ::sittir_core::view::KindOf for BackreferenceEscapeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for BackreferenceEscapeTransport {
+impl ::sittir_core::options::Edged for BackreferenceEscapeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(71) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for BackreferenceEscapeTransport {
+impl ::sittir_core::render::Render for BackreferenceEscapeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_backreference_escape(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_backreference_escape(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for BackreferenceEscapeTransport {
+impl ::sittir_core::prepare::Prepare for BackreferenceEscapeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2811,35 +2811,35 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN], words = 7)]
-pub struct NamedGroupBackreferenceTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN], words = 7)]
+pub struct NamedGroupBackreferenceNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_group_name")]
     #[slot(field = field::GROUP_NAME, word = 2, width = 5)]
-    pub group_name: ::sittir_core::SlotValue<GroupNameTransport>,
+    pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
 }
 
-impl ::sittir_core::view::KindOf for NamedGroupBackreferenceTransport {
+impl ::sittir_core::view::KindOf for NamedGroupBackreferenceNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for NamedGroupBackreferenceTransport {
+impl ::sittir_core::options::Edged for NamedGroupBackreferenceNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(72) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for NamedGroupBackreferenceTransport {
+impl ::sittir_core::render::Render for NamedGroupBackreferenceNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_group_backreference(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_group_backreference(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceTransport {
+impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -2860,34 +2860,34 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DECIMAL_ESCAPE, text, words = 2)]
-pub struct DecimalEscapeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::DECIMAL_ESCAPE, text, words = 2)]
+pub struct DecimalEscapeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for DecimalEscapeTransport {
+impl ::sittir_core::view::KindOf for DecimalEscapeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for DecimalEscapeTransport {
+impl ::sittir_core::options::Edged for DecimalEscapeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(34) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for DecimalEscapeTransport {
+impl ::sittir_core::render::Render for DecimalEscapeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(34)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(34)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for DecimalEscapeTransport {
+impl ::sittir_core::prepare::Prepare for DecimalEscapeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -2906,35 +2906,35 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHARACTER_CLASS_ESCAPE, words = 7)]
-pub struct CharacterClassEscapeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE, words = 7)]
+pub struct CharacterClassEscapeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentNodeSlot>,
 }
 
-impl ::sittir_core::view::KindOf for CharacterClassEscapeTransport {
+impl ::sittir_core::view::KindOf for CharacterClassEscapeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CharacterClassEscapeTransport {
+impl ::sittir_core::options::Edged for CharacterClassEscapeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(73) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CharacterClassEscapeTransport {
+impl ::sittir_core::render::Render for CharacterClassEscapeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CharacterClassEscapeTransport {
+impl ::sittir_core::prepare::Prepare for CharacterClassEscapeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -2954,34 +2954,34 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::UNICODE_CHARACTER_ESCAPE, text, words = 2)]
-pub struct UnicodeCharacterEscapeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::UNICODE_CHARACTER_ESCAPE, text, words = 2)]
+pub struct UnicodeCharacterEscapeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for UnicodeCharacterEscapeTransport {
+impl ::sittir_core::view::KindOf for UnicodeCharacterEscapeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for UnicodeCharacterEscapeTransport {
+impl ::sittir_core::options::Edged for UnicodeCharacterEscapeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(74) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for UnicodeCharacterEscapeTransport {
+impl ::sittir_core::render::Render for UnicodeCharacterEscapeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeTransport {
+impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3000,38 +3000,38 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 12)]
-pub struct UnicodePropertyValueExpressionTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 12)]
+pub struct UnicodePropertyValueExpressionNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_unicode_property_value_expression_group")]
     #[slot(word = 2, width = 5)]
-    pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupTransport>>,
+    pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupNode>>,
     #[wire(key = "_unicode_property_value")]
     #[slot(word = 7, width = 5)]
-    pub unicode_property_value: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
+    pub unicode_property_value: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
 }
 
-impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionTransport {
+impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionTransport {
+impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(75) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for UnicodePropertyValueExpressionTransport {
+impl ::sittir_core::render::Render for UnicodePropertyValueExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport {
+impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3053,34 +3053,34 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::UNICODE_PROPERTY_VALUE, text, words = 2)]
-pub struct UnicodePropertyValueTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE, text, words = 2)]
+pub struct UnicodePropertyValueNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for UnicodePropertyValueTransport {
+impl ::sittir_core::view::KindOf for UnicodePropertyValueNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for UnicodePropertyValueTransport {
+impl ::sittir_core::options::Edged for UnicodePropertyValueNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(35) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for UnicodePropertyValueTransport {
+impl ::sittir_core::render::Render for UnicodePropertyValueNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(35)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(35)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
+impl ::sittir_core::prepare::Prepare for UnicodePropertyValueNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3099,34 +3099,34 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CONTROL_ESCAPE, text, words = 2)]
-pub struct ControlEscapeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CONTROL_ESCAPE, text, words = 2)]
+pub struct ControlEscapeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for ControlEscapeTransport {
+impl ::sittir_core::view::KindOf for ControlEscapeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for ControlEscapeTransport {
+impl ::sittir_core::options::Edged for ControlEscapeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(76) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for ControlEscapeTransport {
+impl ::sittir_core::render::Render for ControlEscapeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for ControlEscapeTransport {
+impl ::sittir_core::prepare::Prepare for ControlEscapeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3145,34 +3145,34 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CONTROL_LETTER_ESCAPE, text, words = 2)]
-pub struct ControlLetterEscapeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CONTROL_LETTER_ESCAPE, text, words = 2)]
+pub struct ControlLetterEscapeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for ControlLetterEscapeTransport {
+impl ::sittir_core::view::KindOf for ControlLetterEscapeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for ControlLetterEscapeTransport {
+impl ::sittir_core::options::Edged for ControlLetterEscapeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(36) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for ControlLetterEscapeTransport {
+impl ::sittir_core::render::Render for ControlLetterEscapeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for ControlLetterEscapeTransport {
+impl ::sittir_core::prepare::Prepare for ControlLetterEscapeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3191,35 +3191,35 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$", words = 6)]
-pub struct IdentityEscapeTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$", words = 6)]
+pub struct IdentityEscapeNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
-impl ::sittir_core::view::KindOf for IdentityEscapeTransport {
+impl ::sittir_core::view::KindOf for IdentityEscapeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for IdentityEscapeTransport {
+impl ::sittir_core::options::Edged for IdentityEscapeNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(37) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for IdentityEscapeTransport {
+impl ::sittir_core::render::Render for IdentityEscapeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_identity_escape(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_identity_escape(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for IdentityEscapeTransport {
+impl ::sittir_core::prepare::Prepare for IdentityEscapeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -3239,34 +3239,34 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::GROUP_NAME, text, words = 2)]
-pub struct GroupNameTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::GROUP_NAME, text, words = 2)]
+pub struct GroupNameNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for GroupNameTransport {
+impl ::sittir_core::view::KindOf for GroupNameNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for GroupNameTransport {
+impl ::sittir_core::options::Edged for GroupNameNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(38) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for GroupNameTransport {
+impl ::sittir_core::render::Render for GroupNameNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for GroupNameTransport {
+impl ::sittir_core::prepare::Prepare for GroupNameNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3285,34 +3285,34 @@ impl ::sittir_core::prepare::Prepare for GroupNameTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DECIMAL_DIGITS, text, words = 2)]
-pub struct DecimalDigitsTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::DECIMAL_DIGITS, text, words = 2)]
+pub struct DecimalDigitsNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for DecimalDigitsTransport {
+impl ::sittir_core::view::KindOf for DecimalDigitsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for DecimalDigitsTransport {
+impl ::sittir_core::options::Edged for DecimalDigitsNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(39) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for DecimalDigitsTransport {
+impl ::sittir_core::render::Render for DecimalDigitsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
+impl ::sittir_core::prepare::Prepare for DecimalDigitsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3331,38 +3331,38 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TERM_GROUP, words = 12)]
-pub struct TermGroupTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::TERM_GROUP, words = 12)]
+pub struct TermGroupNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<TermGroupContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<TermGroupContentNodeSlot>,
     #[wire(key = "_quantifier")]
     #[slot(field = field::QUANTIFIER, word = 7, width = 5)]
-    pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierTransportSlot>>,
+    pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierNodeSlot>>,
 }
 
-impl ::sittir_core::view::KindOf for TermGroupTransport {
+impl ::sittir_core::view::KindOf for TermGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for TermGroupTransport {
+impl ::sittir_core::options::Edged for TermGroupNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(77) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for TermGroupTransport {
+impl ::sittir_core::render::Render for TermGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_term_group(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for TermGroupTransport {
+impl ::sittir_core::prepare::Prepare for TermGroupNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3384,35 +3384,35 @@ impl ::sittir_core::prepare::Prepare for TermGroupTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA], words = 7)]
-pub struct CountQuantifierGroupTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA], words = 7)]
+pub struct CountQuantifierGroupNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_decimal_digits")]
     #[slot(word = 2, width = 5)]
-    pub decimal_digits: Option<::sittir_core::SlotValue<DecimalDigitsTransport>>,
+    pub decimal_digits: Option<::sittir_core::SlotValue<DecimalDigitsNode>>,
 }
 
-impl ::sittir_core::view::KindOf for CountQuantifierGroupTransport {
+impl ::sittir_core::view::KindOf for CountQuantifierGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CountQuantifierGroupTransport {
+impl ::sittir_core::options::Edged for CountQuantifierGroupNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(78) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CountQuantifierGroupTransport {
+impl ::sittir_core::render::Render for CountQuantifierGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_group(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CountQuantifierGroupTransport {
+impl ::sittir_core::prepare::Prepare for CountQuantifierGroupNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3433,38 +3433,38 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COUNT_QUANTIFIER_ARM, words = 12)]
-pub struct CountQuantifierArmTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::COUNT_QUANTIFIER_ARM, words = 12)]
+pub struct CountQuantifierArmNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_decimal_digits")]
     #[slot(word = 2, width = 5)]
-    pub decimal_digits: ::sittir_core::SlotValue<DecimalDigitsTransport>,
+    pub decimal_digits: ::sittir_core::SlotValue<DecimalDigitsNode>,
     #[wire(key = "_count_quantifier_group")]
     #[slot(word = 7, width = 5)]
-    pub count_quantifier_group: Option<::sittir_core::SlotValue<CountQuantifierGroupTransport>>,
+    pub count_quantifier_group: Option<::sittir_core::SlotValue<CountQuantifierGroupNode>>,
 }
 
-impl ::sittir_core::view::KindOf for CountQuantifierArmTransport {
+impl ::sittir_core::view::KindOf for CountQuantifierArmNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CountQuantifierArmTransport {
+impl ::sittir_core::options::Edged for CountQuantifierArmNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(79) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CountQuantifierArmTransport {
+impl ::sittir_core::render::Render for CountQuantifierArmNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_arm(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_count_quantifier_arm(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
+impl ::sittir_core::prepare::Prepare for CountQuantifierArmNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3486,38 +3486,38 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 12)]
-pub struct CharacterClassEscapeArmTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 12)]
+pub struct CharacterClassEscapeArmNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_character_class_escape_text2")]
     #[slot(word = 2, width = 5)]
-    pub character_class_escape_text2: ::sittir_core::SlotValue<CharacterClassEscapeText2Transport>,
+    pub character_class_escape_text2: ::sittir_core::SlotValue<CharacterClassEscapeText2Node>,
     #[wire(key = "_unicode_property_value_expression")]
     #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION, word = 7, width = 5)]
-    pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionTransport>,
+    pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionNode>,
 }
 
-impl ::sittir_core::view::KindOf for CharacterClassEscapeArmTransport {
+impl ::sittir_core::view::KindOf for CharacterClassEscapeArmNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CharacterClassEscapeArmTransport {
+impl ::sittir_core::options::Edged for CharacterClassEscapeArmNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(80) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CharacterClassEscapeArmTransport {
+impl ::sittir_core::render::Render for CharacterClassEscapeArmNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape_arm(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_character_class_escape_arm(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
+impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3539,35 +3539,35 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 7)]
-pub struct UnicodePropertyValueExpressionGroupTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 7)]
+pub struct UnicodePropertyValueExpressionGroupNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_unicode_property_name")]
     #[slot(word = 2, width = 5)]
-    pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyNameTransport>,
+    pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyNameNode>,
 }
 
-impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionGroupTransport {
+impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionGroupTransport {
+impl ::sittir_core::options::Edged for UnicodePropertyValueExpressionGroupNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(81) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for UnicodePropertyValueExpressionGroupTransport {
+impl ::sittir_core::render::Render for UnicodePropertyValueExpressionGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_value_expression_group(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupTransport {
+impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3588,34 +3588,34 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupTran
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT1, text, words = 2)]
-pub struct CharacterClassEscapeText1Transport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT1, text, words = 2)]
+pub struct CharacterClassEscapeText1Node {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for CharacterClassEscapeText1Transport {
+impl ::sittir_core::view::KindOf for CharacterClassEscapeText1Node {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CharacterClassEscapeText1Transport {
+impl ::sittir_core::options::Edged for CharacterClassEscapeText1Node {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(41) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CharacterClassEscapeText1Transport {
+impl ::sittir_core::render::Render for CharacterClassEscapeText1Node {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Transport {
+impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Node {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3634,34 +3634,34 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Transport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT2, text, words = 2)]
-pub struct CharacterClassEscapeText2Transport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT2, text, words = 2)]
+pub struct CharacterClassEscapeText2Node {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for CharacterClassEscapeText2Transport {
+impl ::sittir_core::view::KindOf for CharacterClassEscapeText2Node {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for CharacterClassEscapeText2Transport {
+impl ::sittir_core::options::Edged for CharacterClassEscapeText2Node {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(42) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for CharacterClassEscapeText2Transport {
+impl ::sittir_core::render::Render for CharacterClassEscapeText2Node {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Transport {
+impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Node {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         Ok(())
@@ -3680,20 +3680,20 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Transport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NegationTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum NegationNode {
     #[kind(kind::_NEGATION)]
     Negation,
 }
 
-impl ::sittir_core::view::KindOf for NegationTransport {
+impl ::sittir_core::view::KindOf for NegationNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NegationTransport {
+impl ::sittir_core::prepare::Prepare for NegationNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -3702,44 +3702,44 @@ impl ::sittir_core::prepare::Prepare for NegationTransport {
     }
 }
 
-impl ::sittir_core::render::Render for NegationTransport {
+impl ::sittir_core::render::Render for NegationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_negation(w)
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN], words = 12)]
-pub struct InlineFlagsGroupEnableTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN], words = 12)]
+pub struct InlineFlagsGroupEnableNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_enabled")]
     #[slot(field = field::ENABLED, word = 2, width = 5)]
-    pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
+    pub enabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 7, width = 5)]
-    pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
+    pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
-impl ::sittir_core::view::KindOf for InlineFlagsGroupEnableTransport {
+impl ::sittir_core::view::KindOf for InlineFlagsGroupEnableNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for InlineFlagsGroupEnableTransport {
+impl ::sittir_core::options::Edged for InlineFlagsGroupEnableNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(83) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for InlineFlagsGroupEnableTransport {
+impl ::sittir_core::render::Render for InlineFlagsGroupEnableNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_enable(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_enable(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableTransport {
+impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3761,41 +3761,41 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 17)]
-pub struct InlineFlagsGroupToggleTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 17)]
+pub struct InlineFlagsGroupToggleNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_enabled")]
     #[slot(field = field::ENABLED, word = 2, width = 5)]
-    pub enabled: ::sittir_core::SlotValue<FlagsTransport>,
+    pub enabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_disabled")]
     #[slot(field = field::DISABLED, word = 7, width = 5)]
-    pub disabled: ::sittir_core::SlotValue<FlagsTransport>,
+    pub disabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 12, width = 5)]
-    pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
+    pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
-impl ::sittir_core::view::KindOf for InlineFlagsGroupToggleTransport {
+impl ::sittir_core::view::KindOf for InlineFlagsGroupToggleNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for InlineFlagsGroupToggleTransport {
+impl ::sittir_core::options::Edged for InlineFlagsGroupToggleNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(84) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for InlineFlagsGroupToggleTransport {
+impl ::sittir_core::render::Render for InlineFlagsGroupToggleNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_toggle(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_toggle(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleTransport {
+impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3818,38 +3818,38 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 12)]
-pub struct InlineFlagsGroupDisableTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 12)]
+pub struct InlineFlagsGroupDisableNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_disabled")]
     #[slot(field = field::DISABLED, word = 2, width = 5)]
-    pub disabled: ::sittir_core::SlotValue<FlagsTransport>,
+    pub disabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN, word = 7, width = 5)]
-    pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
+    pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
-impl ::sittir_core::view::KindOf for InlineFlagsGroupDisableTransport {
+impl ::sittir_core::view::KindOf for InlineFlagsGroupDisableNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for InlineFlagsGroupDisableTransport {
+impl ::sittir_core::options::Edged for InlineFlagsGroupDisableNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(85) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for InlineFlagsGroupDisableTransport {
+impl ::sittir_core::render::Render for InlineFlagsGroupDisableNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_disable(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inline_flags_group_disable(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableTransport {
+impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
@@ -3871,20 +3871,20 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum TightTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum TightNode {
     #[kind(kind::_TIGHT)]
     Tight,
 }
 
-impl ::sittir_core::view::KindOf for TightTransport {
+impl ::sittir_core::view::KindOf for TightNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for TightTransport {
+impl ::sittir_core::prepare::Prepare for TightNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -3893,26 +3893,26 @@ impl ::sittir_core::prepare::Prepare for TightTransport {
     }
 }
 
-impl ::sittir_core::render::Render for TightTransport {
+impl ::sittir_core::render::Render for TightNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_tight(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NewlineTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum NewlineNode {
     #[kind(kind::_NEWLINE)]
     Newline,
 }
 
-impl ::sittir_core::view::KindOf for NewlineTransport {
+impl ::sittir_core::view::KindOf for NewlineNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NewlineTransport {
+impl ::sittir_core::prepare::Prepare for NewlineNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -3921,26 +3921,26 @@ impl ::sittir_core::prepare::Prepare for NewlineTransport {
     }
 }
 
-impl ::sittir_core::render::Render for NewlineTransport {
+impl ::sittir_core::render::Render for NewlineNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_newline(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum BlanklineTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum BlanklineNode {
     #[kind(kind::_BLANKLINE)]
     Blankline,
 }
 
-impl ::sittir_core::view::KindOf for BlanklineTransport {
+impl ::sittir_core::view::KindOf for BlanklineNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for BlanklineTransport {
+impl ::sittir_core::prepare::Prepare for BlanklineNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -3949,26 +3949,26 @@ impl ::sittir_core::prepare::Prepare for BlanklineTransport {
     }
 }
 
-impl ::sittir_core::render::Render for BlanklineTransport {
+impl ::sittir_core::render::Render for BlanklineNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_blankline(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum DoubleBlanklineTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum DoubleBlanklineNode {
     #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
 }
 
-impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
+impl ::sittir_core::view::KindOf for DoubleBlanklineNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
+impl ::sittir_core::prepare::Prepare for DoubleBlanklineNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -3977,41 +3977,41 @@ impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
     }
 }
 
-impl ::sittir_core::render::Render for DoubleBlanklineTransport {
+impl ::sittir_core::render::Render for DoubleBlanklineNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_double_blankline(w)
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LAZY, display, content = content, words = 7)]
-pub struct LazyTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_LAZY, display, content = content, words = 7)]
+pub struct LazyNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<LazyContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<LazyContentNodeSlot>,
 }
 
-impl ::sittir_core::view::KindOf for LazyTransport {
+impl ::sittir_core::view::KindOf for LazyNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for LazyTransport {
+impl ::sittir_core::options::Edged for LazyNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(89) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for LazyTransport {
+impl ::sittir_core::render::Render for LazyNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lazy(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lazy(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LazyTransport {
+impl ::sittir_core::prepare::Prepare for LazyNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -4031,35 +4031,35 @@ impl ::sittir_core::prepare::Prepare for LazyTransport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_UNICODE_PROPERTY_NAME, display, content = content, words = 7)]
-pub struct UnicodePropertyNameTransport {
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_UNICODE_PROPERTY_NAME, display, content = content, words = 7)]
+pub struct UnicodePropertyNameNode {
     #[wire(key = "$_layout")]
-    pub layout: Option<Box<TransportLayout>>,
+    pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<UnicodePropertyValueTransport>,
+    pub content: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
 }
 
-impl ::sittir_core::view::KindOf for UnicodePropertyNameTransport {
+impl ::sittir_core::view::KindOf for UnicodePropertyNameNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for UnicodePropertyNameTransport {
+impl ::sittir_core::options::Edged for UnicodePropertyNameNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(90) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for UnicodePropertyNameTransport {
+impl ::sittir_core::render::Render for UnicodePropertyNameNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_name(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_name(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for UnicodePropertyNameTransport {
+impl ::sittir_core::prepare::Prepare for UnicodePropertyNameNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -4079,20 +4079,20 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyNameTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum CaretTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum CaretNode {
     #[kind(kind::CARET)]
     Caret,
 }
 
-impl ::sittir_core::view::KindOf for CaretTransport {
+impl ::sittir_core::view::KindOf for CaretNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CaretTransport {
+impl ::sittir_core::prepare::Prepare for CaretNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4101,26 +4101,26 @@ impl ::sittir_core::prepare::Prepare for CaretTransport {
     }
 }
 
-impl ::sittir_core::render::Render for CaretTransport {
+impl ::sittir_core::render::Render for CaretNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_caret(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LparenQmarkTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LparenQmarkNode {
     #[kind(kind::LPAREN_QMARK)]
     LparenQmark,
 }
 
-impl ::sittir_core::view::KindOf for LparenQmarkTransport {
+impl ::sittir_core::view::KindOf for LparenQmarkNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenQmarkTransport {
+impl ::sittir_core::prepare::Prepare for LparenQmarkNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4129,26 +4129,26 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LparenQmarkTransport {
+impl ::sittir_core::render::Render for LparenQmarkNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum EqTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum EqNode {
     #[kind(kind::EQ)]
     Eq,
 }
 
-impl ::sittir_core::view::KindOf for EqTransport {
+impl ::sittir_core::view::KindOf for EqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for EqTransport {
+impl ::sittir_core::prepare::Prepare for EqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4157,26 +4157,26 @@ impl ::sittir_core::prepare::Prepare for EqTransport {
     }
 }
 
-impl ::sittir_core::render::Render for EqTransport {
+impl ::sittir_core::render::Render for EqNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_eq(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum BangTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum BangNode {
     #[kind(kind::BANG)]
     Bang,
 }
 
-impl ::sittir_core::view::KindOf for BangTransport {
+impl ::sittir_core::view::KindOf for BangNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for BangTransport {
+impl ::sittir_core::prepare::Prepare for BangNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4185,26 +4185,26 @@ impl ::sittir_core::prepare::Prepare for BangTransport {
     }
 }
 
-impl ::sittir_core::render::Render for BangTransport {
+impl ::sittir_core::render::Render for BangNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_bang(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum RparenTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum RparenNode {
     #[kind(kind::RPAREN)]
     Rparen,
 }
 
-impl ::sittir_core::view::KindOf for RparenTransport {
+impl ::sittir_core::view::KindOf for RparenNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for RparenTransport {
+impl ::sittir_core::prepare::Prepare for RparenNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4213,26 +4213,26 @@ impl ::sittir_core::prepare::Prepare for RparenTransport {
     }
 }
 
-impl ::sittir_core::render::Render for RparenTransport {
+impl ::sittir_core::render::Render for RparenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_rparen(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LparenQmarkLtTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LparenQmarkLtNode {
     #[kind(kind::LPAREN_QMARK_LT)]
     LparenQmarkLt,
 }
 
-impl ::sittir_core::view::KindOf for LparenQmarkLtTransport {
+impl ::sittir_core::view::KindOf for LparenQmarkLtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenQmarkLtTransport {
+impl ::sittir_core::prepare::Prepare for LparenQmarkLtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4241,26 +4241,26 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkLtTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LparenQmarkLtTransport {
+impl ::sittir_core::render::Render for LparenQmarkLtNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_lt(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LbrackTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LbrackNode {
     #[kind(kind::LBRACK)]
     Lbrack,
 }
 
-impl ::sittir_core::view::KindOf for LbrackTransport {
+impl ::sittir_core::view::KindOf for LbrackNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LbrackTransport {
+impl ::sittir_core::prepare::Prepare for LbrackNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4269,26 +4269,26 @@ impl ::sittir_core::prepare::Prepare for LbrackTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LbrackTransport {
+impl ::sittir_core::render::Render for LbrackNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lbrack(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum DashTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum DashNode {
     #[kind(kind::DASH)]
     Dash,
 }
 
-impl ::sittir_core::view::KindOf for DashTransport {
+impl ::sittir_core::view::KindOf for DashNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for DashTransport {
+impl ::sittir_core::prepare::Prepare for DashNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4297,26 +4297,26 @@ impl ::sittir_core::prepare::Prepare for DashTransport {
     }
 }
 
-impl ::sittir_core::render::Render for DashTransport {
+impl ::sittir_core::render::Render for DashNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_dash(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum BslashDashTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum BslashDashNode {
     #[kind(kind::BSLASH_DASH)]
     BslashDash,
 }
 
-impl ::sittir_core::view::KindOf for BslashDashTransport {
+impl ::sittir_core::view::KindOf for BslashDashNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for BslashDashTransport {
+impl ::sittir_core::prepare::Prepare for BslashDashNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4325,26 +4325,26 @@ impl ::sittir_core::prepare::Prepare for BslashDashTransport {
     }
 }
 
-impl ::sittir_core::render::Render for BslashDashTransport {
+impl ::sittir_core::render::Render for BslashDashNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_bslash_dash(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum RbrackTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum RbrackNode {
     #[kind(kind::RBRACK)]
     Rbrack,
 }
 
-impl ::sittir_core::view::KindOf for RbrackTransport {
+impl ::sittir_core::view::KindOf for RbrackNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for RbrackTransport {
+impl ::sittir_core::prepare::Prepare for RbrackNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4353,26 +4353,26 @@ impl ::sittir_core::prepare::Prepare for RbrackTransport {
     }
 }
 
-impl ::sittir_core::render::Render for RbrackTransport {
+impl ::sittir_core::render::Render for RbrackNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_rbrack(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LbrackColonTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LbrackColonNode {
     #[kind(kind::LBRACK_COLON)]
     LbrackColon,
 }
 
-impl ::sittir_core::view::KindOf for LbrackColonTransport {
+impl ::sittir_core::view::KindOf for LbrackColonNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LbrackColonTransport {
+impl ::sittir_core::prepare::Prepare for LbrackColonNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4381,26 +4381,26 @@ impl ::sittir_core::prepare::Prepare for LbrackColonTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LbrackColonTransport {
+impl ::sittir_core::render::Render for LbrackColonNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lbrack_colon(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ColonRbrackTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum ColonRbrackNode {
     #[kind(kind::COLON_RBRACK)]
     ColonRbrack,
 }
 
-impl ::sittir_core::view::KindOf for ColonRbrackTransport {
+impl ::sittir_core::view::KindOf for ColonRbrackNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for ColonRbrackTransport {
+impl ::sittir_core::prepare::Prepare for ColonRbrackNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4409,26 +4409,26 @@ impl ::sittir_core::prepare::Prepare for ColonRbrackTransport {
     }
 }
 
-impl ::sittir_core::render::Render for ColonRbrackTransport {
+impl ::sittir_core::render::Render for ColonRbrackNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_colon_rbrack(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LparenTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LparenNode {
     #[kind(kind::LPAREN)]
     Lparen,
 }
 
-impl ::sittir_core::view::KindOf for LparenTransport {
+impl ::sittir_core::view::KindOf for LparenNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenTransport {
+impl ::sittir_core::prepare::Prepare for LparenNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4437,26 +4437,26 @@ impl ::sittir_core::prepare::Prepare for LparenTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LparenTransport {
+impl ::sittir_core::render::Render for LparenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LparenQmarkPLtTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LparenQmarkPLtNode {
     #[kind(kind::LPAREN_QMARK_P_LT)]
     LparenQmarkPLt,
 }
 
-impl ::sittir_core::view::KindOf for LparenQmarkPLtTransport {
+impl ::sittir_core::view::KindOf for LparenQmarkPLtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenQmarkPLtTransport {
+impl ::sittir_core::prepare::Prepare for LparenQmarkPLtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4465,26 +4465,26 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPLtTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LparenQmarkPLtTransport {
+impl ::sittir_core::render::Render for LparenQmarkPLtNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_plt(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum GtTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum GtNode {
     #[kind(kind::GT)]
     Gt,
 }
 
-impl ::sittir_core::view::KindOf for GtTransport {
+impl ::sittir_core::view::KindOf for GtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for GtTransport {
+impl ::sittir_core::prepare::Prepare for GtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4493,26 +4493,26 @@ impl ::sittir_core::prepare::Prepare for GtTransport {
     }
 }
 
-impl ::sittir_core::render::Render for GtTransport {
+impl ::sittir_core::render::Render for GtNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_gt(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LparenQmarkColonTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LparenQmarkColonNode {
     #[kind(kind::LPAREN_QMARK_COLON)]
     LparenQmarkColon,
 }
 
-impl ::sittir_core::view::KindOf for LparenQmarkColonTransport {
+impl ::sittir_core::view::KindOf for LparenQmarkColonNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenQmarkColonTransport {
+impl ::sittir_core::prepare::Prepare for LparenQmarkColonNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4521,26 +4521,26 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkColonTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LparenQmarkColonTransport {
+impl ::sittir_core::render::Render for LparenQmarkColonNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_colon(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum StarTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum StarNode {
     #[kind(kind::STAR)]
     Star,
 }
 
-impl ::sittir_core::view::KindOf for StarTransport {
+impl ::sittir_core::view::KindOf for StarNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for StarTransport {
+impl ::sittir_core::prepare::Prepare for StarNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4549,26 +4549,26 @@ impl ::sittir_core::prepare::Prepare for StarTransport {
     }
 }
 
-impl ::sittir_core::render::Render for StarTransport {
+impl ::sittir_core::render::Render for StarNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_star(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum QmarkTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum QmarkNode {
     #[kind(kind::QMARK)]
     Qmark,
 }
 
-impl ::sittir_core::view::KindOf for QmarkTransport {
+impl ::sittir_core::view::KindOf for QmarkNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for QmarkTransport {
+impl ::sittir_core::prepare::Prepare for QmarkNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4577,26 +4577,26 @@ impl ::sittir_core::prepare::Prepare for QmarkTransport {
     }
 }
 
-impl ::sittir_core::render::Render for QmarkTransport {
+impl ::sittir_core::render::Render for QmarkNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_qmark(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum PlusTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum PlusNode {
     #[kind(kind::PLUS)]
     Plus,
 }
 
-impl ::sittir_core::view::KindOf for PlusTransport {
+impl ::sittir_core::view::KindOf for PlusNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for PlusTransport {
+impl ::sittir_core::prepare::Prepare for PlusNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4605,26 +4605,26 @@ impl ::sittir_core::prepare::Prepare for PlusTransport {
     }
 }
 
-impl ::sittir_core::render::Render for PlusTransport {
+impl ::sittir_core::render::Render for PlusNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_plus(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LbraceTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LbraceNode {
     #[kind(kind::LBRACE)]
     Lbrace,
 }
 
-impl ::sittir_core::view::KindOf for LbraceTransport {
+impl ::sittir_core::view::KindOf for LbraceNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LbraceTransport {
+impl ::sittir_core::prepare::Prepare for LbraceNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4633,26 +4633,26 @@ impl ::sittir_core::prepare::Prepare for LbraceTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LbraceTransport {
+impl ::sittir_core::render::Render for LbraceNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lbrace(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum RbraceTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum RbraceNode {
     #[kind(kind::RBRACE)]
     Rbrace,
 }
 
-impl ::sittir_core::view::KindOf for RbraceTransport {
+impl ::sittir_core::view::KindOf for RbraceNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for RbraceTransport {
+impl ::sittir_core::prepare::Prepare for RbraceNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4661,26 +4661,26 @@ impl ::sittir_core::prepare::Prepare for RbraceTransport {
     }
 }
 
-impl ::sittir_core::render::Render for RbraceTransport {
+impl ::sittir_core::render::Render for RbraceNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_rbrace(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum BslashkTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum BslashkNode {
     #[kind(kind::BSLASHK)]
     Bslashk,
 }
 
-impl ::sittir_core::view::KindOf for BslashkTransport {
+impl ::sittir_core::view::KindOf for BslashkNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for BslashkTransport {
+impl ::sittir_core::prepare::Prepare for BslashkNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4689,26 +4689,26 @@ impl ::sittir_core::prepare::Prepare for BslashkTransport {
     }
 }
 
-impl ::sittir_core::render::Render for BslashkTransport {
+impl ::sittir_core::render::Render for BslashkNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_bslashk(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LtTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LtNode {
     #[kind(kind::LT)]
     Lt,
 }
 
-impl ::sittir_core::view::KindOf for LtTransport {
+impl ::sittir_core::view::KindOf for LtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LtTransport {
+impl ::sittir_core::prepare::Prepare for LtNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4717,26 +4717,26 @@ impl ::sittir_core::prepare::Prepare for LtTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LtTransport {
+impl ::sittir_core::render::Render for LtNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lt(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum LparenQmarkPEqTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LparenQmarkPEqNode {
     #[kind(kind::LPAREN_QMARK_P_EQ)]
     LparenQmarkPEq,
 }
 
-impl ::sittir_core::view::KindOf for LparenQmarkPEqTransport {
+impl ::sittir_core::view::KindOf for LparenQmarkPEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for LparenQmarkPEqTransport {
+impl ::sittir_core::prepare::Prepare for LparenQmarkPEqNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4745,26 +4745,26 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPEqTransport {
     }
 }
 
-impl ::sittir_core::render::Render for LparenQmarkPEqTransport {
+impl ::sittir_core::render::Render for LparenQmarkPEqNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_lparen_qmark_peq(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum CommaTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum CommaNode {
     #[kind(kind::COMMA)]
     Comma,
 }
 
-impl ::sittir_core::view::KindOf for CommaTransport {
+impl ::sittir_core::view::KindOf for CommaNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for CommaTransport {
+impl ::sittir_core::prepare::Prepare for CommaNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4773,26 +4773,26 @@ impl ::sittir_core::prepare::Prepare for CommaTransport {
     }
 }
 
-impl ::sittir_core::render::Render for CommaTransport {
+impl ::sittir_core::render::Render for CommaNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_comma(w)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ColonTransport {
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum ColonNode {
     #[kind(kind::COLON)]
     Colon,
 }
 
-impl ::sittir_core::view::KindOf for ColonTransport {
+impl ::sittir_core::view::KindOf for ColonNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for ColonTransport {
+impl ::sittir_core::prepare::Prepare for ColonNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -4801,13 +4801,13 @@ impl ::sittir_core::prepare::Prepare for ColonTransport {
     }
 }
 
-impl ::sittir_core::render::Render for ColonTransport {
+impl ::sittir_core::render::Render for ColonNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_colon(w)
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for TermGroupTransport {
+impl ::sittir_core::prepare::SeatTarget for TermGroupNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(77)) {
             return Some((self.layout.edges_mut(), site));
@@ -4816,7 +4816,7 @@ impl ::sittir_core::prepare::SeatTarget for TermGroupTransport {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for AnyTransport {
+impl ::sittir_core::prepare::SeatTarget for AnyNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::TermGroup(t) => t.seat_target(table, ctx),
@@ -4828,7 +4828,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 
 
 
-fn render_pattern(node: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_pattern(node: &PatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
@@ -4836,7 +4836,7 @@ fn render_pattern(node: &PatternTransport, w: &mut dyn ::sittir_core::render::Re
     Ok(())
 }
 
-fn render_alternation(node: &AlternationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_alternation(node: &AlternationNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let terms = ListView {
         items: &node.terms,
         template: "{}",
@@ -4854,7 +4854,7 @@ fn render_alternation(node: &AlternationTransport, w: &mut dyn ::sittir_core::re
     Ok(())
 }
 
-fn render_term(node: &TermTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_term(node: &TermNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let term_group = ListView {
         items: &node.term_group,
         template: "{}",
@@ -4872,13 +4872,13 @@ fn render_term(node: &TermTransport, w: &mut dyn ::sittir_core::render::RenderSi
     Ok(())
 }
 
-fn render_lookaround_assertion(node: &LookaroundAssertionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lookaround_assertion(node: &LookaroundAssertionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_lookahead_assertion(node: &LookaheadAssertionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lookahead_assertion(node: &LookaheadAssertionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -4892,7 +4892,7 @@ fn render_lookahead_assertion(node: &LookaheadAssertionTransport, w: &mut dyn ::
     Ok(())
 }
 
-fn render_lookbehind_assertion(node: &LookbehindAssertionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lookbehind_assertion(node: &LookbehindAssertionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -4906,11 +4906,11 @@ fn render_lookbehind_assertion(node: &LookbehindAssertionTransport, w: &mut dyn 
     Ok(())
 }
 
-fn render_pattern_character(t: &PatternCharacterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_pattern_character(t: &PatternCharacterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_character_class(node: &CharacterClassNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let class_atoms = ListView {
         items: &node.class_atoms,
         template: "{}",
@@ -4925,7 +4925,7 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_class_atoms"),
     };
     let leading = View::new(&node.leading, "-");
-    let negation = View::new(::sittir_core::view::Presence::new(node.negation, NegationTransport::Negation), "{}");
+    let negation = View::new(::sittir_core::view::Presence::new(node.negation, NegationNode::Negation), "{}");
     let trailing = View::new(&node.trailing, "-");
     w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
@@ -4953,7 +4953,7 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
     Ok(())
 }
 
-fn render_posix_character_class(node: &PosixCharacterClassTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_posix_character_class(node: &PosixCharacterClassNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let posix_class_name = &node.posix_class_name;
     w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[:")?;
@@ -4965,11 +4965,11 @@ fn render_posix_character_class(node: &PosixCharacterClassTransport, w: &mut dyn
     Ok(())
 }
 
-fn render_posix_class_name(t: &PosixClassNameTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_posix_class_name(t: &PosixClassNameNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_class_range(node: &ClassRangeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_class_range(node: &ClassRangeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let end = &node.end;
     let start = &node.start;
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -4982,12 +4982,12 @@ fn render_class_range(node: &ClassRangeTransport, w: &mut dyn ::sittir_core::ren
     Ok(())
 }
 
-fn render_class_character(t: &ClassCharacterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_class_character(t: &ClassCharacterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.leaf_kind(::sittir_core::types::KindId(20));
     w.text(&t.text)
 }
 
-fn render_anonymous_capturing_group(node: &AnonymousCapturingGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_anonymous_capturing_group(node: &AnonymousCapturingGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
@@ -4999,7 +4999,7 @@ fn render_anonymous_capturing_group(node: &AnonymousCapturingGroupTransport, w: 
     Ok(())
 }
 
-fn render_named_capturing_group(node: &NamedCapturingGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_named_capturing_group(node: &NamedCapturingGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let group_name = &node.group_name;
     let pattern = &node.pattern;
@@ -5017,7 +5017,7 @@ fn render_named_capturing_group(node: &NamedCapturingGroupTransport, w: &mut dyn
     Ok(())
 }
 
-fn render_non_capturing_group(node: &NonCapturingGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_non_capturing_group(node: &NonCapturingGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?:")?;
@@ -5029,11 +5029,11 @@ fn render_non_capturing_group(node: &NonCapturingGroupTransport, w: &mut dyn ::s
     Ok(())
 }
 
-fn render_flags(t: &FlagsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_flags(t: &FlagsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_zero_or_more(node: &ZeroOrMoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_zero_or_more(node: &ZeroOrMoreNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lazy = View::new(&node.lazy, "?");
     w.edge(::sittir_core::types::KindId(67), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("*")?;
@@ -5043,7 +5043,7 @@ fn render_zero_or_more(node: &ZeroOrMoreTransport, w: &mut dyn ::sittir_core::re
     Ok(())
 }
 
-fn render_one_or_more(node: &OneOrMoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_one_or_more(node: &OneOrMoreNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lazy = View::new(&node.lazy, "?");
     w.edge(::sittir_core::types::KindId(68), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("+")?;
@@ -5053,7 +5053,7 @@ fn render_one_or_more(node: &OneOrMoreTransport, w: &mut dyn ::sittir_core::rend
     Ok(())
 }
 
-fn render_optional(node: &OptionalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_optional(node: &OptionalNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lazy = View::new(&node.lazy, "?");
     w.edge(::sittir_core::types::KindId(69), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("?")?;
@@ -5063,7 +5063,7 @@ fn render_optional(node: &OptionalTransport, w: &mut dyn ::sittir_core::render::
     Ok(())
 }
 
-fn render_count_quantifier(node: &CountQuantifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_count_quantifier(node: &CountQuantifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let lazy = View::new(&node.lazy, "?");
     w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -5078,7 +5078,7 @@ fn render_count_quantifier(node: &CountQuantifierTransport, w: &mut dyn ::sittir
     Ok(())
 }
 
-fn render_backreference_escape(node: &BackreferenceEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_backreference_escape(node: &BackreferenceEscapeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let group_name = &node.group_name;
     w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("\\k")?;
@@ -5093,7 +5093,7 @@ fn render_backreference_escape(node: &BackreferenceEscapeTransport, w: &mut dyn 
     Ok(())
 }
 
-fn render_named_group_backreference(node: &NamedGroupBackreferenceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_named_group_backreference(node: &NamedGroupBackreferenceNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let group_name = &node.group_name;
     w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?P=")?;
@@ -5105,21 +5105,21 @@ fn render_named_group_backreference(node: &NamedGroupBackreferenceTransport, w: 
     Ok(())
 }
 
-fn render_decimal_escape(t: &DecimalEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_decimal_escape(t: &DecimalEscapeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_character_class_escape(node: &CharacterClassEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_character_class_escape(node: &CharacterClassEscapeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
-fn render_unicode_character_escape(t: &UnicodeCharacterEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_unicode_character_escape(t: &UnicodeCharacterEscapeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_unicode_property_value_expression(node: &UnicodePropertyValueExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_unicode_property_value_expression(node: &UnicodePropertyValueExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let unicode_property_value = &node.unicode_property_value;
     let unicode_property_value_expression_group = View::new(&node.unicode_property_value_expression_group, "{}");
     w.edge(::sittir_core::types::KindId(75), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -5129,19 +5129,19 @@ fn render_unicode_property_value_expression(node: &UnicodePropertyValueExpressio
     Ok(())
 }
 
-fn render_unicode_property_value(t: &UnicodePropertyValueTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_unicode_property_value(t: &UnicodePropertyValueNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_control_escape(t: &ControlEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_control_escape(t: &ControlEscapeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_control_letter_escape(t: &ControlLetterEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_control_letter_escape(t: &ControlLetterEscapeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_identity_escape(node: &IdentityEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_identity_escape(node: &IdentityEscapeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
@@ -5149,15 +5149,15 @@ fn render_identity_escape(node: &IdentityEscapeTransport, w: &mut dyn ::sittir_c
     Ok(())
 }
 
-fn render_group_name(t: &GroupNameTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_group_name(t: &GroupNameNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_decimal_digits(t: &DecimalDigitsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_decimal_digits(t: &DecimalDigitsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_term_group(node: &TermGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_term_group(node: &TermGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     let quantifier = View::new(&node.quantifier, "{}");
     w.edge(::sittir_core::types::KindId(77), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -5167,7 +5167,7 @@ fn render_term_group(node: &TermGroupTransport, w: &mut dyn ::sittir_core::rende
     Ok(())
 }
 
-fn render_count_quantifier_group(node: &CountQuantifierGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_count_quantifier_group(node: &CountQuantifierGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let decimal_digits = View::new(&node.decimal_digits, "{}");
     w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(",")?;
@@ -5177,7 +5177,7 @@ fn render_count_quantifier_group(node: &CountQuantifierGroupTransport, w: &mut d
     Ok(())
 }
 
-fn render_count_quantifier_arm(node: &CountQuantifierArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_count_quantifier_arm(node: &CountQuantifierArmNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let count_quantifier_group = View::new(&node.count_quantifier_group, "{}");
     let decimal_digits = &node.decimal_digits;
     w.edge(::sittir_core::types::KindId(79), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -5187,7 +5187,7 @@ fn render_count_quantifier_arm(node: &CountQuantifierArmTransport, w: &mut dyn :
     Ok(())
 }
 
-fn render_character_class_escape_arm(node: &CharacterClassEscapeArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_character_class_escape_arm(node: &CharacterClassEscapeArmNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let character_class_escape_text2 = &node.character_class_escape_text2;
     let unicode_property_value_expression = &node.unicode_property_value_expression;
     w.edge(::sittir_core::types::KindId(80), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -5202,7 +5202,7 @@ fn render_character_class_escape_arm(node: &CharacterClassEscapeArmTransport, w:
     Ok(())
 }
 
-fn render_unicode_property_value_expression_group(node: &UnicodePropertyValueExpressionGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_unicode_property_value_expression_group(node: &UnicodePropertyValueExpressionGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let unicode_property_name = &node.unicode_property_name;
     w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_unicode_property_name", ::sittir_core::types::ItemIndex(0), w, |w| unicode_property_name.render(w))?;
@@ -5212,15 +5212,15 @@ fn render_unicode_property_value_expression_group(node: &UnicodePropertyValueExp
     Ok(())
 }
 
-fn render_character_class_escape_text1(t: &CharacterClassEscapeText1Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_character_class_escape_text1(t: &CharacterClassEscapeText1Node, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_character_class_escape_text2(t: &CharacterClassEscapeText2Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_character_class_escape_text2(t: &CharacterClassEscapeText2Node, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_inline_flags_group_enable(node: &InlineFlagsGroupEnableTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_inline_flags_group_enable(node: &InlineFlagsGroupEnableNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let enabled = &node.enabled;
     let pattern = View::new(&node.pattern, "{}");
     w.edge(::sittir_core::types::KindId(83), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -5239,7 +5239,7 @@ fn render_inline_flags_group_enable(node: &InlineFlagsGroupEnableTransport, w: &
     Ok(())
 }
 
-fn render_inline_flags_group_toggle(node: &InlineFlagsGroupToggleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_inline_flags_group_toggle(node: &InlineFlagsGroupToggleNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let disabled = &node.disabled;
     let enabled = &node.enabled;
     let pattern = View::new(&node.pattern, "{}");
@@ -5263,7 +5263,7 @@ fn render_inline_flags_group_toggle(node: &InlineFlagsGroupToggleTransport, w: &
     Ok(())
 }
 
-fn render_inline_flags_group_disable(node: &InlineFlagsGroupDisableTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_inline_flags_group_disable(node: &InlineFlagsGroupDisableNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let disabled = &node.disabled;
     let pattern = View::new(&node.pattern, "{}");
     w.edge(::sittir_core::types::KindId(85), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -5285,160 +5285,160 @@ fn render_inline_flags_group_disable(node: &InlineFlagsGroupDisableTransport, w:
     Ok(())
 }
 
-fn render_lazy(node: &LazyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lazy(node: &LazyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.text("?")?;
     Ok(())
 }
 
-fn render_unicode_property_name(node: &UnicodePropertyNameTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_unicode_property_name(node: &UnicodePropertyNameNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
 fn render_any_character(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(2)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("."))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(2)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("."))
 }
 
 fn render_start_assertion(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("^"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("^"))
 }
 
 fn render_end_assertion(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(4)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("$"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(4)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("$"))
 }
 
 fn render_boundary_assertion(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(5)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("\\b"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(5)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("\\b"))
 }
 
 fn render_non_boundary_assertion(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(6)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("\\B"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(6)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("\\B"))
 }
 
 fn render_negation(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(82)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("^"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(82)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("^"))
 }
 
 fn render_tight(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_newline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_double_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
 }
 
 fn render_caret(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(3)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(3)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^"))
 }
 
 fn render_lparen_qmark(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(7)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(7)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?"))
 }
 
 fn render_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(8)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(8)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("="))
 }
 
 fn render_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(9)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(9)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!"))
 }
 
 fn render_rparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(10)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(")"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(10)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(")"))
 }
 
 fn render_lparen_qmark_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?<"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?<"))
 }
 
 fn render_lbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(13)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("["))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(13)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("["))
 }
 
 fn render_dash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(14)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(14)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-"))
 }
 
 fn render_bslash_dash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(19)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("\\-"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(19)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("\\-"))
 }
 
 fn render_rbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(15)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("]"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(15)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("]"))
 }
 
 fn render_lbrack_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(16)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("[:"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(16)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("[:"))
 }
 
 fn render_colon_rbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(17)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":]"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(17)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":]"))
 }
 
 fn render_lparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(21)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("("))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(21)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("("))
 }
 
 fn render_lparen_qmark_plt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(22)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?P<"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(22)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?P<"))
 }
 
 fn render_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">"))
 }
 
 fn render_lparen_qmark_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(24)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?:"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(24)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?:"))
 }
 
 fn render_star(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(25)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(25)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*"))
 }
 
 fn render_qmark(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(26)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("?"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(26)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("?"))
 }
 
 fn render_plus(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(27)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(27)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+"))
 }
 
 fn render_lbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(28)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("{"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(28)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("{"))
 }
 
 fn render_rbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(30)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("}"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(30)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("}"))
 }
 
 fn render_bslashk(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(31)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("\\k"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(31)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("\\k"))
 }
 
 fn render_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<"))
 }
 
 fn render_lparen_qmark_peq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?P="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("(?P="))
 }
 
 fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(29)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(","))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(29)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(","))
 }
 
 fn render_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":"))
 }
 
 /// Word-class table derived from this grammar's Link-pinned word pattern.
@@ -5448,22 +5448,22 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 )
 .with_literal_merge_pairs(&[(40, 63), (63, 60)]); // "(?" "?<"
 
-/// Render a transport tree to text. Takes the root's own `SlotValue`
+/// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single SpacingWriter
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
-pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
     let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(ctx.recording);
-    let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);
+    let document = ::sittir_core::view::KindTest::kind_in(node, &w, kind::ROOT_KINDS);
     let mut w = w.with_document(document);
-    transport.render(&mut w)?;
+    node.render(&mut w)?;
     w.finish()?;
     Ok(s)
 }
 
-impl ::sittir_core::view::KindOf for AnyTransport {
+impl ::sittir_core::view::KindOf for AnyNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Pattern(inner) => inner.kind_in(kinds),
@@ -5551,154 +5551,154 @@ impl ::sittir_core::view::KindOf for AnyTransport {
     }
 }
 
-impl ::sittir_core::render::Render for AnyTransport {
+impl ::sittir_core::render::Render for AnyNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AnyTransport::Pattern(t) => t.render(w),
-            AnyTransport::Alternation(t) => t.render(w),
-            AnyTransport::Term(t) => t.render(w),
-            AnyTransport::LookaroundAssertion(t) => t.render(w),
-            AnyTransport::LookaheadAssertion(t) => t.render(w),
-            AnyTransport::LookbehindAssertion(t) => t.render(w),
-            AnyTransport::PatternCharacter(t) => t.render(w),
-            AnyTransport::CharacterClass(t) => t.render(w),
-            AnyTransport::PosixCharacterClass(t) => t.render(w),
-            AnyTransport::PosixClassName(t) => t.render(w),
-            AnyTransport::ClassRange(t) => t.render(w),
-            AnyTransport::ClassCharacter(t) => t.render(w),
-            AnyTransport::AnonymousCapturingGroup(t) => t.render(w),
-            AnyTransport::NamedCapturingGroup(t) => t.render(w),
-            AnyTransport::NonCapturingGroup(t) => t.render(w),
-            AnyTransport::Flags(t) => t.render(w),
-            AnyTransport::ZeroOrMore(t) => t.render(w),
-            AnyTransport::OneOrMore(t) => t.render(w),
-            AnyTransport::Optional(t) => t.render(w),
-            AnyTransport::CountQuantifier(t) => t.render(w),
-            AnyTransport::BackreferenceEscape(t) => t.render(w),
-            AnyTransport::NamedGroupBackreference(t) => t.render(w),
-            AnyTransport::DecimalEscape(t) => t.render(w),
-            AnyTransport::CharacterClassEscape(t) => t.render(w),
-            AnyTransport::UnicodeCharacterEscape(t) => t.render(w),
-            AnyTransport::UnicodePropertyValueExpression(t) => t.render(w),
-            AnyTransport::UnicodePropertyValue(t) => t.render(w),
-            AnyTransport::ControlEscape(t) => t.render(w),
-            AnyTransport::ControlLetterEscape(t) => t.render(w),
-            AnyTransport::IdentityEscape(t) => t.render(w),
-            AnyTransport::GroupName(t) => t.render(w),
-            AnyTransport::DecimalDigits(t) => t.render(w),
-            AnyTransport::TermGroup(t) => t.render(w),
-            AnyTransport::CountQuantifierGroup(t) => t.render(w),
-            AnyTransport::CountQuantifierArm(t) => t.render(w),
-            AnyTransport::CharacterClassEscapeArm(t) => t.render(w),
-            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.render(w),
-            AnyTransport::CharacterClassEscapeText1(t) => t.render(w),
-            AnyTransport::CharacterClassEscapeText2(t) => t.render(w),
-            AnyTransport::InlineFlagsGroupEnable(t) => t.render(w),
-            AnyTransport::InlineFlagsGroupToggle(t) => t.render(w),
-            AnyTransport::InlineFlagsGroupDisable(t) => t.render(w),
-            AnyTransport::Lazy(t) => t.render(w),
-            AnyTransport::UnicodePropertyName(t) => t.render(w),
-            AnyTransport::AnyCharacter => render_any_character(w),
-            AnyTransport::StartAssertion => render_start_assertion(w),
-            AnyTransport::EndAssertion => render_end_assertion(w),
-            AnyTransport::BoundaryAssertion => render_boundary_assertion(w),
-            AnyTransport::NonBoundaryAssertion => render_non_boundary_assertion(w),
-            AnyTransport::Negation => render_negation(w),
-            AnyTransport::Tight => render_tight(w),
-            AnyTransport::Newline => render_newline(w),
-            AnyTransport::Blankline => render_blankline(w),
-            AnyTransport::DoubleBlankline => render_double_blankline(w),
-            AnyTransport::Caret => render_caret(w),
-            AnyTransport::LparenQmark => render_lparen_qmark(w),
-            AnyTransport::Eq => render_eq(w),
-            AnyTransport::Bang => render_bang(w),
-            AnyTransport::Rparen => render_rparen(w),
-            AnyTransport::LparenQmarkLt => render_lparen_qmark_lt(w),
-            AnyTransport::Lbrack => render_lbrack(w),
-            AnyTransport::Dash => render_dash(w),
-            AnyTransport::BslashDash => render_bslash_dash(w),
-            AnyTransport::Rbrack => render_rbrack(w),
-            AnyTransport::LbrackColon => render_lbrack_colon(w),
-            AnyTransport::ColonRbrack => render_colon_rbrack(w),
-            AnyTransport::Lparen => render_lparen(w),
-            AnyTransport::LparenQmarkPLt => render_lparen_qmark_plt(w),
-            AnyTransport::Gt => render_gt(w),
-            AnyTransport::LparenQmarkColon => render_lparen_qmark_colon(w),
-            AnyTransport::Star => render_star(w),
-            AnyTransport::Qmark => render_qmark(w),
-            AnyTransport::Plus => render_plus(w),
-            AnyTransport::Lbrace => render_lbrace(w),
-            AnyTransport::Rbrace => render_rbrace(w),
-            AnyTransport::Bslashk => render_bslashk(w),
-            AnyTransport::Lt => render_lt(w),
-            AnyTransport::LparenQmarkPEq => render_lparen_qmark_peq(w),
-            AnyTransport::Comma => render_comma(w),
-            AnyTransport::Colon => render_colon(w),
-            AnyTransport::Verbatim(t) => t.render(w),
+            AnyNode::Pattern(t) => t.render(w),
+            AnyNode::Alternation(t) => t.render(w),
+            AnyNode::Term(t) => t.render(w),
+            AnyNode::LookaroundAssertion(t) => t.render(w),
+            AnyNode::LookaheadAssertion(t) => t.render(w),
+            AnyNode::LookbehindAssertion(t) => t.render(w),
+            AnyNode::PatternCharacter(t) => t.render(w),
+            AnyNode::CharacterClass(t) => t.render(w),
+            AnyNode::PosixCharacterClass(t) => t.render(w),
+            AnyNode::PosixClassName(t) => t.render(w),
+            AnyNode::ClassRange(t) => t.render(w),
+            AnyNode::ClassCharacter(t) => t.render(w),
+            AnyNode::AnonymousCapturingGroup(t) => t.render(w),
+            AnyNode::NamedCapturingGroup(t) => t.render(w),
+            AnyNode::NonCapturingGroup(t) => t.render(w),
+            AnyNode::Flags(t) => t.render(w),
+            AnyNode::ZeroOrMore(t) => t.render(w),
+            AnyNode::OneOrMore(t) => t.render(w),
+            AnyNode::Optional(t) => t.render(w),
+            AnyNode::CountQuantifier(t) => t.render(w),
+            AnyNode::BackreferenceEscape(t) => t.render(w),
+            AnyNode::NamedGroupBackreference(t) => t.render(w),
+            AnyNode::DecimalEscape(t) => t.render(w),
+            AnyNode::CharacterClassEscape(t) => t.render(w),
+            AnyNode::UnicodeCharacterEscape(t) => t.render(w),
+            AnyNode::UnicodePropertyValueExpression(t) => t.render(w),
+            AnyNode::UnicodePropertyValue(t) => t.render(w),
+            AnyNode::ControlEscape(t) => t.render(w),
+            AnyNode::ControlLetterEscape(t) => t.render(w),
+            AnyNode::IdentityEscape(t) => t.render(w),
+            AnyNode::GroupName(t) => t.render(w),
+            AnyNode::DecimalDigits(t) => t.render(w),
+            AnyNode::TermGroup(t) => t.render(w),
+            AnyNode::CountQuantifierGroup(t) => t.render(w),
+            AnyNode::CountQuantifierArm(t) => t.render(w),
+            AnyNode::CharacterClassEscapeArm(t) => t.render(w),
+            AnyNode::UnicodePropertyValueExpressionGroup(t) => t.render(w),
+            AnyNode::CharacterClassEscapeText1(t) => t.render(w),
+            AnyNode::CharacterClassEscapeText2(t) => t.render(w),
+            AnyNode::InlineFlagsGroupEnable(t) => t.render(w),
+            AnyNode::InlineFlagsGroupToggle(t) => t.render(w),
+            AnyNode::InlineFlagsGroupDisable(t) => t.render(w),
+            AnyNode::Lazy(t) => t.render(w),
+            AnyNode::UnicodePropertyName(t) => t.render(w),
+            AnyNode::AnyCharacter => render_any_character(w),
+            AnyNode::StartAssertion => render_start_assertion(w),
+            AnyNode::EndAssertion => render_end_assertion(w),
+            AnyNode::BoundaryAssertion => render_boundary_assertion(w),
+            AnyNode::NonBoundaryAssertion => render_non_boundary_assertion(w),
+            AnyNode::Negation => render_negation(w),
+            AnyNode::Tight => render_tight(w),
+            AnyNode::Newline => render_newline(w),
+            AnyNode::Blankline => render_blankline(w),
+            AnyNode::DoubleBlankline => render_double_blankline(w),
+            AnyNode::Caret => render_caret(w),
+            AnyNode::LparenQmark => render_lparen_qmark(w),
+            AnyNode::Eq => render_eq(w),
+            AnyNode::Bang => render_bang(w),
+            AnyNode::Rparen => render_rparen(w),
+            AnyNode::LparenQmarkLt => render_lparen_qmark_lt(w),
+            AnyNode::Lbrack => render_lbrack(w),
+            AnyNode::Dash => render_dash(w),
+            AnyNode::BslashDash => render_bslash_dash(w),
+            AnyNode::Rbrack => render_rbrack(w),
+            AnyNode::LbrackColon => render_lbrack_colon(w),
+            AnyNode::ColonRbrack => render_colon_rbrack(w),
+            AnyNode::Lparen => render_lparen(w),
+            AnyNode::LparenQmarkPLt => render_lparen_qmark_plt(w),
+            AnyNode::Gt => render_gt(w),
+            AnyNode::LparenQmarkColon => render_lparen_qmark_colon(w),
+            AnyNode::Star => render_star(w),
+            AnyNode::Qmark => render_qmark(w),
+            AnyNode::Plus => render_plus(w),
+            AnyNode::Lbrace => render_lbrace(w),
+            AnyNode::Rbrace => render_rbrace(w),
+            AnyNode::Bslashk => render_bslashk(w),
+            AnyNode::Lt => render_lt(w),
+            AnyNode::LparenQmarkPEq => render_lparen_qmark_peq(w),
+            AnyNode::Comma => render_comma(w),
+            AnyNode::Colon => render_colon(w),
+            AnyNode::Verbatim(t) => t.render(w),
         }
     }
 }
 
-use ::sittir_core::types::Source as TransportSource;
+use ::sittir_core::types::Source as NodeSource;
 
 /// The render entry point. The root arrives in the same `SlotValue`
 /// carrier every slot position uses, so a root that is itself an
 /// unexpanded read stub reproduces its source instead of failing to
 /// deserialize as its own kind.
-pub type RenderRoot = ::sittir_core::SlotValue<AnyTransport>;
+pub type RenderRoot = ::sittir_core::SlotValue<AnyNode>;
 
-pub fn render_transport_parts(
-    mut transport: RenderRoot,
+pub fn render_node_parts(
+    mut node: RenderRoot,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-) -> Result<(TransportSource, String), ::sittir_core::render::RenderError> {
-    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;
-    let rendered = render_transport_dispatch(&transport, ctx)?;
-    Ok((TransportSource::Factory, rendered))
+) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
+    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;
+    let rendered = render_node_dispatch(&node, ctx)?;
+    Ok((NodeSource::Factory, rendered))
 }
 
-const _: () = assert!(::core::mem::size_of::<AlternationTransport>() <= 256, "AlternationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AnonymousCapturingGroupTransport>() <= 256, "AnonymousCapturingGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BackreferenceEscapeTransport>() <= 256, "BackreferenceEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeArmTransport>() <= 256, "CharacterClassEscapeArmTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText1Transport>() <= 256, "CharacterClassEscapeText1Transport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText2Transport>() <= 256, "CharacterClassEscapeText2Transport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeTransport>() <= 256, "CharacterClassEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharacterClassTransport>() <= 256, "CharacterClassTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClassCharacterTransport>() <= 256, "ClassCharacterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClassRangeTransport>() > 256, "ClassRangeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ControlEscapeTransport>() <= 256, "ControlEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ControlLetterEscapeTransport>() <= 256, "ControlLetterEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CountQuantifierArmTransport>() <= 256, "CountQuantifierArmTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CountQuantifierGroupTransport>() <= 256, "CountQuantifierGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CountQuantifierTransport>() <= 256, "CountQuantifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DecimalDigitsTransport>() <= 256, "DecimalDigitsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DecimalEscapeTransport>() <= 256, "DecimalEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FlagsTransport>() <= 256, "FlagsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GroupNameTransport>() <= 256, "GroupNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IdentityEscapeTransport>() <= 256, "IdentityEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupDisableTransport>() <= 256, "InlineFlagsGroupDisableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupEnableTransport>() <= 256, "InlineFlagsGroupEnableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupToggleTransport>() <= 256, "InlineFlagsGroupToggleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LazyTransport>() <= 256, "LazyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LookaheadAssertionTransport>() <= 256, "LookaheadAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LookaroundAssertionTransport>() <= 256, "LookaroundAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LookbehindAssertionTransport>() <= 256, "LookbehindAssertionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NamedCapturingGroupTransport>() <= 256, "NamedCapturingGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NamedGroupBackreferenceTransport>() <= 256, "NamedGroupBackreferenceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NonCapturingGroupTransport>() <= 256, "NonCapturingGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OneOrMoreTransport>() <= 256, "OneOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OptionalTransport>() <= 256, "OptionalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PatternCharacterTransport>() <= 256, "PatternCharacterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PatternTransport>() <= 256, "PatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PosixCharacterClassTransport>() <= 256, "PosixCharacterClassTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PosixClassNameTransport>() <= 256, "PosixClassNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TermGroupTransport>() > 256, "TermGroupTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TermTransport>() <= 256, "TermTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodeCharacterEscapeTransport>() <= 256, "UnicodeCharacterEscapeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyNameTransport>() <= 256, "UnicodePropertyNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroupTransport>() <= 256, "UnicodePropertyValueExpressionGroupTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionTransport>() <= 256, "UnicodePropertyValueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueTransport>() <= 256, "UnicodePropertyValueTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ZeroOrMoreTransport>() <= 256, "ZeroOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AlternationNode>() <= 256, "AlternationNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AnonymousCapturingGroupNode>() <= 256, "AnonymousCapturingGroupNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<BackreferenceEscapeNode>() <= 256, "BackreferenceEscapeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeArmNode>() <= 256, "CharacterClassEscapeArmNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeNode>() <= 256, "CharacterClassEscapeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText1Node>() <= 256, "CharacterClassEscapeText1Node is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassEscapeText2Node>() <= 256, "CharacterClassEscapeText2Node is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CharacterClassNode>() <= 256, "CharacterClassNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClassCharacterNode>() <= 256, "ClassCharacterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClassRangeNode>() > 256, "ClassRangeNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ControlEscapeNode>() <= 256, "ControlEscapeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ControlLetterEscapeNode>() <= 256, "ControlLetterEscapeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierArmNode>() <= 256, "CountQuantifierArmNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierGroupNode>() <= 256, "CountQuantifierGroupNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<CountQuantifierNode>() <= 256, "CountQuantifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecimalDigitsNode>() <= 256, "DecimalDigitsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecimalEscapeNode>() <= 256, "DecimalEscapeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<FlagsNode>() <= 256, "FlagsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GroupNameNode>() <= 256, "GroupNameNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<IdentityEscapeNode>() <= 256, "IdentityEscapeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupDisableNode>() <= 256, "InlineFlagsGroupDisableNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupEnableNode>() <= 256, "InlineFlagsGroupEnableNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupToggleNode>() <= 256, "InlineFlagsGroupToggleNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LazyNode>() <= 256, "LazyNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookaheadAssertionNode>() <= 256, "LookaheadAssertionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookaroundAssertionNode>() <= 256, "LookaroundAssertionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<LookbehindAssertionNode>() <= 256, "LookbehindAssertionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedCapturingGroupNode>() <= 256, "NamedCapturingGroupNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedGroupBackreferenceNode>() <= 256, "NamedGroupBackreferenceNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NonCapturingGroupNode>() <= 256, "NonCapturingGroupNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OneOrMoreNode>() <= 256, "OneOrMoreNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<OptionalNode>() <= 256, "OptionalNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PatternCharacterNode>() <= 256, "PatternCharacterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PatternNode>() <= 256, "PatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PosixCharacterClassNode>() <= 256, "PosixCharacterClassNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PosixClassNameNode>() <= 256, "PosixClassNameNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TermGroupNode>() > 256, "TermGroupNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TermNode>() <= 256, "TermNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodeCharacterEscapeNode>() <= 256, "UnicodeCharacterEscapeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyNameNode>() <= 256, "UnicodePropertyNameNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroupNode>() <= 256, "UnicodePropertyValueExpressionGroupNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionNode>() <= 256, "UnicodePropertyValueExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueNode>() <= 256, "UnicodePropertyValueNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ZeroOrMoreNode>() <= 256, "ZeroOrMoreNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, PatternContentTransportSlot, LookaroundAssertionContentTransportSlot, LookaheadAssertionContentTransportSlot, LookbehindAssertionContentTransportSlot, CharacterClassClassAtomsTransportSlot, ClassRangeStartTransportSlot, NamedCapturingGroupContentTransportSlot, CountQuantifierContentTransportSlot, CharacterClassEscapeContentTransportSlot, TermGroupQuantifierTransportSlot, TermGroupContentTransportSlot, LazyContentTransportSlot, PatternTransport, AlternationTransport, TermTransport, AnyCharacterTransport, StartAssertionTransport, EndAssertionTransport, BoundaryAssertionTransport, NonBoundaryAssertionTransport, LookaroundAssertionTransport, LookaheadAssertionTransport, LookbehindAssertionTransport, PatternCharacterTransport, CharacterClassTransport, PosixCharacterClassTransport, PosixClassNameTransport, ClassRangeTransport, ClassCharacterTransport, AnonymousCapturingGroupTransport, NamedCapturingGroupTransport, NonCapturingGroupTransport, FlagsTransport, ZeroOrMoreTransport, OneOrMoreTransport, OptionalTransport, CountQuantifierTransport, BackreferenceEscapeTransport, NamedGroupBackreferenceTransport, DecimalEscapeTransport, CharacterClassEscapeTransport, UnicodeCharacterEscapeTransport, UnicodePropertyValueExpressionTransport, UnicodePropertyValueTransport, ControlEscapeTransport, ControlLetterEscapeTransport, IdentityEscapeTransport, GroupNameTransport, DecimalDigitsTransport, TermGroupTransport, CountQuantifierGroupTransport, CountQuantifierArmTransport, CharacterClassEscapeArmTransport, UnicodePropertyValueExpressionGroupTransport, CharacterClassEscapeText1Transport, CharacterClassEscapeText2Transport, NegationTransport, InlineFlagsGroupEnableTransport, InlineFlagsGroupToggleTransport, InlineFlagsGroupDisableTransport, TightTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, LazyTransport, UnicodePropertyNameTransport, CaretTransport, LparenQmarkTransport, EqTransport, BangTransport, RparenTransport, LparenQmarkLtTransport, LbrackTransport, DashTransport, BslashDashTransport, RbrackTransport, LbrackColonTransport, ColonRbrackTransport, LparenTransport, LparenQmarkPLtTransport, GtTransport, LparenQmarkColonTransport, StarTransport, QmarkTransport, PlusTransport, LbraceTransport, RbraceTransport, BslashkTransport, LtTransport, LparenQmarkPEqTransport, CommaTransport, ColonTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionContentNodeSlot, LookbehindAssertionContentNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupContentNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, LazyContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, LazyNode, UnicodePropertyNameNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, QmarkNode, PlusNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);

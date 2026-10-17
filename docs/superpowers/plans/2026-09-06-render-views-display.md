@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Generated render bodies become one `write!` over views built as locals inside each transport's `Display` impl; the askama-era view/renderable layer in `sittir-core` is replaced by one generic `View` and one `ListView`.
+**Goal:** Generated render bodies become one `write!` over views built as locals inside each node's `Display` impl; the askama-era view/renderable layer in `sittir-core` is replaced by one generic `View` and one `ListView`.
 
-**Architecture:** Three layers, two traits, both from `std::fmt`. (1) A transport implements `Display`; its `fmt` is the trivia wrapper around `render_<kind>(node, f)`, whose body is the kind template as a `write!` literal. (2) A view carries slot-level facts (arity through the slot shape's `Slot` impl, separator and spacing data for lists, and the co-optional template `"->{}"` that `liftGates` produced); it implements `Display` so it can be a `{placeholder}`. (3) Composition is the `write!` itself. There is no render context parameter: options are stamped per node by `FillOptions` before render, and indent, word class and seams live in the writer chain. If a per-render fact ever appears (source text for span copy, a diagnostics sink), the extension is mechanical: `impl Display for XTransport` becomes `impl Render for XTransport { fn render(&self, ctx, f) }` and `View::new` gains a `ctx` argument while keeping `Display` as the bridge.
+**Architecture:** Three layers, two traits, both from `std::fmt`. (1) A native node implements `Display`; its `fmt` is the trivia wrapper around `render_<kind>(node, f)`, whose body is the kind template as a `write!` literal. (2) A view carries slot-level facts (arity through the slot shape's `Slot` impl, separator and spacing data for lists, and the co-optional template `"->{}"` that `liftGates` produced); it implements `Display` so it can be a `{placeholder}`. (3) Composition is the `write!` itself. There is no render context parameter: options are stamped per node by `FillOptions` before render, and indent, word class and seams live in the writer chain. If a per-render fact ever appears (source text for span copy, a diagnostics sink), the extension is mechanical: `impl Display for XNode` becomes `impl Render for XNode { fn render(&self, ctx, f) }` and `View::new` gains a `ctx` argument while keeping `Display` as the bridge.
 
 **Tech Stack:** Rust (`sittir-core`, generated `sittir-{rust,typescript,python}` crates), TypeScript emitters in `packages/codegen/src/emitters/`, vitest, cargo.
 
@@ -24,13 +24,13 @@
 ## File Structure
 
 - Create `rust/crates/sittir-core/src/view.rs` — `Slot` trait, `View`, `ListView`, template split/unescape, `NO_ITEMS`. Replaces `filters.rs` (deleted).
-- Modify `rust/crates/sittir-core/src/slot.rs` — `impl Display for SlotValue<T, ADJACENT>` replaces the `RenderableTransport` impl; `node_or_write` keeps its `&mut dyn Write` signature.
-- Modify `rust/crates/sittir-core/src/types.rs` — delete `RenderableTransport` and its `Box<T>` blanket.
+- Modify `rust/crates/sittir-core/src/slot.rs` — `impl Display for SlotValue<T, ADJACENT>` replaces the `RenderableNode` impl; `node_or_write` keeps its `&mut dyn Write` signature.
+- Modify `rust/crates/sittir-core/src/types.rs` — delete `RenderableNode` and its `Box<T>` blanket.
 - Modify `rust/crates/sittir-core/src/macros.rs` — `render_with_trivia!` writes entries with `write!`.
 - Modify `rust/crates/sittir-core/src/lib.rs` — module list and re-exports.
 - Create `rust/crates/sittir-core/tests/view.rs`; delete `tests/filters.rs` and `tests/renderable.rs`.
 - Modify `packages/codegen/src/emitters/render-body.ts` — `printRustBody` prints statements over sink `f`; `templateOf(flanks)` and `escapeBraces` shared with the printer.
-- Modify `packages/codegen/src/emitters/render-module.ts` — no Template structs; `render_<kind>(node, f: &mut Formatter)` builds views as locals; every `impl RenderableTransport` becomes `impl ::std::fmt::Display`; `render_transport_dispatch` takes `&dyn Display`.
+- Modify `packages/codegen/src/emitters/render-module.ts` — no Template structs; `render_<kind>(node, f: &mut Formatter)` builds views as locals; every `impl RenderableNode` becomes `impl ::std::fmt::Display`; `render_node_dispatch` takes `&dyn Display`.
 - Modify tests: `packages/codegen/src/emitters/__tests__/render-body.test.ts`, `render-module-emit.test.ts`, `render-module-unnamed-signals.test.ts`, `render-module-separated-list.test.ts`, `packages/tools/src/__tests__/render-pipeline-optimization.test.ts`.
 - Modify `docs/glossary/emitters.md` — entries for the changed/removed functions.
 - Regenerate the three grammars.
@@ -319,7 +319,7 @@ impl<S: Slot> Display for View<'_, S> {
     }
 }
 
-/// The items of a list slot named in a template but absent from the transport.
+/// The items of a list slot named in a template but absent from the node.
 pub const NO_ITEMS: &[&str] = &[];
 
 /// A repeated slot with everything its rendering needs. Between items every
@@ -381,9 +381,9 @@ impl<E: Slot> Display for ListView<'_, E> {
 }
 ```
 
-- [ ] **Step 4: `slot.rs` — `Display` replaces `RenderableTransport`**
+- [ ] **Step 4: `slot.rs` — `Display` replaces `RenderableNode`**
 
-Replace the `use crate::types::RenderableTransport;` line and the `impl<T: RenderableTransport, ...> RenderableTransport for SlotValue` block with:
+Replace the `use crate::types::RenderableNode;` line and the `impl<T: RenderableNode, ...> RenderableNode for SlotValue` block with:
 
 ```rust
 impl<T: std::fmt::Display, const ADJACENT: bool> std::fmt::Display for SlotValue<T, ADJACENT> {
@@ -396,13 +396,13 @@ impl<T: std::fmt::Display, const ADJACENT: bool> std::fmt::Display for SlotValue
 }
 ```
 
-Update the doc line on `node_or_write` ("instead of going through `RenderableTransport`") to say "instead of through `Display`". In the `#[cfg(test)]` module at the bottom, replace the `RenderableTransport` impl on `Word` with a `Display` impl and `render_to_string().unwrap()` with `to_string()`.
+Update the doc line on `node_or_write` ("instead of going through `RenderableNode`") to say "instead of through `Display`". In the `#[cfg(test)]` module at the bottom, replace the `RenderableNode` impl on `Word` with a `Display` impl and `render_to_string().unwrap()` with `to_string()`.
 
-- [ ] **Step 5: `types.rs`** — delete `pub trait RenderableTransport { … }` and the `impl<T: RenderableTransport + ?Sized> RenderableTransport for Box<T>` block with their doc comments.
+- [ ] **Step 5: `types.rs`** — delete `pub trait RenderableNode { … }` and the `impl<T: RenderableNode + ?Sized> RenderableNode for Box<T>` block with their doc comments.
 
-- [ ] **Step 6: `macros.rs`** — in `render_with_trivia!` replace both `__entry.render_into($dest)?;` with `write!($dest, "{__entry}")?;`. In the module doc and macro doc, replace mentions of `RenderableTransport::render_into` with `Display`. In the test module, make `MockTrivia` implement `std::fmt::Display` instead of `RenderableTransport` (same body: `f.write_str(&self.text)`); the test bodies already pass a `String` as `$dest`, which `write!` accepts.
+- [ ] **Step 6: `macros.rs`** — in `render_with_trivia!` replace both `__entry.render_into($dest)?;` with `write!($dest, "{__entry}")?;`. In the module doc and macro doc, replace mentions of `RenderableNode::render_into` with `Display`. In the test module, make `MockTrivia` implement `std::fmt::Display` instead of `RenderableNode` (same body: `f.write_str(&self.text)`); the test bodies already pass a `String` as `$dest`, which `write!` accepts.
 
-- [ ] **Step 7: `lib.rs`** — replace `pub mod filters;` with `pub mod view;`, delete the `pub use types::RenderableTransport;` re-export and its comment, and update the crate doc bullet to: `- [\`view\`] — the render-time views (\`View\`, \`ListView\`) the generated kind templates interpolate.`
+- [ ] **Step 7: `lib.rs`** — replace `pub mod filters;` with `pub mod view;`, delete the `pub use types::RenderableNode;` re-export and its comment, and update the crate doc bullet to: `- [\`view\`] — the render-time views (\`View\`, \`ListView\`) the generated kind templates interpolate.`
 
 - [ ] **Step 8: Delete** `src/filters.rs`, `tests/filters.rs`, `tests/renderable.rs`.
 
@@ -413,7 +413,7 @@ Expected: all green, including `tests/view.rs`. Fix compile fallout in core only
 
 ---
 
-### Task 2: Emitter — views as locals, `Display` on transports
+### Task 2: Emitter — views as locals, `Display` on nodes
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/render-body.ts`
@@ -423,7 +423,7 @@ Expected: all green, including `tests/view.rs`. Fix compile fallout in core only
 **Interfaces:**
 - Consumes: `sittir_core::view::{View, ListView, NO_ITEMS}`; `SlotValue: Display`.
 - Produces (render-body.ts): `escapeBraces(text): string`; `templateOf(flanks: Flanks | undefined): string` (returns `"{}"` when undefined); `printRustBody(body, printer: { field(name): string; indentUnit: string })` returning statement lines over sink `f`, ending with `Ok(())`.
-- Produces (generated Rust): `fn render_<kind>(node: &<Kind>Transport, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result`; `impl ::std::fmt::Display for <Kind>Transport`; `pub fn render_transport_dispatch(transport: &dyn ::std::fmt::Display, indent: &str)`.
+- Produces (generated Rust): `fn render_<kind>(node: &<Kind>Node, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result`; `impl ::std::fmt::Display for <Kind>Node`; `pub fn render_node_dispatch(node: &dyn ::std::fmt::Display, indent: &str)`.
 
 - [ ] **Step 1: Update `render-body.test.ts`**
 
@@ -586,10 +586,10 @@ Expected: PASS.
 - [ ] **Step 5: `render-module.ts` — delete the Template struct layer**
 
 - Delete `renderStructDefs`, `slotFieldType`, `childrenFieldType`, `structNameFor`, `renderBodyFn`, `emitIterCollectBuffer`, `emitListSlotBuffer`, `RENDERABLE_PREFIX`, `EmittedNonterminalView`'s uses in field types if only used by the deleted functions (keep the `view` field on `EmittedField`, it drives list detection).
-- In `EmittedStruct` delete `name`, `bodyFnName`, `hasChildren`, `childrenRequired`, `childrenMultiple`, `hasVariant`, `hasText` if the type-check shows no remaining reader; keep `kind`, `body`, `flanks`, `fields`, `transportHasChildren`.
+- In `EmittedStruct` delete `name`, `bodyFnName`, `hasChildren`, `childrenRequired`, `childrenMultiple`, `hasVariant`, `hasText` if the type-check shows no remaining reader; keep `kind`, `body`, `flanks`, `fields`, `nodeHasChildren`.
 - In `emitStruct` stop computing `name` and `bodyFnName`.
-- In `emitRenderModule` remove `renderStructDefs(structs)` from the `transportRs` assembly.
-- In `commonRustUseImports` replace the `filters` import block with `use ::sittir_core::view::{View, ListView, NO_ITEMS};` and drop `RenderableTransport` from the `types` import.
+- In `emitRenderModule` remove `renderStructDefs(structs)` from the `nodeRs` assembly.
+- In `commonRustUseImports` replace the `filters` import block with `use ::sittir_core::view::{View, ListView, NO_ITEMS};` and drop `RenderableNode` from the `types` import.
 
 - [ ] **Step 6: `render-module.ts` — `render_<kind>` builds views as locals**
 
@@ -629,7 +629,7 @@ for (const f of struct.fields) {
 		continue;
 	}
 	if (f.view === 'list' || f.multiple) {
-		const items = !f.hasTransportField ? 'NO_ITEMS' : f.required ? `&node.${rIdent}` : `node.${rIdent}.as_deref().unwrap_or(&[])`;
+		const items = !f.hasNodeField ? 'NO_ITEMS' : f.required ? `&node.${rIdent}` : `node.${rIdent}.as_deref().unwrap_or(&[])`;
 		… (separator, before/after, leading/trailing, head/tail exactly as today) …
 		lines.push(`    let ${ident} = ListView {`);
 		lines.push(`        items: ${items},`);
@@ -639,19 +639,19 @@ for (const f of struct.fields) {
 		continue;
 	}
 	if (f.required) {
-		if (f.hasTransportField) plain.push(ident);
+		if (f.hasNodeField) plain.push(ident);
 		else bind(ident, '""');
 		continue;
 	}
-	if (f.backingTransportField) {
-		const backing = `node.${rustFieldIdent(f.backingTransportField)}.as_ref().and_then(|h| h.node())`;
+	if (f.backingNodeField) {
+		const backing = `node.${rustFieldIdent(f.backingNodeField)}.as_ref().and_then(|h| h.node())`;
 		const inner = f.backingInnerRequired ? `.map(|h| &h.${ident})` : `.and_then(|h| h.${ident}.as_ref())`;
 		const expr = f.backingDirectField ? `node.${rustFieldIdent(f.backingDirectField)}.as_ref().or_else(|| ${backing}${inner})` : `${backing}${inner}`;
 		bind(ident, `View::new(${expr}, ${template})`);
 		continue;
 	}
-	if (!f.hasTransportField) {
-		bind(ident, `View::new(None::<&::sittir_core::SlotValue<AnyTransport>>, ${template})`);
+	if (!f.hasNodeField) {
+		bind(ident, `View::new(None::<&::sittir_core::SlotValue<AnyNode>>, ${template})`);
 		continue;
 	}
 	bind(ident, `View::new(&node.${rIdent}, ${template})`);
@@ -663,11 +663,11 @@ Insert the destructuring line after the text fast path rather than at index 0: k
 
 Then: `lines.push(...printRustBody(struct.body, { field: rustFieldIdent, indentUnit: '  ' }));`.
 
-The `struct.hasVariant` / `struct.hasText` branches become `bind('variant', '""')` and `bind('text', 'node.transport_text.as_deref().unwrap_or("")')` when the body references them (census: neither occurs in the three grammars; keep them because the body IR still admits the names).
+The `struct.hasVariant` / `struct.hasText` branches become `bind('variant', '""')` and `bind('text', 'node.node_text.as_deref().unwrap_or("")')` when the body references them (census: neither occurs in the three grammars; keep them because the body IR still admits the names).
 
-- [ ] **Step 7: `render-module.ts` — every `impl RenderableTransport` becomes `impl Display`**
+- [ ] **Step 7: `render-module.ts` — every `impl RenderableNode` becomes `impl Display`**
 
-Apply the same replacement at each of these emit sites: `renderTransportDataStruct` (struct impl), `emitSupertypeTransportEnum` (enum impl), `emitPerSlotChildEnum` (enum impl), `renderTriviaTransportSupport` (`TriviaTransport`), `renderTypedDispatch` (`AnyTransport`), and the impl at the file's tail (`3601`):
+Apply the same replacement at each of these emit sites: `renderNodeDataStruct` (struct impl), `emitSupertypeNodeEnum` (enum impl), `emitPerSlotChildEnum` (enum impl), `renderTriviaNodeSupport` (`TriviaNode`), `renderTypedDispatch` (`AnyNode`), and the impl at the file's tail (`3601`):
 
 ```ts
 lines.push(`impl ::std::fmt::Display for ${name} {`);
@@ -679,16 +679,16 @@ lines.push(`}`);
 
 Arm bodies: `t.render_into(dest)` → `::std::fmt::Display::fmt(t, f)`; `inner.as_ref().render_into(dest)` → `::std::fmt::Display::fmt(inner.as_ref(), f)`; `dest.write_str(…)` → `f.write_str(…)`; `mark_adjacent(dest)` → `mark_adjacent(f)`. The struct impl body: `render_with_trivia!(self, f, render_x(self, f))` and, for leaves, `render_with_trivia!(self, f, f.write_str(&self.text))`.
 
-`render_transport_dispatch`: signature `(transport: &dyn ::std::fmt::Display, indent: &str)`, body `write!(w, "{transport}")?;` in place of `transport.render_into(&mut w)?;`.
+`render_node_dispatch`: signature `(node: &dyn ::std::fmt::Display, indent: &str)`, body `write!(w, "{node}")?;` in place of `node.render_into(&mut w)?;`.
 
 `emitSupertypeRenderHelper`, `renderTypedLeafFn`, `renderTypedBranchFallbackFn`: parameter `f: &mut ::std::fmt::Formatter<'_>`; `.render_into(dest)` → `::std::fmt::Display::fmt(x, f)`; `buildSlotWriteCall` heterogeneous case → `write!(f, "{}", ${expr})?;`, concrete/supertype cases keep `node_or_write(f)?` (a `&mut Formatter` coerces to `&mut dyn Write`) and call `render_<kind>(v, f)?`.
 
 - [ ] **Step 8: Update the emitter tests**
 
-- `render-module-emit.test.ts`: the two "uses Renderable::Transport" tests become "interpolates the slot directly": expect `fnBody` to contain `{name}` inside a `write!(f, ` line and not to contain `View::new(&node.name`; the dispatch-arm test expects `ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),`; the separator regex becomes `/ListView \{[^}]*\bseparator: /`.
+- `render-module-emit.test.ts`: the two "uses Renderable::Native node" tests become "interpolates the slot directly": expect `fnBody` to contain `{name}` inside a `write!(f, ` line and not to contain `View::new(&node.name`; the dispatch-arm test expects `ArrayExpressionContentNodeSlot::ArrayExpressionList(inner) => ::std::fmt::Display::fmt(inner, f),`; the separator regex becomes `/ListView \{[^}]*\bseparator: /`.
 - `render-module-unnamed-signals.test.ts`: expect `let identifier = ListView {` and `items: node.content.as_deref().unwrap_or(&[]),` (or `&node.content` if that slot is required in the fixture; read the fixture).
 - `render-module-separated-list.test.ts`: rename the describe to `ListView wiring`; expectations on `token:`/`leading:`/`trailing:` lines are unchanged in text.
-- `packages/tools/src/__tests__/render-pipeline-optimization.test.ts`: delete the `Template<'a>` struct expectations; replace the `SingleNonterminalView(...Transport(&node.kw_j))` expectation with `let FunctionItemTransport { kw_j, .. } = node;` (check the generated ident), the `content: SingleNonterminalView` expectation with the same destructuring form, the `identifier_buf` expectation with `items: node.identifier.as_deref().unwrap_or(&[]),`, and the `not.toContain('let kw_j_buf …')` lines with `not.toContain('View::new(&node.kw_j')`.
+- `packages/tools/src/__tests__/render-pipeline-optimization.test.ts`: delete the `Template<'a>` struct expectations; replace the `SingleNonterminalView(...Node(&node.kw_j))` expectation with `let FunctionItemNode { kw_j, .. } = node;` (check the generated ident), the `content: SingleNonterminalView` expectation with the same destructuring form, the `identifier_buf` expectation with `items: node.identifier.as_deref().unwrap_or(&[]),`, and the `not.toContain('let kw_j_buf …')` lines with `not.toContain('View::new(&node.kw_j')`.
 
 - [ ] **Step 9: Run the codegen and tools suites and the type check**
 
@@ -706,7 +706,7 @@ In `docs/glossary/emitters.md`: delete the sections for `renderBodyFn`, `emitIte
 - [ ] **Step 1: Regenerate all three grammars with the native build**
 
 Run, one per grammar: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src --skip-ts-chain` (then typescript, python). A grammar's napi build compiles the whole workspace, so regenerate all three before trusting any binary.
-Expected: each build green. If `transport.rs` fails to compile, fix the emitter (never the generated file) and regenerate.
+Expected: each build green. If `node.rs` fails to compile, fix the emitter (never the generated file) and regenerate.
 
 - [ ] **Step 2: Dogfood renders byte-identical**
 

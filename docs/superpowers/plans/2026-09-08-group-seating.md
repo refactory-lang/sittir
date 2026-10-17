@@ -904,7 +904,7 @@ git commit --no-verify -q -m "feat(emit): the factory source emitter prints arm,
 **Automatic `variantOf` labels that survive with the fix:** rust `_let_chain` (four seq arms), typescript `public_field_definition` (two seq arms).
 
 **Measured fallout with the fix** (validate, against the rows at the time):
-- typescript read-render-parse 112/114 → 98/114, all from `render: unknown kind id 421 in StatementTransport on … ProgramTransport._statements` (the `export_statement` mints now seated); ir-render-parse 951/952 → 949/950.
+- typescript read-render-parse 112/114 → 98/114, all from `render: unknown kind id 421 in StatementNode on … ProgramNode._statements` (the `export_statement` mints now seated); ir-render-parse 951/952 → 949/950.
 - rust ir-render-parse 1170/1170 → 1168/1169: `Use declarations (use_wildcard)`, `root._use_wildcard_group._path: shape mismatch (node vs scalar)`.
 - python ir-render-parse 1241/1241 → 1239/1239 (two rows fewer, no failure).
 

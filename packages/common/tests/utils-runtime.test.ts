@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
-import { holdReadTree } from '../src/transport-data.ts';
+import { holdReadTree } from '../src/node-data.ts';
 import { mintTreeToken } from '../src/tree-token.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import { withMembers as withMethods } from './support/members.ts';

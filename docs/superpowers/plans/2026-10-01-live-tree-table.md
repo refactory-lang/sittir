@@ -30,34 +30,34 @@
 - **What holds a tree alive.** One token object per tree, `{ treeId }`, minted in `parseAndRead` (`packages/common/src/engine.ts`). It is referenced by (a) the tree handle's `read` closure, as today, and (b) a `$tree` member on **every parsed object a read returns** — the root, every child a deep read expanded, every stub, every leaf — stamped where the read's JSON is parsed. `$tree` is an ordinary enumerable data member, so a spread copy (`{ ...$edited(data) }`, which is how a `$with` rebuild of a parsed node is made) keeps it, and no `Object.defineProperty` is used (a defined property would cost every parsed object its shape).
 - **What frees it.** A module-level `FinalizationRegistry` in `engine.ts`. Its held value is `{ release, treeId }` where `release` is the addon's exported `disposeTree` function. The registry holds no engine, weakly or strongly. The addon module is held strongly by the held value; the addon is never unloaded, so that retains nothing extra.
 - **Why it does not leak.** A tree is in the native table from `parse_and_read` until its token is collected. The token is unreachable exactly when no parsed object of the tree and no tree handle is reachable. On thread exit the `thread_local!` table is dropped with the thread, so a terminated worker leaves nothing behind even though its finalizers never run.
-- **What `$tree` must not do.** It must not cross to native: the projection (`toTransportValue`) drops it with the coordinate keys. It must not count as storage or as a difference: `detachCoordinates` removes it and the validators' ignored-key list names it.
+- **What `$tree` must not do.** It must not cross to native: the projection (`toNodeValue`) drops it with the coordinate keys. It must not count as storage or as a difference: `detachCoordinates` removes it and the validators' ignored-key list names it.
 - **How a collection is tested deterministically.** Not inside the vitest worker (it runs without `--expose-gc`, and the existing test silently asserts nothing there). A fixture script is run in a child process with `node --expose-gc --import tsx`, performs up to 20 rounds of `gc()` followed by a 25 ms timer turn (finalizer callbacks run in a later task, never synchronously), stops as soon as the count reaches its target, and prints one JSON line. The test asserts on that JSON and fails if the script exits non-zero; there is no skip path.
 
 ### 2. The worker-thread case
 
 - The table is a `thread_local!` inside the macro expansion: one per addon image and per OS thread. Node runs each `Worker` on its own thread with its own `napi_env` and its own `globalThis`, so each worker gets its own table and its own id counter starting at 0. The same id in two threads names two different trees in two different tables; they never meet.
 - A parsed node cannot be sent to another thread as a node: a wrapped node holds functions and `postMessage` refuses it (`DataCloneError`). Plain read data (a leaf) clones. Its clone carries a `$handle` whose tree id may name a **different** tree in the receiving thread's table, which would render another source's bytes.
-- **Rule (the user's ruling: yes):** a coordinate is refused at projection when its `$tree` token was minted on another thread. The token records its thread as a value (`threadId` from `node:worker_threads`), and `toTransportValue` already visits every node it projects, so the check adds no walk. As built, the check compares that value and not the token's identity: tools deep-copy read data on the thread that read it, and an identity check refused those copies. A copy made on the same thread passes; a clone that arrives in another thread is refused with a message naming what happened (a coordinate from another thread's tree table) and what to do instead (parse the source on this thread).
+- **Rule (the user's ruling: yes):** a coordinate is refused at projection when its `$tree` token was minted on another thread. The token records its thread as a value (`threadId` from `node:worker_threads`), and `toNodeValue` already visits every node it projects, so the check adds no walk. As built, the check compares that value and not the token's identity: tools deep-copy read data on the thread that read it, and an identity check refused those copies. A copy made on the same thread passes; a clone that arrives in another thread is refused with a message naming what happened (a coordinate from another thread's tree table) and what to do instead (parse the source on this thread).
 
 ## Overlap with the node-members work (#534, sittir-implement)
 
 | File | This plan | #534 |
 | --- | --- | --- |
 | `packages/common/src/create-engine.ts` | deletes `collectReaders`, the reader dispatch, `labelOf`, `serials`, `engineCount` | rewrites `collectReaders`' key walk |
-| `packages/common/src/transport-data.ts` | adds `$tree` to the dropped coordinate keys; the token check in `toTransportValue` (Task 6) | rewrites `toTransportValue`'s key selection and the walks in `isUntouchedBelow`, `isDerivedFromText`, `holdsSlots`, `detachCoordinates` |
+| `packages/common/src/node-data.ts` | adds `$tree` to the dropped coordinate keys; the token check in `toNodeValue` (Task 6) | rewrites `toNodeValue`'s key selection and the walks in `isUntouchedBelow`, `isDerivedFromText`, `holdsSlots`, `detachCoordinates` |
 | `packages/rust/tests/bound-nodes.test.ts` | flips two tests | changes the `$trivia(…)` call sites |
 | `packages/common/src/utils.ts`, `packages/codegen/src/emitters/wrap.ts`, `factories.ts` | not touched | rewritten |
 
-This plan stamps `$tree` at the read boundary in `engine.ts`, not in the generated wrap, so it stays out of the emitters #534 rewrites. There is no strict order between the two: whichever lands second syncs onto master. One coupling: #534 makes every node member enumerable and introduces a single key predicate (`isDataKey`) for the transport walks. Once that is on master, `$tree` is classified by that predicate (as a non-data key) and not by a second list; the `COORDINATE_KEYS` edit in Task 3 is the form to use only while master still has the list.
+This plan stamps `$tree` at the read boundary in `engine.ts`, not in the generated wrap, so it stays out of the emitters #534 rewrites. There is no strict order between the two: whichever lands second syncs onto master. One coupling: #534 makes every node member enumerable and introduces a single key predicate (`isDataKey`) for the native node walks. Once that is on master, `$tree` is classified by that predicate (as a non-data key) and not by a second list; the `COORDINATE_KEYS` edit in Task 3 is the form to use only while master still has the list.
 
 ## File Structure
 
 - `rust/crates/sittir-core/src/napi_engine.rs` — the macro: `thread_local!` table, addon functions, engine methods reading the table.
 - `rust/crates/sittir-core/src/render.rs` — `CoordinateError::UnknownTree` message.
-- `packages/codegen/src/emitters/native-crate.ts` — `NATIVE_RENDER_TRANSPORT_ABI` 7 → 8.
+- `packages/codegen/src/emitters/native-crate.ts` — `NATIVE_RENDER_NODE_ABI` 7 → 8.
 - `packages/codegen/src/emitters/grammar-runtime.ts` — the emitted `NativeModule` type gains the addon functions.
 - `packages/common/src/engine.ts` — `NativeModuleLike` addon functions, token, `$tree` stamping, registry.
-- `packages/common/src/transport-data.ts` — `$tree` among the dropped keys.
+- `packages/common/src/node-data.ts` — `$tree` among the dropped keys.
 - `packages/common/src/create-engine.ts` — render through the calling engine.
 - `packages/common/tests/fixtures/tree-release.mts`, `packages/common/tests/fixtures/tree-worker.mjs` — child-process and worker fixtures (new).
 - `packages/rust/tests/tree-table.test.ts` (new) — the "done when" cases.
@@ -82,7 +82,7 @@ This plan stamps `$tree` at the read boundary in `engine.ts`, not in the generat
 - Test: `packages/rust/tests/tree-table.test.ts` (create)
 
 **Interfaces:**
-- Produces (addon exports, every grammar): `disposeTree(treeId: number): void`, `liveTreeCount(): number`. `SittirEngine` loses `disposeTree` and the `liveTreeCount` getter; `dispose()` stays and no longer drops trees. `nativeRenderTransportAbi` is 8.
+- Produces (addon exports, every grammar): `disposeTree(treeId: number): void`, `liveTreeCount(): number`. `SittirEngine` loses `disposeTree` and the `liveTreeCount` getter; `dispose()` stays and no longer drops trees. `nativeRenderNodeAbi` is 8.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -188,7 +188,7 @@ In `render.rs`, the `UnknownTree` message becomes:
 "handle {handle} names tree {tree_id}, which is not live in this language's table (never parsed on this thread, or already released)"
 ```
 
-In `native-crate.ts`: `export const NATIVE_RENDER_TRANSPORT_ABI = 8;`
+In `native-crate.ts`: `export const NATIVE_RENDER_NODE_ABI = 8;`
 
 - [ ] **Step 4: Update the Rust tests that quote the message**
 
@@ -265,7 +265,7 @@ git commit -m "feat(engine): live trees are held by the language addon, not by a
 
 **Files:**
 - Modify: `packages/common/src/engine.ts`
-- Modify: `packages/common/src/transport-data.ts:7-9`
+- Modify: `packages/common/src/node-data.ts:7-9`
 - Modify: `packages/tools/src/validate/factory-render-parse.ts` (`IGNORED_NODE_KEYS`)
 - Create: `packages/common/tests/fixtures/tree-release.mts`
 - Test: `packages/rust/tests/tree-table.test.ts`
@@ -383,7 +383,7 @@ function holdTree(value: unknown, token: TreeToken): void {
 
 In `parseAndRead`: `const liveToken: TreeToken = Object.freeze({ treeId: parsed.treeId }); liveTokens.add(liveToken); holdTree(root, liveToken);` before the registration, and in `read`, call `holdTree(cached, liveToken)` on a freshly read root and `holdTree(node, liveToken)` on each hydrated node before returning it. `diagnostics.readUntypedNode` (the raw call without a tree handle) returns data without a token; its callers hold the tree handle.
 
-In `transport-data.ts`: `const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly', '$tree'] as const;` and confirm `toTransportValue` deletes `$tree` on both of its paths (the fold builds a coordinate from named keys; the rebuild path deletes the coordinate keys). `detachCoordinates` removes the same list.
+In `node-data.ts`: `const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly', '$tree'] as const;` and confirm `toNodeValue` deletes `$tree` on both of its paths (the fold builds a coordinate from named keys; the rebuild path deletes the coordinate keys). `detachCoordinates` removes the same list.
 
 In `packages/tools/src/validate/factory-render-parse.ts`, add `'$tree'` to `IGNORED_NODE_KEYS`.
 
@@ -517,7 +517,7 @@ git commit -m "feat(engine): render depends only on the tree a coordinate names"
 ### Task 6: A coordinate from another thread is refused
 
 **Files:**
-- Modify: `packages/common/src/transport-data.ts`
+- Modify: `packages/common/src/node-data.ts`
 - Create: `packages/common/tests/fixtures/tree-worker.mjs`, `packages/common/tests/fixtures/tree-clone-worker.mts`
 - Test: `packages/rust/tests/tree-table.test.ts`
 
@@ -590,7 +590,7 @@ try {
 ```
 
 - [ ] **Step 2:** Run: `cd packages/rust && pnpm exec vitest run tests/tree-table.test.ts`. Expected: the worker test passes already (Task 1 made the table thread-local); the clone test fails: the worker renders text from its own tree (`message.rendered` is defined). If the worker cannot load the TypeScript sources under `--import tsx`, fix the fixture's loading before going on; the test must reach the render.
-- [ ] **Step 3:** In `transport-data.ts`, in `foldToCoordinate`'s caller (`toTransportValue`, the branch `if (canFold(value))`), before folding:
+- [ ] **Step 3:** In `node-data.ts`, in `foldToCoordinate`'s caller (`toNodeValue`, the branch `if (canFold(value))`), before folding:
 
 ```ts
 	if (canFold(value)) {
