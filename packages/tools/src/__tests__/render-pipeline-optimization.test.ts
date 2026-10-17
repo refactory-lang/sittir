@@ -188,10 +188,10 @@ function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
 
 // NOTE: assertRustRenderRuntimeBehavior previously verified render_dispatch (bridge.rs path)
 // by spinning up a temp Rust crate. Since render_dispatch + bridge.rs are retired (PR-E2),
-// this function is removed. Transport-path correctness is verified by cargo test --workspace.
+// this function is removed. Node-path correctness is verified by cargo test --workspace.
 function assertRustRenderRuntimeBehavior(): void {
 	// Bridge/dispatch path retired — nothing to verify at runtime here.
-	// The token-only child rendering is now exercised exclusively via the transport path.
+	// The token-only child rendering is now exercised exclusively via the node path.
 }
 
 describe('render pipeline optimization — retained baseline convergence', () => {
@@ -202,7 +202,7 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
 		expect(emitted.hashRs.path).toBe('rust/crates/sittir-rust/src/render/hash.rs');
 		expect(emitted.hashTs.path).toBe('packages/rust/src/hash.ts');
-		expect(emitted.transportRs.path).toBe('rust/crates/sittir-rust/src/render/transport.rs');
+		expect(emitted.nodeRs.path).toBe('rust/crates/sittir-rust/src/render/node.rs');
 		expect(emitted.libRs.path).toBe('rust/crates/sittir-rust/src/render/mod.rs');
 	});
 
@@ -227,15 +227,15 @@ describe('render pipeline optimization — views built as locals in the kind ren
 
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
 		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
-		expect(emitted.transportRs.contents).not.toContain("Template<'a> {");
-		expect(emitted.transportRs.contents).toContain('let name = &node.name;');
-		expect(emitted.transportRs.contents).not.toContain("    pub text: &'a str,");
-		expect(emitted.transportRs.contents).not.toContain("    pub variant: &'a str,");
-		expect(emitted.transportRs.contents).not.toContain("    pub children: ListView<'a>,");
-		expect(emitted.transportRs.contents).not.toContain("    pub name_list: &'a [String],");
-		expect(emitted.transportRs.contents).not.toContain('    pub name_leading_sep: bool,');
-		expect(emitted.transportRs.contents).not.toContain('    pub name_trailing_sep: bool,');
-		expect(emitted.transportRs.contents).not.toContain('.cloned().unwrap_or_default()');
+		expect(emitted.nodeRs.contents).not.toContain("Template<'a> {");
+		expect(emitted.nodeRs.contents).toContain('let name = &node.name;');
+		expect(emitted.nodeRs.contents).not.toContain("    pub text: &'a str,");
+		expect(emitted.nodeRs.contents).not.toContain("    pub variant: &'a str,");
+		expect(emitted.nodeRs.contents).not.toContain("    pub children: ListView<'a>,");
+		expect(emitted.nodeRs.contents).not.toContain("    pub name_list: &'a [String],");
+		expect(emitted.nodeRs.contents).not.toContain('    pub name_leading_sep: bool,');
+		expect(emitted.nodeRs.contents).not.toContain('    pub name_trailing_sep: bool,');
+		expect(emitted.nodeRs.contents).not.toContain('.cloned().unwrap_or_default()');
 	});
 
 	it('emits cardinality-aware children views for singular and repeated child slots', () => {
@@ -247,19 +247,19 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			emittedTemplates({ required_child_parent: slot('identifier') }),
 			required.nodeMap,
 			required.generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 		const optionalRs = emitRenderModule(
 			'rust',
 			emittedTemplates({ optional_child_parent: gate('identifier', slot('identifier')) }),
 			optional.nodeMap,
 			optional.generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 		const repeatedRs = emitRenderModule(
 			'rust',
 			emittedTemplates({ repeated_child_parent: slot('identifier') }),
 			repeated.nodeMap,
 			repeated.generatedIdTables
-		).transportRs.contents;
+		).nodeRs.contents;
 
 		expect(requiredRs).toContain('let identifier = &node.identifier;');
 		expect(optionalRs).toContain('let identifier = View::new(&node.identifier, "{}");');
@@ -267,10 +267,10 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		expect(repeatedRs).toContain('let identifier = ListView {');
 	});
 
-	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
+	it('keeps token-only singular children on direct node views so jjjj does not widen', () => {
 		// Kind-named slots (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md)
 		// give the token-only singular child its own kind-derived storage
-		// key (`kw_j`) on the transport struct — there is no generic
+		// key (`kw_j`) on the node struct — there is no generic
 		// `children` field for the emitted binding to match against, so the
 		// jinja must reference the real field name.
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeTokenOnlyChildrenNodeMap);
@@ -281,15 +281,15 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			generatedIdTables
 		);
 
-		expect(emitted.transportRs.contents).toContain('let kw_j = &node.kw_j;');
-		expect(emitted.transportRs.contents).not.toContain('let kw_j = ListView {');
+		expect(emitted.nodeRs.contents).toContain('let kw_j = &node.kw_j;');
+		expect(emitted.nodeRs.contents).not.toContain('let kw_j = ListView {');
 		assertRustRenderRuntimeBehavior();
 	}, 20_000);
 
-	it('keeps choice-parent singular unnamed children on direct transport views', () => {
+	it('keeps choice-parent singular unnamed children on direct node views', () => {
 		// mergeChoiceBranches (PR-A) arm-lifts a choice-parent's unnamed
-		// child onto a merged `content` slot (ExpressionContentTransportSlot)
-		// on the transport struct — not a generic `children` field.
+		// child onto a merged `content` slot (ExpressionContentNodeSlot)
+		// on the node struct — not a generic `children` field.
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeChoiceParentSingularChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -297,15 +297,15 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			nodeMap,
 			generatedIdTables
 		);
-		const renderStart = emitted.transportRs.contents.indexOf('fn render_expression(');
-		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
-		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+		const renderStart = emitted.nodeRs.contents.indexOf('fn render_expression(');
+		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.nodeRs.contents.slice(renderStart, renderEnd);
 
 		expect(renderBody).toContain('let content = &node.content;');
 		expect(renderBody).not.toContain('let content = ListView {');
 	});
 
-	it('keeps repeated unnamed children on direct Vec-backed transport views', () => {
+	it('keeps repeated unnamed children on direct Vec-backed node views', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -313,27 +313,27 @@ describe('render pipeline optimization — views built as locals in the kind ren
 			nodeMap,
 			generatedIdTables
 		);
-		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
-		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
-		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.nodeRs.contents.slice(renderStart, renderEnd);
 
 		expect(renderBody).toContain('let identifier = ListView {');
 		// The slot may hold no item (its fixture name says "optional"), and an
 		// empty list is `[]`: the field is a bare `Vec`, borrowed as the items.
-		expect(emitted.transportRs.contents).toMatch(/pub identifier: Vec</);
+		expect(emitted.nodeRs.contents).toMatch(/pub identifier: Vec</);
 		expect(renderBody).toContain('items: &node.identifier,');
 	});
 
-	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
+	it('keeps fallback repeated unnamed children on direct Vec-backed node views', () => {
 		// Same kind-named slot (`identifier`, a possibly empty `Vec`) as the
 		// test above, exercised via the fallback (no custom jinja) render path.
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, generatedIdTables);
-		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
-		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
-		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.nodeRs.contents.slice(renderStart, renderEnd);
 
-		expect(emitted.transportRs.contents).toMatch(/pub identifier: Vec</);
+		expect(emitted.nodeRs.contents).toMatch(/pub identifier: Vec</);
 		expect(renderBody).toContain('for child in node.identifier.iter() {');
 		expect(renderBody).not.toContain('if let Some(items)');
 	});
@@ -348,9 +348,9 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		);
 		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
 
-		expect(emitted.transportRs.contents).toContain('fn render_expression(');
-		expect(emitted.transportRs.contents).not.toContain('fn render_expression__form_identifier(');
-		expect(emitted.transportRs.contents).not.toContain('fn render_expression__form_integer(');
+		expect(emitted.nodeRs.contents).toContain('fn render_expression(');
+		expect(emitted.nodeRs.contents).not.toContain('fn render_expression__form_identifier(');
+		expect(emitted.nodeRs.contents).not.toContain('fn render_expression__form_integer(');
 		expect(source).not.toContain('function renderTypedPolymorphFn(');
 		expect(source).not.toContain('function renderTypedFormFn(');
 	});
@@ -404,25 +404,25 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
 
-		expect(emitted.transportRs.contents).toContain(
+		expect(emitted.nodeRs.contents).toContain(
 			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
 		);
 		// bridge.rs and dispatch.rs retired (PR-E2). No bridge/dispatch artifacts emitted.
 		expect(emitted).not.toHaveProperty('bridgeRs');
 		expect(emitted).not.toHaveProperty('dispatchRs');
-		// transport.rs is the only render path — emits per-kind render functions.
-		expect(emitted.transportRs.contents).toContain('fn render_function_item(');
-		expect(emitted.transportRs.contents).not.toContain('TemplateContext');
-		expect(emitted.transportRs.contents).not.toContain('pub struct RustGrammarMeta');
-		// mod.rs re-exports from transport only (bridge/dispatch retired).
+		// node.rs is the only render path — emits per-kind render functions.
+		expect(emitted.nodeRs.contents).toContain('fn render_function_item(');
+		expect(emitted.nodeRs.contents).not.toContain('TemplateContext');
+		expect(emitted.nodeRs.contents).not.toContain('pub struct RustGrammarMeta');
+		// mod.rs re-exports from node only (bridge/dispatch retired).
 		expect(emitted.libRs.contents).not.toContain('pub mod bridge');
 		expect(emitted.libRs.contents).not.toContain('pub mod dispatch');
 		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
 		expect(emitted.libRs.contents).not.toContain('render_dispatch');
-		// render_transport itself was retired (R5 — dead transport→UntypedNode
+		// render_node itself was retired (R5 — dead node→UntypedNode
 		// inverse bridge deleted); only the dispatch/parts helpers remain.
 		expect(emitted.libRs.contents).toContain(
-			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};'
+			'pub use node::{render_node_dispatch, render_node_parts, AnyNode, RenderRoot};'
 		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
 	});
@@ -433,8 +433,8 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		const emitted = emitRenderModule('rust', files, nodeMap, generatedIdTables);
 
-		// Per-kind render logic is in transport.rs (bridge.rs retired in PR-E2).
-		expect(emitted.transportRs.contents).toContain('render_function_item(');
+		// Per-kind render logic is in node.rs (bridge.rs retired in PR-E2).
+		expect(emitted.nodeRs.contents).toContain('render_function_item(');
 	});
 
 	it('routes unnamed children through the shared slot accessor path', () => {
@@ -474,16 +474,16 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		);
 
 		// bridge.rs retired (PR-E2) — render_nodedata_into/SlotAccessor no longer emitted.
-		// The transport path emits direct struct field access, not slot accessors.
+		// The node path emits direct struct field access, not slot accessors.
 		expect(emitted).not.toHaveProperty('bridgeRs');
-		expect(emitted.transportRs.contents).toContain('render_required_child_parent(');
+		expect(emitted.nodeRs.contents).toContain('render_required_child_parent(');
 	});
 
-	it('renders through the transport path only, with no UntypedNode render bridge', () => {
+	it('renders through the node path only, with no UntypedNode render bridge', () => {
 		const rustNapi = readFileSync(resolve(repoRoot, 'rust/crates/sittir-rust/src/lib.rs'), 'utf8');
 
 		expect(rustNapi).not.toContain('render_nodedata_into');
 		expect(rustNapi).not.toContain('build_template_context');
-		expect(rustNapi).toContain('render_transport_parts');
+		expect(rustNapi).toContain('render_node_parts');
 	});
 });

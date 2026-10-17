@@ -5,7 +5,7 @@
 
 **Goal:** A slot that reaches an enum-of-literals or keyword kind through a transparent supertype stores the literal's kind id, so a token in a token tree is spelled `TSKindId.Comma`; the dogfood examples are type-checked; the aliased pattern leaves `ir` drops by name prefix are exposed by the model's own fact.
 
-**Architecture:** One walk over a slot's arms (`enumArmsOf`) that looks through `AssembledSupertype` subtypes feeds both the storage classifier and the wrap's text→id table; nothing downstream changes because `mixedEnum` slots already read, type, transport and render kind ids. The ir emitter's leaf loops test `node.userFacing` (the assemble-time fact) instead of the `_` prefix.
+**Architecture:** One walk over a slot's arms (`enumArmsOf`) that looks through `AssembledSupertype` subtypes feeds both the storage classifier and the wrap's text→id table; nothing downstream changes because `mixedEnum` slots already read, type, native node and render kind ids. The ir emitter's leaf loops test `node.userFacing` (the assemble-time fact) instead of the `_` prefix.
 
 **Tech Stack:** TypeScript (ESM, `.ts` imports), vitest, the codegen pipeline (`pnpm exec tsx packages/cli/src/cli.ts gen …`), the validators (`validate counts`).
 

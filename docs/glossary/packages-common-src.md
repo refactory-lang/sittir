@@ -48,7 +48,7 @@ Captures the active hooks of one operation and composes them in registration ord
 
 ### `packages/common/src/create-engine.ts::interceptedRender`
 
-A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the transport snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
+A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the native node snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
 
 ### `packages/common/src/create-engine.ts::materializeNative`
 
@@ -344,7 +344,7 @@ A lazily rendered text: the render runs on first use and its text is cached. `sa
 
 ### `packages/common/src/engine.ts::NativeEngineDiagnostics`
 
-The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`). Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw read data, transports holding a coordinate for each child past the read's depth; the public entry point is `parse`, which wraps what these produce.
+The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`). Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw read data, nodes holding a coordinate for each child past the read's depth; the public entry point is `parse`, which wraps what these produce.
 
 ### `packages/common/src/engine.ts::depthOf`
 
@@ -395,7 +395,7 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 ### `packages/common/src/runtime.ts::rejectBareText`
 
-`rejectBareText(value, where, expected)` is the bare-text refusal a `'runtime'` engine's structure verifier makes for a node-only slot (no builder calls it): a string or a bigint throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce` (naming which it was). Arrays are checked element-wise and every other value passes through unchanged. A number passes, because a slot that also holds fixed-text kinds stores their kind ids as numbers and the guard cannot tell a kind id from a scalar; where the slot holds no such kind, the native render refuses the number, naming the slot (`renders from a node, not a kind id`). A bigint is never a kind id, and the transport would drop it without a word, so it is refused here. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id.
+`rejectBareText(value, where, expected)` is the bare-text refusal a `'runtime'` engine's structure verifier makes for a node-only slot (no builder calls it): a string or a bigint throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce` (naming which it was). Arrays are checked element-wise and every other value passes through unchanged. A number passes, because a slot that also holds fixed-text kinds stores their kind ids as numbers and the guard cannot tell a kind id from a scalar; where the slot holds no such kind, the native render refuses the number, naming the slot (`renders from a node, not a kind id`). A bigint is never a kind id, and the native node would drop it without a word, so it is refused here. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id.
 
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
@@ -473,58 +473,58 @@ The accessor that reads a slot's stored value as a node, for a caller that walks
 
 Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the elements setters (`elementsWith`) and the list-slot setters share it, so a config object means the same thing on every surface.
 
-### `packages/common/src/transport-data.ts::treeHandleOf`
+### `packages/common/src/node-data.ts::treeHandleOf`
 
 The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which packs its tree and its descendant index; `undefined` for a node with no coordinate. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
 
-### `packages/common/src/transport-data.ts::sourceHandleOf`
+### `packages/common/src/node-data.ts::sourceHandleOf`
 
 The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`sourceOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
 
-### `packages/common/src/transport-data.ts::unitSidesOf`
+### `packages/common/src/node-data.ts::unitSidesOf`
 
-The sides of a node's unit children, by slot and item (`TransportLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
+The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
 
-### `packages/common/src/transport-data.ts::slotsOf`
+### `packages/common/src/node-data.ts::slotsOf`
 
-The stored layout of a node's list slots (`TransportLayout.slots`): the ones
+The stored layout of a node's list slots (`NodeLayout.slots`): the ones
 it holds, else its live tree's for a parsed node, else those of the node it
 was rebuilt from (`sourceOf`), which apply to every gap of the slot, kept or
 inserted. A detached crossing and a snapshot of a built node carry them as
 data, since neither leaves the render a tree to measure them from.
 
-### `packages/common/src/transport-data.ts::separatorOf`
+### `packages/common/src/node-data.ts::separatorOf`
 
 The separator a node's source spells before it as a list item, where it is
-not the one its slot renders (`TransportLayout.separator`): the one it holds,
+not the one its slot renders (`NodeLayout.separator`): the one it holds,
 else its live tree's for a parsed node, else that of the node it was rebuilt
 from. A detached crossing stamps it, and a live crossing keeps a held one,
 on a node whose neighbour before is unchanged; otherwise the node takes its
 new list's separator.
 
-### `packages/common/src/transport-data.ts::carriedUnitSides`
+### `packages/common/src/node-data.ts::carriedUnitSides`
 
 A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
 
-### `packages/common/src/transport-data.ts::itemIdentity`
+### `packages/common/src/node-data.ts::itemIdentity`
 
 What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`). A built node has none and matches nothing in the source.
 
-### `packages/common/src/transport-data.ts::alignedItems`
+### `packages/common/src/node-data.ts::alignedItems`
 
 The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The read nodes both slots hold anchor it, each by the handle it names: a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
 
 Identical units align by order within a run: nothing tells two units of one kind apart, so removing or reordering identical units among themselves keeps their sides by position, not by the unit the caller meant. Removing the first of two commented `;` units keeps the first unit's comment on the `;` that remains.
 
-### `packages/common/src/transport-data.ts::KindView`
+### `packages/common/src/node-data.ts::KindView`
 
 How the crossing tells kinds apart. `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. Every caller names its view: the engine's render passes the grammar's facts, and data with no such kinds (a test's hand-written nodes, a probe's data) passes `PLAIN_KINDS`, which answers no for every kind. There is no default, so no caller can skip the grammar's view by leaving it out.
 
-### `packages/common/src/transport-data.ts::detachCoordinates`
+### `packages/common/src/node-data.ts::detachCoordinates`
 
-Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toTransportData`. A coordinate that survives, on a text leaf or a node past the read's depth, names that node in its tree, so the bytes around it are the node's own layout: the root's edge flanks are read from them as from any read coordinate.
+Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toNodeData`. A coordinate that survives, on a text leaf or a node past the read's depth, names that node in its tree, so the bytes around it are the node's own layout: the root's edge flanks are read from them as from any read coordinate.
 
-The result holds no tree: the hold is removed from every node and trivia entry, while a surviving coordinate keeps its `$treeHandle` and `$span`. `toTransportData` refuses a coordinate that holds no tree, so a caller that still renders the detached data gives it the tree again with `holdTree`, and the data then renders for as long as it is held.
+The result holds no tree: the hold is removed from every node and trivia entry, while a surviving coordinate keeps its `$treeHandle` and `$span`. `toNodeData` refuses a coordinate that holds no tree, so a caller that still renders the detached data gives it the tree again with `holdTree`, and the data then renders for as long as it is held.
 
 ### `packages/common/src/utils.ts::describeValue`
 
@@ -562,31 +562,31 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 
 `node.$trivia.leading(...)` and `.trailing(...)`: with items it replaces that side and returns the node; with none it returns the entries the side holds (`sideOf`). An item is a trivia node, a whitespace kind id, or text, which is a whitespace kind when spelled exactly so and a comment otherwise. It needs the node's engine for the grammar's trivia facts. A parsed node's side is its tree's trivia table's, so a read returns the comments and the stored line layout the table assigns it, and a write lands in the table (`triviaWriter`), where any route to the node reads it back and the render frames the node with it. A writer that keeps a side's entries reads them and writes them back with its addition.
 
-### `packages/common/src/transport-data.ts::holdReadTree`
+### `packages/common/src/node-data.ts::holdReadTree`
 
 `holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`). The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
 
-### `packages/common/src/transport-data.ts::carryRead`
+### `packages/common/src/node-data.ts::carryRead`
 
 Carries read provenance from a read object to the object rebuilt from it, which is the same node in another shape. The wrap's `wrapNode` carries it to every wrapped node, and the validator's `materialize` carries it to every plain node it resolves. Every other copy is not read.
 
-### `packages/common/src/transport-data.ts::markRebuilt`
+### `packages/common/src/node-data.ts::markRebuilt`
 
 Stamps the node a `$with` rebuild returned (`rebuilt` calls it), and `isRebuilt` reads the stamp. Read provenance alone cannot tell an edited read node from an untouched one, since the rebuild carries it (`carryRead`); the stamp is what tells `verifyStructure` that a builder wrote this node's slots, so a parent built in `'runtime'` mode checks it even when another engine ran the rebuild.
 
-### `packages/common/src/transport-data.ts::changedEdges`
+### `packages/common/src/node-data.ts::changedEdges`
 
 Which edges of a list item face a neighbour other than the one its source had there. A stored layout run spells the gap between a node and one particular neighbour, so it holds only while that neighbour is still there; otherwise the seam decides the gap (`$_layout.changed`, where the node's sides drop their edge runs). An edge changed when the item beside it in the rebuilt list is not the sibling its source had there (`siblingsOf`, judged by tree and span through `keepsNeighbour`), or when the source had one there and the list has none. An item with no source identity, or whose tree is gone, has no changed edges. The item is judged by the node that stands for it (`evidenceOf`): a rebuilt wrapper has no source of its own, so the node it holds is the one measured, and the changed edges ride on that held node as it crosses, not on the wrapper.
 
-### `packages/common/src/transport-data.ts::toDetachedTransportData`
+### `packages/common/src/node-data.ts::toDetachedNodeData`
 
-The transport for data leaving the tree it was read from, such as a render fixture's input. It is the same walk as `toTransportData`: each entry's changed edges and the bearer a rebuilt wrapper's edges pass to are judged the same way, so a detached render lays out what a live render of the same data does. The difference is that no node crosses as its coordinate: every node crosses as its storage, with its sides as data (`sidesOf`), and trivia coordinates are not asserted to hold their tree, because the caller turns every range into the text it names before the data leaves.
+The native node for data leaving the tree it was read from, such as a render fixture's input. It is the same walk as `toNodeData`: each entry's changed edges and the bearer a rebuilt wrapper's edges pass to are judged the same way, so a detached render lays out what a live render of the same data does. The difference is that no node crosses as its coordinate: every node crosses as its storage, with its sides as data (`sidesOf`), and trivia coordinates are not asserted to hold their tree, because the caller turns every range into the text it names before the data leaves.
 
-### `packages/common/src/transport-data.ts::toTransportValue`
+### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toTransportData` and `toDetachedTransportData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its transport when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's.
 
-### `packages/common/src/transport-data.ts::evidenceOf`
+### `packages/common/src/node-data.ts::evidenceOf`
 
 The node whose source identity stands for a list entry. A rebuild constructs some wrappers afresh around the one node they hold (an alias envelope, or a kind enrich mints, such as rust's `_attributed_parameter` around each parameter), so the entry itself has no source; the node it holds does. Two conditions, one per fact:
 
@@ -595,7 +595,7 @@ The node whose source identity stands for a list entry. A rebuild constructs som
 
 An entry with its own source identity is its own evidence. Adjacency is judged on these nodes on both sides of a gap.
 
-### `packages/common/src/transport-data.ts::sourceOf`
+### `packages/common/src/node-data.ts::sourceOf`
 
 Where a node sits in its source: a read node's own tree token, tree handle, end, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced (`carrySource`). It is evidence of layout only: an edited node never slices, but its missing sides are its source's (`sideOf`, `$_layout.sides`) and it can be judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
 
@@ -643,11 +643,11 @@ An elements slot's `$with` setter. Its elements are rest arguments, so one array
 
 A seated key's `$with` setter. Through a present group it writes the group's own field; with no value it leaves the group absent; with a value it builds an absent group from that field alone when no other field is required, and otherwise throws naming the required fields. A key that spells the seat's slot also takes the whole group.
 
-### `packages/common/src/transport-data.ts::isSlotKey`
+### `packages/common/src/node-data.ts::isSlotKey`
 
 Whether a key names one of a node's slots (`_<name>`). Slots are a subset of storage (`isStorageKey`), which also includes the node's unslotted children (`$other`): the anonymous tokens a read keeps, such as a list's separators. A question about the nodes a node holds in its slots counts slots only, so these tokens never count as held nodes. That covers a list node's items (`listItemsOf`) and the one node a rebuilt wrapper stands for (`evidenceOf`). `holdsSlots` and `isStorageKey` are built on it.
 
-### `packages/common/src/transport-data.ts::isDataKey`
+### `packages/common/src/node-data.ts::isDataKey`
 
 Whether a key carries node data across the native boundary: a storage key (`_<slot>`, `$other`) or a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`). A reader, a list index, `length` and a list option are members and so are not data. The boundary projection and every walker that visits a node's keys select by this, and read only the keys it selects, so a member that throws when read is never read.
 
@@ -771,7 +771,7 @@ The wrapper registered for a node of a tree, by index and role, while it lives: 
 
 Records a wrapper for a node of a tree, by index and role, weakly. A finalization registry drops the entry when the wrapper is collected, unless a newer wrapper took the key since; the next route then wraps the node afresh and registers that.
 
-### `packages/common/src/transport-data.ts::indexOf`
+### `packages/common/src/node-data.ts::indexOf`
 
 The descendant index a read node or a coordinate names itself by: `decodeIndex` of `treeHandleOf`. `undefined` for a node with no coordinate (a built node, a draft).
 
@@ -783,35 +783,35 @@ The one seat that wraps and registers: the wrapper the registry holds at the val
 
 The role an alias envelope's content accessor hydrates in: `aliasContent` when the content stamps the envelope's own index (the alias renamed one parser node), `node` when the content is its own parser node, which a query may also reach and which must then be one object. It compares the two values' stamped indexes, so it re-derives nothing the reader did not stamp.
 
-### `packages/common/src/transport-data.ts::sideOf`
+### `packages/common/src/node-data.ts::sideOf`
 
 The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`sourceOf`), while that tree lives. An alias envelope's content names its envelope's parser node, so both read and write the one side the table keeps for it.
 
-### `packages/common/src/transport-data.ts::sidesOf`
+### `packages/common/src/node-data.ts::sidesOf`
 
 Every non-empty side of a node (`sideOf`), as a `NodeTrivia`; `undefined` when it has none. A detached crossing carries these as data, and the tools read a node's sides through it.
 
-### `packages/common/src/transport-data.ts::tableAt`
+### `packages/common/src/node-data.ts::tableAt`
 
 The trivia table that answers for a parsed node: its live tree's, at its own index; `undefined` for a built node or one whose tree is gone. `tableOf` is the check both it and a built node's source lookup share: a tree that reads and writes sides, and an index.
 
-### `packages/common/src/transport-data.ts::rootEdges`
+### `packages/common/src/node-data.ts::rootEdges`
 
 The edges a render root crosses with. It renders with no neighbour, so both its edges changed and its sides drop their edge runs, unless it is its tree's root (index 0), whose edges are the document's and whose stored layout is the document's own.
 
-### `packages/common/src/transport-data.ts::siblingsOf`
+### `packages/common/src/node-data.ts::siblingsOf`
 
 The siblings that hold sides beside the node a source identity names, as its tree gives them (`TreeHandle.siblings`); `undefined` while the tree is gone.
 
-### `packages/common/src/transport-data.ts::keepsNeighbour`
+### `packages/common/src/node-data.ts::keepsNeighbour`
 
 Whether the neighbour a node has in its holder is the sibling its source had on that side: both absent, the neighbour's evidence (`evidenceOf`) names the same tree and span, or the neighbour is a unit held as its bare kind and the sibling is of that kind. A unit has no identity of its own, and its text is its kind's, so any unit of the sibling's kind spells the same gap.
 
-### `packages/common/src/transport-data.ts::coordinateCrossing`
+### `packages/common/src/node-data.ts::coordinateCrossing`
 
 A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an edge's neighbour changed, `$_layout.changed`, which the native coordinate decode keeps and the render applies to its sides.
 
-### `packages/common/src/transport-data.ts::PLAIN_KINDS`
+### `packages/common/src/node-data.ts::PLAIN_KINDS`
 
 The `KindView` of data with no wrapper or list kinds: no for every kind.
 

@@ -44,7 +44,7 @@ This is what makes the **visible-group treatment DRY**: instead of hand-rewritin
 
 ## Critical facts / gotchas (do not relitigate)
 
-- **GATE ON RELEASE.** Debug `validate:native` SIGSEGVs from a Node-v24 + napi-rs `transport.rs` `JSON::stringify` issue (NOT engine.rs — the engine.rs transmute UB was already removed in `b4778bb5`). `env -u SITTIR_NATIVE_DEBUG` is unreliable alone — confirm `profile [optimized]` in the build log + the explicit exit line. See memory `project_debug_validation_segfault_gate_release`.
+- **GATE ON RELEASE.** Debug `validate:native` SIGSEGVs from a Node-v24 + napi-rs `node.rs` `JSON::stringify` issue (NOT engine.rs — the engine.rs transmute UB was already removed in `b4778bb5`). `env -u SITTIR_NATIVE_DEBUG` is unreliable alone — confirm `profile [optimized]` in the build log + the explicit exit line. See memory `project_debug_validation_segfault_gate_release`.
 - **enrich runs BEFORE wire/`rules:`** — `grammar(enrich(base), wire(cfg))`. A `rules:` override is post-enrich and CLOBBERS an enrich-hoist (this is why use_wildcard needed a *visible-node* hand-rewrite, not a `rules:` redefinition). The consolidation's declared-alias mechanism must live where it can see the auto-gen'd groups (wire, post-enrich, reading the injected `base.grammar.rules`).
 - **Composition is unified** (all 3 grammars: `const enrichedBase = enrich(base); grammar(enrichedBase, wire({…}, enrichedBase))`). The deferred `sittirGrammar(base, cfg)` single-entry cleanup (kills the double-pass footgun) is a separate follow-up.
 - **Never stage** `rust/crates/sittir-*/test-fixtures.json` / `packages/validator/validation-history.jsonl`. **Stray-file DANGER:** the working tree had ~396 leaked compiled `.js`/`.d.ts` under `packages/codegen/src` (build leakage from a `@to-skills/cli` install) — deleted, but do NOT `git add` broad paths; commit by explicit pathspec. A validator hook auto-commits `chore(validator)` after gates — drop with `git reset --soft HEAD~1`.
@@ -57,6 +57,6 @@ This is what makes the **visible-group treatment DRY**: instead of hand-rewritin
 ## Deferred (NOT this increment)
 
 - **engine.rs perf** (Copilot #61): `NodeCoords` clones the path `Vec<u32>` per `read_child` (O(depth) alloc). Optional opt to `(parent_handle, child_index)` + parent-link walk. `b4778bb5` is correct + release-green; this is perf only.
-- The Node-v24/napi debug-FFI `transport.rs` segfault (separate, larger).
+- The Node-v24/napi debug-FFI `node.rs` segfault (separate, larger).
 - Optional wrapper-aware classification + runtime-variant-dispatch removal (no longer segfault-driven).
 - PR-I-φ2 (count recovery to ≥125 + match_arm residual) and PR-P (terminal/enum) — separate PRs.

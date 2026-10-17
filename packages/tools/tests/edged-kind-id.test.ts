@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 const GRAMMARS = ['rust', 'typescript', 'python', 'scm', 'regex'] as const;
 
-const transportOf = (grammar: string): string | undefined => {
-	const path = new URL(`../../../rust/crates/sittir-${grammar}/src/render/transport.rs`, import.meta.url);
+const nodeOf = (grammar: string): string | undefined => {
+	const path = new URL(`../../../rust/crates/sittir-${grammar}/src/render/node.rs`, import.meta.url);
 	return existsSync(path) ? readFileSync(path, 'utf8') : undefined;
 };
 
@@ -25,10 +25,10 @@ export function edgedKindIdMismatches(source: string): string[] {
 	});
 }
 
-describe('a transport\'s edge kind id', () => {
+describe('a node\'s edge kind id', () => {
 	for (const grammar of GRAMMARS) {
 		it(`${grammar}: is one of the kind ids its KindOf reports`, () => {
-			const source = transportOf(grammar);
+			const source = nodeOf(grammar);
 			if (source === undefined) return;
 			expect(edgedKindIdMismatches(source)).toEqual([]);
 		});

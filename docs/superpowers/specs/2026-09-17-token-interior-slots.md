@@ -4,7 +4,7 @@
 page (`2026-09-17-factory-ergonomics-minor.md`), which becomes its first
 application. Builds on the text-content design
 (`2026-08-26-text-content-vs-source-provenance.md`): a read node is a
-coordinate, a built node is a transport.
+coordinate, a built node is a native node.
 
 ---
 
@@ -95,24 +95,24 @@ accessor value does, and greedy is its definition. The compile-time diagnostic i
 for the one case a reader cannot decide: an optional literal followed by a literal
 that the two cannot be told apart at their first differing character.
 
-## Two transports, one fact
+## Two nodes, one fact
 
 A read leaf is a coordinate until it is edited: untouched, it renders by
 folding its span, affixes and all. A factory-built or edited node renders
-through the kind's typed transport, which holds the slots and writes the
+through the kind's typed node, which holds the slots and writes the
 literal runs from the rule. The two agree only because the reader strips
 exactly the literals the template writes — one rule, read by both. Hence:
 
 - `$text` of a read node is content, and every projection that builds a
-  transport from a read node — the wrap accessor, `nodeToConfig`,
+  native node from a read node — the wrap accessor, `nodeToConfig`,
   `materializeWrappedNodeData`, the strict-rebuild emitter — sees content
-  and never hands the typed transport an affixed string, where the affixes
+  and never hands the typed node an affixed string, where the affixes
   would double.
 - A `$with` setter or `markEdited` detaches the coordinate; from then on the
-  typed transport renders the node from its slots.
+  typed native node renders the node from its slots.
 - The Verbatim arm is never built from a factory node (it has no
   coordinate) and the typed arm is never fed a read node's whole text. Slot
-  transport enums already hold a Verbatim arm beside the typed leaf arm for
+  node enums already hold a Verbatim arm beside the typed leaf arm for
   text kinds; a structured token is that same pair.
 - The reader's text-capture classification has one more case beside
   verbatim-whole and structured: content-with-affixes, stripped on read.
@@ -327,7 +327,7 @@ for the reader.
   failure. The loose coercer accepts a bare string as the sole required text slot. The render template glues the
   members with adjacency marks and a lexed kind owns no seams and no kind edges, so the interior addresses that the
   old text leaf never used are gone from the options surface. The strict rebuild prints a text slot as its content.
-- **Transport.** A text slot is a `String` field of the typed transport; the reader keeps `$text` for a lexed kind.
+- **Node.** A text slot is a `String` field of the typed node; the reader keeps `$text` for a lexed kind.
 
 ### Interior enums are text; forms are hoisted
 

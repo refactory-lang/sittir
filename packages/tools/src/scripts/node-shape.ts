@@ -4,7 +4,7 @@ import { performance } from 'node:perf_hooks';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
-import { PLAIN_KINDS, toTransportData } from '@sittir/common/utils';
+import { PLAIN_KINDS, toNodeData } from '@sittir/common/utils';
 
 v8.setFlagsFromString('--allow-natives-syntax');
 const hasFastProperties = new Function('o', 'return %HasFastProperties(o)') as (o: object) => boolean;
@@ -72,7 +72,7 @@ const parsed = async (grammar: string, file: string): Promise<void> => {
 	const tree = engine.parse(readFileSync(resolve(root, file), 'utf8'), { depth: Infinity });
 	const nodes = typedNodesOf(tree);
 	console.log(`${grammar} ${file}: ${nodes.length} nodes, ${nodes.filter(hasFastProperties).length} with fast properties`);
-	console.log(`  toTransportData(root): ${(best(() => toTransportData(tree as Parameters<typeof toTransportData>[0], PLAIN_KINDS), 8) * 1000).toFixed(0)} us`);
+	console.log(`  toNodeData(root): ${(best(() => toNodeData(tree as Parameters<typeof toNodeData>[0], PLAIN_KINDS), 8) * 1000).toFixed(0)} us`);
 	console.log(`  engine.render(untouched root): ${(best(() => engine.render(tree), 8) * 1000).toFixed(0)} us`);
 };
 

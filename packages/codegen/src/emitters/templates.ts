@@ -29,7 +29,7 @@ import { DEDENT_TEXT, INDENT_TEXT, type Layout } from '../dsl/primitives/spacing
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs } from './shared.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
-import { getTransportProjection } from './transport-projection-cache.ts';
+import { getNodeProjection } from './node-projection-cache.ts';
 import {
 	flanksOf,
 	isSeamChoice,
@@ -167,7 +167,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
 					literalMergePairs(
-						getTransportProjection(config.nodeMap).literals,
+						getNodeProjection(config.nodeMap).literals,
 						config.kindEntries ?? [],
 						config.nodeMap.normalizedRules
 					).map(
@@ -184,7 +184,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const lefts = new Set<string>();
 				const rights = new Set<string>();
 				for (const [a, b] of literalMergePairs(
-					getTransportProjection(config.nodeMap).literals,
+					getNodeProjection(config.nodeMap).literals,
 					config.kindEntries ?? [],
 					config.nodeMap.normalizedRules
 				)) {

@@ -7,9 +7,9 @@
  *     Nothing under the root was rebuilt, so it folds to one coordinate and
  *     the render slices the source. Only the engine that read a node can
  *     resolve its coordinates, so the read and the render share an engine.
- *   - transport: the grammar's parity render fixtures (`test-fixtures.json`),
+ *   - node: the grammar's parity render fixtures (`test-fixtures.json`),
  *     the self-contained inputs the validator captured and proved to render
- *     standalone, so every node crosses as a transport and the render
+ *     standalone, so every node crosses as a native node and the render
  *     rebuilds it from its template.
  * Reports total time, renders/sec, mean, min, max and memory deltas per
  * grammar and workload (heapUsed, heapTotal, rss around the timed loop,
@@ -31,7 +31,7 @@ import { loadCorpusEntries, nativeLanguageEngineOf } from '../validate/common.ts
 import { fixturesOutputPath, type ParityFixture } from '../validate/parity-fixtures.ts';
 
 
-const WORKLOADS = ['coordinate', 'transport'] as const;
+const WORKLOADS = ['coordinate', 'node'] as const;
 type Workload = (typeof WORKLOADS)[number];
 
 const N = (() => {

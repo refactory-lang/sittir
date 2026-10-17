@@ -16,7 +16,7 @@ Each stage starts with a census, sent to brainstorm before any code: the sites t
 
 - `grammar.bindings.ts`, the grammar bindings, is generated and hash-checked for rust, typescript and python, but no `grammar.sittir.ts` passes it to `sittirGrammar` (`bindings:` is unset). The parser and the node model are upstream's plus the authored overrides: no renamed or split kind exists in any node model, and `renamedFrom` and `splitFrom` are never written.
 - Route derivation runs against the unbound model. Claims resolve through kind renames (`bindFacts` maps base names to bound names) but not yet through field renames.
-- `fieldAliasMap` (node model) holds a parser alias of a visible kind, the same table as `type_identifier` over `identifier`. Such an alias kind has no builder, wrap or transport.
+- `fieldAliasMap` (node model) holds a parser alias of a visible kind, the same table as `type_identifier` over `identifier`. Such an alias kind has no builder, wrap or native node.
 - `formsOf` reaches a supertype's owned variants (`variantOf`). A split clone (`splitFrom`) is not yet a form.
 - `modelNode` falls back from `kind` to `_${kind}`, and `routes.ts` strips `Modifier$` from member names. Both are name heuristics.
 - The python docstring's `doc` path is unresolved: `simple_statements` is a site alias of `_simple_statements`, which only the `_${kind}` fallback finds.
@@ -47,7 +47,7 @@ Each gets its own red test before its fix:
 - the stale-resolutions message, which must name the bound grammar's conflicts;
 - an options label re-addressed after a field rename, so the options block names the bound field;
 - `BOXED_PAYLOADS` pins: 20 go stale and 22 are new under the bound build; regenerate the pin set from the bound model rather than editing it;
-- `MethodDeclarationTransport`'s payload pin;
+- `MethodDeclarationNode`'s payload pin;
 - portable read tests that name base fields and kinds (`left`, `decorator`), which must name the bound ones;
 - the validators' same-span locator, which must also match a node's grammar kind.
 
@@ -115,7 +115,7 @@ The aliases retire the interim placed claim that reads any decorated function in
 - **Claim-level flags reach the read model.** Today `resolveFlags` resolves a claim whose last segment is a flag, but nothing downstream reads `claim.flag`. Such a flag reaches neither the read entries nor the members, so the portable surface and `c.is` cannot answer it. This stage carries a claim's flag into its read entry and the kind's flag table, as a member capture's flag already is, so both `static` claims above are answered node-locally.
 - **Gate:** every read the placed claims gave classifies the same, except that a typed-`self` method is no longer static. The `is` tests cover both grammars' static and non-static methods, and rust's static trait signature.
 
-Each alias kind gets its own low-level builder beside the aliased kind's (`build.methodDeclaration` beside `build.functionItem`). Today `fieldAliasMap` emits none, so the node-model and factory emit change: an alias of a visible kind at a context-unique site is a kind with a builder, a wrap and a transport (`MethodDeclarationTransport`), not a field-alias row.
+Each alias kind gets its own low-level builder beside the aliased kind's (`build.methodDeclaration` beside `build.functionItem`). Today `fieldAliasMap` emits none, so the node-model and factory emit change: an alias of a visible kind at a context-unique site is a kind with a builder, a wrap and a native node (`MethodDeclarationNode`), not a field-alias row.
 - **Census:** each alias site, its clones, and the per-grammar STATE and `parser.c` deltas, compared with the probe.
 - **Gate:** every row passes; the deltas within the probe's numbers.
 

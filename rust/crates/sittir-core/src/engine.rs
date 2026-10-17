@@ -30,8 +30,8 @@ pub trait EngineGrammar: Copy {
     fn render_module_hash(self) -> &'static str;
     /// The name of a kind of this grammar, for messages that name one.
     fn kind_name(self, kind: KindId) -> &'static str;
-    /// The display ids this grammar claims a node by (`ReadTransport::shows`
-    /// of its transports), which a coordinate stamps in place of the grammar id.
+    /// The display ids this grammar claims a node by (`ReadNode::shows`
+    /// of its nodes), which a coordinate stamps in place of the grammar id.
     fn shows(self) -> fn(KindId) -> bool;
     /// Whether a node with a grammar id and a display id is a keyword the
     /// grammar relaxes into its word rule (`ReadCtx::relaxes`). A grammar that
@@ -51,7 +51,7 @@ pub trait EngineGrammar: Copy {
     fn option_tables(self) -> &'static crate::options::OptionTables;
     /// The sides of the unit children of the node at `index` of `tree`, by
     /// slot and item: the node read one level down by `ctx`
-    /// (`TransportLayout::units`). None for a grammar with no transports.
+    /// (`NodeLayout::units`). None for a grammar with no nodes.
     fn read_units(self, tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Vec<crate::layout::UnitSides<Self::Trivia>> {
         let _ = (tree, ctx, index);
         Vec::new()
@@ -60,21 +60,21 @@ pub trait EngineGrammar: Copy {
     /// `depth` levels down, from its templates under `render`
     /// (`ParsedTree::recorded`), and answers the text. Refuses a read the
     /// model has no route for, naming it, and a render that fails. A grammar
-    /// with no transports renders nothing.
+    /// with no nodes renders nothing.
     fn render_read(self, tree: &tree_sitter::Tree, index: crate::types::NodeIndex, depth: crate::read::Depth, ctx: &crate::read::ReadCtx<'_>, render: &crate::prepare::RenderContext<'_>) -> Result<String, String> {
         let _ = (tree, index, depth, ctx, render);
         Ok(String::new())
     }
     /// The children of the node at `index` of `tree` as its read routes
-    /// them (`ReadTransport::routes`); none for a node read without routes,
-    /// or a grammar with no transports.
+    /// them (`ReadNode::routes`); none for a node read without routes,
+    /// or a grammar with no nodes.
     fn slot_routes(self, tree: &tree_sitter::Tree, index: crate::types::NodeIndex) -> Option<crate::read::Routed> {
         let _ = (tree, index);
         None
     }
     /// How a node with these ids finds its slots, as its read does
-    /// (`ReadTransport::router`); none for a node read without slots, or a
-    /// grammar with no transports.
+    /// (`ReadNode::router`); none for a node read without slots, or a
+    /// grammar with no nodes.
     fn router(self, grammar: KindId, display: KindId) -> Option<crate::read::Router> {
         let _ = (grammar, display);
         None
@@ -513,7 +513,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The node at `index` read into `T`, `depth` levels down, seating no
     /// sides; index 0 is the root.
-    pub fn read<T: crate::read::ReadTransport>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
+    pub fn read<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
         crate::read::read_at::<T>(&mut self.tree.walk(), &self.read_ctx(), index, depth)
     }
 
@@ -569,10 +569,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// A snapshot of the node at `index`, read at every depth: each node with
-    /// its span from the transport that holds it, each extra and `ERROR` of
+    /// its span from the node that holds it, each extra and `ERROR` of
     /// its sides with its text, and the node itself measured from the byte
     /// `holder`, or from its own start when absent.
-    pub fn snapshot<T: crate::read::ReadTransport>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
+    pub fn snapshot<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
         let measure = self.snapshot_measure(index, holder);
         crate::read::read_at::<T>(&mut self.tree.walk(), &self.seating_ctx().snapshot(&measure), index, crate::read::Depth::All)
     }
@@ -1157,7 +1157,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     fn depth_member(delta: i32) -> Option<SideEntry<G::Trivia>> {
-        <G::Trivia as crate::trivia::TriviaSeam>::depth_member(delta).map(|member| SideEntry::Layout(TriviaEntry::new(SlotValue::Transport(member))))
+        <G::Trivia as crate::trivia::TriviaSeam>::depth_member(delta).map(|member| SideEntry::Layout(TriviaEntry::new(SlotValue::Node(member))))
     }
 
     /// The entries the assignment gives `side` of the node at `index`, and
@@ -1193,20 +1193,20 @@ impl<G: EngineGrammar> ParsedTree<G> {
                             let kind = crate::read::grammar_id(&node);
                             let adjacent = Some(error_adjacency(&node, &self.source));
                             let text = TriviaText::of_source(kind, &self.source, span, adjacent, None);
-                            SideEntry::Source { entry: entry(SlotValue::Transport(G::Trivia::from_text(text))), kind, span, adjacent }
+                            SideEntry::Source { entry: entry(SlotValue::Node(G::Trivia::from_text(text))), kind, span, adjacent }
                         })
                         .into_iter()
                         .collect(),
                     Assigned::Layout { run, depth: count, .. } => {
                         let deviation = self.deviation(run);
-                        deviation.map(|member| SideEntry::Layout(entry(SlotValue::Transport(member)))).into_iter().chain(depth(count)).collect()
+                        deviation.map(|member| SideEntry::Layout(entry(SlotValue::Node(member)))).into_iter().chain(depth(count)).collect()
                     }
                     Assigned::Member(at) => node_at_index(&self.tree, at)
                         .and_then(|node| {
                             let span = Span::of(&node);
                             let kind = crate::read::grammar_id(&node);
                             let adjacent = Some(error_adjacency(&node, &self.source));
-                            let member = entry(SlotValue::Transport(G::Trivia::from_layout(TriviaText::of_source(kind, &self.source, span, adjacent, None))?));
+                            let member = entry(SlotValue::Node(G::Trivia::from_layout(TriviaText::of_source(kind, &self.source, span, adjacent, None))?));
                             Some(if member.is_layout() { SideEntry::Layout(member) } else { SideEntry::Source { entry: member, kind, span, adjacent } })
                         })
                         .into_iter()
@@ -1296,7 +1296,7 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
             let entries: Vec<_> = self.entries(coord.index, side).into_iter().map(SideEntry::into_entry).collect();
             (!entries.is_empty()).then_some(entries)
         };
-        let trivia = crate::trivia::TransportTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
+        let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
     }
 
@@ -1529,7 +1529,7 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
             let entries: Vec<_> = tree.side_entries(coord.index, side, coord.changed().on(side)).into_iter().map(SideEntry::into_entry).collect();
             (!entries.is_empty()).then_some(entries)
         };
-        let trivia = crate::trivia::TransportTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
+        let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
     }
 
@@ -2094,7 +2094,7 @@ mod tests {
         let leading = tree.trivia_side(f, TriviaSide::Leading);
         let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
         assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (TreeId(1), comment, 0, 4));
-        let newline = TriviaEntry::new(SlotValue::Transport(TestTrivia::Newline));
+        let newline = TriviaEntry::new(SlotValue::Node(TestTrivia::Newline));
         assert_eq!(leading[1..], *std::slice::from_ref(&newline));
         assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), []);
     }
@@ -2136,7 +2136,7 @@ mod tests {
             .flatten()
             .collect::<Vec<_>>();
         let text = TriviaText { kind: KindId(u16::MAX), text: "@@".to_owned(), span: None, before: Some(" ".to_owned()), after: Some(" ".to_owned()) };
-        assert!(sides.contains(&TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(text)))), "{sides:?}");
+        assert!(sides.contains(&TriviaEntry::new(SlotValue::Node(TestTrivia::Text(text)))), "{sides:?}");
     }
 
     #[test]
@@ -2145,7 +2145,7 @@ mod tests {
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
         let a = index_of_kind(&tree, "expression_statement", 0);
-        let written = vec![TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None, before: None, after: None })))];
+        let written = vec![TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None, before: None, after: None })))];
         tree.write_trivia_side(a, TriviaSide::Leading, written.clone());
         assert_eq!(tree.trivia_side(a, TriviaSide::Leading), written);
         assert!(tree.edited_within(NodeIndex::ROOT, false));
@@ -2180,7 +2180,7 @@ mod tests {
         let trailing = tree.trivia_side(f.index, TriviaSide::Trailing);
         let sources = table(tree);
         let sides = sources.sides(&f).expect("the function has sides");
-        let sides = sides.as_any().downcast_ref::<crate::trivia::TransportTrivia<TestTrivia>>().expect("the grammar's trivia");
+        let sides = sides.as_any().downcast_ref::<crate::trivia::NodeTrivia<TestTrivia>>().expect("the grammar's trivia");
         assert_eq!((sides.leading.as_deref(), sides.trailing.as_deref(), sides.inner.as_deref()), (Some(&leading[..]), Some(&trailing[..]), None));
     }
 

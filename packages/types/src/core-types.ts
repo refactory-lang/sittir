@@ -77,7 +77,7 @@ export interface AnyUntypedNode {
 	 */
 	$text?: string;
 	/**
-	 * A node's layout as the transport carries it: where a read node came
+	 * A node's layout as the native node carries it: where a read node came
 	 * from (`at`), and the trivia it owns, whether read or written.
 	 */
 	$_layout?: NodeLayout;
@@ -89,7 +89,7 @@ export interface AnyUntypedNode {
 	// -------------------------------------------------------------------------
 	// $-prefixed methods — present on factory/wrap output only.
 	// Members of the literal the factory or wrap writes for the node.
-	// Absent on readUntypedNode / native JSON transport.
+	// Absent on readUntypedNode / native JSON node.
 	// -------------------------------------------------------------------------
 
 	/** Render this node to source text. */
@@ -111,7 +111,7 @@ export interface AnyUntypedNode {
  * the text of a span through `sourceSpans` (or `sliceSpan`) from
  * `@sittir/common`, never `String.prototype.slice`.
  */
-export interface TransportCoordinate {
+export interface NodeCoordinate {
 	readonly $treeHandle: number;
 	/** The index past the node's last descendant: its subtree is the indexes from its own up to this one, exclusive. */
 	readonly $end: number;
@@ -121,7 +121,7 @@ export interface TransportCoordinate {
 
 /** A node's layout (`$_layout`): its own coordinate when a read gave it (`at`), and its trivia. */
 export interface NodeLayout {
-	readonly at?: TransportCoordinate;
+	readonly at?: NodeCoordinate;
 	readonly trivia?: NodeTrivia;
 }
 
@@ -329,6 +329,6 @@ export interface ErrorRegion {
  * The data projection of a generated kind interface: `$type` plus its
  * `_<slot>` storage, without the accessor methods that only the wrap
  * surface installs. This is the shape the reader returns and the render
- * transport accepts.
+ * node accepts.
  */
 export type UntypedNodeOf<T> = Pick<T, Extract<keyof T, '$type' | `_${string}`>> & AnyUntypedNode;

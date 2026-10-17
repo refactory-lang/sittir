@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, NodeLayout, NodeTrivia, TransportCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
@@ -8,7 +8,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /** The coordinate a read node came from (`$_layout.at`), or the node itself when it is a coordinate. */
-export function coordinateOf(node: object): TransportCoordinate | undefined {
+export function coordinateOf(node: object): NodeCoordinate | undefined {
 	if (isCoordinate(node)) return node;
 	const at = (node as { readonly $_layout?: NodeLayout }).$_layout?.at;
 	return at !== undefined && isCoordinate(at) ? at : undefined;
@@ -120,7 +120,7 @@ export function holdsSlots(node: object): boolean {
 	return false;
 }
 
-/** A coordinate as transport data: its four fields, holding no tree. */
+/** A coordinate as node data: its four fields, holding no tree. */
 function plainCoordinate(coordinate: { readonly $treeHandle: number; readonly $end: number; readonly $span: { readonly start: number; readonly end: number }; readonly $type?: number }): Record<string, unknown> {
 	return { $treeHandle: coordinate.$treeHandle, $end: coordinate.$end, $span: { start: coordinate.$span.start, end: coordinate.$span.end }, $type: coordinate.$type };
 }
@@ -207,12 +207,12 @@ function sourceTree(source: SourceIdentity): TreeHandle | undefined {
 }
 
 /**
- * The sides of a node's unit children, by slot and item (`TransportLayout.units`): the ones it
+ * The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it
  * holds, else its tree's for a parsed node, else those of the node it was rebuilt from
  * (`sourceOf`); `undefined` when none answers.
  */
 export function unitSidesOf(node: object): readonly unknown[] | undefined {
-	const held = (node as { readonly $_layout?: TransportLayout }).$_layout?.units;
+	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units;
 	if (held !== undefined) return held;
 	const tree = treeOf(node);
 	const index = indexOf(node);
@@ -223,12 +223,12 @@ export function unitSidesOf(node: object): readonly unknown[] | undefined {
 }
 
 /**
- * The stored layout of a node's list slots (`TransportLayout.slots`): the ones it holds, else its
+ * The stored layout of a node's list slots (`NodeLayout.slots`): the ones it holds, else its
  * tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), which apply to
  * every gap of the slot, kept or inserted; `undefined` when none answers.
  */
 export function slotsOf(node: object): readonly unknown[] | undefined {
-	const held = (node as { readonly $_layout?: TransportLayout }).$_layout?.slots;
+	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.slots;
 	if (held !== undefined) return held;
 	const tree = treeOf(node);
 	const index = indexOf(node);
@@ -240,11 +240,11 @@ export function slotsOf(node: object): readonly unknown[] | undefined {
 
 /**
  * The separator a node's source spells before it as a list item where it is not its slot's
- * (`TransportLayout.separator`): the one it holds, else its tree's for a parsed node, else that of
+ * (`NodeLayout.separator`): the one it holds, else its tree's for a parsed node, else that of
  * the node it was rebuilt from (`sourceOf`); `undefined` when none answers.
  */
 export function separatorOf(node: object): number | undefined {
-	const held = (node as { readonly $_layout?: TransportLayout }).$_layout?.separator;
+	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.separator;
 	if (held !== undefined) return held;
 	const tree = treeOf(node);
 	const index = indexOf(node);
@@ -254,7 +254,7 @@ export function separatorOf(node: object): number | undefined {
 	return source === undefined ? undefined : from?.separatorBefore?.(decodeIndex(source.treeHandle));
 }
 
-/** One unit child's sides as a tree gives them (`TransportLayout.units`): its slot's wire key and its item there. */
+/** One unit child's sides as a tree gives them (`NodeLayout.units`): its slot's wire key and its item there. */
 interface UnitSidesData {
 	readonly slot: string;
 	readonly item: number;
@@ -401,20 +401,20 @@ export function sidesOf(node: object): NodeTrivia | undefined {
  * sides it holds, and names the node it was rebuilt from (`$_layout.sides`)
  * for the sides it does not hold.
  */
-export function toTransportData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
-	return toTransportValue(node, view, rootEdges(node), true, rootBearer(node, view)) as AnyUntypedNode;
+export function toNodeData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
+	return toNodeValue(node, view, rootEdges(node), true, rootBearer(node, view)) as AnyUntypedNode;
 }
 
 /**
- * `toTransportData` for data that will leave the tree it was read from: no
+ * `toNodeData` for data that will leave the tree it was read from: no
  * node crosses as its coordinate, so every node crosses as its own storage
  * with its sides as data (`sidesOf`), and nothing but the layout evidence
  * still names the tree. An alias envelope and its content are one parser
  * node, whose sides the envelope holds. The caller turns that evidence into
  * the text it names.
  */
-export function toDetachedTransportData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
-	return toTransportValue(node, view, rootEdges(node), false, rootBearer(node, view)) as AnyUntypedNode;
+export function toDetachedNodeData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
+	return toNodeValue(node, view, rootEdges(node), false, rootBearer(node, view)) as AnyUntypedNode;
 }
 
 /** How the crossing tells kinds apart: a kind a rebuild constructs around an existing node. */
@@ -507,14 +507,14 @@ export interface PointData {
 	readonly column: number;
 }
 
-/** A snapshot node's span (`$_layout.span`), measured from the start of the transport that holds it. */
+/** A snapshot node's span (`$_layout.span`), measured from the start of the native node that holds it. */
 export interface PointSpanData {
 	readonly start: PointData;
 	readonly end: PointData;
 }
 
 /**
- * A node's layout as the transport sends it (`$_layout`): the trivia that
+ * A node's layout as the native node sends it (`$_layout`): the trivia that
  * crosses with it, its list slots' stored layout (`slots`, as a read gives
  * it), the separator its source spells before it as a list item where it is
  * not its slot's (`separator`), a snapshot node's span, the node a built node takes its missing sides
@@ -522,7 +522,7 @@ export interface PointSpanData {
  * changed (`changed`), where its sides drop their layout runs. Absent when
  * the node has none of these.
  */
-export interface TransportLayout {
+export interface NodeDataLayout {
 	trivia?: unknown;
 	units?: readonly unknown[];
 	slots?: readonly unknown[];
@@ -532,8 +532,8 @@ export interface TransportLayout {
 	changed?: ChangedEdges;
 }
 
-function setLayout<K extends keyof TransportLayout>(out: Record<string, unknown>, key: K, value: TransportLayout[K]): void {
-	const layout = (out.$_layout ??= {}) as TransportLayout;
+function setLayout<K extends keyof NodeDataLayout>(out: Record<string, unknown>, key: K, value: NodeDataLayout[K]): void {
+	const layout = (out.$_layout ??= {}) as NodeDataLayout;
 	layout[key] = value;
 }
 
@@ -548,11 +548,11 @@ function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
-function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
+function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry, index) => {
-			if (!isRecord(entry)) return toTransportValue(entry, view, NO_EDGES, fold);
-			return toTransportValue(entry, view, changedEdges(value, index, view), fold, evidenceOf(entry, view));
+			if (!isRecord(entry)) return toNodeValue(entry, view, NO_EDGES, fold);
+			return toNodeValue(entry, view, changedEdges(value, index, view), fold, evidenceOf(entry, view));
 		});
 	}
 	if (!isRecord(value)) return value;
@@ -569,9 +569,9 @@ function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges,
 		if (!isDataKey(key) || key === '$_layout') continue;
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
+		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
 	}
-	const given = (value as { readonly $_layout?: TransportLayout }).$_layout;
+	const given = (value as { readonly $_layout?: NodeDataLayout }).$_layout;
 	const slots = fold ? given?.slots : slotsOf(value);
 	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
 	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
@@ -589,7 +589,7 @@ function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges,
 	if (source !== undefined && sourceTree(source) !== undefined) {
 		setLayout(out, 'sides', plainCoordinate({ $treeHandle: source.treeHandle, $end: source.end, $span: source.span, $type: source.kind }));
 	}
-	const layout = out.$_layout as TransportLayout | undefined;
+	const layout = out.$_layout as NodeDataLayout | undefined;
 	if ((edges.leading || edges.trailing) && (layout?.trivia !== undefined || layout?.sides !== undefined)) setLayout(out, 'changed', edges);
 	// A storage-bearing node rebuilds from its slots.
 	if (holdsSlots(out)) delete out.$text;
@@ -609,7 +609,7 @@ export function detachCoordinate(data: object): void {
 	releaseTreeOn(data);
 }
 
-/** Remove the tree token from everything under `value`, through slots and trivia: transport data holds no tree. */
+/** Remove the tree token from everything under `value`, through slots and trivia: node data holds no tree. */
 function dropTreeTokens(value: unknown): void {
 	if (Array.isArray(value)) {
 		for (const entry of value) dropTreeTokens(entry);
@@ -628,8 +628,8 @@ function dropTriviaTreeTokens(node: Record<string, unknown>): void {
 
 /**
  * Drop the coordinate that would slice a node's pre-edit bytes from every
- * node that carries storage, in place, and return `root`. For transport data
- * that came through a path other than {@link toTransportData}. A coordinate
+ * node that carries storage, in place, and return `root`. For native node data
+ * that came through a path other than {@link toNodeData}. A coordinate
  * that survives, on a text leaf or a node past the read's depth, addresses
  * that node's bytes only.
  *

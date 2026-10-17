@@ -20,7 +20,7 @@ that same value.
 Two narrow `large_enum_variant` exceptions preserve intentional allocation
 decisions:
 
-- Generated `transport.rs` uses the canonical payload ceiling and pinned
+- Generated `node.rs` uses the canonical payload ceiling and pinned
   boxed types from `packages/codegen/src/emitters/boxed-payloads.ts`.
   Generated compile-time assertions require unboxed payloads to stay at or
   below that ceiling and pinned payloads to remain above it. The module
@@ -39,12 +39,12 @@ concurrent uniqueness tests guard the allocation contract.
 ## Kind ids
 
 `clippy.toml` disallows `tree_sitter::Node::kind_id`. Every flag table, edge
-row, seat table and transport is keyed by the grammar id (`grammar_id()`);
+row, seat table and node is keyed by the grammar id (`grammar_id()`);
 `kind_id()` is the parser's display symbol, which differs for hidden and
 aliased nodes, so keying a table with it silently misses. The one sanctioned
 read of the display symbol is `sittir_core::read::display_id`, which carries
 the only `#[allow(clippy::disallowed_methods)]`. Call it only where an alias
 envelope is meant (a node's `display` field, a search that accepts either
-spelling, the transport expansion's variant match); everything else uses
-`grammar_id()`. The transport macro expands to `display_id`, never to
+spelling, the node expansion's variant match); everything else uses
+`grammar_id()`. The node macro expands to `display_id`, never to
 `kind_id`.
