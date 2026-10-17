@@ -685,6 +685,26 @@ raw-string routing metadata where the type alone cannot express its parser behav
    - a **fields trait**: one accessor per slot and the layout facts the render reads, with generic associated types for each slot's value. The node struct implements it over its fields, and a **record view** (`…Record<'a>`, the arena and the record's address) implements it over the record's cells, bounds-checking every word it reads and refusing any malformed cell.
 3. Codegen's render bodies (`render-module.ts`) are generic over the fields trait, so one body renders a native node and a record. Prepare over a record resolves into side arrays keyed by record address, never into the record.
 4. Add the napi methods beside today's (Interfaces). `read_many` takes a `wire` argument (ruling 2).
+
+**Checks the writer runs** (the maintainer, 2026-10-17). The record writer encodes native nodes their builder or the typed reader already checked, so it runs no `verifyStructure` check of its own. The views' bounds and malformed-cell refusals always run: they are memory safety, not type-proved facts. At the cutover, whoever appends a built record runs the type-proved checks once, as the builder does today.
+
+**Encoding, proposed for ruling (2026-10-17).** The Interfaces fix the header, the presence words and the cell tags. These are the parts they leave open, each with the form proposed:
+
+1. **A leaf in a child cell.** A parsed leaf is tag 2 (kind, byte start, byte end, descendant index): the fifth word is the leaf's row, so its `at` and its sides in the tree's trivia table come from the cell, and a parsed leaf has no record. A built leaf is tag 5 (kind, string-table offset, length, record address): the fifth word names the leaf's own record, the header alone, which is the key its sides take in the built trivia table. A captured interior string (a four-word cell) is tag 2 or 5 with kind 0 and no fifth word. The alternative, a record for every leaf named by a tag-3 cell, costs two or more words and an indirection for every parsed leaf.
+2. **A list cell** is (run address, length): a packed address, not an offset within the record's chunk, so a run longer than a chunk takes a chunk of its own and two records can share one run.
+3. **A side record** is variable-length. Word 0 is a mask of the fields present; the fields follow in a fixed order:
+   - `at` (index, end), on a parsed node: the tree is the arena's;
+   - `edges` (each side's arm kind and strength, the strength stored plus one so 0 is none);
+   - `span` (start and end points, row and column each);
+   - `sides` (tree, index, end, byte start, byte end);
+   - `changed`, as two bits of the mask;
+   - `separator` (a kind);
+   - `slots`, a count, then per slot its cell's stamped `word` (in place of the wire key), `before`, `after`, `separator`, and its `tokens` as a run (address, length).
+
+   It holds no trivia and no unit sides. A parsed node's are in its tree's table; a built node's are in the built trivia table, a unit's keyed by (record address, slot word, item).
+4. **A view names its children's view types through the native type**, not by a name derived from another: the derive implements `HasRecord` for every native node type, struct and choice, with `type Record<'a>`. A struct's view is `<Ident>Record<'a>`, a choice's is an enum over its variants' views selected by the cell's kind, and a cell's accessor yields `<T as HasRecord>::Record<'a>`.
+5. **A blank arm** (id 0) is tag 4 with kind 0, distinct from tag 0, absent.
+
 5. Tests:
    - each kind's macro expansion;
    - read parity over every corpus entry of the five grammars: `render_record(read_record(i))` equals `render(read(i))`, and every view accessor answers what the node's field holds (kind, presence, coordinate, text span), compared through the fields trait;
