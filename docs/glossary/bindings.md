@@ -450,7 +450,7 @@ Codegen's check of a grammar's generated layer: a grammar with a `bindings.scm` 
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsEdit`
 
-One grammar change at a patch position: a field of the member's name, or an alias of a symbol to its bound name.
+One grammar change at a patch position: a field of the member's name, or the bound name a symbol member is aliased to.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsPatch`
 
@@ -592,7 +592,7 @@ The hash a package's generated layer exports, read through the pinned TypeScript
 
 ### `packages/codegen/src/bindings/module.ts::editCall`
 
-An `GrammarBindingsEdit` as the authoring call that makes it.
+An `GrammarBindingsEdit` as the authoring call that makes it: `field(name)` or `alias(name)`.
 
 ### `packages/codegen/src/bindings/module.ts::patchSet`
 

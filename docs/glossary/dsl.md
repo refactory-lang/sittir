@@ -7477,7 +7477,7 @@ The shape of `.sittir/resolutions.json`: two `ResolutionSection`s. The top-level
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ResolutionSection`
 
-One derived resolution list and its stamp. `grammarHash` is the hash of the evaluated grammar the list was derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`): the base grammar's for the base section, the bound grammar's for `bound`. It is the verified stamp: written only once the list has generated cleanly, so a section with a matching hash always held a list that built.
+One derived resolution list and its stamp. `grammarHash` is the hash of the evaluated grammar the list was derived for, as tree-sitter sees it and without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`): the base grammar's for the base section, the bound grammar's for `bound`. It is the verified stamp: written only once the list has generated cleanly, so a section with a matching hash always held a list that built.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::UNVERIFIED_GRAMMAR_HASH`
 

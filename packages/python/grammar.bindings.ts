@@ -103,7 +103,7 @@ export default grammar(
 	enrich(sittir),
 	wire({
 		edits: {
-			_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
+			_expression_within_for_in_clause: { "-1": alias("lambda_expression") },
 			assignment_eq: { "0": field("name"), "1/1": field("value") },
 			assignment_type: { "0": field("name") },
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
@@ -113,7 +113,7 @@ export default grammar(
 			conditional_expression: { "0": field("consequence") },
 			default_parameter: { "2": field("default") },
 			dictionary_splat_pattern: { "1": field("pattern") },
-			expression: { "-5": alias(sym("lambda"), sym("lambda_expression")) },
+			expression: { "-5": alias("lambda_expression") },
 			finally_clause: { "2": field("body") },
 			list: { "1/0": field("elements") },
 			list_pattern: { "1/0": field("elements") },

@@ -110,34 +110,33 @@ the target already has a scanner or the upstream ships none.
  */
 ```
 
-### `packages/codegen/src/transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules`
-
-Prune the rules nothing reaches from `grammar.json`, with their `inline` and `conflicts` entries
-(`util/reachable-rules.ts::pruneOrphanedRules`).
-Two populations land here: rules `injectPlaceholderHiddenRules` pre-registered
-for a placeholder that never deposited (a blank `_kw_<name>`, or a visible
-variant rule such as an unhoisted absent case), and enrich mints whose owner
-rule an override fully redeclares. Neither reaches parser.c/node-types.json;
-pruning keeps grammar.json, sittir's view of the parser, in agreement.
-`compiler/canonical-rules.ts`'s `canonicalGrammar` calls the same prune, so the
-model and the parser drop the same names.
-
-Called after every `tree-sitter generate` (`run-codegen.ts::runTreeSitterGenerate`).
-
-#### body
-
-```text
-// Names the grammar machinery references outside rule bodies — roots the
-// reachability walk must honor even when no surviving rule mentions them.
-// `conflicts:`/`inline:` deliberately do NOT root: wire registers every
-// visible-group mint there, so an orphaned mint would keep itself alive
-// through its own bookkeeping entries — those entries are dead alongside
-// the rule and are filtered below instead.
-```
-
 ### `packages/codegen/src/transpile/transpile-overrides.ts::module`
 
 Scaffolding that lets the tree-sitter CLI run a package's grammar layers. The CLI loads `.sittir/grammar.js` with its own `grammar()`/`seq()`/`choice()` globals; that file re-exports the top layer, and the `node` on `PATH` strips its types. The layers import the DSL and the upstream base grammar by relative path, so no stripped file lives under `node_modules`, where Node refuses to strip types. Every file a layer reaches must use erasable syntax only; each grammar's `tsconfig.grammar-sittir.json` enforces that.
+
+### `packages/codegen/src/transpile/prune-grammar-json.ts::TreeSitterGrammarDoc`
+
+The fields of a grammar that `treeSitterPruned` reads: a `grammar.json` document, or an evaluated grammar.
+
+### `packages/codegen/src/transpile/prune-grammar-json.ts::TreeSitterPrune`
+
+`treeSitterPruned`'s result: the pruned grammar and the names it dropped.
+
+### `packages/codegen/src/transpile/prune-grammar-json.ts::treeSitterPruned`
+
+The grammar tree-sitter keeps: the doc without the rules nothing reaches, and without their `inline` and `conflicts` entries (`util/reachable-rules.ts::pruneOrphanedRules`).
+The walk starts from every visible rule that isn't blank, and from the names the grammar references outside rule bodies: `extras`, `externals`, `precedences`, `supertypes` and `word`.
+`conflicts` and `inline` don't root it: wire registers every visible-group mint there, so an orphaned mint would keep itself alive through its own bookkeeping entries.
+Two populations are pruned: rules `injectPlaceholderHiddenRules` pre-registered for a placeholder that never deposited (a blank `_kw_<name>`, a blank alias mint for a member aliased in place, or a visible variant rule such as an unhoisted absent case), and enrich mints whose owner rule an override fully redeclares. Neither reaches parser.c or node-types.json.
+A doc nothing is pruned from comes back as it is; otherwise the copy keeps the doc's key order.
+`grammar.json` gets it after every generate (`pruneOrphanedPlaceholderRules`), and `evaluate-for-derivation.ts::grammarHash` hashes it, so a rule tree-sitter never receives can't move the resolutions' stamp.
+
+### `packages/codegen/src/transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules`
+
+Rewrites `.sittir/src/grammar.json` as `treeSitterPruned` gives it, when it prunes anything, so grammar.json, sittir's view of the parser, agrees with parser.c.
+`compiler/canonical-rules.ts`'s `canonicalGrammar` calls the same `pruneOrphanedRules`, so the model and the parser drop the same names.
+
+Called after every `tree-sitter generate` (`run-codegen.ts::runTreeSitterGenerate`).
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::writeFileIfChanged`
 
@@ -375,13 +374,9 @@ Orders two canonical values by their JSON text.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::grammarHash`
 
-```text
-sha256 of the canonical JSON of the evaluated grammar, without `conflicts` and
-without the derivation records, together with the tree-sitter CLI version.
-While every resolution is an AddConflict, `conflicts` is the only field the
-resolutions change, so the hash identifies everything the resolutions were
-derived from: the grammar and the CLI that builds its tables.
-```
+sha256 of the canonical JSON of the grammar tree-sitter sees (`prune-grammar-json.ts::treeSitterPruned` of the evaluated grammar), without `conflicts` and without the derivation records, together with the tree-sitter CLI version.
+While every resolution is an AddConflict, `conflicts` is the only field the resolutions change, so the hash identifies everything the resolutions were derived from: the grammar and the CLI that builds its tables.
+A rule tree-sitter never receives, such as a placeholder mint nothing deposited into, stays out of the hash, as it stays out of grammar.json.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::derivationInputsOf`
 
@@ -632,30 +627,30 @@ the target already has a scanner or the upstream ships none.
  */
 ```
 
+
+### `packages/codegen/src/transpile/prune-grammar-json.ts::TreeSitterGrammarDoc`
+
+The fields of a grammar that `treeSitterPruned` reads: a `grammar.json` document, or an evaluated grammar.
+
+### `packages/codegen/src/transpile/prune-grammar-json.ts::TreeSitterPrune`
+
+`treeSitterPruned`'s result: the pruned grammar and the names it dropped.
+
+### `packages/codegen/src/transpile/prune-grammar-json.ts::treeSitterPruned`
+
+The grammar tree-sitter keeps: the doc without the rules nothing reaches, and without their `inline` and `conflicts` entries (`util/reachable-rules.ts::pruneOrphanedRules`).
+The walk starts from every visible rule that isn't blank, and from the names the grammar references outside rule bodies: `extras`, `externals`, `precedences`, `supertypes` and `word`.
+`conflicts` and `inline` don't root it: wire registers every visible-group mint there, so an orphaned mint would keep itself alive through its own bookkeeping entries.
+Two populations are pruned: rules `injectPlaceholderHiddenRules` pre-registered for a placeholder that never deposited (a blank `_kw_<name>`, a blank alias mint for a member aliased in place, or a visible variant rule such as an unhoisted absent case), and enrich mints whose owner rule an override fully redeclares. Neither reaches parser.c or node-types.json.
+A doc nothing is pruned from comes back as it is; otherwise the copy keeps the doc's key order.
+`grammar.json` gets it after every generate (`pruneOrphanedPlaceholderRules`), and `evaluate-for-derivation.ts::grammarHash` hashes it, so a rule tree-sitter never receives can't move the resolutions' stamp.
+
 ### `packages/codegen/src/transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules`
 
-Prune the rules nothing reaches from `grammar.json`, with their `inline` and `conflicts` entries
-(`util/reachable-rules.ts::pruneOrphanedRules`).
-Two populations land here: rules `injectPlaceholderHiddenRules` pre-registered
-for a placeholder that never deposited (a blank `_kw_<name>`, or a visible
-variant rule such as an unhoisted absent case), and enrich mints whose owner
-rule an override fully redeclares. Neither reaches parser.c/node-types.json;
-pruning keeps grammar.json, sittir's view of the parser, in agreement.
-`compiler/canonical-rules.ts`'s `canonicalGrammar` calls the same prune, so the
-model and the parser drop the same names.
+Rewrites `.sittir/src/grammar.json` as `treeSitterPruned` gives it, when it prunes anything, so grammar.json, sittir's view of the parser, agrees with parser.c.
+`compiler/canonical-rules.ts`'s `canonicalGrammar` calls the same `pruneOrphanedRules`, so the model and the parser drop the same names.
 
 Called after every `tree-sitter generate` (`run-codegen.ts::runTreeSitterGenerate`).
-
-#### body
-
-```text
-// Names the grammar machinery references outside rule bodies — roots the
-// reachability walk must honor even when no surviving rule mentions them.
-// `conflicts:`/`inline:` deliberately do NOT root: wire registers every
-// visible-group mint there, so an orphaned mint would keep itself alive
-// through its own bookkeeping entries — those entries are dead alongside
-// the rule and are filtered below instead.
-```
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::writeFileIfChanged`
 
@@ -879,13 +874,9 @@ Orders two canonical values by their JSON text.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::grammarHash`
 
-```text
-sha256 of the canonical JSON of the evaluated grammar, without `conflicts` and
-without the derivation records, together with the tree-sitter CLI version.
-While every resolution is an AddConflict, `conflicts` is the only field the
-resolutions change, so the hash identifies everything the resolutions were
-derived from: the grammar and the CLI that builds its tables.
-```
+sha256 of the canonical JSON of the grammar tree-sitter sees (`prune-grammar-json.ts::treeSitterPruned` of the evaluated grammar), without `conflicts` and without the derivation records, together with the tree-sitter CLI version.
+While every resolution is an AddConflict, `conflicts` is the only field the resolutions change, so the hash identifies everything the resolutions were derived from: the grammar and the CLI that builds its tables.
+A rule tree-sitter never receives, such as a placeholder mint nothing deposited into, stays out of the hash, as it stays out of grammar.json.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::requireFromHere`
 

@@ -41,7 +41,7 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 const BINDINGS = `edits: {
 	let_item: { 1: field('name'), '2/0/1': field('annotation') },
-	call: { '0/0': alias(sym('identifier'), sym('callee')) }
+	call: { '0/0': alias('callee') }
 }`;
 const BOUND = { bindings: BINDINGS, renames: { let_item: 'binding' } };
 
@@ -139,14 +139,14 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 	}, 120_000);
 
 	it('refuses an alias whose target its base already names, as a blocking diagnostic of the layer', async () => {
-		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { call: { '0/0': alias(sym('identifier'), sym('type')) } }" });
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { call: { '0/0': alias('type') } }" });
 		expect(raw.layerDiagnostics).toContainEqual(
 			expect.objectContaining({ code: 'alias-target-invalid', canProceed: false, ownerKind: 'call', message: expect.stringMatching(/alias 'identifier' → 'type'.*already names/) })
 		);
 	}, 120_000);
 
 	it('refuses an alias that flips hiddenness in a layer above the first, and allows both in layer 1', async () => {
-		const flip = "edits: { call: { '0/0': alias(sym('identifier'), sym('_callee')) } }";
+		const flip = "edits: { call: { '0/0': alias('_callee') } }";
 		const above = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: flip });
 		expect(above.layerDiagnostics).toContainEqual(expect.objectContaining({ code: 'alias-target-invalid', message: expect.stringMatching(/flips hiddenness/) }));
 		const first = await evaluateSittirGrammar(baseModule, 'bindtest', flip);
@@ -200,7 +200,7 @@ describe('grammar bindings as the layer above grammar.sittir.ts', () => {
 		let_item: { 'left:/before': preference('tight'), '";"/before': preference('tight') },
 		_labels: { 'identifier/x:/separator': 'gap/separator' }
 	}`;
-		const bindings = `edits: { let_item: { 1: field('name'), 3: field('terminator') }, call: { '0/0': alias(sym('identifier'), sym('callee')) } }`;
+		const bindings = `edits: { let_item: { 1: field('name'), 3: field('terminator') }, call: { '0/0': alias('callee') } }`;
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', options, undefined, { bindings, renames: { let_item: 'binding' } });
 		const block = raw.options as Record<string, Record<string, unknown>>;
 		expect(Object.keys(block.let_item ?? {}).sort()).toEqual(['name:/before', 'terminator:/before']);

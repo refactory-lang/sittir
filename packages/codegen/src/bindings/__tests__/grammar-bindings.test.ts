@@ -306,7 +306,7 @@ describe('deriveGrammarBindings', () => {
 
 const EDITS: GrammarBindings['patches'] = new Map([
 	['let_item', [[{ path: '1', edit: { field: 'name' } }]]],
-	['call', [[{ path: '0/0', edit: { alias: { from: 'identifier', to: 'callee' } } }]]]
+	['call', [[{ path: '0/0', edit: { alias: 'callee' } }]]]
 ]);
 
 describe('printBindingsModule', () => {
@@ -328,7 +328,7 @@ export default grammar(
 	wire({
 		edits: {
 			let_item: { "1": field("name") },
-			call: { "0/0": alias(sym("identifier"), sym("callee")) },
+			call: { "0/0": alias("callee") },
 			parameters_elements: { ".": lead("item", "receiver", match("required_parameter", { "pattern": [match("this")] }, "this_parameter"), match("attributed_parameter", [match("self_parameter")])) }
 		}
 	})

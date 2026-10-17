@@ -1027,12 +1027,18 @@ content is minted like any other `alias()` target instead: the terminal
 becomes the hidden leaf rule `_<name>` (no `hoisted`, since it lexes as one
 token) and the arm becomes `alias($._<name>, $.<name>)`.
 
-Every branch's result — the lift rename, the inline mint, and the
+A symbol member that is not an enrich lift, read through enrich's field as above, is aliased in place (`aliasInPlace`): no rule is minted and nothing is relabelled, so a choice arm keeps the variant label it has.
+
+Every other branch's result — the lift rename, the inline mint, and the
 already-named-symbol upsert — passes through `relabelledArm` against
 `originalMember` before it is returned: when the arm being replaced carried
 a `variantOf`, the new shape gets the same owner and a `variant` name
 recomputed for its own display, so the resolved site keeps standing in for
 the arm it replaced instead of losing its label.
+
+### `packages/codegen/src/dsl/transform/transform.ts::aliasInPlace`
+
+`alias(name)` at a symbol member: the member becomes `alias(member, $.name)`, keeping what it carries. The alias renames that kind in option paths, so its effect `(from, to)` is recorded in every layer, and above the first layer the alias is checked (`refuseAliasTarget`).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::hoistedUnlessToken`
 
@@ -1382,7 +1388,7 @@ Whether a patch rewrites the text of the member it lands on: a replacement rule 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
 
-A replacing function (`ReplacingFn`) is called with the callback's `$` (`replacingDollar`) and the member, and its rule is resolved as a literal entry would be, so a rule that aliases the member's own symbol keeps the member. A patch that lands on a reference to a minted text token (`wireTextTokenOf`) and rewrites text (`rewritesText`) addresses through the mint. The patch is resolved against the minted rule's body and deposited (`wireDepositTextToken`), and the reference, with its annotations, stays in place. So a patch path written against the upstream token keeps working after enrich names the token. A `variant()` that lands on a minted reference lifts through the mint: it resolves against the token body (`wireTextTokenBody`, keeping the reference's annotations), so the variant kind carries the author's variant name and the token body. The minted rule it leaves unreferenced is blanked as a dead enrich mint.
+A replacing function (`ReplacingFn`) is called with the callback's `$` (`replacingDollar`) and the member, and its rule is resolved as a literal entry is: it replaces the member as written. A rule written as an `ALIAS` is such a rule too, and records no alias effect; `alias(name)` is the alias entry. A patch that lands on a reference to a minted text token (`wireTextTokenOf`) and rewrites text (`rewritesText`) addresses through the mint. The patch is resolved against the minted rule's body and deposited (`wireDepositTextToken`), and the reference, with its annotations, stays in place. So a patch path written against the upstream token keeps working after enrich names the token. A `variant()` that lands on a minted reference lifts through the mint: it resolves against the token body (`wireTextTokenBody`, keeping the reference's annotations), so the variant kind carries the author's variant name and the token body. The minted rule it leaves unreferenced is blanked as a dead enrich mint.
 
 
 #### body
@@ -1868,17 +1874,9 @@ Rewrites `choice(optional(x), optional(y), …, optional(n))` to `optional(choic
 
 Applies one patch set: records its sites, then applies it in path mode when any key is a path or any value a placeholder of the listed kinds, and flat otherwise. A flat set indexes the members of the first SEQ under the rule; on a CHOICE it indexes inside every arm, so a plain index there never selects an arm.
 
-### `packages/codegen/src/dsl/transform/transform.ts::isAliasOfSymbol`
-
-Whether a patch is an `alias()` of the same symbol the patched member is. `resolvePatch` then aliases the member itself, so the site keeps what it carries (variant labels, metadata) instead of taking the patch's bare symbol.
-
 ### `packages/codegen/src/dsl/transform/transform.ts::recordFieldEffect`
 
 The option-path segment a `field()` patch renames on the patched kind: an existing field's `name:`, a wrapped symbol's `kind:`, or a wrapped token's quoted text, each becoming the new field's `name:`. Recorded in every layer.
-
-### `packages/codegen/src/dsl/transform/transform.ts::recordAliasEffect`
-
-A named `alias()` of a symbol renames that kind in option paths; recorded in every layer. Above the first layer the alias is also checked (`refuseAliasTarget`).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::refuseAliasTarget`
 
