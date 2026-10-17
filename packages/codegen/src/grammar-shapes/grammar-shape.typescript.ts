@@ -11081,7 +11081,7 @@ export const typescriptGrammarShape = {
 			value: 'type_identifier'
 		}
 	},
-	supertypeNames: ['statement', 'declaration', 'expression', 'primary_expression', 'pattern', 'type', 'primary_type']
+	supertypes: ['statement', 'declaration', 'expression', 'primary_expression', 'pattern', 'type', 'primary_type']
 } as const satisfies GrammarJson;
 
 export type TypescriptGrammarShape = typeof typescriptGrammarShape;

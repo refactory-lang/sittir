@@ -46,7 +46,7 @@ fn check(language: &Language, source: &str) {
             assert_eq!(index + d, *expected_index);
         }
         let mut at = index + 1;
-        for position in 0..node.child_count() as u32 {
+        for position in 0..node.child_count() {
             let child = node.child(position).unwrap();
             let (expected, _) = nodes.iter().find(|(_, n)| *n == child).unwrap();
             assert_eq!(at, *expected, "child {position} of {index}");

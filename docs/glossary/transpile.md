@@ -188,7 +188,7 @@ A resolution tree-sitter offers for a conflict. `Precedence` and
 
 ```text
 The first unresolved conflict `generate` found, under the summary's
-`BuildTables.Conflict` key. `generate` stops at the first one, so each run
+`error.BuildTables.Conflict` key. `generate` stops at the first one, so each run
 reports at most one.
 ```
 
@@ -204,7 +204,8 @@ broken grammar, never something the loop resolves.
 ### `packages/codegen/src/transpile/conflict-summary.ts::GenerateSummary`
 
 ```text
-The slice of the `--json-summary` object the loop reads.
+The slice of the `--json-summary` object the loop reads: its `error`, beside
+the `diagnostics` list the loop ignores.
 ```
 
 ### `packages/codegen/src/transpile/conflict-summary.ts::lastSummary`
@@ -769,7 +770,7 @@ A resolution tree-sitter offers for a conflict. `Precedence` and
 
 ```text
 The first unresolved conflict `generate` found, under the summary's
-`BuildTables.Conflict` key. `generate` stops at the first one, so each run
+`error.BuildTables.Conflict` key. `generate` stops at the first one, so each run
 reports at most one.
 ```
 
@@ -785,7 +786,8 @@ broken grammar, never something the loop resolves.
 ### `packages/codegen/src/transpile/conflict-summary.ts::GenerateSummary`
 
 ```text
-The slice of the `--json-summary` object the loop reads.
+The slice of the `--json-summary` object the loop reads: its `error`, beside
+the `diagnostics` list the loop ignores.
 ```
 
 ### `packages/codegen/src/transpile/conflict-summary.ts::lastSummary`
