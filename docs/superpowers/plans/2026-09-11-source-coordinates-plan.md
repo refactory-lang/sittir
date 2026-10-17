@@ -4,22 +4,22 @@
 
 **Goal:** An untouched parsed node renders by slicing the source the native engine still holds, addressed by its tree handle and byte span, so no source text crosses the boundary in either direction and a rebuilt list takes its whitespace class from the bytes between its still-parsed items.
 
-**Architecture:** The slot carrier becomes `Coord(NodeCoordinate) | Transport(T)`, where a coordinate is a pure value: the tagged handle and the span. The reader captures text only for `pattern`-modeled kinds; every other kind rebuilds from its storage, and the JS projection folds each unedited subtree down to its coordinate. The render context (options table plus the engine's live trees) is an argument end to end: the prepare walk validates every coordinate against the live trees, classifies list gaps between still-parsed items into option values, then fills unset sites from the table; the typed render sink slices a coordinate's bytes at write time through the same source table. Bare strings in a slot that admits a text kind deserialize as a `VerbatimTransport`; anywhere else they are an error.
+**Architecture:** The slot carrier becomes `Coord(NodeCoordinate) | Node(T)`, where a coordinate is a pure value: the tagged handle and the span. The reader captures text only for `pattern`-modeled kinds; every other kind rebuilds from its storage, and the JS projection folds each unedited subtree down to its coordinate. The render context (options table plus the engine's live trees) is an argument end to end: the prepare walk validates every coordinate against the live trees, classifies list gaps between still-parsed items into option values, then fills unset sites from the table; the typed render sink slices a coordinate's bytes at write time through the same source table. Bare strings in a slot that admits a text kind deserialize as a `VerbatimNode`; anywhere else they are an error.
 
 **Tech Stack:** Rust (`sittir-core`, generated `sittir-{rust,typescript,python}` crates, napi-rs 3.12.4), TypeScript codegen (`packages/codegen`), the `@sittir/common` runtime, vitest, cargo.
 
 **Spec:** `docs/superpowers/specs/2026-08-26-text-content-vs-source-provenance.md` (the carrier, the fold, the walk, gap classification, gates 1–10). The read-side paragraph of `docs/superpowers/specs/2026-09-04-render-options-design.md` defers to it.
 
-**Lands on:** `docs/superpowers/plans/2026-09-11-typed-render-sink-plan.md`. Every render function already takes `w: &mut dyn RenderSink`, every transport implements `Render`, and the options table crosses as a generated per-address struct. This plan assumes that state.
+**Lands on:** `docs/superpowers/plans/2026-09-11-typed-render-sink-plan.md`. Every render function already takes `w: &mut dyn RenderSink`, every node implements `Render`, and the options table crosses as a generated per-address struct. This plan assumes that state.
 
 ## Rulings this plan encodes
 
 These are settled; do not re-open them inside a task.
 
-- **R1 — text is retained only for `pattern` kinds.** `is_text_kind` is `modelType === 'pattern'` on the model, *not* tree-sitter's `PATTERN` rule type: `token(seq(...))`, `alias(pattern)`, `repeat1(literal)` and external-scanner symbols are all `pattern`-modeled and all keep their text. `token` kinds render their declared literal (`literalText`), which the generated `FromNapiValue` already defaults a missing `$text` to. There is no hybrid escape hatch: the census in `.superpowers/sdd/2026-09-11-source-coordinates-plan/text-kind-inventory.md` found zero kinds with children that render `{{ text }}`, so the spec's `raw_string_literal` worry is empty at head. The compound empty-slot `transport_text` fast path is deleted with the compound `$text` field (Task 4), not reimplemented.
+- **R1 — text is retained only for `pattern` kinds.** `is_text_kind` is `modelType === 'pattern'` on the model, *not* tree-sitter's `PATTERN` rule type: `token(seq(...))`, `alias(pattern)`, `repeat1(literal)` and external-scanner symbols are all `pattern`-modeled and all keep their text. `token` kinds render their declared literal (`literalText`), which the generated `FromNapiValue` already defaults a missing `$text` to. There is no hybrid escape hatch: the census in `.superpowers/sdd/2026-09-11-source-coordinates-plan/text-kind-inventory.md` found zero kinds with children that render `{{ text }}`, so the spec's `raw_string_literal` worry is empty at head. The compound empty-slot `node_text` fast path is deleted with the compound `$text` field (Task 4), not reimplemented.
 - **R2 — the fixed-literal seam is a prerequisite.** rust `unit_expression` and `unit_type` carry the model literal `"( )"`. Task 0 fixes the derivation so it is `"()"` — before tokens stop reading `$text`.
 - **R3 — Gate 8 measures across a replaced item.** A rebuilt list measures the gap between the *nearest surviving coordinates* on each side of a replaced run, not only between adjacent pairs. Only the edited node detaches its coordinate; its neighbours keep theirs, and the bytes between those neighbours still spell the source's separator spacing.
-- **R4 — the coordinate-key strip moves into Task 4.** Task 4 (emitters) and Task 5 (fold) are coupled: the moment `$nodeHandle` on a wire object selects the `Coord` arm, a storage-bearing node that still carries `$nodeHandle` would render its pre-edit bytes. Rather than merge the two tasks into one commit spanning the emitter, the core carrier, three regenerated grammars *and* the JS runtime, Task 4 takes the one line that fixes the wire — `projectValue` deletes `$nodeHandle`, `$span` and `$childIndex` from every node that carries storage, exactly as it deletes `$text` today. That keeps both commits' `validate:history` numbers identical (Task 4: untouched subtrees already project with no storage and a `$nodeHandle`, so they take `Coord` and slice the same bytes their `$text` spelled; storage-bearing nodes lose the keys and take `Transport` as before), and keeps the two review surfaces — Rust/emitter versus JS runtime — separable.
+- **R4 — the coordinate-key strip moves into Task 4.** Task 4 (emitters) and Task 5 (fold) are coupled: the moment `$nodeHandle` on a wire object selects the `Coord` arm, a storage-bearing node that still carries `$nodeHandle` would render its pre-edit bytes. Rather than merge the two tasks into one commit spanning the emitter, the core carrier, three regenerated grammars *and* the JS runtime, Task 4 takes the one line that fixes the wire — `projectValue` deletes `$nodeHandle`, `$span` and `$childIndex` from every node that carries storage, exactly as it deletes `$text` today. That keeps both commits' `validate:history` numbers identical (Task 4: untouched subtrees already project with no storage and a `$nodeHandle`, so they take `Coord` and slice the same bytes their `$text` spelled; storage-bearing nodes lose the keys and take `Node` as before), and keeps the two review surfaces — Rust/emitter versus JS runtime — separable.
 - **R5 — every carried-in item has an implementing step.** (a) Task 7, (b) and (g) Task 9, (c) Task 8, (d) Task 4, (e) Task 4, (f) Task 3.
 
 ## Global Constraints
@@ -48,7 +48,7 @@ Claude-Session: https://claude.ai/code/session_01GXSJTsC4QVWJNu8wXmMQrn
 | --- | --- |
 | `packages/codegen/src/util/word-matcher.ts` | `wordCharClass` — the one word-character predicate, shared by the emitted table and the fixed-literal join |
 | `packages/codegen/src/dsl/rule-patterns.ts` | `collectFixedLiteral` joins a literal SEQ at word boundaries only |
-| `rust/crates/sittir-core/src/slot.rs` | `NodeCoordinate`; `SlotValue::{Coord, Transport}`; shape-directed `FromNapiValue`; `Render` |
+| `rust/crates/sittir-core/src/slot.rs` | `NodeCoordinate`; `SlotValue::{Coord, Node}`; shape-directed `FromNapiValue`; `Render` |
 | `rust/crates/sittir-core/src/render.rs` | `SourceTable`, `CoordinateError`, `RenderSink::slice`, `RenderSink::dedent(seam)`, `RenderError::Coordinate` |
 | `rust/crates/sittir-core/src/spacing.rs` | the writer holds the source table, implements `slice`, and owns the one dedent-seam derivation |
 | `rust/crates/sittir-core/src/prepare.rs` (new) | `RenderContext`, the `Prepare` trait and its blanket impls |
@@ -58,11 +58,11 @@ Claude-Session: https://claude.ai/code/session_01GXSJTsC4QVWJNu8wXmMQrn
 | `rust/crates/sittir-core/src/read_node.rs` | `ReadModel`; text captured only for `pattern` kinds; a slot's separator is not seated |
 | `rust/crates/sittir-core/src/napi_engine.rs` | `render` builds the `RenderContext` from its tree map |
 | `rust/crates/sittir-core/tests/{prepare,classify}.rs` (new), `tests/options.rs` (deleted) | core tests |
-| `packages/codegen/src/emitters/render-module.ts` | transports without inert metadata fields; `Prepare` impls with gap classification; `VerbatimTransport`; render entry and dispatch taking the context |
+| `packages/codegen/src/emitters/render-module.ts` | nodes without inert metadata fields; `Prepare` impls with gap classification; `VerbatimNode`; render entry and dispatch taking the context |
 | `packages/codegen/src/emitters/render-options-rs.ts` | `pub fn allowed(site) -> &'static [u16]` |
 | `packages/codegen/src/emitters/kind-id-rust.ts` | `is_text_kind`, `is_slot_separator` |
 | `packages/codegen/src/emitters/is.ts`, `wrap.ts` | node test and supertype-stub gate keyed on the coordinate |
-| `packages/common/src/transport-data.ts` | the fold: `foldsToCoordinate`, `isUntouchedBelow`, `asCoordinate`, `markEdited` detaches the coordinate |
+| `packages/common/src/node-data.ts` | the fold: `foldsToCoordinate`, `isUntouchedBelow`, `asCoordinate`, `markEdited` detaches the coordinate |
 | `packages/common/src/readNode.ts`, `engine.ts` | `SITTIR_DEBUG_TEXT` gone; `ParsedRoot` has no `$text` |
 | `rust/crates/sittir-<g>/src/lib.rs` (three, hand-written) | `ReadModel` delegates to the generated tables |
 | `packages/tools/src/validate/{common,from,factory-render-parse}.ts`, `packages/tools/src/emit/factory-source.ts` | structural text read from `tree.source` by span |
@@ -276,10 +276,10 @@ for g in typescript rust python; do SITTIR_NATIVE_DEBUG=0 pnpm exec tsx packages
 
 ```bash
 rtk git diff --stat -- packages/rust/src packages/typescript/src packages/python/src rust/crates/sittir-rust/src/render rust/crates/sittir-typescript/src/render rust/crates/sittir-python/src/render
-git diff -U0 -- rust/crates/sittir-rust/src/render/transport.rs | awk '/^[+-][^+-]/' | sort -u | head -40
+git diff -U0 -- rust/crates/sittir-rust/src/render/node.rs | awk '/^[+-][^+-]/' | sort -u | head -40
 ```
 
-Expected: every changed literal loses a space at a boundary where at least one flank is punctuation. `"( )"` → `"()"` on `UnitExpressionTransport` and `UnitTypeTransport`. `"raw const"` is unchanged. Any changed literal whose two flanks are both word-shaped is a finding — stop and report it rather than proceeding.
+Expected: every changed literal loses a space at a boundary where at least one flank is punctuation. `"( )"` → `"()"` on `UnitExpressionNode` and `UnitTypeNode`. `"raw const"` is unchanged. Any changed literal whose two flanks are both word-shaped is a finding — stop and report it rather than proceeding.
 
 - [ ] **Step 7: Build, suite, gates**
 
@@ -356,7 +356,7 @@ Claude-Session: https://claude.ai/code/session_01GXSJTsC4QVWJNu8wXmMQrn" -- pack
   // engine.rs
   pub fn encode_handle(tree_id: u32, index: u32) -> u64;
   ```
-  `Node` and `Verbatim` survive until Task 4 so the generated crates keep compiling; `Coord` is dispatched first on the wire. Task 2 consumes `NodeCoordinate::{resolve, tree_id, span}` and `SourceTable`. Task 4 renames `Node` to `Transport` and deletes `Verbatim`.
+  `Node` and `Verbatim` survive until Task 4 so the generated crates keep compiling; `Coord` is dispatched first on the wire. Task 2 consumes `NodeCoordinate::{resolve, tree_id, span}` and `SourceTable`. Task 4 renames `Node` to `Node` and deletes `Verbatim`.
 
 - [ ] **Step 1: Write the failing unit tests**
 
@@ -583,7 +583,7 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// The content is in the tree: the sink slices it from the source the
     /// engine still holds.
     Coord(NodeCoordinate),
-    /// A node with its own storage — renders through its transport type.
+    /// A node with its own storage — renders through its native node type.
     Node(T),
     /// Text emitted as-is: a bare string a factory wrote into the slot.
     Verbatim(String),
@@ -628,7 +628,7 @@ and to `Render for SlotValue`:
 In `FromNapiValue`, dispatch the coordinate shape first, before the existing offer-to-`T` body:
 
 ```rust
-        let value_type = unsafe { transport_value_type(env, napi_val)? };
+        let value_type = unsafe { node_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
             let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
             if let Some(handle) = obj.get::<f64>("$nodeHandle")? {
@@ -741,7 +741,7 @@ Two contracts settled before a line is written:
   // engine.rs
   impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>>;
   ```
-  Task 4 generates `Prepare` impls and calls `render_transport_parts(transport, &RenderContext)`. Task 8 emits `classify_list_gaps` calls with `&options::WHITESPACE` as the table.
+  Task 4 generates `Prepare` impls and calls `render_node_parts(node, &RenderContext)`. Task 8 emits `classify_list_gaps` calls with `&options::WHITESPACE` as the table.
 
 - [ ] **Step 1: Write the failing prepare tests**
 
@@ -1009,7 +1009,7 @@ use crate::options::ResolvedOptions;
 use crate::render::{CoordinateError, SourceTable};
 use crate::slot::SlotValue;
 
-/// Everything a render reads that is not the transport itself.
+/// Everything a render reads that is not the node itself.
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
@@ -1510,11 +1510,11 @@ Claude-Session: https://claude.ai/code/session_01GXSJTsC4QVWJNu8wXmMQrn" -- rust
 The largest task in the plan and the one that regenerates. It does six things
 that must land together, because each of them alone would move the numbers:
 
-1. the carrier keeps two arms, `Coord` and `Transport`, and deserializes by shape;
-2. transports stop declaring the five inert metadata fields, and compounds stop declaring `$text` — with which the empty-slot `transport_text` fast path goes, closing the depth leak it caused;
+1. the carrier keeps two arms, `Coord` and `Node`, and deserializes by shape;
+2. nodes stop declaring the five inert metadata fields, and compounds stop declaring `$text` — with which the empty-slot `node_text` fast path goes, closing the depth leak it caused;
 3. depth tokens stop carrying the sentinel as a `$text` default — the depth fact is the kind id the sink already dispatches on;
 4. `FillOptions` becomes `Prepare` and the render context is an argument from `napi_engine` down;
-5. `VerbatimTransport` returns for slots that admit a text kind, and free text anywhere else is an error;
+5. `VerbatimNode` returns for slots that admit a text kind, and free text anywhere else is an error;
 6. `projectValue` strips `$nodeHandle`, `$span` and `$childIndex` from every node that carries storage, so the new `Coord` dispatch never sees a rebuilt node wearing a stale coordinate.
 
 Point 6 is the half of Task 5 that has to be here: without it, a node whose
@@ -1530,89 +1530,89 @@ now takes the `Coord` arm, slicing exactly the bytes its `$text` spelled. A
 deep read still rebuilds every level, as it does today.
 
 **Files:**
-- Modify: `packages/codegen/src/emitters/render-module.ts` — `TRANSPORT_METADATA_FIELDS`, `TransportMetadataField`, `renderTransportMetadataFields`, `renderLeafTransportPlainFields`, `renderLeafTransportNapiImpls`, `leafDefaultTextLiteral`, `renderTransportDataStruct`, `buildTypedTemplateBody`, `buildSlotWriteCall`, `seatLoops`, `seatVariantArms`, `armSeamSupport`, `fillOptionsStructImpl` → `prepareStructImpl`, `fillOptionsEnumImpl` → `prepareEnumImpl`, `noopFillOptionsImpl` → `inertPrepareImpl`, `emitPerSlotChildEnum`, `emitSupertypeTransportEnum`, `emitTransportEnumFromNapiValueBody`, `renderTransportSupport`, `renderTypedDispatch`, `renderTransportEntry`, `renderTriviaTransportSupport`
+- Modify: `packages/codegen/src/emitters/render-module.ts` — `TRANSPORT_METADATA_FIELDS`, `NodeMetadataField`, `renderNodeMetadataFields`, `renderLeafNodePlainFields`, `renderLeafNodeNapiImpls`, `leafDefaultTextLiteral`, `renderNodeDataStruct`, `buildTypedTemplateBody`, `buildSlotWriteCall`, `seatLoops`, `seatVariantArms`, `armSeamSupport`, `fillOptionsStructImpl` → `prepareStructImpl`, `fillOptionsEnumImpl` → `prepareEnumImpl`, `noopFillOptionsImpl` → `inertPrepareImpl`, `emitPerSlotChildEnum`, `emitSupertypeNodeEnum`, `emitNodeEnumFromNapiValueBody`, `renderNodeSupport`, `renderTypedDispatch`, `renderNodeEntry`, `renderTriviaNodeSupport`
 - Modify: `packages/codegen/src/emitters/render-options-rs.ts` (`allowed`)
 - Modify: `rust/crates/sittir-core/src/slot.rs`, `src/prepare.rs`, `src/options.rs`, `src/napi_engine.rs`
 - Delete: `rust/crates/sittir-core/tests/options.rs`
-- Modify: `rust/crates/sittir-core/tests/prepare.rs` (`Node` → `Transport`)
+- Modify: `rust/crates/sittir-core/tests/prepare.rs` (`Node` → `Node`)
 - Create: `rust/crates/sittir-python/tests/depth_balance.rs`
-- Modify: `packages/common/src/transport-data.ts` (`projectValue` only)
+- Modify: `packages/common/src/node-data.ts` (`projectValue` only)
 - Modify: `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, `__tests__/render-options-rs.test.ts`
 - Modify: `docs/glossary/emitters.md`
 
 **Interfaces:**
 - Consumes: `NodeCoordinate`, `SlotValue::Coord`, `SourceTable`, `CoordinateError`, `RenderSink::slice`, `SpacingWriter::with_sources` (Task 1); `Prepare`, `RenderContext` (Task 2); `RenderSink::dedent(seam)` (Task 3).
-- Produces, in every generated `transport.rs`:
+- Produces, in every generated `node.rs`:
   ```rust
-  pub struct VerbatimTransport { pub text: String }
-  pub enum <Owner><Slot>TransportSlot { …, Verbatim(VerbatimTransport) }   // only when a member is pattern-modeled
-  impl ::sittir_core::prepare::Prepare for <every transport type> {
+  pub struct VerbatimNode { pub text: String }
+  pub enum <Owner><Slot>NodeSlot { …, Verbatim(VerbatimNode) }   // only when a member is pattern-modeled
+  impl ::sittir_core::prepare::Prepare for <every node type> {
       fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError>
   }
-  pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError>
-  pub fn render_transport_parts(mut transport: RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(TransportSource, String), ::sittir_core::render::RenderError>
+  pub fn render_node_dispatch(node: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError>
+  pub fn render_node_parts(mut node: RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(NodeSource, String), ::sittir_core::render::RenderError>
   ```
   and in every generated `options.rs`: `pub fn allowed(site: usize) -> &'static [u16] { SPACING_SITES[site].4 }`.
-  In core: `pub enum SlotValue<T, const ADJACENT: bool = false> { Coord(NodeCoordinate), Transport(T) }` with `coord()`, `transport()`, `transport_or_write(w)`.
-  In `@sittir/common`: `toTransportData` no longer lets `$nodeHandle`, `$span` or `$childIndex` cross on a node that carries storage.
+  In core: `pub enum SlotValue<T, const ADJACENT: bool = false> { Coord(NodeCoordinate), Node(T) }` with `coord()`, `node()`, `node_or_write(w)`.
+  In `@sittir/common`: `toNodeData` no longer lets `$nodeHandle`, `$span` or `$childIndex` cross on a node that carries storage.
   Task 5 consumes the `Coord`-on-`$nodeHandle` dispatch. Task 8 adds gap classification inside `prepareStructImpl`.
 
 - [ ] **Step 1: Write the failing emitter tests**
 
-In `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, inside `describe('the typed sink replaces the mark-based Display path', …)`, add five `it`s. Each fetches its own source — there is no shared `transportRs` binding in this file; every case calls `await getRustTemplatesRs()` (or `getTypescriptTransportRs()`) itself.
+In `packages/codegen/src/emitters/__tests__/render-module-emit.test.ts`, inside `describe('the typed sink replaces the mark-based Display path', …)`, add five `it`s. Each fetches its own source — there is no shared `nodeRs` binding in this file; every case calls `await getRustTemplatesRs()` (or `getTypescriptNodeRs()`) itself.
 
 ```ts
-	it('carries every slot as Coord or Transport and never a bare string', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).not.toContain('SlotValue::Node(');
-		expect(transportRs).not.toContain('SlotValue::Verbatim(');
-		expect(transportRs).toContain('SlotValue::Transport(');
+	it('carries every slot as Coord or Node and never a bare string', async () => {
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).not.toContain('SlotValue::Node(');
+		expect(nodeRs).not.toContain('SlotValue::Verbatim(');
+		expect(nodeRs).toContain('SlotValue::Node(');
 	});
 
-	it('declares no inert metadata on transports', async () => {
-		const transportRs = await getRustTemplatesRs();
+	it('declares no inert metadata on nodes', async () => {
+		const nodeRs = await getRustTemplatesRs();
 		for (const field of [
-			'transport_span',
-			'transport_node_handle',
-			'transport_child_index',
-			'transport_source',
-			'transport_named'
+			'node_span',
+			'node_node_handle',
+			'node_child_index',
+			'node_source',
+			'node_named'
 		]) {
-			expect(transportRs).not.toContain(`pub ${field}:`);
+			expect(nodeRs).not.toContain(`pub ${field}:`);
 		}
-		expect(transportRs).toContain('pub transport_trivia_data: Option<TransportTrivia>');
-		expect(transportRs).not.toContain('pub transport_text: Option<String>');
+		expect(nodeRs).toContain('pub node_trivia_data: Option<NodeTrivia>');
+		expect(nodeRs).not.toContain('pub node_text: Option<String>');
 	});
 
 	it('reads a depth token off its kind and not off a sentinel default', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
-		expect(transportRs).toContain('{ w.dedent("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }');
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u);
+		expect(nodeRs).toContain('{ w.dedent("\\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }');
 	});
 
-	it('prepares every transport through the render context and renders with its sources', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).not.toContain('FillOptions');
-		expect(transportRs).toContain('impl ::sittir_core::prepare::Prepare for FunctionItemTransport {');
-		expect(transportRs).toContain(
+	it('prepares every node through the render context and renders with its sources', async () => {
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).not.toContain('FillOptions');
+		expect(nodeRs).toContain('impl ::sittir_core::prepare::Prepare for FunctionItemNode {');
+		expect(nodeRs).toContain(
 			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
 		);
-		expect(transportRs).toContain('.get_or_insert(ctx.options.spacing[options::');
-		expect(transportRs).toContain(
-			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+		expect(nodeRs).toContain('.get_or_insert(ctx.options.spacing[options::');
+		expect(nodeRs).toContain(
+			"pub fn render_node_dispatch(node: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
-		expect(transportRs).toContain(
+		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
 		);
 	});
 
 	it('admits verbatim text only where a slot admits a pattern kind', async () => {
-		const transportRs = await getRustTemplatesRs();
-		expect(transportRs).toContain('pub struct VerbatimTransport {');
+		const nodeRs = await getRustTemplatesRs();
+		expect(nodeRs).toContain('pub struct VerbatimNode {');
 		// FunctionItem.name admits identifier and metavariable, both pattern-modeled.
-		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
+		expect(nodeRs).toMatch(/pub enum FunctionItemNameNodeSlot \{[^}]*Verbatim\(VerbatimNode\),/s);
 		// MacroDefinition.content admits three envelopes and no pattern kind.
-		expect(transportRs).toMatch(/pub enum MacroDefinitionContentTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
+		expect(nodeRs).toMatch(/pub enum MacroDefinitionContentNodeSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 ```
 
@@ -1622,14 +1622,14 @@ Update the two existing cases in this file that pin the old signatures:
 
 ```ts
 	it('the render entry prepares the tree through the context before dispatch', async () => {
-		const src = await getTypescriptTransportRs();
-		expect(src).toContain('pub fn render_transport_parts(');
+		const src = await getTypescriptNodeRs();
+		expect(src).toContain('pub fn render_node_parts(');
 		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
-		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;');
+		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;');
 	});
 ```
 
-- in `it('renders through the typed sink and writes no mark character', …)`, delete the `depthDefaultLine` strip and the `withoutStampedIdentityDefaults` construction (the sentinel no longer appears anywhere), assert `expect(transportRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u)` on the raw source, and update the two signature assertions to the `ctx` spellings above.
+- in `it('renders through the typed sink and writes no mark character', …)`, delete the `depthDefaultLine` strip and the `withoutStampedIdentityDefaults` construction (the sentinel no longer appears anywhere), assert `expect(nodeRs).not.toMatch(/[\u{FFFE}\u{FDD0}-\u{FDD3}]/u)` on the raw source, and update the two signature assertions to the `ctx` spellings above.
 
 In `packages/codegen/src/emitters/__tests__/render-options-rs.test.ts` add a case. `plan` and `addresses` are built inside each `it` in this file, never at describe scope, so build them here too, copying the two lines from the neighbouring case:
 
@@ -1667,18 +1667,18 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// engine still holds.
     Coord(NodeCoordinate),
     /// The content is in this message.
-    Transport(T),
+    Node(T),
 }
 ```
 
-Rename `node()` → `transport()` and `node_or_write()` → `transport_or_write()`; delete `captured_source_text` and `write_verbatim`; rewrite the module doc to say the content is either in the tree or in the message, and that free text is a transport that admits it. `FromNapiValue` becomes shape-directed with no fallback:
+Rename `node()` → `node()` and `node_or_write()` → `node_or_write()`; delete `captured_source_text` and `write_verbatim`; rewrite the module doc to say the content is either in the tree or in the message, and that free text is a native node that admits it. `FromNapiValue` becomes shape-directed with no fallback:
 
 ```rust
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let value_type = unsafe { transport_value_type(env, napi_val)? };
+        let value_type = unsafe { node_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
             let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
             if let Some(handle) = obj.get::<f64>("$nodeHandle")? {
@@ -1689,22 +1689,22 @@ Rename `node()` → `transport()` and `node_or_write()` → `transport_or_write(
                 return Ok(Self::Coord(NodeCoordinate::new(handle, span)));
             }
         }
-        Ok(Self::Transport(unsafe { T::from_napi_value(env, napi_val)? }))
+        Ok(Self::Node(unsafe { T::from_napi_value(env, napi_val)? }))
     }
 ```
 
-Update the slot unit tests: `SlotValue::Node(Word(..))` → `SlotValue::Transport(Word(..))`, delete `verbatim_renders_its_text`, rename `node_or_write_writes_only_the_verbatim_case` to `transport_or_write_writes_only_the_coordinate_case` and rewrite it against a coordinate:
+Update the slot unit tests: `SlotValue::Node(Word(..))` → `SlotValue::Node(Word(..))`, delete `verbatim_renders_its_text`, rename `node_or_write_writes_only_the_verbatim_case` to `node_or_write_writes_only_the_coordinate_case` and rewrite it against a coordinate:
 
 ```rust
     #[test]
-    fn transport_or_write_writes_only_the_coordinate_case() {
+    fn node_or_write_writes_only_the_coordinate_case() {
         let sources = Sources(HashMap::from([(1, Arc::from("raw"))]));
         let mut buf = String::new();
         let mut w = SpacingWriter::new(&mut buf, WordMatcher::default_ident())
             .with_table(&TABLE)
             .with_sources(&sources);
-        let node: SlotValue<Word> = SlotValue::Transport(Word("fn"));
-        assert!(node.transport_or_write(&mut w).unwrap().is_some());
+        let node: SlotValue<Word> = SlotValue::Native node(Word("fn"));
+        assert!(node.node_or_write(&mut w).unwrap().is_some());
         w.finish().unwrap();
         assert_eq!(buf, "");
 
@@ -1714,15 +1714,15 @@ Update the slot unit tests: `SlotValue::Node(Word(..))` → `SlotValue::Transpor
             .with_sources(&sources);
         let coord: SlotValue<Word> =
             SlotValue::Coord(NodeCoordinate::new(encode_handle(1, 0), Span { start: 0, end: 3 }));
-        assert!(coord.transport_or_write(&mut w2).unwrap().is_none());
+        assert!(coord.node_or_write(&mut w2).unwrap().is_none());
         w2.finish().unwrap();
         assert_eq!(buf2, "raw");
     }
 ```
 
-`prepare.rs`: the `SlotValue` impl becomes two arms — `Coord(coord) => coord.resolve(ctx.sources).map(|_| ())` and `Transport(t) => t.prepare(ctx)`.
+`prepare.rs`: the `SlotValue` impl becomes two arms — `Coord(coord) => coord.resolve(ctx.sources).map(|_| ())` and `Node(t) => t.prepare(ctx)`.
 
-`tests/prepare.rs`: `SlotValue::Node(Leaf)` → `SlotValue::Transport(Leaf)`.
+`tests/prepare.rs`: `SlotValue::Node(Leaf)` → `SlotValue::Node(Leaf)`.
 
 `options.rs`: delete `FillOptions` and every impl of it; keep `ResolvedOptions` and `reject_unknown_keys`; the module doc becomes "Resolved render options: one whitespace kind id per spacing site, one bitflag per flank site, and the indentation unit." Delete `rust/crates/sittir-core/tests/options.rs` — every behaviour it pinned (an unset site takes the table, a set site keeps its wire value) is now pinned by `tests/prepare.rs`, and `reject_unknown_keys` is covered by the per-grammar options tests, not by that file.
 
@@ -1738,8 +1738,8 @@ Update the slot unit tests: `SlotValue::Node(Word(..))` → `SlotValue::Transpor
                     None => self.engine.options(),
                 };
                 let ctx = $crate::prepare::RenderContext { options: table, sources: &self.trees };
-                let (source, canonical) = $render_parts(transport, &ctx).map_err(|e| {
-                    ::napi::Error::from_reason(format!("render_transport failed: {e}"))
+                let (source, canonical) = $render_parts(node, &ctx).map_err(|e| {
+                    ::napi::Error::from_reason(format!("render_node failed: {e}"))
                 })?;
 ```
 
@@ -1750,17 +1750,17 @@ Update the slot unit tests: `SlotValue::Node(Word(..))` → `SlotValue::Transpor
 `TRANSPORT_METADATA_FIELDS` keeps one entry:
 
 ```ts
-const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
+const TRANSPORT_METADATA_FIELDS: readonly NodeMetadataField[] = [
+	{ jsName: '$_trivia', rustName: 'node_trivia_data', rustType: 'Option<NodeTrivia>' }
 ];
 ```
 
-`TransportMetadataField` loses `bridgeMap` and `needsExplicitTypeAnnotation` — both existed only for the dropped coordinate fields.
+`NodeMetadataField` loses `bridgeMap` and `needsExplicitTypeAnnotation` — both existed only for the dropped coordinate fields.
 
-`renderTransportMetadataFields` currently reads the array by index (`[0]` = `$source`, `[1]` = `$named`, then text, then `.slice(2)`). That body must be rewritten, not just fed a shorter array, or the reads silently pick the wrong field:
+`renderNodeMetadataFields` currently reads the array by index (`[0]` = `$source`, `[1]` = `$named`, then text, then `.slice(2)`). That body must be rewritten, not just fed a shorter array, or the reads silently pick the wrong field:
 
 ```ts
-function renderTransportMetadataFields(includeText: boolean): string[] {
+function renderNodeMetadataFields(includeText: boolean): string[] {
 	const lines: string[] = [];
 	for (const f of TRANSPORT_METADATA_FIELDS) {
 		lines.push(
@@ -1778,15 +1778,15 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
 }
 ```
 
-and its one compound caller in `renderTransportDataStruct` passes `false`:
-`lines.push(...renderTransportMetadataFields(false));`. A leaf struct keeps its own `text: String` — that field is the leaf's content, not metadata.
+and its one compound caller in `renderNodeDataStruct` passes `false`:
+`lines.push(...renderNodeMetadataFields(false));`. A leaf struct keeps its own `text: String` — that field is the leaf's content, not metadata.
 
-`renderLeafTransportNapiImpls` iterates `TRANSPORT_METADATA_FIELDS` at five sites (the release `Ok(Self { … })`, the two boolean-literal `Self { … }` early returns, the debug-transport `let <field> = obj.get(…)` block, and the debug-transport `Ok(Self { … })`). With one entry the loops still work, but two of them special-case `transport_named`, which no longer exists: delete those branches, so the release constructor is `Ok(Self { transport_trivia_data: __trivia, text })` and each boolean early return is `Self { transport_trivia_data: None, text: … }`. Delete the now-unused `named` binding the emitter computed for those branches.
+`renderLeafNodeNapiImpls` iterates `TRANSPORT_METADATA_FIELDS` at five sites (the release `Ok(Self { … })`, the two boolean-literal `Self { … }` early returns, the debug-node `let <field> = obj.get(…)` block, and the debug-node `Ok(Self { … })`). With one entry the loops still work, but two of them special-case `node_named`, which no longer exists: delete those branches, so the release constructor is `Ok(Self { node_trivia_data: __trivia, text })` and each boolean early return is `Self { node_trivia_data: None, text: … }`. Delete the now-unused `named` binding the emitter computed for those branches.
 
-`renderLeafTransportPlainFields` becomes:
+`renderLeafNodePlainFields` becomes:
 
 ```ts
-function renderLeafTransportPlainFields(): string[] {
+function renderLeafNodePlainFields(): string[] {
 	return [...TRANSPORT_METADATA_FIELDS.map((f) => `    pub ${f.rustName}: ${f.rustType},`), '    pub text: String,'];
 }
 ```
@@ -1795,17 +1795,17 @@ The compound `$text` field is gone, so the empty-slots fast path that read it go
 
 ```rust
     if <every slot empty> {
-        if let Some(text) = node.transport_text.as_deref() {
+        if let Some(text) = node.node_text.as_deref() {
             return w.text(text);
         }
     }
 ```
 
-along with the `struct.hasText` / `node.transport_text` bindings that fed it. That early `return` is also the depth leak: python's `render_suite_block` opens an indent and calls `render_block`, whose fast path returned before `w.dedent()`, leaving depth +1 for the rest of the render. Step 7 pins that it is gone.
+along with the `struct.hasText` / `node.node_text` bindings that fed it. That early `return` is also the depth leak: python's `render_suite_block` opens an indent and calls `render_block`, whose fast path returned before `w.dedent()`, leaving depth +1 for the rest of the render. Step 7 pins that it is gone.
 
-Search the file for every remaining `transport_source`, `transport_named`, `transport_span`, `transport_node_handle`, `transport_child_index` and `transport_text` spelling (`ToNapiValue` impls, `renderTriviaTransportSupport`, the `bridgeMap` consumers, the `debug-transport` impls) and remove those fields there too.
+Search the file for every remaining `node_source`, `node_named`, `node_span`, `node_node_handle`, `node_child_index` and `node_text` spelling (`ToNapiValue` impls, `renderTriviaNodeSupport`, the `bridgeMap` consumers, the `debug-node` impls) and remove those fields there too.
 
-Carrier spelling: replace every `SlotValue::Node(` with `SlotValue::Transport(` (`seatVariantArms`, `seatLoops`), `.node()` with `.transport()` (the backing-field bind in `buildTypedTemplateBody`) and `node_or_write` with `transport_or_write` (`buildSlotWriteCall`).
+Carrier spelling: replace every `SlotValue::Node(` with `SlotValue::Node(` (`seatVariantArms`, `seatLoops`), `.node()` with `.node()` (the backing-field bind in `buildTypedTemplateBody`) and `node_or_write` with `node_or_write` (`buildSlotWriteCall`).
 
 Depth tokens stop shipping a sentinel default:
 
@@ -1902,30 +1902,30 @@ function inertPrepareImpl(typeName: string): string[] {
 }
 ```
 
-In `seatVariantArms` the seat line becomes `t.<field>.get_or_insert(ctx.options.spacing[options::…]);` and the `if let ::sittir_core::SlotValue::Node(seated) = item` guard in `seatLoops` becomes `SlotValue::Transport(seated)`. `armSeamSupport`'s `Seamed<T>` `FillOptions` impl becomes a `Prepare` impl reading `ctx.options.spacing` and returning `Ok(())`.
+In `seatVariantArms` the seat line becomes `t.<field>.get_or_insert(ctx.options.spacing[options::…]);` and the `if let ::sittir_core::SlotValue::Node(seated) = item` guard in `seatLoops` becomes `SlotValue::Node(seated)`. `armSeamSupport`'s `Seamed<T>` `FillOptions` impl becomes a `Prepare` impl reading `ctx.options.spacing` and returning `Ok(())`.
 
 `renderTypedDispatch`'s root:
 
 ```rust
-pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+pub fn render_node_dispatch(node: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
     let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources);
-    transport.render(&mut w)?;
+    node.render(&mut w)?;
     w.finish()?;
     Ok(s)
 }
 ```
 
-`renderTransportEntry`:
+`renderNodeEntry`:
 
 ```rust
-pub fn render_transport_parts(
-    mut transport: RenderRoot,
+pub fn render_node_parts(
+    mut node: RenderRoot,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-) -> Result<(TransportSource, String), ::sittir_core::render::RenderError> {
-    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;
-    let rendered = render_transport_dispatch(&transport, ctx)?;
-    Ok((TransportSource::Factory, rendered))
+) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
+    ::sittir_core::prepare::Prepare::prepare(&mut node, ctx)?;
+    let rendered = render_node_dispatch(&node, ctx)?;
+    Ok((NodeSource::Factory, rendered))
 }
 ```
 
@@ -1937,44 +1937,44 @@ pub fn allowed(site: usize) -> &'static [u16] {
 }
 ```
 
-- [ ] **Step 6: Emitter — `VerbatimTransport`**
+- [ ] **Step 6: Emitter — `VerbatimNode`**
 
-In `renderTransportSupport`, before the per-slot enums, emit once:
+In `renderNodeSupport`, before the per-slot enums, emit once:
 
 ```rust
 /// Text that is a slot's content with no kind of its own: a bare string in
 /// a slot whose members all render from their own text, where the variant
 /// tag is render-invisible and picking one would be a guess.
 #[derive(Debug, Clone)]
-pub struct VerbatimTransport {
+pub struct VerbatimNode {
     pub text: String,
 }
 
-impl ::sittir_core::render::Render for VerbatimTransport {
+impl ::sittir_core::render::Render for VerbatimNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         w.text(&self.text)
     }
 }
 
-impl ::sittir_core::prepare::Prepare for VerbatimTransport {
+impl ::sittir_core::prepare::Prepare for VerbatimNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 ```
 
-In `emitPerSlotChildEnum` and `emitSupertypeTransportEnum`, compute
+In `emitPerSlotChildEnum` and `emitSupertypeNodeEnum`, compute
 `const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');`
 (for the supertype enum, over its concrete members). When true, add the arm
-`Verbatim(VerbatimTransport),`, a `Verbatim(t) => t.prepare(ctx),` arm in the
+`Verbatim(VerbatimNode),`, a `Verbatim(t) => t.prepare(ctx),` arm in the
 prepare impl, and a `Verbatim(t) => t.render(w),` arm in the `Render` impl.
-Give `emitTransportEnumFromNapiValueBody` a third parameter
+Give `emitNodeEnumFromNapiValueBody` a third parameter
 `admitsVerbatim: boolean` and, before the `_ =>` arm, emit:
 
 ```ts
 	if (admitsVerbatim) {
 		lines.push(
-			`            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),`
+			`            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimNode { text: String::from_napi_value(env, napi_val)? })),`
 		);
 	}
 ```
@@ -1982,10 +1982,10 @@ Give `emitTransportEnumFromNapiValueBody` a third parameter
 That is a `ValueType` dispatch beside the existing `Number` and `Object` arms, not a trial: the `_ =>` arm still errors, and its message becomes
 `` `${enumName}: expected u16 kind_id, string, or object with $type` `` when there is a verbatim arm.
 
-Every bridge-to-`AnyTransport` function (`*_transport_slot_to_any`) gets a
-`Verbatim(t) => AnyTransport::Verbatim(t),` arm, and `AnyTransport` gains
-`Verbatim(VerbatimTransport)` with `Render` and `Prepare` arms.
-`AnyTransport::from_napi_value` does **not** accept a bare string: the root of
+Every bridge-to-`AnyNode` function (`*_node_slot_to_any`) gets a
+`Verbatim(t) => AnyNode::Verbatim(t),` arm, and `AnyNode` gains
+`Verbatim(VerbatimNode)` with `Render` and `Prepare` arms.
+`AnyNode::from_napi_value` does **not** accept a bare string: the root of
 a render is never free text.
 
 - [ ] **Step 7: A debug build proves the depth leak is gone**
@@ -2007,8 +2007,8 @@ use sittir_core::render::SourceTable;
 use std::sync::Arc;
 
 use sittir_python::render::options;
-use sittir_python::render::transport::{
-    render_transport_parts, AnyTransport, BlockTransport, RenderRoot, SuiteBlockTransport,
+use sittir_python::render::node::{
+    render_node_parts, AnyNode, BlockNode, RenderRoot, SuiteBlockNode,
 };
 
 struct NoSources;
@@ -2022,30 +2022,30 @@ impl SourceTable for NoSources {
 fn an_empty_suite_block_closes_the_indent_it_opened() {
     let options = options::defaults();
     let ctx = RenderContext { options: &options, sources: &NoSources };
-    let block = BlockTransport {
-        transport_trivia_data: None,
+    let block = BlockNode {
+        node_trivia_data: None,
         statements: None,
         ..Default::default()
     };
-    let suite = SuiteBlockTransport {
-        transport_trivia_data: None,
-        block: ::sittir_core::SlotValue::Transport(block),
+    let suite = SuiteBlockNode {
+        node_trivia_data: None,
+        block: ::sittir_core::SlotValue::Node(block),
         ..Default::default()
     };
-    let root: RenderRoot = ::sittir_core::SlotValue::Transport(AnyTransport::SuiteBlock(suite));
-    let (_, rendered) = render_transport_parts(root, &ctx).expect("render");
+    let root: RenderRoot = ::sittir_core::SlotValue::Node(AnyNode::SuiteBlock(suite));
+    let (_, rendered) = render_node_parts(root, &ctx).expect("render");
     assert!(!rendered.contains('\u{FDD0}'));
 }
 ```
 
-The generated transport structs do not derive `Default`; before writing this
+The generated node structs do not derive `Default`; before writing this
 file, print the two structs and fill every field explicitly instead of the
 `..Default::default()` shorthand:
 
 ```bash
-awk '/^pub struct BlockTransport \{/,/^\}/' rust/crates/sittir-python/src/render/transport.rs
-awk '/^pub struct SuiteBlockTransport \{/,/^\}/' rust/crates/sittir-python/src/render/transport.rs
-awk '/^pub enum AnyTransport \{/,/^\}/' rust/crates/sittir-python/src/render/transport.rs | awk 'index($0,"SuiteBlock")>0'
+awk '/^pub struct BlockNode \{/,/^\}/' rust/crates/sittir-python/src/render/node.rs
+awk '/^pub struct SuiteBlockNode \{/,/^\}/' rust/crates/sittir-python/src/render/node.rs
+awk '/^pub enum AnyNode \{/,/^\}/' rust/crates/sittir-python/src/render/node.rs | awk 'index($0,"SuiteBlock")>0'
 ```
 
 Every `Option<u16>` site field is `None`, every `Option<Vec<…>>` slot is
@@ -2054,7 +2054,7 @@ relax the test.
 
 - [ ] **Step 8: The wire stops carrying a stale coordinate**
 
-In `packages/common/src/transport-data.ts`, `projectValue` deletes the
+In `packages/common/src/node-data.ts`, `projectValue` deletes the
 coordinate keys wherever it deletes `$text` today:
 
 ```ts
@@ -2088,7 +2088,7 @@ and both are replaced in Task 5.
 
 - [ ] **Step 9: Glossary**
 
-In `docs/glossary/emitters.md`: rename the headings `fillOptionsStructImpl` → `prepareStructImpl`, `fillOptionsEnumImpl` → `prepareEnumImpl`, `noopFillOptionsImpl` → `inertPrepareImpl`; add `PREPARE_SIG`, `PREPARE_MOD` and `render-options-rs.ts::allowed`; update `renderTransportEntry`, `renderTypedDispatch`, `renderTransportMetadataFields`, `renderLeafTransportPlainFields`, `renderLeafTransportNapiImpls`, `leafDefaultTextLiteral`, `emitTransportEnumFromNapiValueBody`, `emitPerSlotChildEnum`, `emitSupertypeTransportEnum`, `armSeamSupport`, `seatLoops`, `buildTypedTemplateBody` and `buildSlotWriteCall` to describe the prepare walk, the context argument, the verbatim arm, the dropped metadata fields and the deleted fast path. In `packages/common`, update `toTransportData`'s and `projectValue`'s doc comments.
+In `docs/glossary/emitters.md`: rename the headings `fillOptionsStructImpl` → `prepareStructImpl`, `fillOptionsEnumImpl` → `prepareEnumImpl`, `noopFillOptionsImpl` → `inertPrepareImpl`; add `PREPARE_SIG`, `PREPARE_MOD` and `render-options-rs.ts::allowed`; update `renderNodeEntry`, `renderTypedDispatch`, `renderNodeMetadataFields`, `renderLeafNodePlainFields`, `renderLeafNodeNapiImpls`, `leafDefaultTextLiteral`, `emitNodeEnumFromNapiValueBody`, `emitPerSlotChildEnum`, `emitSupertypeNodeEnum`, `armSeamSupport`, `seatLoops`, `buildTypedTemplateBody` and `buildSlotWriteCall` to describe the prepare walk, the context argument, the verbatim arm, the dropped metadata fields and the deleted fast path. In `packages/common`, update `toNodeData`'s and `projectValue`'s doc comments.
 
 - [ ] **Step 10: Type-check, unit tests, regenerate, build**
 
@@ -2109,7 +2109,7 @@ cd rust && cargo build --workspace && cargo test --workspace --exclude sittir-pa
 ```
 
 Dropping five fields from every struct will leave unused imports (`Span` in a
-generated `transport.rs`) and unused bindings; fix them in the emitter, never
+generated `node.rs`) and unused bindings; fix them in the emitter, never
 in the generated file.
 
 - [ ] **Step 11: Gates**
@@ -2144,11 +2144,11 @@ revert.
 
 ```bash
 git rm -q rust/crates/sittir-core/tests/options.rs
-git add packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/render-options-rs.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts packages/codegen/src/emitters/__tests__/render-options-rs.test.ts packages/common/src/transport-data.ts docs/glossary/emitters.md rust/crates/sittir-core/src rust/crates/sittir-core/tests rust/crates/sittir-python/tests/depth_balance.rs rust/crates/sittir-rust/src/render rust/crates/sittir-typescript/src/render rust/crates/sittir-python/src/render packages/rust/src packages/typescript/src packages/python/src packages/rust/.sittir packages/typescript/.sittir packages/python/.sittir
-git commit -m "feat(render): a transport renders an untouched node from its coordinate; verbatim text is a transport
+git add packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/render-options-rs.ts packages/codegen/src/emitters/__tests__/render-module-emit.test.ts packages/codegen/src/emitters/__tests__/render-options-rs.test.ts packages/common/src/node-data.ts docs/glossary/emitters.md rust/crates/sittir-core/src rust/crates/sittir-core/tests rust/crates/sittir-python/tests/depth_balance.rs rust/crates/sittir-rust/src/render rust/crates/sittir-typescript/src/render rust/crates/sittir-python/src/render packages/rust/src packages/typescript/src packages/python/src packages/rust/.sittir packages/typescript/.sittir packages/python/.sittir
+git commit -m "feat(render): a native node renders an untouched node from its coordinate; verbatim text is a native node
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_01GXSJTsC4QVWJNu8wXmMQrn" -- packages/codegen/src/emitters packages/common/src/transport-data.ts docs/glossary/emitters.md rust/crates/sittir-core rust/crates/sittir-python/tests rust/crates/sittir-rust/src/render rust/crates/sittir-typescript/src/render rust/crates/sittir-python/src/render packages/rust packages/typescript packages/python
+Claude-Session: https://claude.ai/code/session_01GXSJTsC4QVWJNu8wXmMQrn" -- packages/codegen/src/emitters packages/common/src/node-data.ts docs/glossary/emitters.md rust/crates/sittir-core rust/crates/sittir-python/tests rust/crates/sittir-rust/src/render rust/crates/sittir-typescript/src/render rust/crates/sittir-python/src/render packages/rust packages/typescript packages/python
 ```
 
 Confirm with `git status --short` that only generated outputs, the emitters, core, `packages/common` and the glossary are staged; manifest and bundled `grammar.js` churn is expected.
@@ -2183,9 +2183,9 @@ ancestor folds over it — and because a grafted foreign node always arrives
 no ancestor can fold a foreign subtree into this tree's bytes.
 
 **Files:**
-- Modify: `packages/common/src/transport-data.ts`
+- Modify: `packages/common/src/node-data.ts`
 - Modify: `packages/common/src/index.ts` (`stripStructuralNodeText` → `stripStructuralProvenance`)
-- Create: `packages/common/tests/transport-data.test.ts`
+- Create: `packages/common/tests/node-data.test.ts`
 - Modify: `packages/codegen/src/emitters/is.ts` (`isNode`), `packages/codegen/src/emitters/wrap.ts` (the supertype-collapse gate)
 - Modify: `packages/rust/tests/read-depth.test.ts`
 - Modify: `packages/tools/src/probe/kind.ts`, `packages/tools/src/validate/read-render-parse.ts`, `packages/tools/tests/probe/probe-kind-trace.test.ts` (the three `stripStructuralNodeText` call sites)
@@ -2196,7 +2196,7 @@ no ancestor can fold a foreign subtree into this tree's bytes.
 - Produces (`@sittir/common`):
   ```ts
   export function markEdited<T extends object>(data: T): Omit<T, '$nodeHandle' | '$span' | '$childIndex'>;
-  export function toTransportData(node: AnyNodeData, normalize?: NormalizeNodeStorage): AnyNodeData;
+  export function toNodeData(node: AnyNodeData, normalize?: NormalizeNodeStorage): AnyNodeData;
   export function stripStructuralProvenance<T>(root: T): T;
   ```
   A folded node on the wire is `{ $type, $source?, $named?, $span, $nodeHandle, $childIndex? }`. A structural node that does not fold crosses with no `$nodeHandle`, `$span`, `$childIndex` or `$text`. Leaves keep `$text` and `$span`.
@@ -2204,11 +2204,11 @@ no ancestor can fold a foreign subtree into this tree's bytes.
 
 - [ ] **Step 1: Write the failing projection tests**
 
-Create `packages/common/tests/transport-data.test.ts`:
+Create `packages/common/tests/node-data.test.ts`:
 
 ```ts
 import { describe, expect, it } from 'vitest';
-import { markEdited, toTransportData } from '../src/transport-data.ts';
+import { markEdited, toNodeData } from '../src/node-data.ts';
 
 const leaf = (text: string, start: number) => ({
 	$type: 1,
@@ -2234,7 +2234,7 @@ const deep = (start: number, end: number, storage: Record<string, unknown>) => (
 	...storage
 });
 
-describe('toTransportData', () => {
+describe('toNodeData', () => {
 	it('folds an unedited node with only stubs and leaves below it to its coordinate', () => {
 		const node = {
 			$type: 3,
@@ -2245,7 +2245,7 @@ describe('toTransportData', () => {
 			_name: leaf('main', 3),
 			_body: stub(8, 20, 2)
 		};
-		expect(toTransportData(node as never)).toEqual({
+		expect(toNodeData(node as never)).toEqual({
 			$type: 3,
 			$source: 0,
 			$named: true,
@@ -2263,7 +2263,7 @@ describe('toTransportData', () => {
 			$nodeHandle: 0,
 			_body: deep(8, 20, { _statements: [deep(10, 18, { _name: leaf('x', 10) })] })
 		};
-		expect(toTransportData(node as never)).toEqual({
+		expect(toNodeData(node as never)).toEqual({
 			$type: 3,
 			$source: 0,
 			$named: true,
@@ -2283,7 +2283,7 @@ describe('toTransportData', () => {
 			_name: leaf('main', 3),
 			_body: rebuilt
 		};
-		const out = toTransportData(node as never) as Record<string, unknown>;
+		const out = toNodeData(node as never) as Record<string, unknown>;
 		expect(out.$nodeHandle).toBeUndefined();
 		expect(out.$span).toBeUndefined();
 		expect(out._body).toEqual(rebuilt);
@@ -2297,7 +2297,7 @@ describe('toTransportData', () => {
 			_a: stub(0, 4, 0),
 			_b: { $type: 9, $source: 2, $named: true }
 		};
-		const out = toTransportData(parent as never) as Record<string, unknown>;
+		const out = toNodeData(parent as never) as Record<string, unknown>;
 		expect(out._a).toEqual(stub(0, 4, 0));
 	});
 
@@ -2311,7 +2311,7 @@ describe('toTransportData', () => {
 			$_trivia: { leading: [leaf('// c', 0)] },
 			_a: stub(0, 4, 0)
 		};
-		const own = toTransportData(withOwnTrivia as never) as Record<string, unknown>;
+		const own = toNodeData(withOwnTrivia as never) as Record<string, unknown>;
 		expect(own.$nodeHandle).toBeUndefined();
 		expect(own.$_trivia).toBeDefined();
 
@@ -2323,7 +2323,7 @@ describe('toTransportData', () => {
 			$nodeHandle: 0,
 			_a: { ...deep(0, 8, {}), $_trivia: { leading: [leaf('// c', 0)] } }
 		};
-		expect((toTransportData(withChildTrivia as never) as Record<string, unknown>).$nodeHandle).toBeUndefined();
+		expect((toNodeData(withChildTrivia as never) as Record<string, unknown>).$nodeHandle).toBeUndefined();
 	});
 
 	it('never lets a structural node cross with $text or a stale coordinate', () => {
@@ -2336,7 +2336,7 @@ describe('toTransportData', () => {
 			$nodeHandle: 0,
 			_a: { $type: 9, $source: 2, $named: true }
 		};
-		const out = toTransportData(node as never) as Record<string, unknown>;
+		const out = toNodeData(node as never) as Record<string, unknown>;
 		expect(out.$text).toBeUndefined();
 		expect(out.$nodeHandle).toBeUndefined();
 		expect(out.$span).toBeUndefined();
@@ -2352,7 +2352,7 @@ describe('toTransportData', () => {
 			_marker: true,
 			_keyword: 42
 		};
-		expect(toTransportData(node as never)).toEqual({
+		expect(toNodeData(node as never)).toEqual({
 			$type: 3,
 			$source: 0,
 			$named: true,
@@ -2379,12 +2379,12 @@ describe('markEdited', () => {
 
 - [ ] **Step 2: Run to see them fail**
 
-Run: `pnpm exec vitest run packages/common/tests/transport-data.test.ts`
+Run: `pnpm exec vitest run packages/common/tests/node-data.test.ts`
 Expected: the deep-read fold and the child-trivia case fail (today the gate is `$text` and stub-shaped children); `markEdited` fails (it strips `$text`).
 
 - [ ] **Step 3: Implement the fold**
 
-Replace `hasStructure`, `isUnexpandedStub`, `markEdited`, `isUntouchedSubtree`, `asCapturedText` and the `projectValue` fold branch in `packages/common/src/transport-data.ts` with:
+Replace `hasStructure`, `isUnexpandedStub`, `markEdited`, `isUntouchedSubtree`, `asCapturedText` and the `projectValue` fold branch in `packages/common/src/node-data.ts` with:
 
 ```ts
 const COORDINATE_KEYS = ['$nodeHandle', '$span', '$childIndex'] as const;
@@ -2469,7 +2469,7 @@ coordinate keys as well as `$text` on any node that carries storage:
  * Drop the pre-edit spelling and the coordinate that would slice it from
  * every node that carries storage, in place, and return `root`. For
  * already-projected data that came through a path other than
- * {@link toTransportData}.
+ * {@link toNodeData}.
  */
 export function stripStructuralProvenance<T>(root: T): T {
 	const seen = new WeakSet<object>();
@@ -2570,7 +2570,7 @@ now fold — and the from/coverage counts unchanged.
 - [ ] **Step 8: Commit**
 
 ```bash
-git add packages/common/src/transport-data.ts packages/common/src/index.ts packages/common/tests/transport-data.test.ts packages/codegen/src/emitters/is.ts packages/codegen/src/emitters/wrap.ts packages/rust/tests/read-depth.test.ts packages/tools/src/probe/kind.ts packages/tools/src/validate/read-render-parse.ts packages/tools/tests/probe/probe-kind-trace.test.ts docs/glossary/emitters.md packages/rust/src packages/typescript/src packages/python/src packages/rust/.sittir packages/typescript/.sittir packages/python/.sittir
+git add packages/common/src/node-data.ts packages/common/src/index.ts packages/common/tests/node-data.test.ts packages/codegen/src/emitters/is.ts packages/codegen/src/emitters/wrap.ts packages/rust/tests/read-depth.test.ts packages/tools/src/probe/kind.ts packages/tools/src/validate/read-render-parse.ts packages/tools/tests/probe/probe-kind-trace.test.ts docs/glossary/emitters.md packages/rust/src packages/typescript/src packages/python/src packages/rust/.sittir packages/typescript/.sittir packages/python/.sittir
 git commit -m "feat(common): an unedited subtree crosses as its coordinate; an edit detaches the coordinate
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
@@ -2593,7 +2593,7 @@ from.
 `token` kinds are **not** in the predicate: every `token` kind is an
 `AssembledLeaf<StringRule>`, its literal is on the model, and the generated
 `FromNapiValue` already defaults a missing `$text` to that literal. Keeping
-`token` would keep a `$text` the transport can reconstruct. Only 9 rust /
+`token` would keep a `$text` the node can reconstruct. Only 9 rust /
 10 typescript / 10 python token kinds are named parser nodes at all; for
 every other one the `!named ||` short-circuit keeps the text regardless.
 Task 0 fixed the one literal this exposes.
@@ -2976,7 +2976,7 @@ byte fixtures green.
 
 - [ ] **Step 8: Glossary**
 
-`docs/glossary/emitters.md`: add `` ### `packages/codegen/src/emitters/kind-id-rust.ts::is_text_kind` `` — the generated predicate is the model's `pattern` class, keyed by resolved kind id because an alias puts a model kind on a different parser symbol; a `token` kind is absent because its literal is on the model and the transport already defaults to it.
+`docs/glossary/emitters.md`: add `` ### `packages/codegen/src/emitters/kind-id-rust.ts::is_text_kind` `` — the generated predicate is the model's `pattern` class, keyed by resolved kind id because an alias puts a model kind on a different parser symbol; a `token` kind is absent because its literal is on the model and the node already defaults to it.
 
 - [ ] **Step 9: Commit**
 
@@ -3302,10 +3302,10 @@ the same `describe` the Task 4 cases went into:
 
 ```ts
 	it('classifies a rebuilt list from the gaps between its coordinates before the table fills it', async () => {
-		const transportRs = await getRustTemplatesRs();
-		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
+		const nodeRs = await getRustTemplatesRs();
+		const from = nodeRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsNode {');
 		expect(from).toBeGreaterThan(-1);
-		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		const body = nodeRs.slice(from, nodeRs.indexOf('\n}\n', from));
 		expect(body).toContain('::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ","');
 		expect(body).toContain('&options::WHITESPACE)');
 		expect(body.indexOf('classify_list_gaps')).toBeGreaterThan(body.indexOf('.prepare(ctx)?;'));
@@ -3313,13 +3313,13 @@ the same `describe` the Task 4 cases went into:
 	});
 ```
 
-`ArgumentsElementsTransport` is the rust `_arguments_elements` list carrier —
+`ArgumentsElementsNode` is the rust `_arguments_elements` list carrier —
 a comma-separated `many` slot with `SITE_ARGUMENTS_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE`
 and `…_AFTER` in `options.rs`. Confirm the struct name before writing the
 test:
 
 ```bash
-awk 'index($0,"ArgumentsElementsTransport {")>0 {print FNR": "$0}' rust/crates/sittir-rust/src/render/transport.rs | head
+awk 'index($0,"ArgumentsElementsNode {")>0 {print FNR": "$0}' rust/crates/sittir-rust/src/render/node.rs | head
 ```
 
 If the name differs, use the one head has — the assertions are about the
@@ -3584,7 +3584,7 @@ the same three files:
 ```ts
 const READ_CASES = [
 	['rust', '@sittir/rust', 'rust/crates/sittir-core/src/render.rs'],
-	['typescript', '@sittir/typescript', 'packages/common/src/transport-data.ts'],
+	['typescript', '@sittir/typescript', 'packages/common/src/node-data.ts'],
 	['python', '@sittir/python', 'examples/dogfood.py']
 ] as const;
 
@@ -3704,7 +3704,7 @@ validate numbers before and after, the deep-kind-set recommendation, the
 byte-axis result (including any `it.fails` witness it left), and what is
 next — plan 4 of render options (`reformat`, `engine.ir`, `tree.inferOptions()`
 from classified gaps); per-tree render format is still out of scope, and
-`render_transport_parts` still hardcodes `TransportSource::Factory`.
+`render_node_parts` still hardcodes `NodeSource::Factory`.
 
 - [ ] **Step 8: Commit**
 
@@ -3728,10 +3728,10 @@ Claude-Session: https://claude.ai/code/session_01GXSJTsC4QVWJNu8wXmMQrn" -- pack
 | Provenance becomes a coordinate (`$nodeHandle` + `$span`) | 1 |
 | An edit detaches the coordinate | 5 (`markEdited`) |
 | The readers converge; `SITTIR_DEBUG_TEXT` deleted | 6 |
-| One rule at the transport: unread and unedited fold alike | 5 (fold), 4 (coordinate-key strip) |
-| Carrier: `SlotValue::{Coord, Transport}`, `Node`/`Verbatim` gone | 1 (arm added), 4 (arms removed) |
-| `VerbatimTransport` returns; free text elsewhere is an error | 4 |
-| Transports drop `$span`, `$nodeHandle`, `$childIndex`, `$source`, `$named` | 4 |
+| One rule at the node: unread and unedited fold alike | 5 (fold), 4 (coordinate-key strip) |
+| Carrier: `SlotValue::{Coord, Node}`, `Node`/`Verbatim` gone | 1 (arm added), 4 (arms removed) |
+| `VerbatimNode` returns; free text elsewhere is an error | 4 |
+| Nodes drop `$span`, `$nodeHandle`, `$childIndex`, `$source`, `$named` | 4 |
 | Coordinates resolve in one walk; context is an argument | 2 (walk), 4 (wired from `napi_engine`) |
 | Gaps classify into option values, precedence wire → gaps → table → default | 2 (classifier), 8 (emission) |
 | Coordinates must name their engine | 4 (`UnknownTree`), 9 (gate) |
@@ -3766,7 +3766,7 @@ Task N", no test described without its code. Three steps ask the implementer
 to print a name from head before writing a test (Task 8's typescript
 accessors, Task 8's rust list-carrier struct name, Task 6's `buildNodeMap`
 spelling); each gives the exact command and says to adjust the navigation,
-never the expectation. Task 4 step 7 asks for the two python transport
+never the expectation. Task 4 step 7 asks for the two python node
 structs' fields for the same reason. Those are verification steps, not
 placeholders: the assertion each test makes is fully written.
 
@@ -3787,8 +3787,8 @@ as head spells it;
 — the table is `&WhitespaceTable`, never a `text_of` fn plus a sentinel
 sniff, because `spacing_text` already maps both depth arms to a plain break;
 `options::allowed(site) -> &'static [u16]` reading `SPACING_SITES[site].4`;
-`render_transport_dispatch(&dyn Render, &RenderContext)`;
-`render_transport_parts(RenderRoot, &RenderContext) -> Result<(TransportSource, String), RenderError>`;
+`render_node_dispatch(&dyn Render, &RenderContext)`;
+`render_node_parts(RenderRoot, &RenderContext) -> Result<(NodeSource, String), RenderError>`;
 `ReadModel::{is_text_kind, is_slot_separator}` with `EngineGrammar: Copy + ReadModel`;
 `kind_ids::{is_text_kind, is_slot_separator}`;
 `slotSeparatorTexts(field, elidedOnly)` shared by `separatorIdsExprOf`,
@@ -3797,9 +3797,9 @@ sniff, because `spacing_text` already maps both depth arms to a plain break;
 `collectFixedLiteral`;
 `markEdited` detaching `$nodeHandle`, `$span`, `$childIndex`;
 `stripStructuralProvenance` replacing `stripStructuralNodeText`.
-Per-slot enums are `<Owner><Slot>TransportSlot` (`perSlotEnumName` suffixes
-`TransportSlot`), which is why Task 4's assertions name
-`FunctionItemNameTransportSlot` and `MacroDefinitionContentTransportSlot`.
+Per-slot enums are `<Owner><Slot>NodeSlot` (`perSlotEnumName` suffixes
+`NodeSlot`), which is why Task 4's assertions name
+`FunctionItemNameNodeSlot` and `MacroDefinitionContentNodeSlot`.
 
 ---
 
@@ -3827,4 +3827,4 @@ One row per task pair that shares a file or an interface.
 | 6 → 7 | `ReadModel` with `is_slot_separator` defaulted to `false`; the generated-table channel in `kind-id-rust.ts` | Task 7 fills the default in and adds `SLOT_SEPARATORS` | consistent |
 | 7 → 8 | `slotSeparatorTexts(field, elidedOnly)` in `emitters/shared.ts` | `listGapTokenOf` reads it for the gap's token | consistent — one derivation of a slot's separator serves wrap, the reader table and the classifier |
 | 6, 7 → `read_node.rs` | Task 6: the model argument and the text gate; Task 7: the separator skip in `read_children` | both edit `read_children` | consistent, ordered — Task 6 threads the model, Task 7 asks it a second question |
-| 4, 5 → `transport-data.ts` | Task 4: the coordinate-key strip in `projectValue`; Task 5: `foldsToCoordinate`, `isUntouchedBelow`, `asCoordinate`, `markEdited` | Task 5 replaces the fold branch and leaves Task 4's strip alone | consistent — named explicitly in Task 5 step 3 |
+| 4, 5 → `node-data.ts` | Task 4: the coordinate-key strip in `projectValue`; Task 5: `foldsToCoordinate`, `isUntouchedBelow`, `asCoordinate`, `markEdited` | Task 5 replaces the fold branch and leaves Task 4's strip alone | consistent — named explicitly in Task 5 step 3 |

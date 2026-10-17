@@ -4,7 +4,7 @@
 
 **Goal:** A separated list whose separator is a choice of literal tokens declares the token a built node uses, carries it as a kind-id option like every other preference, and gets the ordinary separator spacing sites, so typescript interface bodies (and, by retiring one skip-list entry on the way, enum bodies) lay out one member per line.
 
-**Architecture:** The declared token is a site preference under the list's slot key (`preference('separator', 'semi')`), collected beside the delimiter default into the spacing-site table the resolver already walks (a declared preference rides `SPACING_SITES` the way `statement_terminator` does); the transport's existing `separator_kind` field is filled from that site, the factory stamps the declared default, and the render's fallback arm prints the default's text. `gapOf` then treats a choice-of-literals separator as a gap named by the list kind, so `spaceRenderRules` injects `<kind>_separator_space_before` / `_after` unchanged. On the enum side, `fieldSeparatedListElements` declines by shape when an element arm is already fielded, which lets `_enum_body_elements` leave the skip list and take the canonical list spelling.
+**Architecture:** The declared token is a site preference under the list's slot key (`preference('separator', 'semi')`), collected beside the delimiter default into the spacing-site table the resolver already walks (a declared preference rides `SPACING_SITES` the way `statement_terminator` does); the node's existing `separator_kind` field is filled from that site, the factory stamps the declared default, and the render's fallback arm prints the default's text. `gapOf` then treats a choice-of-literals separator as a gap named by the list kind, so `spaceRenderRules` injects `<kind>_separator_space_before` / `_after` unchanged. On the enum side, `fieldSeparatedListElements` declines by shape when an element arm is already fielded, which lets `_enum_body_elements` leave the skip list and take the canonical list spelling.
 
 **Tech Stack:** TypeScript codegen (`packages/codegen`), generated Rust render crates, vitest, cargo.
 
@@ -607,7 +607,7 @@ and, as new kind entries (no `object_type_content` or `object_type` patch entry 
 for g in rust typescript python; do pnpm exec tsx packages/cli/src/cli.ts gen --grammar $g --all --output packages/$g/src --skip-ts-chain; done
 ```
 
-Expected: rust and python regenerate with identical render output (no choice separator; the `_separator`-less factories change only where the `separatedListFactoryOptions` signature is consumed); typescript's `options.rs` gains the `("object_type_content", "content_separator", "separator", …)` row, `transport.rs` the fill line and `_ => ";"`.
+Expected: rust and python regenerate with identical render output (no choice separator; the `_separator`-less factories change only where the `separatedListFactoryOptions` signature is consumed); typescript's `options.rs` gains the `("object_type_content", "content_separator", "separator", …)` row, `node.rs` the fill line and `_ => ";"`.
 
 - [x] **Step 3: Probe**
 

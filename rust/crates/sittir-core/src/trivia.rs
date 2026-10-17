@@ -1,4 +1,4 @@
-//! `TransportTrivia` — the trivia a transport carries, and where it renders.
+//! `NodeTrivia` — the trivia a node carries, and where it renders.
 //!
 //! A side holds its owner's entries in source order (`trivia_table`): leading
 //! entries render before the owner, trailing entries after it, and inner
@@ -57,7 +57,7 @@ pub trait TriviaSeam {
 impl<T: TriviaSeam> TriviaEntry<T> {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         match &self.value {
-            SlotValue::Transport(value) => value.seam_gap(),
+            SlotValue::Node(value) => value.seam_gap(),
             SlotValue::Coord(_) => None,
         }
     }
@@ -66,7 +66,7 @@ impl<T: TriviaSeam> TriviaEntry<T> {
     /// other entry.
     pub fn depth(&self) -> i32 {
         match &self.value {
-            SlotValue::Transport(value) => value.depth(),
+            SlotValue::Node(value) => value.depth(),
             SlotValue::Coord(_) => 0,
         }
     }
@@ -125,7 +125,7 @@ pub fn on_changed_edge<E>(
     }
 }
 
-impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> {
+impl<T: crate::prepare::Prepare> crate::prepare::Prepare for NodeTrivia<T> {
     /// Every entry is prepared like a slot value: a coordinate entry takes its
     /// kind's edges, as a coordinate in a slot does.
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
@@ -206,15 +206,15 @@ impl crate::prepare::Prepare for TriviaText {
     }
 }
 
-/// The trivia one transport owns. Mirrors `NodeTrivia` in `@sittir/types`.
+/// The trivia one node owns. Mirrors `NodeTrivia` in `@sittir/types`.
 #[derive(Debug, Clone, PartialEq)]
-pub struct TransportTrivia<T> {
+pub struct NodeTrivia<T> {
     pub leading: Option<Vec<TriviaEntry<T>>>,
     pub trailing: Option<Vec<TriviaEntry<T>>>,
     pub inner: Option<Vec<TriviaEntry<T>>>,
 }
 
-impl<T> Default for TransportTrivia<T> {
+impl<T> Default for NodeTrivia<T> {
     fn default() -> Self {
         Self {
             leading: None,
@@ -224,7 +224,7 @@ impl<T> Default for TransportTrivia<T> {
     }
 }
 
-/// The trivia type of the grammar a transport belongs to: what a coordinate
+/// The trivia type of the grammar a node belongs to: what a coordinate
 /// of it carries as outside trivia. Codegen states it once per grammar
 /// (`grammar_trivia!`).
 pub trait HasTrivia {
@@ -248,7 +248,7 @@ pub trait FromTriviaText: Sized {
     fn from_layout(text: TriviaText) -> Option<Self>;
 }
 
-/// A transport family that keeps no trivia drops what a read finds.
+/// A node family that keeps no trivia drops what a read finds.
 impl FromTriviaText for () {
     fn from_text(_: TriviaText) -> Self {}
 
@@ -320,7 +320,7 @@ pub trait Framing {
     fn frame_trailing(&self, w: &mut dyn RenderSink) -> RenderResult;
 }
 
-impl<T: Render + TriviaSeam> Framing for TransportTrivia<T> {
+impl<T: Render + TriviaSeam> Framing for NodeTrivia<T> {
     fn frame_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
         self.render_leading(w)
     }
@@ -332,7 +332,7 @@ impl<T: Render + TriviaSeam> Framing for TransportTrivia<T> {
 
 /// The outside trivia a folded coordinate renders between, with its
 /// grammar's trivia type erased, so a coordinate carries it whatever its
-/// slot's transport type.
+/// slot's node type.
 pub trait FramedTrivia: Framing + std::fmt::Debug {
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError>;
     fn boxed_clone(&self) -> Box<dyn FramedTrivia>;
@@ -341,7 +341,7 @@ pub trait FramedTrivia: Framing + std::fmt::Debug {
     fn same_as(&self, other: &dyn FramedTrivia) -> bool;
 }
 
-impl<T: TriviaItem> FramedTrivia for TransportTrivia<T> {
+impl<T: TriviaItem> FramedTrivia for NodeTrivia<T> {
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         crate::prepare::Prepare::prepare(self, ctx)
     }
@@ -424,7 +424,7 @@ fn defer_run<T: Render + TriviaSeam>(run: &[TriviaEntry<T>], w: &mut dyn RenderS
     w.defer_trailing(&mut |w| render_joined(run, LayoutKinds::SPACE, w))
 }
 
-impl<T: Render + TriviaSeam> TransportTrivia<T> {
+impl<T: Render + TriviaSeam> NodeTrivia<T> {
     /// Leading entries, before the owner renders. Each layout entry takes the
     /// place of the join at its gap; where none stands, an entry joins the
     /// next entry, or the owner, on its line.
@@ -478,13 +478,13 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
     }
 }
 
-/// Whether a transport's trivia holds inner entries.
-pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&TransportTrivia<T>>) -> bool {
+/// Whether a node's trivia holds inner entries.
+pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> bool {
     trivia.is_some_and(|trivia| trivia.inner.as_ref().is_some_and(|entries| !entries.is_empty()))
 }
 
-/// The inner entries of a transport's trivia, if it has any.
-pub fn render_inner<T: Render + TriviaSeam>(trivia: Option<&TransportTrivia<T>>, w: &mut dyn RenderSink) -> RenderResult {
+/// The inner entries of a node's trivia, if it has any.
+pub fn render_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>, w: &mut dyn RenderSink) -> RenderResult {
     match trivia {
         Some(trivia) => trivia.render_inner(w),
         None => Ok(()),
@@ -508,7 +508,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
-    for TransportTrivia<T>
+    for NodeTrivia<T>
 {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
@@ -524,7 +524,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportTrivia<T> {
+impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for NodeTrivia<T> {
     /// `{ leading?, trailing?, inner? }`, each only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present};

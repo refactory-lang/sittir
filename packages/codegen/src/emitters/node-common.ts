@@ -36,7 +36,7 @@ function coversExactly(kindSet: ReadonlySet<string>, subtypes: ReadonlySet<strin
 	return kindSet.size === subtypes.size && [...kindSet].every((k) => subtypes.has(k));
 }
 
-export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
+export function buildSupertypeNodeSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
 	const result = new Map<string, ReadonlySet<string>>();
 	const expandSupertypeKinds = (kind: string, seen: Set<string> = new Set()): Set<string> => {
 		if (seen.has(kind)) return new Set();
@@ -57,7 +57,7 @@ export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, Readon
 	return result;
 }
 
-export function acceptedTransportKinds(
+export function acceptedNodeKinds(
 	kind: string,
 	nodeMap?: NodeMap,
 	parseAliases?: Readonly<Record<string, string>>
@@ -131,8 +131,8 @@ export const RUST_KEYWORDS = new Set([
 
 export function rustTypeIdent(name: string): string {
 	const replaced = name.replace(/[^A-Za-z0-9_]/g, '_');
-	const withStart = /^[A-Za-z_]/.test(replaced) ? replaced : `Transport${replaced}`;
-	const ident = withStart.length > 0 ? withStart : 'Transport';
+	const withStart = /^[A-Za-z_]/.test(replaced) ? replaced : `Node${replaced}`;
+	const ident = withStart.length > 0 ? withStart : 'Node';
 	return RUST_KEYWORDS.has(ident) ? `${ident}_` : ident;
 }
 
@@ -141,29 +141,29 @@ export function rustFieldIdent(id: string): string {
 	return id;
 }
 
-export const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
+export const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralNode']);
 
-export function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
+export function isReservedSupertypeNodeNode(node: AssembledNode): node is AssembledSupertype {
 	return (
-		node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
+		node instanceof AssembledSupertype && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Node`)
 	);
 }
 
 export function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotClass {
-	const supertypeMap = buildSupertypeTransportSet(nodeMap);
+	const supertypeMap = buildSupertypeNodeSet(nodeMap);
 	const cls = classifySlot(kinds, supertypeMap);
 	if (cls.tag === 'concrete') {
 		const node = nodeMap.nodes.get(cls.kind);
 		if (node === undefined) return { tag: 'heterogeneous' };
 		if (node instanceof AssembledSupertype) {
-			const enumName = `${rustTypeIdent(node.typeName)}Transport`;
+			const enumName = `${rustTypeIdent(node.typeName)}Node`;
 			if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
 			return { tag: 'supertype', supertypeName: node.typeName };
 		}
 		return { tag: 'concrete', kind: cls.kind, typeName: node.typeName };
 	}
 	if (cls.tag === 'supertype') {
-		const enumName = `${rustTypeIdent(cls.supertypeName)}Transport`;
+		const enumName = `${rustTypeIdent(cls.supertypeName)}Node`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
 	}
 	return cls;
@@ -184,13 +184,13 @@ export function findSupertypeKindByTypeName(supertypeName: string, nodeMap: Node
 	return map.get(supertypeName);
 }
 
-export interface SupertypeTransportShape {
+export interface SupertypeNodeShape {
 	readonly kinds: readonly string[];
 	readonly suppressed: readonly string[];
 	readonly parseNames: ReadonlyMap<string, string>;
 }
 
-export function supertypeTransportKinds(
+export function supertypeNodeKinds(
 	node: AssembledSupertype,
 	nodeMap: NodeMap,
 	seen: Set<string> = new Set(),
@@ -199,7 +199,7 @@ export function supertypeTransportKinds(
 		suppressed: new Set(),
 		parseNames: new Map()
 	}
-): SupertypeTransportShape {
+): SupertypeNodeShape {
 	if (seen.has(node.kind)) return { kinds: state.kinds, suppressed: [...state.suppressed], parseNames: state.parseNames };
 	seen.add(node.kind);
 	for (const [storage, parse] of Object.entries(node.subtypeParseNames ?? {})) {
@@ -208,9 +208,9 @@ export function supertypeTransportKinds(
 	for (const subKind of node.subtypeNames) {
 		const subNode = nodeMap.nodes.get(subKind);
 		if (subNode === undefined) continue;
-		if (isReservedSupertypeTransportNode(subNode)) {
+		if (isReservedSupertypeNodeNode(subNode)) {
 			state.suppressed.add(subKind);
-			supertypeTransportKinds(subNode, nodeMap, seen, state);
+			supertypeNodeKinds(subNode, nodeMap, seen, state);
 			continue;
 		}
 		if (!state.kinds.includes(subKind)) state.kinds.push(subKind);
@@ -224,7 +224,7 @@ export function slotElementKinds(slot: AssembledNonterminal, nodeMap: NodeMap): 
 	if (cls.tag === 'supertype') {
 		const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
 		const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
-		return node instanceof AssembledSupertype ? [...supertypeTransportKinds(node, nodeMap).kinds] : [];
+		return node instanceof AssembledSupertype ? [...supertypeNodeKinds(node, nodeMap).kinds] : [];
 	}
 	if (cls.tag === 'concrete') return [cls.kind];
 	if (cls.tag !== 'heterogeneous') return [];

@@ -25,7 +25,7 @@ describe('verifyStructure', () => {
 
 	it('trusts the types by default: the build and the rebuild stand, and the render refuses them natively', () => {
 		expect(() => (trusting.build.expressionStatement.strict as unknown as () => { $render(): string })().$render()).toThrow('Missing field `_content`');
-		expect(() => decorated(trusting).$with.decorators().$render()).toThrow(/a repeat1 list holds no item on DecoratedDefinitionTransport\._decorator/);
+		expect(() => decorated(trusting).$with.decorators().$render()).toThrow(/a repeat1 list holds no item on DecoratedDefinitionNode\._decorator/);
 	});
 
 	it("refuses a parent that holds a rebuild another engine let through, and trusts an untouched read, in 'runtime' mode", () => {

@@ -568,7 +568,7 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 
 export interface RustBodyPrinter {
 	readonly field: (name: string) => string;
-	/** The kind id and side of a seam that is the kind's own edge, written from the transport's base edges. */
+	/** The kind id and side of a seam that is the kind's own edge, written from the node's base edges. */
 	readonly edge?: (name: string) => { readonly kindId: number; readonly side: 'before' | 'after' } | undefined;
 	/** The `options::SITE_*` constant of the seam site a body names. */
 	readonly site: (name: string) => string;

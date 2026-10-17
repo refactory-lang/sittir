@@ -115,7 +115,7 @@ pnpm exec tsx packages/codegen/src/scripts/probe-validate.ts \
 | Wrap shape wrong | wrap emitter | `packages/codegen/src/emitters/wrap.ts` |
 | Factory dispatch wrong | factory-map emitter, validator config | `packages/codegen/src/emitters/factory-map.ts`, `packages/codegen/src/validate/common.ts` |
 | Render template wrong | render-module emitter, node-map | `packages/codegen/src/emitters/render-module.ts`, `packages/codegen/src/compiler/node-map.ts` |
-| Transport contract wrong | transport-common emitter | `packages/codegen/src/emitters/transport-common.ts` |
+| Node contract wrong | node-common emitter | `packages/codegen/src/emitters/node-common.ts` |
 | Parse-side issue | grammar overrides | `packages/<grammar>/overrides.ts` |
 
 **C4. After a fix, confirm the NEXT first-failing entry is genuinely different.** If the same entry fails the same way, the regen + measurement loop didn't pick up the change (or the fix targeted the wrong layer).
@@ -144,14 +144,14 @@ pnpm exec tsx packages/codegen/src/scripts/probe-validate.ts \
 
 - `resolve_children`
 - `structuralChildrenOf`
-- `transportChildrenOf`
-- `deriveChildrenTransportCardinality`
+- `nodeChildrenOf`
+- `deriveChildrenNodeCardinality`
 
 (`plan.md` line 13, 024 closeout addendum item 2)
 
-**E5. No `toNativeRenderTransport` shim.** Currently identity-deprecated; full removal preferred over revival. (May 12 design §3 non-goal, native transport plumbing removal milestone)
+**E5. No `toNativeRenderNode` shim.** Currently identity-deprecated; full removal preferred over revival. (May 12 design §3 non-goal, native node plumbing removal milestone)
 
-**E6. Slot widening only for grammar-true multi-shape slots.** Default to single-shape; widen to per-slot enum or `Box<AnyTransport>` only when the grammar genuinely admits multiple shapes. Do NOT invent `<X>ChildTransport` wrappers for single-shape slots. (§5 transport row, addendum item 3)
+**E6. Slot widening only for grammar-true multi-shape slots.** Default to single-shape; widen to per-slot enum or `Box<AnyNode>` only when the grammar genuinely admits multiple shapes. Do NOT invent `<X>ChildNode` wrappers for single-shape slots. (§5 node row, addendum item 3)
 
 ---
 

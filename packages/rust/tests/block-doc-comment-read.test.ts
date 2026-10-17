@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { treeOf } from '@sittir/common/utils';
-import { coordinateOf } from '../../common/src/transport-data.ts';
+import { coordinateOf } from '../../common/src/node-data.ts';
 import { readNode } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
 

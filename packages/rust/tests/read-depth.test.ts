@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { isCoordinate, readNode, type TreeHandle } from '@sittir/common/utils';
-import type { AnyUntypedNode, TransportCoordinate } from '@sittir/types';
+import type { AnyUntypedNode, NodeCoordinate } from '@sittir/types';
 import rust from '../src/index.ts';
 
 const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
@@ -32,7 +32,7 @@ function countCoordinates(value: unknown): number {
 }
 
 /** The coordinates directly under `value`'s slots, in slot order. */
-const coordinatesOf = (value: object): TransportCoordinate[] => slotValues(value).filter(isCoordinate);
+const coordinatesOf = (value: object): NodeCoordinate[] => slotValues(value).filter(isCoordinate);
 
 describe('read depth', () => {
 	it('leaves children unread by default', async () => {

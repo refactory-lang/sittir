@@ -61,7 +61,7 @@ impl Address {
 
 /// A slot by its number in each kind that has it, keyed by the kind a
 /// coordinate of the node carries (`ReadCtx::node_kind`). The number is the
-/// slot field's position among the kind's transport slots, the numbering
+/// slot field's position among the kind's node slots, the numbering
 /// `Route::Slot` uses. A node of a kind the map lacks holds nothing there.
 #[derive(serde::Deserialize, Debug, Clone, Default)]
 pub struct Slots {
@@ -147,7 +147,7 @@ pub enum Subject {
 
 /// What a plan reads a node with: the source, the kind a coordinate of a
 /// node carries (`ReadCtx::node_kind`), and how a node's kind finds its
-/// slots (`ReadTransport::router`).
+/// slots (`ReadNode::router`).
 pub struct QueryCtx<'a> {
     pub source: &'a str,
     pub stamp: &'a dyn Fn(&Node<'_>) -> crate::types::KindId,

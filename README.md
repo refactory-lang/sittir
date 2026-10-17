@@ -202,7 +202,7 @@ narrative of each phase lives in
   descriptor (`index.ts`), the node types, builders with their coercion,
   typed node wrappers, kind guards, kind constants, the render options and
   the portable vocabulary surface.
-- **`rust/crates/sittir-<lang>`**: the Rust crate. It holds one transport
+- **`rust/crates/sittir-<lang>`**: the Rust crate. It holds one node
   struct per kind (what a node is across the native boundary, with its typed
   reader), one render body per kind, kind and field ids, and the language's
   layout options. With `sittir-core` it builds the N-API addon each package

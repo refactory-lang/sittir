@@ -21,7 +21,7 @@ describe('the typed read', () => {
 		expect(sibling.replace(/\s+/g, '')).toBe('fnb(){}');
 	});
 
-	it('reads a let declaration at depth one with its value a plain identifier transport', () => {
+	it('reads a let declaration at depth one with its value a plain identifier node', () => {
 		const source = 'let x = a;';
 		const letDecl = rs.parse(source).statements()[0];
 		if (letDecl === undefined || !rs.is.letDeclaration(letDecl)) throw new Error('expected a let declaration');

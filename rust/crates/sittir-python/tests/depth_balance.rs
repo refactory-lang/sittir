@@ -7,8 +7,8 @@ use sittir_core::render::SourceTable;
 use std::sync::Arc;
 
 use sittir_python::render::options;
-use sittir_python::render::transport::{
-    render_transport_parts, AnyTransport, BlockTransport, RenderRoot, SuiteBlockTransport,
+use sittir_python::render::node::{
+    render_node_parts, AnyNode, BlockNode, RenderRoot, SuiteBlockNode,
 };
 
 struct NoSources;
@@ -22,16 +22,16 @@ impl SourceTable for NoSources {
 fn an_empty_suite_block_closes_the_indent_it_opened() {
     let options = options::defaults();
     let ctx = RenderContext { options: &options, sources: &NoSources, recording: None };
-    let block = BlockTransport {
+    let block = BlockNode {
         layout: None,
         statements: Vec::new(),
         statements_separator_space: None,
     };
-    let suite = SuiteBlockTransport {
+    let suite = SuiteBlockNode {
         layout: None,
-        block: ::sittir_core::SlotValue::Transport(block),
+        block: ::sittir_core::SlotValue::Node(block),
     };
-    let root: RenderRoot = ::sittir_core::SlotValue::Transport(AnyTransport::SuiteBlock(suite));
-    let (_, rendered) = render_transport_parts(root, &ctx).expect("render");
+    let root: RenderRoot = ::sittir_core::SlotValue::Node(AnyNode::SuiteBlock(suite));
+    let (_, rendered) = render_node_parts(root, &ctx).expect("render");
     assert!(!rendered.contains('\u{FDD0}'));
 }

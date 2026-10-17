@@ -283,7 +283,7 @@ while authoring, runs while resolving, dense vector while rendering.
 
 ## Reading: accessor structs and a render context
 
-Generated per-kind accessor structs mirror the transports, so no site index
+Generated per-kind accessor structs mirror the nodes, so no site index
 appears in a render body:
 
 ```rust
@@ -293,19 +293,19 @@ impl<'a> DelimTokenTreeParenOptions<'a> {
 }
 ```
 
-The accessor is the transport-mirroring shape; the vector is an implementation
+The accessor is the node-mirroring shape; the vector is an implementation
 detail behind it, so storage layout and reading shape are no longer forced to
 be the same thing.
 
 Options reach a render function through a **render context**:
-`impl Display for XTransport` becomes `impl Render for XTransport { fn render(&self, ctx, f) }`,
+`impl Display for XNode` becomes `impl Render for XNode { fn render(&self, ctx, f) }`,
 `View::new` gains a `ctx`, and `Display` stays as the bridge. This is the
 extension the render-views-display plan left open for exactly this case.
 
 With options delivered by context, the adapter that existed only because
 `Display::fmt` has nowhere to put a second parameter is deleted:
 
-- every `Option<u16>` spacing field on every transport
+- every `Option<u16>` spacing field on every node
 - the `fill_options` walk, which runs once per render over every node
 - `FillOptions` and its blanket impls in `sittir-core`
 
@@ -366,9 +366,9 @@ per site — as generated type tables on the TypeScript side and as named
 fields on the Rust side — where this design derives it. Four corrections,
 each a conformance to a section above rather than a new mechanism.
 
-### Kind edges live in the transport base
+### Kind edges live in the node base
 
-Every transport carries `before` and `after` once, in the shared base beside
+Every node carries `before` and `after` once, in the shared base beside
 its trivia field. They are the kind's own edges (`<kind>/before`,
 `<kind>/after`), so a per-kind field named after the kind is the same fact
 spelled 400 times.
@@ -376,14 +376,14 @@ spelled 400 times.
 ### A sibling gap is the preceding element's own `after` edge
 
 "A sibling gap belongs to the child before it" is a statement about
-storage as much as addressing. With edges in every transport's base, a
+storage as much as addressing. With edges in every node's base, a
 seated site (`arguments/elements/as_expression/after`) fills the element's
 own base `after`; the element carrier gains nothing. What the generated
 `prepare` does today by matching on each element's kind and descending into
 nested polymorph content becomes one loop over the elements and a generated
 per-slot table from element kind id to seated site index. The reader's
 classifier keeps stamping one majority class per list into the list
-transport's two separator fields, which stay: they are list facts, not
+node's two separator fields, which stay: they are list facts, not
 token seams.
 
 ### A token seam has no per-node carrier

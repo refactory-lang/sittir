@@ -6,7 +6,7 @@ vi.mock('@sittir/common/utils', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('@sittir/common/utils')>();
 	return {
 		...actual,
-		toDetachedTransportData: () => {
+		toDetachedNodeData: () => {
 			throw new Error(INJECTED);
 		}
 	};

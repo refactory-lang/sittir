@@ -651,6 +651,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - `rules: { k: ($, p) => edit(p, { '1': field('a') }) }` with `edits: { k: { 'body:': field('b') } }`, where `body:` is member 1, conflicts.
   - Two different members do not conflict.
 - [ ] **Step 2:** Implement, then run the tests and the gate. Commit.
+  - **Landed:** c5e6b8eb8 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - Wire's context records the nodes a rule callback's verbs wrote, keyed per kind, and transform refuses an entry that resolves onto one of them, at the point it resolves. A node is the member every spelling of a path reaches, so no second path resolver is needed; `layer.ts` is unchanged, and the refusal reaches the layer's diagnostics as the other entry refusals do.
+    - The `'body:'` example can't be written yet: a field segment matches only when the rule at that level is that field, so it never names a seq member. The test spells member 1 as `'-1'` instead.
+    - A direct variant's arm counts as an inline write at that arm.
 
 ---
 
@@ -667,6 +671,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
 
 - [ ] **Step 1:** Test that python's two generated alias sites give the same rule, labels and recorded effect through `alias(name)` as through the literal form. Take the expected values from Stage 4's snapshot.
 - [ ] **Step 2:** Implement, regenerate, and run the gate. Commit.
+  - **Landed:** accea8a79 on `feat/authoring-dsl`, with the resolutions-hash change in the same commit, and 60d44a8d2, a docs-only dedupe of `docs/glossary/transpile.md`. The rows equal the 913f2cfec reference. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above and the stage gate:
+    - A symbol member is aliased in place, `alias(member, $.name)`, with no relabel, after the enrich-lift check and through enrich's field, so a choice arm keeps its variant label. A rule written as a literal `ALIAS` is now a plain replacement with no effect, and `GrammarBindingsEdit.alias` is the bound name.
+    - The stage gate is not byte-identical, as ruled. Aliasing in place leaves the alias entry's up-front placeholder mint (`_lambda_expression`) blank, and it stays in the `python.top` evaluated snapshot, following the `_kw_*` convention. `grammarHash` is now taken over the grammar tree-sitter sees (`treeSitterPruned`, the prune `grammar.json` gets), so every grammar's `resolutions.json` hash moves once; the resolution arrays are unchanged. That is the only output-gate difference, apart from python's regenerated `grammar.bindings.ts`.
+    - The hash change shares the 5.1 commit: the pre-commit check compares a commit's staged codegen source with the last regen, which covered both changes.
 
 ---
 

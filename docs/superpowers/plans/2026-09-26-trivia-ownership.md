@@ -12,7 +12,7 @@ can attach inner comments to empty nodes through a type-guarded `$trivia.inner`.
   placement rule.
 - **Emitted gap tables:** tell the reader which empty slot an inner comment
   sits in.
-- **Wrap and transport:** carry trivia entries through the same per-kind paths
+- **Wrap and node:** carry trivia entries through the same per-kind paths
   as slot children.
 - **Render:** a per-kind `lineTerminated` fact and a `$sameLine` stamp decide
   line breaks.
@@ -249,8 +249,8 @@ forward from Task 7, so every commit stays at baseline):
   its owner; more holds it past the tokens that follow the owner
   (`RenderSink::defer_trailing` / `seat_trailing`), seated before the next owner,
   a coordinate, a line break, or the end of the parent's render.
-- `sittir_core::trivia::TransportTrivia<T>` is the one trivia carrier; each
-  grammar aliases it over its `TriviaTransport`. Inner entries render at their
+- `sittir_core::trivia::NodeTrivia<T>` is the one trivia carrier; each
+  grammar aliases it over its `TriviaNode`. Inner entries render at their
   gap through the render-body printer's `innerGap` hook
   (`trivia::render_inner`), before a presence-gated slot's `if`.
 - `foldsToCoordinate` refuses only leading/trailing trivia; inner lies inside the
@@ -470,7 +470,7 @@ it('classifies loose strings against comment kinds and rejects others', () => {
   (`'\n\n'` → blankline), or is refused. It never falls back to a comment.
 - Render: a whitespace entry replaces the spacing of the gap it sits in
   (`SEAM_TRIVIA`, above declared strength; `TriviaSeam` on the trivia
-  transport). After an open line comment it still keeps the line break, and
+  node). After an open line comment it still keeps the line break, and
   an empty block holding one keeps it (`{\n\n}`).
 - The factory emitters' hidden-keyword skip reads `isHiddenPresenceMarker`;
   the skipped `_kw_*` sets are unchanged.
@@ -479,7 +479,7 @@ it('classifies loose strings against comment kinds and rejects others', () => {
   Emitter sites read the builder ones (`isBuilderTextLeaf`,
   `isBuilderlessPunctuationLeaf`, `isWordOrBuilderTextLeaf`), and `consts`,
   `markUserFacing` and the edge classes read the grammar ones.
-- Pulled forward from Task 7: the whitespace transport variants and render.
+- Pulled forward from Task 7: the whitespace node variants and render.
 
 ### Full-form acceptance (follows 5w)
 
@@ -554,14 +554,14 @@ const s: readonly import('../src/index.js').Statement[] = parsed.statements();
 - [ ] **Step 5: Regen, gate and commit.** List the public API additions in the
   commit message.
 
-### Task 7: Transport and render: line-terminated breaks, leading joins, inner layout
+### Task 7: Node and render: line-terminated breaks, leading joins, inner layout
 
-**Landed early (Task 5w):** the whitespace variants of `TriviaTransport` and
+**Landed early (Task 5w):** the whitespace variants of `TriviaNode` and
 a whitespace entry replacing the gap's spacing. Still open here: an own-line
 trailing comment renders a blank line after it (`a;\n    // c\n\n    b;`),
 on the comment-only path.
 
-Re-based on Task 3, which landed the core `trivia::TransportTrivia<T>` (with
+Re-based on Task 3, which landed the core `trivia::NodeTrivia<T>` (with
 `inner`, `same_line`, `tokens_between` per entry), same-line trailing seating in
 the spacing writer, and inner entries at their gap. What remains:
 
@@ -574,7 +574,7 @@ the spacing writer, and inner entries at their gap. What remains:
     special case for line comments, since their `<kind>_after` edge default is
     `newline` (next bullet).
 - Modify: `packages/codegen/src/emitters/render-module.ts`:
-  - `TriviaTransport` implements `fn line_terminated(&self) -> bool`, one arm
+  - `TriviaNode` implements `fn line_terminated(&self) -> bool`, one arm
     per comment kind from the stamped fact.
 - Modify: the render-defaults stamp (`compiler/model/render-rules.ts` /
   `site-preferences.ts`): an extra kind with `lineTerminated` gets `<kind>_after`
@@ -620,8 +620,8 @@ it('renders a built trailing line comment followed by the next statement on a ne
   `detachedRender` is the existing helper the render tests use to render with
   source coordinates stripped.
 - [ ] **Step 2: Run them.** Expected: FAIL.
-- [ ] **Step 3: Implement** the macro, transport, body node and
-  `render_inner_trivia`. `TriviaTransport` gains the whitespace variants; a
+- [ ] **Step 3: Implement** the macro, native node, body node and
+  `render_inner_trivia`. `TriviaNode` gains the whitespace variants; a
   whitespace entry replaces the spacing default at its gap for that node (it is
   written through the spacing writer, which coalesces by rank). Add matching Rust unit tests to `trivia_macro_tests`
   for `same_line` and `line_terminated`.
@@ -631,7 +631,7 @@ it('renders a built trailing line comment followed by the next statement on a ne
   grammar. If a row regresses, stop and report old/new/where.
 
 **Follow-ups after Task 7 (not in its scope):**
-- **Done:** a trailing entry held past a field-held token seated before that token. Anonymous-kind transports now render with `render_with_trivia!(token …)` and don't seat. The token renders through its own transport, and `render_with_trivia` seats held trailing on entry. Repro: `fn f() { x = a + /* x */ b; }` renders `x = a /* x */ + b`, although the reader stamps `$tokensBetween: 1` on the comment. The entry must seat after the token.
+- **Done:** a trailing entry held past a field-held token seated before that token. Anonymous-kind nodes now render with `render_with_trivia!(token …)` and don't seat. The token renders through its own node, and `render_with_trivia` seats held trailing on entry. Repro: `fn f() { x = a + /* x */ b; }` renders `x = a /* x */ + b`, although the reader stamps `$tokensBetween: 1` on the comment. The entry must seat after the token.
 - **Done:** the same seating when the token is kept as a source coordinate (an edited tree). The sink reads the grammar's `KIND_FLAGS` table: a coordinate onto a `KIND_ANON` kind seats no held trailing entries, and `KIND_LINE_TERMINATED` replaces the per-grammar line-terminated match.
 - **Done:** an own-line trailing entry no longer swallows its owner's after edge. The sink sets that seam aside while the run renders and merges it back after, so a built `fn g() {}` with a trailing `/* t */` keeps its blank line before `fn h`. The same root cause fixed the python line continuation that was followed by an extra break: `def foo():\n    pass \\\n\\\n\\\n` now renders as its source.
 

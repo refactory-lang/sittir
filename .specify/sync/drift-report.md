@@ -40,7 +40,7 @@ Focus: spec 022 (De-hoisted NodeData Surface)
 | SC-008 | No JSON serialization in native render path | Confirmed: 0 hits in render crates |
 | FR-009a | `$with.$child`/`$with.$children` for unnamed slots | Container factories emit `$with: { $children: (...) => ... }` |
 | FR-013 | Wrap output exposes same surface as factory | wrap.ts emitter (pending migration — task #80) |
-| FR-016 | `$with` and `$`-methods JS-side only, not across napi | napi transport structs have no `$with` or method fields |
+| FR-016 | `$with` and `$`-methods JS-side only, not across napi | napi node structs have no `$with` or method fields |
 
 #### Intentionally Drifted
 

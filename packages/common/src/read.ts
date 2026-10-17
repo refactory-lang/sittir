@@ -1,4 +1,4 @@
-import type { TransportCoordinate } from '@sittir/types';
+import type { NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 
 /** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
@@ -10,7 +10,7 @@ export interface TreeHandle {
 	source?: string;
 	/** The native tree `read` reads: the tree id every coordinate read from it packs. */
 	id?: number;
-	/** The node at descendant `index` read into its transport, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's transport is its kind id. */
+	/** The node at descendant `index` read into its native node, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's native node is its kind id. */
 	read?(index: number, depth?: number): unknown;
 	/** The tree's layer of the render options (`NativeParseResult.options`). */
 	options?: Readonly<Record<string, unknown>>;
@@ -21,11 +21,11 @@ export interface TreeHandle {
 	triviaSide?(index: number, side: TriviaSideName): unknown[];
 	/** Replaces `side` of the node at descendant `index` with `entries`. */
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
-	/** The sides of the unit children of the node at descendant `index`, by slot and item (`TransportLayout.units`). */
+	/** The sides of the unit children of the node at descendant `index`, by slot and item (`NodeLayout.units`). */
 	unitSides?(index: number): unknown[];
-	/** The stored layout of each list slot of the node at descendant `index` that stores any (`TransportLayout.slots`). */
+	/** The stored layout of each list slot of the node at descendant `index` that stores any (`NodeLayout.slots`). */
 	slotLayouts?(index: number): unknown[];
-	/** The separator before the node at descendant `index` as a list item, where it is not its slot's (`TransportLayout.separator`). */
+	/** The separator before the node at descendant `index` as a list item, where it is not its slot's (`NodeLayout.separator`). */
 	separatorBefore?(index: number): number | undefined;
 	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */
 	editedWithin?(index: number, ownSides: boolean): boolean;
@@ -58,18 +58,18 @@ export function decodeTree(handle: number): number {
 	return Math.floor(handle / INDEX_RANGE);
 }
 
-/** Whether `value` is a coordinate: a node past the read's depth, named by its tree and index. A transport never carries `$treeHandle` itself; its own coordinate is nested in `$_layout.at`. */
-export function isCoordinate(value: unknown): value is TransportCoordinate {
+/** Whether `value` is a coordinate: a node past the read's depth, named by its tree and index. A native node never carries `$treeHandle` itself; its own coordinate is nested in `$_layout.at`. */
+export function isCoordinate(value: unknown): value is NodeCoordinate {
 	return value !== null && typeof value === 'object' && '$treeHandle' in value && '$span' in value;
 }
 
 /**
- * The node a coordinate names, read into its transport `depth` levels down (one when absent): a unit
- * variant's transport is its kind id.
+ * The node a coordinate names, read into its native node `depth` levels down (one when absent): a unit
+ * variant's node is its kind id.
  *
  * @throws when the tree has no native read, or the coordinate names another tree.
  */
-export function readNode(tree: TreeHandle, coordinate: TransportCoordinate, depth?: number): unknown {
+export function readNode(tree: TreeHandle, coordinate: NodeCoordinate, depth?: number): unknown {
 	if (tree.read === undefined) throw new Error('readNode: this tree has no native read');
 	const owner = decodeTree(coordinate.$treeHandle);
 	if (owner !== tree.id) throw new Error(`readNode: the coordinate names another tree (${owner}), not this one (${String(tree.id)})`);

@@ -8,7 +8,7 @@
 //!
 //! Note: `RenderFixture` (SC-001a byte-for-byte render-dispatch parity)
 //! has been retired — `render_dispatch` is removed as part of the
-//! bridge-sunset (PR-E2). Production render uses the transport path.
+//! bridge-sunset (PR-E2). Production render uses the node path.
 //!
 //! Any divergence fails the test with the fixture index + the
 //! diff, so a CI signal pinpoints which kind regressed.

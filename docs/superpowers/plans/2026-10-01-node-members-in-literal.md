@@ -29,7 +29,7 @@
 The inputs and conditions the issue implies but no task's main tests exercise. Each has a test in the owning task.
 
 1. **A node built outside any engine** (no handle): `$render`, `$toEdit`, `$replace` and every `$trivia` position throw `node has no engine`; `$engine` reads `undefined`; `$with` setters still rebuild. Same shape class as the engine-bound node. (Task 4, Task 5)
-2. **A read-stub owner** (a parsed list owner whose list has not been read): `Object.keys`, a spread, `toTransportData` and `isEmptyNode` must not trigger its throwing `length` getter and must not hydrate any stub. (Task 3, Task 8)
+2. **A read-stub owner** (a parsed list owner whose list has not been read): `Object.keys`, a spread, `toNodeData` and `isEmptyNode` must not trigger its throwing `length` getter and must not hydrate any stub. (Task 3, Task 8)
 3. **Duplicate member keys**: an accessor that spells a list-view member (`at`, `map`, `length`, ...), or a seated key that spells another reader, would silently replace a member in an object literal. The emitter must pick one deliberately and a census over all five grammars must find none left by accident. (Task 7, Task 8)
 4. **Trivia carried through `$with`**: a setter hands the source node's trivia to its result; inner comments refuse a result that is no longer empty (same message); a node that gets trivia attached after it was built stays fast. (Task 4, Task 5)
 5. **Kinds with no inner gap**: `node.$trivia.inner` and `.innerAt` are absent on them at runtime, so calling them is a plain `TypeError`, and the type surface must not offer them either. The types offer `inner` only on the `Empty<Kind>` forms, and the runtime literal gets `inner` from the same fact (`node.innerGaps`, the fact `emptyForms` reads), so the two cannot drift; nothing pins the old message today (searched). Task 5 adds a type-level pin (`@ts-expect-error` on `.inner` of a kind with no gap and of a non-empty `Bound`) and a runtime test per grammar over every kind: the kinds that have `inner` are exactly the `emptyForms` keys. (Task 2, Task 5)
@@ -49,9 +49,9 @@ Today a built node's readers, `$trivia`, `$engine` and list members are non-enum
 | `tools/src/exercise/walk.ts` `collectChildren` (L70) | wrapped nodes | **changes**: calls every zero-arity function member that is not `$`/`_` prefixed; wrapped readers already match, a list node's `keys()`, `values()`, `entries()`, `toString()` would now be called as if they were readers | name the readers instead: call only members whose `_<slot>` storage key exists (Task 3) |
 | `tools/src/validate/common.ts` L316, L343, L913, L1242, L1261, L1953; `from.ts` L56, L110, L124; `factory-render-parse.ts` `storageKeysOf` (L161); `read-projection.ts` L145; `probe/kind.ts` L1206, L1240; `read-render-parse.ts` L370 | built or wrapped nodes | **safe**: every one filters by `_` prefix or `$type`/`$other` | none; Task 3 adds a regression test that feeds them an enumerable-member node |
 | `read-render-parse.ts` `walk` (L387), `trivia-placement.ts` (L72), `uncovered-content.ts` (L117, L168), `profile/*`, `corpus/*`, `probe/stages.ts` | plain native read data (`readNativeTree`, `$handle` keys) | **unaffected**: not typed nodes | none |
-| `common/src/transport-data.ts` `toTransportValue` (L171), `isUntouchedBelow` (L67), `isDerivedFromText` (L45), `detachCoordinates` (L213), `holdsSlots` (L28) | built and wrapped nodes | `toTransportValue` **breaks** (copies `$trivia`, `$engine`, list members; the native boundary rejects function-valued keys and has no `$trivia` field); the others are correct but pay for walking every key | select by key prefix; read only the selected keys (Task 3) |
+| `common/src/node-data.ts` `toNodeValue` (L171), `isUntouchedBelow` (L67), `isDerivedFromText` (L45), `detachCoordinates` (L213), `holdsSlots` (L28) | built and wrapped nodes | `toNodeValue` **breaks** (copies `$trivia`, `$engine`, list members; the native boundary rejects function-valued keys and has no `$trivia` field); the others are correct but pay for walking every key | select by key prefix; read only the selected keys (Task 3) |
 | `common/src/create-engine.ts` `collectReaders` (L107, L114), `common/src/utils.ts` `isEmptyNode` (L113), `isNode` (L502) | built and wrapped nodes | correct (prefix filtered) but allocate an entries array per node and scan more keys | loop keys with the prefix test; `isNode` uses `holdsSlots` (Task 3) |
-| `common/src/transport-data.ts` `detachCoordinate` (L141) | the node being edited | uses `delete`, which makes that one node dictionary-mode | runs only on an inner-trivia write to an empty node; left as is, listed in the PR notes |
+| `common/src/node-data.ts` `detachCoordinate` (L141) | the node being edited | uses `delete`, which makes that one node dictionary-mode | runs only on an inner-trivia write to an empty node; left as is, listed in the PR notes |
 
 Also `common/src/utils.ts` `setTriviaData` assigns `$_trivia` onto the node after it is built. That is one added data property (a second shape for nodes that carry trivia, still fast); Task 5 pins it.
 
@@ -59,7 +59,7 @@ Also `common/src/utils.ts` `setTriviaData` assigns `$_trivia` onto the node afte
 
 Measured with `scratchpad/probes/parsed-cost.mts` (master + the chain, release native, Apple M4 Pro, Node 26.10). "Copies" are ordinary objects with the same enumerable keys (so the only difference is the V8 representation).
 
-| | nodes reached | fast properties | `toTransportData(root)` on the nodes | on same-shape copies | `engine.render` of the untouched tree | `Object.keys` + prefix per node, nodes / copies |
+| | nodes reached | fast properties | `toNodeData(root)` on the nodes | on same-shape copies | `engine.render` of the untouched tree | `Object.keys` + prefix per node, nodes / copies |
 |---|---|---|---|---|---|---|
 | rust `engine.rs`, deep parse | 3,272 | 1,006 (69% dictionary) | 3,302 µs | 515 µs (6.4x) | 3,236 µs | 159 / 35 ns |
 | typescript `create-engine.ts`, deep parse | 2,109 | 740 (65% dictionary) | 1,848 µs | 362 µs (5.1x) | 1,852 µs | 148 / 38 ns |
@@ -88,7 +88,7 @@ The PR body carries: the three affected tools walkers (`materializeValue`, `toRe
 | File | Responsibility |
 |---|---|
 | `packages/common/src/utils.ts` | The member logic as plain functions: `renderText`, `rebuilt`, `triviaSide`, `triviaInner`, `triviaInnerAt`, `listItems`, `LIST_ITEMS`, `LIST_METHODS`, `listIterator`, `listSlotWith`, `elementsWith`, `seatWith`, `isDataKey`. The old helpers (`withMethods`, `withAccessors`, `withListView`, `withListSlots`, `withElementsSeat`, `withGroupSeat`, `carryTriviaThroughWith`, `bindEngine`, `triviaSetterOf`) stay until Task 10. |
-| `packages/common/src/transport-data.ts` | `isDataKey` selection in `toTransportValue`; prefix loops in the walkers. |
+| `packages/common/src/node-data.ts` | `isDataKey` selection in `toNodeValue`; prefix loops in the walkers. |
 | `packages/common/src/runtime.ts`, `packages/codegen/src/emitters/client-utils.ts` | `withMethods` leaves `bindRuntime` and each grammar's generated `utils.ts` (Task 10). |
 | `packages/codegen/src/emitters/node-members.ts` (new) | One emitter function that returns the member lines of a literal (readers, `$with` entries, `$render`..`$engine`, `$trivia`, seat and list members). Used by `factories.ts` and `wrap.ts`. |
 | `packages/codegen/src/emitters/factories.ts`, `wrap.ts` | Replace the `withMethods(...)` nesting at their emit sites with the literal from `node-members.ts`; `seatRuntimes`/`seatOpening`/`seatClosing` go in Task 10. |
@@ -107,7 +107,7 @@ The PR body carries: the three affected tools walkers (`materializeValue`, `toRe
 - Modify: `package.json` (script `probe:node-shape`)
 
 **Interfaces:**
-- Produces: `pending` (a `Set<string>` in the test) naming the classes not yet converted; each class task deletes its labels, which turns its `it.fails` into a passing assertion. `measureNodeShape(grammar)` in the script returns `{ built: Record<string, number>, parsed: { nodes: number; fast: number; toTransportUs: number; renderUs: number }, listOwnerBuildNs: number }`.
+- Produces: `pending` (a `Set<string>` in the test) naming the classes not yet converted; each class task deletes its labels, which turns its `it.fails` into a passing assertion. `measureNodeShape(grammar)` in the script returns `{ built: Record<string, number>, parsed: { nodes: number; fast: number; toNodeUs: number; renderUs: number }, listOwnerBuildNs: number }`.
 
 - [ ] **Step 1: Refresh the base.** Merge origin/master into the branch; confirm the chain (#527, #528, #524, #533, #535) is in master (`git log --oneline origin/master -12`). Regenerate and rebuild natives (`pnpm run regen:all`) so `createEngine` loads. If the chain is not merged, stop and ask sittir-brainstorm.
 
@@ -199,7 +199,7 @@ describe('a parsed node keeps fast properties', () => {
 Run: `pnpm exec vitest run packages/tools/tests/node-shape.test.ts`
 Expected: every `it.fails` passes (the assertions fail today: 0 or 1 of 1000 are fast). A class that passes without `fails` means the pending set is wrong.
 
-- [ ] **Step 4: Write the probe script.** `packages/tools/src/scripts/node-shape.ts` exports `measureNodeShape(grammar)` and prints a table when run directly. It reuses the same class builders as the test (move them to `packages/tools/tests/support/node-shape-classes.ts` and import from both), and adds: (a) `engine.render` per node over 400 trees of `letDeclaration(chain(6))` against the copies-into-ordinary-objects baseline from the issue; (b) `toTransportData` per node; (c) `engine.build.arguments(x, y, z)` and `binaryExpression` build time (best of 15 rounds of 10,000); (d) for a deep parse of `rust/crates/sittir-core/src/engine.rs` and `packages/common/src/create-engine.ts`: nodes reached, fast count, `toTransportData(root)` and `engine.render(root)` best-of-8, with the same-shape copies column from the parsed-cost probe. Add `"probe:node-shape": "tsx packages/tools/src/scripts/node-shape.ts"` to `package.json`.
+- [ ] **Step 4: Write the probe script.** `packages/tools/src/scripts/node-shape.ts` exports `measureNodeShape(grammar)` and prints a table when run directly. It reuses the same class builders as the test (move them to `packages/tools/tests/support/node-shape-classes.ts` and import from both), and adds: (a) `engine.render` per node over 400 trees of `letDeclaration(chain(6))` against the copies-into-ordinary-objects baseline from the issue; (b) `toNodeData` per node; (c) `engine.build.arguments(x, y, z)` and `binaryExpression` build time (best of 15 rounds of 10,000); (d) for a deep parse of `rust/crates/sittir-core/src/engine.rs` and `packages/common/src/create-engine.ts`: nodes reached, fast count, `toNodeData(root)` and `engine.render(root)` best-of-8, with the same-shape copies column from the parsed-cost probe. Add `"probe:node-shape": "tsx packages/tools/src/scripts/node-shape.ts"` to `package.json`.
 
 - [ ] **Step 5: Record the baseline.** Run `pnpm run probe:node-shape` on the unchanged tree and paste the output into the PR description's "Before" section (not committed).
 
@@ -235,20 +235,20 @@ Expected: every `it.fails` passes (the assertions fail today: 0 or 1 of 1000 are
 ### Task 3: Projection and the walkers select keys; no node changes yet
 
 **Files:**
-- Modify: `packages/common/src/transport-data.ts` (add `isDataKey`; `toTransportValue` L166-186, `isUntouchedBelow` L62, `isDerivedFromText` L43, `detachCoordinates` L196)
+- Modify: `packages/common/src/node-data.ts` (add `isDataKey`; `toNodeValue` L166-186, `isUntouchedBelow` L62, `isDerivedFromText` L43, `detachCoordinates` L196)
 - Modify: `packages/common/src/utils.ts` (`isEmptyNode` L112, `isNode` L498)
 - Modify: `packages/common/src/create-engine.ts` (`collectReaders` L103-118)
 - Modify: `packages/tools/src/validate/common.ts` (`materializeValue` L951), `packages/tools/src/exercise/roundtrip.ts` (`toRenderableNode` L196), `packages/tools/src/exercise/walk.ts` (`collectChildren` L68)
-- Test: `packages/common/tests/transport-data-selection.test.ts` (new), `packages/tools/src/__tests__/node-key-walkers.test.ts` (new)
+- Test: `packages/common/tests/node-data-selection.test.ts` (new), `packages/tools/src/__tests__/node-key-walkers.test.ts` (new)
 
 **Interfaces:**
-- Produces: `isDataKey(key: string): boolean` in `transport-data.ts`, exported from `@sittir/common/utils`: true for a storage key (`_<slot>`, `$other`) and for a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`, `$toEdit`, `$replace`); false for everything else (readers, list indices, `length`, options, symbol keys).
+- Produces: `isDataKey(key: string): boolean` in `node-data.ts`, exported from `@sittir/common/utils`: true for a storage key (`_<slot>`, `$other`) and for a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`, `$toEdit`, `$replace`); false for everything else (readers, list indices, `length`, options, symbol keys).
 
 - [ ] **Step 1: Write the failing test.** A hand-written node in the new shape: every member enumerable.
 
 ```ts
 import { describe, expect, it } from 'vitest';
-import { toTransportData } from '../src/transport-data.ts';
+import { toNodeData } from '../src/node-data.ts';
 
 const LIST_ITEMS = Symbol('items');
 const newShapeList = () => {
@@ -267,20 +267,20 @@ const newShapeList = () => {
 	};
 };
 
-describe('toTransportData selects a node by key', () => {
+describe('toNodeData selects a node by key', () => {
 	it('copies storage and $ metadata and nothing else', () => {
-		expect(toTransportData(newShapeList() as never)).toEqual({ $type: 7, $source: 2, $named: true, _elements: ['a', 'b'] });
+		expect(toNodeData(newShapeList() as never)).toEqual({ $type: 7, $source: 2, $named: true, _elements: ['a', 'b'] });
 	});
 	it('does not read a getter that throws', () => {
 		const owner = { ...newShapeList() };
 		Object.defineProperty(owner, 'length', { get() { throw new Error('read stub'); }, enumerable: false });
-		expect(() => toTransportData(owner as never)).not.toThrow();
+		expect(() => toNodeData(owner as never)).not.toThrow();
 	});
 });
 ```
 Add the same node to `node-key-walkers.test.ts` and assert `materializeValue`, `toRenderableNode`, `collectChildren` (export them for test if they are not), `findUndefined`, `storageKeysOf`, `isEmptyNode` and `isNode` give the same result for it as for the old-shape node of the same data. Run: expect FAIL (`$trivia` copied).
 
-- [ ] **Step 2: Implement `isDataKey` and use it.** In `toTransportValue` replace the `Object.entries` loop with `for (const key of Object.keys(value)) { if (!isDataKey(key)) continue; const raw = value[key]; out[key] = isStorageKey(key) ? toTransportValue(raw) : raw; }`. In `isUntouchedBelow`, `isDerivedFromText`, `detachCoordinates` and `collectReaders` loop `Object.keys` with the `_`/`$other` test and read only those. `isEmptyNode` loops keys with the `_` test. `isNode` replaces `Object.keys(o).some(...)` with `holdsSlots(o)`.
+- [ ] **Step 2: Implement `isDataKey` and use it.** In `toNodeValue` replace the `Object.entries` loop with `for (const key of Object.keys(value)) { if (!isDataKey(key)) continue; const raw = value[key]; out[key] = isStorageKey(key) ? toNodeValue(raw) : raw; }`. In `isUntouchedBelow`, `isDerivedFromText`, `detachCoordinates` and `collectReaders` loop `Object.keys` with the `_`/`$other` test and read only those. `isEmptyNode` loops keys with the `_` test. `isNode` replaces `Object.keys(o).some(...)` with `holdsSlots(o)`.
 - [ ] **Step 3: Fix the three tools walkers.** `materializeValue`: skip any key that is not `isDataKey`. `toRenderableNode`: same predicate on the `$` loop. `collectChildren`: call a member only when `_<slot>` storage exists for it (derive the slot from the storage keys, as `roundtrip.ts` L204 already derives the getter name from them) instead of calling every zero-arity function.
 - [ ] **Step 4: Gates.** The new tests pass; vitest (own call) unchanged; `validate:native` rows identical; zero generated diff.
 - [ ] **Step 5: Commit** `refactor(common,tools): nodes are selected by key, so members may become enumerable`.
@@ -506,7 +506,7 @@ for (let index = 0; index < items.length; index++) node[index] = items[index];
 - The list options (`delimiter`, `separator`) are plain data decided at build for built owners and read from the stored list for wrapped owners (a getter-free read when the list is hydrated, otherwise the default).
 
 - [ ] **Step 1: Spike and measure (answers question 1).** Build `arguments(x, y, z)` 10,000 times best-of-15 with `...LIST_METHODS` and with the 29 methods named; record both next to the issue's 125 ns / 1,328 B. Choose spread when within 1.5x of the named figure; otherwise name them. The choice is recorded in the commit body.
-- [ ] **Step 2: Failing tests.** In `list-view.test.ts` (kept, ported to the literal form in Task 4) add the owner-level checks against the real engine: a built owner and a parsed owner expose the same `length`, indices, options and methods; `Object.keys` of a parsed shallow owner reads no stub (assert the native read counter does not move: use `recordFfi` from `@sittir/common`'s metrics as `real-list-cost.mts` does); `toTransportData(parsedOwner)` does not call the `length` getter of a stub owner.
+- [ ] **Step 2: Failing tests.** In `list-view.test.ts` (kept, ported to the literal form in Task 4) add the owner-level checks against the real engine: a built owner and a parsed owner expose the same `length`, indices, options and methods; `Object.keys` of a parsed shallow owner reads no stub (assert the native read counter does not move: use `recordFfi` from `@sittir/common`'s metrics as `real-list-cost.mts` does); `toNodeData(parsedOwner)` does not call the `length` getter of a stub owner.
 - [ ] **Step 3: Implement** owners (factory and wrap), including `listSlotWith`/`elementsWith` inside the `$with` closure in the order `rebuilt(elementsWith(listSlotWith(base)))`, which is the composition today's `withMethods(withListView(withListSlots(...)))` produces.
 - [ ] **Step 4: Regenerate all five; describe the diff by class** (rust 33 / typescript 15 / python 38 owner sites × factory and wrap; the other counts from the issue's table are reconciled in the commit body).
 - [ ] **Step 5: Shape gate.** Remove `rust list owner` and `parsed` from `pending`; add built and parsed list-owner classes for typescript (`formalParameters`) and python (`parameters`) to the table with their builders.
@@ -542,7 +542,7 @@ for (let index = 0; index < items.length; index++) node[index] = items[index];
 - Modify docs: remove the glossary entries of the deleted helpers (`docs/glossary/packages-common-src.md`, `emitters.md`); document `node-members.ts` and the new functions
 
 - [ ] **Step 1: Delete, then let the compiler find every user.** `pnpm run type-check` lists them; fix each by deleting dead code or rewriting the test to the new surface (never loosening an assertion without the stash-and-rerun proof from the working standards).
-- [ ] **Step 2: `nodedata-shape.test.ts`** now asserts the new contract: every member enumerable; `Object.keys` of a built node lists `$` keys, `_` keys, readers, `$render`, `$toEdit`, `$replace`, `$trivia`, `$engine`; `JSON.stringify` of a node contains no function; `toTransportData` of it equals the plain data.
+- [ ] **Step 2: `nodedata-shape.test.ts`** now asserts the new contract: every member enumerable; `Object.keys` of a built node lists `$` keys, `_` keys, readers, `$render`, `$toEdit`, `$replace`, `$trivia`, `$engine`; `JSON.stringify` of a node contains no function; `toNodeData` of it equals the plain data.
 - [ ] **Step 3: Full gates and `pnpm -r build`.** Regenerate to prove generated output is unchanged by this task (`git status --short packages/*/src` empty).
 - [ ] **Step 4: Commit** `refactor: remove the helpers that attached members after a node was built`.
 
@@ -556,7 +556,7 @@ for (let index = 0; index < items.length; index++) node[index] = items[index];
 - Modify: `docs/use-cases-and-examples.md`, package READMEs (final pass), `docs/glossary/*` (entries for everything added)
 - No code
 
-- [ ] **Step 1: After numbers.** `pnpm run probe:node-shape` on the final tree; the PR description carries a before/after table for each of the issue's probes: build time and retained heap of the three node classes, fast-properties counts for built and parsed nodes, `engine.render` and `toTransportData` per node over built trees, deep-parse `toTransportData` and untouched `engine.render`, `engine.build.arguments(x, y, z)`.
+- [ ] **Step 1: After numbers.** `pnpm run probe:node-shape` on the final tree; the PR description carries a before/after table for each of the issue's probes: build time and retained heap of the three node classes, fast-properties counts for built and parsed nodes, `engine.render` and `toNodeData` per node over built trees, deep-parse `toNodeData` and untouched `engine.render`, `engine.build.arguments(x, y, z)`.
 - [ ] **Step 2: The issue's done-when list**, each item with the evidence: (1) no `Object.defineProperty` or getter in factories apart from the read-stub owner, and in wraps only the parsed-list index getters (the Task 9 census); (2) nodes of one kind share a shape (the shape test); (3) validation counts for every grammar match the previous run (`validate:history` rows pasted).
 - [ ] **Step 3: Generated-output diff by class with counts** per grammar (text leaf, plain, refine form, seat, list owner, separated list; factory and wrap), and the full gate output: `pnpm -r build`, type-check, lint, vitest (own call), `cargo test --workspace --no-default-features`.
 - [ ] **Step 4: PR.** Body starts with `Owner: sittir-implement`; links the issue; lists the one public change (`node.$trivia(...)` is gone; positions remain) and the enumerability change; notes `detachCoordinate`'s `delete` as untouched. Wait for CI green and the user's word before anything is merged; never merge it myself.

@@ -406,7 +406,7 @@ pub trait RenderSink {
     /// A node of `kind` has just been written: hold the line end when the
     /// kind is line-terminated (`options::KIND_LINE_TERMINATED`) or ends in
     /// the declared newline token (`options::KIND_LINE_BREAK_TERMINATED`).
-    /// Every node render reaches this once, whether a transport, a
+    /// Every node render reaches this once, whether a native node, a
     /// coordinate or detached trivia text.
     fn end_line_after(&mut self, kind: KindId) {
         if self.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED) {

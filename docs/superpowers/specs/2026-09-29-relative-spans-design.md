@@ -148,16 +148,16 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
 - **The wire and `NodeData` carry relative points.** `read_node` emits each
   stored child's start and end point relative to its parent's start point,
   with the root at (0, 0) after `widen_to_whole_source`.
-- **Transports carry their points.** A node that renders from its data
+- **Native nodes carry their points.** A node that renders from its data
   crosses with its `$span`, and with `$anchor` (its handle and child index)
   when it has a handle, edited or not.
 - **The prepare walk threads a frame from the render root.** A frame is a
   parent's position and the tree it is in. The walk is top-down, so it holds
   the frame when it reaches a child, and a child's position is the frame's
-  plus its offset, by the column rule; nothing stores it. A transport with an
+  plus its offset, by the column rule; nothing stores it. A node with an
   `$anchor` places itself through it (below); one without passes the frame
   on through its `$span`; a factory-built one, with neither, leaves the frame
-  below it unknown. A transport's trivia is placed with the frame it
+  below it unknown. A node's trivia is placed with the frame it
   received, since trivia is measured from the owner's parent.
 - **Bytes come from the anchor's line-start table.** An anchor's source gets
   one table of line-start byte offsets, built once and shared for the render.
@@ -190,7 +190,7 @@ position.
   `widen_to_whole_source`), the wire (`types.rs` serialize and deserialize,
   `slot.rs` `from_napi_value`), the prepare walk that builds
   `NodeCoordinate`s, and the gap classifier.
-- **`@sittir/common`:** `transport-data.ts` (the coordinate fold,
+- **`@sittir/common`:** `node-data.ts` (the coordinate fold,
   `asCoordinate`, `markEdited`, `projectValue`), `readNode.ts`,
   `native-boundary.ts`, `span.ts` slicing, and the coordinate types on node
   data.
@@ -206,7 +206,7 @@ position.
 - **Handles:** a trivia entry carries its owner's handle instead of its
   tree's, when the owner has one.
 - **Trivia ownership:** `node_trivia` and `extras_run` (owner assignment),
-  `TransportTrivia::render_trailing` (no held entries), and the node map's
+  `NodeTrivia::render_trailing` (no held entries), and the node map's
   `innerGaps` with the `inner_gap_key` and `INNER_GAPS` rows it feeds (the
   closing gap).
 
