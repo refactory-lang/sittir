@@ -121,7 +121,7 @@ fn least_stack_kib(probe: Probe) -> usize {
     let (mut lo, mut hi) = (16, 16 * 1024);
     assert!(survives(probe, hi), "the typed read overflows {hi} KiB reading {probe:?}, or the probe did not run");
     while hi - lo > 8 {
-        let mid = (lo + hi) / 2;
+        let mid = usize::midpoint(lo, hi);
         if survives(probe, mid) {
             hi = mid;
         } else {
@@ -138,7 +138,8 @@ fn least_stack_kib(probe: Probe) -> usize {
 fn the_typed_read_stays_within_its_pinned_stack_ceilings() {
     let typed = LEVELS.map(|n| least_stack_kib(Probe::Nested(n)));
     assert!(typed[3] > typed[2] && typed[2] > typed[0], "the least stack must grow with the nesting: {typed:?}");
-    let slope = |from: usize, to: usize| (typed[to] - typed[from]) as f64 * 1024.0 / (LEVELS[to] - LEVELS[from]) as f64;
+    let kib = |n: usize| f64::from(u32::try_from(n).unwrap());
+    let slope = |from: usize, to: usize| kib(typed[to] - typed[from]) * 1024.0 / kib(LEVELS[to] - LEVELS[from]);
     let release = !cfg!(debug_assertions);
     let (os, arch) = (std::env::consts::OS, std::env::consts::ARCH);
     let profile = if release { "release" } else { "dev" };

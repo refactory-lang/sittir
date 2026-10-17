@@ -60,6 +60,12 @@ pub struct RoundTripFixture {
 /// Load the fixture corpus for a grammar from disk. Path is relative
 /// to the workspace root so `cargo test -p sittir-parity-tests` finds
 /// it regardless of the caller's cwd.
+///
+/// # Panics
+///
+/// If the grammar's `test-fixtures.json` is missing or malformed; codegen
+/// writes it.
+#[must_use]
 pub fn load_fixtures(grammar: &str) -> Vec<ParityFixture> {
     let path = format!(
         "{}/../sittir-{}/test-fixtures.json",

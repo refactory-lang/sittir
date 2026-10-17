@@ -107,7 +107,7 @@ mod tests {
     use crate::types::{KindId, RunId};
 
     fn child(index: u32, start: u32, end: u32) -> Child {
-        Child { index: crate::types::NodeIndex(index), grammar: KindId(index as u16), display: KindId(index as u16), field: None, named: true, trivia: false, start, end, descendants: 1 }
+        Child { index: crate::types::NodeIndex(index), grammar: KindId(u16::try_from(index).unwrap()), display: KindId(u16::try_from(index).unwrap()), field: None, named: true, trivia: false, start, end, descendants: 1 }
     }
 
     #[test]
@@ -124,7 +124,7 @@ mod tests {
             keys: &["_item"],
         };
         let runs = [(1, 2), (3, 4), (5, 5), (6, 6)];
-        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(at as u32));
+        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(crate::types::narrow(at)));
         let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
         assert_eq!(slot.key, "_item");
         assert_eq!(slot.gaps.iter().map(|gap| (gap.before, gap.after)).collect::<Vec<_>>(), vec![(Some(RunId(0)), Some(RunId(1))), (Some(RunId(2)), Some(RunId(3)))]);
@@ -139,7 +139,7 @@ mod tests {
             keys: &["_statements"],
         };
         let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
-        assert!(slot.gaps.is_empty());
+        assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
     }
 
     #[test]
@@ -156,7 +156,7 @@ mod tests {
             keys: &["_item", "_other"],
         };
         let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
-        assert!(slot.gaps.is_empty());
+        assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
     }
 
     #[test]

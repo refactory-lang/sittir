@@ -54,6 +54,7 @@ pub struct ChangedEdges {
 
 impl ChangedEdges {
     /// Whether the edge `side` lies on changed.
+    #[must_use]
     pub fn on(self, side: crate::trivia_table::TriviaSide) -> bool {
         use crate::trivia_table::TriviaSide;
         match side {
@@ -79,6 +80,7 @@ pub struct CoordinateEdges {
 }
 
 impl NodeCoordinate {
+    #[must_use]
     pub fn new(tree: crate::types::TreeId, index: crate::types::NodeIndex, end: crate::types::NodeIndex, span: Span) -> Self {
         Self {
             tree,
@@ -97,6 +99,7 @@ impl NodeCoordinate {
     }
 
     /// The tree and the index packed as one handle: the wire's `$treeHandle`.
+    #[must_use]
     pub fn handle(&self) -> crate::types::TreeHandle {
         encode_handle(self.tree, self.index)
     }
@@ -296,7 +299,7 @@ pub unsafe fn js_type_name(env: ::napi::sys::napi_env, napi_val: ::napi::sys::na
 unsafe fn raw_typeof(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<::napi::sys::napi_valuetype> {
     let mut value_type = 0;
     // SAFETY: its callers, `node_value_type` and `js_type_name`, require `napi_val` to be live in `env`.
-    let status = unsafe { ::napi::sys::napi_typeof(env, napi_val, &mut value_type) };
+    let status = unsafe { ::napi::sys::napi_typeof(env, napi_val, &raw mut value_type) };
     if status != ::napi::sys::Status::napi_ok {
         return Err(::napi::Error::new(
             ::napi::Status::from(status),
@@ -344,7 +347,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
             // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
             Self::Node(node) => unsafe { T::to_napi_value(env, node) },
             // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Coord(coord) => unsafe { coordinate_to_napi(env, coord) },
+            Self::Coord(coord) => unsafe { coordinate_to_napi(env, &coord) },
         }
     }
 }
@@ -387,7 +390,7 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
 /// back. Its edges are the prepare walk's and its gap JavaScript's, so neither
 /// crosses back.
 #[cfg(feature = "napi-bindings")]
-pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
+pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: &NodeCoordinate) -> ::napi::Result<::napi::sys::napi_value> {
     use crate::boundary::{object_with_present, present};
     // SAFETY: its caller passes the live `env` napi gave `to_napi_value`.
     unsafe {
