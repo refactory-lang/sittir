@@ -688,7 +688,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
 
 **Checks the writer runs** (the maintainer, 2026-10-17). The record writer encodes native nodes their builder or the typed reader already checked, so it runs no `verifyStructure` check of its own. The views' bounds and malformed-cell refusals always run: they are memory safety, not type-proved facts. At the cutover, whoever appends a built record runs the type-proved checks once, as the builder does today.
 
-**Encoding, proposed for ruling (2026-10-17).** The Interfaces fix the header, the presence words and the cell tags. These are the parts they leave open, each with the form proposed:
+**Encoding (ruled 2026-10-17).** The Interfaces fix the header, the presence words and the cell tags. These are the parts they leave open, each in its ruled form:
 
 1. **A leaf in a child cell.** A parsed leaf is tag 2 (kind, byte start, byte end, descendant index): the fifth word is the leaf's row, so its `at` and its sides in the tree's trivia table come from the cell, and a parsed leaf has no record. A built leaf is tag 5 (kind, string-table offset, length, record address): the fifth word names the leaf's own record, the header alone, which is the key its sides take in the built trivia table. A captured interior string (a four-word cell) is tag 2 or 5 with kind 0 and no fifth word. The alternative, a record for every leaf named by a tag-3 cell, costs two or more words and an indirection for every parsed leaf.
 2. **A list cell** is (run address, length): a packed address, not an offset within the record's chunk, so a run longer than a chunk takes a chunk of its own and two records can share one run.
@@ -705,6 +705,8 @@ raw-string routing metadata where the type alone cannot express its parser behav
 4. **A view names its children's view types through the native type**, not by a name derived from another: the derive implements `HasRecord` for every native node type, struct and choice, with `type Record<'a>`. A struct's view is `<Ident>Record<'a>`, a choice's is an enum over its variants' views selected by the cell's kind, and a cell's accessor yields `<T as HasRecord>::Record<'a>`.
 5. **A blank arm** (id 0) is tag 4 with kind 0, distinct from tag 0, absent.
 
+At the cutover, a parsed leaf is identified by (tree, row) and a parsed unit by its record.
+
 5. Tests:
    - each kind's macro expansion;
    - read parity over every corpus entry of the five grammars: `render_record(read_record(i))` equals `render(read(i))`, and every view accessor answers what the node's field holds (kind, presence, coordinate, text span), compared through the fields trait;
@@ -720,7 +722,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
 - Generated: `packages/<lang>/src/wrap.ts`.
 
 **Steps.**
-1. Each accessor reads its cell through the stamped offsets in `records.ts` and hydrates a coordinate cell as today's accessor does.
+1. Each accessor reads its cell through the stamped offsets in `records.ts` and hydrates a coordinate cell as today's accessor does. The wrap's node members (`$render`, `toString`, `toJSON`, `$trivia`, …) come from `nodeMemberLines`, the emitter today's wraps and builders share.
 2. `$text` decodes the record's byte span from the tree's source bytes (ruling 1.1). A built leaf keeps the builder's string.
 3. The source copy goes (§ The source copy): `TreeHandle.source` is removed, `bytes()` and `text(span)` are added, and its one reader moves to them.
 4. The record-backed wraps are tested against today's: every corpus node's accessors, kinds and `$text` are equal on both wires (Review Focus 3). A view held across arena growth (Review Focus 2) and a disposed tree's view (Review Focus 4) are pinned.
