@@ -94,6 +94,11 @@ exists only for the agreement check.
 /** Current rule kind on the active wire context, or null when inactive. */
 ```
 
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetCurrentDollar`
+
+The `$` the active wire context's rule callback was called with (`WireContext.currentDollar`), or undefined outside one. A replacing entry's function receives it (`transform/transform.ts::replacingDollar`).
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireAutomaticVariants`
 
 The current wire context's automatic-variant record (`automaticVariantsOf`).
@@ -441,6 +446,8 @@ patched a reference to it in.
  * currentRuleKind, installs this context, runs the fn, restores.
  */
 ```
+
+The callback's `$` is installed and restored the same way (`WireContext.currentDollar`), so a replacing entry applied while the callback runs receives it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wrapInlineCallback`
 
@@ -939,6 +946,10 @@ A patch site's identity, `owner|path|form`: the key of `WireContext.patchSites` 
 Every `edits:` entry applied under this wire context, keyed by
 owner|path|form so an entry recorded by a rule function that runs more than
 once counts once.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.currentDollar`
+
+The `$` of the rule callback running under this context, set and restored with `currentRuleKind` (`wrapOneRuleFn`); undefined between callbacks.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
 

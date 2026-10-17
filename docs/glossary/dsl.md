@@ -2337,6 +2337,11 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
 
 The authoring name of `transform/transform.ts::transform`: `edit(previous, ...sets)` applies each set, keyed by path as an `edits:` entry is, to the rule a `rules:` callback received. It is the same application as the kind's `edits:` entry, which the layer lowers to `edit(result, edits[K])` after the callback, so it records the same patch sites and effects. `transform` stays the internal name the lowering calls.
 
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::replace`
+
+The authoring view of `transform/transform.ts::replace`: `replace(previous, path, rule)`, where `rule` is a rule or `($, member) => rule`, replaces the member at `path` in a rule a `rules:` callback holds. It is the inline spelling of a replacing `edits:` entry and records the same patch site and effects.
+
 ### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringAlias`
 
 ```text

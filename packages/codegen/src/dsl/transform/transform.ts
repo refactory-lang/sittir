@@ -38,6 +38,7 @@ import {
 	wireSymbols,
 	wireRegisterSyntheticRule,
 	wireGetCurrentRuleKind,
+	wireGetCurrentDollar,
 	wireIsExtraRule,
 	wireIsPrecedenceRankedRule,
 	wireRegisterFlattenedParent,
@@ -109,7 +110,10 @@ export type PatchValue =
 	| FlattenPlaceholder
 	| RegexPlaceholder
 	| NarrowPlaceholder
-	| LeadPlaceholder;
+	| LeadPlaceholder
+	| ReplacingFn;
+
+export type ReplacingFn = ($: unknown, member: RuntimeRule) => RuntimeRule;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -117,6 +121,10 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	let rule = original;
 	for (const patches of patchSets) rule = applyPatchSet(rule, patches);
 	return rule;
+}
+
+export function replace(previous: RuntimeRule, path: string, rule: RuntimeRule | ReplacingFn): RuntimeRule {
+	return transform(previous, { [path]: rule });
 }
 
 function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
@@ -686,12 +694,19 @@ function assertElementSlotName(fieldName: string, member: RuntimeRule): void {
 	}
 }
 
+function replacingDollar(key: string): unknown {
+	const dollar = wireGetCurrentDollar();
+	if (dollar === undefined) throw new Error(`edits: the replacing function at '${key}' runs only inside a layer's rule callback, which gives it the layer's $`);
+	return dollar;
+}
+
 function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
 	const textToken = wireTextTokenOf(originalMember);
 	if (textToken !== undefined && rewritesText(patch)) {
 		wireDepositTextToken(textToken, (body) => resolvePatch(patch, body, key));
 		return originalMember;
 	}
+	if (typeof patch === 'function') return resolvePatch(patch(replacingDollar(key), originalMember), originalMember, key, enclosing);
 	if (isRulePlaceholder(patch)) {
 		return resolveRulePlaceholder(patch, key);
 	}

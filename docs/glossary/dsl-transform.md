@@ -504,6 +504,15 @@ calls.
  */
 ```
 
+
+### `packages/codegen/src/dsl/transform/transform.ts::replace`
+
+`replace(previous, path, rule)`: the inline spelling of a replacing entry, `transform(previous, { [path]: rule })`. `rule` is a rule or a replacing function (`ReplacingFn`), so it records the patch site and effects the entry records.
+
+### `packages/codegen/src/dsl/transform/transform.ts::ReplacingFn`
+
+A replacing entry's function form, `($, member) => rule`: it receives the layer's `$` and the member at the path, so the replacement can keep the member.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::requiresPathMode`
 
 ```text
@@ -1351,7 +1360,7 @@ Whether a patch rewrites the text of the member it lands on: a replacement rule 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
 
-A patch that lands on a reference to a minted text token (`wireTextTokenOf`) and rewrites text (`rewritesText`) addresses through the mint. The patch is resolved against the minted rule's body and deposited (`wireDepositTextToken`), and the reference, with its annotations, stays in place. So a patch path written against the upstream token keeps working after enrich names the token. A `variant()` that lands on a minted reference lifts through the mint: it resolves against the token body (`wireTextTokenBody`, keeping the reference's annotations), so the variant kind carries the author's variant name and the token body. The minted rule it leaves unreferenced is blanked as a dead enrich mint.
+A replacing function (`ReplacingFn`) is called with the callback's `$` (`replacingDollar`) and the member, and its rule is resolved as a literal entry would be, so a rule that aliases the member's own symbol keeps the member. A patch that lands on a reference to a minted text token (`wireTextTokenOf`) and rewrites text (`rewritesText`) addresses through the mint. The patch is resolved against the minted rule's body and deposited (`wireDepositTextToken`), and the reference, with its annotations, stays in place. So a patch path written against the upstream token keeps working after enrich names the token. A `variant()` that lands on a minted reference lifts through the mint: it resolves against the token body (`wireTextTokenBody`, keeping the reference's annotations), so the variant kind carries the author's variant name and the token body. The minted rule it leaves unreferenced is blanked as a dead enrich mint.
 
 
 #### body
@@ -1454,6 +1463,11 @@ A `flatten()` patch stamps `annotations.flattened` on the member at its path, th
 `regex(/.../)` replaces the regex of the pattern at the patched path, so a bare pattern can draw named groups
 that name its slots. The path of a rule that is itself a pattern is `.`.
 ```
+
+
+### `packages/codegen/src/dsl/transform/transform.ts::replacingDollar`
+
+The `$` a replacing function receives: the active rule callback's (`wire/wire.ts::wireGetCurrentDollar`). Outside a layer's rule callback there is none, and the entry throws naming its path.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::recordPatchSites`
 

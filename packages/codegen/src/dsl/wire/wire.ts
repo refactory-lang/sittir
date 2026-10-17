@@ -85,6 +85,7 @@ export interface WireContext {
 	readonly reparseHosts?: ReparseHostsConfig;
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
+	currentDollar: unknown;
 	readonly authoredRuleNames: ReadonlySet<string>;
 	readonly ruleCauses: ReadonlyMap<string, RuleCauseDeclaration>;
 	readonly undeclaredRules: ReadonlySet<string>;
@@ -255,6 +256,10 @@ export function wireGetCurrentRuleKind(): string | null {
 	return currentContext?.currentRuleKind ?? null;
 }
 
+export function wireGetCurrentDollar(): unknown {
+	return currentContext?.currentDollar;
+}
+
 export function wireAutomaticVariants(): AutomaticVariants {
 	return automaticVariantsOf(currentContext);
 }
@@ -340,6 +345,7 @@ export function withWireContext<T>(
 		renderAs: undefined,
 		options: undefined,
 		currentRuleKind: ruleKind,
+		currentDollar: undefined,
 		authoredRuleNames: new Set(),
 		ruleCauses: new Map(),
 		undeclaredRules: new Set(),
@@ -557,6 +563,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		reparseHosts: cfg.reparseHosts,
 		options: cfg.options,
 		currentRuleKind: null,
+		currentDollar: undefined,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		...declaredRuleCauses(cfg.rules ?? {}),
 		patchSites: new Map(),
@@ -1131,12 +1138,15 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
 	return function wiredRuleFn($, previous) {
 		const prevContext = currentContext;
 		const prevKind = context.currentRuleKind;
+		const prevDollar = context.currentDollar;
 		currentContext = context;
 		context.currentRuleKind = name;
+		context.currentDollar = $;
 		try {
 			return fn($, previous);
 		} finally {
 			context.currentRuleKind = prevKind;
+			context.currentDollar = prevDollar;
 			currentContext = prevContext;
 		}
 	};
