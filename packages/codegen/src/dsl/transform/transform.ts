@@ -46,6 +46,10 @@ import {
 	wireHasDeposit,
 	wireDeclareRuleBody,
 	wireDepositTextToken,
+	wireApplyingEntries,
+	wireIsApplyingEntries,
+	wireIsInlineWrite,
+	wireNoteInlineWrite,
 	wireTextTokenBody,
 	wireTextTokenOf,
 	wireAutomaticVariants,
@@ -132,8 +136,8 @@ export function replace(previous: RuntimeRule, path: string, rule: RuntimeRule |
 export function withDirectVariants(rule: unknown, ...sets: readonly PatchSet[]): unknown {
 	const entries: [string, VariantPlaceholder][] = [];
 	const stripped = stripDirectVariants(rule, [], entries);
-	const all = entries.length === 0 ? sets : [...sets, Object.fromEntries(entries)];
-	return all.length === 0 ? rule : transform(stripped as RuntimeRule, ...all);
+	const edited = sets.length === 0 ? stripped : wireApplyingEntries(() => transform(stripped as RuntimeRule, ...sets));
+	return entries.length === 0 ? edited : transform(edited as RuntimeRule, Object.fromEntries(entries));
 }
 
 function stripDirectVariants(rule: unknown, path: readonly string[] | undefined, entries: [string, VariantPlaceholder][]): unknown {
@@ -148,7 +152,8 @@ function stripDirectVariants(rule: unknown, path: readonly string[] | undefined,
 	const contentPath = path === undefined ? undefined : isPrecWrapper(rule as { type: string }) ? path : node.type === 'FIELD' ? [...path, `${node.name}:`] : undefined;
 	const content = node.content === undefined ? undefined : stripDirectVariants(node.content, contentPath, entries);
 	if (label === undefined && members === undefined && content === node.content) return rule;
-	return { ...node, ...(members === undefined ? {} : { members }), ...(node.content === undefined ? {} : { content }) };
+	const copy = { ...node, ...(members === undefined ? {} : { members }), ...(node.content === undefined ? {} : { content }) };
+	return label !== undefined || wireIsInlineWrite(rule) ? wireNoteInlineWrite(copy) : copy;
 }
 
 function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
@@ -208,7 +213,7 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		const segments = parsePath(key);
 		if (isArmDefault(value)) assertChoiceArmPath(rule, key, segments);
 		rule = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
-			applyPath(rule, segments, (member, enclosing) => resolvePatch(value, member, key, enclosing))
+			applyPath(rule, segments, (member, enclosing) => resolveAt(value, member, key, enclosing))
 		);
 		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
 	}
@@ -305,7 +310,7 @@ function applyVariantPatches(
 		const segments = parsePath(key);
 		try {
 			result = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
-				applyPath(result, segments, (member, enclosing) => resolvePatch(value, member, key, enclosing))
+				applyPath(result, segments, (member, enclosing) => resolveAt(value, member, key, enclosing))
 			);
 		} catch (error) {
 			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
@@ -519,6 +524,7 @@ function buildHoistedVariants(
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
 		const altMember = choiceMembers[resolvedAlt]!;
+		refuseSameSite(altMember, p.key);
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
 		if (lift !== null) wireRenameLift(lift.liftName, name, true);
@@ -685,7 +691,7 @@ function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | s
 				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
 			);
 		}
-		members[index] = wireWithPatchSites(patchSitesOf([[key, patch]]), () => resolvePatch(patch, members[index]!, key));
+		members[index] = wireWithPatchSites(patchSitesOf([[key, patch]]), () => resolveAt(patch, members[index]!, key));
 	}
 	return reconstructContainer(original, members);
 }
@@ -737,6 +743,22 @@ function replacingDollar(key: string): unknown {
 	const dollar = wireGetCurrentDollar();
 	if (dollar === undefined) throw new Error(`edits: the replacing function at '${key}' runs only inside a layer's rule callback, which gives it the layer's $`);
 	return dollar;
+}
+
+function resolveAt(patch: PatchValue, member: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
+	refuseSameSite(member, key);
+	return wireNoteInlineWrite(resolvePatch(patch, member, key, enclosing));
+}
+
+function refuseSameSite(member: RuntimeRule, key: string): void {
+	if (!wireIsApplyingEntries() || !wireIsInlineWrite(member)) return;
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'edit-site-conflict',
+		ownerKind: owner,
+		message: `edits: '${owner}' at '${key}': the rule callback already edits this member inline`,
+		details: { kind: owner, path: key }
+	});
 }
 
 function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {

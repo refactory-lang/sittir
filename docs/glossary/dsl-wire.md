@@ -99,6 +99,22 @@ exists only for the agreement check.
 
 The `$` the active wire context's rule callback was called with (`WireContext.currentDollar`), or undefined outside one. A replacing entry's function receives it (`transform/transform.ts::replacingDollar`).
 
+### `packages/codegen/src/dsl/wire/wire.ts::wireNoteInlineWrite`
+
+Records `rule` as written inline by the running callback's kind (`WireContext.inlineWrites`) and returns it. Outside a rule callback, and while entries apply, it records nothing.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireIsInlineWrite`
+
+Whether `rule` is a node the running callback's kind wrote inline. A node another kind wrote does not count.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireIsApplyingEntries`
+
+Whether a kind's `edits:` sets are being applied (`WireContext.applyingEntries`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireApplyingEntries`
+
+Runs `fn` with `WireContext.applyingEntries` set, restoring the prior value after. Without a wire context it just runs `fn`.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireAutomaticVariants`
 
 The current wire context's automatic-variant record (`automaticVariantsOf`).
@@ -952,6 +968,14 @@ once counts once.
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.currentDollar`
 
 The `$` of the rule callback running under this context, set and restored with `currentRuleKind` (`wrapOneRuleFn`); undefined between callbacks.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.inlineWrites`
+
+The rule nodes a verb wrote while a rule callback ran, each with the kind whose callback wrote it (`wireNoteInlineWrite`). Keys are the nodes themselves, so a site is the member a path resolves to, however the path is spelt. A copy of a node is not in the map unless it is noted itself.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.applyingEntries`
+
+True while a kind's `edits:` sets apply (`wireApplyingEntries`). Verb writes in that span are entries, not inline writes.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
 

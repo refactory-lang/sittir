@@ -511,15 +511,25 @@ calls.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::withDirectVariants`
 
-Lowers a rule callback's direct `variant(name, rule)` arms to entries: each labelled arm's path (indexes through members, through precedence wrappers as the path model does, and `name:` through a field) keys its placeholder, the labels are stripped, and the entries apply through `transform` as the last set, after any `sets` passed in. The arms therefore mint, annotate and record patch sites as the matching `edits:` entries do, and an entry that edits inside a labelled arm lands in its mint, as it does when the label is an entry of the same set (variant entries apply after the set's other entries). The labels must be collected before the sets run, because each set copies the rule and a copy drops them. With no labelled arm and no sets, the rule is returned as it is.
+Lowers a rule callback's direct `variant(name, rule)` arms to entries: each labelled arm's path (indexes through members, through precedence wrappers as the path model does, and `name:` through a field) keys its placeholder, the labels are stripped, and the entries apply through `transform` as the last set, after any `sets` passed in. The `sets` are a kind's `edits:` entries and apply under `wire/wire.ts::wireApplyingEntries`; the labels' set does not. The arms therefore mint, annotate and record patch sites as the matching `edits:` entries do, and an entry that edits inside a labelled arm lands in its mint, as it does when the label is an entry of the same set (variant entries apply after the set's other entries). The labels must be collected before the sets run, because each set copies the rule and a copy drops them. With no labelled arm and no sets, the rule is returned as it is.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::stripDirectVariants`
 
 The walk behind `withDirectVariants`: it collects each labelled arm with its path and returns the rule without the labels. An arm under a wrapper no path addresses (a repeat, an optional, a token, an alias) throws: such an arm is written as an `edits:` entry.
 
+Each labelled arm's copy is noted as an inline write (`wire/wire.ts::wireNoteInlineWrite`), and so is the copy of a node that was one, so the same-site check (`refuseSameSite`) sees the arm the label wrote.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::refuseRefineEntry`
 
 A `refine(forms)` entry at a path other than `.` is refused (`edit-entry-invalid`): forms belong to the rule.
+
+### `packages/codegen/src/dsl/transform/transform.ts::resolveAt`
+
+Resolves an entry at the member a path reached: first the same-site check (`refuseSameSite`), then `resolvePatch`, and the result is noted as an inline write when a rule callback, not an `edits:` set, applied it. Every route that rewrites one member goes through it: path entries, variant entries and flat positional entries.
+
+### `packages/codegen/src/dsl/transform/transform.ts::refuseSameSite`
+
+While a kind's `edits:` sets apply, an entry that resolves onto a member the kind's rule callback wrote inline (`wire/wire.ts::wireIsInlineWrite`) is refused (`edit-site-conflict`), naming the entry's key. Sites compare by the member, so `'1'` and `'-1'` on a two-member seq conflict. An entry that edits inside such a member does not. The hoist of sibling variants applies it to each arm it takes.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::ReplacingFn`
 

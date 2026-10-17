@@ -86,6 +86,8 @@ export interface WireContext {
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	currentDollar: unknown;
+	readonly inlineWrites: WeakMap<object, string>;
+	applyingEntries: boolean;
 	readonly authoredRuleNames: ReadonlySet<string>;
 	readonly ruleCauses: ReadonlyMap<string, RuleCauseDeclaration>;
 	readonly undeclaredRules: ReadonlySet<string>;
@@ -260,6 +262,33 @@ export function wireGetCurrentDollar(): unknown {
 	return currentContext?.currentDollar;
 }
 
+export function wireNoteInlineWrite<R>(rule: R): R {
+	const context = currentContext;
+	if (context && !context.applyingEntries && context.currentRuleKind !== null && typeof rule === 'object' && rule !== null) context.inlineWrites.set(rule, context.currentRuleKind);
+	return rule;
+}
+
+export function wireIsInlineWrite(rule: unknown): boolean {
+	const context = currentContext;
+	return !!context && context.currentRuleKind !== null && typeof rule === 'object' && rule !== null && context.inlineWrites.get(rule) === context.currentRuleKind;
+}
+
+export function wireIsApplyingEntries(): boolean {
+	return currentContext?.applyingEntries === true;
+}
+
+export function wireApplyingEntries<T>(fn: () => T): T {
+	const context = currentContext;
+	if (!context) return fn();
+	const prior = context.applyingEntries;
+	context.applyingEntries = true;
+	try {
+		return fn();
+	} finally {
+		context.applyingEntries = prior;
+	}
+}
+
 export function wireAutomaticVariants(): AutomaticVariants {
 	return automaticVariantsOf(currentContext);
 }
@@ -346,6 +375,8 @@ export function withWireContext<T>(
 		options: undefined,
 		currentRuleKind: ruleKind,
 		currentDollar: undefined,
+		inlineWrites: new WeakMap(),
+		applyingEntries: false,
 		authoredRuleNames: new Set(),
 		ruleCauses: new Map(),
 		undeclaredRules: new Set(),
@@ -564,6 +595,8 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		options: cfg.options,
 		currentRuleKind: null,
 		currentDollar: undefined,
+		inlineWrites: new WeakMap(),
+		applyingEntries: false,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		...declaredRuleCauses(cfg.rules ?? {}),
 		patchSites: new Map(),
