@@ -1,18 +1,19 @@
 //! Arena storage for records: fixed chunks of `u32` words that never move,
 //! and a string table of UTF-8 bytes in chunks that never move either.
 //!
-//! [`cell`] encodes and decodes one slot's cell, [`side`] a record's side
-//! record, and [`built_trivia`] holds the trivia of built records, outside
-//! the records themselves.
+//! [`cell`] encodes and decodes one slot's cell, and [`side`] a record's
+//! side record. A built record's trivia is outside it, in the engine's
+//! store of written sides (`trivia_store`).
+//!
+//! An arena only appends: no record is freed or moved, so an address names
+//! one record for as long as the arena lives.
 
-pub mod built_trivia;
 pub mod cell;
 pub mod side;
 
 use std::collections::HashMap;
 use std::fmt;
 
-pub use built_trivia::BuiltTrivia;
 pub use cell::{Cell, ListCell};
 pub use side::{SideRecord, SideSlot, Sides};
 
@@ -287,6 +288,18 @@ mod tests {
         assert!(Address::new(0, CHUNK_WORDS).is_none());
         assert_eq!(at.offset(2), Address::new(3, 19));
         assert!(Address::new(3, CHUNK_WORDS - 1).expect("in range").offset(1).is_none());
+    }
+
+    #[test]
+    fn no_address_is_handed_out_twice() {
+        let mut arena = Arena::new();
+        let mut seen = std::collections::HashSet::new();
+        for words in [1, 3, 700, 2, CHUNK_WORDS + 1, 5, CHUNK_WORDS / 2, 4] {
+            for _ in 0..40 {
+                let at = arena.alloc(words).expect("room");
+                assert!(seen.insert(at), "{at:?} handed out again");
+            }
+        }
     }
 
     #[test]

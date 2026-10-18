@@ -1,8 +1,9 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
 //! `at`, `edges`, `span`, `sides`, `separator`, `slots`. `changed` is two
-//! bits of the mask. It holds no trivia and no unit sides: a parsed node's
-//! are in its tree's trivia table, a built node's in [`super::BuiltTrivia`].
+//! bits of the mask. It holds no trivia and no unit sides: a written side is
+//! in the engine's store of written sides ([`crate::trivia_store`]), and a
+//! parsed node's assigned sides in its tree's trivia table.
 
 use super::{Address, Arena, ArenaError};
 use crate::options::{EdgeArm, Edges};

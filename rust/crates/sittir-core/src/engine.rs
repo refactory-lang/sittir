@@ -19,6 +19,7 @@ use crate::types::Span;
 use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
+use crate::trivia_store::{Place, TriviaStore};
 use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
 use crate::types::{ChildPosition, KindId, NodeIndex, RunId, TreeHandle, TreeId};
 use std::collections::HashMap;
@@ -406,8 +407,14 @@ pub struct ParsedTree<G: EngineGrammar> {
     items: std::sync::Mutex<HashMap<NodeIndex, Arc<Option<SlotItems>>>>,
     /// The work its layout reads have done (`layout_work`).
     work: crate::layout::LayoutWorkCounter,
-    /// The sides a write replaced, by node and side.
-    written: std::collections::BTreeMap<(NodeIndex, TriviaSide), Vec<crate::trivia::TriviaEntry<G::Trivia>>>,
+    /// The sides a write set, in the store of the engine that parsed the tree.
+    written: TriviaStore<G::Trivia>,
+}
+
+impl<G: EngineGrammar> Drop for ParsedTree<G> {
+    fn drop(&mut self) {
+        self.written.drop_tree(self.tree_id);
+    }
 }
 
 /// A record of a tree (`ParsedTree::recorded`), shared by every run it
@@ -1137,8 +1144,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `trivia_side` with where each entry came from, and when `edge_changed`
     /// as a changed edge keeps it (`trivia::on_changed_edge`).
     pub fn side_entries(&self, index: crate::types::NodeIndex, side: TriviaSide, edge_changed: bool) -> Vec<SideEntry<G::Trivia>> {
-        let mut entries: Vec<SideEntry<G::Trivia>> = match self.written.get(&(index, side)) {
-            Some(written) => written.iter().cloned().map(SideEntry::Written).collect(),
+        let mut entries: Vec<SideEntry<G::Trivia>> = match self.written.side(Place::Row { tree: self.tree_id, row: index }, side) {
+            Some(written) => written.into_iter().map(SideEntry::Written).collect(),
             None => self.assigned_side(index, side, true),
         };
         if edge_changed {
@@ -1229,8 +1236,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Replace `side` of the node at `index` with `entries`.
-    pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) {
-        self.written.insert((index, side), entries);
+    pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) {
+        self.written.write_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
     }
 
     /// Whether a write replaced a side of a node under the node at `index`:
@@ -1238,10 +1245,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// and trailing too when `own_sides` is set.
     pub fn edited_within(&self, index: crate::types::NodeIndex, own_sides: bool) -> bool {
         let Some(node) = node_at_index(&self.tree, index) else { return false };
-        let end = index + crate::read::descendant_count(&node);
-        self.written
-            .range((index, TriviaSide::Leading)..(end, TriviaSide::Leading))
-            .any(|(&(at, side), _)| at != index || own_sides || side == TriviaSide::Inner)
+        self.written.edited_within(self.tree_id, index, index + crate::read::descendant_count(&node), own_sides)
     }
 }
 
@@ -1335,6 +1339,9 @@ pub struct Engine<G: EngineGrammar> {
     /// The render options resolved once at construction; a render call may
     /// resolve another table over this one.
     options: ResolvedOptions,
+    /// The sides a write set on any node this engine renders, shared with
+    /// every tree it parses.
+    written: TriviaStore<G::Trivia>,
 }
 
 impl<G: EngineGrammar> Engine<G> {
@@ -1345,6 +1352,7 @@ impl<G: EngineGrammar> Engine<G> {
             grammar,
             parser,
             options,
+            written: TriviaStore::new(),
         })
     }
 
@@ -1387,7 +1395,7 @@ impl<G: EngineGrammar> Engine<G> {
             slots: std::sync::Mutex::new(HashMap::new()),
             items: std::sync::Mutex::new(HashMap::new()),
             work: crate::layout::LayoutWorkCounter::default(),
-            written: std::collections::BTreeMap::new(),
+            written: self.written.clone(),
         })
     }
 
@@ -2148,7 +2156,7 @@ mod tests {
 
     #[test]
     fn a_written_side_replaces_the_assigned_one_and_marks_its_ancestors_edited() {
-        let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
+        let (tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
         let a = index_of_kind(&tree, "expression_statement", 0);
@@ -2164,10 +2172,26 @@ mod tests {
 
     #[test]
     fn a_written_inner_side_is_within_its_own_node() {
-        let (mut tree, _) = parsed("fn f() {}\n");
+        let (tree, _) = parsed("fn f() {}\n");
         let block = index_of_kind(&tree, "block", 0);
         tree.write_trivia_side(block, TriviaSide::Inner, Vec::new());
         assert!(tree.edited_within(block, false));
+    }
+
+    #[test]
+    fn an_engine_s_trees_write_to_its_store_and_take_their_sides_with_them() {
+        let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
+        let first = engine.parse("fn f() {}\n", crate::types::TreeId(1)).expect("parse");
+        let second = engine.parse("fn f() {}\n", crate::types::TreeId(2)).expect("parse");
+        let f = index_of_kind(&first, "function_item", 0);
+        first.write_trivia_side(f, TriviaSide::Leading, Vec::new());
+        second.write_trivia_side(f, TriviaSide::Trailing, Vec::new());
+        assert!(first.edited_within(NodeIndex::ROOT, false));
+        assert_eq!(second.trivia_side(f, TriviaSide::Leading), first.trivia_side(f, TriviaSide::Trailing), "each tree reads its own writes");
+        assert_eq!(engine.written.len(), 2);
+        drop(first);
+        assert_eq!(engine.written.len(), 1, "a dropped tree's sides leave the store");
+        assert!(second.edited_within(NodeIndex::ROOT, false));
     }
 
     fn table(tree: ParsedTree<TestGrammar>) -> HashMap<crate::types::TreeId, ParsedTree<TestGrammar>> {
@@ -2200,7 +2224,7 @@ mod tests {
 
     #[test]
     fn the_tree_table_answers_whether_a_coordinates_range_holds_a_write() {
-        let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
+        let (tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let g = coordinate(&tree, index_of_kind(&tree, "function_item", 1));
         tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new());
