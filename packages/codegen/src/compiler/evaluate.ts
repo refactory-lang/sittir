@@ -9,6 +9,7 @@ import { baseRulesOf } from '../dsl/shared.ts';
 import { wireWithoutConfig, type WiredOpts } from '../dsl/wire/wire.ts';
 import { ownRecordsOf } from '../dsl/layer.ts';
 import { layerRecordOf, mergedRecords, synthesizedOf, type LayerRecords, type StageBases, type SynthesizedRules } from '../dsl/layer-record.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -469,6 +470,13 @@ export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> 
 	return withDslGlobals(() => importAndExtractGrammar(entryPath));
 }
 
+export function generatedLayerDiagnostics(entryPath: string): Promise<readonly GrammarDiagnostic[]> {
+	return withDslGlobals(async () => {
+		const record = layerRecordOf(await importedGrammar(entryPath));
+		return record?.generated === true ? record.fixpoint().diagnostics : [];
+	});
+}
+
 export async function withDslGlobals<T>(run: () => Promise<T>): Promise<T> {
 	let release!: () => void;
 	const previous = evaluateMutex;
@@ -517,12 +525,16 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 	return savedGlobals;
 }
 
-async function importAndExtractGrammar(entryPath: string): Promise<EvaluatedGrammar> {
+async function importedGrammar(entryPath: string): Promise<unknown> {
 	const mod = (await import(entryPath)) as {
 		default?: unknown;
 		grammar?: unknown;
 	};
-	return evaluatedGrammarOf(mod.default ?? mod);
+	return mod.default ?? mod;
+}
+
+async function importAndExtractGrammar(entryPath: string): Promise<EvaluatedGrammar> {
+	return evaluatedGrammarOf(await importedGrammar(entryPath));
 }
 
 export function evaluatedGrammarOf(result: unknown): EvaluatedGrammar {

@@ -882,7 +882,8 @@ function recordFieldEffect(name: string, member: RuntimeRule): void {
 	const owner = wireGetCurrentRuleKind();
 	if (owner === null) return;
 	const field = isFieldLike(member) ? member : findEnrichShapedFieldThroughTransparentWrappers(member)?.found;
-	const node = member as { type?: unknown; name?: unknown; value?: unknown };
+	const wrapped = member as { type?: unknown; name?: unknown; value?: unknown; content?: unknown };
+	const node = (wrapped.type === 'REPEAT' || wrapped.type === 'REPEAT1' ? wrapped.content : wrapped) as { type?: unknown; name?: unknown; value?: unknown };
 	const from =
 		field !== undefined ? `${(field as { name: string }).name}:`
 		: node.type === 'SYMBOL' && typeof node.name === 'string' ? `${node.name}:`

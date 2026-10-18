@@ -24,7 +24,7 @@ import {
 } from '@sittir/codegen/bindings';
 import { printFlagsModule } from './flags.ts';
 import { REPO_ROOT, type GrammarName } from '@sittir/codegen/grammars';
-import { compileNodeMap, evaluateGrammar, invoke } from '../codegen-surface.ts';
+import { compileNodeMap, evaluateGrammar, invoke, load, type GrammarDiagnostic } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
 
 export { VOCABULARY_DIR };
@@ -99,6 +99,32 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 	});
 	await invoke('grammarDiagnostics', 'assertGatePasses', diagnostics, undefined);
 	return { text: printBindingsModule(bindings, grammarBindingsHash(grammar)), bindings, report };
+}
+
+export async function generatedLayerFixpoint(grammar: GrammarName): Promise<readonly GrammarDiagnostic[]> {
+	const [{ generatedLayerDiagnostics }, { packageSourceEntry }, { grammarPackage }] = await Promise.all([load('evaluate'), load('resolveGrammar'), load('grammars')]);
+	return generatedLayerDiagnostics(packageSourceEntry(grammarPackage(grammar)));
+}
+
+export interface GeneratedLayerReport {
+	readonly failed: boolean;
+	readonly text: string;
+}
+
+export async function generatedLayerReport(grammars: readonly GrammarName[]): Promise<GeneratedLayerReport> {
+	const { formatGrammarDiagnostics } = await load('grammarDiagnostics');
+	const lines: string[] = [];
+	let failed = false;
+	for (const grammar of grammars) {
+		const unsettled = await generatedLayerFixpoint(grammar);
+		if (unsettled.length > 0) failed = true;
+		lines.push(
+			unsettled.length === 0
+				? `${grammar}: grammar.bindings.ts is enrich's fixpoint over grammar.sittir.ts`
+				: `${grammar}: grammar.bindings.ts is not enrich's fixpoint over grammar.sittir.ts\n${formatGrammarDiagnostics(unsettled)}`
+		);
+	}
+	return { failed, text: lines.join('\n') };
 }
 
 export function grammarBindingsSummary(grammar: string, { bindings, report }: Omit<BindingsModule, 'text'>): string {
@@ -201,6 +227,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 			const module = await bindingsModule(grammar);
 			writeFileSync(bindingsModulePath(grammar), module.text);
 			process.stdout.write(`${grammarBindingsSummary(grammar, module)}\n`);
+			await invoke('grammarDiagnostics', 'assertGatePasses', await generatedLayerFixpoint(grammar), undefined);
 		}
 	}
 	if (opts.check) {
@@ -210,6 +237,9 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 				process.stdout.write(`${report.grammar}: bindings.scm does not compile:\n  ${report.error}\n`);
 			} else process.stdout.write(`${report.grammar}: bindings.scm compiles, ${report.patterns} patterns\n`);
 		}
+		const fixpoints = await generatedLayerReport(grammars);
+		if (fixpoints.failed) code = 1;
+		process.stdout.write(`${fixpoints.text}\n`);
 	}
 	const d = await deriveVocabulary(grammars);
 	process.stdout.write(`${summarize(d)}\n`);

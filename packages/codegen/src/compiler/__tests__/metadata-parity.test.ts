@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, it, expect } from 'vitest';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 interface CompiledGrammarJson {
 	readonly rules: Record<string, unknown>;
@@ -27,7 +28,7 @@ describe.each(['rust', 'typescript', 'python'])('%s metadata lists match what tr
 
 	beforeAll(async () => {
 		raw = await evaluatePackage(grammarPackage(grammar));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('inline equals grammar.json inline', () => {
 		const compiled = compiledGrammarJson(grammar);

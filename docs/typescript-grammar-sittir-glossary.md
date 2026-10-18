@@ -170,23 +170,6 @@ them once each, in canonical flat order. The former per-arm kinds and their
 					// Position 2: a four-arm modifier choice (heterogeneous).
 ```
 
-### `jsx_opening_element_content` (`packages/typescript/grammar.sittir.ts:425`)
-
-```text
-				// __jsx_start_opening_element_optional1 is the inline two-slot helper for
-				// JSX element head content: choice(name / name+type_args) + repeat(attribute).
-				// The two-slot seq causes the template to flatten both slots, losing the
-				// name–attribute distinction. Registering as a visible group collapses the
-				// parent's optional to a single `jsx_opening_element_content` slot so each
-				// field renders from its own slot.
-				// The name+type_arguments arm is NOT written out inline: enrich's group
-				// lift has already hoisted it into `_jsx_start_opening_element_group1`
-				// (aliased visible) by the time pattern replacement compares bodies, so
-				// the post-enrich sub-tree this pattern must equal holds that alias ref.
-				// The old inline-seq form silently matched nothing (caught by
-				// `body-pattern-zero-match`).
-```
-
 ### `class_body` (`packages/typescript/grammar.sittir.ts:471`)
 
 ```text

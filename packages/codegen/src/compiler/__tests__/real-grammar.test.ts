@@ -6,6 +6,7 @@ import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 type Evaluated = Awaited<ReturnType<typeof evaluatePackage>>;
 
@@ -16,7 +17,7 @@ for (const grammar of ['python', 'rust', 'typescript']) {
 	beforeAll(async () => {
 		upstream[grammar] = await evaluatePackage(grammarPackage(grammar), { base: true });
 		authored[grammar] = await evaluatePackage(grammarPackage(grammar));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 }
 
 describe('Evaluate — real tree-sitter grammars', () => {

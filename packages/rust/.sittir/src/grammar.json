@@ -6038,17 +6038,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "attributes",
           "content": {
-            "type": "FIELD",
-            "name": "attributes",
+            "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
               "name": "attribute_item"
-            },
-            "metadata": {
-              "fieldSource": "override"
             }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -15297,10 +15297,6 @@
     [
       "unit_type",
       "tuple_pattern"
-    ],
-    [
-      "shorthand_field_initializer",
-      "field_initializer"
     ]
   ],
   "precedences": [],

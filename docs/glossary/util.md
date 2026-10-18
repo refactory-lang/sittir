@@ -246,3 +246,19 @@ otherwise keep itself alive through its own entries.
 ### `packages/codegen/src/util/reachable-rules.ts::OrphanPrune`
 
 `pruneOrphanedRules`' result.
+
+### `packages/codegen/src/util/content-hash.ts::sha256`
+
+The hex SHA-256 of `data`: a string by its UTF-8 bytes, or the bytes given.
+
+### `packages/codegen/src/util/content-hash.ts::sha256File`
+
+The hex SHA-256 of the file at `path`, read whole (`sha256`).
+
+### `packages/codegen/src/util/content-hash.ts::contentHashes`
+
+The SHA-256 of each of `files` under `root` that exists (`sha256File`), by repo-relative path, once each and sorted. A missing file is left out, so adding or removing one changes the result.
+
+### `packages/codegen/src/util/write-file-atomic.ts::writeFileAtomic`
+
+Writes `text` to `path`, creating its directory. The text goes to a scratch file beside `path`, named for the process, and is renamed into place, so a reader never sees a half-written file and two processes writing at once leave one of their files whole.

@@ -30,13 +30,6 @@ import {
 export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'typescript',
-	groups: {
-		jsx_opening_element_content: ($) =>
-			seq(
-				choice(field('name', choice($._jsx_identifier, $.jsx_namespace_name)), $.jsx_start_opening_element_arm),
-				repeat(field('attribute', $._jsx_attribute))
-			)
-	},
 	options: {
 		indent: preference('  '),
 		body: { before: preference('indent'), after: preference('dedent') },

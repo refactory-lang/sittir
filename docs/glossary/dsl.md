@@ -7164,7 +7164,7 @@ layer's inherited records pass through `rewriteInherited`, and its own merge ove
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecord`
 
-The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, enrich's checked run over the layer's result with its three sidecars (`enrichment`), which the layer above takes as its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records (`mergedRecords`), where each layer's render bodies go among the rules (`SynthesizedRules`), the top layer's automatic-variant record (`automatic-variants.ts::AutomaticVariants`), the stage bases (`StageBases`), the projections (`verbs/effects.ts::Provenance`, for a layer that inherits a record), the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
+The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, whether the layer is `generated`, its `fixpoint` (`LayerFixpoint`: enrich's checked run over the layer's result with its three sidecars, which the layer above takes as its base, and the check's diagnostics), run once when first asked, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records (`mergedRecords`), where each layer's render bodies go among the rules (`SynthesizedRules`), the top layer's automatic-variant record (`automatic-variants.ts::AutomaticVariants`), the stage bases (`StageBases`), the projections (`verbs/effects.ts::Provenance`, for a layer that inherits a record), the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
 
 ### `packages/codegen/src/dsl/layer-record.ts::SynthesizedRules`
 
@@ -7230,6 +7230,10 @@ has.
 The `SynthesizedRules` entry for a layer's own render bodies, after the given number of rules; none when the layer
 declares none.
 
+### `packages/codegen/src/dsl/layer-record.ts::LayerFixpoint`
+
+A layer's fixpoint check (`layer.ts::enrichFixpoint`): enrich's checked run over the layer's result (`checked`), which the layer above takes as its base, and its `layer-not-enrich-fixpoint`, or no diagnostic when enrich changes nothing.
+
 ### `packages/codegen/src/dsl/layer.ts::LAYER_BASE`
 
 A type-only key under which `PendingBase<B>` and `LayerOptions<B>` carry the base type, so `grammar(enrich(base), wire(config))` infers one `B` for both halves and `wire`'s config is checked against the base `enrich` was given. No value exists at runtime.
@@ -7240,7 +7244,7 @@ A layer's `contexts:` callback: a function of the layer's `$` that returns named
 
 ### `packages/codegen/src/dsl/layer.ts::LayerConfig`
 
-What `wire(config)` takes in a grammar file: wire's config over the enriched base, with an optional `name` (the base's by default), `resolutions` (the conflict resolutions file, which only the first layer gives) and `contexts`.
+What `wire(config)` takes in a grammar file: wire's config over the enriched base, with an optional `name` (the base's by default), `resolutions` (the conflict resolutions file, which only the first layer gives), `contexts`, and `generated`, which a layer's generator writes into the layer it prints (`bindings/module.ts::printBindingsModule`), so its fixpoint is checked by the generator rather than on every compile (`completeLayer`).
 
 ### `packages/codegen/src/dsl/layer.ts::LayerCallback`
 
@@ -7337,8 +7341,8 @@ Fills the options from a pass's output: `name` when the config gives none, its l
 Runs enrich once over a layer's result, with the sidecars of the base it completed (`enrich.ts::withEnrichSidecarsOf`)
 and the display families an effect log declares (`verbs/effects.ts::displayFamiliesOf`), and names every rule enrich
 would add, remove or change, sorted, with the fields enrich adds to them (`fieldsAddedTo`), so the diagnostic can name the
-field the author must write (`fixpointProposal`). A merge a layer declared therefore passes. The checked result is the
-record's `enrichment`, which the layer above takes as its base.
+field the author must write (`fixpointProposal`). A merge a layer declared therefore passes. The result is the `LayerFixpoint`: the checked run, which the layer above
+takes as its base, and the `layer-not-enrich-fixpoint` naming those rules at the layer's depth, or none.
 
 ### `packages/codegen/src/dsl/layer.ts::EnrichAddedField`
 
@@ -7382,7 +7386,7 @@ evaluated callbacks (`declared`), whose `groups:` bodies enrich reads.
 
 ### `packages/codegen/src/dsl/layer.ts::intake`
 
-Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies the layer evaluated, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and the base is its record's `enrichment`, the run the layer below checked when it completed (`completeLayer`), so intake enriches nothing.
+Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies the layer evaluated, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and the base is the checked run of its record's `fixpoint` (`completeLayer`), so intake enriches nothing beyond that check, which a generated layer below runs here.
 
 ### `packages/codegen/src/dsl/layer.ts::wireConfigOf`
 
@@ -7444,7 +7448,7 @@ The conflict sets the `conflicts` callback returns. The first layer's are its se
 
 ### `packages/codegen/src/dsl/layer.ts::completeLayer`
 
-Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The layer's result (`layerResult`), its bodies and lists as the runtime takes them, is checked against enrich (`enrichFixpoint`) with the display families every effect so far declares, the inherited ones and the layer's own: the rules enrich would change are one `layer-not-enrich-fixpoint` at the layer's depth, and the checked result becomes the record's `enrichment`. A layer cannot know whether another will extend it, so every layer checks its own result and no layer checks its base again. The record is built: depth, upstream, the checked enrichment, resolutions, dead mints, text tokens, lift names, effects, the records (`layer-record.ts::mergedRecords`: the ones its base's record carries, rewritten through the effects (`rewriteInherited`), under the layer's own (`ownRecordsOf`), which take the `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`)), where the layer's render bodies go (`layer-record.ts::synthesizedOf`, after the rules the runtime holds once the layer's bodies join its base's), wire's automatic-variant record, the stage bases, the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
+Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The layer's result (`layerResult`), its bodies and lists as the runtime takes them, is checked against enrich (`enrichFixpoint`) with the display families every effect so far declares, the inherited ones and the layer's own. The check is the record's `fixpoint`, run at most once. Every layer is checked where it is produced: an authored layer runs it at completion and records its diagnostic, while a generated layer (`LayerConfig`'s `generated`) runs it only when asked, by the layer above taking its base or by its producer (`compiler/evaluate.ts::generatedLayerDiagnostics`). The layer's result is taken here, so a later run checks the layer as it completed. No layer checks its base again. The record is built: depth, upstream, whether the layer is generated, the fixpoint check, resolutions, dead mints, text tokens, lift names, effects, the records (`layer-record.ts::mergedRecords`: the ones its base's record carries, rewritten through the effects (`rewriteInherited`), under the layer's own (`ownRecordsOf`), which take the `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`)), where the layer's render bodies go (`layer-record.ts::synthesizedOf`, after the rules the runtime holds once the layer's bodies join its base's), wire's automatic-variant record, the stage bases, the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
 
 Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags). The rules the verbs created follow every body wire evaluated, in creation order, so the runtime appends them last.
 
@@ -7672,7 +7676,7 @@ What a field wrap fields: an unfielded reference to a kind (`symbol`, matched by
 
 ### `packages/codegen/src/dsl/bind.ts::FieldWrap`
 
-A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`.
+A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`, and a repeat of the target is wrapped whole (`isWrapSite`).
 
 ### `packages/codegen/src/dsl/bind.ts::LIST_FIELDS`
 
@@ -7716,11 +7720,11 @@ Whether a rule is a wrap's target: the token's `STRING` for a token target; for 
 
 ### `packages/codegen/src/dsl/bind.ts::wrapTargets`
 
-A rule with every reachable occurrence of the target wrapped in the field. It stops at `OPAQUE_RULES` and at aliases, whose contents belong to the aliased kind.
+A rule with every reachable wrap site (`isWrapSite`) wrapped in the field. It stops at `OPAQUE_RULES` and at aliases, whose contents belong to the aliased kind.
 
 ### `packages/codegen/src/dsl/bind.ts::hasWrapTarget`
 
-Whether a rule holds a target `wrapTargets` would wrap, by the same descent.
+Whether a rule holds a wrap site `wrapTargets` would wrap (`isWrapSite`), by the same descent.
 
 ### `packages/codegen/src/dsl/bind.ts::wrapHosts`
 
@@ -7773,6 +7777,10 @@ A sequence or choice without its blank members (`isBlank`), or the node itself w
 ### `packages/codegen/src/dsl/bind.ts::lead`
 
 Builds a `Lead` from the list, the item field, the lead field and the matches it admits.
+
+### `packages/codegen/src/dsl/bind.ts::isWrapSite`
+
+The rule a field wrap wraps: the target itself (`isWrapTarget`), or a `REPEAT` or `REPEAT1` whose whole content is the target. A list child so gets one field over its repeat, `field('attributes', repeat($.attribute_item))`, the shape enrich and the authored list fields take. Fielding each item instead would give the owner a second auxiliary repeat beside a sibling rule's unfielded one, and tree-sitter a conflict on the shared first token that upstream does not have.
 
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_SIDECAR_KEYS`
 

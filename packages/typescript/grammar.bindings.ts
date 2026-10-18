@@ -115,6 +115,7 @@ export const renames = {
 export default grammar(
 	enrich(sittir),
 	wire({
+		generated: true,
 		edits: {
 			_number: { "1": field("value") },
 			_parameter_name: { "4": field("name") },

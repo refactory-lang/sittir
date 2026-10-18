@@ -94,36 +94,14 @@ It first refuses a `node` on `PATH` below the floor (`transpile/tree-sitter-cli.
 
 ### `packages/codegen/src/run-codegen.ts::runGrammarDiagnosticsPreflight`
 
-```text
 Compiles the grammar through the gate (`compile.ts::compileGrammar`) and persists every record the gate saw to
-`.sittir/grammar-diagnostics.json`, whether or not it passed. Records the gate lets through are printed as
+`.sittir/grammar-diagnostics.json`, whether or not it passed (`gatedCompilation`). Records the gate lets through are printed as
 non-fatal output. A blocked compile throws in a non-interactive run. In an interactive run a confirmation adds
 the blocked codes to the allow set and compiles again, until the compile passes or the user declines; the
 returned `PreflightOutcome` carries the allow set and the passing compilation for `generate()` to reuse.
 `injectedDiagnostics` replaces the compile with a fixed record list (test seam) and `confirm` replaces the stdin
-prompt.
-
-### `packages/codegen/src/run-codegen.ts::PreflightOutcome`
-
-The allow set a preflight ends with, and the compilation that passed the gate with it (absent on the injected
-test seam).
-
-### `packages/codegen/src/run-codegen.ts::GatedCompilation`
-
-`gatedCompilation`'s result: every record the gate saw, the blocked ones, and the compilation when it passed.
-
-### `packages/codegen/src/run-codegen.ts::gatedCompilation`
-
-One gated compile for the preflight: the compilation when it passes, or the blocked records and every record the
-gate saw when it throws `GrammarDiagnosticError`. Writes `grammar-diagnostics.json` into the package's `.sittir/`
-either way.
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Grammar-diagnostics preflight gate
-// ---------------------------------------------------------------------------
-```
+prompt. The injected list is written nowhere, so a test that gates an arbitrary grammar never reaches a real package's
+`grammar-diagnostics.json`.
 
 #### body
 
@@ -707,6 +685,18 @@ The regen's wasm step: sittir's `parser.wasm` from the sources `generate` just w
  */
 ```
 
+### `packages/codegen/src/run-codegen.ts::PreflightOutcome`
+
+The allow set a preflight ends with, and the compilation that passed the gate with it (absent on the injected test seam).
+
+### `packages/codegen/src/run-codegen.ts::GatedCompilation`
+
+`gatedCompilation`'s result: every record the gate saw, the blocked ones, and the compilation when it passed.
+
+### `packages/codegen/src/run-codegen.ts::gatedCompilation`
+
+One gated compile for the preflight, with the generated top layer's fixpoint checked (`compiler/compile.ts::compileGrammar`'s `checkGeneratedLayers`), so every regeneration checks the layer it compiles: the compilation when it passes, or the blocked records and every record the gate saw when it throws `GrammarDiagnosticError`. Writes `grammar-diagnostics.json` into the package's `.sittir/` either way.
+
 ### `packages/codegen/src/index.ts::module`
 
 ```text
@@ -857,4 +847,3 @@ The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `Typescript
 ### `packages/codegen/src/grammars.ts::grammarDisplayName`
 
 The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.
-

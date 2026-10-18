@@ -4,11 +4,11 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar, writeSittirGrammarPackage } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
 import { parserRulesOf } from '../../compiler/canonical-rules.ts';
 import { diagnoseGrammar } from '../../compiler/compile.ts';
-import { evaluate, evaluateDsl, evaluatedGrammarOf, withDslGlobals } from '../../compiler/evaluate.ts';
+import { evaluate, evaluateDsl, evaluatedGrammarOf, generatedLayerDiagnostics, withDslGlobals } from '../../compiler/evaluate.ts';
 import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import type { EvaluatedGrammar } from '../../compiler/types.ts';
 import { grammarPackage } from '../../grammars.ts';
@@ -684,5 +684,63 @@ describe('the grammar bindings layer', () => {
 		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-c/grammar.js'), 'c', '', undefined, { bindings: '' });
 		expect(raw.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 		expect(checks.count).toBeGreaterThan(0);
+	}, 120_000);
+});
+
+describe('a generated layer checks its fixpoint where it is produced', () => {
+	const PAIR_RULES = { pair: ($: Symbols) => seq(alias($.a!, $.shown), alias($.b!, $.shown)) };
+	const base = () => upstream({ program: ($: Symbols) => repeat(choice($.item!, $.a!, $.b!)), a: ($: Symbols) => seq('(', $.item!), b: ($: Symbols) => seq('[', $.item!) });
+
+	it('keeps layer-not-enrich-fixpoint out of the record diagnostics, and returns it from fixpoint() with the authored details and proposal', async () => {
+		await withDslGlobals(async () => {
+			const first = layer(base(), {});
+			const second = layer(first, { rules: PAIR_RULES, generated: true });
+			const record = layerRecordOf(second)!;
+			expect(record.diagnostics).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
+			expect(record.fixpoint().diagnostics).toContainEqual(
+				expect.objectContaining({
+					code: 'layer-not-enrich-fixpoint',
+					canProceed: false,
+					details: { layer: 'up', depth: 2, rules: ['pair'], addedFields: [{ rule: 'pair', field: 'a' }, { rule: 'pair', field: 'b' }] },
+					proposal: "Write what enrich changes in pair into the layer's entries. Enrich adds field('a', …), field('b', …) to 'pair'."
+				})
+			);
+		});
+	});
+
+	it('returns the same fixpoint object on every call', async () => {
+		await withDslGlobals(async () => {
+			const second = layer(layer(base(), {}), { rules: PAIR_RULES, generated: true });
+			const record = layerRecordOf(second)!;
+			expect(record.fixpoint()).toBe(record.fixpoint());
+		});
+	});
+
+	it('a generated top layer diagnostic is absent from evaluateDsl, and generatedLayerDiagnostics returns it', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'generated-fixpoint-'));
+		try {
+			writeFileSync(join(dir, 'base.js'), "module.exports = grammar({ name: 'demo', extras: ($) => [], rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, program: ($) => repeat(choice($.item, $.a, $.b)), a: ($) => seq('(', $.item), b: ($) => seq('[', $.item), item: ($) => $.word } });\n");
+			writeSittirGrammarPackage(dir, join(dir, 'base.js'), 'demo', '', undefined, { bindings: "generated: true, rules: { pair: ($) => seq(alias($.a, $.shown), alias($.b, $.shown)) }" } as never);
+			const bindings = join(dir, 'grammar.bindings.ts');
+			const evaluated = await evaluateDsl(bindings);
+			expect(evaluated.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
+			expect(await generatedLayerDiagnostics(bindings)).toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 120_000);
+
+	it('an authored top layer is reported once by the evaluation, and generatedLayerDiagnostics returns nothing for it', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'authored-fixpoint-'));
+		try {
+			writeFileSync(join(dir, 'base.js'), "module.exports = grammar({ name: 'demo', extras: ($) => [], rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, program: ($) => repeat(choice($.item, $.a, $.b)), a: ($) => seq('(', $.item), b: ($) => seq('[', $.item), item: ($) => $.word } });\n");
+			writeSittirGrammarPackage(dir, join(dir, 'base.js'), 'demo', '', undefined, { bindings: "rules: { pair: ($) => seq(alias($.a, $.shown), alias($.b, $.shown)) }" } as never);
+			const bindings = join(dir, 'grammar.bindings.ts');
+			const evaluated = await evaluateDsl(bindings);
+			expect((evaluated.layerDiagnostics ?? []).filter((d) => d.code === 'layer-not-enrich-fixpoint')).toHaveLength(1);
+			expect(await generatedLayerDiagnostics(bindings)).toEqual([]);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	}, 120_000);
 });

@@ -5699,7 +5699,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '473': 0 } }],
+						via: [{ slots: { '472': 0 } }],
 						plan: { op: 'match', pattern: '^(Option|Result|String|Vec|Box)$', self: true }
 					}
 				]

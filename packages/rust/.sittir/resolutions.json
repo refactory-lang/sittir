@@ -256,38 +256,7 @@
 		}
 	],
 	"bound": {
-		"grammarHash": "ec3f06627ee77053329bddd25e0f5c5936b8897dd1f38fbc64451a7b5832ca60",
-		"resolutions": [
-			{
-				"resolution": {
-					"kind": "AddConflict",
-					"symbols": [
-						"shorthand_field_initializer",
-						"field_initializer"
-					]
-				},
-				"step": "default",
-				"sourceChains": [
-					[
-						"shorthand_field_initializer"
-					],
-					[
-						"field_initializer"
-					]
-				],
-				"conflict": {
-					"symbolSequence": [
-						"identifier",
-						"'{'",
-						"attribute_item"
-					],
-					"lookahead": "'#'",
-					"interpretations": [
-						"tuple_expression_repeat1",
-						"field_initializer_repeat1"
-					]
-				}
-			}
-		]
+		"grammarHash": "58c306caeeada8aeebfac8d5d269cc364945e68ee34afdcbdd97c2ee8ba90268",
+		"resolutions": []
 	}
 }

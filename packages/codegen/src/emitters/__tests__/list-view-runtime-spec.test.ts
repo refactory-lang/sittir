@@ -3,6 +3,7 @@ import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { allGrammars, grammarPackage } from '../../grammars.ts';
 import { listOptionKeys, listViewHint, listViewPlanOf } from '../factories.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const keysOf = (text: string): string[] => [...text.matchAll(/\b(separator|delimiter)\??:/g)].map((m) => m[1]!).sort();
 
@@ -28,6 +29,6 @@ describe('the list-view plan', () => {
 				expect(plan.count).toMatch(/^_\w+$/);
 			}
 			if (['rust', 'python', 'typescript'].includes(grammar)) expect(views).toBeGreaterThan(0);
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 	}
 });

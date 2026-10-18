@@ -27,7 +27,7 @@ export const triviaFacts = Object.freeze({
 		352, 353, 354, 355, 356, 357, 358, 359, 360, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379,
 		380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 400, 401, 402, 403,
 		405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 422, 423, 424, 425, 427, 428, 429,
-		430, 431, 432, 433, 434, 436, 438, 470, 472, 473
+		430, 431, 432, 433, 434, 436, 438, 469, 471, 472
 	]),
 	listKinds: new Set<number>([
 		342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359
@@ -726,9 +726,9 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parametersElementsReceiverGroup', 1]
 	],
 	438: [['elements', 0]],
-	470: [['content', 0]],
-	472: [['content', 0]],
-	473: [['content', 0]]
+	469: [['content', 0]],
+	471: [['content', 0]],
+	472: [['content', 0]]
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -2364,17 +2364,17 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'parameters_elements_receiver_group',
 		nodeOnly: [['_elements', 'ParametersElementsReceiverGroup.elements', 'a built ParametersElements']]
 	},
-	470: {
+	469: {
 		kind: 'field_identifier',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'FieldIdentifier.content', 'buildIdentifier(…)']]
 	},
-	472: {
+	471: {
 		kind: 'shorthand_field_identifier',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'ShorthandFieldIdentifier.content', 'buildIdentifier(…)']]
 	},
-	473: {
+	472: {
 		kind: 'type_identifier',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'TypeIdentifier.content', 'buildIdentifier(…)']]

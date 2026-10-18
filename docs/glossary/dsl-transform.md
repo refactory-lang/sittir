@@ -1801,7 +1801,7 @@ Applies one patch set: records its sites, then applies it in path mode when any 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::recordFieldEffect`
 
-The option-path segment a `field()` patch renames on the patched kind: an existing field's `name:`, a wrapped symbol's `kind:`, or a wrapped token's quoted text, each becoming the new field's `name:`. Recorded in every layer.
+The option-path segment a `field()` patch renames on the patched kind: an existing field's `name:`, a wrapped symbol's `kind:`, or a wrapped token's quoted text, each becoming the new field's `name:`. A wrapped `REPEAT` or `REPEAT1` names the segment by its content, so fielding a repeat of a symbol renames the same `kind:` segment as fielding the symbol, and an inherited option path over the list keeps its site. Recorded in every layer.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::refuseAliasTarget`
 
