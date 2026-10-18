@@ -652,7 +652,7 @@ fn a_snapshot_root_with_no_items_reads_its_edges_around_its_inner_trivia() {
     // "\n\n// only\n\n": the comment is the root's own, on row 2 of a root ending on row 4.
     let inner = Some(EdgeItem::Snapshot(SnapshotEdge { span: at(2, 0, 2, 7), leading: Bare, trailing: Bare }));
     let none: Vec<SlotValue<Spanned>> = Vec::new();
-    let (first, last) = (outermost(none.first_item(), inner, Side::Before), outermost(none.last_item(), inner, Side::After));
+    let (first, last) = (outermost(none.first_item(), inner.clone(), Side::Before), outermost(none.last_item(), inner, Side::After));
     let flanks = root_flanks(first, last, Some(at(0, 0, 4, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks, Edges { before: Some(wire(4)), after: Some(wire(4)) });
 }

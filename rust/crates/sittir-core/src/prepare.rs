@@ -53,16 +53,16 @@ impl<X: ArmOf> ArmOf for Option<X> {
     }
 }
 
-/// A rebuilt list's delimiter flags with its trailing flag as the list it
-/// was rebuilt from (`NodeLayout::sides`) spells it, as a read list's
+/// A rebuilt list's delimiter flags with its trailing flag as `source`, the
+/// list it was rebuilt from (`Layout::sides`), spells it, as a read list's
 /// are its own: the trailing flag (2) is set iff that list's last child that
 /// is not an extra is one of its `separators` (`SourceTable::last_list_child_kind`,
 /// the list's own kind being `kind`). A list rebuilt from none, or a table
 /// that cannot answer, takes `default`, the options table's. The leading
 /// flag is always `default`'s.
 #[must_use]
-pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::NodeLayout<T>>, kind: KindId, separators: &[KindId], default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
-    let Some(source) = layout.and_then(|layout| layout.sides.as_ref()) else { return default };
+pub fn source_trailing_delimiter(source: Option<&NodeCoordinate>, kind: KindId, separators: &[KindId], default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
+    let Some(source) = source else { return default };
     let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
     let trailing = crate::types::Delimiter::TRAILING;
     if separators.contains(&last) { default.with(trailing) } else { default.without(trailing) }
@@ -72,9 +72,11 @@ pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::NodeLayout<T>
 /// coordinate into its source, framed by its sides (`SourceTable::framed_span`),
 /// bytes of a source (a root's inner entries read from its tree), a snapshot
 /// node's geometry, or an item that was rebuilt and gives the edge nothing.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// A coordinate is borrowed from a node that holds one, or owned when it is
+/// decoded from a record.
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EdgeItem<'a> {
-    Coord(&'a crate::NodeCoordinate),
+    Coord(std::borrow::Cow<'a, crate::NodeCoordinate>),
     Bytes { tree: crate::types::TreeId, span: crate::types::Span },
     Snapshot(SnapshotEdge),
     Rebuilt,
@@ -99,7 +101,7 @@ impl<T: Prepare, const ADJACENT: bool> EdgeItems for SlotValue<T, ADJACENT> {
 
 fn edge_item<T: Prepare, const ADJACENT: bool>(value: &SlotValue<T, ADJACENT>) -> EdgeItem<'_> {
     match value.coord() {
-        Some(coord) => EdgeItem::Coord(coord),
+        Some(coord) => EdgeItem::Coord(std::borrow::Cow::Borrowed(coord)),
         None => value.snapshot_edge().map_or(EdgeItem::Rebuilt, EdgeItem::Snapshot),
     }
 }
@@ -189,7 +191,7 @@ pub fn root_flanks(
             Some(std::borrow::Cow::Borrowed(bytes))
         };
         let text = match item? {
-            EdgeItem::Coord(coord) => source_bytes(coord.tree, ctx.sources.framed_span(coord))?,
+            EdgeItem::Coord(coord) => source_bytes(coord.tree, ctx.sources.framed_span(&coord))?,
             EdgeItem::Bytes { tree, span } => source_bytes(tree, span)?,
             EdgeItem::Snapshot(edge) => {
                 let root = root?;
@@ -310,10 +312,21 @@ pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
     kind_of: fn(KindId) -> Option<KindId>,
     ctx: &RenderContext<'_>,
 ) {
-    let tokens: Vec<Option<KindId>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0)?.source_separator(ctx).and_then(kind_of)).collect();
-    if tokens.iter().any(Option::is_some) {
+    if let Some(tokens) = slot_separators(items, kind_of, ctx) {
         crate::layout::slot_entry(layout, slot).tokens = tokens;
     }
+}
+
+/// Each item's own separator by its place in the slot, as
+/// `fill_slot_separators` stores it, or `None` when no item has one.
+#[must_use]
+pub fn slot_separators<'i, T: Prepare + 'i, const ADJACENT: bool>(
+    items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,
+    kind_of: fn(KindId) -> Option<KindId>,
+    ctx: &RenderContext<'_>,
+) -> Option<Vec<Option<KindId>>> {
+    let tokens: Vec<Option<KindId>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0)?.source_separator(ctx).and_then(kind_of)).collect();
+    tokens.iter().any(Option::is_some).then_some(tokens)
 }
 
 impl<T, const ADJACENT: bool> PresentItems for Vec<&mut SlotValue<T, ADJACENT>> {
@@ -646,7 +659,7 @@ mod tests {
             sources: &sources,
             recording: None,
         };
-        root_flanks(Some(super::EdgeItem::Coord(first)), None, None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
+        root_flanks(Some(super::EdgeItem::Coord(std::borrow::Cow::Borrowed(first))), None, None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
             .before
             .map(|edge| edge.arm)
     }
@@ -675,8 +688,8 @@ mod tests {
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources, recording: None };
-        let layout = crate::layout::NodeLayout::<String> { sides: rebuilt.then(|| coordinate(2, 7)), ..Default::default() };
-        super::source_trailing_delimiter(Some(&layout), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
+        let source = rebuilt.then(|| coordinate(2, 7));
+        super::source_trailing_delimiter(source.as_ref(), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
     }
 
     #[test]

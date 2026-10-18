@@ -308,6 +308,8 @@ pub trait Layout {
     fn edges_mut(&mut self) -> &mut Edges;
     /// The stored layout of the node's list slot `slot` (`SlotLayout`).
     fn slot(&self, slot: &str) -> Option<&SlotLayout>;
+    /// The node a built node was rebuilt from (`NodeLayout::sides`).
+    fn sides(&self) -> Option<&crate::slot::NodeCoordinate>;
     /// Where a snapshot node lies, and how far its leading and trailing
     /// trivia reach (`NodeLayout::span`).
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge>;
@@ -339,6 +341,10 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
 
     fn slot(&self, slot: &str) -> Option<&SlotLayout> {
         slot_layout(self.as_deref(), slot)
+    }
+
+    fn sides(&self) -> Option<&crate::slot::NodeCoordinate> {
+        self.as_ref()?.sides.as_ref()
     }
 
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
