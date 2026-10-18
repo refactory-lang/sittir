@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
 	buildValidationReportEntries,
-	checkSClassCeilings,
-	classifySClass,
-	countSClassEntries,
+	checkCodeCeilings,
+	countCodeEntries,
+	readValidationReport,
 	writeValidationReport,
-	type SClassCeilings,
+	type CodeCeilings,
 	type ValidationReportEntry
 } from '../validation-report.ts';
 import { readFileSync, mkdtempSync, rmSync } from 'node:fs';
@@ -73,118 +73,68 @@ describe('buildValidationReportEntries', () => {
 	});
 });
 
-describe('classifySClass', () => {
-	it.each([
-		['parsekind-noninjective', 'x', 'S1'],
-		['seq-with-nested-seq', 'x', 'S3'],
-		['union-slot-unaddressable', 'x', 'S4'],
-		['union-slot-mixed-row', 'x', 'S4'],
-		['accessor-throw', 'x', 'S4'],
-		['coverage-missing-field', 'x', 'S5']
-	] as const)('direct code %s -> %s regardless of message', (code, message, expected) => {
-		expect(classifySClass({ code, message })).toBe(expected);
-	});
-
-	it.each([
-		['from-error', 'kind not found at rendered offset 3', 'S8'],
-		['read-render-parse-error', 'render: expected u16 kind_id, string, or object with $type', 'S2'],
-		['read-render-parse-ast-mismatch', 'childCount 7 ≠ 6 [...,automatic_semicolon]', 'S7'],
-		['read-render-parse-error', 'render: Missing field `_content`', 'S6'],
-		['factory-storage-ast-mismatch', 'root._line_continuation: missing on factory output', 'S6'],
-		[
-			'from-error',
-			'native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound',
-			'S1'
-		],
-		['read-render-parse-error', 'render: alias-wrapper kind id 436: no kind-keyed child slot to unwrap', 'S1'],
-		['read-render-parse-error', 'render: unknown kind id 428 in EnumBodyGroup1Content', 'S1']
-	] as const)('message fallback for %s: %s -> %s', (code, message, expected) => {
-		expect(classifySClass({ code, message })).toBe(expected);
-	});
-
-	it('leaves a message-fallback code unclassified when the message matches no known signature', () => {
-		expect(classifySClass({ code: 'read-render-parse-ast-mismatch', message: 'childCount 3 ≠ 2' })).toBeUndefined();
-	});
-
-	it('leaves a code outside the round-trip-fidelity taxonomy unclassified', () => {
-		expect(classifySClass({ code: 'kindid-unstamped-symbols', message: 'anything' })).toBeUndefined();
-	});
-
-	it('does not mistake an unrelated missing-field message for the line_comment S6 bug just because `_content` appears mid-chain', () => {
-		expect(
-			classifySClass({
-				code: 'read-render-parse-error',
-				message:
-					'render: Missing field `_left` on IfExpressionNode._condition on ExpressionStatementNode._content on SourceFileNode._statements'
-			})
-		).toBeUndefined();
+describe('countCodeEntries', () => {
+	it('counts error and warning rows per grammar per code, and leaves info rows out', () => {
+		const rows = [entry('rust', 'a', 'error'), entry('rust', 'a', 'warning'), entry('rust', 'b', 'info'), entry('python', 'a', 'error')];
+		expect(countCodeEntries(rows)).toEqual({ rust: { a: 2 }, python: { a: 1 } });
 	});
 });
 
-function entry(grammar: string, sClass?: ValidationReportEntry['sClass']): ValidationReportEntry {
-	return { source: 'validator', grammar, backend: 'native', code: 'x', severity: 'error', message: 'm', sClass };
-}
+describe('checkCodeCeilings', () => {
+	const ceilings: CodeCeilings = { rust: { a: 2, b: 0 } };
 
-describe('countSClassEntries', () => {
-	it('counts classified entries per grammar per class, skipping unclassified ones', () => {
-		const counts = countSClassEntries([entry('rust', 'S1'), entry('rust', 'S1'), entry('rust'), entry('python', 'S8')]);
-		expect(counts).toEqual({ rust: { S1: 2 }, python: { S8: 1 } });
-	});
-});
-
-describe('checkSClassCeilings', () => {
-	const ceilings: SClassCeilings = { rust: { S1: 2 } };
-
-	it('passes when every class is at its ceiling', () => {
-		const verdict = checkSClassCeilings([entry('rust', 'S1'), entry('rust', 'S1')], ceilings, ['rust']);
-		expect(verdict.violations).toEqual([]);
-		expect(verdict.improvements).toEqual([]);
+	it('passes a code at its ceiling', () => {
+		expect(checkCodeCeilings([entry('rust', 'a'), entry('rust', 'a')], ceilings, ['rust'])).toEqual({ violations: [], improvements: [] });
 	});
 
-	it('flags a count above its ceiling as a violation', () => {
-		const verdict = checkSClassCeilings([entry('rust', 'S1'), entry('rust', 'S1'), entry('rust', 'S1')], ceilings, [
-			'rust'
-		]);
-		expect(verdict.violations).toEqual([{ grammar: 'rust', sClass: 'S1', count: 3, ceiling: 2 }]);
-	});
-
-	it('treats a class (or grammar) absent from the ceilings file as ceiling 0 — cleared classes stay cleared by omission', () => {
-		const verdict = checkSClassCeilings([entry('rust', 'S7'), entry('python', 'S2')], ceilings, ['rust', 'python']);
-		expect(verdict.violations).toEqual([
-			{ grammar: 'rust', sClass: 'S7', count: 1, ceiling: 0 },
-			{ grammar: 'python', sClass: 'S2', count: 1, ceiling: 0 }
+	it('fails a code above its ceiling: new debt', () => {
+		expect(checkCodeCeilings([entry('rust', 'a'), entry('rust', 'a'), entry('rust', 'a')], ceilings, ['rust']).violations).toEqual([
+			{ grammar: 'rust', code: 'a', count: 3, ceiling: 2 }
 		]);
 	});
 
-	it('reports a count below a non-zero ceiling as an improvement (ceiling should be ratcheted down), not a violation', () => {
-		const verdict = checkSClassCeilings([entry('rust', 'S1')], ceilings, ['rust']);
-		expect(verdict.violations).toEqual([]);
-		expect(verdict.improvements).toEqual([{ grammar: 'rust', sClass: 'S1', count: 1, ceiling: 2 }]);
+	it('gives a code the grammar does not list a ceiling of zero, so every error and warning code is guarded', () => {
+		expect(checkCodeCeilings([entry('rust', 'new-code'), entry('python', 'a')], ceilings, ['rust', 'python']).violations).toEqual([
+			{ grammar: 'python', code: 'a', count: 1, ceiling: 0 },
+			{ grammar: 'rust', code: 'new-code', count: 1, ceiling: 0 }
+		]);
 	});
 
-	it('judges only the grammars actually validated this run', () => {
-		const verdict = checkSClassCeilings([entry('python', 'S2')], ceilings, ['rust']);
+	it('reports a code below a non-zero ceiling as one to lower', () => {
+		const verdict = checkCodeCeilings([entry('rust', 'a')], ceilings, ['rust']);
 		expect(verdict.violations).toEqual([]);
+		expect(verdict.improvements).toEqual([{ grammar: 'rust', code: 'a', count: 1, ceiling: 2 }]);
+	});
+
+	it('judges only the grammars validated in this run', () => {
+		expect(checkCodeCeilings([entry('python', 'a')], ceilings, ['rust']).violations).toEqual([]);
+	});
+
+	it('guards a trivia or layout code like any other', () => {
+		const rows = buildValidationReportEntries({}, { rust: [{ code: 'layout-unreached', severity: 'error', message: 'leading of 3 at 4..4', stage: 'layout-runs', label: 'entry' }] });
+		expect(checkCodeCeilings(rows, { rust: { 'from-trivia': 0 } }, ['rust']).violations).toEqual([{ grammar: 'rust', code: 'layout-unreached', count: 1, ceiling: 0 }]);
 	});
 });
 
-describe('committed S-class ratchet', () => {
-	// The committed validation-report.json is refreshed by every
-	// `validate counts` run (which also enforces the ceilings live). This
-	// pins the same invariant on the committed pair of artifacts, so a
-	// report committed past the gate — or a ceilings edit that loosens one —
-	// fails the suite.
-	it('committed validation-report.json stays within committed sclass-ceilings.json', () => {
+describe('committed diagnostic ratchet', () => {
+	it('the committed validation-report.json stays within the committed diagnostic-ceilings.json', () => {
 		const toolsRoot = fileURLToPath(new URL('../../..', import.meta.url));
-		const report = JSON.parse(
-			readFileSync(join(toolsRoot, 'validation-report.json'), 'utf8')
-		) as ValidationReportEntry[];
-		const ceilings = JSON.parse(readFileSync(join(toolsRoot, 'sclass-ceilings.json'), 'utf8')) as SClassCeilings;
+		const report = readValidationReport(join(toolsRoot, 'validation-report.json'));
+		const ceilings = JSON.parse(readFileSync(join(toolsRoot, 'diagnostic-ceilings.json'), 'utf8')) as CodeCeilings;
 		const grammars = [...new Set(report.map((e) => e.grammar))];
-		const { violations } = checkSClassCeilings(report, ceilings, grammars);
-		expect(violations).toEqual([]);
+		expect(checkCodeCeilings(report, ceilings, grammars).violations).toEqual([]);
+	});
+
+	it('holds no negative ceiling', () => {
+		const toolsRoot = fileURLToPath(new URL('../../..', import.meta.url));
+		const ceilings = JSON.parse(readFileSync(join(toolsRoot, 'diagnostic-ceilings.json'), 'utf8')) as CodeCeilings;
+		for (const codes of Object.values(ceilings)) for (const ceiling of Object.values(codes)) expect(ceiling).toBeGreaterThanOrEqual(0);
 	});
 });
+
+function entry(grammar: string, code: string, severity: ValidationReportEntry['severity'] = 'error'): ValidationReportEntry {
+	return { source: 'validator', grammar, backend: 'native', code, severity, message: 'm' };
+}
 
 describe('writeValidationReport', () => {
 	it('writes the entries array as JSON, overwriting any previous report', () => {
@@ -219,35 +169,3 @@ describe('writeValidationReport row lines', () => {
 	});
 });
 
-describe('trivia row', () => {
-	const trivia = (grammar: string, code: string): ValidationReportEntry =>
-		({
-			source: 'validator',
-			grammar,
-			backend: 'native',
-			code,
-			severity: 'warning',
-			message: 'native-read-dropped-extra',
-			sClass: 'trivia'
-		}) as ValidationReportEntry;
-
-	it("classifies every stage's trivia code as trivia, never S1", () => {
-		for (const code of ['from-trivia', 'read-render-parse-trivia', 'read-render-parse-shallow-trivia'])
-			expect(classifySClass({ code, message: 'native-read-dropped-extra' })).toBe('trivia');
-	});
-
-	it('classifies an unreached layout run and a refused region as layout, whose ceiling is zero by omission', () => {
-		for (const code of ['layout-unreached', 'layout-refused']) expect(classifySClass({ code, message: 'side of 3 at 4..4' })).toBe('layout');
-		const entries = buildValidationReportEntries({}, { rust: [{ code: 'layout-unreached', severity: 'error', message: 'leading of 3 at 4..4', stage: 'layout-runs', label: 'entry' }] });
-		expect(checkSClassCeilings(entries, { rust: { trivia: 1 } }, ['rust']).violations).toEqual([{ grammar: 'rust', sClass: 'layout', count: 1, ceiling: 0 }]);
-	});
-
-	it('counts trivia entries against their own ceiling', () => {
-		const entries = [trivia('rust', 'from-trivia'), trivia('rust', 'read-render-parse-trivia')];
-		expect(countSClassEntries(entries)).toEqual({ rust: { trivia: 2 } });
-		const ceilings: SClassCeilings = { rust: { trivia: 1 } };
-		expect(checkSClassCeilings(entries, ceilings, ['rust']).violations).toEqual([
-			{ grammar: 'rust', sClass: 'trivia', count: 2, ceiling: 1 }
-		]);
-	});
-});

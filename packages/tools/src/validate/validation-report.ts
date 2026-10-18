@@ -85,79 +85,17 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
 	readonly source: 'grammar' | 'validator';
 	readonly grammar: string;
 	readonly backend: string;
-	readonly sClass?: SClass;
 } & (
 		| Partial<Pick<GrammarDiagnosticEntry, 'location' | 'proposal'>>
 		| Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>
 	);
 
 /**
- * Round-trip-fidelity source-class taxonomy: S1 alias-storage identity, S2
- * marker population/representation, S3 separator possession, S4 slot
- * arity, S5 template projection, S6 factory extras, S7 zero-width-token
- * divergence, S8 validator/report artifacts. `trivia` holds the losses of
- * extras the native read drops (kept out of the validator totals). `layout`
- * holds the layout runs no region's record reaches and the entries whose
- * region render was refused: each keeps its source class at render, and the
- * class's ceiling is zero.
- */
-export const S_CLASSES = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'trivia', 'layout'] as const;
-
-export type SClass = (typeof S_CLASSES)[number];
-
-/** Codes that determine their S-class unambiguously, independent of message text. */
-const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
-	'parsekind-noninjective': 'S1',
-	'seq-with-nested-seq': 'S3',
-	'union-slot-unaddressable': 'S4',
-	'union-slot-mixed-row': 'S4',
-	'union-slot-routed-repeated': 'S4',
-	'accessor-throw': 'S4',
-	'coverage-missing-field': 'S5',
-	'layout-unreached': 'layout',
-	'layout-refused': 'layout'
-};
-
-/**
- * Message-shape fallback for codes covering more than one S-class
- * (`from-error`, the `*-ast-mismatch`/`*-error` validator codes). A
- * message that matches none of these known signatures is left
- * unclassified rather than guessed — most `*-ast-mismatch` rows are
- * genuinely ambiguous across S1/S2/S3/S5/S7 without more structure than
- * the message string carries.
- */
-function classifyByMessage(message: string): SClass | undefined {
-	if (/kind not found at rendered offset/.test(message)) return 'S8';
-	if (/expected u16 kind_id/.test(message)) return 'S2';
-	if (/automatic_semicolon/.test(message)) return 'S7';
-	if (/_comment|_line_continuation|Missing field `_content`$/.test(message)) return 'S6';
-	if (/no kind-keyed child slot|unknown kind id \d+|native coords unresolved for alias target/.test(message))
-		return 'S1';
-	return undefined;
-}
-
-/**
- * Maps a validation report entry to its round-trip-fidelity-restoration
- * source class. Entries outside this initiative's scope (e.g. the
- * kindid-invariant-restoration `kindid-*`/`desugar-divergence-*` codes)
- * are deliberately left unclassified.
- */
-export function classifySClass(entry: { readonly code: string; readonly message: string }): SClass | undefined {
-	const direct = DIRECT_CODE_TO_S_CLASS[entry.code];
-	if (direct) return direct;
-	if (entry.code.endsWith('-trivia')) return 'trivia';
-	if (entry.code.endsWith('-error') || entry.code.endsWith('-ast-mismatch')) return classifyByMessage(entry.message);
-	return undefined;
-}
-
-/**
  * Merge per-grammar static grammar diagnostics and per-grammar validator
  * failures into one flat array of `ValidationReportEntry` — each entry is
  * the original diagnostic object, spread as-is, tagged with only the shared
  * `source`/`grammar`/`backend` fields. No hand-picked field list to keep in
- * sync as either diagnostic shape grows. `sClass` is stamped once here,
- * from the same `code`/`message` every entry already carries, rather than
- * re-derived by each downstream consumer (`validate history`, triage tools).
+ * sync as either diagnostic shape grows.
  */
 export function buildValidationReportEntries(
 	grammarDiagnosticsByGrammar: Readonly<Record<string, readonly GrammarDiagnosticEntry[]>>,
@@ -167,14 +105,12 @@ export function buildValidationReportEntries(
 	const entries: ValidationReportEntry[] = [];
 	for (const [grammar, diagnostics] of Object.entries(grammarDiagnosticsByGrammar)) {
 		for (const d of diagnostics) {
-			const entry = { source: 'grammar' as const, grammar, backend, ...d };
-			entries.push({ ...entry, sClass: classifySClass(entry) });
+			entries.push({ source: 'grammar' as const, grammar, backend, ...d });
 		}
 	}
 	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
 		for (const f of failures) {
-			const entry = { source: 'validator' as const, grammar, backend, ...f };
-			entries.push({ ...entry, sClass: classifySClass(entry) });
+			entries.push({ source: 'validator' as const, grammar, backend, ...f });
 		}
 	}
 	return entries;
@@ -220,71 +156,60 @@ function compareReportRows(a: ValidationReportEntry, b: ValidationReportEntry): 
 }
 
 /**
- * Per-grammar ceilings on how many report entries each S-class may carry —
- * the committed shape of `packages/tools/sclass-ceilings.json`. A class
- * absent from a grammar's row (or a grammar absent entirely) has ceiling 0:
- * cleared classes stay cleared by omission, so a brand-new failure in a
- * cleared class is a violation without anyone having to enumerate zeros.
+ * Per grammar, the most report rows each diagnostic code may carry at error or
+ * warning severity: the committed shape of `packages/tools/diagnostic-ceilings.json`.
+ * A code a grammar does not list has ceiling 0, so every error and warning code is guarded.
  */
-export type SClassCeilings = Readonly<Record<string, Readonly<Partial<Record<SClass, number>>>>>;
+export type CodeCeilings = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
-/** Count classified report entries per grammar per S-class. Unclassified entries are outside the taxonomy and not counted. */
-export function countSClassEntries(
-	entries: readonly ValidationReportEntry[]
-): Record<string, Partial<Record<SClass, number>>> {
-	const counts: Record<string, Partial<Record<SClass, number>>> = {};
+/** Report rows per grammar per code, counting error and warning rows; an info row records a fact, not debt. */
+export function countCodeEntries(entries: readonly ValidationReportEntry[]): Record<string, Record<string, number>> {
+	const counts: Record<string, Record<string, number>> = {};
 	for (const e of entries) {
-		if (!e.sClass) continue;
-		// Resolved audit records (severity 'info' — e.g. enrich's
-		// "automatically resolved" unalias trail) document fixes already
-		// applied to the compiled grammar. They are provenance kept for
-		// visibility, not open failures, and do not count against a
-		// class ceiling.
-		if ((e as { severity?: string }).severity === 'info') continue;
+		if (e.severity !== 'error' && e.severity !== 'warning') continue;
 		const row = (counts[e.grammar] ??= {});
-		row[e.sClass] = (row[e.sClass] ?? 0) + 1;
+		row[e.code] = (row[e.code] ?? 0) + 1;
 	}
 	return counts;
 }
 
-export interface SClassCeilingViolation {
+/** One (grammar, code) pair's row count against its ceiling. */
+export interface CodeCeilingCount {
 	readonly grammar: string;
-	readonly sClass: SClass;
+	readonly code: string;
 	readonly count: number;
 	readonly ceiling: number;
 }
 
-export interface SClassCeilingVerdict {
-	/** (grammar, class) pairs whose entry count EXCEEDS the committed ceiling — new debt, fails the run. */
-	readonly violations: readonly SClassCeilingViolation[];
-	/** (grammar, class) pairs whose entry count is BELOW a non-zero ceiling — the ceiling should be ratcheted down in the same commit. */
-	readonly improvements: readonly SClassCeilingViolation[];
+export interface CodeCeilingVerdict {
+	/** Pairs whose count exceeds the ceiling: new debt, which fails the run. */
+	readonly violations: readonly CodeCeilingCount[];
+	/** Pairs whose count is below a non-zero ceiling: lower the ceiling in the same commit. */
+	readonly improvements: readonly CodeCeilingCount[];
 }
 
 /**
- * The S-class ratchet: compare classified report-entry counts against the
- * committed per-grammar ceilings. A count above its ceiling means the change
- * being validated minted new debt in that source class — the fix is at the
- * source, never a raised ceiling. A count below a non-zero ceiling means
- * debt was paid down; the ceiling only ever moves toward zero, so lower it
- * in the same commit. Only `grammars` actually validated this run are
- * compared — a single-grammar `validate counts <g>` run must not judge the
- * grammars it never measured.
+ * The diagnostic ratchet: each validated grammar's error and warning rows per
+ * code against the committed ceilings. A count above its ceiling is new debt;
+ * fix the source, never raise the ceiling. A count below a non-zero ceiling is
+ * paid-down debt, and the ceiling moves down with it. Only `grammars` are
+ * judged, so a single-grammar run never judges a grammar it did not measure.
  */
-export function checkSClassCeilings(
+export function checkCodeCeilings(
 	entries: readonly ValidationReportEntry[],
-	ceilings: SClassCeilings,
+	ceilings: CodeCeilings,
 	grammars: readonly string[]
-): SClassCeilingVerdict {
-	const counts = countSClassEntries(entries);
-	const violations: SClassCeilingViolation[] = [];
-	const improvements: SClassCeilingViolation[] = [];
-	for (const grammar of grammars) {
-		for (const sClass of S_CLASSES) {
-			const count = counts[grammar]?.[sClass] ?? 0;
-			const ceiling = ceilings[grammar]?.[sClass] ?? 0;
-			if (count > ceiling) violations.push({ grammar, sClass, count, ceiling });
-			else if (count < ceiling) improvements.push({ grammar, sClass, count, ceiling });
+): CodeCeilingVerdict {
+	const counts = countCodeEntries(entries);
+	const violations: CodeCeilingCount[] = [];
+	const improvements: CodeCeilingCount[] = [];
+	for (const grammar of [...grammars].sort()) {
+		const codes = [...new Set([...Object.keys(counts[grammar] ?? {}), ...Object.keys(ceilings[grammar] ?? {})])].sort();
+		for (const code of codes) {
+			const count = counts[grammar]?.[code] ?? 0;
+			const ceiling = ceilings[grammar]?.[code] ?? 0;
+			if (count > ceiling) violations.push({ grammar, code, count, ceiling });
+			else if (count < ceiling) improvements.push({ grammar, code, count, ceiling });
 		}
 	}
 	return { violations, improvements };

@@ -160,16 +160,17 @@ Two committed ratchets back the run (both only ever tighten):
   `sittir tool check-baseline --collect --backend native`; CI diffs a fresh
   head collection against the base commit's copy via
   `sittir tool check-baseline --base <base.json> --head <head.json>`.
-- `packages/tools/sclass-ceilings.json` — per-grammar ceilings on
-  round-trip-fidelity S-class counts in `validation-report.json`. Every
-  `validate counts` run fails when a class exceeds its ceiling (new debt in
-  a tracked source class); a class absent from the file has ceiling 0, so
-  cleared classes stay cleared. When a run reports a class below its
-  ceiling, lower the ceiling in the same commit.
+- `packages/tools/diagnostic-ceilings.json` — per grammar, the most
+  error- and warning-severity rows each diagnostic code may have in
+  `validation-report.json`. Every `validate counts` run fails when a code
+  exceeds its ceiling (new debt); a code a grammar does not list has
+  ceiling 0, so every error and warning code is guarded and a cleared code
+  stays cleared. When a run reports a code below its ceiling, lower the
+  ceiling in the same commit.
 - `packages/tools/validation-report.json` — the report the committed
   ceilings are checked against (a unit test pins the committed pair).
   Commit it, as `validate` wrote it, in the same commit as any change to
-  `sclass-ceilings.json` or to the validated rows; otherwise leave it out,
+  `diagnostic-ceilings.json` or to the validated rows; otherwise leave it out,
   since every run rewrites it. Compare two reports, such as the committed
   one and a fresh run's, with
   `sittir validate history --diff <base.json> <head.json>`: it prints

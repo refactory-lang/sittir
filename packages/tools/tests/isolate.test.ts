@@ -69,7 +69,7 @@ vi.mock('../src/native-staleness.ts', () => ({
 // cwd-relative — under vitest that cwd is the repo root, so an unmocked write
 // clobbers the real committed packages/tools/validation-report.json with this
 // file's fabricated single-grammar entries. Stub ONLY the disk write; the
-// entry building and S-class ceiling check stay real.
+// entry building and diagnostic ceiling check stay real.
 vi.mock('../src/validate/validation-report.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../src/validate/validation-report.ts')>();
 	return { ...actual, writeValidationReport: vi.fn() };

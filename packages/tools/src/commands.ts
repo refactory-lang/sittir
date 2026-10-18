@@ -21,11 +21,11 @@ import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import { diffValidationReports, formatReportDiff, readComparableReport } from './validate/report-diff.ts';
 import {
 	buildValidationReportEntries,
-	checkSClassCeilings,
+	checkCodeCeilings,
 	readValidationReport,
 	writeValidationReport,
 	type GrammarDiagnosticEntry,
-	type SClassCeilings,
+	type CodeCeilings,
 	type ValidatorDiagnostic,
 	type ValidationReportEntry
 } from './validate/validation-report.ts';
@@ -632,43 +632,32 @@ export function writeMergedValidationReport(
 }
 
 /**
- * The S-class ratchet gate on a fresh validation run: compare the freshly
- * classified report entries for the grammars actually validated against the
- * committed per-grammar ceilings in `packages/tools/sclass-ceilings.json`.
- * A count above its ceiling means this run minted new debt in a tracked
- * source class — the run fails; fix the source, never raise the ceiling. A
- * count below a non-zero ceiling is a paid-down class — the ceiling should
- * be lowered (toward omission = 0) in the same commit, surfaced here as a
- * reminder rather than a failure.
- *
- * A missing or unparsable ceilings file is a hard error, not an empty
- * default — silently treating it as "all ceilings 0" would fail every run
- * on pre-existing documented debt, and treating it as "no gate" would
- * silently disable the ratchet.
+ * The diagnostic ratchet on a fresh validation run: the report entries of the
+ * grammars validated, counted per code at error or warning severity, against
+ * the committed per-grammar ceilings in `packages/tools/diagnostic-ceilings.json`.
+ * A count above its ceiling fails the run; a count below a non-zero ceiling
+ * prints a reminder to lower it in the same commit. A missing or unparsable
+ * ceilings file throws: reading it as empty would fail every run, and reading
+ * it as no gate would switch the ratchet off.
  *
  * Returns true when the gate passes.
  */
-export function enforceSClassCeilings(
-	grammars: readonly GrammarName[],
-	entries: readonly ValidationReportEntry[]
-): boolean {
-	const ceilingsPath = resolvePath(join('packages', 'tools', 'sclass-ceilings.json'));
-	let ceilings: SClassCeilings;
+export function enforceCodeCeilings(grammars: readonly GrammarName[], entries: readonly ValidationReportEntry[]): boolean {
+	const ceilingsPath = resolvePath(join('packages', 'tools', 'diagnostic-ceilings.json'));
+	let ceilings: CodeCeilings;
 	try {
-		ceilings = JSON.parse(readFileSync(ceilingsPath, 'utf8')) as SClassCeilings;
+		ceilings = JSON.parse(readFileSync(ceilingsPath, 'utf8')) as CodeCeilings;
 	} catch (e) {
-		throw new Error(`enforceSClassCeilings: failed to read/parse ceilings at ${ceilingsPath}: ${(e as Error).message}`);
+		throw new Error(`enforceCodeCeilings: failed to read/parse ceilings at ${ceilingsPath}: ${(e as Error).message}`);
 	}
-	const { violations, improvements } = checkSClassCeilings(entries, ceilings, grammars);
+	const { violations, improvements } = checkCodeCeilings(entries, ceilings, grammars);
 	for (const v of violations) {
 		console.error(
-			`✗ S-class ratchet: ${v.grammar} ${v.sClass} has ${v.count} report entr${v.count === 1 ? 'y' : 'ies'} (ceiling ${v.ceiling}) — new ${v.sClass} debt; fix the source, never raise the ceiling (${ceilingsPath})`
+			`✗ diagnostic ratchet: ${v.grammar} ${v.code} has ${v.count} report entr${v.count === 1 ? 'y' : 'ies'} (ceiling ${v.ceiling}) — new debt; fix the source, never raise the ceiling (${ceilingsPath})`
 		);
 	}
 	for (const i of improvements) {
-		console.log(
-			`  S-class ratchet: ${i.grammar} ${i.sClass} is at ${i.count} (ceiling ${i.ceiling}) — lower the ceiling in ${ceilingsPath} in this commit`
-		);
+		console.log(`  diagnostic ratchet: ${i.grammar} ${i.code} is at ${i.count} (ceiling ${i.ceiling}) — lower the ceiling in ${ceilingsPath} in this commit`);
 	}
 	return violations.length === 0;
 }
@@ -762,7 +751,7 @@ export async function runCountsCli(
 		// One merged write covering every grammar attempted (ok, crashed, and
 		// error alike) — mirrors the non-isolate path's write-on-attempt policy.
 		const freshEntries = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
-		if (!enforceSClassCeilings(grammars, freshEntries)) {
+		if (!enforceCodeCeilings(grammars, freshEntries)) {
 			process.exitCode = 1;
 		}
 		if (anyCrashed) {
@@ -834,7 +823,7 @@ export async function runCountsCli(
 		}
 	} else {
 		const freshEntries = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
-		if (!enforceSClassCeilings(grammars, freshEntries)) {
+		if (!enforceCodeCeilings(grammars, freshEntries)) {
 			process.exitCode = 1;
 		}
 	}
