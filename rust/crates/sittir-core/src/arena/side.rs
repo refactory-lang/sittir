@@ -1,7 +1,7 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
-//! `at`, `edges`, `span`, `sides`, `separator`, `slots`. `changed` is two
-//! bits of the mask. It holds no trivia and no unit sides: a written side is
+//! `at`, `edges`, `span`, `sides`, `separator`, `delimiter`,
+//! `separator_kind`, `slots`. `changed` is two bits of the mask. It holds no trivia and no unit sides: a written side is
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
 
@@ -10,7 +10,7 @@ use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
 use crate::spacing::SeamStrength;
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{Delimiter, KindId, NodeIndex, Span, TreeId};
 
 mod mask {
     pub const AT: u32 = 1;
@@ -21,7 +21,9 @@ mod mask {
     pub const CHANGED_TRAILING: u32 = 1 << 5;
     pub const SEPARATOR: u32 = 1 << 6;
     pub const SLOTS: u32 = 1 << 7;
-    pub const ALL: u32 = (1 << 8) - 1;
+    pub const DELIMITER: u32 = 1 << 8;
+    pub const SEPARATOR_KIND: u32 = 1 << 9;
+    pub const ALL: u32 = (1 << 10) - 1;
 }
 
 /// The node a built node was rebuilt from: its tree, its subtree's rows and
@@ -34,13 +36,18 @@ pub struct Sides {
     pub span: Span,
 }
 
-/// A list slot's stored layout, keyed by its cell's stamped word.
+/// A list slot's stored layout and its separator spacing settings, keyed by
+/// its cell's stamped word.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SideSlot {
     pub word: u32,
     pub before: Option<KindId>,
     pub after: Option<KindId>,
     pub separator: Option<KindId>,
+    /// The slot's `…_separator_space_before` setting.
+    pub space_before: Option<KindId>,
+    /// The slot's `…_separator_space` (`…_after`) setting.
+    pub space_after: Option<KindId>,
     pub tokens: Vec<Option<KindId>>,
 }
 
@@ -54,12 +61,16 @@ pub struct SideRecord {
     pub sides: Option<Sides>,
     pub changed: ChangedEdges,
     pub separator: Option<KindId>,
+    /// A list's delimiters setting; an explicit empty set is `Some`.
+    pub delimiter: Option<Delimiter>,
+    /// A list's chosen separator setting, a builder's preference.
+    pub separator_kind: Option<KindId>,
     pub slots: Vec<SideSlot>,
 }
 
-/// The words of one slot entry: word, before, after, separator, and the
-/// tokens run's address and length.
-const SLOT_WORDS: u32 = 6;
+/// The words of one slot entry: word, before, after, separator, the two
+/// spacing settings, and the tokens run's address and length.
+const SLOT_WORDS: u32 = 8;
 /// An edge side's word marks a set side with this bit, so a blank arm with
 /// no strength still differs from an unset side.
 const EDGE_SET: u32 = 1 << 31;
@@ -82,6 +93,11 @@ fn read_optional_kind(word: u32) -> Result<Option<KindId>, ArenaError> {
 
 fn read_kind(word: u32) -> Result<KindId, ArenaError> {
     u16::try_from(word).map(KindId).map_err(|_| malformed("side record kind", word))
+}
+
+fn read_delimiter(word: u32) -> Result<Delimiter, ArenaError> {
+    let every = Delimiter::LEADING.with(Delimiter::TRAILING);
+    u8::try_from(word).ok().map(Delimiter).filter(|&set| set.without(every) == Delimiter::NONE).ok_or(malformed("side record delimiter", word))
 }
 
 /// One edge side as a word: the set bit, the strength plus one (0 when the
@@ -163,13 +179,30 @@ impl SideRecord {
             flags |= mask::SEPARATOR;
             words.push(u32::from(separator.0));
         }
+        if let Some(delimiter) = self.delimiter {
+            flags |= mask::DELIMITER;
+            words.push(u32::from(delimiter.0));
+        }
+        if let Some(kind) = self.separator_kind {
+            flags |= mask::SEPARATOR_KIND;
+            words.push(u32::from(kind.0));
+        }
         if !self.slots.is_empty() {
             flags |= mask::SLOTS;
             words.push(u32::try_from(self.slots.len()).map_err(|_| ArenaError::Full)?);
             for slot in &self.slots {
                 let tokens: Vec<u32> = slot.tokens.iter().copied().map(optional_kind).collect();
                 let (run, len) = if tokens.is_empty() { (Address::NONE, 0) } else { (arena.push(&tokens)?, u32::try_from(tokens.len()).map_err(|_| ArenaError::Full)?) };
-                words.extend([slot.word, optional_kind(slot.before), optional_kind(slot.after), optional_kind(slot.separator), run.0, len]);
+                words.extend([
+                    slot.word,
+                    optional_kind(slot.before),
+                    optional_kind(slot.after),
+                    optional_kind(slot.separator),
+                    optional_kind(slot.space_before),
+                    optional_kind(slot.space_after),
+                    run.0,
+                    len,
+                ]);
             }
         }
         words[0] = flags;
@@ -211,19 +244,35 @@ impl SideRecord {
             let [separator] = fields.array()?;
             record.separator = Some(read_kind(separator)?);
         }
+        if has(mask::DELIMITER) {
+            let [delimiter] = fields.array()?;
+            record.delimiter = Some(read_delimiter(delimiter)?);
+        }
+        if has(mask::SEPARATOR_KIND) {
+            let [kind] = fields.array()?;
+            record.separator_kind = Some(read_kind(kind)?);
+        }
         if has(mask::SLOTS) {
             let [count] = fields.array()?;
             let entries = fields.take(count.checked_mul(SLOT_WORDS).ok_or(malformed("side record slot count", count))?)?;
             let (entries, _) = entries.as_chunks::<{ SLOT_WORDS as usize }>();
             record.slots = entries
                 .iter()
-                .map(|&[word, before, after, separator, run, len]| {
+                .map(|&[word, before, after, separator, space_before, space_after, run, len]| {
                     let tokens = match (run, len) {
                         (0, 0) => Vec::new(),
                         (0, _) => return Err(malformed("side record tokens address", run)),
                         _ => arena.words(Address(run), len)?.iter().map(|&token| read_optional_kind(token)).collect::<Result<_, _>>()?,
                     };
-                    Ok(SideSlot { word, before: read_optional_kind(before)?, after: read_optional_kind(after)?, separator: read_optional_kind(separator)?, tokens })
+                    Ok(SideSlot {
+                        word,
+                        before: read_optional_kind(before)?,
+                        after: read_optional_kind(after)?,
+                        separator: read_optional_kind(separator)?,
+                        space_before: read_optional_kind(space_before)?,
+                        space_after: read_optional_kind(space_after)?,
+                        tokens,
+                    })
                 })
                 .collect::<Result<_, _>>()?;
         }
@@ -246,9 +295,20 @@ mod tests {
             sides: Some(Sides { tree: TreeId(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
             changed: ChangedEdges { leading: true, trailing: false },
             separator: Some(KindId(7)),
+            delimiter: Some(Delimiter::TRAILING),
+            separator_kind: Some(KindId(12)),
             slots: vec![
-                SideSlot { word: 2, before: Some(KindId::BLANK), after: None, separator: Some(KindId(8)), tokens: vec![None, Some(KindId(8)), Some(KindId::BLANK)] },
+                SideSlot {
+                    word: 2,
+                    before: Some(KindId::BLANK),
+                    after: None,
+                    separator: Some(KindId(8)),
+                    space_before: None,
+                    space_after: Some(KindId(3)),
+                    tokens: vec![None, Some(KindId(8)), Some(KindId::BLANK)],
+                },
                 SideSlot { word: 7, ..SideSlot::default() },
+                SideSlot { word: 9, space_before: Some(KindId::BLANK), ..SideSlot::default() },
             ],
         }
     }
@@ -272,6 +332,9 @@ mod tests {
             SideRecord { sides: whole.sides, ..SideRecord::default() },
             SideRecord { changed: ChangedEdges { leading: false, trailing: true }, ..SideRecord::default() },
             SideRecord { separator: whole.separator, ..SideRecord::default() },
+            SideRecord { delimiter: whole.delimiter, ..SideRecord::default() },
+            SideRecord { delimiter: Some(Delimiter::NONE), ..SideRecord::default() },
+            SideRecord { separator_kind: whole.separator_kind, ..SideRecord::default() },
             SideRecord { slots: whole.slots, ..SideRecord::default() },
         ];
         let mut arena = Arena::new();
@@ -294,15 +357,19 @@ mod tests {
         let mut arena = Arena::new();
         for words in [
             vec![0],
-            vec![1 << 8],
+            vec![1 << 10],
             vec![mask::AT],
             vec![mask::EDGES, 5, 0],
             vec![mask::EDGES, EDGE_SET | 9 << 16, 0],
             vec![mask::SIDES, 1, 2, 3, 9, 4],
             vec![mask::SEPARATOR, 70_000],
+            vec![mask::DELIMITER, 4],
+            vec![mask::DELIMITER],
+            vec![mask::SEPARATOR_KIND, 70_000],
             vec![mask::SLOTS, u32::MAX],
-            vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 3],
-            vec![mask::SLOTS, 1, 2, 70_002, 0, 0, 0, 0],
+            vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 0, 0, 3],
+            vec![mask::SLOTS, 1, 2, 70_002, 0, 0, 0, 0, 0, 0],
+            vec![mask::SLOTS, 1, 2, 0, 0, 0, 0, 70_002, 0, 0],
         ] {
             let at = arena.push(&words).expect("room");
             assert!(SideRecord::read(&arena, at).is_err(), "{words:?}");

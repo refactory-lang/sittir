@@ -708,7 +708,8 @@ raw-string routing metadata where the type alone cannot express its parser behav
    - `sides` (tree, index, end, byte start, byte end);
    - `changed`, as two bits of the mask;
    - `separator` (a kind);
-   - `slots`, a count, then per slot its cell's stamped `word` (in place of the wire key), `before`, `after`, `separator`, and its `tokens` as a run (address, length).
+   - `delimiter` and `separator_kind`, a print setting each (item 7);
+   - `slots`, a count, then per slot its cell's stamped `word` (in place of the wire key), `before`, `after`, `separator`, its two separator spacing settings (item 7), and its `tokens` as a run (address, length).
 
    It holds no trivia and no unit sides. A parsed node's are in its tree's table; a built node's are in the built trivia table, a unit's keyed by (record address, slot word, item).
 4. **A view names its children's view types through the native type**, not by a name derived from another: the derive implements `HasRecord` for every native node type, struct and choice, with `type Record<'a>`. A struct's view is `<Ident>Record<'a>`, a choice's is an enum over its variants' views selected by the cell's kind, and a cell's accessor yields `<T as HasRecord>::Record<'a>`.
