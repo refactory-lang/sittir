@@ -21810,7 +21810,7 @@ export namespace UnescapedDoubleStringFragment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnescapedDoubleStringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21830,7 +21830,7 @@ export namespace UnescapedSingleStringFragment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnescapedSingleStringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21850,7 +21850,7 @@ export namespace RegexPattern {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.RegexPattern;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21870,7 +21870,7 @@ export namespace RegexFlags {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.RegexFlags;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21890,7 +21890,7 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21910,7 +21910,7 @@ export namespace NumberDecimal {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.NumberDecimal;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21930,7 +21930,7 @@ export namespace HtmlComment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.HtmlComment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21950,7 +21950,7 @@ export namespace JsxText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.JsxText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21970,7 +21970,7 @@ export namespace TemplateChars {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.TemplateChars;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -21990,7 +21990,7 @@ export namespace TernaryQmark {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.TernaryQmark;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -22010,7 +22010,7 @@ export namespace ErrorRecovery {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ErrorRecovery;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;

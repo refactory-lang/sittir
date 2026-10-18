@@ -1,5 +1,5 @@
 import { stableGrammars, assertGrammar } from '@sittir/codegen/grammars';
-import { buildNodeMap, invoke, load } from '../codegen-surface.ts';
+import { buildNodeMap, load } from '../codegen-surface.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
 import { loadCorpusEntries, loadNativeEngine } from '../validate/common.ts';
 
@@ -53,14 +53,9 @@ function readShape(node: Walked, accessor: string): SlotShape {
 
 export async function nodeJsonCensus(grammar: string): Promise<NodeJsonCensus> {
 	const nodeMap = await buildNodeMap(grammar);
-	const tables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
-	if (tables === undefined) throw new Error(`node-json-census: no generated id tables for grammar '${grammar}'; run gen first`);
-	const { collectKindEntries, collectCatalogKinds } = await load('kindDiscriminant');
-	const { leafTextChecks } = await load('from');
+	const { isPatternLeaf } = await load('modelNodeMap');
 	const { unitKindIds } = await load('wrap');
-	const leafKinds = leafTextChecks(nodeMap, collectKindEntries(collectCatalogKinds(tables), nodeMap, tables))
-		.filter((check) => check.pattern !== undefined)
-		.map((check) => check.kind);
+	const leafKinds = [...nodeMap.nodes].filter(([, node]) => isPatternLeaf(node)).map(([kind]) => kind);
 
 	const { KIND_NAMES, kindIdFromName } = await requireGrammarModule(grammar, 'types.ts');
 	const { _fromMap } = await requireGrammarModule(grammar, 'factories/coerce.ts');

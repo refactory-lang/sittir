@@ -2,7 +2,7 @@ import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { continuationTriviaKinds, layoutTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, isPatternLeaf, storesNodes } from '../compiler/model/node-map.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, type SetterEntry } from './node-members.ts';
@@ -390,7 +390,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			const existing = rows.get(memberName);
 			if (existing === undefined || (exact && !existing.exact)) rows.set(memberName, { row, exact });
 		}
-		return new Map([...rows].map(([member, { row }]) => [member, row]));
+		const table = new Map([...rows].map(([member, { row }]) => [member, row]));
+		for (const [kind, node] of this.#nodeMap.nodes) {
+			if (!isPatternLeaf(node)) continue;
+			const entry = this.#kindEntries ? findKindEntry(this.#kindEntries, kind) : undefined;
+			if (this.#kindEntries && entry === undefined) continue;
+			const memberName = entry?.member ?? kind;
+			if (table.has(memberName)) continue;
+			table.set(memberName, `  ${this.#kindEntries ? `[TSKindId.${memberName}]` : `'${kind}'`}: (d, t) => wrapLeaf(d, t),`);
+		}
+		return table;
 	}
 
 	#rootTreeLines(rows: ReadonlyMap<string, string>): string[] {
@@ -445,6 +454,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			''
 		];
 		for (const source of this.#output) lines.push(source, '');
+		lines.push(
+			'function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {',
+			'  const handle = currentHandle();',
+			'  const node = {',
+			'    ...data,',
+			...nodeMemberLines({ accessors: [], parsed: true, inner: { inner: false } }).map((line) => line.slice(2)),
+			'  };',
+			'  return node;',
+			'}',
+			''
+		);
 		lines.push(
 			`const _wrapTable: Record<${keyed ? 'number' : 'string'}, (data: _UntypedNode, tree: TreeHandle) => unknown> = {`,
 			...rows.values(),

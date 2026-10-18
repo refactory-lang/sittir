@@ -22,7 +22,7 @@ One header line with the shadowing and unsampled pair counts, then a `SHADOWS` r
 
 What node JSON and its reviver rest on, measured per grammar over the corpus entries that parse and enumerate without a read error. Four tables:
 
-1. The text-leaf kinds: the pattern checks `leafTextChecks` prints for the coercer's registry, so a fixed-text kind (a keyword or punctuation unit) is not one. Each row counts its corpus instances and how many already carry `$render`, so a kind with none rendering is one whose parsed node crosses as plain data.
+1. The text-leaf kinds: the pattern nodes (`isPatternLeaf`), so a fixed-text kind (a keyword or punctuation unit) is not one, and neither is a lexed compound or an alias of a pattern leaf, which have wraps. Each row counts its corpus instances and how many already carry `$render`, so a kind with none rendering is one whose parsed node crosses as plain data.
 2. The corpus kinds that are neither keys of `_fromMap` nor units (`unitKindIds`): the kinds a reviver could not build. Units are counted separately because they revive to their kind id.
 3. The value shape each `querySlots` accessor returns, per kind and accessor, as instance counts: node, list, kind id, boolean, string, undefined, or throws.
 4. The comment kinds: `triviaFacts.kinds` that name a kind and are not in `triviaFacts.layout`.

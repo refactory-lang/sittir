@@ -12,7 +12,7 @@ export function readFirstFunction(source: string) {
 	if (first === undefined || !rs.is.functionItem(first)) return undefined;
 
 	return {
-		name: rs.render(first.name()).toString(),
+		name: first.name().$render(),
 		body: first.body(),
 		statements: first.body().statements(),
 	};

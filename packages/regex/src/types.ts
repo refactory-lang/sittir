@@ -2828,7 +2828,7 @@ export namespace PatternCharacter {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.PatternCharacter;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2848,7 +2848,7 @@ export namespace PosixClassName {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.PosixClassName;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2868,7 +2868,7 @@ export namespace ClassCharacter {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ClassCharacter;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2888,7 +2888,7 @@ export namespace Flags {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Flags;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2908,7 +2908,7 @@ export namespace DecimalEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.DecimalEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2928,7 +2928,7 @@ export namespace UnicodeCharacterEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnicodeCharacterEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2948,7 +2948,7 @@ export namespace UnicodePropertyValue {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnicodePropertyValue;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2968,7 +2968,7 @@ export namespace ControlEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ControlEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2988,7 +2988,7 @@ export namespace ControlLetterEscape {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ControlLetterEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -3008,7 +3008,7 @@ export namespace GroupName {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.GroupName;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -3028,7 +3028,7 @@ export namespace DecimalDigits {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.DecimalDigits;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -3048,7 +3048,7 @@ export namespace CharacterClassEscapeText1 {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.CharacterClassEscapeText1;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -3068,7 +3068,7 @@ export namespace CharacterClassEscapeText2 {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.CharacterClassEscapeText2;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
