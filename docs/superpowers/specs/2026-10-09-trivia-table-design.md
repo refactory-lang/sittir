@@ -1,6 +1,6 @@
 # Trivia table
 
-Status: the parsed tree's table is built (`ParsedTree::trivia_table`). The written-sides store, which holds every write and built nodes' trivia, lands with the shared arena's record step; until then a built node carries its trivia on the node.
+Status: the parsed tree's table is built (`ParsedTree::trivia_table`). The written-sides store holds every write: parsed writes go there from the shared arena's record step's first commit, and built nodes' trivia from its record writer, until which a built node carries its trivia on the node.
 
 ## 1. The model
 
