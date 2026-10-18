@@ -593,7 +593,7 @@ Whether a rule can produce a sequence of literal tokens and symbols. A string
 matches its literal; a symbol matches an item naming it, and a symbol the caller
 expands is also followed into its own body. By default only hidden symbols
 (leading underscore) expand, since they leave no node of its own. Sequences, choices, optionals and repeats are followed; fields,
-aliases and tokens are transparent. Recursion is solved as a least fixed
+aliases and tokens are transparent; `EOF` and `BLANK` match nothing and end where they start. Recursion is solved as a least fixed
 point. A rule re-entered at the same position yields what it has reached so
 far, and passes repeat until no rule reaches a new end. So a left-recursive rule
 is recognised in full, and the answer is exact in both directions. That matters

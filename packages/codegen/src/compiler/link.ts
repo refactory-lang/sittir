@@ -75,6 +75,7 @@ import {
 	hiddenChoiceClass,
 	isKindChoice,
 	isNamedArmChoice,
+	optionalContentOf,
 	separatedListBodyInfo,
 	separatorOf,
 	inlinesAtReference,
@@ -2267,13 +2268,10 @@ function rewriteRuleForStamp(rule: Rule<'link'>, ctx: RenderAsStampCtx): Rule<'l
 			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, ctx)) };
 
 		case CHOICE: {
-			const members = rule.members.map((m) => rewriteRuleForStamp(m, ctx));
-			const nonBlank = members.filter((m) => !isBlank(m));
-			const hadBlank = nonBlank.length < members.length;
-			if (!hadBlank) return { ...rule, members };
-			if (nonBlank.length === 0) return withId({ type: CHOICE, members: [] }, rule.id);
-			if (nonBlank.length === 1) return withId({ type: OPTIONAL, content: nonBlank[0]! }, rule.id);
-			return withId({ type: OPTIONAL, content: { type: CHOICE, members: nonBlank } }, rule.id);
+			const stamped = { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, ctx)) };
+			if (!stamped.members.some(isBlank)) return stamped;
+			const content = optionalContentOf(stamped);
+			return withId(content === undefined ? { type: CHOICE, members: [] } : { type: OPTIONAL, content }, rule.id);
 		}
 
 		default:

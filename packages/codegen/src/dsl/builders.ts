@@ -18,6 +18,7 @@ import {
 import { DEDENT_TEXT, INDENT_TEXT } from './primitives/spacing.ts';
 import type {
 	AliasRule,
+	BlankRule,
 	ChoiceRule,
 	FieldRule,
 	ImmediateTokenRule,
@@ -40,10 +41,9 @@ import type {
 	TokenRule,
 } from '../types/rule.ts';
 import { sym } from '../types/rule.ts';
-import { isSpliceableBareSeq } from './rule-patterns.ts';
-import { withAttrsFrom } from './rule-attrs.ts';
+import { isSpliceableBareMember, withoutBlankMembers } from './rule-patterns.ts';
 import { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
-import { withId } from './rule-attrs.ts';
+import { withAttrsFrom, withId } from './rule-attrs.ts';
 
 export type PrecKind = 'left' | 'right' | 'dynamic' | undefined;
 
@@ -92,6 +92,7 @@ export interface StructuralPrec extends PrecBuilder<'evaluate'> {
 
 export interface StructuralBuilder extends RuleBuilder<'evaluate'> {
 	reserved(contextName: string, content: Rule<'evaluate'>): ReservedRule<'evaluate'>;
+	blank(): BlankRule<'evaluate'>;
 	seq(...members: Rule<'evaluate'>[]): SeqRule<'evaluate'>;
 	choice(...members: Rule<'evaluate'>[]): ChoiceRule<'evaluate'>;
 	optional(content: Rule<'evaluate'>): OptionalRule<'evaluate'>;
@@ -105,6 +106,7 @@ export interface StructuralBuilder extends RuleBuilder<'evaluate'> {
 
 type Built = Rule<'normalize'>;
 type BuiltSeq = SeqRule<'normalize'>;
+type BuiltChoice = ChoiceRule<'normalize'>;
 type BuiltString = StringRule<'normalize'>;
 type Stampable = Exclude<Built, BuiltSeq>;
 type StampableNonLiteral = Exclude<Built, BuiltSeq | BuiltString>;
@@ -122,7 +124,7 @@ export interface AttributePrec extends PrecBuilder<'normalize'> {
 }
 
 export interface AttributeBuilder extends RuleBuilder<'normalize'> {
-	choice(...members: Built[]): ChoiceRule<'normalize'>;
+	choice(...members: Built[]): Built;
 	optional(content: BuiltSeq | BuiltString): Built;
 	optional<R extends StampableNonLiteral>(content: R): R;
 	optional(content: Built): Built;
@@ -177,6 +179,7 @@ export const structuralBuilder: StructuralBuilder = {
 	token: structuralToken,
 	prec: structuralPrec,
 	reserved: (contextName, content) => ({ type: RESERVED, content, context_name: contextName }),
+	blank: () => ({ type: 'BLANK' }),
 	string: (value) => ({ type: STRING, value }),
 	pattern: (value) => ({ type: PATTERN, value }),
 	symbol: sym,
@@ -196,19 +199,9 @@ function structuralAlias(content: Structural, target: string | SymbolRule<'evalu
 	};
 }
 
-function collapseSingletonSeq(seq: BuiltSeq): Built {
-	const survivor = seq.members[0]!;
-	const carried = withAttrsFrom(seq, survivor);
-	if (seq.multiplicity !== undefined) {
-		const combined = combineMultiplicity(seq.multiplicity, survivor.multiplicity);
-		if (combined !== undefined) return { ...carried, multiplicity: combined };
-	}
-	return carried;
-}
-
 function buildSeq(input: { members: Built[]; multiplicity?: LeafMultiplicity }): Built {
 	const { members: splicedInput, multiplicity } = input;
-	const rawMembers = splicedInput.flatMap((m) => (isSpliceableBareSeq(m) ? m.members : [m]));
+	const rawMembers = splicedInput.flatMap((m) => (isSpliceableBareMember(m) ? m.members : [m]));
 	const multToPush = multiplicity === 'nonEmptyArray' ? 'array' : multiplicity;
 	const pushed = rawMembers.map((m) => {
 		const isBareLiteral = (m.type === STRING || m.type === PATTERN) && !isSlotPromotedLiteral(m);
@@ -219,7 +212,7 @@ function buildSeq(input: { members: Built[]; multiplicity?: LeafMultiplicity }):
 	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);
 	const seq: BuiltSeq = { type: SEQ, members: pushed, nonterminal: pushed.some((m) => m.nonterminal === true) };
 	const withMult: BuiltSeq = hasBareLiteral && multToPush !== undefined ? { ...seq, multiplicity: multToPush } : seq;
-	return pushed.length === 1 ? collapseSingletonSeq(withMult) : withMult;
+	return pushed.length === 1 ? collapsedInto(withMult, withMult.members[0]!) : withMult;
 }
 
 function slotShaped(rule: Built): boolean {
@@ -234,7 +227,17 @@ function slotShaped(rule: Built): boolean {
 	}
 }
 
-export function carrySeqFacts(content: BuiltSeq, built: Built): Built {
+export function collapsedInto<R extends Built>(wrapper: Built, survivor: R): R {
+	return withWrapperMultiplicity(wrapper, survivor, withAttrsFrom(wrapper, survivor));
+}
+
+export function withWrapperMultiplicity<R extends Built>(wrapper: Built, inner: Built, result: R): R {
+	if (wrapper.multiplicity === undefined) return result;
+	const combined = combineMultiplicity(wrapper.multiplicity, inner.multiplicity);
+	return combined === undefined ? result : { ...result, multiplicity: combined };
+}
+
+export function carryNodeFacts(content: BuiltSeq | BuiltChoice, built: Built): Built {
 	const merged: Built & { members?: Built[] } = { ...content, ...built };
 	if (!('members' in built)) delete merged.members;
 	return merged;
@@ -247,7 +250,7 @@ export function buildOptional(content: Built): Built {
 			members: content.members,
 			multiplicity: combineMultiplicity('optional', content.multiplicity)
 		});
-		const merged = carrySeqFacts(content, built);
+		const merged = carryNodeFacts(content, built);
 		return nonterminal !== undefined ? { ...merged, nonterminal } : merged;
 	}
 	return {
@@ -289,7 +292,7 @@ function buildRepeatLike(input: { content: Built; native: 'array' | 'nonEmptyArr
 			members: content.members,
 			multiplicity: repeatCombine({ contentMult: content.multiplicity, native })
 		});
-		return { ...carrySeqFacts(content, built), ...stamps };
+		return { ...carryNodeFacts(content, built), ...stamps };
 	}
 	return { ...content, multiplicity: repeatCombine({ contentMult: content.multiplicity, native }), ...stamps };
 }
@@ -314,6 +317,13 @@ function attributeOptional<R extends StampableNonLiteral>(content: R): R;
 function attributeOptional(content: Built): Built;
 function attributeOptional(content: Built): Built {
 	return foldOptionalEmptyMatch(content);
+}
+
+function attributeChoice(...members: Built[]): Built {
+	const choice: BuiltChoice = { type: CHOICE, members, nonterminal: true };
+	const arms = withoutBlankMembers(choice);
+	if (arms === choice || arms.members.length === 0) return arms;
+	return buildOptional(arms.members.length === 1 ? arms.members[0]! : arms);
 }
 
 function attributeRepeat(content: BuiltSeq): Built;
@@ -343,7 +353,7 @@ function attributeAlias<R extends Built>(content: R, target: string | SymbolRule
 
 export const attributeBuilder: AttributeBuilder = {
 	seq: (...members) => buildSeq({ members }),
-	choice: (...members) => ({ type: CHOICE, members, nonterminal: true }),
+	choice: attributeChoice,
 	optional: attributeOptional,
 	repeat: attributeRepeat,
 	repeat1: attributeRepeat1,

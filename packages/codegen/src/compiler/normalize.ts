@@ -21,10 +21,10 @@ import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
 import {
 	deriveComplexAliasTargetHidden,
-	isBlank,
 	isEnumChoiceRule,
 	isHiddenRule,
-	separatorFactsEqual
+	separatorFactsEqual,
+	withoutBlankMembers
 } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, SimplifyCtx } from './simplify.ts';
@@ -208,7 +208,7 @@ function materializeInlinedBody(
 export function blanksDropped(rule: Rule<'link'>): Rule<'link'> {
 	const visit = (node: Rule<'link'>): Rule<'link'> => {
 		if (node.type === EOF) return { type: CHOICE, members: [], ...(node.id === undefined ? {} : { id: node.id }) } as Rule<'link'>;
-		if (node.type === SEQ && node.members.some(isBlank)) return { ...node, members: node.members.filter((member) => !isBlank(member)) };
+		if (node.type === SEQ) return withoutBlankMembers(node);
 		return node;
 	};
 	return visit(new RuleWalker<Rule<'link'>>().map(rule, visit));

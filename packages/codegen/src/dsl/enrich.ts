@@ -59,6 +59,7 @@ import { dslArmStage, isTopologyMixed, partitionChoiceArms } from './choice-arm-
 
 import {
 	isArmChoice,
+	isBlank,
 	separatorOf,
 	matchesEmpty,
 	isInlineSafe,
@@ -1376,7 +1377,7 @@ function detectSymbolTarget(member: Rule, isTextToken: TextTokenTest): SymbolTar
 			if (isTextToken(sn.name)) continue;
 			if (symIdx !== -1) return null;
 			symIdx = i;
-		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN') {
+		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN' && !isBlank(sn)) {
 			return null;
 		}
 	}

@@ -198,6 +198,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+`BLANK` is not one: it is a leaf with no content, so a path that reaches one cannot descend and is a skip (`dsl/transform/transform-path.ts::ApplyPathSkip`).
+
 ### `packages/codegen/src/types/runtime-shapes.ts::isPrecWrapper`
 
 ```text
@@ -1624,3 +1626,7 @@ The display name a ref carries (`aliasedTo`), or `undefined` when it has none.
 ### `packages/codegen/src/types/rule.ts::storageNameOf`
 
 The ref's own storage identity: the rule, or literal symbol, that parsed it.
+
+### `packages/codegen/src/types/rule.ts::BlankRule`
+
+tree-sitter's empty rule, as `blank()` builds it (`dsl/builders.ts::structuralBuilder`). Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`), and a choice with a blank arm becomes `OPTIONAL` there.

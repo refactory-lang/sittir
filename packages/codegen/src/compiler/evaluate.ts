@@ -1,4 +1,4 @@
-import { CHOICE, EOF, FIELD, PATTERN, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { EOF, FIELD, PATTERN, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type { AliasRule, FieldRule, PatternRule, Rule, StringRule, SymbolRule, TokenRule } from '../types/rule.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
@@ -133,7 +133,7 @@ function alias(rule: Input, value: string | Rule<'evaluate'> | ReferenceError): 
 }
 
 function blank(): Rule<'evaluate'> {
-	return { type: CHOICE, members: [] };
+	return structuralBuilder.blank();
 }
 
 function eof(): Rule<'evaluate'> {
