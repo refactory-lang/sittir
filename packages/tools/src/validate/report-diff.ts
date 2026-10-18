@@ -35,14 +35,21 @@ export function readComparableReport(path: string): ValidationReportEntry[] {
 	return entries;
 }
 
-/** A row's identity: every field, independent of key order. */
-function rowKey(entry: ValidationReportEntry): string {
-	const record = entry as unknown as Record<string, unknown>;
-	return JSON.stringify(
-		Object.keys(record)
+/** A JSON value with every object's keys sorted, at every depth; array order is kept, and an array never reads as an object. */
+function canonical(value: unknown): unknown {
+	if (Array.isArray(value)) return { array: value.map(canonical) };
+	if (value === null || typeof value !== 'object') return value;
+	const record = value as Record<string, unknown>;
+	return {
+		object: Object.keys(record)
 			.sort()
-			.map((k) => [k, record[k]])
-	);
+			.map((k) => [k, canonical(record[k])])
+	};
+}
+
+/** A row's identity: every field, independent of key order at any depth. */
+function rowKey(entry: ValidationReportEntry): string {
+	return JSON.stringify(canonical(entry));
 }
 
 function countBy<T>(items: readonly T[], key: (item: T) => string): Map<string, number> {

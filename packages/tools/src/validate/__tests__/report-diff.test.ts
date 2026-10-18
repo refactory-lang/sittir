@@ -4,7 +4,11 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runValidationReportDiffCli } from '../../commands.ts';
 import { diffValidationReports, formatReportDiff, readComparableReport } from '../report-diff.ts';
-import { readValidationReport, type ValidationReportEntry } from '../validation-report.ts';
+import {
+	buildValidationReportEntries,
+	readValidationReport,
+	type ValidationReportEntry
+} from '../validation-report.ts';
 
 const row = (grammar: string, code: string, message: string): ValidationReportEntry => ({
 	source: 'validator',
@@ -58,6 +62,22 @@ describe('diffValidationReports', () => {
 		expect(diff.removed).toEqual([]);
 		expect(diff.codes).toEqual([]);
 		expect(diff.grammars).toEqual([{ grammar: 'rust', base: 1, head: 1, added: 0, removed: 0 }]);
+	});
+
+	it('ignores key order at every depth, and still tells nested values apart', () => {
+		const nested = (details: unknown): ValidationReportEntry =>
+			buildValidationReportEntries(
+				{ rust: [{ code: 'conflict-resolution', severity: 'info', message: 'm', details }] },
+				{}
+			)[0]!;
+		const a = nested({ resolution: { kind: 'AddConflict', symbols: ['a', 'b'] }, step: 'default' });
+		const reordered = nested({ step: 'default', resolution: { symbols: ['a', 'b'], kind: 'AddConflict' } });
+		expect(diffValidationReports([a], [reordered]).added).toEqual([]);
+		const reorderedArray = nested({ resolution: { kind: 'AddConflict', symbols: ['b', 'a'] }, step: 'default' });
+		expect(diffValidationReports([a], [reorderedArray]).added).toEqual([reorderedArray]);
+		const pairs = nested([['step', 'default']]);
+		const object = nested({ step: 'default' });
+		expect(diffValidationReports([pairs], [object]).added).toEqual([object]);
 	});
 
 	it('gives per-grammar row deltas and per-code count deltas, and the rows only one side has', () => {
