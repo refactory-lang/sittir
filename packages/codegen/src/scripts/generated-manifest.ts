@@ -286,7 +286,6 @@ function grammarDependencies(dir: string): string[] {
 
 export function upstreamDigest(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
 	const hash = createHash('sha256');
-	hash.update(`${treeSitterToolchainIdentity()}\0`);
 	const grammarDir = join(src.checkout, relative(REPO_ROOT, grammarPackageDir(grammar)));
 	const pending: Array<[string, string]> = [[grammarDir, upstreamPackage(grammar)]];
 	const seen = new Set<string>();
@@ -319,6 +318,9 @@ export function computeSourceHash(grammar: GrammarName, src: ManifestSource = wo
 	}
 	hash.update('codegen\0');
 	hash.update(codegenSourceHash(src));
+	hash.update('\0');
+	hash.update('toolchain\0');
+	hash.update(treeSitterToolchainIdentity());
 	hash.update('\0');
 	hash.update('upstream\0');
 	hash.update(upstreamDigest(grammar, src));

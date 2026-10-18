@@ -452,7 +452,7 @@ The codegen side of a grammar's source hash: every codegen source input (`codege
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::computeSourceHash`
 
-A grammar's source hash: its own inputs and the lockfile (`grammarSourceInputs`), the codegen source and the shared runtime it executes (`codegenSourceHash`), and the installed upstream grammar (`upstreamDigest`).
+A grammar's source hash: its own inputs and the lockfile (`grammarSourceInputs`), the codegen source and the shared runtime it executes (`codegenSourceHash`), what builds the parsers (`treeSitterToolchainIdentity`: the tree-sitter CLI version and each wasm toolchain's), and the installed upstream grammar (`upstreamDigest`).
 
 #### body
 
@@ -503,7 +503,7 @@ Where a grammar's local manifest lives: under the checkout's `node_modules/.cach
 
 Whether the grammar's generated files came from its current source inputs. The rule, stated here and nowhere else: the pair in the tree (its source hash and the digest of its generated files) is a known-good pair in the local manifest, or the tree's source inputs and generated roots equal one trusted commit (`differencesFromTrustedCommit`).
 
-A tree equal to a trusted commit is trusted only while its installed upstream (`upstreamDigest`) equals the newest recorded generation's: `node_modules` is invisible to git, so an upstream that moved under an unchanged tree would otherwise pass. With no generation on record there is nothing to compare locally.
+A tree equal to a trusted commit is trusted only while its installed upstream (`upstreamDigest`) equals the newest recorded generation's: `node_modules` is invisible to git, so an upstream that moved under an unchanged tree would otherwise pass. With no generation on record there is nothing to compare locally. The upstream digest leaves the toolchain out, so installing or removing a toolchain after a generation was recorded is judged only by the toolchain check below.
 
 It is also trusted only while the toolchain the committed tree names equals the installed one (`toolchainMove`), with or without a manifest: the toolchain is not in any commit, so the committed `.sittir/upstream.json` is the only record of what built the committed parsers. A move is reported in `toolchainMoved`, and nothing is recorded. With no toolchain installed there is nothing to compare: nothing here can have built the parsers, and a generation installs the toolchain before it runs, so the committed tree is trusted.
 
@@ -681,7 +681,7 @@ Whether a grammar ships a `bindings.scm` in the source being verified, which mak
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::upstreamDigest`
 
-What the grammar's upstream contributes to generation, as one digest: what builds the parsers (`treeSitterToolchainIdentity`: the tree-sitter CLI version and each wasm toolchain's), then the upstream grammar package (`upstreamPackage`) and, transitively, every `tree-sitter-*` grammar it depends on (tree-sitter-typescript builds on tree-sitter-javascript), each by its upstream sources (`isUpstreamSource`). It is read from the checkout's installed packages, so a dependency bump that has not been regenerated fails verification, as a source edit does.
+What the grammar's upstream package contributes to generation, as one digest: the upstream grammar package (`upstreamPackage`) and, transitively, every `tree-sitter-*` grammar it depends on (tree-sitter-typescript builds on tree-sitter-javascript), each by its upstream sources (`isUpstreamSource`). It is read from the checkout's installed packages, so a dependency bump that has not been regenerated fails verification, as a source edit does.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::LOCKFILE`
 

@@ -5,11 +5,13 @@ import { dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	checkoutSource,
+	computeSourceHash,
 	manifestPath,
 	recordNativeBuild,
 	recordedGeneration,
 	stagedInputPathspecs,
 	sourceFingerprint,
+	upstreamDigest,
 	verifyManifestForGrammar,
 	writeManifestForGrammar,
 	type VerifyResult
@@ -128,14 +130,20 @@ afterEach(() => {
 });
 
 describe('the wasm toolchain the parsers are built with', () => {
-	it('changes the source when a toolchain is replaced by another version', () => {
+	it('changes the source, and not the upstream digest, when a toolchain is replaced by another version', () => {
+		const src = checkoutSource(repo);
+		const [source, upstream] = [computeSourceHash(GRAMMAR, src), upstreamDigest(GRAMMAR, src)];
 		writeFileSync(toolchainVersion('binaryen'), '133');
-		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+		expect(computeSourceHash(GRAMMAR, src)).not.toBe(source);
+		expect(upstreamDigest(GRAMMAR, src)).toBe(upstream);
 	});
 
 	it('reads a missing toolchain version as a changed source, never as fresh, and does not throw', () => {
+		const source = computeSourceHash(GRAMMAR, checkoutSource(repo));
 		rmSync(toolchainVersion('wasi-sdk'));
-		expect(verify).not.toThrow();
+		expect(() => computeSourceHash(GRAMMAR, checkoutSource(repo))).not.toThrow();
+		expect(computeSourceHash(GRAMMAR, checkoutSource(repo))).not.toBe(source);
+		write(GENERATED, 'edited by hand');
 		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
 	});
 
@@ -157,7 +165,10 @@ describe('the wasm toolchain the parsers are built with', () => {
 		const own = join(toolchainCache, 'own-sdk');
 		toolchainExecutable(own, 'clang', 'clang version 19.1.5-wasi-sdk');
 		vi.stubEnv('TREE_SITTER_WASI_SDK_PATH', own);
-		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+		expect(verify()).toMatchObject({
+			ok: false,
+			toolchainMoved: { committed: expect.arrayContaining(['wasi-sdk 34.0']), current: expect.arrayContaining(['wasi-sdk clang version 19.1.5-wasi-sdk']) }
+		});
 		regenerate();
 		expect(verify().ok).toBe(true);
 	});
@@ -201,6 +212,20 @@ describe('the toolchain a committed tree names', () => {
 		dropStamp();
 		rmSync(join(toolchainCache, 'tree-sitter'), { recursive: true, force: true });
 		expect(verify()).toMatchObject({ ok: true, toolchainMoved: undefined });
+	});
+
+	it('passes a fresh clone verified before its toolchain is installed and again after', () => {
+		dropStamp();
+		rmSync(join(toolchainCache, 'tree-sitter'), { recursive: true, force: true });
+		expect(verify().ok).toBe(true);
+		installToolchain(join(toolchainCache, 'tree-sitter', 'wasi-sdk'), '34.0');
+		installToolchain(join(toolchainCache, 'tree-sitter', 'binaryen'), '132');
+		expect(verify()).toMatchObject({ ok: true, sourceChanged: false, toolchainMoved: undefined });
+	});
+
+	it('passes a generation on record once its toolchain is no longer installed', () => {
+		rmSync(join(toolchainCache, 'tree-sitter'), { recursive: true, force: true });
+		expect(verify()).toMatchObject({ ok: true, sourceChanged: false, toolchainMoved: undefined });
 	});
 
 	it('passes a fresh clone on the toolchain the committed tree names', () => {
