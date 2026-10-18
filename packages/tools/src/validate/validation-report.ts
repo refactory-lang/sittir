@@ -11,7 +11,7 @@
  * before calling in.
  */
 
-import { writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 /**
  * Minimal shared shape both diagnostic sources (`grammar` static diagnostics
@@ -175,6 +175,21 @@ export function buildValidationReportEntries(
 		}
 	}
 	return entries;
+}
+
+/** Read a report `writeValidationReport` wrote. A missing, empty or unparseable file, or one that is not an array, throws naming the path. */
+export function readValidationReport(path: string): ValidationReportEntry[] {
+	if (!existsSync(path)) throw new Error(`validation report not found: ${path}`);
+	const text = readFileSync(path, 'utf8');
+	if (text.trim() === '') throw new Error(`validation report is empty: ${path}`);
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(text);
+	} catch (e) {
+		throw new Error(`validation report is not valid JSON: ${path}: ${(e as Error).message}`);
+	}
+	if (!Array.isArray(parsed)) throw new Error(`validation report is not an array: ${path}`);
+	return parsed as ValidationReportEntry[];
 }
 
 /** Write the full (unbounded) entry list to `outPath` as pretty JSON, overwriting any previous report. */

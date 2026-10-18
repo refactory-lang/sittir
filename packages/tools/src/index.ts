@@ -115,6 +115,7 @@ export {
 	runCountsCli,
 	runProbeFactoryCli,
 	runHistoryCli,
+	runValidationReportDiffCli,
 	runTestHistoryCli,
 	runTraceRtCli,
 	resolveGrammars,
