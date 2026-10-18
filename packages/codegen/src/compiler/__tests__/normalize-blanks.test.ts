@@ -51,13 +51,13 @@ describe('a blank member of a production is dropped before the model reads it (i
 		const withBlank = await normalized("source: ($) => optional($.r), r: ($) => seq($.x, blank()), x: () => 'a'");
 		const without = await normalized("source: ($) => optional($.r), r: ($) => seq($.x), x: () => 'a'");
 		expect(Object.keys(withBlank.rules)).toEqual(Object.keys(without.rules));
-		expect(shape(withBlank.rules.r)).toEqual(shape(without.rules.r));
+		expect(withBlank.rules.r).toEqual(without.rules.r);
 	}, 60_000);
 
 	it('all-blank: seq(\'(\', optional(seq(blank(), blank())), $.x) normalizes as seq(\'(\', $.x)', async () => {
 		const withBlank = await normalized("source: ($) => optional($.r), r: ($) => seq('(', optional(seq(blank(), blank())), $.x), x: () => 'a'");
 		const without = await normalized("source: ($) => optional($.r), r: ($) => seq('(', $.x), x: () => 'a'");
-		expect(shape(withBlank.rules.r)).toEqual(shape(without.rules.r));
+		expect(withBlank.rules.r).toEqual(without.rules.r);
 	}, 60_000);
 
 	it.each([
@@ -65,6 +65,8 @@ describe('a blank member of a production is dropped before the model reads it (i
 		['seq($.x, blank())', "r: ($) => seq('(', optional(seq($.x, blank())))"]
 	])('inside optional: %s keeps r as a node of the assembled map', async (_label, rule) => {
 		const normalizedGrammar = await normalized(`source: ($) => optional($.r), ${rule}, x: () => 'a'`);
+		const blankFree = await normalized("source: ($) => optional($.r), r: ($) => seq('(', optional(seq($.x))), x: () => 'a'");
+		expect(normalizedGrammar.rules.r).toEqual(blankFree.rules.r);
 		const map = assemble(AssembleCtx.from(normalizedGrammar));
 		expect(map.nodes.has('r')).toBe(true);
 	}, 60_000);

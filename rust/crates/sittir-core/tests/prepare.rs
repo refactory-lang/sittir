@@ -247,7 +247,7 @@ fn an_edge_arm_picks_its_own_site_and_any_other_arm_the_shared_one() {
     assert_eq!(at(Some(42)), at(None));
     assert_eq!(opts.edge_arm(KindId(3), Side::After, None, Some(KindId(40))), Some(SeamArm { arm: KindId(6), strength: SeamStrength::Cascade }));
     assert_eq!(opts.edge_arm_sites(KindId(3), Side::Before), ARM_SITES);
-    assert!(opts.edge_arm_sites(KindId(3), Side::After).is_empty());
+    assert_eq!(opts.edge_arm_sites(KindId(3), Side::After), []);
 }
 
 struct Token(u16);
@@ -316,11 +316,12 @@ impl SeatTarget for Wrapper {
     }
 }
 
+#[allow(clippy::unnecessary_wraps, reason = "an item of an optional-slot list, beside `None` items")]
 fn seatable(kind: u16) -> Option<SlotValue<Seatable>> {
     Some(SlotValue::Node(Seatable { kind, edges: Edges::default() }))
 }
 
-fn after_of(item: &Option<SlotValue<Seatable>>) -> Option<KindId> {
+fn after_of(item: Option<&SlotValue<Seatable>>) -> Option<KindId> {
     match item {
         Some(SlotValue::Node(t)) => t.edges.after.map(|e| e.arm),
         _ => None,
@@ -341,10 +342,10 @@ fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
     let sources = Sources(HashMap::new());
     let mut items = [seatable(3), None, seatable(4), seatable(5), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(after_of(&items[0]), Some(KindId(70)));
-    assert_eq!(after_of(&items[2]), Some(KindId(80)));
-    assert_eq!(after_of(&items[3]), None);
-    assert_eq!(after_of(&items[4]), None);
+    assert_eq!(after_of(items[0].as_ref()), Some(KindId(70)));
+    assert_eq!(after_of(items[2].as_ref()), Some(KindId(80)));
+    assert_eq!(after_of(items[3].as_ref()), None);
+    assert_eq!(after_of(items[4].as_ref()), None);
 }
 
 #[test]
@@ -365,8 +366,8 @@ fn a_seated_gap_is_not_written_after_the_last_present_element() {
     let sources = Sources(HashMap::new());
     let mut items = [seatable(3), seatable(3), None, None];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(after_of(&items[0]), Some(KindId(70)));
-    assert_eq!(after_of(&items[1]), None);
+    assert_eq!(after_of(items[0].as_ref()), Some(KindId(70)));
+    assert_eq!(after_of(items[1].as_ref()), None);
 }
 
 #[test]
@@ -379,7 +380,7 @@ fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
         seatable(3),
     ];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(after_of(&items[0]), Some(KindId(1)));
+    assert_eq!(after_of(items[0].as_ref()), Some(KindId(1)));
 }
 
 #[test]
@@ -401,13 +402,14 @@ impl Prepare for Seatable {
     }
 }
 
+#[allow(clippy::unnecessary_wraps, reason = "an item of an optional-slot list, beside `None` items")]
 fn parsed(kind: u16, start: u32, end: u32) -> Option<SlotValue<Seatable>> {
     let mut coord = NodeCoordinate::new(sittir_core::types::TreeId(7), sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1), Span { start, end });
     coord.kind = Some(KindId(kind));
     Some(SlotValue::Coord(coord))
 }
 
-fn coord_after_of(item: &Option<SlotValue<Seatable>>) -> Option<KindId> {
+fn coord_after_of(item: Option<&SlotValue<Seatable>>) -> Option<KindId> {
     match item {
         Some(SlotValue::Coord(c)) => c.edges.and_then(|e| e.after).map(|e| e.arm),
         _ => None,
@@ -425,7 +427,7 @@ fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat() {
     let sources = source_tree();
     let mut items = [parsed(3, 0, 6), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(coord_after_of(&items[0]), Some(KindId(70)));
+    assert_eq!(coord_after_of(items[0].as_ref()), Some(KindId(70)));
 }
 
 #[test]
@@ -435,8 +437,8 @@ fn a_coordinate_followed_by_one_out_of_source_order_takes_its_seat() {
     let sources = source_tree();
     let mut items = [parsed(3, 8, 17), parsed(3, 0, 6)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(coord_after_of(&items[0]), Some(KindId(70)));
-    assert_eq!(coord_after_of(&items[1]), None);
+    assert_eq!(coord_after_of(items[0].as_ref()), Some(KindId(70)));
+    assert_eq!(coord_after_of(items[1].as_ref()), None);
 }
 
 #[test]
@@ -449,7 +451,7 @@ fn a_coordinate_whose_gap_its_slot_already_filled_keeps_it() {
     first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: KindId(9), strength: sittir_core::spacing::SeamStrength::Slot }) });
     let mut items = [Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(coord_after_of(&items[0]), Some(KindId(9)));
+    assert_eq!(coord_after_of(items[0].as_ref()), Some(KindId(9)));
 }
 
 #[test]
@@ -459,7 +461,7 @@ fn a_coordinate_followed_by_the_next_in_source_order_with_no_source_gap_takes_it
     let sources = source_tree();
     let mut items = [parsed(3, 0, 6), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(coord_after_of(&items[0]), Some(KindId(70)));
+    assert_eq!(coord_after_of(items[0].as_ref()), Some(KindId(70)));
 }
 
 #[test]
@@ -469,7 +471,7 @@ fn a_coordinate_followed_by_a_rebuilt_element_takes_its_seat_before_a_later_coor
     let sources = source_tree();
     let mut items = [parsed(3, 0, 6), seatable(3), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
-    assert_eq!(coord_after_of(&items[0]), Some(KindId(70)));
+    assert_eq!(coord_after_of(items[0].as_ref()), Some(KindId(70)));
 }
 
 #[test]
@@ -482,8 +484,8 @@ fn a_seated_coordinate_keeps_its_seat_when_it_prepares_its_kind_edges() {
     items.prepare(&ctx(&opts, &sources)).unwrap();
     let Some(SlotValue::Coord(first)) = &items[0] else { panic!() };
     assert_eq!(first.edges.and_then(|e| e.before).map(|e| e.arm), Some(KindId(5)));
-    assert_eq!(coord_after_of(&items[0]), Some(KindId(70)));
-    assert_eq!(coord_after_of(&items[1]), Some(KindId(6)));
+    assert_eq!(coord_after_of(items[0].as_ref()), Some(KindId(70)));
+    assert_eq!(coord_after_of(items[1].as_ref()), Some(KindId(6)));
 }
 
 static EDGE_ROWS_3: &[EdgeSite] = &[EdgeSite { before: Some(SiteId(0)), after: Some(SiteId(2)), before_arms: &[], after_arms: &[] }];
@@ -674,7 +676,7 @@ fn slot(before: Option<KindId>, after: Option<KindId>) -> sittir_core::layout::S
 /// An edge's arm and strength, where one is set.
 type ArmAt = Option<(KindId, Option<SeamStrength>)>;
 
-fn edge_arms(item: &Option<SlotValue<Spanned>>) -> (ArmAt, ArmAt) {
+fn edge_arms(item: Option<&SlotValue<Spanned>>) -> (ArmAt, ArmAt) {
     match item {
         Some(SlotValue::Node(item)) => (item.edges.before.map(|e| (e.arm, e.strength)), item.edges.after.map(|e| (e.arm, e.strength))),
         _ => (None, None),
@@ -686,10 +688,10 @@ fn a_slot_layout_gives_every_gap_between_present_items_its_classes_at_slot_stren
     let strength = Some(sittir_core::spacing::SeamStrength::Slot);
     let mut items = [Some(spanned(at(0, 0, 0, 1), Bare, Bare)), None, Some(spanned(at(0, 3, 0, 4), Bare, Bare)), Some(spanned(at(0, 6, 0, 7), Bare, Bare))];
     fill_slot_gaps(items.iter_mut().map(Option::as_mut), Some(&slot(Some(KindId(1)), Some(KindId(3)))));
-    assert_eq!(edge_arms(&items[0]), (None, Some((KindId(1), strength))));
-    assert_eq!(edge_arms(&items[1]), (None, None));
-    assert_eq!(edge_arms(&items[2]), (Some((KindId(3), strength)), Some((KindId(1), strength))));
-    assert_eq!(edge_arms(&items[3]), (Some((KindId(3), strength)), None));
+    assert_eq!(edge_arms(items[0].as_ref()), (None, Some((KindId(1), strength))));
+    assert_eq!(edge_arms(items[1].as_ref()), (None, None));
+    assert_eq!(edge_arms(items[2].as_ref()), (Some((KindId(3), strength)), Some((KindId(1), strength))));
+    assert_eq!(edge_arms(items[3].as_ref()), (Some((KindId(3), strength)), None));
 }
 
 #[test]
@@ -700,6 +702,6 @@ fn a_slot_layout_leaves_an_edge_already_set_and_a_side_it_stores_nothing_for() {
     }
     let mut items = [Some(first), Some(spanned(at(0, 3, 0, 4), Bare, Bare))];
     fill_slot_gaps(items.iter_mut().map(Option::as_mut), Some(&slot(Some(KindId(1)), None)));
-    assert_eq!(edge_arms(&items[0]).1.map(|(arm, _)| arm), Some(KindId(2)));
-    assert_eq!(edge_arms(&items[1]), (None, None));
+    assert_eq!(edge_arms(items[0].as_ref()).1.map(|(arm, _)| arm), Some(KindId(2)));
+    assert_eq!(edge_arms(items[1].as_ref()), (None, None));
 }

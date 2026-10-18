@@ -27,34 +27,45 @@ pub enum ParityFixture {
     },
 
     #[serde(rename = "roundtrip")]
-    RoundTrip {
-        grammar: String,
-        #[serde(rename = "sourceIn")]
-        source_in: String,
-        pattern: String,
-        edits: Vec<serde_json::Value>,
-        #[serde(rename = "expectedSourceOut")]
-        expected_source_out: String,
-        #[serde(rename = "expectedReparseTree")]
-        expected_reparse_tree: String,
-        /// Rendered fragment wrapped in a supertype/direct-kind reparse
-        /// context so tree-sitter can parse it standalone. Produced by
-        /// the TS validator's `wrapForReparse` at capture time. The
-        /// parity harness parses THIS text, not the bare rendered
-        /// fragment (bare fragments like `"pub"` alone fail parse).
-        #[serde(rename = "wrappedText", default)]
-        wrapped_text: String,
-        /// Byte offset within `wrapped_text` where the rendered
-        /// fragment was spliced. The harness locates the subtree at
-        /// this offset to compare against `expected_reparse_tree`.
-        #[serde(rename = "wrappedOffset", default)]
-        wrapped_offset: u32,
-    },
+    RoundTrip(RoundTripFixture),
+}
+
+/// A round-trip entry: a source, the kind it is read as, and the reparse
+/// the render must come back to.
+#[derive(Debug, Deserialize)]
+pub struct RoundTripFixture {
+    pub grammar: String,
+    #[serde(rename = "sourceIn")]
+    pub source_in: String,
+    pub pattern: String,
+    pub edits: Vec<serde_json::Value>,
+    #[serde(rename = "expectedSourceOut")]
+    pub expected_source_out: String,
+    #[serde(rename = "expectedReparseTree")]
+    pub expected_reparse_tree: String,
+    /// Rendered fragment wrapped in a supertype/direct-kind reparse
+    /// context so tree-sitter can parse it standalone. Produced by
+    /// the TS validator's `wrapForReparse` at capture time. The
+    /// parity harness parses THIS text, not the bare rendered
+    /// fragment (bare fragments like `"pub"` alone fail parse).
+    #[serde(rename = "wrappedText", default)]
+    pub wrapped_text: String,
+    /// Byte offset within `wrapped_text` where the rendered
+    /// fragment was spliced. The harness locates the subtree at
+    /// this offset to compare against `expected_reparse_tree`.
+    #[serde(rename = "wrappedOffset", default)]
+    pub wrapped_offset: u32,
 }
 
 /// Load the fixture corpus for a grammar from disk. Path is relative
 /// to the workspace root so `cargo test -p sittir-parity-tests` finds
 /// it regardless of the caller's cwd.
+///
+/// # Panics
+///
+/// If the grammar's `test-fixtures.json` is missing or malformed; codegen
+/// writes it.
+#[must_use]
 pub fn load_fixtures(grammar: &str) -> Vec<ParityFixture> {
     let path = format!(
         "{}/../sittir-{}/test-fixtures.json",

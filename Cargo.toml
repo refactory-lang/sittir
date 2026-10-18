@@ -10,6 +10,32 @@ members = ["rust/crates/*"]
 # which is why the workspace manifest lives at the repo root while the
 # grammar-owned native crates live under `rust/crates/sittir-{lang}`.
 
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+# Pedantic lints that don't fit this workspace:
+# - match_same_arms: dispatch matches have one arm per kind, and arms
+#   that share a body still name distinct kinds.
+# - too_many_lines: the emitted per-kind dispatch and prepare bodies
+#   grow with the grammar.
+# - missing_errors_doc: each error type documents its variants; a
+#   per-function `# Errors` section would repeat them.
+# - struct_excessive_bools: a node's bool fields are the grammar's
+#   presence flags, one per keyword slot.
+# - similar_names: generated bindings take the grammar's slot names.
+match_same_arms = "allow"
+too_many_lines = "allow"
+missing_errors_doc = "allow"
+struct_excessive_bools = "allow"
+similar_names = "allow"
+allow_attributes_without_reason = "warn"
+clone_on_ref_ptr = "warn"
+dbg_macro = "warn"
+debug_assert_with_mut_call = "warn"
+redundant_clone = "warn"
+todo = "warn"
+undocumented_unsafe_blocks = "warn"
+unimplemented = "warn"
+
 [workspace.package]
 version = "0.0.0"
 edition = "2021"
@@ -32,6 +58,15 @@ repository = "https://github.com/refactory-lang/sittir"
 strip = "none"
 lto = "fat"
 codegen-units = 1
+
+# What local generation and validation build (the crates' `build:gate`):
+# optimized like release, so validation's deep reads keep optimized stack
+# frames (`typed_read_nesting`'s ceilings hold on it), without fat LTO's
+# single-threaded link. CI and published bindings build `release`.
+[profile.gate]
+inherits = "release"
+lto = "off"
+codegen-units = 16
 
 # Centralise common dependency versions so core + render + napi stay
 # aligned. Per-crate `Cargo.toml` files pull these via

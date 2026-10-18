@@ -20,3 +20,6 @@ sittir-python = { path = "../sittir-python", default-features = false }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
+
+[lints]
+workspace = true

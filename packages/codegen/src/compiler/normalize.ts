@@ -21,10 +21,10 @@ import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice } from '../types/rule.ts';
 import {
 	deriveComplexAliasTargetHidden,
-	isBlank,
 	isEnumChoiceRule,
 	isHiddenRule,
-	separatorFactsEqual
+	separatorFactsEqual,
+	withoutBlankMembers
 } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, SimplifyCtx } from './simplify.ts';
@@ -208,7 +208,7 @@ function materializeInlinedBody(
 export function blanksDropped(rule: Rule<'link'>): Rule<'link'> {
 	const visit = (node: Rule<'link'>): Rule<'link'> => {
 		if (node.type === EOF) return { type: CHOICE, members: [], ...(node.id === undefined ? {} : { id: node.id }) } as Rule<'link'>;
-		if (node.type === SEQ && node.members.some(isBlank)) return { ...node, members: node.members.filter((member) => !isBlank(member)) };
+		if (node.type === SEQ) return withoutBlankMembers(node);
 		return node;
 	};
 	return visit(new RuleWalker<Rule<'link'>>().map(rule, visit));
@@ -231,7 +231,6 @@ function applyNormalizationPasses(
 	rules = rebuildEach(rules, (rule) => collapseWrappers(rule, ctx));
 	rules = rebuildEach(rules, (rule) => fanOutSeqChoices(rule, ctx));
 	rules = rebuildEach(rules, (rule) => factorChoiceBranches(rule, ctx));
-	rules = rebuildEach(rules, (rule) => dedupeSeqMembers(rule, ctx));
 	const before = rules;
 	rules = inlineSingleUseHidden(rules, ctx, preserveKinds);
 	for (const name of Object.keys(rules)) {
@@ -272,7 +271,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		externals: linked.externals,
 		extras: linked.extras,
 		nodelessExtrasRun: linked.nodelessExtrasRun,
-		derivations: linked.derivations,
 		displayUnions: linked.displayUnions,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
 		leafTextPatterns: linked.leafTextPatterns,
@@ -342,7 +340,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		externals: linked.externals,
 		extras: linked.extras,
 		nodelessExtrasRun: linked.nodelessExtrasRun,
-		derivations: linked.derivations,
 		displayUnions: linked.displayUnions,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
 		leafTextPatterns: linked.leafTextPatterns,
@@ -463,30 +460,6 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 		case TOKEN:
 		case FIELD:
 			return { ...rule, content: factorChoiceBranches(rule.content) };
-		default:
-			return rule;
-	}
-}
-
-export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
-	switch (rule.type) {
-		case SEQ: {
-			const members = rule.members.map((m) => dedupeSeqMembers(m));
-			const deduped: Rule<'link'>[] = [];
-			for (const m of members) {
-				const prev = deduped[deduped.length - 1];
-				if (prev && rulesEqual(prev, m)) continue;
-				deduped.push(m);
-			}
-			return { ...rule, members: deduped };
-		}
-		case CHOICE:
-			return { ...rule, members: rule.members.map((m) => dedupeSeqMembers(m)) };
-		case OPTIONAL:
-		case REPEAT:
-		case TOKEN:
-		case FIELD:
-			return { ...rule, content: dedupeSeqMembers(rule.content) };
 		default:
 			return rule;
 	}

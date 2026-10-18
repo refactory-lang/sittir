@@ -21,7 +21,8 @@
 	},
 	"scripts": {
 		"build": "tsx ../../../scripts/build-native.mts python --release",
-		"build:debug": "tsx ../../../scripts/build-native.mts python"
+		"build:debug": "tsx ../../../scripts/build-native.mts python",
+		"build:gate": "tsx ../../../scripts/build-native.mts python --profile gate"
 	},
 	"devDependencies": {
 		"@napi-rs/cli": "^3.0.0"

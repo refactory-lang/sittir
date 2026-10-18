@@ -30,11 +30,6 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 		nodeByKindId: new Map(),
 		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
-		derivations: {
-			inferredFields: [],
-			promotedRules: [],
-			repeatedShapes: []
-		},
 		externals: [],
 		word: undefined
 	};

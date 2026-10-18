@@ -17,7 +17,7 @@
 //! covered by per-crate tests. This harness isolates
 //! grammar crate render module + sittir-core engine parity.
 
-use sittir_parity_tests::{load_fixtures, ParityFixture};
+use sittir_parity_tests::{load_fixtures, ParityFixture, RoundTripFixture};
 use tree_sitter::Parser;
 
 /// One grammar's engine binding — everything the harness needs to
@@ -71,17 +71,9 @@ fn python_engine() -> Engine {
 /// per the tables in `packages/codegen/src/validate/common.ts`.
 /// Capturing the wrapped text + offset means the Rust side doesn't
 /// need to duplicate those tables.
-#[allow(clippy::too_many_arguments)]
-fn assert_roundtrip_parity(
-    engine: &Engine,
-    idx: usize,
-    source_in: &str,
-    pattern: &str,
-    expected_source_out: &str,
-    expected_reparse_tree: &str,
-    wrapped_text: &str,
-    wrapped_offset: u32,
-) {
+fn assert_roundtrip_parity(engine: &Engine, idx: usize, fixture: &RoundTripFixture) {
+    let RoundTripFixture { source_in, pattern, expected_source_out, expected_reparse_tree, wrapped_text, wrapped_offset, .. } = fixture;
+    let wrapped_offset = *wrapped_offset;
     // Fixture backward-compat: older fixtures don't carry
     // `wrappedText` — serde `default` leaves these blank. Skip the
     // assertion quietly so a stale fixture doesn't fail the harness
@@ -91,34 +83,26 @@ fn assert_roundtrip_parity(
     }
     let mut parser = Parser::new();
     parser.set_language(&engine.language).expect("set_language");
-    let tree = match parser.parse(wrapped_text, None) {
-        Some(t) => t,
-        None => panic!(
+    let Some(tree) = parser.parse(wrapped_text, None) else { panic!(
             "[{}][roundtrip #{idx}] pattern={pattern} parse returned None on wrappedText: {wrapped_text:?}",
             engine.name
-        ),
-    };
+        ) };
     // Find the subtree at `wrapped_offset` whose kind equals `pattern`.
     let subtree = find_subtree_at_offset(tree.root_node(), pattern, wrapped_offset);
-    let subtree = match subtree {
-        Some(n) => n,
-        None => {
-            // Grammar-version mismatch: kinds named in `pattern` (e.g.
-            // typescript's `_in_expression_position` variants) come from
-            // the npm `tree-sitter-typescript` version that captured the
-            // fixture; the Cargo `tree-sitter-typescript` we link against
-            // may rename or merge them. Surface as a strict-mode-only
-            // panic so non-strict CI stays green while the version drift
-            // gets tracked separately. Same gate as the s-expression
-            // divergence below.
-            if std::env::var("SITTIR_PARITY_STRICT").is_ok() {
-                panic!(
-                    "[{}][roundtrip #{idx}] pattern={pattern} no matching subtree at offset {wrapped_offset} in wrappedText (strict mode)",
-                    engine.name
-                );
-            }
-            return;
-        }
+    let Some(subtree) = subtree else {
+        // Grammar-version mismatch: kinds named in `pattern` (e.g.
+        // typescript's `_in_expression_position` variants) come from
+        // the npm `tree-sitter-typescript` version that captured the
+        // fixture; the Cargo `tree-sitter-typescript` we link against
+        // may rename or merge them. Surface as a strict-mode-only
+        // panic so non-strict CI stays green while the version drift
+        // gets tracked separately. Same gate as the s-expression
+        // divergence below.
+        assert!(std::env::var("SITTIR_PARITY_STRICT").is_err(), 
+            "[{}][roundtrip #{idx}] pattern={pattern} no matching subtree at offset {wrapped_offset} in wrappedText (strict mode)",
+            engine.name
+        );
+        return;
     };
     let actual_reparse_tree = subtree.to_sexp();
     // Reparse-tree s-expressions can differ between engines if the
@@ -130,13 +114,10 @@ fn assert_roundtrip_parity(
     // the reparsed source. Byte-identical render parity (SC-001a)
     // stays strict; semantic s-exp parity (SC-001b) is downgraded
     // to a warn-only diagnostic until the grammar versions align.
-    if actual_reparse_tree != expected_reparse_tree && std::env::var("SITTIR_PARITY_STRICT").is_ok()
-    {
-        panic!(
-            "[{}][roundtrip #{idx}] pattern={pattern} reparse s-expression divergence (strict mode)\n  expected: {expected_reparse_tree}\n  actual:   {actual_reparse_tree}",
-            engine.name
-        );
-    }
+    assert!(!(actual_reparse_tree != *expected_reparse_tree && std::env::var("SITTIR_PARITY_STRICT").is_ok()), 
+        "[{}][roundtrip #{idx}] pattern={pattern} reparse s-expression divergence (strict mode)\n  expected: {expected_reparse_tree}\n  actual:   {actual_reparse_tree}",
+        engine.name
+    );
     // `source_in` + `expected_source_out` are referenced for a future
     // render-from-source assertion (needs the napi path to provide
     // parse + readNode + render in Rust). For now the
@@ -164,7 +145,7 @@ fn find_subtree_at_offset<'a>(
     None
 }
 
-fn run_parity_suite(engine: Engine) {
+fn run_parity_suite(engine: &Engine) {
     if !engine.enabled {
         eprintln!("[{}] parity suite SKIPPED (enabled=false)", engine.name);
         return;
@@ -176,25 +157,8 @@ fn run_parity_suite(engine: Engine) {
             ParityFixture::Render { .. } => {
                 // render_dispatch retired (PR-E2 bridge-sunset) — skip render fixtures.
             }
-            ParityFixture::RoundTrip {
-                source_in,
-                pattern,
-                expected_source_out,
-                expected_reparse_tree,
-                wrapped_text,
-                wrapped_offset,
-                ..
-            } => {
-                assert_roundtrip_parity(
-                    &engine,
-                    idx,
-                    source_in,
-                    pattern,
-                    expected_source_out,
-                    expected_reparse_tree,
-                    wrapped_text,
-                    *wrapped_offset,
-                );
+            ParityFixture::RoundTrip(fixture) => {
+                assert_roundtrip_parity(engine, idx, fixture);
                 rt_count += 1;
             }
         }
@@ -211,15 +175,15 @@ fn run_parity_suite(engine: Engine) {
 
 #[test]
 fn parity_rust() {
-    run_parity_suite(rust_engine());
+    run_parity_suite(&rust_engine());
 }
 
 #[test]
 fn parity_typescript() {
-    run_parity_suite(typescript_engine());
+    run_parity_suite(&typescript_engine());
 }
 
 #[test]
 fn parity_python() {
-    run_parity_suite(python_engine());
+    run_parity_suite(&python_engine());
 }

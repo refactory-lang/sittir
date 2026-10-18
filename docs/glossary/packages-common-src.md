@@ -528,7 +528,7 @@ The result holds no tree: the hold is removed from every node and trivia entry, 
 
 ### `packages/common/src/utils.ts::describeValue`
 
-A value as the text of a refusal message: a string as itself, anything else as JSON (a bigint as `<n>n`), falling back to `String` when it cannot be serialised. Generated pattern guards use it so a node or object that reached a text slot prints as what it was, not `[object Object]`.
+A value as the text of a refusal message: a string as itself, anything else as JSON (a bigint as `<n>n`), falling back to `String` (a node writes its text) when it cannot be serialised, and to the object's tag when that throws, as a built node with no engine does, so a refusal message never throws itself. Generated pattern guards use it so a node or object that reached a text slot prints as what it was, not `[object Object]`.
 
 ### `packages/common/src/native-binding.ts::nativeLoadFailure`
 

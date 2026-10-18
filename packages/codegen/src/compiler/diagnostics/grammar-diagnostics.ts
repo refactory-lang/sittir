@@ -12,7 +12,7 @@ import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
 import { boundNameOf } from '../../dsl/bind.ts';
-import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, ReservedWordsets, RuleCatalog } from '../types.ts';
+import type { RawGrammar, LinkedGrammar, NormalizedGrammar, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
 	kindCatalogOf,
 	predictedEntriesOf,
@@ -369,7 +369,6 @@ export function unexpectableExpectEntries(
 
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
-	include?: IncludeFilter;
 	generatedIdTables?: GeneratedIdTables;
 }): {
 	raw: RawGrammar;
@@ -383,7 +382,6 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	const compilerDiagnostics = new DiagnosticSink();
 	const slotGroupingCollector = makeSlotGroupingCollector();
 	const linked = link(input.rawGrammar, {
-		include: input.include,
 		generatedIdTables: input.generatedIdTables,
 		diagnostics: compilerDiagnostics
 	});

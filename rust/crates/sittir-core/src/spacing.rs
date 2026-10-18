@@ -1,4 +1,4 @@
-//! SpacingWriter — a `RenderSink` that inserts render-time word-boundary
+//! `SpacingWriter` — a `RenderSink` that inserts render-time word-boundary
 //! spacing and resolves whitespace sites against a grammar's
 //! `WhitespaceTable`.
 //!
@@ -52,6 +52,7 @@ impl WordMatcher {
         }
     }
 
+    #[must_use]
     pub const fn with_literal_merge_pairs(
         mut self,
         literal_merge_pairs: &'static [(u8, u8)],
@@ -64,6 +65,7 @@ impl WordMatcher {
     /// grammars: `[A-Za-z0-9_]` plus Unicode alphanumerics. Per-grammar
     /// tables derived from the Link-pinned `wordMatcher` can replace this
     /// via `WordMatcher::new` without touching call sites.
+    #[must_use]
     pub fn default_ident() -> &'static WordMatcher {
         static DEFAULT: WordMatcher =
             WordMatcher::new(default_ascii_table(), char::is_alphanumeric);
@@ -71,6 +73,7 @@ impl WordMatcher {
     }
 
     #[inline]
+    #[must_use]
     pub fn is_word(&self, c: char) -> bool {
         if (c as u32) < 128 {
             self.ascii[c as usize]
@@ -80,6 +83,7 @@ impl WordMatcher {
     }
 
     #[inline]
+    #[must_use]
     pub fn is_literal_merge_pair(&self, left: char, right: char) -> bool {
         if (left as u32) >= 128 || (right as u32) >= 128 {
             return false;
@@ -136,6 +140,7 @@ pub enum SeamStrength {
 
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
+#[must_use]
 pub fn seam_rank(text: &str) -> SeamRank {
     match crate::line_endings::logical_breaks(text) {
         0 if text.is_empty() => 2,
@@ -317,6 +322,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// Records the line breaks the render writes at each gap into
     /// `baseline`, when one is given (`baseline::Recorder`).
+    #[must_use]
     pub fn with_recording(mut self, baseline: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>) -> Self {
         self.recorder = baseline.map(crate::baseline::Recorder::new);
         self
@@ -324,6 +330,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// Marks the render as a document, whose end no held line break
     /// outlasts (`finish`).
+    #[must_use]
     pub fn with_document(mut self, document: bool) -> Self {
         self.document = document;
         self
@@ -333,12 +340,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// [`crate::render::RenderSink::edge`] read. A render that writes option
     /// sites must attach them; a writer with none attached is a debug-mode
     /// bug, like a missing whitespace table.
+    #[must_use]
     pub fn with_options(mut self, options: &'a crate::options::ResolvedOptions) -> Self {
         self.options = Some(options);
         self
     }
 
     /// The text written once per depth level after every newline.
+    #[must_use]
     pub fn with_indent(mut self, indent: &'a str) -> Self {
         self.indent = indent;
         self
@@ -349,11 +358,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// attached is a debug-mode bug, not a supported no-table mode.
     /// The live trees this render may slice. A writer with none refuses every
     /// coordinate rather than writing nothing in its place.
+    #[must_use]
     pub fn with_sources(mut self, sources: &'a dyn crate::render::SourceTable) -> Self {
         self.sources = Some(sources);
         self
     }
 
+    #[must_use]
     pub fn with_table(mut self, table: &'a crate::render::WhitespaceTable) -> Self {
         self.table = Some(table);
         self
@@ -383,7 +394,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// The levels the next line indents: the template's depth and the
     /// trivia's excess, never below none.
     fn levels(&self) -> usize {
-        usize::try_from(self.depth as i64 + i64::from(self.excess)).unwrap_or(0)
+        self.depth.saturating_add_signed(isize::try_from(self.excess).unwrap_or(0))
     }
 
     /// A slice's text moved to the column the writer puts it at: each
@@ -422,7 +433,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             } else {
                 out.push_str(line);
             }
-            at += line.len() as u32 + 1;
+            at += crate::types::narrow(line.len()) + 1;
         }
         std::borrow::Cow::Owned(out)
     }
@@ -691,7 +702,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     fn set_payload(&mut self, payload: Payload) {
-        self.seam = Some(self.payload_rank(&payload));
+        self.seam = Some(Self::payload_rank(&payload));
         self.seam_set = payload.set;
         self.seam_pick = payload.pick;
         self.seam_cont = payload.cont;
@@ -703,7 +714,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_template = false;
     }
 
-    fn payload_rank(&self, payload: &Payload) -> SeamRank {
+    fn payload_rank(payload: &Payload) -> SeamRank {
         if payload.pick == LayoutKinds::LINE_CONTINUATION {
             seam_rank(&payload.cont)
         } else {
@@ -779,7 +790,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             && self.seam_pick == LayoutKinds::LINE_CONTINUATION
             && self.seam_cont.ends_with('\n')
             && gap.rank() <= LayoutKinds::NEWLINE.rank();
-        if !continuation_held && !(floor && self.seam.is_some_and(|held| held >= gap.rank())) {
+        if !(continuation_held || floor && self.seam.is_some_and(|held| held >= gap.rank())) {
             self.set_payload(Payload { set: gap, pick: gap, cont: String::new() });
             self.seam_strength = strength;
             self.seam_is_flank = false;
@@ -793,7 +804,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if self.seam_is_root {
             return false;
         }
-        let rank = self.payload_rank(&payload);
+        let rank = Self::payload_rank(&payload);
         let breaks = if payload.pick == LayoutKinds::LINE_CONTINUATION { payload.cont.contains('\n') } else { payload.pick.breaks() };
         if self.glued && !breaks {
             return false;

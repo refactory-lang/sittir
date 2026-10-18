@@ -1,7 +1,7 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { snakeToCamel } from '../compiler/model/node-map.ts';
+import { AssembledEnum, isFixedTextLeaf, isPatternLeaf, snakeToCamel } from '../compiler/model/node-map.ts';
 import { expandToConcreteParseKinds, isDeclaredSupertype } from './shared.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
@@ -177,6 +177,32 @@ export function emitIs(config: EmitIsConfig): string {
 		const variants = variantParents.find((parent) => parent.node === st)?.variants ?? [];
 		supertypes.push({ kind, id: kindIdOf(kind), typeName, guardKey, memberKinds, memberIds, memberKindIds, variants });
 	}
+
+	const leafGuards: Array<{
+		kind: string;
+		guardKey: string;
+		shape: 'text' | 'unit' | 'enum';
+		discriminant: string;
+		memberIds: number[];
+	}> = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.hidden || !(isPatternLeaf(node) || isFixedTextLeaf(node) || node instanceof AssembledEnum)) continue;
+		const entry = kindEntries === undefined ? undefined : findOwnKindEntry(kindEntries, kind);
+		if (kindEntries && entry === undefined) continue;
+		const guardKey = safeGuardKey(toCamelCase(kind.replace(/^_/, '')));
+		if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(guardKey)) {
+			throw new Error(`is emitter: camelCase kind '${guardKey}' collides with reserved guard key or another kind. Rename '${kind}' before proceeding.`);
+		}
+		usedCamelKeys.add(guardKey);
+		const memberEntries = node instanceof AssembledEnum && kindEntries ? node.resolvedKinds.flatMap((member) => findKindEntry(kindEntries, member) ?? []) : [];
+		leafGuards.push({
+			kind,
+			guardKey,
+			shape: isPatternLeaf(node) ? 'text' : node instanceof AssembledEnum ? 'enum' : 'unit',
+			discriminant: node instanceof AssembledEnum ? (memberEntries.length > 0 ? memberEntries.map((m) => `TSKindId.${m.member}`).join(' | ') : 'number') : entry ? `TSKindId.${entry.member}` : 'number',
+			memberIds: [...new Set(memberEntries.map((m) => m.id))]
+		});
+	}
 	const guardKeyOfSupertype = (key: string): string => {
 		const nested = supertypes.find((s) => s.kind === supertypeKindByKey.get(key));
 		if (nested === undefined) throw new Error(`is emitter: the nested variant parent '${key}' has no supertype guard.`);
@@ -202,7 +228,7 @@ export function emitIs(config: EmitIsConfig): string {
 		lines.push("import { TSKindId } from './kinds.js';");
 	}
 	lines.push("import type { NamespaceMap } from './types.js';");
-	if (supertypes.length > 0) lines.push("import type { NarrowTo } from '@sittir/types';");
+	if (supertypes.length > 0 || leafGuards.some((leaf) => leaf.shape !== 'text')) lines.push("import type { NarrowTo } from '@sittir/types';");
 	lines.push('');
 
 	lines.push('// IsGuards — per-kind + supertype type-narrowing guards.');
@@ -223,6 +249,9 @@ export function emitIs(config: EmitIsConfig): string {
 		lines.push(`        ${predicate};`);
 		for (const variant of s.variants) lines.push(`        ${variantGuard(variant).type};`);
 		lines.push('    };');
+	}
+	for (const leaf of leafGuards) {
+		lines.push(`    ${leaf.guardKey}${leaf.shape === 'text' ? kindPredicate(leaf.discriminant) : supertypePredicate(leaf.discriminant)};`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -267,6 +296,10 @@ export function emitIs(config: EmitIsConfig): string {
 		}
 	}
 	if (supertypes.length > 0) lines.push('');
+
+	const enumLeaves = leafGuards.filter((leaf) => leaf.shape === 'enum' && kindEntries !== undefined);
+	for (const leaf of enumLeaves) lines.push(`const _enum_${leaf.guardKey}_ids = new Set<number>([${leaf.memberIds.join(', ')}]);`);
+	if (enumLeaves.length > 0) lines.push('');
 
 	const tabled = supertypes.filter((s) => s.id !== undefined && s.memberIds.length > 0);
 	lines.push('const _members = new Map<number, ReadonlySet<number>>([');
@@ -314,6 +347,14 @@ export function emitIs(config: EmitIsConfig): string {
 		} else {
 			lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`);
 		}
+	}
+	for (const leaf of leafGuards) {
+		if (!kindEntries) {
+			lines.push(`    ${leaf.guardKey}: _g(${JSON.stringify(leaf.kind)}),`);
+			continue;
+		}
+		const expr = kindDiscriminantExpr(leaf.kind, nodeMap, kindEntries);
+		lines.push(`    ${leaf.guardKey}: ${leaf.shape === 'text' ? `_g(${expr})` : leaf.shape === 'unit' ? `_mg(${expr})` : `_sg(_enum_${leaf.guardKey}_ids)`},`);
 	}
 	lines.push('}) as unknown as IsGuards;');
 	lines.push('');

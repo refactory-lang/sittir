@@ -17,8 +17,7 @@ import {
 	tokenToName,
 	collapseWrappers,
 	fanOutSeqChoices,
-	factorChoiceBranches,
-	dedupeSeqMembers
+	factorChoiceBranches
 } from '../normalize.ts';
 import { classifyNode } from '../assemble.ts';
 import type { Rule } from '../../types/rule.ts';
@@ -39,7 +38,6 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 		externalRoles: new Map<string, ExternalRole>(),
 		word: null,
 		references: [],
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		...overrides
 	};
 }
@@ -450,34 +448,3 @@ describe('Normalize — collapseWrappers (T062)', () => {
 	});
 });
 
-// ---------------------------------------------------------------------------
-// T064 — dedupeSeqMembers
-// ---------------------------------------------------------------------------
-
-describe('Normalize — dedupeSeqMembers (T064)', () => {
-	it('collapses adjacent duplicates inside a seq', () => {
-		const rule: Rule = {
-			type: SEQ,
-			members: [
-				{ type: STRING, value: 'a' },
-				{ type: STRING, value: 'a' },
-				{ type: STRING, value: 'b' }
-			]
-		};
-		const out = dedupeSeqMembers(rule) as any;
-		expect(out.members.map((m: any) => m.value)).toEqual(['a', 'b']);
-	});
-
-	it('preserves non-adjacent duplicates', () => {
-		const rule: Rule = {
-			type: SEQ,
-			members: [
-				{ type: STRING, value: 'a' },
-				{ type: STRING, value: 'b' },
-				{ type: STRING, value: 'a' }
-			]
-		};
-		const out = dedupeSeqMembers(rule) as any;
-		expect(out.members.map((m: any) => m.value)).toEqual(['a', 'b', 'a']);
-	});
-});

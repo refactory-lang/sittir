@@ -3167,7 +3167,7 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: Some(SiteId(510)), after: Some(SiteId(511)), before_arms: &[], after_arms: &[] },
 ];
 
-/// Per kind id, its row in EDGE_SITES.
+/// Per kind id, its row in `EDGE_SITES`.
 pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -3199,7 +3199,7 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     Some(EdgeRow(187)), Some(EdgeRow(188)), Some(EdgeRow(189)), Some(EdgeRow(190)), None, None, Some(EdgeRow(191)), Some(EdgeRow(192)), Some(EdgeRow(193)), Some(EdgeRow(194)), None, Some(EdgeRow(195)), None, Some(EdgeRow(196)), Some(EdgeRow(197)),
 ];
 
-/// Per kind id, its `KindFlags`: ANON (the parser's anonymous token), LINE_TERMINATED, LINE_BREAK_TERMINATED, ROOT.
+/// Per kind id, its `KindFlags`: `ANON` (the parser's anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`.
 pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(0), KindFlags(0), KindFlags(2), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
     KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
@@ -3462,6 +3462,7 @@ pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
     ::sittir_core::trivia_table::DepthRegion { kind: KindId(367), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{", "{|"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}", "|}"]) },
 ];
 
+#[must_use]
 pub fn spacing_text(kind: KindId) -> &'static str {
     match kind {
         KindId(180) => "",
@@ -3476,6 +3477,7 @@ pub fn spacing_text(kind: KindId) -> &'static str {
     }
 }
 
+#[must_use]
 pub fn allowed(site: SiteId) -> &'static [KindId] {
     SPACING_SITES[site.index()].3
 }
@@ -5928,6 +5930,7 @@ pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
     Some(SeatPath::Content),
 ];
 
+#[must_use]
 pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {
         spacing: ResolvedOptions::default_spacing(SITE_SPECS),
@@ -5942,6 +5945,7 @@ pub fn defaults() -> ResolvedOptions {
     }
 }
 
+#[must_use]
 pub fn delimiter_allowed(site: FlankId) -> Delimiter {
     DELIMITER_SITES[site.index()].2
 }

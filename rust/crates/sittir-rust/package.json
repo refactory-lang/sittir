@@ -21,7 +21,8 @@
 	},
 	"scripts": {
 		"build": "tsx ../../../scripts/build-native.mts rust --release",
-		"build:debug": "tsx ../../../scripts/build-native.mts rust"
+		"build:debug": "tsx ../../../scripts/build-native.mts rust",
+		"build:gate": "tsx ../../../scripts/build-native.mts rust --profile gate"
 	},
 	"devDependencies": {
 		"@napi-rs/cli": "^3.0.0"

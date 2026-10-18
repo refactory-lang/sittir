@@ -694,9 +694,9 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 		);
 	}
 	L.push('];', '');
-	L.push('/// Per kind id, its row in EDGE_SITES.');
+	L.push('/// Per kind id, its row in `EDGE_SITES`.');
 	L.push(...denseTable('EDGE_ROWS', 'EdgeRow', new Map(edgeRows.map((e, row) => [e.kind, row]))));
-	L.push('/// Per kind id, its `KindFlags`: ANON (the parser\'s anonymous token), LINE_TERMINATED, LINE_BREAK_TERMINATED, ROOT.');
+	L.push('/// Per kind id, its `KindFlags`: `ANON` (the parser\'s anonymous token), `LINE_TERMINATED`, `LINE_BREAK_TERMINATED`, `ROOT`.');
 	L.push(...denseFlags('KIND_FLAGS', plan.kindFlags, 'KindFlags'));
 	L.push('/// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.');
 	L.push(...denseFlags('LEAF_EDGES', plan.leafEdges, 'u16').map((line) => line.replace('pub static', 'pub const')));
@@ -714,6 +714,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[');
 	for (const r of plan.depthRegions) L.push(`    ::sittir_core::trivia_table::DepthRegion { kind: KindId(${r.id}), open: ${depthAnchorRs(r.open)}, close: ${depthAnchorRs(r.close)} },`);
 	L.push('];', '');
+	L.push('#[must_use]');
 	L.push("pub fn spacing_text(kind: KindId) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
@@ -722,6 +723,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        _ => "",');
 	L.push('    }');
 	L.push('}', '');
+	L.push('#[must_use]');
 	L.push("pub fn allowed(site: SiteId) -> &'static [KindId] {", '    SPACING_SITES[site.index()].3', '}', '');
 	L.push('/// Every layout kind (each `_layout` member, the depth movers among them where the grammar has them), the domain of `spacing_text`.');
 	L.push(`pub const LAYOUT_KINDS: &[KindId] = &[${kindIdList(plan.whitespaceText.map((w) => w.id))}];`, '');
@@ -741,6 +743,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	}
 	L.push('/// Per kind id of a wrapper, the way its seat passes through to the node it holds.');
 	L.push(...denseCells('SEAT_WRAPPERS', 'SeatPath', new Map(plan.seatWrappers.map((row) => [row.id, row.field === undefined ? 'SeatPath::Content' : `SeatPath::Field(${idLiteral('FieldId', row.field)})`]))));
+	L.push('#[must_use]');
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: ResolvedOptions::default_spacing(SITE_SPECS),');
@@ -755,6 +758,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	else L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');
+	L.push('#[must_use]');
 	L.push('pub fn delimiter_allowed(site: FlankId) -> Delimiter {', '    DELIMITER_SITES[site.index()].2', '}', '');
 	L.push(...emitAddressTrie(plan, addresses, siteIndex, kindEntries));
 	L.push('#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]');

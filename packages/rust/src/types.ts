@@ -13400,7 +13400,7 @@ export namespace TokenKeywords {
 
 export namespace CharLiteralEmpty {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly squote?: { readonly before?: LayoutKindId } };
+		readonly __optionsHint__?: { readonly squote?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId } };
 	}
 }
 
@@ -23929,7 +23929,7 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -23949,7 +23949,7 @@ export namespace TokenRepetitionPatternText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.TokenRepetitionPatternText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -23969,7 +23969,7 @@ export namespace StringOpen {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringOpen;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -23989,7 +23989,7 @@ export namespace CharLiteralEmpty {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.CharLiteralEmpty;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24009,7 +24009,7 @@ export namespace LineCommentExtraSlashes {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.LineCommentExtraSlashes;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24029,7 +24029,7 @@ export namespace LineCommentRegular {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.LineCommentRegular;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24049,7 +24049,7 @@ export namespace BlockCommentRegular {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.BlockCommentRegular;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24069,7 +24069,7 @@ export namespace FloatLiteral {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.FloatLiteral;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24089,7 +24089,7 @@ export namespace StringContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringContent;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24109,7 +24109,7 @@ export namespace RawStringLiteralContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.RawStringLiteralContent;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24129,7 +24129,7 @@ export namespace RawStringLiteralStart {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.RawStringLiteralStart;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24149,7 +24149,7 @@ export namespace RawStringLiteralEnd {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.RawStringLiteralEnd;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24169,7 +24169,7 @@ export namespace DocComment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.DocComment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24189,7 +24189,7 @@ export namespace BlockCommentContent {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.BlockCommentContent;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24209,7 +24209,7 @@ export namespace StringClose {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringClose;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -24229,7 +24229,7 @@ export namespace ErrorSentinel {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ErrorSentinel;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;

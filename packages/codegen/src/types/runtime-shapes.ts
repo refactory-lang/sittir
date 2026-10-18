@@ -61,8 +61,7 @@ export function isWrapperType(t: string): boolean {
 		t === 'REPEAT' ||
 		t === 'REPEAT1' ||
 		t === 'FIELD' ||
-		isTokenWrapperType(t) ||
-		t === 'BLANK'
+		isTokenWrapperType(t)
 	);
 }
 

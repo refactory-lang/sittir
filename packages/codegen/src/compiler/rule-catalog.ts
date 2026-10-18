@@ -215,6 +215,7 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		case NEWLINE:
 		case SYMBOL:
 		case EOF:
+		case 'BLANK':
 			return [];
 		default:
 			return assertNever(params.rule);
@@ -252,6 +253,7 @@ function withIdentifiedChildren(args: {
 		case NEWLINE:
 		case SYMBOL:
 		case EOF:
+		case 'BLANK':
 			return { ...rule, id };
 		default:
 			return assertNever(rule);

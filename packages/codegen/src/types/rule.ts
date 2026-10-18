@@ -99,6 +99,7 @@ export type Rule<Phase extends PhaseName = 'normalize'> =
 	| DedentRule<Phase>
 	| NewlineRule<Phase>
 	| EofRule<Phase>
+	| BlankRule<Phase>
 	| SymbolRule<Phase>
 	| OptionalRule<Phase>
 	| FieldRule<Phase>
@@ -289,6 +290,8 @@ export type NewlineRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 export type EofRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof EOF;
 };
+
+export type BlankRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate' ? RuleBase<Phase> & { readonly type: 'BLANK' } : never;
 
 export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SYMBOL;

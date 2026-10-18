@@ -21,7 +21,7 @@ describe('the typed read', () => {
 		expect(sibling.replace(/\s+/g, '')).toBe('fnb(){}');
 	});
 
-	it('reads a let declaration at depth one with its value a plain identifier node', () => {
+	it('reads a let declaration at depth one with its value an identifier node that renders itself', () => {
 		const source = 'let x = a;';
 		const letDecl = rs.parse(source).statements()[0];
 		if (letDecl === undefined || !rs.is.letDeclaration(letDecl)) throw new Error('expected a let declaration');
@@ -30,7 +30,7 @@ describe('the typed read', () => {
 		expect(value.$text).toBe('a');
 		expect(value.$_layout).toMatchObject({ at: { $span: { start: 8, end: 9 }, $type: rs.kinds.Identifier } });
 		expect(treeTokenOf(value)).toBeDefined();
-		expect(value.$render).toBeUndefined();
+		expect((value.$render as () => string)()).toBe('a');
 		expect(letDecl.$render().toString()).toBe(source);
 	});
 });

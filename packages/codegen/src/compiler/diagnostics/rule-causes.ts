@@ -191,6 +191,7 @@ function derivesForm(
 			case 'RESERVED':
 				return ends(node.content, at);
 			case EOF:
+			case 'BLANK':
 				return [at];
 			case PATTERN:
 			case SUPERTYPE:

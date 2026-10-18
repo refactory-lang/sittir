@@ -19,6 +19,7 @@ interface GenCliOptions {
 	emitDiff?: boolean; // commander sets false for --no-emit-diff
 	roundtrip?: boolean;
 	postGenerateOnly?: boolean;
+	nativeOnly?: boolean;
 	allowDiagnostic?: string[];
 }
 
@@ -79,6 +80,9 @@ export const gen: CommandModule = {
 			.addOption(
 				new Option('--post-generate-only', 'Run only the post-generate fixtures and probes').hideHelp()
 			)
+			.addOption(
+				new Option('--native-only', 'Rebuild only the N-API binding from the generated sources, then run post-generate').hideHelp()
+			)
 			.addOption(new Option('--no-build-native', 'Skip the post-regen N-API rebuild'))
 			.option(
 				'--native-debug',
@@ -99,7 +103,7 @@ export const gen: CommandModule = {
 					await runPostGenerate(grammarOpts);
 					return;
 				}
-				const { runCodegen, runFullRegen, runStandaloneSteps } = await import('@sittir/codegen/run-codegen');
+				const { runCodegen, runFullRegen, runNativeOnly, runStandaloneSteps } = await import('@sittir/codegen/run-codegen');
 				const codegenOpts: CodegenOptions = {
 					grammar: opts.grammar,
 					outputDir: opts.output ?? '',
@@ -115,6 +119,14 @@ export const gen: CommandModule = {
 					noEmitDiff: opts.emitDiff === false, // true only if --no-emit-diff
 					allowDiagnostics: opts.allowDiagnostic
 				};
+
+				// The second half of a multi-grammar regeneration: every grammar is
+				// already generated, so only the binding is built from those sources.
+				if (opts.nativeOnly) {
+					await runNativeOnly(codegenOpts);
+					runPostGenerateInFreshProcess(grammarOpts);
+					return;
+				}
 
 				// Standalone maintenance steps (--transpile / --compile-parser /
 				// --ts-generate) run with only --grammar — no --output/--all

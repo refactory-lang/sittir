@@ -338,13 +338,20 @@ every struct and enum impl asks it.
 
 `impl SeatTarget` for an enum (a supertype node enum, a per-slot child
 enum, `AnyNode`, a fixed literal's own type): one arm per reaching
-variant (`seatArm`), and a non-exhaustive list falls through to `None`. An
-enum with no reaching variant gets no impl.
+variant (`seatArm`). The variants that don't reach share one closing arm,
+`Self::A { .. } | Self::B { .. } => None` (a braced pattern fits unit and
+tuple variants alike), so the match names every variant and has no
+wildcard: none of its arms is unreachable, and a variant added later can't
+fall through unnoticed. The variant list is the one the enum's emitter
+recorded in `read.variants` while printing the enum (Verbatim, blank and
+fixed-literal variants included); an enum with seat arms and no recorded
+list is a codegen error. An enum with no reaching variant gets no impl.
 
 ### `packages/codegen/src/emitters/render-module.ts::seatArm`
 
-The seat arm of one reaching variant: a payload delegates to its own
-`seat_target`, and an edged unit answers its seat itself (`fixedSeatArm`).
+The seat arm of one reaching variant, with the variant it covers: a
+payload delegates to its own `seat_target`, and an edged unit answers its
+seat itself (`fixedSeatArm`).
 
 ### `packages/codegen/src/emitters/render-module.ts::seatTargetStructImpl`
 
@@ -550,7 +557,7 @@ model-level builder decision.
 The runtime guard statements of a text-leaf factory, each a complete `if (…) throw` statement. Three guards, none conditional on a debug flag:
 
 1. **Non-empty**, on every leaf whose pattern does not accept the empty string.
-2. **Pattern**, where `buildLeafReConsts` hoisted a `_leafRe_<factory>` constant: `!_leafRe_<factory>.test(text)`.
+2. **Pattern**, where `buildLeafReConsts` hoisted a `_leafRe_<factory>` constant: `typeof text !== 'string' || !_leafRe_<factory>.test(text)`. The type test comes first because a node now writes its text, so `test` would otherwise coerce a node argument to its text; a leaf builder takes a string only and refuses anything else with the same pattern message.
 3. **Reserved word**, on the grammar's word kind only, where `buildLeafReConsts` hoisted a `_reservedWords_<factory>` set: text in the grammar's declared `reserved.global` wordset throws `<kind>: '<text>' is a reserved word`. The set is the grammar's own declaration read through `reservedWordset`, never a collected keyword list: a contextual keyword the grammar admits as an identifier (python `print`, `match`, `exec`) is not in it, and a grammar that declares no wordset (typescript and rust today) gets no guard. The builder has no slot context, so its message cannot name a keyword arm; the slot-side check is `keywordTextRejection`.
 
 ### `packages/codegen/src/emitters/factories.ts::childElementType`
@@ -3142,6 +3149,12 @@ The `use` block at the top of `node.rs`: the views (`View`,
 `ListView`, `NO_ITEMS`) and the node support types. `fmt::Write` is
 deliberately not imported; the kind bodies write through `Formatter`'s
 inherent `write_fmt`, and the render root spells the trait call in full.
+
+The module allows `clippy::unnecessary_wraps`,
+`clippy::trivially_copy_pass_by_ref` and `clippy::needless_pass_by_value`
+because each generated function role keeps one signature: a render
+function takes its node by reference and returns `RenderResult`, and a
+conversion into `AnyNode` takes its node by value, whatever one body needs.
 
 The module permits `clippy::large_enum_variant` because
 `payloadCeilingAssertions` enforces the canonical pinned payload ceiling
@@ -7957,12 +7970,11 @@ A supertype guard is generic over its input and narrows through the shared `Narr
 #### body
 
 ```text
-// Per-kind guards exist only for structural kinds (branch /
-// polymorph). Leaves, keywords and enums have none; the
-// common node guards (`isNode`, `isParsedNode`, `isFactoryNode`)
-// cover them. Tokens, groups, multi, and
-// supertypes have no per-kind guard surface. Supertypes
-// get their own guards in a separate pass below.
+// Structural kinds (branch / polymorph / alias / list) get their
+// per-kind guard in this pass. Supertypes get their own guards in a
+// separate pass, and the visible leaf kinds (pattern leaves, keyword
+// and punctuation units, enums) in a third, so every node kind has an
+// `is.<kind>`. Tokens, groups and multi have no guard surface.
 ```
 
 #### body
@@ -8219,9 +8231,9 @@ The signature of a guard that narrows to a set of kinds by id, bare ids included
  *                (narrow the `type` discriminant). A slot or supertype
  *                union may contain keyword members stored as bare kind
  *                ids, so every guard accepts `{ $type } | number`: a
- *                per-kind guard is false for a bare id (a keyword kind is
- *                never a node) and narrows the object arms only, `_sg`
- *                tests the id directly.
+ *                structural per-kind guard is false for a bare id (a keyword
+ *                kind is never a node) and narrows the object arms only; a
+ *                unit kind's guard and `_sg` test the id directly.
  *
  * Whether a value is a node, and where it came from, is the common
  * guards' question (`isNode`, `isParsedNode`, `isFactoryNode` in
@@ -9236,7 +9248,7 @@ The keyword kinds among a slot's literal values, through
 undefined for a slot whose values are all keywords or all punctuation. It is
 the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 
-### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter::constructor`
 
 #### body
 
@@ -11241,11 +11253,11 @@ Throws when one of the node's accessors or options has the name of a `ReadonlyAr
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.structure`
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::structure`
 
 The structure table the emitter recorded while emitting builders: each emitted compound's or list's row, by kind id. A kind without a builder or a kind id has no row. The language utils print it as `structure`.
 
-### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.constructor`
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::constructor`
 
 #### body
 
@@ -12112,7 +12124,7 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/from.ts::FromEmitter.finalize`
+### `packages/codegen/src/emitters/from.ts::FromEmitter::finalize`
 
 #### body
 
@@ -12293,7 +12305,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.rootTreeTypeName`
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::rootTreeTypeName`
 
 ```text
 /** The exported alias naming the wrapped root surface, once `finalize()`
@@ -12305,13 +12317,13 @@ normalization; a node that already carries slot storage (built or edited) is lef
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::finalize`
 
 Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfData` (a node's `$type` mapped to its wrapped surface through `T.ParsedByKindId`, the data type itself for a grammar with no kind catalog), the hydrate helpers, every per-kind wrap function, the `_wrapTable` dispatch table and `wrapNode`.
 
-`hydrate`, `hydrateSlot` and `hydrateSlots` bind `@sittir/common`'s `hydrateWith`, `hydrateSlotWith` and `hydrateSlotsWith` to this module's `wrapNode` (`hydrateSlot` also passes the route's registry role): a stored coordinate is read through `readNode` on the holder's tree and wrapped, a native node is wrapped, anything else (a kind id, a text leaf already plain) is returned as it is. A slot accessor writes what it hydrated back into the slot and adopts it, so the next read returns the same node, and a list is stored once as a frozen array. `hydrate` is exported, so a tool that hydrates read data takes the same path as the accessors.
+`hydrate`, `hydrateSlot` and `hydrateSlots` bind `@sittir/common`'s `hydrateWith`, `hydrateSlotWith` and `hydrateSlotsWith` to this module's `wrapNode` (`hydrateSlot` also passes the route's registry role): a stored coordinate is read through `readNode` on the holder's tree and wrapped, a native node is wrapped, anything else (a kind id) is returned as it is. A slot accessor writes what it hydrated back into the slot and adopts it, so the next read returns the same node, and a list is stored once as a frozen array. `hydrate` is exported, so a tool that hydrates read data takes the same path as the accessors.
 
-`wrapNode` dispatches on `data.$type` through `_wrapTable` and runs the kind's wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached; it carries read provenance (`carryRead`) from the native node to the wrapped node. Data whose kind has no row (an ERROR read, a plain text leaf) is returned as it crossed. With a catalog, `wrapNode` has a narrowing overload: a `$type`-narrowed input (an `is.*` guard) resolves to that kind's wrapped surface, read through an indexed `D['$type']` so a guard-narrowed intersection reduces instead of unioning every constituent's discriminant.
+`wrapNode` dispatches on `data.$type` through `_wrapTable` and runs the kind's wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached; it carries read provenance (`carryRead`) from the native node to the wrapped node. Data whose kind has no row (an ERROR read) is returned as it crossed. A text leaf has a row: the one shared `wrapLeaf`, registered for every pattern leaf kind (`isPatternLeaf`) that has a kind id. It keeps the leaf's own `$type` and text and adds the members every node has (`nodeMemberLines` with no accessors and the parsed `$query` and `$snapshot`), so a parsed leaf renders itself, interpolates into a template string, carries `$trivia`, and still holds its tree. With a catalog, `wrapNode` has a narrowing overload: a `$type`-narrowed input (an `is.*` guard) resolves to that kind's wrapped surface, read through an indexed `D['$type']` so a guard-narrowed intersection reduces instead of unioning every constituent's discriminant.
 
 #### body
 
@@ -12362,13 +12374,13 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitLeaf`
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter::emitLeaf`
 
 ```text
 // No per-node accumulation needed — emitRenderModule reads the full nodeMap.
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter.emitBranch`
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter::emitBranch`
 
 ```text
 // 'list' participates in this scan uniformly alongside 'branch' (no-op
@@ -12840,10 +12852,10 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
  * arriving at this position falls through to the generated catch-all
  * `Err("unknown kind id")`, silently, with no compile error and no coverage
  * failure unless the corpus happens to exercise this exact shape. Kinds with
- * no catalog entry at all (VAPORIZED / inline / synthesized — see
- * `warnSkippedParserSymbol`) never had a parser symbol to route by in the
- * first place; that's a separate, already-surfaced condition, not this
- * check's concern.
+ * no catalog entry at all (left out by tree-sitter, inlined or synthesized;
+ * see `warnSkippedParserSymbol`) never had a parser symbol to route by in
+ * the first place; the phantom-kind ratchet counts them, so they are not
+ * this check's concern.
  */
 ```
 
@@ -13326,7 +13338,9 @@ fixture file is: both land in the validator's own commit.
 The `KindOf` answer a generated node type gives a kind-gated body: a
 struct is its own kind, an enum answers for the variant it holds (a payload
 variant delegates, a literal variant names its id), and a verbatim value
-stands for whichever pattern kinds the position admits. Every node
+stands for whichever pattern kinds the position admits. `AnyNode`'s
+`Verbatim` admits no kind, so its arm answers `false`; every match names
+all its variants. Every node
 struct, supertype enum, per-slot enum, literal enum and `AnyNode` gets
 one, so a `SlotValue` of any generated type satisfies `KindTest`.
 
@@ -14812,7 +14826,7 @@ The version of the wire between the JS packages and a native build: the render n
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
-Emits a kind's `Bound` and `Parsed` interfaces. Every `Parsed` extends `HoldsTree`, because every object a read returns holds its tree's token. A terminal kind (no main type) gets the same members twice: `Bound` over the node methods, and `Parsed` over `HoldsTree` alone, because a parsed leaf is plain data with no methods. Otherwise each declares `$type` first, then `$with` over `this`, then (on `Parsed` only) `$query`, the node's `QueryFacet`, and `$snapshot`, the kind's `Snapshot`, then its own members. A draft drops `$query` and `$snapshot` with `$with` and `$trivia` (`WithSlot`), so only a node read from a parse has them. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
+Emits a kind's `Bound` and `Parsed` interfaces. Every `Parsed` extends `HoldsTree`, because every object a read returns holds its tree's token. A terminal kind (no main type) gets the same members twice: `Bound` over the node methods, and `Parsed` over the node methods and `HoldsTree`, because a parsed leaf renders itself like any node (`wrapLeaf`). Otherwise each declares `$type` first, then `$with` over `this`, then (on `Parsed` only) `$query`, the node's `QueryFacet`, and `$snapshot`, the kind's `Snapshot`, then its own members. A draft drops `$query` and `$snapshot` with `$with` and `$trivia` (`WithSlot`), so only a node read from a parse has them. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
 
 ### `packages/codegen/src/emitters/shared.ts::listOptionsParam`
 
@@ -14900,7 +14914,7 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, `toString` (the same text, so a node interpolates into a template string and a pattern test of a node renders it), the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
 
 ### `packages/codegen/src/emitters/node-members.ts::StoredAccessor`
 
@@ -14969,6 +14983,10 @@ The literals a compound's render rule places directly under each field, keyed by
 ### `packages/codegen/src/emitters/shared.ts::slotDropKindIds`
 
 The kind ids of a slot's drop set, for the reader: the `separatorKindId` stamped on each of the slot's separated values, and the kind id of each field-tagged literal. Each id is the public symbol link stamped; a separator with no stamp is an error naming it. The ids come out once each, the separators first and then the field-tagged literals.
+
+### `packages/codegen/src/emitters/shared.ts::warnSkippedParserSymbol`
+
+Says why an emitter skipped a kind `classifyParserSymbolEmission` found no parser symbol for, when there is something to say. A kind the grammar inlines is named, since inlining is the grammar's choice. A synthesized kind and a kind tree-sitter left out of the parser are skipped silently. The kinds left out are unreachable by construction: rust's `comment` is a choice over `line_comment` and `block_comment`, which extras name directly, and `_layout` is sittir's layout-trivia union. A kind that goes missing by mistake shows up in the phantom-kind ratchet (`packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts`), which only tightens.
 
 ### `packages/codegen/src/emitters/node-projection.ts::SCALAR_STORAGE`
 
@@ -15058,7 +15076,7 @@ Whether a presence slot's value is a keyword the site wraps in an alias, read fr
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the node printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the nodes printed (`nodes`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are. The record layout of each struct it prints is kept on `records`, by struct name, for `records.ts`.
+What the node printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, the variants each printed enum holds (`variants`), which the seat-target matches name, and the nodes printed (`nodes`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are. The record layout of each struct it prints is kept on `records`, by struct name, for `records.ts`.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 

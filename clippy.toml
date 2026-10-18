@@ -7,6 +7,7 @@ disallowed-methods = [
     { path = "tree_sitter::Node::child_by_field_id", reason = "fields cross as FieldId: use read::child_by_field" },
     { path = "tree_sitter::Language::field_name_for_id", reason = "fields cross as FieldId: use read::field_name" },
     { path = "tree_sitter::TreeCursor::descendant_index", reason = "nodes cross as NodeIndex: use read::index_of from the root, read::offset_of below a subtree" },
+    { path = "tree_sitter::Node::descendant_count", reason = "counts cross as u32: use read::descendant_count" },
     { path = "tree_sitter::TreeCursor::goto_descendant", reason = "nodes cross as NodeIndex: use read::goto" },
     { path = "tree_sitter::Node::start_byte", reason = "offsets cross as u32: use types::Span::of" },
     { path = "tree_sitter::Node::end_byte", reason = "offsets cross as u32: use types::Span::of" },

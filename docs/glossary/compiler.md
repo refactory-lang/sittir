@@ -1693,8 +1693,12 @@ concern: `compileGrammar` gated them before returning.
 Coerces its members and builds tree-sitter's CHOICE as is — a single member
 stays wrapped and same-name FIELD members are not factored (both happen at
 the compile boundary, `canonicalRuleTree`). The one rewrite is
-`choice(x, blank())`, which builds `optional(x)`: the same language, and the
-representation pair `optionalContentOf` and `rulesEqual` read as one shape.
+a choice with a blank arm, which builds `optional` over its other arms
+(`optionalContentOf`): `choice(x, blank())` builds `optional(x)` and
+`choice(a, b, blank())` builds `optional(choice(a, b))`. It is the same
+language, and the representation pair `optionalContentOf` and `rulesEqual`
+read as one shape. `eof()` is not blank: `choice(x, eof())` matches `x` or
+the end of the input, and stays a choice.
 
 ### `packages/codegen/src/compiler/evaluate.ts::optional`
 
@@ -2832,39 +2836,13 @@ The whole-text regex of every linked rule that composes to one (`composeTokenTex
 // this synthetic one.
 ```
 
-### `packages/codegen/src/compiler/link.ts::classifyAndLogHiddenRules`
+### `packages/codegen/src/compiler/link.ts::classifyHiddenRules`
 
-```text
-/**
- * Classify every hidden or grammar-declared-supertype rule and record it in
- * the derivation log.
- *
- * @param rules - Mutable resolved rules map; entries are replaced when
- *   classification succeeds and `ctx.applyPromotedRules` is true.
- * @param ctx - Link phase context. `ctx.inline` lists names from
- *   `grammar.inline`, hidden even without an underscore prefix;
- *   `ctx.supertypes` is the grammar-declared supertype set; `ctx.derivations`
- *   gets promoted classifications appended; `ctx.applyPromotedRules` false
- *   means classifications are logged but the rule map is NOT mutated.
- * @remarks
- *   A kind is "hidden" when its name starts with `_` OR appears in the
- *   grammar's `inline:` array — the latter catches grammars that don't follow
- *   the convention. Tree-sitter's supertype feature marks visible rules whose
- *   CST node never appears — classifying them here prevents the polymorph
- *   promoter from producing bogus variant maps for kinds like ts `primary_type`
- *   that should be a single SupertypeRule<'link'>.
- */
-```
+Classifies every hidden, inlined or grammar-declared-supertype rule in place (`classifyHiddenRule`): a hidden choice of literals becomes an enum, and a hidden choice of kinds becomes a supertype. A kind is hidden when its name starts with `_` or it appears in the grammar's `inline:` array, which catches grammars that don't follow the convention. Tree-sitter's supertype feature marks visible rules whose node never appears; classifying them here keeps the polymorph promoter from producing variant maps for kinds like typescript's `primary_type`, which is a single supertype.
 
 #### body
 
-```text
-// Branch on the RETURNED classification only — never re-read a stamp off
-// `classified.rule`. See ClassifyResult. When classification actually
-// changed the shape, `withKindFacts` carries the original rule's `hidden`
-// and `inlinedFrom` stamps onto the reclassified shape — classification
-// builds a fresh EnumRule/SupertypeRule that would otherwise lose them.
-```
+When classification changed the shape, `withKindFacts` carries the original rule's `hidden` and `inlinedFrom` stamps onto the new shape, since classification builds a fresh enum or supertype rule that would otherwise lose them.
 
 ### `packages/codegen/src/compiler/link.ts::topLevelAliasOf`
 
@@ -2995,26 +2973,6 @@ ordinary union.
 // rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
 // ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
 // view with a cast.
-```
-
-### `packages/codegen/src/compiler/link.ts::emitVariantChildDerivations`
-
-```text
-/**
- * Emit derivation log entries for each variant child kind of a polymorph parent.
- *
- * @param parentKind - The grammar kind that owns the polymorph.
- * @param children - Short child suffixes from `variant()` declarations; each
- *   produces a visible kind named `${parentKind}_${child}` in the parse tree.
- * @param derivations - Derivation log; one entry per child is appended.
- * @remarks
- *   The `variant()` naming convention produces visible kinds named
- *   `${parentKind}_${child}` (the alias target tree-sitter creates). Emitting
- *   each as a derivation records in the derivation log what the parse
- *   tree carries vs what sittir's typed surface presents. Without this,
- *   the reader would have to infer polymorph-internal shape from
- *   grammar-specific knowledge.
- */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::pushAmbientScaffoldIntoVariantChildren`
@@ -3268,103 +3226,6 @@ tree has.
  *   it's visible, so consumers of `else_clause` are NOT block-bearers
  *   themselves (the `else_clause` renders flush-left).
  */
-```
-
-### `packages/codegen/src/compiler/link.ts::collectRepeatedShapes`
-
-```text
-/**
- * Walk every rule's field content-type unions and flag kind sets
- * that appear in ≥2 distinct parent rules. Each unique set becomes
- * a `RepeatedShapeEntry` recorded in the derivation log as a review
- * candidate — the grammar author can then declare a shared
- * supertype (choice of the kinds) or a group and replace the
- * repeated union with a single reference.
- *
- * Non-mutating: purely additive to `derivations.repeatedShapes`.
- * Doesn't reshape `rules`, so downstream classification is
- * unaffected regardless of include filter.
- *
- * Heuristics:
- *   - Kind sets smaller than 2 are skipped (single-type fields
- *     don't benefit from a supertype).
- *   - Sets that already match an existing supertype's subtypes are
- *     skipped — no value in suggesting what's already declared.
- *   - Shape is tagged `supertype` when every kind in the set is a
- *     named visible rule (candidates for a choice-of-symbols),
- *     `group` otherwise.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// collectRepeatedShapes — suggestion pass for shared supertypes/groups
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Build the set of already-declared supertype signatures so we
-// don't duplicate-suggest what the grammar author already wrote.
-```
-
-#### body
-
-```text
-// Parent map: sorted kind key → set of parent rule names that
-// host a field with exactly this content-type set.
-```
-
-#### body
-
-```text
-// Suggest a `supertype` when every kind looks like a named
-// rule kind (letters/underscores/digits, not operator
-// punctuation). Otherwise fall back to `group`.
-```
-
-### `packages/codegen/src/compiler/link.ts::collectFieldKindSets`
-
-```text
-/**
- * Walk a rule tree and invoke `yield_` for every `field` node's
- * content-type set. Strips supertype references to their subtypes
- * before yielding, matching the way the from emitter classifies
- * resolver kind lists.
- */
-```
-
-#### body
-
-```text
-// Walk into the content too — nested fields get yielded
-// on their own.
-```
-
-### `packages/codegen/src/compiler/link.ts::directContentKinds`
-
-```text
-/**
- * Extract the immediate concrete kind set a rule expression
- * resolves to. Unwraps seq/choice/optional/repeat/variant but
- * stops at field/symbol boundaries.
- */
-```
-
-### `packages/codegen/src/compiler/link.ts::suggestSharedName`
-
-```text
-/** Suggest a readable shared name from the kind set. */
-```
-
-#### body
-
-```text
-// Longest common suffix works surprisingly well for grammars —
-// `binary_expression` / `call_expression` / `field_expression`
-// all share `_expression`. Fall back to the kinds count when
-// nothing common sticks out.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::liftSeq`
@@ -3874,26 +3735,6 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 // skip the choice wrapper (shape is already correct).
 ```
 
-### `packages/codegen/src/compiler/normalize.ts::dedupeSeqMembers`
-
-```text
-/**
- * Collapse adjacent duplicates inside a `seq`:
- *
- *   seq(x, x, y) → seq(x, y)
- *
- * Uses `rulesEqual` for structural equality. Only collapses
- * adjacent duplicates; non-adjacent duplicates are almost always
- * intentional repetition in the grammar.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// dedupeSeqMembers
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/compiler/normalize.ts::inlineSingleUseHidden`
 
 ```text
@@ -4152,7 +3993,7 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 
 ### `packages/codegen/src/compiler/normalize.ts::blanksDropped`
 
-The first normalization pass: every `EOF` becomes blank, and a `SEQ` drops every blank member (`dsl/rule-patterns.ts::isBlank`), whether it came from `eof()`, `blank()` or a sequence that emptied below it. So `seq(a, eof())` and `seq(a, blank())` both normalize as `seq(a)`, and a sequence of nothing but blanks is itself blank to its parent. A blank takes no slot, has no child and renders no text, so the model sees exactly what the sequence without it gives: a rule whose body is only `eof()` assembles as one whose body is `blank()`. It runs before any pass that reads a sequence's members as structure; distributing a sequence over its one choice member (`fanOutSeqChoices`) would otherwise read an empty choice as zero arms and leave the rule nothing. Everything before normalize (the evaluated grammar, grammar.json, the symbol-table prediction) keeps `EOF` and blanks as tree-sitter does.
+The first normalization pass: every `EOF` becomes blank, and a `SEQ` drops every blank member (`dsl/rule-patterns.ts::withoutBlankMembers`). The compile boundary already dropped the blanks the DSL built (`canonical-rules.ts::canonicalRule`); this pass drops the ones made after it: an `EOF` it lowers, an empty choice link leaves for a symbol stamped blank, and a sequence that emptied below. So `seq(a, eof())` normalizes as `seq(a)`, and a sequence of nothing but blanks is itself blank to its parent. A blank takes no slot, has no child and renders no text, so the model sees exactly what the sequence without it gives: a rule whose body is only `eof()` assembles as one whose body is `blank()`. It runs before any pass that reads a sequence's members as structure; distributing a sequence over its one choice member (`fanOutSeqChoices`) would otherwise read an empty choice as zero arms and leave the rule nothing. Everything before the compile boundary (the evaluated grammar, grammar.json, the symbol-table prediction) keeps `EOF` and `BLANK` as tree-sitter does.
 
 ### `packages/codegen/src/compiler/opaque-facts.ts::opaqueFacts`
 
@@ -4362,16 +4203,6 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
  * WrapperPhase-only (types/rule.ts) and collapse to `never` under the
  * RenderRule/SimplifiedRule values this function actually receives (always
  * post-`flattenRules`) — `default: false` already covers them.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::isEmptyMatchMember`
-
-```text
-/**
- * Test whether a choice member matches the empty string — the canonical
- * signal for "this branch contributes nothing" so the enclosing choice
- * can be simplified to `optional(non-empty-branches)`.
  */
 ```
 
@@ -4692,7 +4523,7 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 ```text
 // Slot-grouping diagnostic: propose-promotion only. Records never drive
 // codegen behavior (feedback_metadata_not_behavior) — they surface for the
-// author via the derivation log and regen console output.
+// author as diagnostics in the regen console output.
 // Pass inlineKinds so auto-group helpers (_*_repeat1/_*_optional1) are
 // treated as slot-position bodies (they represent seq content of inlined
 // repeats), while normal branch kinds are silent at the top level.
@@ -4753,9 +4584,9 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
  * `nonterminal: false` (`flatten.ts::stampTerminality`: a literal, a layout
  * token, a reference to a literal) and an all-text SEQ member are stripped, and empty
  * seqs are dropped; a spliceable bare seq member is spliced into this
- * seq's own member list. A single surviving member carries the seq's own
- * attrs (`withAttrsFrom`) and combines multiplicity with its own via the
- * lattice (a survivor `optional` inside an `array` seq combines to
+ * seq's own member list. A single surviving member absorbs the seq
+ * (`collapsedInto`: the seq's attrs, and its multiplicity composed with the
+ * survivor's, so a survivor `optional` inside an `array` seq combines to
  * `array`); more than one survivor keeps the SEQ shape.
  */
 ```
@@ -4788,17 +4619,10 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 
 ```text
 // A spliceable bare seq (no own attrs — shared predicate with
-// flatten.ts's SEQ case, see isSpliceableBareSeq's doc) is inlined into
+// flatten.ts's SEQ case, see isSpliceableBareMember's doc) is inlined into
 // this seq's member list; a seq that carries its own cardinality
 // survives as one member instead, so splicing never drops a
 // multiplicity/separator stamp.
-```
-
-#### body
-
-```text
-// Multiplicity combines via the lattice; stamped only when the combined
-// value is non-default (absent stays absent).
 ```
 
 The fixed-literal join reads the word matcher off the context's grammar, so
@@ -5416,33 +5240,6 @@ The source kind a rule id was minted under, decoded; the other inverse of `creat
 	 */
 ```
 
-### `packages/codegen/src/compiler/generate.ts::include`
-
-```text
-/**
-	 * Which derived source tags are accepted into the rule tree.
-	 * Defaults to all derived sources (permissive). `grammar` and
-	 * `override` are always-on and can't be filtered out — this
-	 * controls which DERIVATIONS Link's inference / promotion passes
-	 * mutate the rule tree with.
-	 *
-	 * Entries EXCLUDED from this filter still appear in the
-	 * `derivations` log
-	 * so you can review what Link inferred and either adopt it into
-	 * grammar.sittir.ts or leave it in the log.
-	 *
-	 * @example
-	 * // Strict base pipeline — no inference / promotion:
-	 * { include: { rules: [], fields: [] } }
-	 *
-	 * // Accept promotion, review inference:
-	 * { include: { rules: ['promoted'], fields: [] } }
-	 *
-	 * // Default (permissive): everything applied.
-	 * { include: undefined }
-	 */
-```
-
 ### `packages/codegen/src/compiler/generate.ts::strict`
 
 ```text
@@ -5555,15 +5352,14 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
  *
  * Holds the rule-resolution walk's state (`rules`, inherited from `BaseCtx`,
  * `supertypes`, `externalRoles`) and the hidden-rule classification cluster
- * (`inline`, `derivations`, `applyPromotedRules`, `hiddenNamedArmChoices`):
+ * (`inline`, `hiddenNamedArmChoices`):
  * pass-constant and pass-shared state for one `link()` call.
  * `currentName`/per-rule `name` stay explicit trailing params, as in
  * `resolveRule(rule, ctx, name)`.
  *
- * `externalRoles` and `derivations` are write-through accumulators mutated
- * during the resolve/classify walks (role-lookup memoization and the
- * promoted-rules log, respectively) — kept as plain mutable fields rather
- * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
+ * `externalRoles` is a write-through accumulator mutated during the resolve
+ * walk (role-lookup memoization), kept as a plain mutable field rather than
+ * wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
  *
  * Every
  * `ctx.rules` / `ctx.grammar.rules` read site inside this file was checked
@@ -5612,25 +5408,6 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 
 ```text
 /** Members of the outer seq that appear after the choice. */
-```
-
-### `packages/codegen/src/compiler/link.ts::ClassifyResult`
-
-```text
-/**
- * Result of classifying a hidden (or grammar-declared-supertype) rule.
- *
- * The classifier returns its classification ALONGSIDE the rule, and the
- * caller (`classifyAndLogHiddenRules`) reads ONLY the return value to decide
- * whether to log a derivation and mutate the rule map — it never re-reads a
- * tag off `rule`: a compiler decision does not key on a stamp it re-inspects.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// classifyHiddenRule — determine what a hidden rule IS
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/compiler/link.ts::classification`
@@ -5918,47 +5695,6 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
  *  link tree for it. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::DerivationLog`
-
-```text
-/**
- * DerivationLog — sidecar record of everything Link inferred / promoted.
- *
- * Populated unconditionally by Link's derivation passes and recorded
- * regardless of whether Link actually applied the mutation to the rule
- * tree. No emitter consumes it; it is a diagnostics record pinned by
- * link's tests.
- *
- * Whether a derivation is ALSO applied (mutating the rule tree) is
- * governed by `IncludeFilter` — excluded sources still appear in the
- * log but don't land in the generated packages.
- */
-```
-
-### `packages/codegen/src/compiler/types.ts::inferredFields`
-
-```text
-/** Field-name inferences: parent wants a bare symbol wrapped in field(). */
-```
-
-### `packages/codegen/src/compiler/types.ts::promotedRules`
-
-```text
-/** Rule-level promotions: enum, supertype, terminal, polymorph classifications. */
-```
-
-### `packages/codegen/src/compiler/types.ts::repeatedShapes`
-
-```text
-/**
-	 * Repeated-shape candidates — sets of kinds that appear as field
-	 * content unions in ≥2 distinct parent rules. Suggested as either
-	 * a grammar-level supertype (choice-of-symbols) or a shared group
-	 * so the grammar author can collapse the repetition with a single
-	 * named rule. Non-mutating — these are suggestions only.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::kind`
 
 ```text
@@ -6167,23 +5903,6 @@ grammar no wire ran over; then no label is automatic.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::DerivedFieldSource`
-
-```text
-/**
- * Derived source tags that can be toggled via GenerateConfig.include.
- * `grammar` and `override` are always-on — user-authored content cannot
- * be filtered out.
- *
- * (debt: source-homonym resolution, decision 6) `DerivedRuleSource` (the
- * type alias formerly here, `= 'promoted'`) is deleted — a single-literal
- * alias adds nothing, and the name invited confusion with the unrelated
- * `RuleSource`/`author` authorship vocabulary. This `IncludeFilter.rules`
- * knob is a different axis (an opt-in include/exclude filter for link's
- * INFERRED classifications, declared by the caller), not a provenance fact.
- */
-```
-
 ### `packages/codegen/src/compiler/types.ts::rules`
 
 ```text
@@ -6369,16 +6088,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 * each slot's source-rule positions are registered. Lets consumers walking a
 	 * rule tree look up the slot's propertyName / storageName / paramName directly.
 	 * See feedback_ruleid_backpointer.
-	 */
-```
-
-### `packages/codegen/src/compiler/types.ts::derivations`
-
-```text
-/**
-	 * Sidecar log of every derivation Link produced. Emitters read
-	 * this to surface suggestions regardless of whether the mutation
-	 * was applied to the rule tree (governed by IncludeFilter).
 	 */
 ```
 
@@ -6836,17 +6545,19 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
 // wrapper cases below, which are consumed into their content) — the
 // original node's own stamped facts (id, metadata, …) must ride
 // along, so spread it under attributeBuilder's freshly-built shape.
-// For SEQ the built node may be a collapsed singleton survivor with
-// no `members` of its own — `carrySeqFacts` drops the stale array.
+// The built node may be a survivor with no `members` of its own (a
+// collapsed singleton seq, or a choice's one non-blank arm made
+// optional): `carryNodeFacts` drops the stale array.
 ```
 
 #### body
 
 ```text
 // `buildOptional`, not `attributeBuilder.optional`: the empty-match
-// fold (`foldOptionalEmptyMatch`) belongs to simplify's own later
-// construction, not RenderRule production — a raw OPTIONAL over a
-// bare literal here stays a leaf with `multiplicity: 'optional'`.
+// fold (`foldOptionalEmptyMatch`) would strip a bare literal — a raw
+// OPTIONAL over a bare literal here stays a leaf with
+// `multiplicity: 'optional'`, as `choice(x, blank())` does through
+// `attributeChoice`.
 ```
 
 #### body
@@ -7365,15 +7076,6 @@ alias target, as in tree-sitter's `alias()`.
 // value instead of a property-access TypeError.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::blank`
-
-#### body
-
-```text
-// A choice with no members; `isBlank` reads it and tree-sitter's BLANK as
-// the same rule.
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::eof`
 
 tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`normalize.ts::blanksDropped`).
@@ -7534,28 +7236,6 @@ adds.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::link`
-
-#### body
-
-```text
-// Resolve include defaults: undefined means "include everything".
-// Explicit empty arrays mean "include nothing of this category".
-```
-
-#### body
-
-```text
-// Derivation log — populated unconditionally; each entry records
-// whether the mutation was also applied.
-```
-
-#### body
-
-```text
-// inferredFields stays empty: the statistical field-name-inference pass was
-// deleted (it was apply=false / analysis-only). suggested-overrides emission
-// is disabled for now, so nothing reads this.
-```
 
 #### body
 
@@ -7926,7 +7606,7 @@ the rules as they stand mid-link (past wire's alias injection and
 `resolveRule`), after `stampLabelProvenance`. The only
 structural mutation is `pushAmbientScaffoldIntoVariantChildren`, for a parent
 whose choice holds none of the children's own members (typescript's
-`public_field_definition`); every other parent only records its derivation.
+`public_field_definition`); every other parent is left as it is.
 
 ### `packages/codegen/src/compiler/link.ts::findVariantChoice`
 
@@ -8380,10 +8060,11 @@ lifted afterwards.
 #### body
 
 ```text
-// Recursively stamp members, then re-apply the blank-collapse that
-// evaluate.ts's choice() applies at DSL time. `choice(X, blank)` →
-// `optional(X)`. Re-applied here because stamping may have
-// synthesized new blank members the DSL-time pass didn't see.
+// Recursively stamp members; a choice that gained a blank arm becomes
+// `optional` over its other arms (`optionalContentOf`, as the compile
+// boundary folds an authored one), or blank when none remain.
+// Re-applied here because stamping may have synthesized new blank
+// members the boundary didn't see.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::RefinePathResolution`
@@ -8524,14 +8205,11 @@ identifiers and numbers are read through the C parser, as the name tables are.
  * them.
  *
  * - Evaluate  produces {@link RawGrammar}.
- * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
+ * - Link      produces {@link LinkedGrammar}.
  * - Normalize produces {@link NormalizedGrammar}.
  * - Simplify  (a sub-stage of Normalize) produces {@link SimplifiedGrammar}.
  * - Assemble  produces {@link NodeMap}.
- *
- * Diagnostic / suggester-input types live here too ({@link DerivationLog}
- * and its entry types, {@link IncludeFilter}) because they flow between
- * Link and the suggester emitter, not through the rule tree itself.
+
  *
  * The Rule model (Rule union + type guards + SymbolRef) stays in
  * `./rule.ts`. The AssembledNode hierarchy currently stays in `rule.ts`
@@ -8624,7 +8302,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.constructor`
+### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx::constructor`
 
 #### body
 
@@ -8635,6 +8313,8 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 ```
 
 ### `packages/codegen/src/compiler/simplify.ts::collapseSingleMemberSeq`
+
+A sequence of one member collapses into it (`dsl/builders.ts::collapsedInto`); `canonicalizeSeqOfLeaves` applies it bottom-up.
 
 #### body
 
@@ -8667,29 +8347,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 
 ### `packages/codegen/src/compiler/simplify.ts::simplifyChoiceRule`
 
-```text
-/**
- * CHOICE: first splice any directly-nested CHOICE member into the parent's
- * member list (choice associativity) — each spliced arm carries the nested
- * node's own attributes (`fieldName`, `multiplicity`, `inlinedFrom`, …,
- * already flattened to attributes by this phase) via `withAttrsFrom` onto
- * that arm, not the nested CHOICE node itself, and the parent absorbs the
- * spliced-away nested choices' ids (`absorbIds`). Then: fold an empty-match
- * member (`pattern("")`, empty seq) into `optional`, where a single
- * surviving non-empty member absorbs the wrapper choice's id; collapse a
- * single member the same way; merge structurally-equivalent branches
- * (`mergeBranchesForChoice`). Variant wrappers are preserved for polymorph
- * detection.
- *
- * Constructs through `ctx.builder` (`RuleBuilder<'normalize'>` — always
- * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather
- * than mint wrapper nodes; the empty-match fold is `b.optional`'s own
- * semantics. simplify's helpers are typed `RenderRule` in and out — the
- * builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP
- * has no dedicated handler — recursion into its `.content`
- * happens once, via simplifyRule's ctx.walker.map call.)
- */
-```
+CHOICE. First every directly nested non-blank choice member splices into the parent's member list (choice associativity, `isSplicedChoice`): each spliced arm carries the nested node's own attributes (`fieldName`, `multiplicity`, `inlinedFrom`, …, already flattened to attributes by this phase) via `withAttrsFrom`, and the parent absorbs the spliced-away nested choices' ids (`absorbIds`). An empty choice is blank, not a choice of no arms, so it stays a member. A single member then absorbs the choice (`withAttrsFrom`). Otherwise the choice is rebuilt through `ctx.builder.choice` (`dsl/builders.ts::attributeChoice`), which folds blank arms, with one of three results. When the builder kept every member, structurally equivalent branches merge (`mergeBranchesForChoice`) under the choice's own facts. When one arm survived, made optional, the choice collapses into it (`dsl/builders.ts::collapsedInto`). When several survived as an optional choice, the choice's own facts carry onto it and its multiplicity composes with the optional one (`dsl/builders.ts::withWrapperMultiplicity`); merging is skipped there, since a merged sequence would drop the optional multiplicity. Variant wrappers are preserved for polymorph detection. Members arrive already simplified (simplifyRule's `ctx.walker.map` recursion), so this does not recurse into its own children. simplify's helpers are typed `RenderRule` in and out; the builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP has no dedicated handler: recursion into its `.content` happens once, via simplifyRule's `ctx.walker.map` call.)
 
 #### body
 
@@ -8697,6 +8355,10 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 // Members already simplified by simplifyRule's ctx.walker.map recursion —
 // this function does not recurse into its own children.
 ```
+
+### `packages/codegen/src/compiler/simplify.ts::isSplicedChoice`
+
+A choice member that splices into its parent choice: a non-empty `CHOICE`. The empty choice is blank (`dsl/rule-patterns.ts::isBlank`); splicing its zero arms would lose the empty alternative it stands for, so it stays a member for the builder to fold (`dsl/builders.ts::attributeChoice`).
 
 ### `packages/codegen/src/compiler/trace.ts::module`
 
@@ -9071,14 +8733,15 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
  * compiler/normalize.ts — Normalize phase.
  *
  * Restructures seq/choice/optional/repeat for SIMPLIFICATION (fan-out,
- * factoring, prefix/suffix extraction, wrapper collapsing, dedupe,
+ * factoring, prefix/suffix extraction, wrapper collapsing,
  * single-use hidden-rule inlining). Does NOT change named content.
  * Non-lossy.
  *
  * Variant tagging lives in Link — that is classification, not simplification.
  * Pipeline order is fixed in
- * `normalizeGrammar()` below: collapse → fan-out → factor → dedupe → inline →
- * re-collapse.
+ * `normalizeGrammar()` below: drop blanks → collapse → fan-out → factor →
+ * inline → re-collapse. A sequence keeps every member it names: two
+ * equal adjacent members are two children (`seq("'", "'")` is `''`).
  */
 ```
 
@@ -9486,7 +9149,7 @@ lexical), passed through from the owning node's derive ctx so slots resolve
 alias envelopes the same way element and value derivation does.
 ```
 
-### `packages/codegen/src/compiler/link.ts::LinkCtx.sourceSymbols`
+### `packages/codegen/src/compiler/link.ts::LinkCtx::sourceSymbols`
 
 The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar.predictedKinds`), asked through `catalogSymbolSource`, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 
@@ -9552,6 +9215,14 @@ The raw symbols a parser folds onto another public symbol: the entries of `ts_sy
 
 Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar layer inside it.
 
+### `packages/codegen/src/compiler/evaluate.ts::blank`
+
+tree-sitter's `blank()`: the `BLANK` node, built as tree-sitter builds it (`dsl/builders.ts::structuralBuilder`), so enrich and wire read the same empty rule under both runtimes. The compile boundary lowers it (`canonical-rules.ts::canonicalRule`).
+
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalChoiceRule`
 
-Canonicalizes a choice: a blank arm is the existing optional representation, a singleton is peeled, and common fields are factored when safe. Optional detection uses the shared `optionalContentOf` derivation, so a tree-sitter `CHOICE` with `BLANK` is accepted at the compiler boundary without adding blank to the compiler Rule union.
+Canonicalizes a choice. A choice with a blank arm becomes `OPTIONAL` over its other arms, carrying the choice's own facts (`dsl/rule-patterns.ts::optionalContentOf`, which takes every blank arm wherever it sits), so `choice(a, b, blank())` canonicalizes as `optional(choice(a, b))`; a choice of nothing but blanks is blank, the empty choice (`dsl/rule-patterns.ts::withoutBlankMembers`); a singleton is peeled; and common fields are factored when safe. A tree-sitter `CHOICE` with `BLANK` is accepted at the compiler boundary without adding blank to the compiler Rule union.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::canonicalRule`
+
+One node's canonical form at the compile boundary, applied bottom-up by `canonicalRuleTree`. A prec or `RESERVED` wrapper is peeled, its facts carried onto the content (`peelWrapper`; a reserved word set goes to the metadata). `OPTIONAL`, `REPEAT` and `REPEAT1` lose the wrappers that add nothing (an optional repeat is a repeat). A choice with a blank arm becomes `OPTIONAL` over its other arms and a choice of nothing but blanks is blank (`canonicalChoiceRule`), a choice of one member is that member, and a choice of fields all named alike becomes one field over a choice. A sequence drops its blank members (`dsl/rule-patterns.ts::withoutBlankMembers`) and a sequence of one member is that member, so `seq($.x, blank())` canonicalizes as `seq($.x)`, wrapper facts carried. A bare `BLANK` becomes the empty choice the compile phases read as blank. Tokens carry `immediate` explicitly. Everything else is unchanged.

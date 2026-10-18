@@ -18,6 +18,7 @@ impl Point {
 
     /// The point `offset` names from `self`: on `self`'s row the columns add;
     /// on a later row the offset's column stands alone.
+    #[must_use]
     pub fn then(self, offset: Point) -> Point {
         if offset.row == 0 {
             Point { row: self.row, column: self.column + offset.column }
@@ -28,6 +29,7 @@ impl Point {
 
     /// The offset of `self` from `base`, which must not lie after `self`;
     /// `base.then(self.offset_from(base)) == self`.
+    #[must_use]
     pub fn offset_from(self, base: Point) -> Point {
         if self.row == base.row {
             Point { row: 0, column: self.column - base.column }
@@ -47,12 +49,14 @@ pub struct PointSpan {
 
 impl PointSpan {
     /// The empty span at `point`.
+    #[must_use]
     pub const fn at(point: Point) -> Self {
         PointSpan { start: point, end: point }
     }
 
     /// The row of the span's last byte: a span that ends with its line break
     /// ends on the row that break closes.
+    #[must_use]
     pub fn last_row(&self) -> u32 {
         if self.end.column == 0 && self.end.row > self.start.row {
             self.end.row - 1
@@ -67,6 +71,7 @@ impl PointSpan {
 impl ::napi::bindgen_prelude::FromNapiValue for Point {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::{object, required_whole};
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             let obj = object(env, napi_val)?;
             Ok(Point { row: required_whole(env, obj, c"row", "a span point")?, column: required_whole(env, obj, c"column", "a span point")? })
@@ -78,6 +83,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Point {
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for Point {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { crate::boundary::object_with(env, &[(c"row", u32::to_napi_value(env, val.row)?), (c"column", u32::to_napi_value(env, val.column)?)]) }
     }
 }
@@ -87,6 +93,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Point {
 impl ::napi::bindgen_prelude::FromNapiValue for PointSpan {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         use crate::boundary::{object, required};
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         unsafe {
             let obj = object(env, napi_val)?;
             Ok(PointSpan { start: required(env, obj, c"start", "a span")?, end: required(env, obj, c"end", "a span")? })
@@ -98,6 +105,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointSpan {
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for PointSpan {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { crate::boundary::object_with(env, &[(c"start", Point::to_napi_value(env, val.start)?), (c"end", Point::to_napi_value(env, val.end)?)]) }
     }
 }
@@ -111,24 +119,27 @@ pub struct LineTable {
 }
 
 impl LineTable {
+    #[must_use]
     pub fn new(source: &str) -> Self {
         let mut starts = vec![0];
-        starts.extend(source.bytes().enumerate().filter(|&(_, b)| b == b'\n').map(|(i, _)| i as u32 + 1));
+        starts.extend(source.bytes().enumerate().filter(|&(_, b)| b == b'\n').map(|(i, _)| crate::types::narrow(i) + 1));
         Self { starts, len: crate::types::Span::whole(source).end }
     }
 
     /// The point of byte offset `byte`, or `None` past the source's end.
+    #[must_use]
     pub fn point(&self, byte: u32) -> Option<Point> {
         if byte > self.len {
             return None;
         }
         let row = self.starts.partition_point(|&start| start <= byte) - 1;
-        Some(Point { row: row as u32, column: byte - self.starts[row] })
+        Some(Point { row: crate::types::narrow(row), column: byte - self.starts[row] })
     }
 
     /// The byte offset of `point`, or `None` when its row does not exist or
     /// its column runs past the row's end. A row's last column is its `\n`,
     /// or the source's end on the last row, as `point` returns for that byte.
+    #[must_use]
     pub fn byte(&self, point: Point) -> Option<u32> {
         let row = point.row as usize;
         let start = *self.starts.get(row)?;

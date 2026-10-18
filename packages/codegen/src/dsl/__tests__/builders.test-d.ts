@@ -9,7 +9,7 @@
  */
 import { describe, it, expectTypeOf } from 'vitest';
 import { structuralBuilder, attributeBuilder } from '../builders.ts';
-import type { Rule, SeqRule, ChoiceRule, FieldRule, AliasRule, StringRule, SymbolRule } from '../../types/rule.ts';
+import type { Rule, SeqRule, FieldRule, AliasRule, StringRule, SymbolRule } from '../../types/rule.ts';
 
 const evalSym = { type: 'SYMBOL', name: 'x' } as unknown as SymbolRule<'evaluate'>;
 const builtString = { type: 'STRING', value: 'x' } as unknown as StringRule<'normalize'>;
@@ -31,8 +31,8 @@ describe('AttributeBuilder preserves refined inputs where it only stamps', () =>
 		expectTypeOf(attributeBuilder.token(builtString)).toEqualTypeOf<StringRule<'normalize'>>();
 	});
 
-	it('choice narrows to ChoiceRule; repeat/optional over a SEQ widen (flatten rebuilds it)', () => {
-		expectTypeOf(attributeBuilder.choice(builtSym)).toEqualTypeOf<ChoiceRule<'normalize'>>();
+	it('choice is a Rule (a blank arm makes it optional); repeat/optional over a SEQ widen', () => {
+		expectTypeOf(attributeBuilder.choice(builtSym)).toEqualTypeOf<Rule<'normalize'>>();
 		expectTypeOf(attributeBuilder.repeat(builtSeq)).toEqualTypeOf<Rule<'normalize'>>();
 		expectTypeOf(attributeBuilder.optional(builtSeq)).toEqualTypeOf<Rule<'normalize'>>();
 	});

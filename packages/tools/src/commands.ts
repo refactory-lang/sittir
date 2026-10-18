@@ -18,9 +18,11 @@ import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import { cachedNativeEngineProfile, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
+import { diffValidationReports, formatReportDiff, readComparableReport } from './validate/report-diff.ts';
 import {
 	buildValidationReportEntries,
 	checkSClassCeilings,
+	readValidationReport,
 	writeValidationReport,
 	type GrammarDiagnosticEntry,
 	type SClassCeilings,
@@ -681,14 +683,7 @@ export function enforceSClassCeilings(
  * function exists to prevent.
  */
 function readExistingValidationReportEntries(path: string): ValidationReportEntry[] {
-	if (!existsSync(path)) return [];
-	try {
-		return JSON.parse(readFileSync(path, 'utf8')) as ValidationReportEntry[];
-	} catch (e) {
-		throw new Error(
-			`writeMergedValidationReport: failed to read/parse existing report at ${path}: ${(e as Error).message}`
-		);
-	}
+	return existsSync(path) ? readValidationReport(path) : [];
 }
 
 /** Exported entry: counts subcommand — prints raw pass/total for all four validators. */
@@ -895,6 +890,26 @@ export function runHistoryCli(args: string[]): void {
 					: `  built-render-parse=${r.builtRenderParsePass}/${r.builtRenderParseTotal}`)
 		);
 	}
+}
+
+/**
+ * Exported entry: `validate history --diff <base> <head>` — prints the row diff of two validation reports.
+ * Returns 0 when the reports hold the same rows, 1 when rows moved, 2 when a side is missing, empty or has no rows.
+ */
+export function runValidationReportDiffCli(basePath: string, headPath: string): number {
+	let base: ValidationReportEntry[];
+	let head: ValidationReportEntry[];
+	try {
+		base = readComparableReport(basePath);
+		head = readComparableReport(headPath);
+	} catch (e) {
+		console.error(`validate history --diff: ${(e as Error).message}`);
+		return 2;
+	}
+	const diff = diffValidationReports(base, head);
+	console.log(`rows: base ${base.length}, head ${head.length}; +${diff.added.length} -${diff.removed.length}`);
+	for (const line of formatReportDiff(diff)) console.log(line);
+	return diff.added.length + diff.removed.length === 0 ? 0 : 1;
 }
 
 /** Exported entry: test-history subcommand — prints last N recorded `vitest run` summaries. */
