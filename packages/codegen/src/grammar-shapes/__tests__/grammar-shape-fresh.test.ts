@@ -1,9 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { grammarPackages } from '../../grammars.ts';
+import { BASE_ENTRY, grammarPackages } from '../../grammars.ts';
 import {
-	BASE_ENTRY,
 	emitGrammarShapeSource,
 	emitUpstreamDeclarationSource,
 	grammarShapeFile,

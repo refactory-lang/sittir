@@ -148,11 +148,12 @@ jobs:
           name: bindings-x86_64-unknown-linux-gnu
           path: /tmp/016-bindings
       - name: Stage `.node` artifacts into the grammar packages
-        # The artifact keeps the upload step's paths
-        # (`packages/<grammar>/native/*.node`). Copy them back into the
-        # workspace so each grammar package's loader finds its binary.
+        # The artifact keeps the upload step's repo-relative paths: each
+        # `packages/<grammar>/native/*.node` and the build stamp under
+        # `node_modules/.cache/sittir/native-build/` that the loader checks
+        # it against. Copy both back into the workspace.
         run: |
-          cp -R /tmp/016-bindings/. packages/
+          cp -R /tmp/016-bindings/. ./
           find packages -path "*/native/*.node" -print
       - name: Resolve base SHA
         id: base
@@ -222,7 +223,7 @@ jobs:
           path: /tmp/published-bindings
       - name: Stage `.node` artifacts into the grammar packages
         run: |
-          cp -R /tmp/published-bindings/. packages/
+          cp -R /tmp/published-bindings/. ./
           find packages -path "*/native/*.node" -print
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
@@ -262,7 +263,7 @@ jobs:
           path: /tmp/054-bindings
       - name: Stage `.node` artifacts into the grammar packages
         run: |
-          cp -R /tmp/054-bindings/. packages/
+          cp -R /tmp/054-bindings/. ./
           find packages -path "*/native/*.node" -print
       - name: Collect fresh metrics (native backend)
         run: |
@@ -487,6 +488,8 @@ jobs:
           name: bindings-${{ matrix.target }}
           path: |
             packages/*/native/*.node
+            node_modules/.cache/sittir/native-build/
+          include-hidden-files: true
           if-no-files-found: ignore
 
   # Spec 012 T060 — surface parity counts in PR job summary so review
