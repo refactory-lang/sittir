@@ -63,6 +63,15 @@ describe('the resolutions file of a package', () => {
 		expect(JSON.parse(text)).toEqual(derived);
 	});
 
+	it('writes each section\'s resolutions sorted by their symbol sets, so a re-derivation diffs only in what changed', () => {
+		const record = (symbols: string[]) => ({ ...derived.resolutions[0]!, resolution: { kind: 'AddConflict' as const, symbols } });
+		const file = { ...derived, resolutions: [record(['b', 'c']), record(['a', 'z'])], bound: { grammarHash: 'g', resolutions: [record(['y']), record(['x'])] } };
+		writeConflictResolutions({ dir }, file);
+		const read = readConflictResolutions({ dir });
+		expect(read.resolutions.map((entry) => entry.resolution.symbols)).toEqual([['a', 'z'], ['b', 'c']]);
+		expect(read.bound.resolutions.map((entry) => entry.resolution.symbols)).toEqual([['x'], ['y']]);
+	});
+
 	it('is not rewritten when the content is unchanged', () => {
 		writeConflictResolutions({ dir }, derived);
 		const before = statSync(conflictResolutionsPath({ dir })).mtimeMs;

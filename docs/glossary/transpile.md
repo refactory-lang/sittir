@@ -470,7 +470,7 @@ Where a package's derived resolutions live: `.sittir/resolutions.json`.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::writeConflictResolutions`
 
-Writes the resolutions one per line (`printRecordLines`), leaving the file untouched when its content is already the same, so an unchanged derivation leaves the committed file untouched.
+Writes the resolutions one per line (`printRecordLines`), each section sorted by symbol set (`sortedBySymbols`), leaving the file untouched when its content is already the same, so an unchanged derivation leaves the committed file untouched.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::ensureConflictResolutions`
 
@@ -489,6 +489,10 @@ none.
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::rewriteConflictResolutions`
 
 Rewrites the saved resolutions through `writeConflictResolutions`, so the committed file is in the writer's format even when the derivation reused it unchanged. The content does not change, and a file already in that format is left untouched. `generateWithDerivedConflicts` calls it once the conflicts settle.
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::sortedBySymbols`
+
+A section's resolutions sorted by their symbol sets, then by the whole record. The order carries no meaning: each record names the policy step that chose it, and tree-sitter reads the `conflicts` it receives as a set. A re-derivation that reaches the same sets therefore writes the same file, and one that changes a set diffs only in that record.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::stopRegen`
 

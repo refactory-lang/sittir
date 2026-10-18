@@ -17649,89 +17649,81 @@
   ],
   "conflicts": [
     [
-      "import",
-      "meta_property_import_meta"
+      "_call_signature",
+      "constructor_type"
     ],
     [
-      "primary_expression",
-      "export_statement_default_from"
+      "_call_signature",
+      "function_type"
     ],
     [
-      "primary_expression",
-      "export_statement_namespace_export"
+      "_initializer",
+      "binary_expression_in"
     ],
     [
       "_lhs_expression",
       "export_statement_equals_export"
     ],
     [
-      "primary_expression",
-      "meta_property_new_target"
-    ],
-    [
-      "primary_expression",
-      "arrow_function"
-    ],
-    [
-      "primary_expression",
-      "await_expression"
-    ],
-    [
-      "primary_expression",
-      "_property_name"
-    ],
-    [
-      "labeled_statement",
-      "_property_name"
-    ],
-    [
-      "object_assignment_pattern",
-      "_lhs_expression"
-    ],
-    [
-      "object",
-      "object_pattern"
-    ],
-    [
-      "primary_expression",
-      "method_definition"
-    ],
-    [
-      "object_assignment_pattern",
       "_lhs_expression",
-      "export_statement_equals_export"
+      "for_header_let_const_kind"
     ],
     [
-      "primary_expression",
-      "arrow_function",
-      "_property_name"
+      "_lhs_expression",
+      "literal_type"
     ],
     [
-      "primary_expression",
-      "await_expression",
-      "_property_name"
+      "_lhs_expression",
+      "predefined_type"
     ],
     [
-      "binary_expression",
-      "unary_expression",
-      "instantiation_expression",
-      "call_expression_call"
+      "_lhs_expression",
+      "primary_type"
+    ],
+    [
+      "_lhs_expression",
+      "readonly_type"
     ],
     [
       "_lhs_expression",
       "variable_declarator_plain"
     ],
     [
-      "primary_expression",
-      "variable_declarator_definite"
+      "_parameter_name",
+      "primary_type"
     ],
     [
-      "primary_expression",
-      "_lhs_expression"
+      "_type_query_call_expression",
+      "call_expression_call"
     ],
     [
-      "primary_expression",
-      "_parameter_name"
+      "_type_query_call_expression_in_type_annotation",
+      "call_expression_call"
+    ],
+    [
+      "array",
+      "array_pattern",
+      "tuple_type"
+    ],
+    [
+      "array",
+      "array_pattern"
+    ],
+    [
+      "array",
+      "computed_property_name"
+    ],
+    [
+      "array",
+      "tuple_type"
+    ],
+    [
+      "array_pattern",
+      "tuple_type"
+    ],
+    [
+      "arrow_function",
+      "update_expression_postfix"
     ],
     [
       "assignment_expression",
@@ -17752,15 +17744,137 @@
       "update_expression_postfix"
     ],
     [
-      "array",
-      "array_pattern"
+      "binary_expression",
+      "instantiation_expression",
+      "call_expression_call"
     ],
     [
-      "primary_type",
-      "type_parameter"
+      "binary_expression",
+      "unary_expression",
+      "instantiation_expression",
+      "call_expression_call"
     ],
     [
+      "class"
+    ],
+    [
+      "class_body_member_method"
+    ],
+    [
+      "class_body_member_method_sig",
+      "class_body_member_declaration"
+    ],
+    [
+      "class_static_block",
+      "_property_name"
+    ],
+    [
+      "import",
+      "meta_property_import_meta"
+    ],
+    [
+      "labeled_statement",
+      "_property_name"
+    ],
+    [
+      "nested_identifier",
+      "nested_type_identifier"
+    ],
+    [
+      "object",
+      "object_pattern",
+      "_property_name"
+    ],
+    [
+      "object",
+      "object_pattern",
+      "object_type"
+    ],
+    [
+      "object",
+      "object_pattern"
+    ],
+    [
+      "object",
+      "object_type"
+    ],
+    [
+      "object_assignment_pattern",
       "_lhs_expression",
+      "export_statement_equals_export"
+    ],
+    [
+      "object_assignment_pattern",
+      "_lhs_expression"
+    ],
+    [
+      "object_pattern",
+      "object_type"
+    ],
+    [
+      "optional_tuple_parameter",
+      "primary_type"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression",
+      "literal_type"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression",
+      "predefined_type"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression",
+      "primary_type"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression"
+    ],
+    [
+      "primary_expression",
+      "_parameter_name",
+      "primary_type"
+    ],
+    [
+      "primary_expression",
+      "_parameter_name"
+    ],
+    [
+      "primary_expression",
+      "_property_name"
+    ],
+    [
+      "primary_expression",
+      "arrow_function",
+      "_property_name"
+    ],
+    [
+      "primary_expression",
+      "arrow_function"
+    ],
+    [
+      "primary_expression",
+      "await_expression",
+      "_property_name"
+    ],
+    [
+      "primary_expression",
+      "await_expression"
+    ],
+    [
+      "primary_expression",
+      "export_statement_default_from"
+    ],
+    [
+      "primary_expression",
+      "export_statement_namespace_export"
+    ],
+    [
+      "primary_expression",
       "for_header_let_const_kind"
     ],
     [
@@ -17768,167 +17882,53 @@
       "for_header_lhs"
     ],
     [
-      "class"
-    ],
-    [
-      "class_static_block",
-      "_property_name"
-    ],
-    [
-      "class_body_member_method"
-    ],
-    [
-      "_lhs_expression",
-      "readonly_type"
-    ],
-    [
-      "_lhs_expression",
-      "predefined_type"
-    ],
-    [
       "primary_expression",
-      "predefined_type"
-    ],
-    [
-      "_lhs_expression",
-      "primary_type"
-    ],
-    [
-      "primary_expression",
-      "primary_type"
-    ],
-    [
-      "primary_expression",
-      "nested_identifier",
-      "nested_type_identifier"
+      "for_header_using_kind"
     ],
     [
       "primary_expression",
       "generic_type"
     ],
     [
-      "_lhs_expression",
-      "literal_type"
-    ],
-    [
       "primary_expression",
       "literal_type"
     ],
     [
-      "_parameter_name",
-      "primary_type"
-    ],
-    [
-      "_call_signature",
-      "function_type"
-    ],
-    [
-      "optional_tuple_parameter",
-      "primary_type"
-    ],
-    [
-      "binary_expression",
-      "instantiation_expression",
-      "call_expression_call"
-    ],
-    [
-      "arrow_function",
-      "update_expression_postfix"
-    ],
-    [
-      "array",
-      "computed_property_name"
+      "primary_expression",
+      "meta_property_new_target"
     ],
     [
       "primary_expression",
-      "for_header_using_kind"
-    ],
-    [
-      "variable_declarator_plain",
-      "for_header_let_const_kind"
+      "method_definition"
     ],
     [
       "primary_expression",
-      "for_header_let_const_kind"
-    ],
-    [
-      "class_body_member_method_sig",
-      "class_body_member_declaration"
-    ],
-    [
-      "object_pattern",
-      "object_type"
-    ],
-    [
-      "object",
-      "object_type"
-    ],
-    [
-      "object",
-      "object_pattern",
-      "_property_name"
+      "nested_identifier",
+      "nested_type_identifier"
     ],
     [
       "primary_expression",
-      "_lhs_expression",
       "predefined_type"
     ],
     [
       "primary_expression",
-      "_lhs_expression",
       "primary_type"
     ],
     [
       "primary_expression",
-      "_lhs_expression",
-      "literal_type"
+      "variable_declarator_definite"
     ],
     [
-      "primary_expression",
-      "_parameter_name",
-      "primary_type"
-    ],
-    [
-      "_call_signature",
-      "constructor_type"
-    ],
-    [
-      "array_pattern",
-      "tuple_type"
-    ],
-    [
-      "array",
-      "tuple_type"
+      "primary_type",
+      "type_parameter"
     ],
     [
       "template_string",
       "template_literal_type"
     ],
     [
-      "_type_query_call_expression_in_type_annotation",
-      "call_expression_call"
-    ],
-    [
-      "_type_query_call_expression",
-      "call_expression_call"
-    ],
-    [
-      "object",
-      "object_pattern",
-      "object_type"
-    ],
-    [
-      "array",
-      "array_pattern",
-      "tuple_type"
-    ],
-    [
-      "nested_identifier",
-      "nested_type_identifier"
-    ],
-    [
-      "_initializer",
-      "binary_expression_in"
+      "variable_declarator_plain",
+      "for_header_let_const_kind"
     ]
   ],
   "precedences": [
