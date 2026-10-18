@@ -168,15 +168,19 @@ Two committed ratchets back the run (both only ever tighten):
   stays cleared. When a run reports a code below its ceiling, lower the
   ceiling in the same commit.
 - `packages/tools/validation-report.json` — the report the committed
-  ceilings are checked against (a unit test pins the committed pair).
-  Commit it, as `validate` wrote it, in the same commit as any change to
-  `diagnostic-ceilings.json` or to the validated rows; otherwise leave it out,
-  since every run rewrites it. Compare two reports, such as the committed
-  one and a fresh run's, with
+  ceilings are checked against (a unit test pins the committed pair). It
+  records, per grammar, its `grammar-diagnostics.json` as counts per code and
+  severity plus a digest of the file, and every validator failure as a row,
+  one record per line. Commit it, as `validate` wrote it, in the same commit
+  as any change to `diagnostic-ceilings.json` or to the validated rows;
+  otherwise leave it out, since every run rewrites it. Compare two reports,
+  such as the committed one and a fresh run's, with
   `sittir validate history --diff <base.json> <head.json>`: it prints
-  per-grammar row and per-code count deltas, then every row only one side
-  has. It exits 1 when rows moved and 2 when a side is missing, empty or
-  has no rows, so an empty side never reads as "nothing moved".
+  per-grammar row and per-code count deltas, each grammar whose diagnostics
+  file moved (read that file's `git diff` for the rows), then every row only
+  one side has. It reads the older flat-array format too. It exits 1 when
+  anything moved and 2 when a side is missing, empty or records nothing, so
+  an empty side never reads as "nothing moved".
 
 ## Native engine build
 

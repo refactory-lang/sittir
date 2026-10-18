@@ -11,6 +11,7 @@
  * before calling in.
  */
 
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { load } from '../codegen-surface.ts';
 
@@ -90,34 +91,68 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
 		| Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>
 	);
 
+/** Per diagnostic code, how many rows it has at each severity. */
+export type DiagnosticCounts = Readonly<Record<string, Readonly<Record<string, number>>>>;
+
 /**
- * Merge per-grammar static grammar diagnostics and per-grammar validator
- * failures into one flat array of `ValidationReportEntry` — each entry is
- * the original diagnostic object, spread as-is, tagged with only the shared
- * `source`/`grammar`/`backend` fields. No hand-picked field list to keep in
- * sync as either diagnostic shape grows.
+ * What the report records of one grammar's `grammar-diagnostics.json`: its
+ * rows counted per code and severity, and a digest of the file, so a diff of
+ * two reports names a grammar whose diagnostics moved without the report
+ * copying the rows. A report in the flat format records no digest.
  */
-export function buildValidationReportEntries(
-	grammarDiagnosticsByGrammar: Readonly<Record<string, readonly GrammarDiagnosticEntry[]>>,
-	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>,
-	backend = 'native'
-): ValidationReportEntry[] {
-	const entries: ValidationReportEntry[] = [];
-	for (const [grammar, diagnostics] of Object.entries(grammarDiagnosticsByGrammar)) {
-		for (const d of diagnostics) {
-			entries.push({ source: 'grammar' as const, grammar, backend, ...d });
-		}
-	}
-	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
-		for (const f of failures) {
-			entries.push({ source: 'validator' as const, grammar, backend, ...f });
-		}
-	}
-	return entries;
+export interface GrammarDiagnosticsRecord {
+	readonly digest?: string;
+	readonly counts: DiagnosticCounts;
 }
 
-/** Read a report `writeValidationReport` wrote. A missing, empty or unparseable file, or one that is not an array, throws naming the path. */
-export function readValidationReport(path: string): ValidationReportEntry[] {
+/** The validation report: each grammar's diagnostics record, and every validator failure as a row. */
+export interface ValidationReport {
+	readonly grammars: Readonly<Record<string, GrammarDiagnosticsRecord>>;
+	readonly rows: readonly ValidationReportEntry[];
+}
+
+/** One grammar's diagnostics as read from its file: the file's text, when it exists, and its rows. */
+export interface GrammarDiagnosticsInput {
+	readonly text?: string;
+	readonly entries: readonly GrammarDiagnosticEntry[];
+}
+
+function countDiagnostics(entries: readonly DiagnosticEntryBase[]): DiagnosticCounts {
+	const counts: Record<string, Record<string, number>> = {};
+	for (const e of entries) {
+		const bySeverity = (counts[e.code] ??= {});
+		bySeverity[e.severity] = (bySeverity[e.severity] ?? 0) + 1;
+	}
+	return counts;
+}
+
+/** The report of one validation run: each grammar's diagnostics record, and each validator failure as a row tagged with its grammar and backend. */
+export function buildValidationReport(
+	grammarDiagnosticsByGrammar: Readonly<Record<string, GrammarDiagnosticsInput>>,
+	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>,
+	backend = 'native'
+): ValidationReport {
+	const grammars: Record<string, GrammarDiagnosticsRecord> = {};
+	for (const [grammar, { text, entries }] of Object.entries(grammarDiagnosticsByGrammar)) {
+		grammars[grammar] = {
+			...(text === undefined ? {} : { digest: createHash('sha256').update(text).digest('hex') }),
+			counts: countDiagnostics(entries)
+		};
+	}
+	const rows: ValidationReportEntry[] = [];
+	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
+		for (const f of failures) rows.push({ source: 'validator' as const, grammar, backend, ...f });
+	}
+	return { grammars, rows };
+}
+
+/**
+ * Read a report `writeValidationReport` wrote, or one in the flat format (one
+ * array of rows, grammar diagnostics among them), whose grammar rows fold into
+ * counts with no digest. A missing, empty or unparseable file, a value in
+ * neither format, or an element that is not a row throws naming the path.
+ */
+export function readValidationReport(path: string): ValidationReport {
 	if (!existsSync(path)) throw new Error(`validation report not found: ${path}`);
 	const text = readFileSync(path, 'utf8');
 	if (text.trim() === '') throw new Error(`validation report is empty: ${path}`);
@@ -127,23 +162,40 @@ export function readValidationReport(path: string): ValidationReportEntry[] {
 	} catch (e) {
 		throw new Error(`validation report is not valid JSON: ${path}: ${(e as Error).message}`);
 	}
-	if (!Array.isArray(parsed)) throw new Error(`validation report is not an array: ${path}`);
-	parsed.forEach((row: unknown, index) => {
+	if (Array.isArray(parsed)) {
+		const rows = checkedRows(parsed, path);
+		const grammarRows = Map.groupBy(
+			rows.filter((row) => row.source === 'grammar'),
+			(row) => row.grammar
+		);
+		return {
+			grammars: Object.fromEntries([...grammarRows].map(([grammar, entries]) => [grammar, { counts: countDiagnostics(entries) }])),
+			rows: rows.filter((row) => row.source !== 'grammar')
+		};
+	}
+	const record = parsed as { grammars?: unknown; rows?: unknown } | null;
+	if (typeof record !== 'object' || record === null || typeof record.grammars !== 'object' || record.grammars === null || !Array.isArray(record.rows))
+		throw new Error(`validation report is not a validation report (neither a row array nor grammars and rows): ${path}`);
+	return { grammars: record.grammars as ValidationReport['grammars'], rows: checkedRows(record.rows, path) };
+}
+
+function checkedRows(rows: readonly unknown[], path: string): ValidationReportEntry[] {
+	rows.forEach((row, index) => {
 		if (typeof row !== 'object' || row === null || Array.isArray(row))
 			throw new Error(`validation report row ${index} is not an object: ${path}`);
 		const missing = REPORT_ROW_FIELDS.filter((f) => typeof (row as Record<string, unknown>)[f] !== 'string');
 		if (missing.length > 0)
 			throw new Error(`validation report row ${index} lacks the string field(s) ${missing.join(', ')}: ${path}`);
 	});
-	return parsed as ValidationReportEntry[];
+	return rows as ValidationReportEntry[];
 }
 
 /** The string fields every report row carries, whichever source wrote it. */
 const REPORT_ROW_FIELDS = ['source', 'grammar', 'backend', 'code', 'severity', 'message'] as const;
 
-/** Write the full (unbounded) entry list to `outPath` as pretty JSON, overwriting any previous report. */
-export function writeValidationReport(entries: readonly ValidationReportEntry[], outPath: string): void {
-	writeFileSync(outPath, printRecordLines([...entries].sort(compareReportRows)));
+/** Write the report to `outPath`, one grammar record and one row per line, overwriting any previous report. */
+export function writeValidationReport(report: ValidationReport, outPath: string): void {
+	writeFileSync(outPath, printRecordLines({ grammars: report.grammars, rows: [...report.rows].sort(compareReportRows) }));
 }
 
 /** Report rows in a stable order: by grammar, source, backend, code, severity and message, then by the whole row. */
@@ -162,14 +214,19 @@ function compareReportRows(a: ValidationReportEntry, b: ValidationReportEntry): 
  */
 export type CodeCeilings = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
-/** Report rows per grammar per code, counting error and warning rows; an info row records a fact, not debt. */
-export function countCodeEntries(entries: readonly ValidationReportEntry[]): Record<string, Record<string, number>> {
+const isDebt = (severity: string): boolean => severity === 'error' || severity === 'warning';
+
+/** Rows per grammar per code at error or warning severity, validator rows and recorded grammar diagnostics alike; an info row records a fact, not debt. */
+export function countCodeEntries(report: ValidationReport): Record<string, Record<string, number>> {
 	const counts: Record<string, Record<string, number>> = {};
-	for (const e of entries) {
-		if (e.severity !== 'error' && e.severity !== 'warning') continue;
-		const row = (counts[e.grammar] ??= {});
-		row[e.code] = (row[e.code] ?? 0) + 1;
-	}
+	const add = (grammar: string, code: string, n: number): void => {
+		const row = (counts[grammar] ??= {});
+		row[code] = (row[code] ?? 0) + n;
+	};
+	for (const [grammar, { counts: byCode }] of Object.entries(report.grammars))
+		for (const [code, bySeverity] of Object.entries(byCode))
+			for (const [severity, n] of Object.entries(bySeverity)) if (isDebt(severity)) add(grammar, code, n);
+	for (const row of report.rows) if (isDebt(row.severity)) add(row.grammar, row.code, 1);
 	return counts;
 }
 
@@ -195,12 +252,8 @@ export interface CodeCeilingVerdict {
  * paid-down debt, and the ceiling moves down with it. Only `grammars` are
  * judged, so a single-grammar run never judges a grammar it did not measure.
  */
-export function checkCodeCeilings(
-	entries: readonly ValidationReportEntry[],
-	ceilings: CodeCeilings,
-	grammars: readonly string[]
-): CodeCeilingVerdict {
-	const counts = countCodeEntries(entries);
+export function checkCodeCeilings(report: ValidationReport, ceilings: CodeCeilings, grammars: readonly string[]): CodeCeilingVerdict {
+	const counts = countCodeEntries(report);
 	const violations: CodeCeilingCount[] = [];
 	const improvements: CodeCeilingCount[] = [];
 	for (const grammar of [...grammars].sort()) {

@@ -103,7 +103,7 @@ Print last N validation history entries, or diff two validation reports
 
 **Options**
 
-- `--diff <reports...>` — Diff two validation-report.json files, <base> <head>: per-grammar row and per-code count deltas, then every moved row; exits 1 when rows moved, 2 when a side is missing, empty or has no rows
+- `--diff <reports...>` — Diff two validation-report.json files, <base> <head>: per-grammar row and per-code count deltas, each grammar whose diagnostics file moved, then every moved row; exits 1 when anything moved, 2 when a side is missing, empty or records nothing
 
 **Example**
 

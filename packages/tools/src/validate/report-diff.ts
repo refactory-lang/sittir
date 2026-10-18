@@ -1,6 +1,6 @@
-import { readValidationReport, type ValidationReportEntry } from './validation-report.ts';
+import { readValidationReport, type ValidationReport, type ValidationReportEntry } from './validation-report.ts';
 
-/** One grammar's row counts on each side, and how many rows only one side has. */
+/** One grammar's row counts on each side (validator rows and recorded grammar diagnostics), and how many validator rows only one side has. */
 export interface GrammarRowDelta {
 	readonly grammar: string;
 	readonly base: number;
@@ -9,12 +9,19 @@ export interface GrammarRowDelta {
 	readonly removed: number;
 }
 
-/** A (grammar, code) pair whose row count differs between the sides. */
+/** A (grammar, code) pair whose row count, validator rows and recorded grammar diagnostics together, differs between the sides. */
 export interface CodeCountDelta {
 	readonly grammar: string;
 	readonly code: string;
 	readonly base: number;
 	readonly head: number;
+}
+
+/** A grammar whose diagnostics file differs between the sides, by the digests each side recorded. */
+export interface DigestChange {
+	readonly grammar: string;
+	readonly base: string;
+	readonly head: string;
 }
 
 export interface ReportDiff {
@@ -26,13 +33,15 @@ export interface ReportDiff {
 	readonly added: readonly ValidationReportEntry[];
 	/** Rows the base has more copies of than the head, in base order. */
 	readonly removed: readonly ValidationReportEntry[];
+	/** Grammars whose diagnostics file moved, where both sides record a digest; read that file's history for the rows. */
+	readonly digests: readonly DigestChange[];
 }
 
-/** A report one side of a comparison can stand on: readable, and with at least one row, so an empty side never reads as nothing moved. */
-export function readComparableReport(path: string): ValidationReportEntry[] {
-	const entries = readValidationReport(path);
-	if (entries.length === 0) throw new Error(`validation report has no rows: ${path}`);
-	return entries;
+/** A report one side of a comparison can stand on: readable, and recording at least one row or grammar, so an empty side never reads as nothing moved. */
+export function readComparableReport(path: string): ValidationReport {
+	const report = readValidationReport(path);
+	if (report.rows.length === 0 && Object.keys(report.grammars).length === 0) throw new Error(`validation report has nothing recorded: ${path}`);
+	return report;
 }
 
 /** A JSON value with every object's keys sorted, at every depth; array order is kept, and an array never reads as an object. */
@@ -73,16 +82,36 @@ function surplus(
 	});
 }
 
-/** Compare two validation reports row by row, as multisets of rows. */
-export function diffValidationReports(
-	base: readonly ValidationReportEntry[],
-	head: readonly ValidationReportEntry[]
-): ReportDiff {
-	const added = surplus(head, base);
-	const removed = surplus(base, head);
+/** Per (grammar, code), the row count: validator rows plus every recorded grammar diagnostic, whatever its severity. */
+function codeCounts(report: ValidationReport): Map<string, number> {
+	const counts = countBy(report.rows, (e) => JSON.stringify([e.grammar, e.code]));
+	for (const [grammar, record] of Object.entries(report.grammars))
+		for (const [code, bySeverity] of Object.entries(record.counts)) {
+			const key = JSON.stringify([grammar, code]);
+			counts.set(key, (counts.get(key) ?? 0) + Object.values(bySeverity).reduce((sum, n) => sum + n, 0));
+		}
+	return counts;
+}
+
+/** Per grammar, its total of `codeCounts`. */
+function grammarTotals(counts: ReadonlyMap<string, number>): Map<string, number> {
+	const totals = new Map<string, number>();
+	for (const [key, n] of counts) {
+		const [grammar] = JSON.parse(key) as [string, string];
+		totals.set(grammar, (totals.get(grammar) ?? 0) + n);
+	}
+	return totals;
+}
+
+/** Compare two validation reports: validator rows as multisets, row counts per grammar and code, and each grammar's diagnostics digest. */
+export function diffValidationReports(base: ValidationReport, head: ValidationReport): ReportDiff {
+	const added = surplus(head.rows, base.rows);
+	const removed = surplus(base.rows, head.rows);
 	const byGrammar = (e: ValidationReportEntry) => e.grammar;
-	const baseRows = countBy(base, byGrammar);
-	const headRows = countBy(head, byGrammar);
+	const baseCodes = codeCounts(base);
+	const headCodes = codeCounts(head);
+	const baseRows = grammarTotals(baseCodes);
+	const headRows = grammarTotals(headCodes);
 	const addedRows = countBy(added, byGrammar);
 	const removedRows = countBy(removed, byGrammar);
 	const grammars = [...new Set([...baseRows.keys(), ...headRows.keys()])].sort().map((grammar) => ({
@@ -92,9 +121,6 @@ export function diffValidationReports(
 		added: addedRows.get(grammar) ?? 0,
 		removed: removedRows.get(grammar) ?? 0
 	}));
-	const byCode = (e: ValidationReportEntry) => JSON.stringify([e.grammar, e.code]);
-	const baseCodes = countBy(base, byCode);
-	const headCodes = countBy(head, byCode);
 	const codes = [...new Set([...baseCodes.keys(), ...headCodes.keys()])]
 		.sort()
 		.map((key) => {
@@ -102,13 +128,26 @@ export function diffValidationReports(
 			return { grammar, code, base: baseCodes.get(key) ?? 0, head: headCodes.get(key) ?? 0 };
 		})
 		.filter((d) => d.base !== d.head);
-	return { grammars, codes, added, removed };
+	const digests = Object.keys(head.grammars)
+		.sort()
+		.flatMap((grammar) => {
+			const before = base.grammars[grammar]?.digest;
+			const after = head.grammars[grammar]?.digest;
+			return before !== undefined && after !== undefined && before !== after ? [{ grammar, base: before, head: after }] : [];
+		});
+	return { grammars, codes, added, removed, digests };
 }
 
-/** The diff as lines: every grammar, every moved code count, then every added (`+`) and removed (`-`) row in full. */
+/** Whether anything moved: a row, a count or a grammar's diagnostics file. */
+export function reportMoved(diff: ReportDiff): boolean {
+	return diff.added.length + diff.removed.length + diff.codes.length + diff.digests.length > 0;
+}
+
+/** The diff as lines: every grammar, every moved code count, every grammar whose diagnostics file moved, then every added (`+`) and removed (`-`) row in full. */
 export function formatReportDiff(diff: ReportDiff): string[] {
 	const lines = diff.grammars.map((g) => `${g.grammar}: rows ${g.base} -> ${g.head} (+${g.added} -${g.removed})`);
 	for (const c of diff.codes) lines.push(`  ${c.grammar} ${c.code}: ${c.base} -> ${c.head}`);
+	for (const d of diff.digests) lines.push(`  ${d.grammar}: grammar diagnostics changed (digest ${d.base.slice(0, 12)} -> ${d.head.slice(0, 12)})`);
 	for (const e of diff.added) lines.push(`+ ${JSON.stringify(e)}`);
 	for (const e of diff.removed) lines.push(`- ${JSON.stringify(e)}`);
 	return lines;
