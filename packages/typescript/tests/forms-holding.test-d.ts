@@ -34,3 +34,5 @@ export type ListAdmits = Expect<
 	Equals<FormsHolding<T.CallExpression.Parsed, 'typeArguments', T.TypeArguments.Parsed>['$type'], TSKindId.CallExpressionCall | TSKindId.CallExpressionMember>
 >;
 breakStatement.$with.label(label);
+export type ListRejectsString = Expect<Equals<FormsHolding<T.CallExpression.Parsed, 'typeArguments', string>, never>>;
+export type ListRejectsNode = Expect<Equals<FormsHolding<T.CallExpression.Parsed, 'typeArguments', T.Number.Parsed>, never>>;

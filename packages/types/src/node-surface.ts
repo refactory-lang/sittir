@@ -105,10 +105,10 @@ export type SupertypeSurface<S, ByKindId> = Resolve<S, ByKindId>;
 
 /** The parameter lists of every overload of a setter; the pattern lists the most overloads a setter carries, and a source with fewer matches it with repeats. */
 type SetterParameters<Setter> = Setter extends {
-	(...args: infer A1): unknown;
-	(...args: infer A2): unknown;
-	(...args: infer A3): unknown;
-	(...args: infer A4): unknown;
+	(...args: infer A1 extends readonly unknown[]): unknown;
+	(...args: infer A2 extends readonly unknown[]): unknown;
+	(...args: infer A3 extends readonly unknown[]): unknown;
+	(...args: infer A4 extends readonly unknown[]): unknown;
 }
 	? A1 | A2 | A3 | A4
 	: never;
