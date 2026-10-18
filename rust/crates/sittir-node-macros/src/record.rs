@@ -106,6 +106,7 @@ mod tests {
         let out = checks(&parse_quote! {
             #[node(words = 10)]
             pub struct LetDeclarationNode {
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[slot(word = 2, bit = 0)]
                 pub mutable: bool,
@@ -125,6 +126,7 @@ mod tests {
     fn a_struct_with_no_record_attribute_checks_nothing() {
         let out = checks(&parse_quote! {
             pub struct IdentifierNode {
+                #[text]
                 pub text: String,
             }
         })

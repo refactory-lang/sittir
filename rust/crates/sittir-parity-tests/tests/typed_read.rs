@@ -48,8 +48,10 @@ type Layout = Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>;
 #[node(kind = kind::IDENTIFIER, text)]
 struct Ident {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -57,6 +59,7 @@ struct Ident {
 #[node(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN])]
 struct Params {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
 }
 
@@ -64,6 +67,7 @@ struct Params {
 #[node(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE])]
 struct Block {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
@@ -74,6 +78,7 @@ struct Block {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct Function {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
@@ -91,6 +96,7 @@ struct Function {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct FunctionWithoutBody {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
@@ -104,6 +110,7 @@ struct FunctionWithoutBody {
 #[node(kind = kind::PARAMETERS)]
 struct ParamsWithoutTokenList {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
 }
 
@@ -111,6 +118,7 @@ struct ParamsWithoutTokenList {
 #[node(kind = kind::SOURCE_FILE)]
 struct OneFunction {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_statement")]
     #[slot(field = field::STATEMENTS)]
@@ -121,6 +129,7 @@ struct OneFunction {
 #[node(kind = kind::SOURCE_FILE)]
 struct File {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
@@ -132,8 +141,10 @@ struct File {
 #[node(kind = ts::_AUTOMATIC_SEMICOLON, text = ";")]
 struct Inserted {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -428,6 +439,7 @@ enum Type {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Typed {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
@@ -527,8 +539,10 @@ fn a_seated_read_keeps_a_unit_stored_child_past_its_depth_a_coordinate_whose_hol
 #[node(kind = ts::IDENTIFIER, text)]
 struct TsIdent {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -536,8 +550,10 @@ struct TsIdent {
 #[node(kind = ts::NUMBER_DECIMAL, text)]
 struct TsNumber {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -545,6 +561,7 @@ struct TsNumber {
 #[node(kind = ts::VARIABLE_DECLARATOR_PLAIN, layout = [ts::EQ])]
 struct Declarator {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_name")]
     #[slot(field = ts_field::NAME)]
@@ -576,6 +593,7 @@ enum Terminator {
 #[node(kind = ts::LEXICAL_DECLARATION)]
 struct Declaration {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_kind")]
     #[slot(field = ts_field::KIND)]
@@ -614,6 +632,7 @@ enum BlockTerminator {
 #[node(kind = ts::STATEMENT_BLOCK, layout = [ts::LBRACE, ts::RBRACE])]
 struct StatementBlock {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_terminator")]
     #[slot(field = ts_field::TERMINATOR)]
@@ -638,6 +657,7 @@ fn an_absent_slot_with_a_blank_arm_reads_as_its_blank() {
 )]
 struct Decimal {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
@@ -651,8 +671,10 @@ struct Decimal {
 #[node(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
 struct TypeIdent {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_content")]
+    #[slot]
     content: SlotValue<Ident>,
 }
 
@@ -669,6 +691,7 @@ enum NamedType {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct Named {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
@@ -715,6 +738,7 @@ fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
 #[node(kind = kind::_ATTRIBUTED_PARAMETER)]
 struct Param {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
 }
 
@@ -722,6 +746,7 @@ struct Param {
 #[node(kind = kind::PARAMETERS_ELEMENTS, item = item)]
 struct List {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
@@ -735,6 +760,7 @@ struct List {
 #[node(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2)]
 struct Owner {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
@@ -786,8 +812,10 @@ enum Name {
 #[node(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
 struct TypeIdentOfChoice {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_content")]
+    #[slot]
     content: SlotValue<Name>,
 }
 
@@ -802,6 +830,7 @@ enum NamedTypeOfChoice {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT])]
 struct NamedOfChoice {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]

@@ -364,6 +364,7 @@ mod tests {
             #[node(kind = kind::LET_DECLARATION)]
             pub struct LetDeclarationNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_pattern")]
                 #[slot(field = field::PATTERN)]
@@ -390,8 +391,10 @@ mod tests {
             #[node(kind = kind::SELF, text = "self")]
             pub struct SelfNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
+                #[text]
                 pub text: String,
             }
         });
@@ -406,8 +409,10 @@ mod tests {
             #[node(kind = kind::IDENTIFIER, text)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
+                #[text]
                 pub text: String,
             }
         });
@@ -425,8 +430,10 @@ mod tests {
             #[node(kind = IDENTIFIER, text)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
+                #[text]
                 pub text: String,
             }
         };

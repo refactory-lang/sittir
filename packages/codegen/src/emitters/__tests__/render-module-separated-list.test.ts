@@ -219,7 +219,8 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
 		}).nodeRs.contents;
 
-		expect(emitted).toContain('self.separator_kind.get_or_insert(ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
+		expect(emitted).toContain('::sittir_core::prepare::Setting::fill(&mut parts.separator_kind, ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
+		expect(emitted).toContain('if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.member, MemberListNode::separator_kind_of, ctx) {');
 		expect(emitted).toContain('_ => ";" };');
 	});
 

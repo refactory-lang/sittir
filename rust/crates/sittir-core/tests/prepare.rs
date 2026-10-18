@@ -206,7 +206,7 @@ fn an_edged_node_prepares_its_edges_from_the_edge_row() {
     let opts = edged_options();
     let sources = Sources(HashMap::new());
     let mut leaf = Edged3 { edges: Edges::default() };
-    prepare_edges(&mut leaf, &ctx(&opts, &sources));
+    prepare_edges(&mut leaf.edges, KindId(3), (None, None), &ctx(&opts, &sources));
     assert_eq!(leaf.edges, Edges { before: Some(stamped(5, SeamStrength::Cascade)), after: Some(stamped(6, SeamStrength::Cascade)) });
 }
 
@@ -220,7 +220,7 @@ fn a_wire_stamp_takes_its_site_spec_strength_and_a_render_stamp_keeps_its_own() 
     assert_eq!(opts.edge_arm(KindId(4), Side::Before, None, None), None);
     let sources = Sources(HashMap::new());
     let mut leaf = Edged3 { edges: Edges { before: None, after: Some(wire(8)) } };
-    prepare_edges(&mut leaf, &ctx(&opts, &sources));
+    prepare_edges(&mut leaf.edges, KindId(3), (None, None), &ctx(&opts, &sources));
     assert_eq!(leaf.edges, Edges { before: Some(stamped(5, SeamStrength::Cascade)), after: Some(wire(8)) });
 }
 
@@ -261,20 +261,6 @@ struct Armed {
     edges: Edges,
     slot: Option<SlotValue<Token>>,
 }
-impl Edged for Armed {
-    fn kind_id(&self) -> KindId {
-        KindId(3)
-    }
-    fn edges(&self) -> &Edges {
-        &self.edges
-    }
-    fn edges_mut(&mut self) -> &mut Edges {
-        &mut self.edges
-    }
-    fn edge_arm_kinds(&self, ctx: &RenderContext<'_>) -> (Option<KindId>, Option<KindId>) {
-        (self.slot.arm_among(ctx, ctx.options.edge_arm_sites(self.kind_id(), Side::Before)), None)
-    }
-}
 
 #[test]
 fn a_node_prepares_the_edge_of_the_arm_its_slot_holds() {
@@ -283,7 +269,9 @@ fn a_node_prepares_the_edge_of_the_arm_its_slot_holds() {
     let sources = Sources(HashMap::new());
     let prepared = |slot: Option<SlotValue<Token>>| {
         let mut node = Armed { edges: Edges::default(), slot };
-        prepare_edges(&mut node, &ctx(&opts, &sources));
+        let ctx = ctx(&opts, &sources);
+        let arms = (node.slot.arm_among(&ctx, ctx.options.edge_arm_sites(KindId(3), Side::Before)), None);
+        prepare_edges(&mut node.edges, KindId(3), arms, &ctx);
         node.edges.before
     };
     assert_eq!(prepared(Some(SlotValue::Node(Token(41)))), Some(stamped(9, SeamStrength::Declared)));
@@ -529,7 +517,7 @@ fn a_rebuilt_edge_item_or_a_flank_that_is_not_whitespace_leaves_the_edge_unset()
 #[test]
 fn filling_root_edges_keeps_a_side_the_wire_set() {
     let mut root = Edged3 { edges: Edges { before: Some(wire(4)), after: None } };
-    fill_edges(&mut root, Edges { before: Some(wire(1)), after: Some(wire(3)) });
+    fill_edges(&mut root.edges, Edges { before: Some(wire(1)), after: Some(wire(3)) });
     assert_eq!(root.edges, Edges { before: Some(wire(4)), after: Some(wire(3)) });
 }
 

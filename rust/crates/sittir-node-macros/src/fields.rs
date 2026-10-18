@@ -3,14 +3,15 @@
 //! The struct's impl hands out its fields; each accessor's bound is what a
 //! render body asks of a field of that shape.
 
-use crate::expand::{inner_of, is_layout, last_segment};
+use crate::expand::{inner_of, last_segment, Field, Role};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use syn::{Fields, Ident, Type};
+use syn::{Ident, Type};
 
-/// What a render body asks of a field, by the field's type.
+/// What a render body asks of a field: the layout by its stamp, any other
+/// field by its type.
 enum Shape<'t> {
-    /// `Option<Box<NodeLayout>>`: read through `BodyLayout`.
+    /// `#[layout]`, an `Option<Box<NodeLayout>>`: read through `BodyLayout`.
     Layout(&'t Type),
     /// `SlotValue<…>`: a child the body renders and tests the kind of.
     Child,
@@ -26,13 +27,16 @@ enum Shape<'t> {
     Value,
 }
 
-fn shape(ty: &Type) -> Shape<'_> {
-    if is_layout(ty) {
-        let boxed = inner_of(ty, "Option").and_then(|boxed| inner_of(boxed, "Box")).expect("a layout is `Option<Box<…>>`");
-        return Shape::Layout(boxed);
+fn shape<'t>(field: &Field<'t>) -> syn::Result<Shape<'t>> {
+    let ty = field.ty;
+    if matches!(field.role, Role::Layout) {
+        let boxed = inner_of(ty, "Option")
+            .and_then(|boxed| inner_of(boxed, "Box"))
+            .ok_or_else(|| syn::Error::new_spanned(ty, "a `#[layout]` field is an `Option<Box<NodeLayout>>`"))?;
+        return Ok(Shape::Layout(boxed));
     }
     let segment = last_segment(ty);
-    match segment.as_deref() {
+    Ok(match segment.as_deref() {
         Some("SlotValue") => Shape::Child,
         Some("Vec" | "NonEmptyVec") => Shape::Items,
         Some("String") => Shape::Text,
@@ -42,11 +46,11 @@ fn shape(ty: &Type) -> Shape<'_> {
             _ => Shape::Value,
         },
         _ => Shape::Value,
-    }
+    })
 }
 
 /// `type_` → `Type`, `return_type` → `ReturnType`.
-fn camel(field: &Ident) -> Ident {
+pub(crate) fn camel(field: &Ident) -> Ident {
     let name = field.to_string();
     let camel: String = name
         .trim_start_matches("r#")
@@ -60,15 +64,12 @@ fn camel(field: &Ident) -> Ident {
     format_ident!("{}", camel, span = field.span())
 }
 
-pub fn fields_trait(owner: &Ident, name: &Ident, fields: &Fields) -> syn::Result<TokenStream> {
-    let Fields::Named(named) = fields else {
-        return Err(syn::Error::new_spanned(owner, "a fields trait is over named fields"));
-    };
+pub fn fields_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
     let mut declared = Vec::new();
     let mut implemented = Vec::new();
-    for field in &named.named {
-        let ident = field.ident.as_ref().expect("a named field");
-        let ty = &field.ty;
+    for field in fields {
+        let ident = field.ident;
+        let ty = field.ty;
         let assoc = camel(ident);
         let gat = |bound: TokenStream, value: TokenStream, read: TokenStream| {
             (
@@ -85,7 +86,7 @@ pub fn fields_trait(owner: &Ident, name: &Ident, fields: &Fields) -> syn::Result
         let plain = |out: TokenStream, read: TokenStream| {
             (quote! { fn #ident(&self) -> #out; }, quote! { fn #ident(&self) -> #out { #read } })
         };
-        let (decl, imp) = match shape(ty) {
+        let (decl, imp) = match shape(field)? {
             Shape::Layout(inner) => gat(
                 quote!(::sittir_core::layout::BodyLayout<'a>),
                 quote!(::core::option::Option<&'a #inner>),

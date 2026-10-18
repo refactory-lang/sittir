@@ -62,7 +62,7 @@ pub struct NodeLayout<T> {
 /// the separator, and its separator token, each only where its occurrence's
 /// source takes one apart from the options in effect when it was read. Every
 /// separator gap of the slot, existing or inserted, renders it, below a
-/// gap's own layout entry (`prepare::fill_slot_gaps`).
+/// gap's own layout entry (`prepare::SlotTarget::fill_gaps`).
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SlotLayout {
     /// The slot's wire key.
@@ -72,8 +72,8 @@ pub struct SlotLayout {
     pub separator: Option<KindId>,
     /// The separator before each item, by its place in the slot, as a
     /// candidate kind of the list's separator, where its source spells
-    /// another than the slot's (`prepare::fill_slot_separators`). The prepare
-    /// walk fills it; it never crosses.
+    /// another than the slot's (`prepare::SlotTarget::separators`). The
+    /// prepare walk fills it; it never crosses.
     pub tokens: Vec<Option<KindId>>,
 }
 
@@ -383,6 +383,40 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
             }));
         }
         extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
+    }
+}
+
+/// A prepare's handle on a layout (`prepare::LayoutTarget`) reads it as the
+/// layout it borrows.
+impl<L: Layout + ?Sized> Layout for &mut L {
+    type Trivia = L::Trivia;
+
+    fn trivia(&self) -> Option<&NodeTrivia<Self::Trivia>> {
+        (**self).trivia()
+    }
+
+    fn edges(&self) -> &Edges {
+        (**self).edges()
+    }
+
+    fn edges_mut(&mut self) -> &mut Edges {
+        (**self).edges_mut()
+    }
+
+    fn slot(&self, slot: &str) -> Option<&SlotLayout> {
+        (**self).slot(slot)
+    }
+
+    fn sides(&self) -> Option<&crate::slot::NodeCoordinate> {
+        (**self).sides()
+    }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        (**self).snapshot_edge()
+    }
+
+    fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>> {
+        (**self).inner_item()
     }
 }
 

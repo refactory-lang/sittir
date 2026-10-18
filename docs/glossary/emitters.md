@@ -251,13 +251,12 @@ by kind and slot (interiorSlotGuards); the raw builder tests a slot value agains
 
 ### `packages/codegen/src/emitters/render-module.ts::seatLoops`
 
-One `fill_seated_gaps` call per repeat slot that has seated sites and whose
-elements can reach a seat (`slotElementsReach`), passing the slot's seat
-table (`SEATS_<KIND>_<SLOT>`). The runtime walks the elements, so there is
-no per-list match block: each element answers its own seat through
-`SeatTarget`. A list field is never optional; a slot whose elements may
-be absent is iterated through `Option::as_mut`, any other through
-`Some`, so one core function serves both.
+One `SeatSlot::fill_seats` call for each seated slot (`seatedSlots`),
+passing the slot's seat table (`SEATS_<KIND>_<SLOT>`). The runtime walks the
+elements, so there is no per-list match block: each element answers its own
+seat through `SeatTarget`. The same list stamps each of those slots
+`seated`, which gives its handle `SeatSlot`, so a seated slot whose elements
+answer no seat is a compile error.
 
 The core walk skips the last present element. A child's edge is written at
 the end of its own body and cannot know whether a sibling follows, so
@@ -3520,9 +3519,10 @@ Each payload is written by `choicePayloadType`, boxed when it is pinned over the
 The unit variants' kind ids are computed once (`unitKindIdsOf`) and become
 their `#[kind]` claims. Each claim prints as the variant's `#[kind]` line
 (`variantKindLines`), which is what the derive's codec decodes from, and from
-which the derive builds `from_kind_id` for an enum whose arms are all units
+which the derive implements `FromKindId` for an enum whose arms are all units
 or blank: a prepare-filled slot fills from its option's resolved kind id
-through it, so a slot whose enum has a payload arm fails to compile there.
+through it (`UnitSlot`), so a slot whose enum has a payload arm fails to
+compile there.
 An id no variant claims, such as the wire id of an alias that wraps a
 flattened supertype, is refused by the codec.
 
@@ -3715,13 +3715,15 @@ is a codegen error, since the node has no other way to decode it.
 ### `packages/codegen/src/emitters/render-module.ts::renderLayoutField`
 
 The `layout` field (`LAYOUT_FIELD`) a compound node struct carries
-besides its slots, keyed `#[wire(key = "$_layout")]` (`wireKeyAttr`). A
+besides its slots, keyed `#[wire(key = "$_layout")]` (`wireKeyAttr`) and
+stamped `#[layout]`, the role the derive knows it by. A
 compound declares no text field — its content is its slots, and a node that
 arrives with storage renders from that storage.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderLeafTextField`
 
-A text leaf's `text: String` field, keyed `$text`: the leaf's own content,
+A text leaf's `text: String` field, keyed `$text` and stamped `#[text]`
+(the role the derive knows it by): the leaf's own content,
 after its layout field (`renderLayoutField`). The struct's
 `#[node(…, text …)]` (`nodeArgs`) has the derive expand the text
 leaf codec: a bare string is its text, a number its fixed text, and an object
@@ -12963,7 +12965,14 @@ cell.
 `rustNodeFieldsTraitName`), which the derive emits and the kind's render
 function is generic over. The struct's `Render` calls that function, for a
 leaf as for a compound, so the node renders through the body a record's view
-shares.
+shares. It names the prepare trait the same way (`prepare = <Kind>Prepare`,
+`rustNodePrepareTraitName`), over which the kind's prepare function is
+generic (`prepareStructImpl`).
+
+Every field carries the one stamp the derive knows its role by: the layout
+`#[layout]`, a leaf's text `#[text]`, a slot `#[slot(…)]`, a list's
+delimiters `#[flank(…)]` and its chosen separator `#[separator_kind(…)]`,
+and a spacing setting `#[space(…)]` (`spaceAttr`).
 
 #### body
 
@@ -13835,7 +13844,7 @@ id, site index), sorted by kind id.
 ### `packages/codegen/src/emitters/render-options-rs.ts::seatTableName`
 
 `SEATS_<KIND>_<SLOT>`, the constant a slot's seat table is emitted under
-and `seatLoops` passes to `fill_seated_gaps`.
+and `seatLoops` passes to `SeatSlot::fill_seats`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::seatEdgeSide`
 
@@ -14233,37 +14242,50 @@ enums, `VerbatimNode`): `Ok(())`. It reads a coordinate (`READ_COORDINATE`).
 
 ### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`
 
-The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, each framed by its sides (`SourceTable::framed_span`: a comment an end item holds is its own, not the root's flank), classified into the root's before and after sites by the whitespace classes they admit (for a snapshot root, the gaps from the root's own span, `Layout::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `Layout::inner_item`, in place of an end item it lies beyond or of a missing one, as the source bytes its entries span or their geometry); `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
+The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, each framed by its sides (`SourceTable::framed_span`: a comment an end item holds is its own, not the root's flank), classified into the root's before and after sites by the whitespace classes they admit (for a snapshot root, the gaps from the root's own span, `Layout::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `Layout::inner_item`, in place of an end item it lies beyond or of a missing one, as the source bytes its entries span or their geometry); `fill_edges` sets only the sides the wire left unset, on the base edges the layout's handle gives (`Layout::edges_mut`). Every read and write goes through the prepare body's parts (`prepare_parts`). A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
-A node struct's `Prepare` impl. Every struct answers `gap_edges` with
-its own base edges, made when the layout holds none, `source_separator`
-from its layout (`layout::source_separator`: the one it carries, else its
-source's while its neighbour before is unchanged), and `snapshot_edge`
-from its layout's span and trivia, so a snapshot root's edges read
-geometry. A compound kind first fills its own base edges (for the grammar
-root, from its source flanks, `rootEdgeStamp`; then, for a kind that owns
-kind-edge sites, from its edge row, `prepare_edges`). A list node's own
-flanks need nothing more: they are its sides' layout runs, which its
-layout renders. Then each repeated slot's separator gaps take the classes
-the slot's stored layout holds (`slotGapFills`), and this kind's own facts
-fill: each spacing field that carries a per-node value
-(`carriesPerNodeValue`) takes the resolved arm when unset; the seat calls
-(`seatLoops`) write each seated element's gap into that element's own base
-`after` edge; a separated list takes its `delimiter` from its site when
-unset, its `separator_kind` from its slot's stored separator
-(`listItemWireKey`, read through the derive's `separator_kind_of`) before
-its site, and each item's own separator where its source spells another
-than the slot's (`fill_slot_separators` over `listItemsExpr`, by each
-item's `Prepare::source_separator`); and a required registered choice option the caller left unset is
-built from its option site's resolved arm (`optionDefaultFills`). Only then
-does it walk the children (every slot field's `prepare(ctx)?`). The order
-matters: a seat is a `get_or_insert` on the child's base edge, and the
-child's own `prepare_edges` fills that same edge from its kind's row, so
-the parent must seat before the child sees it. A wire-carried value always
-wins; a coordinate that names no tree or a span outside its source is the
-walk's error, not the render's.
+A node struct's `Prepare` impl and the prepare function it calls. The
+function, `prepare_<kind>` (`rustTypedPrepareFnName`), is generic over the
+kind's prepare trait (`<Kind>Prepare`, `rustNodePrepareTraitName`, which the
+derive emits from the struct's stamps), so one body prepares the struct and
+a record alike. It takes every place at once (`prepare_parts`) and writes
+each through its handle's core trait (`sittir_core::prepare`): the layout
+through `LayoutTarget`, a slot through `SlotTarget` (and `SeatSlot`,
+`UnitSlot`, `ArmOf` where its stamp gives it them), a print setting through
+`Setting`. The struct's own impl calls the function with itself.
+
+Every struct also answers `gap_edges` with its own base edges, made when the
+layout holds none, `source_separator` from its layout
+(`layout::source_separator`: the one it carries, else its source's while its
+neighbour before is unchanged), and `snapshot_edge` from its layout's span
+and trivia, so a snapshot root's edges read geometry.
+
+The body prepares the layout first, leaves included: a trivia entry that is a
+source coordinate takes its kind's edges there, as a coordinate in a slot
+does. A compound kind then fills its own base edges (for the grammar root,
+from its source flanks, `rootEdgeStamp`; then, for a kind that owns kind-edge
+sites, from its edge row, `prepareEdgesLine`). A list node's own flanks need
+nothing more: they are its sides' layout runs, which its layout renders. Then
+each repeated slot's separator gaps take the classes the slot's stored layout
+holds (`slotGapFills`), and this kind's own facts fill: each spacing field
+that carries a per-node value (`carriesPerNodeValue`) takes the resolved arm
+when unset; the seat calls (`seatLoops`) write each seated element's gap into
+that element's own base `after` edge; a separated list takes its `delimiter`
+from its site when unset, its `separator_kind` from its slot's stored
+separator (`listItemWireKey`, read through the derive's `separator_kind_of`)
+before its site, and each item's own separator where its source spells
+another than the slot's (`SlotTarget::separators` over the list's item field,
+stored by `LayoutTarget::set_slot_tokens`); and a required registered choice
+option the caller left unset is built from its option site's resolved arm
+(`optionDefaultFills`). Only then does it walk the children (each field
+`preparesSlot` admits, through `SlotTarget::prepare`). The order matters: a
+seat fills the child's base edge only when unset, and the child's own
+`prepare_edges` fills that same edge from its kind's row, so the parent must
+seat before the child sees it. A wire-carried value always wins; a coordinate
+that names no tree or a span outside its source is the walk's error, not the
+render's.
 
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
@@ -14271,7 +14293,7 @@ the node's own value still wins. One exception: a list whose trailing
 separator is optional takes its trailing flag from the source while its
 last item is still its source's last (`sourceTrailingSeparator`).
 
-Every struct node prepares its layout's trivia first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does. It reads a coordinate (`READ_COORDINATE`).
+It reads a coordinate (`READ_COORDINATE`).
 
 ### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparator`
 
@@ -14294,21 +14316,19 @@ trailing separator renders none even where the table's default is trailing.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 
-The `prepare` lines that fill a node's prepare-filled slots (`isPrepareFilled`)
-when the node arrived without them: the slot's choice, as `choiceNameOf`
-names it, is built with `from_kind_id` from `ctx.options.spacing[<site>].arm`, the arm the option
-chain resolved for the slot's choice site (per-tree, engine, then the
-grammar's declared default). The site is the one choice site in the render
-plan for this kind and slot, with no side and no seat. A slot with no such
-site fails codegen: the option would have nothing to resolve from. A value
-the caller set is never replaced.
+The `prepare` lines that fill a node's prepare-filled slots
+(`defaultedSlots`) when the node arrived without them: `UnitSlot::fill_unit`
+with `ctx.options.site_arm(<site>).arm`, the arm the option chain resolved for
+the slot's choice site (per-tree, engine, then the grammar's declared
+default), which builds the unit that arm names (`FromKindId`). A value the
+caller set is never replaced.
 
 ### `packages/codegen/src/emitters/render-module.ts::slotGapFills`
 
 The call a generated `prepare` makes for every repeated slot, before the
-seats and the option fills: `fill_slot_gaps` over the slot's items, with the
-layout the node's source stores for that slot (`Layout::slot`, by the slot's
-wire key). A list slot's layout holds the class most of its separator gaps
+seats and the option fills: `SlotTarget::fill_gaps` on the slot's handle,
+with the layout the node's source stores for that slot (`Layout::slot`, by
+the slot's wire key). A list slot's layout holds the class most of its separator gaps
 have on each side of the separator, stored only where it differs from what
 the read-time options write. The fill gives every gap between two present
 items those classes at slot strength (`SeamStrength::Slot`): the side before the
@@ -14318,22 +14338,10 @@ slot's class, a gap's own deviation (trivia, which is stronger) keeps its
 class, and an option fills only what the slot stores nothing for. A node
 built afresh has no layout, and its gaps are the options'.
 
-### `packages/codegen/src/emitters/render-module.ts::slotItems`
-
-A repeated slot's items as the generated `prepare` iterates them: each as
-`Option<&SlotValue>` (or `&mut`), a slot of optional elements yielding its
-absent ones as `None`, so every caller walks items by their place in the
-slot.
-
 ### `packages/codegen/src/emitters/render-module.ts::listItemField`
 
 A list kind's item slot, its one multiple slot. A list with no multiple
 slot is a compile error.
-
-### `packages/codegen/src/emitters/render-module.ts::listItemsExpr`
-
-A list kind's items as its `prepare` reads them (`slotItems` over
-`listItemField`), for `fill_slot_separators`.
 
 ### `packages/codegen/src/emitters/render-module.ts::listItemWireKey`
 
@@ -14358,8 +14366,9 @@ the seams `isKindEdge` accepts, their side read from the parsed seam label.
 The slot each side's arm is read from, for a kind whose edge has arm sites. For
 each kind-edge seam of the body whose side has arm sites, the member beside the
 seam (the one after a before seam, the one before an after seam) must be a slot;
-its name is the answer. Anything else is an error, since the arm could not be
-read at render time. Arm sites exist only where the compiler saw such a slot
+its name is the answer, the slot the kind's prepare reads the arm from
+(`prepareEdgesLine`). Anything else is an error, since the arm could not be
+read at prepare time. Arm sites exist only where the compiler saw such a slot
 (`spacingSitesOf`), so the error marks a disagreement between the two.
 
 ### `packages/codegen/src/emitters/render-module.ts::edgeRowsOf`
@@ -14393,10 +14402,8 @@ plan so `edgeIdOf` is a set lookup per node.
 
 A node's `Edged` impl: its edge-row id, and access to its base `edges`,
 inserting the default on first write. `edges()` answers `Edges::NONE` for a
-node not yet prepared. A kind with arm sites also overrides
-`edge_arm_kinds`: each side's edge slot (`edgeArmSlotsOf`) answers which arm
-token it holds (`ArmOf::arm_among`, over the row's arm sites), so
-`prepare_edges` stamps that arm's site and not the shared one.
+node not yet prepared. The arm an edge with arm sites holds is read in the
+kind's prepare body (`prepareEdgesLine`), not here.
 
 ### `packages/codegen/src/emitters/render-module.ts::delimiterSiteOf`
 
@@ -15162,7 +15169,7 @@ Each slot's number by storage name: its position in `structSlotsOf`, which is th
 
 ### `packages/codegen/src/emitters/render-module.ts::slotAttr`
 
-The `#[slot]` attribute of one slot, its one attribute: its read facts, then its record place (`recordArgs`). The read facts are a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has no read facts, only its place: it is not a parser field but the aliased node itself, which the derive's envelope mode reads as the slot `content = …` names.
+The `#[slot]` attribute of one slot, its one attribute: its read facts, then its record place (`recordArgs`), then its prepare capabilities (`PrepareFlags`). The read facts are a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has no read facts, only its place: it is not a parser field but the aliased node itself, which the derive's envelope mode reads as the slot `content = …` names. `seated` marks a slot whose gaps its seat table fills (`seatedSlots`), `defaulted` one its option site fills when unset (`defaultedSlots`); the derive bounds the slot's prepare handle by them.
 
 ### `packages/codegen/src/emitters/render-module.ts::readsItsSlots`
 
@@ -15213,6 +15220,86 @@ An enum's members as the model records them, each its kind and text. Every value
 words and its fields' places by Rust field name, the same numbers
 `node.rs` stamps. JavaScript reads a record through these literal offsets
 and never computes one.
+
+### `packages/codegen/src/emitters/render-module.ts::prepareEdgesLine`
+
+The prepare line that fills a kind's unset base edges from its edge row
+(`prepare_edges`), for a kind that owns kind-edge sites: on the edges its
+layout's handle gives, by its kind id, with the arm token each side's edge
+holds, read from the slot beside that edge (`edgeArmSlotsOf`) through
+`ArmOf::arm_among` over the row's arm sites, so the edge takes that arm's
+site and not the shared one. A side with no arm sites reads none. A kind with
+kind-edge sites and no kind id fails codegen.
+
+### `packages/codegen/src/emitters/render-module.ts::seatedSlots`
+
+A kind's seated slots (`seatedListFields`), each as its struct field and
+its seat table (`SeatedSlot`): the one list both the prepare body's seat
+calls (`seatLoops`) and the slots' `seated` stamps (`slotAttr`) read, so a
+slot is seated in its body exactly when its handle can be.
+
+### `packages/codegen/src/emitters/render-module.ts::SeatedSlot`
+
+A seated slot (`seatedSlots`): its struct field and the seat table
+(`options::SEATS_<KIND>_<SLOT>`) its gaps are filled from.
+
+### `packages/codegen/src/emitters/render-module.ts::defaultedSlots`
+
+A kind's prepare-filled slots (`isPrepareFilled`), each as its struct
+field and the option site that fills it (`DefaultedSlot`): the one list both
+the prepare body's fills (`optionDefaultFills`) and the slots' `defaulted`
+stamps (`slotAttr`) read. The site is the one choice site in the render plan
+for the kind and slot, with no side and no seat. A slot with no such site
+fails codegen: the option would have nothing to resolve from.
+
+### `packages/codegen/src/emitters/render-module.ts::DefaultedSlot`
+
+A prepare-filled slot (`defaultedSlots`): its struct field and the
+choice site whose resolved arm fills it when unset.
+
+### `packages/codegen/src/emitters/render-module.ts::preparesSlot`
+
+Whether a slot is a place the prepare body walks into: not a presence
+(a slot whose record place is a bit) and not a capture (a slot of a token
+interior). The derive gives those no prepare handle, by the same stamps
+(`bit`, `capture`), so the body never names them.
+
+### `packages/codegen/src/emitters/render-module.ts::PrepareFlags`
+
+A slot's prepare capabilities as `slotAttr` stamps them: `seated`
+(`seatedSlots`) and `defaulted` (`defaultedSlots`).
+
+### `packages/codegen/src/emitters/render-module.ts::spaceAttr`
+
+The `#[space(slot = …, side = …, site = …)]` stamp of a spacing field that
+carries a per-node value, from its spacing site (`SpacingSite`), never from
+the field's name: the record word of the list slot it spaces (the place
+`recordLayoutOf` gives the slot `site.slot` names), the side of the
+separator its render writes it on (`separatorSideOf`), and the site prepare
+fills it from. A site on no side of a separator, or spacing a slot that is no
+list of the struct, fails codegen.
+
+### `packages/codegen/src/emitters/render-module.ts::separatorSideOf`
+
+The side of a list slot's separator a spacing site is written on: `before`
+for a before site, `after` for an after site and for the bare form (a `gap`
+site, a list with no separator token, whose render writes it after);
+`undefined` for any other site. The list view's `before` and `after`
+(`spacingFieldExprs`) and the field's `#[space]` stamp (`spaceAttr`) both
+read it.
+
+### `packages/codegen/src/emitters/render-module.ts::rustNodePrepareTraitName`
+
+The name of a kind's prepare trait, `<Kind>Prepare`: the one spelling
+codegen stamps on the struct (`#[node(prepare = …)]`, from which the derive
+emits the trait, its parts struct and the struct's impl) and bounds the
+kind's prepare function by.
+
+### `packages/codegen/src/emitters/render-module.ts::rustTypedPrepareFnName`
+
+The name of a kind's prepare function, `prepare_<kind>`, generic over its
+prepare trait (`prepareStructImpl`), as `rustTypedRenderFnName` names its
+render function.
 
 ### `packages/codegen/src/emitters/record-layout.ts::RECORD_HEADER_WORDS`
 

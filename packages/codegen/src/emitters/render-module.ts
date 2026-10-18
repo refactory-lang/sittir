@@ -705,6 +705,10 @@ function rustTypedRenderFnName(typeName: string): string {
 	return `render_${rustSnakeIdent(typeName)}`;
 }
 
+function rustTypedPrepareFnName(typeName: string): string {
+	return `prepare_${rustSnakeIdent(typeName)}`;
+}
+
 function renderTypedKindFn(
 	node: AssembledNode,
 	structsByKind: Map<string, EmittedStruct>,
@@ -2727,16 +2731,11 @@ function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | u
 	return plan.spacingSites.find((site) => site.source === node.kind && site.role === 'separator');
 }
 
-function slotItems(field: AssembledNonterminal, mutable: boolean): string {
-	const [iter, present] = mutable ? ['iter_mut', 'Option::as_mut'] : ['iter', 'Option::as_ref'];
-	return `self.${rustFieldIdent(field.storageName)}.${iter}().map(${hasOptionalElements(field) ? present : 'Some'})`;
-}
-
 function slotGapFills(node: AssembledNode): string[] {
 	const slotModel = renderSlotModelOf(node);
 	return [...slotModel.named, ...slotModel.unnamed].filter(isMultiple).map((field) => {
-		const slot = `::sittir_core::layout::Layout::slot(&self.layout, ${JSON.stringify(slotWireKey(field.storageName))})`;
-		return `        ::sittir_core::prepare::fill_slot_gaps(${slotItems(field, true)}, ${slot});`;
+		const slot = `::sittir_core::layout::Layout::slot(&parts.layout, ${JSON.stringify(slotWireKey(field.storageName))})`;
+		return `    ${PREPARE_MOD}::SlotTarget::fill_gaps(&mut parts.${rustFieldIdent(field.storageName)}, ${slot});`;
 	});
 }
 
@@ -2751,8 +2750,10 @@ function listItemWireKey(node: AssembledList): string {
 	return slotWireKey(listItemField(node).storageName);
 }
 
-function listItemsExpr(node: AssembledList): string {
-	return slotItems(listItemField(node), false);
+function separatorSideOf(site: SpacingSite): 'before' | 'after' | undefined {
+	if (site.side === 'before') return 'before';
+	if (site.side === 'after' || site.side === 'gap') return 'after';
+	return undefined;
 }
 
 function spacingFieldExprs(
@@ -2767,8 +2768,8 @@ function spacingFieldExprs(
 	const flank = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `Some(options::${site.constName})`;
 	return {
-		before: expr(sites.find((site) => site.side === 'before')),
-		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap')),
+		before: expr(sites.find((site) => separatorSideOf(site) === 'before')),
+		after: expr(sites.find((site) => separatorSideOf(site) === 'after')),
 		head: flank(sites.find((site) => site.side === 'start')),
 		tail: flank(sites.find((site) => site.side === 'end'))
 	};
@@ -2983,20 +2984,31 @@ function seatedListFields(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMa
 }
 
 
-function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
-	const lines: string[] = [];
+interface SeatedSlot {
+	readonly ident: string;
+	readonly table: string;
+}
+
+function seatedSlots(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): SeatedSlot[] {
 	const seated = seatedListFields(plan, node, nodeMap);
 	const slotModel = renderSlotModelOf(node);
-	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
-		if (field.name === undefined || !seated.has(field.name)) continue;
-		const ident = rustFieldIdent(field.name);
-		const table = `options::${seatTableName(node.kind, field.name)}`;
-		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
-		lines.push(`        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`);
-	}
-	return lines;
+	return [...slotModel.named, ...slotModel.unnamed].flatMap((field) =>
+		field.name === undefined || !seated.has(field.name)
+			? []
+			: [{ ident: rustFieldIdent(field.storageName), table: `options::${seatTableName(node.kind, field.name)}` }]
+	);
 }
-function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: ChoiceNames): string[] {
+
+function seatLoops(seated: readonly SeatedSlot[]): string[] {
+	return seated.map(({ ident, table }) => `    ${PREPARE_MOD}::SeatSlot::fill_seats(&mut parts.${ident}, ${table}, ctx);`);
+}
+
+interface DefaultedSlot {
+	readonly ident: string;
+	readonly site: SpacingSite;
+}
+
+function defaultedSlots(plan: RenderPlan, node: AssembledNode): DefaultedSlot[] {
 	const kind = node.kind;
 	return renderSlotModelOf(node)
 		.named.filter(isPrepareFilled)
@@ -3013,10 +3025,14 @@ function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: Choi
 					`render-module: ${kind}.${slot.name} is a registered choice option with no option site to fill it from`
 				);
 			}
-			const ident = rustFieldIdent(slot.storageName);
-			const build = `${choiceNameOf(choices, node.typeName, slot.name)}::from_kind_id(ctx.options.site_arm(options::${site.constName}).arm)`;
-			return `        if self.${ident}.is_none() { self.${ident} = ${build}.map(::sittir_core::SlotValue::Node); }`;
+			return { ident: rustFieldIdent(slot.storageName), site };
 		});
+}
+
+function optionDefaultFills(defaulted: readonly DefaultedSlot[]): string[] {
+	return defaulted.map(
+		({ ident, site }) => `    ${PREPARE_MOD}::UnitSlot::fill_unit(&mut parts.${ident}, ctx.options.site_arm(options::${site.constName}).arm);`
+	);
 }
 
 function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readonly string[]): string[] {
@@ -3031,15 +3047,28 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 		return `options::allowed(options::${site.constName})`;
 	};
 	const items = (end: 'first' | 'last'): string =>
-		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&self.${f})`).join(', ')}].into_iter().flatten().next()`;
+		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&parts.${f})`).join(', ')}].into_iter().flatten().next()`;
 	return [
-		`        let inner = ::sittir_core::layout::Layout::inner_item(&self.layout);`,
-		`        let first = ::sittir_core::prepare::outermost(${items('first')}, inner.clone(), ::sittir_core::options::Side::Before);`,
-		`        let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
-		`        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);`,
-		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
-		`        ::sittir_core::prepare::fill_edges(self, flanks);`
+		`    let inner = ::sittir_core::layout::Layout::inner_item(&parts.layout);`,
+		`    let first = ::sittir_core::prepare::outermost(${items('first')}, inner.clone(), ::sittir_core::options::Side::Before);`,
+		`    let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
+		`    let root = ::sittir_core::layout::Layout::snapshot_edge(&parts.layout).map(|edge| edge.span);`,
+		`    let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
+		`    ::sittir_core::prepare::fill_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), flanks);`
 	];
+}
+
+function prepareEdgesLine(plan: RenderPlan, node: AssembledNode, templateBody: Body | undefined): string {
+	if (node.kindId === undefined) throw new Error(`render: '${node.kind}' owns kind-edge sites but has no kind id to read its edge row by`);
+	const id = `::sittir_core::types::KindId(${node.kindId})`;
+	const armSlots = edgeArmSlotsOf(plan, node, templateBody);
+	const arm = (side: 'before' | 'after'): string => {
+		const slot = armSlots?.[side];
+		return slot === undefined
+			? 'None'
+			: `${PREPARE_MOD}::ArmOf::arm_among(&parts.${rustFieldIdent(slot)}, ctx, ctx.options.edge_arm_sites(${id}, ::sittir_core::options::Side::${side === 'before' ? 'Before' : 'After'}))`;
+	};
+	return `    ${PREPARE_MOD}::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ${id}, (${arm('before')}, ${arm('after')}), ctx);`;
 }
 
 function prepareStructImpl(
@@ -3048,50 +3077,53 @@ function prepareStructImpl(
 	fillFields: readonly string[],
 	plan: RenderPlan,
 	isCompound: boolean,
-	nodeMap: NodeMap,
-	choices: ChoiceNames,
-	kindEntries: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[],
+	templateBody: Body | undefined,
+	seated: readonly SeatedSlot[],
+	defaulted: readonly DefaultedSlot[]
 ): string[] {
-	const body: string[] = ['        self.layout.prepare(ctx)?;'];
+	const body: string[] = [`    ${PREPARE_MOD}::LayoutTarget::prepare(&mut parts.layout, ctx)?;`];
 	if (isCompound) {
 		body.push(...rootEdgeStamp(plan, node, fillFields));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		const trailing = delim !== undefined && node instanceof AssembledList ? sourceTrailingSeparator(node, kindEntries) : undefined;
-		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
+		if (kindEdgeSidesOf(plan, node).size > 0) body.push(prepareEdgesLine(plan, node, templateBody));
 		body.push(...slotGapFills(node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			body.push(
-				`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.site_arm(options::${site.constName}).arm);`
-			);
+			body.push(`    ${PREPARE_MOD}::Setting::fill(&mut parts.${rustFieldIdent(site.fieldIdent)}, ctx.options.site_arm(options::${site.constName}).arm);`);
 		}
-		body.push(...seatLoops(plan, node, nodeMap));
+		body.push(...seatLoops(seated));
 		if (delim !== undefined) {
 			const fallback = `ctx.options.delimiter_at(options::${delim.constName})`;
 			const value =
 				trailing === undefined
 					? fallback
-					: `::sittir_core::prepare::source_trailing_delimiter(::sittir_core::layout::Layout::sides(&self.layout), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
-			body.push(`        self.delimiter.get_or_insert(${value});`);
+					: `::sittir_core::prepare::source_trailing_delimiter(::sittir_core::layout::Layout::sides(&parts.layout), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
+			body.push(`    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, ${value});`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {
+			const key = JSON.stringify(listItemWireKey(node));
+			const items = rustFieldIdent(listItemField(node).storageName);
 			body.push(
-				`        if let Some(kind) = ::sittir_core::layout::Layout::slot(&self.layout, ${JSON.stringify(listItemWireKey(node))}).and_then(|slot| slot.separator).and_then(Self::separator_kind_of) {`,
-				'            self.separator_kind.get_or_insert(kind);',
-				'        }',
-				`        self.separator_kind.get_or_insert(ctx.options.site_arm(options::${sep.constName}).arm);`,
-				`        ::sittir_core::prepare::fill_slot_separators(&mut self.layout, ${JSON.stringify(listItemWireKey(node))}, ${listItemsExpr(node)}, Self::separator_kind_of, ctx);`
+				`    if let Some(kind) = ::sittir_core::layout::Layout::slot(&parts.layout, ${key}).and_then(|slot| slot.separator).and_then(${structName}::separator_kind_of) {`,
+				`        ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, kind);`,
+				'    }',
+				`    ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, ctx.options.site_arm(options::${sep.constName}).arm);`,
+				`    if let Some(tokens) = ${PREPARE_MOD}::SlotTarget::separators(&parts.${items}, ${structName}::separator_kind_of, ctx) {`,
+				`        ${PREPARE_MOD}::LayoutTarget::set_slot_tokens(&mut parts.layout, ${key}, tokens);`,
+				'    }'
 			);
 		}
-		body.push(...optionDefaultFills(plan, node, choices));
-		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
+		body.push(...optionDefaultFills(defaulted));
+		for (const f of fillFields) body.push(`    ${PREPARE_MOD}::SlotTarget::prepare(&mut parts.${f}, ctx)?;`);
 	}
+	const prepareFn = rustTypedPrepareFnName(node.typeName);
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${structName} {`,
-		`    ${body.length > 0 ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
-		...body,
-		`        Ok(())`,
+		`    ${PREPARE_SIG}`,
+		`        ${prepareFn}(self, ctx)`,
 		`    }`,
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
@@ -3104,29 +3136,23 @@ function prepareStructImpl(
 		`    }`,
 		...READ_COORDINATE,
 		`}`,
+		'',
+		`fn ${prepareFn}<N: ${rustNodePrepareTraitName(node)} + ?Sized>(node: &mut N, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`,
+		`    let mut parts = node.prepare_parts();`,
+		...body,
+		`    Ok(())`,
+		`}`,
 		''
 	];
 }
 
-function edgedImplLines(typeName: string, kindId: number, armSlots?: EdgeArmSlots): string[] {
+function edgedImplLines(typeName: string, kindId: number): string[] {
 	const id = `::sittir_core::types::KindId(${kindId})`;
-	const arm = (side: 'before' | 'after', slot: string | undefined): string =>
-		slot === undefined
-			? 'None'
-			: `self.${rustFieldIdent(slot)}.arm_among(ctx, ctx.options.edge_arm_sites(${id}, ::sittir_core::options::Side::${side === 'before' ? 'Before' : 'After'}))`;
 	return [
 		`impl ::sittir_core::options::Edged for ${typeName} {`,
 		`    fn kind_id(&self) -> ::sittir_core::types::KindId { ${id} }`,
 		`    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }`,
 		`    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }`,
-		...(armSlots === undefined
-			? []
-			: [
-					`    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {`,
-					`        use ::sittir_core::prepare::ArmOf;`,
-					`        (${arm('before', armSlots.before)}, ${arm('after', armSlots.after)})`,
-					`    }`
-				]),
 		`}`,
 		''
 	];
@@ -3219,13 +3245,20 @@ function renderNodeDataStruct(
 	);
 	read.records.set(structName, layout);
 	const placeOf = new Map(layout.places.map((place) => [place.field, place]));
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}`, 'struct', structName));
+	const seated = isCompoundOf(node) ? seatedSlots(plan, node, nodeMap) : [];
+	const defaulted = isCompoundOf(node) ? defaultedSlots(plan, node) : [];
+	const prepareFlags = (field: string): PrepareFlags => ({
+		seated: seated.some(({ ident }) => ident === field),
+		defaulted: defaulted.some(({ ident }) => ident === field)
+	});
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}`, 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
 			const field = rustFieldIdent(slot.storageName);
-			lines.push(...renderNodeField(slot, owner.kind, owner.typeName, nodeMap, choices, slotAttr(slot, owner, node, nodeMap, read, placeOf.get(field)), forceOptional));
-			fillFields.push(field);
+			const place = placeOf.get(field);
+			lines.push(...renderNodeField(slot, owner.kind, owner.typeName, nodeMap, choices, slotAttr(slot, owner, node, nodeMap, read, place, prepareFlags(field)), forceOptional));
+			if (preparesSlot(node, place)) fillFields.push(field);
 		}
 		if (node instanceof AssembledList) {
 			if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
@@ -3237,7 +3270,7 @@ function renderNodeDataStruct(
 		}
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			lines.push(wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<KindId>,`);
+			lines.push(wireKeyAttr(site.wireKey), spaceAttr(site, node, printedSlots, placeOf), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<KindId>,`);
 		}
 	} else if (isTerminalNode(node)) {
 		lines.push(...renderLayoutField(), ...renderLeafTextField());
@@ -3247,7 +3280,7 @@ function renderNodeDataStruct(
 	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
 	const ownKind = ownId === undefined ? 'None' : `Some(::sittir_core::types::KindId(${ownId}))`;
 	const edgedId = node.kindId;
-	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId, edgeArmSlotsOf(plan, node, templateBody)));
+	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -3258,7 +3291,7 @@ function renderNodeDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundOf(node), nodeMap, choices, kindEntries));
+	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundOf(node), kindEntries, templateBody, seated, defaulted));
 	return lines;
 }
 
@@ -3431,12 +3464,28 @@ function wireKeyAttr(key: string): string {
 	return `    #[wire(key = ${JSON.stringify(key)})]`;
 }
 
+function spaceAttr(
+	site: SpacingSite,
+	node: AssembledNode,
+	printedSlots: readonly StructSlot[],
+	placeOf: ReadonlyMap<string, RecordPlace>
+): string {
+	const side = separatorSideOf(site);
+	if (side === undefined) throw new Error(`render: '${node.kind}' spacing site '${site.address}' carries a per-node value on no side of a separator`);
+	const slot = printedSlots.find(({ slot }) => slot.name === site.slot)?.slot;
+	const place = slot === undefined ? undefined : placeOf.get(rustFieldIdent(slot.storageName));
+	if (place === undefined || !('run' in place) || place.run === undefined) {
+		throw new Error(`render: '${node.kind}' spacing site '${site.address}' spaces '${site.slot}', which is none of its list slots`);
+	}
+	return `    #[space(slot = ${place.word}, side = ${side}, site = options::${site.constName})]`;
+}
+
 function renderLayoutField(): string[] {
-	return [wireKeyAttr(LAYOUT_FIELD.wireKey), `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
+	return [wireKeyAttr(LAYOUT_FIELD.wireKey), '    #[layout]', `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
 }
 
 function renderLeafTextField(): string[] {
-	return [wireKeyAttr('$text'), '    pub text: String,'];
+	return [wireKeyAttr('$text'), '    #[text]', '    pub text: String,'];
 }
 
 
@@ -3476,9 +3525,19 @@ function structSlotsOf(node: AssembledNode, slotModel: RenderSlotModel, nodeMap:
 	return out;
 }
 
-function slotAttr(slot: AssembledNonterminal, owner: AssembledNode, node: AssembledNode, nodeMap: NodeMap, read: ReadPrint, place: RecordPlace | undefined): string {
+function preparesSlot(node: AssembledNode, place: RecordPlace | undefined): boolean {
+	return interiorOf(node) === undefined && !(place !== undefined && 'bit' in place);
+}
+
+interface PrepareFlags {
+	readonly seated: boolean;
+	readonly defaulted: boolean;
+}
+
+function slotAttr(slot: AssembledNonterminal, owner: AssembledNode, node: AssembledNode, nodeMap: NodeMap, read: ReadPrint, place: RecordPlace | undefined, prepare: PrepareFlags): string {
 	const facts = node instanceof AssembledAlias ? '' : interiorOf(node) !== undefined ? captureArgs(slot) : slotArgs(slot, owner, nodeSlotShapeOf(slot, nodeMap), read.ctx);
-	const args = [facts, place === undefined ? '' : recordArgs(place)].filter((part) => part !== '').join(', ');
+	const flags = [prepare.seated ? 'seated' : '', prepare.defaulted ? 'defaulted' : ''].filter((flag) => flag !== '').join(', ');
+	const args = [facts, place === undefined ? '' : recordArgs(place), flags].filter((part) => part !== '').join(', ');
 	return args === '' ? '#[slot]' : `#[slot(${args})]`;
 }
 
@@ -3696,6 +3755,10 @@ function perSlotEnumName(typeName: string, fieldName: string): string {
 
 function rustNodeFieldsTraitName(node: AssembledNode): string {
 	return `${rustTypeIdent(node.typeName)}Fields`;
+}
+
+function rustNodePrepareTraitName(node: AssembledNode): string {
+	return `${rustTypeIdent(node.typeName)}Prepare`;
 }
 
 export function rustNodeStructName(node: AssembledNode): string {

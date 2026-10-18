@@ -4,7 +4,7 @@
 //! field from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
-use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
+use crate::options::{EdgeArm, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
 use crate::render::{CoordinateError, SourceTable};
 use crate::slot::{NodeCoordinate, SeamArm, SlotValue};
@@ -18,11 +18,15 @@ pub struct RenderContext<'a> {
     pub recording: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>,
 }
 
-/// Fill a node's unset base edges from its kind's edge row; an edge the wire already set keeps its arm.
-pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
-    let kind = t.kind_id();
-    let (before_arm, after_arm) = t.edge_arm_kinds(ctx);
-    let edges = t.edges_mut();
+mod target;
+pub use target::{FromKindId, LayoutTarget, SeatSlot, Setting, SlotTarget, UnitSlot};
+
+/// Fill a node's unset base `edges` from its kind's edge row, each side by
+/// the arm token its edge holds (`arms`, read with `ArmOf` from the slot
+/// beside that edge, for a kind whose edge is a choice of tokens); an edge the
+/// wire already set keeps its arm.
+pub fn prepare_edges(edges: &mut Edges, kind: KindId, arms: (Option<KindId>, Option<KindId>), ctx: &RenderContext<'_>) {
+    let (before_arm, after_arm) = arms;
     if edges.before.is_none() {
         edges.before = ctx.options.edge_arm(kind, Side::Before, None, before_arm).map(EdgeArm::from);
     }
@@ -50,6 +54,12 @@ impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf for SlotValue<T, ADJACE
 impl<X: ArmOf> ArmOf for Option<X> {
     fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
         self.as_ref().and_then(|slot| slot.arm_among(ctx, arms))
+    }
+}
+
+impl<X: ArmOf + ?Sized> ArmOf for &mut X {
+    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
+        (**self).arm_among(ctx, arms)
     }
 }
 
@@ -143,6 +153,15 @@ impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
     }
 }
 
+impl<X: EdgeItems + ?Sized> EdgeItems for &mut X {
+    fn first_item(&self) -> Option<EdgeItem<'_>> {
+        (**self).first_item()
+    }
+    fn last_item(&self) -> Option<EdgeItem<'_>> {
+        (**self).last_item()
+    }
+}
+
 /// The item at one end of a root once its own trivia is counted: the end item
 /// of its children, or its inner trivia (`Layout::inner_item`) when that
 /// lies beyond it on `side` or the root has no children.
@@ -212,10 +231,9 @@ pub fn root_flanks(
     }
 }
 
-/// Fill a node's unset base edges from `edges`; a side the wire already
-/// set keeps its arm.
-pub fn fill_edges<T: Edged + ?Sized>(t: &mut T, edges: Edges) {
-    let own = t.edges_mut();
+/// Fill a node's unset base edges, `own`, from `edges`; a side the wire
+/// already set keeps its arm.
+pub fn fill_edges(own: &mut Edges, edges: Edges) {
     own.before = own.before.or(edges.before);
     own.after = own.after.or(edges.after);
 }
@@ -300,25 +318,12 @@ pub fn fill_gaps(items: &mut impl GapItems, slot: Option<&crate::layout::SlotLay
     }
 }
 
-/// Give a list slot each item's own separator where its source spells
-/// another than the slot's (`Prepare::source_separator`), as the candidate
-/// kind `kind_of` maps it to (the list's `separator_kind_of`), on the slot's
-/// entry by the item's place (`layout::SlotLayout::tokens`). The first item
-/// has no separator before it; nothing is stored when no item has one.
-pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
-    layout: &mut Option<Box<crate::layout::NodeLayout<L>>>,
-    slot: &str,
-    items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,
-    kind_of: fn(KindId) -> Option<KindId>,
-    ctx: &RenderContext<'_>,
-) {
-    if let Some(tokens) = slot_separators(items, kind_of, ctx) {
-        crate::layout::slot_entry(layout, slot).tokens = tokens;
-    }
-}
-
-/// Each item's own separator by its place in the slot, as
-/// `fill_slot_separators` stores it, or `None` when no item has one.
+/// A list slot's items' own separators, by each item's place in the slot:
+/// the separator its source spells before it where that is another than
+/// the slot's (`Prepare::source_separator`), as the candidate kind `kind_of`
+/// maps it to (the list's `separator_kind_of`). The first item has no
+/// separator before it. `None` when no item has one; otherwise the slot's
+/// entry stores them (`layout::SlotLayout::tokens`).
 #[must_use]
 pub fn slot_separators<'i, T: Prepare + 'i, const ADJACENT: bool>(
     items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,

@@ -1,7 +1,7 @@
 //! The expansions. Each wraps its items in `const _: () = { … };` so the
 //! helper items it defines never meet the node's own names.
 
-use crate::attrs::{self, FlankAttrs, KindAttrs, Presence, SeparatorKindAttrs, SlotAttrs};
+use crate::attrs::{self, FlankAttrs, KindAttrs, Presence, SeparatorKindAttrs, SlotAttrs, SpaceAttrs};
 use crate::codec;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -222,8 +222,8 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let codec = codec::choice(ident, &wire)?;
     let from_kind_id = all_units.then(|| {
         quote! {
-            impl #ident {
-                pub fn from_kind_id(id: ::sittir_core::types::KindId) -> ::core::option::Option<Self> {
+            impl ::sittir_core::prepare::FromKindId for #ident {
+                fn from_kind_id(id: ::sittir_core::types::KindId) -> ::core::option::Option<Self> {
                     #(#builds)*
                     ::core::option::Option::None
                 }
@@ -410,19 +410,56 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     })
 }
 
-enum Role {
+/// What a field of a node struct is, by the one stamp codegen puts on it.
+pub(crate) enum Role {
+    /// `#[layout]`: the node's layout.
     Layout,
+    /// `#[text]`: a text leaf's text.
+    Text,
     Slot(SlotAttrs),
+    /// `#[flank(…)]`: a list's delimiters.
     Flank(FlankAttrs),
+    /// `#[separator_kind(…)]`: a list's chosen separator.
     SeparatorKind(SeparatorKindAttrs),
-    Other,
+    /// `#[space(…)]`: a list slot's separator spacing.
+    Space(SpaceAttrs),
 }
 
-struct Field<'a> {
-    ident: &'a Ident,
-    ty: &'a Type,
-    role: Role,
+pub(crate) struct Field<'a> {
+    pub(crate) ident: &'a Ident,
+    pub(crate) ty: &'a Type,
+    pub(crate) role: Role,
     key: Option<LitStr>,
+}
+
+/// A field's role, from the one stamp it carries.
+fn role_of(field: &syn::Field, ident: &Ident) -> syn::Result<Role> {
+    let mut roles = Vec::new();
+    if let Some(slot) = attrs::slot_attrs(&field.attrs)? {
+        roles.push(Role::Slot(slot));
+    }
+    if let Some(flank) = attrs::flank_attrs(&field.attrs)? {
+        roles.push(Role::Flank(flank));
+    }
+    if let Some(separator) = attrs::separator_kind_attrs(&field.attrs)? {
+        roles.push(Role::SeparatorKind(separator));
+    }
+    if let Some(space) = attrs::space_attrs(&field.attrs)? {
+        roles.push(Role::Space(space));
+    }
+    if attrs::marker(&field.attrs, "layout")? {
+        roles.push(Role::Layout);
+    }
+    if attrs::marker(&field.attrs, "text")? {
+        roles.push(Role::Text);
+    }
+    let role = roles.pop().ok_or_else(|| {
+        syn::Error::new_spanned(ident, format!("`{ident}` has no stamp naming its role: `#[layout]`, `#[text]`, `#[slot]`, `#[flank]`, `#[separator_kind]` or `#[space]`"))
+    })?;
+    if !roles.is_empty() {
+        return Err(syn::Error::new_spanned(ident, format!("`{ident}` has more than one role stamp")));
+    }
+    Ok(role)
 }
 
 fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'a>>> {
@@ -434,18 +471,7 @@ fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'
         .iter()
         .map(|field| {
             let ident = field.ident.as_ref().expect("a named field");
-            let role = if let Some(slot) = attrs::slot_attrs(&field.attrs)? {
-                Role::Slot(slot)
-            } else if let Some(flank) = attrs::flank_attrs(&field.attrs)? {
-                Role::Flank(flank)
-            } else if let Some(separator) = attrs::separator_kind_attrs(&field.attrs)? {
-                Role::SeparatorKind(separator)
-            } else if is_layout(&field.ty) {
-                Role::Layout
-            } else {
-                Role::Other
-            };
-            Ok(Field { ident, ty: &field.ty, role, key: attrs::wire_key(&field.attrs)? })
+            Ok(Field { ident, ty: &field.ty, role: role_of(field, ident)?, key: attrs::wire_key(&field.attrs)? })
         })
         .collect()
 }
@@ -469,11 +495,6 @@ pub(crate) fn inner_of<'t>(ty: &'t Type, wrapper: &str) -> Option<&'t Type> {
         GenericArgument::Type(ty) => Some(ty),
         _ => None,
     })
-}
-
-/// `Option<Box<…NodeLayout…>>`: the layout field, known by its type.
-pub(crate) fn is_layout(ty: &Type) -> bool {
-    inner_of(ty, "Option").and_then(|boxed| inner_of(boxed, "Box")).and_then(last_segment).as_deref() == Some("NodeLayout")
 }
 
 fn is_text(ty: &Type) -> bool {
@@ -501,7 +522,11 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         .collect();
     let record = crate::record::checks(ident, attrs.words, &stamped)?;
     let fields_trait = match &attrs.fields {
-        Some(name) => crate::fields::fields_trait(ident, name, &data.fields)?,
+        Some(name) => crate::fields::fields_trait(ident, name, &fields)?,
+        None => TokenStream::new(),
+    };
+    let prepare_trait = match &attrs.prepare {
+        Some(name) => crate::prepare::prepare_trait(ident, name, &fields)?,
         None => TokenStream::new(),
     };
     let folded = &attrs.folded;
@@ -590,6 +615,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         };
         #record
         #fields_trait
+        #prepare_trait
     })
 }
 
@@ -619,18 +645,18 @@ fn spelling_router() -> TokenStream {
 }
 
 /// The fields every mode fills the same way: the layout as the context seats
-/// the node's sides (`ReadCtx::layout`), and a field with no helper attribute
-/// from its `Default`.
-fn common_inits(fields: &[Field<'_>], skip: &str, units: bool) -> Vec<TokenStream> {
+/// the node's sides (`ReadCtx::layout`), and a spacing setting or a text
+/// from its `Default`. A text leaf's mode fills its text itself (`skip`).
+fn common_inits(fields: &[Field<'_>], skip: Option<&Ident>, units: bool) -> Vec<TokenStream> {
     fields
         .iter()
-        .filter(|field| field.ident != skip)
+        .filter(|field| Some(field.ident) != skip)
         .filter_map(|field| {
             let name = field.ident;
             match field.role {
                 Role::Layout if units => Some(quote!(#name: Some(ctx.layout_with_units(index, __at, true, __units)),)),
                 Role::Layout => Some(quote!(#name: Some(ctx.layout(index, __at, true)),)),
-                Role::Other => Some(quote!(#name: ::core::default::Default::default(),)),
+                Role::Space(_) | Role::Text => Some(quote!(#name: ::core::default::Default::default(),)),
                 _ => None,
             }
         })
@@ -638,11 +664,13 @@ fn common_inits(fields: &[Field<'_>], skip: &str, units: bool) -> Vec<TokenStrea
 }
 
 fn text_body(ident: &Ident, fields: &[Field<'_>], fixed: Option<&LitStr>) -> syn::Result<Body> {
-    if !fields.iter().any(|f| f.ident == "text" && is_text(f.ty) && matches!(f.role, Role::Other)) {
-        return Err(syn::Error::new_spanned(ident, "a text leaf has a `text: String` field"));
-    }
+    let text = fields
+        .iter()
+        .find(|f| matches!(f.role, Role::Text))
+        .map(|f| f.ident)
+        .ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf has a `#[text]` field"))?;
     let fixed = fixed.map_or_else(|| quote!(""), |text| quote!(#text));
-    let inits = common_inits(fields, "text", false);
+    let inits = common_inits(fields, Some(text), false);
     let pass = pass(0);
     Ok(Body {
         routes: quote!(),
@@ -656,7 +684,7 @@ fn text_body(ident: &Ident, fields: &[Field<'_>], fixed: Option<&LitStr>) -> syn
                 ""
             };
             let text = if spanned.is_empty() { #fixed } else { spanned };
-            ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string(text), #(#inits)* })
+            ::core::result::Result::Ok(Self { #text: ::std::string::ToString::to_string(text), #(#inits)* })
         },
     })
 }
@@ -666,7 +694,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
     regex::Regex::new(&flagged)
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
     let flagged = LitStr::new(&flagged, pattern.span());
-    let mut inits = common_inits(fields, "", false);
+    let mut inits = common_inits(fields, None, false);
     let mut captures = Vec::new();
     for field in fields {
         if let Role::Slot(slot) = &field.role {
@@ -868,7 +896,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         .map(|(_, field, _)| field.key.as_ref().ok_or_else(|| syn::Error::new_spanned(field.ident, "a slot crosses the wire under a key: `#[wire(key = \"…\")]`")))
         .collect::<syn::Result<_>>()?;
     let slot_count = slots.len();
-    let mut inits = common_inits(fields, "", true);
+    let mut inits = common_inits(fields, None, true);
     for (((name, ty), acc), label) in names.iter().zip(&tys).zip(&accs).zip(&labels) {
         inits.push(quote!(#name: <#ty as __rt::ReadSlot>::finish(#acc, __rt::SlotSite { kind: __KIND, slot: #label, index })?,));
     }
@@ -1034,6 +1062,7 @@ mod tests {
             #[node(kind = kind::PAIR)]
             pub struct PairNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_key")]
                 #[slot(field = field::KEY)]
@@ -1061,6 +1090,7 @@ mod tests {
             #[node(kind = kind::STATIC_ITEM)]
             pub struct StaticItemNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_mutable")]
                 #[slot(field = field::MUTABLE, presence = kind::MUT)]
@@ -1076,6 +1106,7 @@ mod tests {
             #[node(kind = kind::PAIR)]
             pub struct PairNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
             }
         });
@@ -1102,8 +1133,8 @@ mod tests {
         });
         assert!(has(
             &out,
-            "impl Terminator {
-                pub fn from_kind_id(id: ::sittir_core::types::KindId) -> ::core::option::Option<Self> {
+            "impl ::sittir_core::prepare::FromKindId for Terminator {
+                fn from_kind_id(id: ::sittir_core::types::KindId) -> ::core::option::Option<Self> {
                     if [kind::_AUTOMATIC_SEMICOLON].contains(&id) { return ::core::option::Option::Some(Self::AutomaticSemicolon); }
                     if [kind::SEMI, kind::SEMI_ALIAS].contains(&id) { return ::core::option::Option::Some(Self::Semi); }
                     if id == ::sittir_core::types::KindId::BLANK { return ::core::option::Option::Some(Self::Blank); }
@@ -1154,7 +1185,7 @@ mod tests {
                 Block(BlockNode),
             }
         });
-        assert!(!has(&out, "pub fn from_kind_id"));
+        assert!(!has(&out, "FromKindId"));
     }
 
     #[test]

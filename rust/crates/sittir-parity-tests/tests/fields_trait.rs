@@ -15,8 +15,10 @@ use sittir_rust::render::{field_ids as field, kind_ids as kind};
 #[node(kind = kind::IDENTIFIER, text, fields = IdentFields)]
 struct Ident {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<NodeLayout>>,
     #[wire(key = "$text")]
+    #[text]
     text: String,
 }
 
@@ -38,6 +40,7 @@ impl Render for Ident {
 #[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD], fields = FunctionFields)]
 struct Function {
     #[wire(key = "$_layout")]
+    #[layout]
     layout: Option<Box<NodeLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
@@ -49,6 +52,7 @@ struct Function {
     #[slot(field = field::RETURN_TYPE)]
     return_type: Option<SlotValue<Ident>>,
     #[wire(key = "_separator")]
+    #[separator_kind(candidates = [kind::COMMA, kind::SEMI])]
     separator: Option<KindId>,
 }
 
