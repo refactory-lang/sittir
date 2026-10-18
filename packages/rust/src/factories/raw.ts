@@ -7,6 +7,7 @@ import type { Admit, ListOptions, NonEmptyArray, NumericConfig, NumericLiteral, 
 import type { DelimitedSpec } from '@sittir/common/utils';
 import {
 	currentHandle,
+	admitChildren,
 	checkDelimited,
 	listSlotWith,
 	LIST_ITEMS,
@@ -102,6 +103,7 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 	const _shebang = config.shebang;
 	const _statements = listStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'source_file', { shebang: _shebang, statements: _statements });
 	const node = {
 		$type: TSKindId.SourceFile as const,
 		$source: 2 as const,
@@ -148,6 +150,7 @@ export function buildExpressionStatement(
 ): T.ExpressionStatement.Bound {
 	const _content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'expression_statement', { content: _content });
 	const node = {
 		$type: TSKindId.ExpressionStatement as const,
 		$source: 2 as const,
@@ -187,6 +190,7 @@ export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Bound {
 	const _left = config.left;
 	const _right = config.right;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'macro_rule', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.MacroRule as const,
 		$source: 2 as const,
@@ -215,6 +219,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 	const _name = config.name;
 	const _type = kindIdStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'token_binding_pattern', { name: _name, type: _type });
 	const node = {
 		$type: TSKindId.TokenBindingPattern as const,
 		$source: 2 as const,
@@ -247,6 +252,12 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 	const _separator = config.separator;
 	const _operator = kindIdStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'token_repetition_pattern', {
+			tokenPatterns: _token_patterns,
+			separator: _separator,
+			operator: _operator
+		});
 	const node = {
 		$type: TSKindId.TokenRepetitionPattern as const,
 		$source: 2 as const,
@@ -287,6 +298,8 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 	const _separator = config.separator;
 	const _operator = kindIdStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'token_repetition', { tokens: _tokens, separator: _separator, operator: _operator });
 	const node = {
 		$type: TSKindId.TokenRepetition as const,
 		$source: 2 as const,
@@ -474,6 +487,7 @@ export function buildNonSpecialToken(
 		]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'non_special_token', { content: _content });
 	const node = {
 		$type: TSKindId.NonSpecialToken as const,
 		$source: 2 as const,
@@ -615,6 +629,7 @@ export function buildAttributeItem(...args: unknown[]) {
 function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
 	const _attribute = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'attribute_item', { attribute: _attribute });
 	const node = {
 		$type: TSKindId.AttributeItem as const,
 		$source: 2 as const,
@@ -655,6 +670,7 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
 	const _attribute = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { attribute: _attribute });
 	const node = {
 		$type: TSKindId.InnerAttributeItem as const,
 		$source: 2 as const,
@@ -684,6 +700,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	);
 	const _input = config.input;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'attribute', { path: _path, input: _input });
 	const node = {
 		$type: TSKindId.Attribute as const,
 		$source: 2 as const,
@@ -714,6 +731,7 @@ export function buildDeclarationList(...children: Admit<T.DeclarationStatement[]
 export function buildDeclarationList(...children: Admit<T.DeclarationStatement[]>): T.DeclarationList.Bound {
 	const _declarations = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'declaration_list', { declarations: _declarations });
 	const node = {
 		$type: TSKindId.DeclarationList as const,
 		$source: 2 as const,
@@ -745,6 +763,14 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 	const _where_clause = config.whereClause;
 	const _body = orDefault(config.body, () => buildFieldDeclarationList());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'union_item', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			typeParameters: _type_parameters,
+			whereClause: _where_clause,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.UnionItem as const,
 		$source: 2 as const,
@@ -819,6 +845,14 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 	const _where_clause = config.whereClause;
 	const _body = orDefault(config.body, () => buildEnumVariantList());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'enum_item', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			typeParameters: _type_parameters,
+			whereClause: _where_clause,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.EnumItem as const,
 		$source: 2 as const,
@@ -917,6 +951,7 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'enum_variant_list', { elements: _elements });
 	const node = {
 		$type: TSKindId.EnumVariantList as const,
 		$source: 2 as const,
@@ -970,6 +1005,13 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bo
 	const _body = config.body;
 	const _value = kindIdStorage<NonNullable<T.EnumVariant['_value']>>(config.value);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'enum_variant', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			body: _body,
+			value: _value
+		});
 	const node = {
 		$type: TSKindId.EnumVariant as const,
 		$source: 2 as const,
@@ -1035,6 +1077,7 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_declaration_list', { elements: _elements });
 	const node = {
 		$type: TSKindId.FieldDeclarationList as const,
 		$source: 2 as const,
@@ -1092,6 +1135,8 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'field_declaration', { visibilityModifier: _visibility_modifier, name: _name, type: _type });
 	const node = {
 		$type: TSKindId.FieldDeclaration as const,
 		$source: 2 as const,
@@ -1156,6 +1201,7 @@ function _buildOrderedFieldDeclarationList(
 	const listView = ownerView(_attributes, '_item');
 	if (listView.stored === undefined) refuseReadStub('_attributes');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list', { attributes: _attributes });
 	const node = {
 		$type: TSKindId.OrderedFieldDeclarationList as const,
 		$source: 2 as const,
@@ -1208,6 +1254,12 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 	const _name = config.name;
 	const _alias = config.alias;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'extern_crate_declaration', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			alias: _alias
+		});
 	const node = {
 		$type: TSKindId.ExternCrateDeclaration as const,
 		$source: 2 as const,
@@ -1246,6 +1298,13 @@ export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Bound {
 	);
 	const _value = kindIdStorage<NonNullable<T.ConstItem['_value']>>(config.value);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'const_item', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			type: _type,
+			value: _value
+		});
 	const node = {
 		$type: TSKindId.ConstItem as const,
 		$source: 2 as const,
@@ -1289,6 +1348,15 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 	);
 	const _value = kindIdStorage<NonNullable<T.StaticItem['_value']>>(config.value);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'static_item', {
+			visibilityModifier: _visibility_modifier,
+			ref: _ref,
+			mutable: _mutable,
+			name: _name,
+			type: _type,
+			value: _value
+		});
 	const node = {
 		$type: TSKindId.StaticItem as const,
 		$source: 2 as const,
@@ -1342,6 +1410,15 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 	);
 	const _trailing_where_clause = config.trailingWhereClause;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'type_item', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			typeParameters: _type_parameters,
+			whereClause: _where_clause,
+			type: _type,
+			trailingWhereClause: _trailing_where_clause
+		});
 	const node = {
 		$type: TSKindId.TypeItem as const,
 		$source: 2 as const,
@@ -1419,6 +1496,17 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 	const _where_clause = config.whereClause;
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'function_item', {
+			visibilityModifier: _visibility_modifier,
+			functionModifiers: _function_modifiers,
+			name: _name,
+			typeParameters: _type_parameters,
+			parameters: _parameters,
+			returnType: _return_type,
+			whereClause: _where_clause,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.FunctionItem as const,
 		$source: 2 as const,
@@ -1507,6 +1595,16 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	);
 	const _where_clause = config.whereClause;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'function_signature_item', {
+			visibilityModifier: _visibility_modifier,
+			functionModifiers: _function_modifiers,
+			name: _name,
+			typeParameters: _type_parameters,
+			parameters: _parameters,
+			returnType: _return_type,
+			whereClause: _where_clause
+		});
 	const node = {
 		$type: TSKindId.FunctionSignatureItem as const,
 		$source: 2 as const,
@@ -1593,6 +1691,7 @@ export function buildFunctionModifiers(
 ): T.FunctionModifiers.Bound {
 	const _modifier = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'function_modifiers', { modifier: _modifier });
 	const node = {
 		$type: TSKindId.FunctionModifiers as const,
 		$source: 2 as const,
@@ -1651,6 +1750,7 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 	const listView = ownerView(_where_predicates, '_item');
 	if (listView.stored === undefined) refuseReadStub('_where_predicates');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'where_clause', { wherePredicates: _where_predicates });
 	const node = {
 		$type: TSKindId.WhereClause as const,
 		$source: 2 as const,
@@ -1694,6 +1794,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 	);
 	const _bounds = config.bounds;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'where_predicate', { left: _left, bounds: _bounds });
 	const node = {
 		$type: TSKindId.WherePredicate as const,
 		$source: 2 as const,
@@ -1730,6 +1831,16 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 	const _where_clause = config.whereClause;
 	const _body = orDefault(config.body, () => buildDeclarationList());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'trait_item', {
+			visibilityModifier: _visibility_modifier,
+			unsafe: _unsafe,
+			name: _name,
+			typeParameters: _type_parameters,
+			bounds: _bounds,
+			whereClause: _where_clause,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.TraitItem as const,
 		$source: 2 as const,
@@ -1799,6 +1910,13 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 	const _bounds = config.bounds;
 	const _where_clause = config.whereClause;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'associated_type', {
+			name: _name,
+			typeParameters: _type_parameters,
+			bounds: _bounds,
+			whereClause: _where_clause
+		});
 	const node = {
 		$type: TSKindId.AssociatedType as const,
 		$source: 2 as const,
@@ -1856,6 +1974,7 @@ export function buildTraitBounds(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'trait_bounds', { bounds: _bounds });
 	const node = {
 		$type: TSKindId.TraitBounds as const,
 		$source: 2 as const,
@@ -1885,6 +2004,8 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'higher_ranked_trait_bound', { typeParameters: _type_parameters, type: _type });
 	const node = {
 		$type: TSKindId.HigherRankedTraitBound as const,
 		$source: 2 as const,
@@ -1927,6 +2048,7 @@ export function buildRemovedTraitBound(value: Admit<T.Type | T.TypeIdentifier.Ty
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'removed_trait_bound', { type: _type });
 	const node = {
 		$type: TSKindId.RemovedTraitBound as const,
 		$source: 2 as const,
@@ -1982,6 +2104,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'type_parameters', { elements: _elements });
 	const node = {
 		$type: TSKindId.TypeParameters as const,
 		$source: 2 as const,
@@ -2036,6 +2159,7 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 	);
 	const _value = kindIdStorage<NonNullable<T.ConstParameter['_value']>>(config.value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'const_parameter', { name: _name, type: _type, value: _value });
 	const node = {
 		$type: TSKindId.ConstParameter as const,
 		$source: 2 as const,
@@ -2075,6 +2199,8 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'type_parameter', { name: _name, bounds: _bounds, defaultType: _default_type });
 	const node = {
 		$type: TSKindId.TypeParameter as const,
 		$source: 2 as const,
@@ -2108,6 +2234,7 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 	const _name = config.name;
 	const _bounds = config.bounds;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'lifetime_parameter', { name: _name, bounds: _bounds });
 	const node = {
 		$type: TSKindId.LifetimeParameter as const,
 		$source: 2 as const,
@@ -2143,6 +2270,14 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 	const _value = kindIdStorage<NonNullable<T.LetDeclaration['_value']>>(config.value);
 	const _alternative = config.alternative;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'let_declaration', {
+			mutable: _mutable,
+			pattern: _pattern,
+			type: _type,
+			value: _value,
+			alternative: _alternative
+		});
 	const node = {
 		$type: TSKindId.LetDeclaration as const,
 		$source: 2 as const,
@@ -2189,6 +2324,8 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'use_declaration', { visibilityModifier: _visibility_modifier, argument: _argument });
 	const node = {
 		$type: TSKindId.UseDeclaration as const,
 		$source: 2 as const,
@@ -2223,6 +2360,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 	);
 	const _list = orDefault(config.list, () => buildUseList());
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'scoped_use_list', { path: _path, list: _list });
 	const node = {
 		$type: TSKindId.ScopedUseList as const,
 		$source: 2 as const,
@@ -2307,6 +2445,7 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 	const listView = ownerView(_use_clauses, '_item');
 	if (listView.stored === undefined) refuseReadStub('_use_clauses');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'use_list', { useClauses: _use_clauses });
 	const node = {
 		$type: TSKindId.UseList as const,
 		$source: 2 as const,
@@ -2353,6 +2492,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 	);
 	const _alias = config.alias;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { path: _path, alias: _alias });
 	const node = {
 		$type: TSKindId.UseAsClause as const,
 		$source: 2 as const,
@@ -2400,6 +2540,7 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 	const _use_wildcard_group = value;
 	const readGroup_useWildcardGroup = () => _use_wildcard_group;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'use_wildcard', { useWildcardGroup: _use_wildcard_group });
 	const node = {
 		$type: TSKindId.UseWildcard as const,
 		$source: 2 as const,
@@ -2488,6 +2629,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parameters', { elements: _elements });
 	const node = {
 		$type: TSKindId.Parameters as const,
 		$source: 2 as const,
@@ -2540,6 +2682,8 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	const _lifetime = config.lifetime;
 	const _mutable = strictBooleanStorage(config.mutable);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'self_parameter', { reference: _reference, lifetime: _lifetime, mutable: _mutable });
 	const node = {
 		$type: TSKindId.SelfParameter as const,
 		$source: 2 as const,
@@ -2573,6 +2717,7 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 	const _mutable = strictBooleanStorage(config.mutable);
 	const _pattern = kindIdStorage<NonNullable<T.VariadicParameter['_pattern']>>(config.pattern);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'variadic_parameter', { mutable: _mutable, pattern: _pattern });
 	const node = {
 		$type: TSKindId.VariadicParameter as const,
 		$source: 2 as const,
@@ -2606,6 +2751,7 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parameter', { mutable: _mutable, name: _name, type: _type });
 	const node = {
 		$type: TSKindId.Parameter as const,
 		$source: 2 as const,
@@ -2655,6 +2801,7 @@ export function buildExternModifier(...args: unknown[]) {
 function _buildExternModifier(value?: Admit<T.StringLiteral>): T.ExternModifier.Bound {
 	const _abi = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'extern_modifier', { abi: _abi });
 	const node = {
 		$type: TSKindId.ExternModifier as const,
 		$source: 2 as const,
@@ -2680,6 +2827,7 @@ export function buildVisibilityModifier(
 ): T.VisibilityModifier.Bound {
 	const _content = kindIdStorage<NonNullable<T.VisibilityModifier['_content']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'visibility_modifier', { content: _content });
 	const node = {
 		$type: TSKindId.VisibilityModifier as const,
 		$source: 2 as const,
@@ -2709,6 +2857,7 @@ export function buildBracketedType(
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'bracketed_type', { type: _type });
 	const node = {
 		$type: TSKindId.BracketedType as const,
 		$source: 2 as const,
@@ -2740,6 +2889,7 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'qualified_type', { type: _type, alias: _alias });
 	const node = {
 		$type: TSKindId.QualifiedType as const,
 		$source: 2 as const,
@@ -2768,6 +2918,7 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 export function buildLifetime(value: Admit<T.Identifier>): T.Lifetime.Bound {
 	const _name = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'lifetime', { name: _name });
 	const node = {
 		$type: TSKindId.Lifetime as const,
 		$source: 2 as const,
@@ -2795,6 +2946,7 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Bound {
 	);
 	const _length = kindIdStorage<NonNullable<T.ArrayType['_length']>>(config.length);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'array_type', { element: _element, length: _length });
 	const node = {
 		$type: TSKindId.ArrayType as const,
 		$source: 2 as const,
@@ -2846,6 +2998,7 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 	const listView = ownerView(_lifetimes, '_item');
 	if (listView.stored === undefined) refuseReadStub('_lifetimes');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'for_lifetimes', { lifetimes: _lifetimes });
 	const node = {
 		$type: TSKindId.ForLifetimes as const,
 		$source: 2 as const,
@@ -2891,6 +3044,13 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'function_type', {
+			forLifetimes: _for_lifetimes,
+			content: _content,
+			parameters: _parameters,
+			returnType: _return_type
+		});
 	const node = {
 		$type: TSKindId.FunctionType as const,
 		$source: 2 as const,
@@ -2967,6 +3127,7 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'tuple_type', { types: _types });
 	const node = {
 		$type: TSKindId.TupleType as const,
 		$source: 2 as const,
@@ -3009,6 +3170,8 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 	const _function = config.function;
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'generic_function', { function: _function, typeArguments: _type_arguments });
 	const node = {
 		$type: TSKindId.GenericFunction as const,
 		$source: 2 as const,
@@ -3049,6 +3212,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	const _type = config.type;
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'generic_type', { type: _type, typeArguments: _type_arguments });
 	const node = {
 		$type: TSKindId.GenericType as const,
 		$source: 2 as const,
@@ -3093,6 +3257,8 @@ export function buildGenericTypeWithTurbofish(
 	]);
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'generic_type_with_turbofish', { type: _type, typeArguments: _type_arguments });
 	const node = {
 		$type: TSKindId.GenericTypeWithTurbofish as const,
 		$source: 2 as const,
@@ -3139,6 +3305,7 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bo
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'bounded_type', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.BoundedType as const,
 		$source: 2 as const,
@@ -3193,6 +3360,7 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 	const listView = ownerView(_bounds, '_item');
 	if (listView.stored === undefined) refuseReadStub('_bounds');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'use_bounds', { bounds: _bounds });
 	const node = {
 		$type: TSKindId.UseBounds as const,
 		$source: 2 as const,
@@ -3264,6 +3432,7 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'type_arguments', { elements: _elements });
 	const node = {
 		$type: TSKindId.TypeArguments as const,
 		$source: 2 as const,
@@ -3320,6 +3489,8 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'type_binding', { name: _name, typeArguments: _type_arguments, type: _type });
 	const node = {
 		$type: TSKindId.TypeBinding as const,
 		$source: 2 as const,
@@ -3368,6 +3539,8 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'reference_type', { lifetime: _lifetime, mutable: _mutable, type: _type });
 	const node = {
 		$type: TSKindId.ReferenceType as const,
 		$source: 2 as const,
@@ -3405,6 +3578,7 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'abstract_type', { typeParameters: _type_parameters, trait: _trait });
 	const node = {
 		$type: TSKindId.AbstractType as const,
 		$source: 2 as const,
@@ -3468,6 +3642,7 @@ export function buildDynamicType(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'dynamic_type', { trait: _trait });
 	const node = {
 		$type: TSKindId.DynamicType as const,
 		$source: 2 as const,
@@ -3506,6 +3681,7 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 	const _macro = config.macro;
 	const _arguments = config.arguments;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'macro_invocation', { macro: _macro, arguments: _arguments });
 	const node = {
 		$type: TSKindId.MacroInvocation as const,
 		$source: 2 as const,
@@ -3545,6 +3721,7 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 		['super']
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'scoped_identifier', { path: _path, name: _name });
 	const node = {
 		$type: TSKindId.ScopedIdentifier as const,
 		$source: 2 as const,
@@ -3583,6 +3760,8 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'scoped_type_identifier_in_expression_position', { path: _path, name: _name });
 	const node = {
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
 		$source: 2 as const,
@@ -3619,6 +3798,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'scoped_type_identifier', { path: _path, name: _name });
 	const node = {
 		$type: TSKindId.ScopedTypeIdentifier as const,
 		$source: 2 as const,
@@ -3648,6 +3828,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 	const _operator = kindIdStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator);
 	const _operand = kindIdStorage<NonNullable<T.UnaryExpression['_operand']>>(config.operand);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'unary_expression', { operator: _operator, operand: _operand });
 	const node = {
 		$type: TSKindId.UnaryExpression as const,
 		$source: 2 as const,
@@ -3676,6 +3857,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 export function buildTryExpression(value: Admit<T.Expression>): T.TryExpression.Bound {
 	const _value = kindIdStorage<NonNullable<T.TryExpression['_value']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'try_expression', { value: _value });
 	const node = {
 		$type: TSKindId.TryExpression as const,
 		$source: 2 as const,
@@ -3701,6 +3883,8 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config): T.Bina
 	const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
 	const _right = kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'binary_expression', { left: _left, operator: _operator, right: _right });
 	const node = {
 		$type: TSKindId.BinaryExpression as const,
 		$source: 2 as const,
@@ -3734,6 +3918,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 	const _left = kindIdStorage<NonNullable<T.AssignmentExpression['_left']>>(config.left);
 	const _right = kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'assignment_expression', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.AssignmentExpression as const,
 		$source: 2 as const,
@@ -3764,6 +3949,8 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 	const _operator = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_operator']>>(config.operator);
 	const _right = kindIdStorage<NonNullable<T.CompoundAssignmentExpr['_right']>>(config.right);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'compound_assignment_expr', { left: _left, operator: _operator, right: _right });
 	const node = {
 		$type: TSKindId.CompoundAssignmentExpr as const,
 		$source: 2 as const,
@@ -3800,6 +3987,7 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'type_cast_expression', { value: _value, type: _type });
 	const node = {
 		$type: TSKindId.TypeCastExpression as const,
 		$source: 2 as const,
@@ -3828,6 +4016,7 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.
 export function buildReturnExpression(value?: Admit<T.Expression>): T.ReturnExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.ReturnExpression['_expression']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'return_expression', { expression: _expression });
 	const node = {
 		$type: TSKindId.ReturnExpression as const,
 		$source: 2 as const,
@@ -3852,6 +4041,7 @@ export function buildReturnExpression(value?: Admit<T.Expression>): T.ReturnExpr
 export function buildYieldExpression(value?: Admit<T.Expression>): T.YieldExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.YieldExpression['_expression']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'yield_expression', { expression: _expression });
 	const node = {
 		$type: TSKindId.YieldExpression as const,
 		$source: 2 as const,
@@ -3881,6 +4071,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 	);
 	const _arguments = orDefault(config.arguments, () => buildArguments());
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'call_expression', { function: _function, arguments: _arguments });
 	const node = {
 		$type: TSKindId.CallExpression as const,
 		$source: 2 as const,
@@ -3946,6 +4137,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'arguments', { elements: _elements });
 	const node = {
 		$type: TSKindId.Arguments as const,
 		$source: 2 as const,
@@ -3996,6 +4188,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 export function buildParenthesizedExpression(value: Admit<T.Expression>): T.ParenthesizedExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parenthesized_expression', { expression: _expression });
 	const node = {
 		$type: TSKindId.ParenthesizedExpression as const,
 		$source: 2 as const,
@@ -4021,6 +4214,8 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 	const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
 	const _expressions = config.expressions;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'tuple_expression', { attributes: _attributes, expressions: _expressions });
 	const node = {
 		$type: TSKindId.TupleExpression as const,
 		$source: 2 as const,
@@ -4060,6 +4255,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 	]);
 	const _body = orDefault(config.body, () => buildFieldInitializerList());
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'struct_expression', { name: _name, body: _body });
 	const node = {
 		$type: TSKindId.StructExpression as const,
 		$source: 2 as const,
@@ -4130,6 +4326,7 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 	const listView = ownerView(_initializers, '_item');
 	if (listView.stored === undefined) refuseReadStub('_initializers');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_initializer_list', { initializers: _initializers });
 	const node = {
 		$type: TSKindId.FieldInitializerList as const,
 		$source: 2 as const,
@@ -4177,6 +4374,8 @@ export function buildShorthandFieldInitializer(
 	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
 	const _name = config.name;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, name: _name });
 	const node = {
 		$type: TSKindId.ShorthandFieldInitializer as const,
 		$source: 2 as const,
@@ -4211,6 +4410,8 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 	]);
 	const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'field_initializer', { attributeItem: _attribute_item, field: _field, value: _value });
 	const node = {
 		$type: TSKindId.FieldInitializer as const,
 		$source: 2 as const,
@@ -4245,6 +4446,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 export function buildBaseFieldInitializer(value: Admit<T.Expression>): T.BaseFieldInitializer.Bound {
 	const _value = kindIdStorage<NonNullable<T.BaseFieldInitializer['_value']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'base_field_initializer', { value: _value });
 	const node = {
 		$type: TSKindId.BaseFieldInitializer as const,
 		$source: 2 as const,
@@ -4270,6 +4472,12 @@ export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression
 	const _consequence = orDefault(config.consequence, () => buildBlock());
 	const _alternative = config.alternative;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'if_expression', {
+			condition: _condition,
+			consequence: _consequence,
+			alternative: _alternative
+		});
 	const node = {
 		$type: TSKindId.IfExpression as const,
 		$source: 2 as const,
@@ -4303,6 +4511,7 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 	const _pattern = kindIdStorage<NonNullable<T.LetCondition['_pattern']>>(config.pattern);
 	const _value = kindIdStorage<NonNullable<T.LetCondition['_value']>>(config.value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'let_condition', { pattern: _pattern, value: _value });
 	const node = {
 		$type: TSKindId.LetCondition as const,
 		$source: 2 as const,
@@ -4332,6 +4541,7 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 	const _left = kindIdStorage<NonNullable<T.LetChain['_left']>>(config.left);
 	const _right = listStorage<NonNullable<T.LetChain['_right']>>(config.right ?? [], kindIdStorage);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, '_let_chain', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.LetChain as const,
 		$source: 2 as const,
@@ -4360,6 +4570,7 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 export function buildElseClause(value: Admit<T.Block | T.IfExpression>): T.ElseClause.Bound {
 	const _body = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'else_clause', { body: _body });
 	const node = {
 		$type: TSKindId.ElseClause as const,
 		$source: 2 as const,
@@ -4384,6 +4595,7 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 	const _value = kindIdStorage<NonNullable<T.MatchExpression['_value']>>(config.value);
 	const _body = orDefault(config.body, () => buildMatchBlock());
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'match_expression', { value: _value, body: _body });
 	const node = {
 		$type: TSKindId.MatchExpression as const,
 		$source: 2 as const,
@@ -4415,6 +4627,7 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 	const _match_block_arms = value;
 	const readGroup_matchBlockArms = () => _match_block_arms;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'match_block', { matchBlockArms: _match_block_arms });
 	const node = {
 		$type: TSKindId.MatchBlock as const,
 		$source: 2 as const,
@@ -4485,6 +4698,13 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 	const _comma = strictBooleanStorage(config.comma);
 	const readGroup_pattern = () => _pattern;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'last_match_arm', {
+			attributes: _attributes,
+			pattern: _pattern,
+			value: _value,
+			comma: _comma
+		});
 	const node = {
 		$type: TSKindId.LastMatchArm as const,
 		$source: 2 as const,
@@ -4560,6 +4780,7 @@ export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern
 	const _pattern = kindIdStorage<NonNullable<T.MatchPattern['_pattern']>>(config.pattern);
 	const _condition = kindIdStorage<NonNullable<T.MatchPattern['_condition']>>(config.condition);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'match_pattern', { pattern: _pattern, condition: _condition });
 	const node = {
 		$type: TSKindId.MatchPattern as const,
 		$source: 2 as const,
@@ -4590,6 +4811,8 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 	const _condition = kindIdStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition);
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'while_expression', { label: _label, condition: _condition, body: _body });
 	const node = {
 		$type: TSKindId.WhileExpression as const,
 		$source: 2 as const,
@@ -4621,6 +4844,7 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 	const _label = config.label;
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'loop_expression', { label: _label, body: _body });
 	const node = {
 		$type: TSKindId.LoopExpression as const,
 		$source: 2 as const,
@@ -4650,6 +4874,8 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 	const _value = kindIdStorage<NonNullable<T.ForExpression['_value']>>(config.value);
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_expression', { label: _label, pattern: _pattern, value: _value, body: _body });
 	const node = {
 		$type: TSKindId.ForExpression as const,
 		$source: 2 as const,
@@ -4702,6 +4928,7 @@ export function buildConstBlock(...args: unknown[]) {
 function _buildConstBlock(value: Admit<T.Block>): T.ConstBlock.Bound {
 	const _body = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'const_block', { body: _body });
 	const node = {
 		$type: TSKindId.ConstBlock as const,
 		$source: 2 as const,
@@ -4727,6 +4954,7 @@ export function buildClosureParameters(...children: Admit<(T.Pattern | T.Paramet
 export function buildClosureParameters(...children: Admit<(T.Pattern | T.Parameter)[]>): T.ClosureParameters.Bound {
 	const _parameters = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'closure_parameters', { parameters: _parameters });
 	const node = {
 		$type: TSKindId.ClosureParameters as const,
 		$source: 2 as const,
@@ -4752,6 +4980,7 @@ export function buildClosureParameters(...children: Admit<(T.Pattern | T.Paramet
 export function buildLabel(value: Admit<T.Identifier>): T.Label.Bound {
 	const _name = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'label', { name: _name });
 	const node = {
 		$type: TSKindId.Label as const,
 		$source: 2 as const,
@@ -4776,6 +5005,7 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 	const _label = config.label;
 	const _expression = kindIdStorage<NonNullable<T.BreakExpression['_expression']>>(config.expression);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'break_expression', { label: _label, expression: _expression });
 	const node = {
 		$type: TSKindId.BreakExpression as const,
 		$source: 2 as const,
@@ -4803,6 +5033,7 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 export function buildContinueExpression(value?: Admit<T.Label>): T.ContinueExpression.Bound {
 	const _label = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'continue_expression', { label: _label });
 	const node = {
 		$type: TSKindId.ContinueExpression as const,
 		$source: 2 as const,
@@ -4827,6 +5058,7 @@ export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexE
 	const _object = kindIdStorage<NonNullable<T.IndexExpression['_object']>>(config.object);
 	const _index = kindIdStorage<NonNullable<T.IndexExpression['_index']>>(config.index);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'index_expression', { object: _object, index: _index });
 	const node = {
 		$type: TSKindId.IndexExpression as const,
 		$source: 2 as const,
@@ -4855,6 +5087,7 @@ export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexE
 export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.AwaitExpression['_expression']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'await_expression', { expression: _expression });
 	const node = {
 		$type: TSKindId.AwaitExpression as const,
 		$source: 2 as const,
@@ -4881,6 +5114,7 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_expression', { value: _value, field: _field });
 	const node = {
 		$type: TSKindId.FieldExpression as const,
 		$source: 2 as const,
@@ -4929,6 +5163,7 @@ export function buildUnsafeBlock(...args: unknown[]) {
 function _buildUnsafeBlock(value: Admit<T.Block>): T.UnsafeBlock.Bound {
 	const _body = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'unsafe_block', { body: _body });
 	const node = {
 		$type: TSKindId.UnsafeBlock as const,
 		$source: 2 as const,
@@ -4953,6 +5188,7 @@ export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.As
 	const _move = strictBooleanStorage(config.move);
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'async_block', { move: _move, body: _body });
 	const node = {
 		$type: TSKindId.AsyncBlock as const,
 		$source: 2 as const,
@@ -4981,6 +5217,7 @@ export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlo
 	const _move = strictBooleanStorage(config.move);
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'gen_block', { move: _move, body: _body });
 	const node = {
 		$type: TSKindId.GenBlock as const,
 		$source: 2 as const,
@@ -5026,6 +5263,7 @@ export function buildTryBlock(...args: unknown[]) {
 function _buildTryBlock(value: Admit<T.Block>): T.TryBlock.Bound {
 	const _body = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'try_block', { body: _body });
 	const node = {
 		$type: TSKindId.TryBlock as const,
 		$source: 2 as const,
@@ -5053,6 +5291,12 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound 
 	const _statements = listStorage<NonNullable<T.Block['_statements']>>(config.statements ?? [], kindIdStorage);
 	const _trailing_expression = kindIdStorage<NonNullable<T.Block['_trailing_expression']>>(config.trailingExpression);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'block', {
+			label: _label,
+			statements: _statements,
+			trailingExpression: _trailing_expression
+		});
 	const node = {
 		$type: TSKindId.Block as const,
 		$source: 2 as const,
@@ -5086,6 +5330,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 	const _name = config.name;
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'generic_pattern', { name: _name, typeArguments: _type_arguments });
 	const node = {
 		$type: TSKindId.GenericPattern as const,
 		$source: 2 as const,
@@ -5151,6 +5396,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'tuple_pattern', { elements: _elements });
 	const node = {
 		$type: TSKindId.TuplePattern as const,
 		$source: 2 as const,
@@ -5215,6 +5461,7 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 	const listView = ownerView(_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_patterns');
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'slice_pattern', { patterns: _patterns });
 	const node = {
 		$type: TSKindId.SlicePattern as const,
 		$source: 2 as const,
@@ -5256,6 +5503,7 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 	const _type = config.type;
 	const _patterns = config.patterns;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'tuple_struct_pattern', { type: _type, patterns: _patterns });
 	const node = {
 		$type: TSKindId.TupleStructPattern as const,
 		$source: 2 as const,
@@ -5293,6 +5541,7 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 	]);
 	const _fields = config.fields;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'struct_pattern', { type: _type, fields: _fields });
 	const node = {
 		$type: TSKindId.StructPattern as const,
 		$source: 2 as const,
@@ -5329,6 +5578,7 @@ export const buildRemainingFieldPattern: TSKindId.RemainingFieldPattern = TSKind
 export function buildMutPattern(value: Admit<T.Pattern>): T.MutPattern.Bound {
 	const _pattern = kindIdStorage<NonNullable<T.MutPattern['_pattern']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'mut_pattern', { pattern: _pattern });
 	const node = {
 		$type: TSKindId.MutPattern as const,
 		$source: 2 as const,
@@ -5352,6 +5602,7 @@ export function buildMutPattern(value: Admit<T.Pattern>): T.MutPattern.Bound {
 export function buildRefPattern(value: Admit<T.Pattern>): T.RefPattern.Bound {
 	const _pattern = kindIdStorage<NonNullable<T.RefPattern['_pattern']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ref_pattern', { pattern: _pattern });
 	const node = {
 		$type: TSKindId.RefPattern as const,
 		$source: 2 as const,
@@ -5376,6 +5627,7 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): T.Captur
 	const _name = config.name;
 	const _pattern = kindIdStorage<NonNullable<T.CapturedPattern['_pattern']>>(config.pattern);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'captured_pattern', { name: _name, pattern: _pattern });
 	const node = {
 		$type: TSKindId.CapturedPattern as const,
 		$source: 2 as const,
@@ -5405,6 +5657,7 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): T.Refe
 	const _mutable = strictBooleanStorage(config.mutable);
 	const _pattern = kindIdStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'reference_pattern', { mutable: _mutable, pattern: _pattern });
 	const node = {
 		$type: TSKindId.ReferencePattern as const,
 		$source: 2 as const,
@@ -5433,6 +5686,7 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): T.Refe
 export function buildNegativeLiteral(value: Admit<T.IntegerLiteral | T.FloatLiteral>): T.NegativeLiteral.Bound {
 	const _value = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'negative_literal', { value: _value });
 	const node = {
 		$type: TSKindId.NegativeLiteral as const,
 		$source: 2 as const,
@@ -5458,6 +5712,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 	const _string_open = config.stringOpen;
 	const _elements = listStorage<NonNullable<T.StringLiteral['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'string_literal', { stringOpen: _string_open, elements: _elements });
 	const node = {
 		$type: TSKindId.StringLiteral as const,
 		$source: 2 as const,
@@ -5488,6 +5743,12 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	const _string_content = config.stringContent;
 	const _raw_string_literal_end = config.rawStringLiteralEnd;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'raw_string_literal', {
+			rawStringLiteralStart: _raw_string_literal_start,
+			stringContent: _string_content,
+			rawStringLiteralEnd: _raw_string_literal_end
+		});
 	const node = {
 		$type: TSKindId.RawStringLiteral as const,
 		$source: 2 as const,
@@ -5530,6 +5791,7 @@ export function buildLineComment(
 ): T.LineComment.Bound {
 	const _content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'line_comment', { content: _content });
 	const node = {
 		$type: TSKindId.LineComment as const,
 		$source: 2 as const,
@@ -5561,6 +5823,7 @@ export function buildBlockComment(
 ): T.BlockComment.Bound {
 	const _content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'block_comment', { content: _content });
 	const node = {
 		$type: TSKindId.BlockComment as const,
 		$source: 2 as const,
@@ -5612,6 +5875,7 @@ export function buildShebang(input: string, affix: boolean = true): T.Shebang.Bo
 	if (typeof _content !== 'string' || !_slotRe_buildShebang_content.test(_content))
 		throw new Error(`shebang.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'shebang', { content: _content });
 	const node = {
 		$type: TSKindId.Shebang as const,
 		$source: 2 as const,
@@ -5646,6 +5910,7 @@ export function buildMetavariable(input: string, affix: boolean = true): T.Metav
 	if (typeof _name !== 'string' || !_slotRe_buildMetavariable_name.test(_name))
 		throw new Error(`metavariable.name: text does not match pattern: ${describeValue(_name)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'metavariable', { name: _name });
 	const node = {
 		$type: TSKindId.Metavariable as const,
 		$source: 2 as const,
@@ -5690,6 +5955,7 @@ function _buildMacroRules(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'macro_rules', { items: _item });
 	const node = {
 		$type: TSKindId.MacroRules as const,
 		$source: 2 as const,
@@ -5760,6 +6026,7 @@ function _buildEnumVariantListElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'enum_variant_list_elements', { items: _item });
 	const node = {
 		$type: TSKindId.EnumVariantListElements as const,
 		$source: 2 as const,
@@ -5846,6 +6113,7 @@ function _buildFieldDeclarationListElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_declaration_list_elements', { items: _item });
 	const node = {
 		$type: TSKindId.FieldDeclarationListElements as const,
 		$source: 2 as const,
@@ -5932,6 +6200,7 @@ function _buildOrderedFieldDeclarationListElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordered_field_declaration_list_elements', { items: _item });
 	const node = {
 		$type: TSKindId.OrderedFieldDeclarationListElements as const,
 		$source: 2 as const,
@@ -6005,6 +6274,7 @@ function _buildWherePredicates(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'where_predicates', { items: _item });
 	const node = {
 		$type: TSKindId.WherePredicates as const,
 		$source: 2 as const,
@@ -6085,6 +6355,7 @@ function _buildTypeParametersElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'type_parameters_elements', { items: _item });
 	const node = {
 		$type: TSKindId.TypeParametersElements as const,
 		$source: 2 as const,
@@ -6229,6 +6500,7 @@ function _buildUseClauses(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'use_clauses', { items: _item });
 	const node = {
 		$type: TSKindId.UseClauses as const,
 		$source: 2 as const,
@@ -6363,6 +6635,7 @@ function _buildParametersElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parameters_elements', { items: _item });
 	const node = {
 		$type: TSKindId.ParametersElements as const,
 		$source: 2 as const,
@@ -6443,6 +6716,7 @@ function _buildLifetimes(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'lifetimes', { items: _item });
 	const node = {
 		$type: TSKindId.Lifetimes as const,
 		$source: 2 as const,
@@ -6507,6 +6781,7 @@ function _buildTypes(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'types', { items: _item });
 	const node = {
 		$type: TSKindId.Types as const,
 		$source: 2 as const,
@@ -6575,6 +6850,7 @@ function _buildUseBoundsElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'use_bounds_elements', { items: _item });
 	const node = {
 		$type: TSKindId.UseBoundsElements as const,
 		$source: 2 as const,
@@ -6653,6 +6929,7 @@ function _buildTypeArgumentsElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'type_arguments_elements', { items: _item });
 	const node = {
 		$type: TSKindId.TypeArgumentsElements as const,
 		$source: 2 as const,
@@ -6741,6 +7018,7 @@ function _buildArgumentsElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'arguments_elements', { items: _item });
 	const node = {
 		$type: TSKindId.ArgumentsElements as const,
 		$source: 2 as const,
@@ -6811,6 +7089,7 @@ function _buildExpressions(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'expressions', { items: _item });
 	const node = {
 		$type: TSKindId.Expressions as const,
 		$source: 2 as const,
@@ -6877,6 +7156,7 @@ function _buildFieldInitializerListElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_initializer_list_elements', { items: _item });
 	const node = {
 		$type: TSKindId.FieldInitializerListElements as const,
 		$source: 2 as const,
@@ -6940,6 +7220,7 @@ function _buildTuplePatternElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'tuple_pattern_elements', { items: _item });
 	const node = {
 		$type: TSKindId.TuplePatternElements as const,
 		$source: 2 as const,
@@ -6997,6 +7278,7 @@ function _buildPatterns(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'patterns', { items: _item });
 	const node = {
 		$type: TSKindId.Patterns as const,
 		$source: 2 as const,
@@ -7062,6 +7344,7 @@ function _buildStructPatternElements(
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'struct_pattern_elements', { items: _item });
 	const node = {
 		$type: TSKindId.StructPatternElements as const,
 		$source: 2 as const,
@@ -7105,6 +7388,7 @@ export function buildUseWildcardGroup(
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'use_wildcard_group', { path: _path });
 	const node = {
 		$type: TSKindId.UseWildcardGroup as const,
 		$source: 2 as const,
@@ -7192,6 +7476,7 @@ export function buildIntegerLiteralDecimal(
 	)
 		throw new Error(`integer_literal_decimal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_literal_decimal', { content: _content, suffix: _suffix });
 	const node = {
 		$type: TSKindId.IntegerLiteralDecimal as const,
 		$source: 2 as const,
@@ -7249,6 +7534,7 @@ export function buildIntegerLiteralHex(
 	if (_suffix !== undefined && (typeof _suffix !== 'string' || !_slotRe_buildIntegerLiteralHex_suffix.test(_suffix)))
 		throw new Error(`integer_literal_hex.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_literal_hex', { content: _content, suffix: _suffix });
 	const node = {
 		$type: TSKindId.IntegerLiteralHex as const,
 		$source: 2 as const,
@@ -7306,6 +7592,7 @@ export function buildIntegerLiteralBinary(
 	if (_suffix !== undefined && (typeof _suffix !== 'string' || !_slotRe_buildIntegerLiteralBinary_suffix.test(_suffix)))
 		throw new Error(`integer_literal_binary.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_literal_binary', { content: _content, suffix: _suffix });
 	const node = {
 		$type: TSKindId.IntegerLiteralBinary as const,
 		$source: 2 as const,
@@ -7363,6 +7650,7 @@ export function buildIntegerLiteralOctal(
 	if (_suffix !== undefined && (typeof _suffix !== 'string' || !_slotRe_buildIntegerLiteralOctal_suffix.test(_suffix)))
 		throw new Error(`integer_literal_octal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'integer_literal_octal', { content: _content, suffix: _suffix });
 	const node = {
 		$type: TSKindId.IntegerLiteralOctal as const,
 		$source: 2 as const,
@@ -7410,6 +7698,7 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralPlain_content.test(_content))
 		throw new Error(`char_literal_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'char_literal_plain', { byte: _byte, content: _content });
 	const node = {
 		$type: TSKindId.CharLiteralPlain as const,
 		$source: 2 as const,
@@ -7464,6 +7753,7 @@ export function buildCharLiteralEscapedSimple(
 	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
 		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_simple', { byte: _byte, content: _content });
 	const node = {
 		$type: TSKindId.CharLiteralEscapedSimple as const,
 		$source: 2 as const,
@@ -7499,6 +7789,8 @@ export function buildCharLiteralEscapedUnicodeFixed(
 			`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`
 		);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'char_literal_escaped_unicode_fixed', { byte: _byte, content: _content });
 	const node = {
 		$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
 		$source: 2 as const,
@@ -7534,6 +7826,8 @@ export function buildCharLiteralEscapedUnicodeBraced(
 			`char_literal_escaped_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`
 		);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'char_literal_escaped_unicode_braced', { byte: _byte, content: _content });
 	const node = {
 		$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
 		$source: 2 as const,
@@ -7565,6 +7859,7 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralEscapedHex_content.test(_content))
 		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'char_literal_escaped_hex', { byte: _byte, content: _content });
 	const node = {
 		$type: TSKindId.CharLiteralEscapedHex as const,
 		$source: 2 as const,
@@ -7598,6 +7893,7 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence_simple', { content: _content });
 	const node = {
 		$type: TSKindId.EscapeSequenceSimple as const,
 		$source: 2 as const,
@@ -7629,6 +7925,7 @@ export function buildEscapeSequenceUnicodeFixed(
 	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence_unicode_fixed', { content: _content });
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeFixed as const,
 		$source: 2 as const,
@@ -7663,6 +7960,7 @@ export function buildEscapeSequenceUnicodeBraced(
 	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
 		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence_unicode_braced', { content: _content });
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeBraced as const,
 		$source: 2 as const,
@@ -7691,6 +7989,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence_hex', { content: _content });
 	const node = {
 		$type: TSKindId.EscapeSequenceHex as const,
 		$source: 2 as const,
@@ -7716,6 +8015,8 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 	const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
 	const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'array_expression_semi', { attributes: _attributes, element: _element, length: _length });
 	const node = {
 		$type: TSKindId.ArrayExpressionSemi as const,
 		$source: 2 as const,
@@ -7755,6 +8056,8 @@ export function buildArrayExpressionList(
 	const _attributes = listStorage<NonNullable<T.ArrayExpressionList['_attributes']>>(config.attributes ?? []);
 	const _elements = config.elements;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'array_expression_list', { attributes: _attributes, elements: _elements });
 	const node = {
 		$type: TSKindId.ArrayExpressionList as const,
 		$source: 2 as const,
@@ -7798,6 +8101,7 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 	const _value = kindIdStorage<NonNullable<T.AttributeInput['_value']>>(config.value);
 	const _arguments = config.arguments;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'attribute_input', { value: _value, arguments: _arguments });
 	const node = {
 		$type: TSKindId.AttributeInput as const,
 		$source: 2 as const,
@@ -7836,6 +8140,15 @@ export function buildClosureExpressionBlock(
 	);
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'closure_expression_block', {
+			static: _static,
+			async: _async,
+			move: _move,
+			parameters: _parameters,
+			returnType: _return_type,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.ClosureExpressionBlock as const,
 		$source: 2 as const,
@@ -7884,6 +8197,14 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 	const _parameters = orDefault(config.parameters, () => buildClosureParameters());
 	const _body = kindIdStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'closure_expression_expr', {
+			static: _static,
+			async: _async,
+			move: _move,
+			parameters: _parameters,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.ClosureExpressionExpr as const,
 		$source: 2 as const,
@@ -7924,6 +8245,7 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 export function buildReferenceExpressionRawConst(value: Admit<T.Expression>): T.ReferenceExpressionRawConst.Bound {
 	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionRawConst['_value']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_const', { value: _value });
 	const node = {
 		$type: TSKindId.ReferenceExpressionRawConst as const,
 		$source: 2 as const,
@@ -7948,6 +8270,7 @@ export function buildReferenceExpressionRawConst(value: Admit<T.Expression>): T.
 export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.ReferenceExpressionRawMut.Bound {
 	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_value']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { value: _value });
 	const node = {
 		$type: TSKindId.ReferenceExpressionRawMut as const,
 		$source: 2 as const,
@@ -7972,6 +8295,7 @@ export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.Re
 export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.ReferenceExpressionMut.Bound {
 	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_value']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { value: _value });
 	const node = {
 		$type: TSKindId.ReferenceExpressionMut as const,
 		$source: 2 as const,
@@ -7996,6 +8320,7 @@ export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.Refer
 export function buildReferenceExpressionBare(value: Admit<T.Expression>): T.ReferenceExpressionBare.Bound {
 	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionBare['_value']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_bare', { value: _value });
 	const node = {
 		$type: TSKindId.ReferenceExpressionBare as const,
 		$source: 2 as const,
@@ -8024,6 +8349,7 @@ export function buildImplItemPositiveClause(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'impl_item_positive_clause', { trait: _trait });
 	const node = {
 		$type: TSKindId.ImplItemPositiveClause as const,
 		$source: 2 as const,
@@ -8052,6 +8378,7 @@ export function buildImplItemNegativeClause(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'impl_item_negative_clause', { trait: _trait });
 	const node = {
 		$type: TSKindId.ImplItemNegativeClause as const,
 		$source: 2 as const,
@@ -8084,6 +8411,15 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 	const _where_clause = config.whereClause;
 	const _body = orDefault(config.body, () => buildDeclarationList());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'impl_item_body', {
+			unsafe: _unsafe,
+			typeParameters: _type_parameters,
+			traitClause: _trait_clause,
+			type: _type,
+			whereClause: _where_clause,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.ImplItemBody as const,
 		$source: 2 as const,
@@ -8152,6 +8488,14 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 	);
 	const _where_clause = config.whereClause;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'impl_item_semi', {
+			unsafe: _unsafe,
+			typeParameters: _type_parameters,
+			traitClause: _trait_clause,
+			type: _type,
+			whereClause: _where_clause
+		});
 	const node = {
 		$type: TSKindId.ImplItemSemi as const,
 		$source: 2 as const,
@@ -8216,6 +8560,7 @@ export function buildVisibilityModifierPubScopeInPath(
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'visibility_modifier_pub_scope_in_path', { path: _path });
 	const node = {
 		$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 		$source: 2 as const,
@@ -8247,6 +8592,7 @@ export function buildVisibilityModifierPubScope(
 ): T.VisibilityModifierPubScope.Bound {
 	const _content = kindIdStorage<NonNullable<T.VisibilityModifierPubScope['_content']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'visibility_modifier_pub_scope', { content: _content });
 	const node = {
 		$type: TSKindId.VisibilityModifierPubScope as const,
 		$source: 2 as const,
@@ -8295,6 +8641,8 @@ export function buildVisibilityModifierPub(...args: unknown[]) {
 function _buildVisibilityModifierPub(value?: Admit<T.VisibilityModifierPubScope>): T.VisibilityModifierPub.Bound {
 	const _visibility_modifier_pub_scope = value;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'visibility_modifier_pub', { visibilityModifierPubScope: _visibility_modifier_pub_scope });
 	const node = {
 		$type: TSKindId.VisibilityModifierPub as const,
 		$source: 2 as const,
@@ -8323,6 +8671,7 @@ export function buildFunctionTypeTraitForm(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'function_type_trait_form', { trait: _trait });
 	const node = {
 		$type: TSKindId.FunctionTypeTraitForm as const,
 		$source: 2 as const,
@@ -8378,6 +8727,7 @@ export function buildFunctionTypeFnForm(...args: unknown[]) {
 function _buildFunctionTypeFnForm(value?: Admit<T.FunctionModifiers>): T.FunctionTypeFnForm.Bound {
 	const _function_modifiers = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'function_type_fn_form', { functionModifiers: _function_modifiers });
 	const node = {
 		$type: TSKindId.FunctionTypeFnForm as const,
 		$source: 2 as const,
@@ -8403,6 +8753,8 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'mod_item_external', { visibilityModifier: _visibility_modifier, name: _name });
 	const node = {
 		$type: TSKindId.ModItemExternal as const,
 		$source: 2 as const,
@@ -8433,6 +8785,8 @@ export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInl
 	const _name = config.name;
 	const _body = orDefault(config.body, () => buildDeclarationList());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'mod_item_inline', { visibilityModifier: _visibility_modifier, name: _name, body: _body });
 	const node = {
 		$type: TSKindId.ModItemInline as const,
 		$source: 2 as const,
@@ -8465,6 +8819,7 @@ export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatt
 	const _left = kindIdStorage<NonNullable<T.OrPatternBinary['_left']>>(config.left);
 	const _right = kindIdStorage<NonNullable<T.OrPatternBinary['_right']>>(config.right);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'or_pattern_binary', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.OrPatternBinary as const,
 		$source: 2 as const,
@@ -8493,6 +8848,7 @@ export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatt
 export function buildOrPatternPrefix(value: Admit<T.Pattern>): T.OrPatternPrefix.Bound {
 	const _right = kindIdStorage<NonNullable<T.OrPatternPrefix['_right']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'or_pattern_prefix', { right: _right });
 	const node = {
 		$type: TSKindId.OrPatternPrefix as const,
 		$source: 2 as const,
@@ -8519,6 +8875,7 @@ export function buildPointerTypeConst(value: Admit<T.Type | T.TypeIdentifier.Typ
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'pointer_type_const', { type: _type });
 	const node = {
 		$type: TSKindId.PointerTypeConst as const,
 		$source: 2 as const,
@@ -8546,6 +8903,7 @@ export function buildPointerTypeMut(value: Admit<T.Type | T.TypeIdentifier.Types
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'pointer_type_mut', { type: _type });
 	const node = {
 		$type: TSKindId.PointerTypeMut as const,
 		$source: 2 as const,
@@ -8572,6 +8930,8 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 	const _operator = kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator);
 	const _end = kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'range_expression_binary', { start: _start, operator: _operator, end: _end });
 	const node = {
 		$type: TSKindId.RangeExpressionBinary as const,
 		$source: 2 as const,
@@ -8604,6 +8964,7 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 export function buildRangeExpressionPostfix(value: Admit<T.Expression>): T.RangeExpressionPostfix.Bound {
 	const _start = kindIdStorage<NonNullable<T.RangeExpressionPostfix['_start']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'range_expression_postfix', { start: _start });
 	const node = {
 		$type: TSKindId.RangeExpressionPostfix as const,
 		$source: 2 as const,
@@ -8628,6 +8989,7 @@ export function buildRangeExpressionPostfix(value: Admit<T.Expression>): T.Range
 export function buildRangeExpressionPrefix(value: Admit<T.Expression>): T.RangeExpressionPrefix.Bound {
 	const _end = kindIdStorage<NonNullable<T.RangeExpressionPrefix['_end']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'range_expression_prefix', { end: _end });
 	const node = {
 		$type: TSKindId.RangeExpressionPrefix as const,
 		$source: 2 as const,
@@ -8653,6 +9015,8 @@ export function buildRangeExpressionBare(value?: Admit<TSKindId.DotDot>): T.Rang
 		orDefault(value, () => TSKindId.DotDot as const)
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'range_expression_bare', { rangeExpressionBare: _range_expression_bare });
 	const node = {
 		$type: TSKindId.RangeExpressionBare as const,
 		$source: 2 as const,
@@ -8677,6 +9041,7 @@ export function buildRangeExpressionBare(value?: Admit<TSKindId.DotDot>): T.Rang
 export function buildExpressionStatementWithSemi(value: Admit<T.Expression>): T.ExpressionStatementWithSemi.Bound {
 	const _expression = kindIdStorage<NonNullable<T.ExpressionStatementWithSemi['_expression']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'expression_statement_with_semi', { expression: _expression });
 	const node = {
 		$type: TSKindId.ExpressionStatementWithSemi as const,
 		$source: 2 as const,
@@ -8702,6 +9067,8 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 	const _unsafe = strictBooleanStorage(config.unsafe);
 	const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'foreign_mod_item_semi', { unsafe: _unsafe, externModifier: _extern_modifier });
 	const node = {
 		$type: TSKindId.ForeignModItemSemi as const,
 		$source: 2 as const,
@@ -8732,6 +9099,8 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 	const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
 	const _body = orDefault(config.body, () => buildDeclarationList());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'foreign_mod_item_body', { unsafe: _unsafe, externModifier: _extern_modifier, body: _body });
 	const node = {
 		$type: TSKindId.ForeignModItemBody as const,
 		$source: 2 as const,
@@ -8767,6 +9136,8 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 	const _value = kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value);
 	const readGroup_pattern = () => _pattern;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, pattern: _pattern, value: _value });
 	const node = {
 		$type: TSKindId.MatchArmWithComma as const,
 		$source: 2 as const,
@@ -8840,6 +9211,8 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 	const _value = config.value;
 	const readGroup_pattern = () => _pattern;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, pattern: _pattern, value: _value });
 	const node = {
 		$type: TSKindId.MatchArmBlockEnding as const,
 		$source: 2 as const,
@@ -8946,6 +9319,7 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineCommentDocOuter.Bound {
 	const _doc = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_outer', { doc: _doc });
 	const node = {
 		$type: TSKindId.LineCommentDocOuter as const,
 		$source: 2 as const,
@@ -8969,6 +9343,7 @@ export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineComm
 export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineCommentDocInner.Bound {
 	const _doc = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'line_comment_doc_inner', { doc: _doc });
 	const node = {
 		$type: TSKindId.LineCommentDocInner as const,
 		$source: 2 as const,
@@ -9012,6 +9387,7 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Boun
 export function buildBlockCommentDocOuter(value?: Admit<T.BlockCommentContent>): T.BlockCommentDocOuter.Bound {
 	const _doc = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'block_comment_doc_outer', { doc: _doc });
 	const node = {
 		$type: TSKindId.BlockCommentDocOuter as const,
 		$source: 2 as const,
@@ -9035,6 +9411,7 @@ export function buildBlockCommentDocOuter(value?: Admit<T.BlockCommentContent>):
 export function buildBlockCommentDocInner(value?: Admit<T.BlockCommentContent>): T.BlockCommentDocInner.Bound {
 	const _doc = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'block_comment_doc_inner', { doc: _doc });
 	const node = {
 		$type: TSKindId.BlockCommentDocInner as const,
 		$source: 2 as const,
@@ -9088,6 +9465,7 @@ export function buildTokenTreePatternParen(
 ): T.TokenTreePatternParen.Bound {
 	const _token_patterns = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'token_tree_pattern_paren', { tokenPatterns: _token_patterns });
 	const node = {
 		$type: TSKindId.TokenTreePatternParen as const,
 		$source: 2 as const,
@@ -9126,6 +9504,7 @@ export function buildTokenTreePatternBracket(
 ): T.TokenTreePatternBracket.Bound {
 	const _token_patterns = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'token_tree_pattern_bracket', { tokenPatterns: _token_patterns });
 	const node = {
 		$type: TSKindId.TokenTreePatternBracket as const,
 		$source: 2 as const,
@@ -9164,6 +9543,7 @@ export function buildTokenTreePatternBrace(
 ): T.TokenTreePatternBrace.Bound {
 	const _token_patterns = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'token_tree_pattern_brace', { tokenPatterns: _token_patterns });
 	const node = {
 		$type: TSKindId.TokenTreePatternBrace as const,
 		$source: 2 as const,
@@ -9198,6 +9578,7 @@ export function buildTokenTreeParen(
 ): T.TokenTreeParen.Bound {
 	const _tokens = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'token_tree_paren', { tokens: _tokens });
 	const node = {
 		$type: TSKindId.TokenTreeParen as const,
 		$source: 2 as const,
@@ -9229,6 +9610,7 @@ export function buildTokenTreeBracket(
 ): T.TokenTreeBracket.Bound {
 	const _tokens = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'token_tree_bracket', { tokens: _tokens });
 	const node = {
 		$type: TSKindId.TokenTreeBracket as const,
 		$source: 2 as const,
@@ -9260,6 +9642,7 @@ export function buildTokenTreeBrace(
 ): T.TokenTreeBrace.Bound {
 	const _tokens = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'token_tree_brace', { tokens: _tokens });
 	const node = {
 		$type: TSKindId.TokenTreeBrace as const,
 		$source: 2 as const,
@@ -9291,6 +9674,7 @@ export function buildDelimTokenTreeParen(
 ): T.DelimTokenTreeParen.Bound {
 	const _delim_tokens = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'delim_token_tree_paren', { delimTokens: _delim_tokens });
 	const node = {
 		$type: TSKindId.DelimTokenTreeParen as const,
 		$source: 2 as const,
@@ -9322,6 +9706,7 @@ export function buildDelimTokenTreeBracket(
 ): T.DelimTokenTreeBracket.Bound {
 	const _delim_tokens = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'delim_token_tree_bracket', { delimTokens: _delim_tokens });
 	const node = {
 		$type: TSKindId.DelimTokenTreeBracket as const,
 		$source: 2 as const,
@@ -9353,6 +9738,7 @@ export function buildDelimTokenTreeBrace(
 ): T.DelimTokenTreeBrace.Bound {
 	const _delim_tokens = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'delim_token_tree_brace', { delimTokens: _delim_tokens });
 	const node = {
 		$type: TSKindId.DelimTokenTreeBrace as const,
 		$source: 2 as const,
@@ -9382,6 +9768,8 @@ export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Confi
 		[[1], (v: unknown) => buildShorthandFieldIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'field_pattern_shorthand', { ref: _ref, mutable: _mutable, name: _name });
 	const node = {
 		$type: TSKindId.FieldPatternShorthand as const,
 		$source: 2 as const,
@@ -9419,6 +9807,8 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 	]);
 	const _pattern = kindIdStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'field_pattern_named', { ref: _ref, mutable: _mutable, name: _name, pattern: _pattern });
 	const node = {
 		$type: TSKindId.FieldPatternNamed as const,
 		$source: 2 as const,
@@ -9456,6 +9846,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 	const _name = config.name;
 	const _macro_rules = config.macroRules;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'macro_definition_paren', { name: _name, macroRules: _macro_rules });
 	const node = {
 		$type: TSKindId.MacroDefinitionParen as const,
 		$source: 2 as const,
@@ -9491,6 +9882,8 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 	const _name = config.name;
 	const _macro_rules = config.macroRules;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'macro_definition_bracket', { name: _name, macroRules: _macro_rules });
 	const node = {
 		$type: TSKindId.MacroDefinitionBracket as const,
 		$source: 2 as const,
@@ -9526,6 +9919,7 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 	const _name = config.name;
 	const _macro_rules = config.macroRules;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'macro_definition_brace', { name: _name, macroRules: _macro_rules });
 	const node = {
 		$type: TSKindId.MacroDefinitionBrace as const,
 		$source: 2 as const,
@@ -9566,6 +9960,7 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { content: _content, right: _right });
 	const node = {
 		$type: TSKindId.RangePatternPrefix as const,
 		$source: 2 as const,
@@ -9602,6 +9997,8 @@ export function buildRangePatternWithLeftWithRight(
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'range_pattern_with_left_with_right', { content: _content, right: _right });
 	const node = {
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
 		$source: 2 as const,
@@ -9638,6 +10035,7 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 	);
 	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left, content: _content });
 	const node = {
 		$type: TSKindId.RangePatternWithLeft as const,
 		$source: 2 as const,
@@ -9672,6 +10070,14 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 	const _where_clause = config.whereClause;
 	const _body = orDefault(config.body, () => buildFieldDeclarationList());
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'struct_item_brace', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			typeParameters: _type_parameters,
+			whereClause: _where_clause,
+			body: _body
+		});
 	const node = {
 		$type: TSKindId.StructItemBrace as const,
 		$source: 2 as const,
@@ -9746,6 +10152,14 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 	const _body = orDefault(config.body, () => buildOrderedFieldDeclarationList());
 	const _where_clause = config.whereClause;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'struct_item_tuple', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			typeParameters: _type_parameters,
+			body: _body,
+			whereClause: _where_clause
+		});
 	const node = {
 		$type: TSKindId.StructItemTuple as const,
 		$source: 2 as const,
@@ -9818,6 +10232,12 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 	]);
 	const _type_parameters = config.typeParameters;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'struct_item_unit', {
+			visibilityModifier: _visibility_modifier,
+			name: _name,
+			typeParameters: _type_parameters
+		});
 	const node = {
 		$type: TSKindId.StructItemUnit as const,
 		$source: 2 as const,
@@ -9868,6 +10288,11 @@ export function buildAttributedFieldDeclaration(
 	);
 	const _field_declaration = config.fieldDeclaration;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_field_declaration', {
+			attributeItem: _attribute_item,
+			fieldDeclaration: _field_declaration
+		});
 	const node = {
 		$type: TSKindId.AttributedFieldDeclaration as const,
 		$source: 2 as const,
@@ -9901,6 +10326,8 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 	);
 	const _enum_variant = config.enumVariant;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_enum_variant', { attributeItem: _attribute_item, enumVariant: _enum_variant });
 	const node = {
 		$type: TSKindId.AttributedEnumVariant as const,
 		$source: 2 as const,
@@ -9935,6 +10362,8 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_parameter', { attributeItem: _attribute_item, content: _content });
 	const node = {
 		$type: TSKindId.AttributedParameter as const,
 		$source: 2 as const,
@@ -9968,6 +10397,8 @@ export function buildAttributedTypeParameter(
 	);
 	const _content = config.content;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_type_parameter', { attributeItem: _attribute_item, content: _content });
 	const node = {
 		$type: TSKindId.AttributedTypeParameter as const,
 		$source: 2 as const,
@@ -9999,6 +10430,8 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 	const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(config.attributeItem ?? []);
 	const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_argument', { attributeItem: _attribute_item, expression: _expression });
 	const node = {
 		$type: TSKindId.AttributedArgument as const,
 		$source: 2 as const,
@@ -10036,6 +10469,12 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_ordered_field', {
+			attributeItem: _attribute_item,
+			visibilityModifier: _visibility_modifier,
+			type: _type
+		});
 	const node = {
 		$type: TSKindId.AttributedOrderedField as const,
 		$source: 2 as const,
@@ -10074,6 +10513,7 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 	);
 	const _trait_bounds = config.traitBounds;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'type_argument', { content: _content, traitBounds: _trait_bounds });
 	const node = {
 		$type: TSKindId.TypeArgument as const,
 		$source: 2 as const,
@@ -10103,6 +10543,7 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 	const _arms = listStorage<NonNullable<T.MatchBlockArms['_arms']>>(config.arms ?? []);
 	const _last_arm = config.lastArm;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'match_block_arms', { arms: _arms, lastArm: _last_arm });
 	const node = {
 		$type: TSKindId.MatchBlockArms as const,
 		$source: 2 as const,
@@ -10337,6 +10778,7 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifier.Bound {
 	const _content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'type_identifier', { content: _content });
 	const node = {
 		$type: TSKindId.TypeIdentifier as const,
 		$source: 2 as const,
@@ -10360,6 +10802,7 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentifier.Bound {
 	const _content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_identifier', { content: _content });
 	const node = {
 		$type: TSKindId.FieldIdentifier as const,
 		$source: 2 as const,
@@ -10383,6 +10826,7 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 export function buildShorthandFieldIdentifier(value: Admit<T.Identifier>): T.ShorthandFieldIdentifier.Bound {
 	const _content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'shorthand_field_identifier', { content: _content });
 	const node = {
 		$type: TSKindId.ShorthandFieldIdentifier as const,
 		$source: 2 as const,

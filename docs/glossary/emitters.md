@@ -12373,6 +12373,9 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
 
+### `packages/codegen/src/emitters/wrap.ts::admittedSlot`
+
+The value a parsed node's `$with` setter writes into its slot, through `admitSlot` under the wrap's engine handle, by the node's kind and the setter's name. The wrap's setters (`inlineSetters`) write every new value through it, so an edit of a parsed node refuses a child of another language as a builder does.
 
 ### `packages/codegen/src/emitters/render-module.ts::module`
 
@@ -15197,6 +15200,10 @@ Emits one `_delimited_<factory>` constant per delimited kind into the raw module
 ### `packages/codegen/src/emitters/factories.ts::delimitedCheckLine`
 
 The `checkDelimited(handle, node, spec, [content slots], open, close)` call emitted before a delimited builder returns. The delimiter slots come from the stamped fact; every other slot is content.
+
+### `packages/codegen/src/emitters/factories.ts::builderHandleLines`
+
+The lines every builder opens its node with: the engine handle in scope (`currentHandle`), then, for a builder with slots, its children's admission (`admitChildren`) under that handle, by each slot's config key and storage variable. A builder outside any engine admits without a check, having no language to compare. The field-carrying, refine-form, separated-list and text builders all take their handle here.
 
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 

@@ -2,6 +2,7 @@
 
 import {
 	restItems,
+	admitSlot,
 	markEdited as $edited,
 	carryRead,
 	treeHandleOf,
@@ -69,9 +70,19 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFi
 		},
 		$with: {
 			shebang: (v: NonNullable<T.SourceFile['_shebang']>) =>
-				rebuilt(node, handle, () => wrapSourceFile({ ...$edited(data), _shebang: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapSourceFile({ ...$edited(data), _shebang: admitSlot(handle, 'source_file', 'shebang', v) }, tree)
+				),
 			statements: (...v: NonNullable<T.SourceFile['_statements']>[number][]) =>
-				rebuilt(node, handle, () => wrapSourceFile({ ...$edited(data), _statements: restItems('statements', v) }, tree))
+				rebuilt(node, handle, () =>
+					wrapSourceFile(
+						{
+							...$edited(data),
+							_statements: admitSlot(handle, 'source_file', 'statements', restItems('statements', v))
+						},
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -110,7 +121,12 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 		},
 		$with: {
 			content: (v: NonNullable<T.ExpressionStatement['_content']>) =>
-				rebuilt(node, handle, () => wrapExpressionStatement({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapExpressionStatement(
+						{ ...$edited(data), _content: admitSlot(handle, 'expression_statement', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -138,9 +154,13 @@ export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle): T.MacroRule.
 		},
 		$with: {
 			left: (v: NonNullable<T.MacroRule['_left']>) =>
-				rebuilt(node, handle, () => wrapMacroRule({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMacroRule({ ...$edited(data), _left: admitSlot(handle, 'macro_rule', 'left', v) }, tree)
+				),
 			right: (v: NonNullable<T.MacroRule['_right']>) =>
-				rebuilt(node, handle, () => wrapMacroRule({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapMacroRule({ ...$edited(data), _right: admitSlot(handle, 'macro_rule', 'right', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -168,9 +188,19 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 		},
 		$with: {
 			name: (v: NonNullable<T.TokenBindingPattern['_name']>) =>
-				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTokenBindingPattern(
+						{ ...$edited(data), _name: admitSlot(handle, 'token_binding_pattern', 'name', v) },
+						tree
+					)
+				),
 			type: (v: NonNullable<T.TokenBindingPattern['_type']>) =>
-				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTokenBindingPattern(
+						{ ...$edited(data), _type: admitSlot(handle, 'token_binding_pattern', 'type', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -207,12 +237,33 @@ export function wrapTokenRepetitionPattern(
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenRepetitionPattern['_token_patterns']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapTokenRepetitionPattern({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+					wrapTokenRepetitionPattern(
+						{
+							...$edited(data),
+							_token_patterns: admitSlot(
+								handle,
+								'token_repetition_pattern',
+								'tokenPatterns',
+								restItems('tokenPatterns', v)
+							)
+						},
+						tree
+					)
 				),
 			separator: (v: NonNullable<T.TokenRepetitionPattern['_separator']>) =>
-				rebuilt(node, handle, () => wrapTokenRepetitionPattern({ ...$edited(data), _separator: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTokenRepetitionPattern(
+						{ ...$edited(data), _separator: admitSlot(handle, 'token_repetition_pattern', 'separator', v) },
+						tree
+					)
+				),
 			operator: (v: NonNullable<T.TokenRepetitionPattern['_operator']>) =>
-				rebuilt(node, handle, () => wrapTokenRepetitionPattern({ ...$edited(data), _operator: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTokenRepetitionPattern(
+						{ ...$edited(data), _operator: admitSlot(handle, 'token_repetition_pattern', 'operator', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -243,11 +294,26 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): 
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenRepetition['_tokens']>[number][]) =>
-				rebuilt(node, handle, () => wrapTokenRepetition({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTokenRepetition(
+						{ ...$edited(data), _tokens: admitSlot(handle, 'token_repetition', 'tokens', restItems('tokens', v)) },
+						tree
+					)
+				),
 			separator: (v: NonNullable<T.TokenRepetition['_separator']>) =>
-				rebuilt(node, handle, () => wrapTokenRepetition({ ...$edited(data), _separator: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTokenRepetition(
+						{ ...$edited(data), _separator: admitSlot(handle, 'token_repetition', 'separator', v) },
+						tree
+					)
+				),
 			operator: (v: NonNullable<T.TokenRepetition['_operator']>) =>
-				rebuilt(node, handle, () => wrapTokenRepetition({ ...$edited(data), _operator: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTokenRepetition(
+						{ ...$edited(data), _operator: admitSlot(handle, 'token_repetition', 'operator', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -369,7 +435,12 @@ export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): 
 		},
 		$with: {
 			content: (v: NonNullable<T.NonSpecialToken['_content']>) =>
-				rebuilt(node, handle, () => wrapNonSpecialToken({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapNonSpecialToken(
+						{ ...$edited(data), _content: admitSlot(handle, 'non_special_token', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -394,7 +465,9 @@ export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle): T.At
 		},
 		$with: {
 			attribute: (v: NonNullable<T.AttributeItem['_attribute']>) =>
-				rebuilt(node, handle, () => wrapAttributeItem({ ...$edited(data), _attribute: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributeItem({ ...$edited(data), _attribute: admitSlot(handle, 'attribute_item', 'attribute', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -419,7 +492,12 @@ export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHan
 		},
 		$with: {
 			attribute: (v: NonNullable<T.InnerAttributeItem['_attribute']>) =>
-				rebuilt(node, handle, () => wrapInnerAttributeItem({ ...$edited(data), _attribute: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapInnerAttributeItem(
+						{ ...$edited(data), _attribute: admitSlot(handle, 'inner_attribute_item', 'attribute', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -449,9 +527,13 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		},
 		$with: {
 			path: (v: NonNullable<T.Attribute['_path']>) =>
-				rebuilt(node, handle, () => wrapAttribute({ ...$edited(data), _path: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAttribute({ ...$edited(data), _path: admitSlot(handle, 'attribute', 'path', v) }, tree)
+				),
 			input: (v: NonNullable<T.Attribute['_input']>) =>
-				rebuilt(node, handle, () => wrapAttribute({ ...$edited(data), _input: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttribute({ ...$edited(data), _input: admitSlot(handle, 'attribute', 'input', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -477,7 +559,13 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle): 
 		$with: {
 			declarations: (...v: NonNullable<T.DeclarationList['_declarations']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapDeclarationList({ ...$edited(data), _declarations: restItems('declarations', v) }, tree)
+					wrapDeclarationList(
+						{
+							...$edited(data),
+							_declarations: admitSlot(handle, 'declaration_list', 'declarations', restItems('declarations', v))
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -516,9 +604,16 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.UnionItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapUnionItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapUnionItem(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'union_item', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.UnionItem['_name']>) =>
-				rebuilt(node, handle, () => wrapUnionItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapUnionItem({ ...$edited(data), _name: admitSlot(handle, 'union_item', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -530,7 +625,10 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.UnionItem['_type_parameters']>) =>
-							wrapUnionItem({ ...$edited(data), _type_parameters: v }, tree)
+							wrapUnionItem(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'union_item', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			whereClause: (...args: unknown[]) =>
@@ -539,7 +637,10 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.UnionItem['_where_clause']>) =>
-							wrapUnionItem({ ...$edited(data), _where_clause: v }, tree)
+							wrapUnionItem(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'union_item', 'whereClause', v) },
+								tree
+							)
 					)
 				),
 			body: (...args: unknown[]) =>
@@ -552,7 +653,8 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 							make: RAW.buildFieldDeclarationList,
 							element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 						},
-						(v: NonNullable<T.UnionItem['_body']>) => wrapUnionItem({ ...$edited(data), _body: v }, tree)
+						(v: NonNullable<T.UnionItem['_body']>) =>
+							wrapUnionItem({ ...$edited(data), _body: admitSlot(handle, 'union_item', 'body', v) }, tree)
 					)
 				)
 		},
@@ -591,9 +693,16 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.EnumItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapEnumItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapEnumItem(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'enum_item', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.EnumItem['_name']>) =>
-				rebuilt(node, handle, () => wrapEnumItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapEnumItem({ ...$edited(data), _name: admitSlot(handle, 'enum_item', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -605,7 +714,10 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.EnumItem['_type_parameters']>) =>
-							wrapEnumItem({ ...$edited(data), _type_parameters: v }, tree)
+							wrapEnumItem(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'enum_item', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			whereClause: (...args: unknown[]) =>
@@ -613,7 +725,8 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
-						(v: NonNullable<T.EnumItem['_where_clause']>) => wrapEnumItem({ ...$edited(data), _where_clause: v }, tree)
+						(v: NonNullable<T.EnumItem['_where_clause']>) =>
+							wrapEnumItem({ ...$edited(data), _where_clause: admitSlot(handle, 'enum_item', 'whereClause', v) }, tree)
 					)
 				),
 			body: (...args: unknown[]) =>
@@ -626,7 +739,8 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 							make: RAW.buildEnumVariantList,
 							element: { keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
 						},
-						(v: NonNullable<T.EnumItem['_body']>) => wrapEnumItem({ ...$edited(data), _body: v }, tree)
+						(v: NonNullable<T.EnumItem['_body']>) =>
+							wrapEnumItem({ ...$edited(data), _body: admitSlot(handle, 'enum_item', 'body', v) }, tree)
 					)
 				)
 		},
@@ -664,7 +778,10 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 							element: { keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
 						},
 						(v: NonNullable<T.EnumVariantList['_elements']>) =>
-							wrapEnumVariantList({ ...$edited(data), _elements: v }, tree)
+							wrapEnumVariantList(
+								{ ...$edited(data), _elements: admitSlot(handle, 'enum_variant_list', 'elements', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -715,13 +832,24 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVa
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.EnumVariant['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapEnumVariant(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'enum_variant', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.EnumVariant['_name']>) =>
-				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapEnumVariant({ ...$edited(data), _name: admitSlot(handle, 'enum_variant', 'name', v) }, tree)
+				),
 			body: (v: NonNullable<T.EnumVariant['_body']>) =>
-				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _body: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapEnumVariant({ ...$edited(data), _body: admitSlot(handle, 'enum_variant', 'body', v) }, tree)
+				),
 			value: (v: NonNullable<T.EnumVariant['_value']>) =>
-				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapEnumVariant({ ...$edited(data), _value: admitSlot(handle, 'enum_variant', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -760,7 +888,10 @@ export function wrapFieldDeclarationList(
 							element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 						},
 						(v: NonNullable<T.FieldDeclarationList['_elements']>) =>
-							wrapFieldDeclarationList({ ...$edited(data), _elements: v }, tree)
+							wrapFieldDeclarationList(
+								{ ...$edited(data), _elements: admitSlot(handle, 'field_declaration_list', 'elements', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -808,11 +939,20 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.FieldDeclaration['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapFieldDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldDeclaration(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'field_declaration', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.FieldDeclaration['_name']>) =>
-				rebuilt(node, handle, () => wrapFieldDeclaration({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldDeclaration({ ...$edited(data), _name: admitSlot(handle, 'field_declaration', 'name', v) }, tree)
+				),
 			type: (v: NonNullable<T.FieldDeclaration['_type']>) =>
-				rebuilt(node, handle, () => wrapFieldDeclaration({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFieldDeclaration({ ...$edited(data), _type: admitSlot(handle, 'field_declaration', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -851,7 +991,10 @@ export function wrapOrderedFieldDeclarationList(
 							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 						},
 						(v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>) =>
-							wrapOrderedFieldDeclarationList({ ...$edited(data), _attributes: v }, tree)
+							wrapOrderedFieldDeclarationList(
+								{ ...$edited(data), _attributes: admitSlot(handle, 'ordered_field_declaration_list', 'attributes', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -902,11 +1045,29 @@ export function wrapExternCrateDeclaration(
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ExternCrateDeclaration['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapExternCrateDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapExternCrateDeclaration(
+						{
+							...$edited(data),
+							_visibility_modifier: admitSlot(handle, 'extern_crate_declaration', 'visibilityModifier', v)
+						},
+						tree
+					)
+				),
 			name: (v: NonNullable<T.ExternCrateDeclaration['_name']>) =>
-				rebuilt(node, handle, () => wrapExternCrateDeclaration({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapExternCrateDeclaration(
+						{ ...$edited(data), _name: admitSlot(handle, 'extern_crate_declaration', 'name', v) },
+						tree
+					)
+				),
 			alias: (v: NonNullable<T.ExternCrateDeclaration['_alias']>) =>
-				rebuilt(node, handle, () => wrapExternCrateDeclaration({ ...$edited(data), _alias: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapExternCrateDeclaration(
+						{ ...$edited(data), _alias: admitSlot(handle, 'extern_crate_declaration', 'alias', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -940,13 +1101,24 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ConstItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapConstItem(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'const_item', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.ConstItem['_name']>) =>
-				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapConstItem({ ...$edited(data), _name: admitSlot(handle, 'const_item', 'name', v) }, tree)
+				),
 			type: (v: NonNullable<T.ConstItem['_type']>) =>
-				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapConstItem({ ...$edited(data), _type: admitSlot(handle, 'const_item', 'type', v) }, tree)
+				),
 			value: (v: NonNullable<T.ConstItem['_value']>) =>
-				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapConstItem({ ...$edited(data), _value: admitSlot(handle, 'const_item', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -986,17 +1158,32 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.StaticItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStaticItem(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'static_item', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			ref: (v: NonNullable<T.StaticItem['_ref']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _ref: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStaticItem({ ...$edited(data), _ref: admitSlot(handle, 'static_item', 'ref', v) }, tree)
+				),
 			mutable: (v: NonNullable<T.StaticItem['_mutable']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStaticItem({ ...$edited(data), _mutable: admitSlot(handle, 'static_item', 'mutable', v) }, tree)
+				),
 			name: (v: NonNullable<T.StaticItem['_name']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStaticItem({ ...$edited(data), _name: admitSlot(handle, 'static_item', 'name', v) }, tree)
+				),
 			type: (v: NonNullable<T.StaticItem['_type']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStaticItem({ ...$edited(data), _type: admitSlot(handle, 'static_item', 'type', v) }, tree)
+				),
 			value: (v: NonNullable<T.StaticItem['_value']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapStaticItem({ ...$edited(data), _value: admitSlot(handle, 'static_item', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1036,9 +1223,16 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.TypeItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapTypeItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeItem(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'type_item', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.TypeItem['_name']>) =>
-				rebuilt(node, handle, () => wrapTypeItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeItem({ ...$edited(data), _name: admitSlot(handle, 'type_item', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1050,7 +1244,10 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.TypeItem['_type_parameters']>) =>
-							wrapTypeItem({ ...$edited(data), _type_parameters: v }, tree)
+							wrapTypeItem(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'type_item', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			whereClause: (...args: unknown[]) =>
@@ -1058,18 +1255,24 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
-						(v: NonNullable<T.TypeItem['_where_clause']>) => wrapTypeItem({ ...$edited(data), _where_clause: v }, tree)
+						(v: NonNullable<T.TypeItem['_where_clause']>) =>
+							wrapTypeItem({ ...$edited(data), _where_clause: admitSlot(handle, 'type_item', 'whereClause', v) }, tree)
 					)
 				),
 			type: (v: NonNullable<T.TypeItem['_type']>) =>
-				rebuilt(node, handle, () => wrapTypeItem({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeItem({ ...$edited(data), _type: admitSlot(handle, 'type_item', 'type', v) }, tree)
+				),
 			trailingWhereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.TypeItem['_trailing_where_clause']>) =>
-							wrapTypeItem({ ...$edited(data), _trailing_where_clause: v }, tree)
+							wrapTypeItem(
+								{ ...$edited(data), _trailing_where_clause: admitSlot(handle, 'type_item', 'trailingWhereClause', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -1117,11 +1320,23 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.FunctionItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionItem(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'function_item', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			functionModifiers: (v: NonNullable<T.FunctionItem['_function_modifiers']>) =>
-				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _function_modifiers: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionItem(
+						{ ...$edited(data), _function_modifiers: admitSlot(handle, 'function_item', 'functionModifiers', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.FunctionItem['_name']>) =>
-				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionItem({ ...$edited(data), _name: admitSlot(handle, 'function_item', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1133,7 +1348,10 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.FunctionItem['_type_parameters']>) =>
-							wrapFunctionItem({ ...$edited(data), _type_parameters: v }, tree)
+							wrapFunctionItem(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'function_item', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -1147,22 +1365,35 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
 						},
 						(v: NonNullable<T.FunctionItem['_parameters']>) =>
-							wrapFunctionItem({ ...$edited(data), _parameters: v }, tree)
+							wrapFunctionItem(
+								{ ...$edited(data), _parameters: admitSlot(handle, 'function_item', 'parameters', v) },
+								tree
+							)
 					)
 				),
 			returnType: (v: NonNullable<T.FunctionItem['_return_type']>) =>
-				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _return_type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionItem(
+						{ ...$edited(data), _return_type: admitSlot(handle, 'function_item', 'returnType', v) },
+						tree
+					)
+				),
 			whereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.FunctionItem['_where_clause']>) =>
-							wrapFunctionItem({ ...$edited(data), _where_clause: v }, tree)
+							wrapFunctionItem(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'function_item', 'whereClause', v) },
+								tree
+							)
 					)
 				),
 			body: (v: NonNullable<T.FunctionItem['_body']>) =>
-				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFunctionItem({ ...$edited(data), _body: admitSlot(handle, 'function_item', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1208,11 +1439,32 @@ export function wrapFunctionSignatureItem(
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.FunctionSignatureItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapFunctionSignatureItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionSignatureItem(
+						{
+							...$edited(data),
+							_visibility_modifier: admitSlot(handle, 'function_signature_item', 'visibilityModifier', v)
+						},
+						tree
+					)
+				),
 			functionModifiers: (v: NonNullable<T.FunctionSignatureItem['_function_modifiers']>) =>
-				rebuilt(node, handle, () => wrapFunctionSignatureItem({ ...$edited(data), _function_modifiers: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionSignatureItem(
+						{
+							...$edited(data),
+							_function_modifiers: admitSlot(handle, 'function_signature_item', 'functionModifiers', v)
+						},
+						tree
+					)
+				),
 			name: (v: NonNullable<T.FunctionSignatureItem['_name']>) =>
-				rebuilt(node, handle, () => wrapFunctionSignatureItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionSignatureItem(
+						{ ...$edited(data), _name: admitSlot(handle, 'function_signature_item', 'name', v) },
+						tree
+					)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1224,7 +1476,13 @@ export function wrapFunctionSignatureItem(
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.FunctionSignatureItem['_type_parameters']>) =>
-							wrapFunctionSignatureItem({ ...$edited(data), _type_parameters: v }, tree)
+							wrapFunctionSignatureItem(
+								{
+									...$edited(data),
+									_type_parameters: admitSlot(handle, 'function_signature_item', 'typeParameters', v)
+								},
+								tree
+							)
 					)
 				),
 			parameters: (...args: unknown[]) =>
@@ -1238,18 +1496,29 @@ export function wrapFunctionSignatureItem(
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
 						},
 						(v: NonNullable<T.FunctionSignatureItem['_parameters']>) =>
-							wrapFunctionSignatureItem({ ...$edited(data), _parameters: v }, tree)
+							wrapFunctionSignatureItem(
+								{ ...$edited(data), _parameters: admitSlot(handle, 'function_signature_item', 'parameters', v) },
+								tree
+							)
 					)
 				),
 			returnType: (v: NonNullable<T.FunctionSignatureItem['_return_type']>) =>
-				rebuilt(node, handle, () => wrapFunctionSignatureItem({ ...$edited(data), _return_type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionSignatureItem(
+						{ ...$edited(data), _return_type: admitSlot(handle, 'function_signature_item', 'returnType', v) },
+						tree
+					)
+				),
 			whereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.FunctionSignatureItem['_where_clause']>) =>
-							wrapFunctionSignatureItem({ ...$edited(data), _where_clause: v }, tree)
+							wrapFunctionSignatureItem(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'function_signature_item', 'whereClause', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -1283,7 +1552,13 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 		$with: {
 			modifiers: (...v: NonEmptyArray<NonNullable<T.FunctionModifiers['_modifier']>[number]>) =>
 				rebuilt(node, handle, () =>
-					wrapFunctionModifiers({ ...$edited(data), _modifier: restItems('modifiers', v) }, tree)
+					wrapFunctionModifiers(
+						{
+							...$edited(data),
+							_modifier: admitSlot(handle, 'function_modifiers', 'modifiers', restItems('modifiers', v))
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -1315,7 +1590,10 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 						args,
 						{ kind: TSKindId.WherePredicates as const, optional: true, make: RAW.buildWherePredicates },
 						(v: NonNullable<T.WhereClause['_where_predicates']>) =>
-							wrapWhereClause({ ...$edited(data), _where_predicates: v }, tree)
+							wrapWhereClause(
+								{ ...$edited(data), _where_predicates: admitSlot(handle, 'where_clause', 'wherePredicates', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -1381,9 +1659,13 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.
 		},
 		$with: {
 			left: (v: NonNullable<T.WherePredicate['_left']>) =>
-				rebuilt(node, handle, () => wrapWherePredicate({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapWherePredicate({ ...$edited(data), _left: admitSlot(handle, 'where_predicate', 'left', v) }, tree)
+				),
 			bounds: (v: NonNullable<T.WherePredicate['_bounds']>) =>
-				rebuilt(node, handle, () => wrapWherePredicate({ ...$edited(data), _bounds: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapWherePredicate({ ...$edited(data), _bounds: admitSlot(handle, 'where_predicate', 'bounds', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1426,11 +1708,20 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.TraitItem['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTraitItem(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'trait_item', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			unsafe: (v: NonNullable<T.TraitItem['_unsafe']>) =>
-				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _unsafe: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTraitItem({ ...$edited(data), _unsafe: admitSlot(handle, 'trait_item', 'unsafe', v) }, tree)
+				),
 			name: (v: NonNullable<T.TraitItem['_name']>) =>
-				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTraitItem({ ...$edited(data), _name: admitSlot(handle, 'trait_item', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1442,22 +1733,32 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.TraitItem['_type_parameters']>) =>
-							wrapTraitItem({ ...$edited(data), _type_parameters: v }, tree)
+							wrapTraitItem(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'trait_item', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			bounds: (v: NonNullable<T.TraitItem['_bounds']>) =>
-				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _bounds: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTraitItem({ ...$edited(data), _bounds: admitSlot(handle, 'trait_item', 'bounds', v) }, tree)
+				),
 			whereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.TraitItem['_where_clause']>) =>
-							wrapTraitItem({ ...$edited(data), _where_clause: v }, tree)
+							wrapTraitItem(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'trait_item', 'whereClause', v) },
+								tree
+							)
 					)
 				),
 			body: (v: NonNullable<T.TraitItem['_body']>) =>
-				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTraitItem({ ...$edited(data), _body: admitSlot(handle, 'trait_item', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1491,7 +1792,9 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 		},
 		$with: {
 			name: (v: NonNullable<T.AssociatedType['_name']>) =>
-				rebuilt(node, handle, () => wrapAssociatedType({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAssociatedType({ ...$edited(data), _name: admitSlot(handle, 'associated_type', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1503,18 +1806,26 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.AssociatedType['_type_parameters']>) =>
-							wrapAssociatedType({ ...$edited(data), _type_parameters: v }, tree)
+							wrapAssociatedType(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'associated_type', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			bounds: (v: NonNullable<T.AssociatedType['_bounds']>) =>
-				rebuilt(node, handle, () => wrapAssociatedType({ ...$edited(data), _bounds: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAssociatedType({ ...$edited(data), _bounds: admitSlot(handle, 'associated_type', 'bounds', v) }, tree)
+				),
 			whereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.AssociatedType['_where_clause']>) =>
-							wrapAssociatedType({ ...$edited(data), _where_clause: v }, tree)
+							wrapAssociatedType(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'associated_type', 'whereClause', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -1541,7 +1852,12 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitB
 		},
 		$with: {
 			bounds: (...v: NonEmptyArray<NonNullable<T.TraitBounds['_bounds']>[number]>) =>
-				rebuilt(node, handle, () => wrapTraitBounds({ ...$edited(data), _bounds: restItems('bounds', v) }, tree))
+				rebuilt(node, handle, () =>
+					wrapTraitBounds(
+						{ ...$edited(data), _bounds: admitSlot(handle, 'trait_bounds', 'bounds', restItems('bounds', v)) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1582,11 +1898,22 @@ export function wrapHigherRankedTraitBound(
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.HigherRankedTraitBound['_type_parameters']>) =>
-							wrapHigherRankedTraitBound({ ...$edited(data), _type_parameters: v }, tree)
+							wrapHigherRankedTraitBound(
+								{
+									...$edited(data),
+									_type_parameters: admitSlot(handle, 'higher_ranked_trait_bound', 'typeParameters', v)
+								},
+								tree
+							)
 					)
 				),
 			type: (v: NonNullable<T.HigherRankedTraitBound['_type']>) =>
-				rebuilt(node, handle, () => wrapHigherRankedTraitBound({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapHigherRankedTraitBound(
+						{ ...$edited(data), _type: admitSlot(handle, 'higher_ranked_trait_bound', 'type', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1611,7 +1938,9 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 		},
 		$with: {
 			type: (v: NonNullable<T.RemovedTraitBound['_type']>) =>
-				rebuilt(node, handle, () => wrapRemovedTraitBound({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRemovedTraitBound({ ...$edited(data), _type: admitSlot(handle, 'removed_trait_bound', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1647,7 +1976,10 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.TypeParameters['_elements']>) =>
-							wrapTypeParameters({ ...$edited(data), _elements: v }, tree)
+							wrapTypeParameters(
+								{ ...$edited(data), _elements: admitSlot(handle, 'type_parameters', 'elements', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -1694,11 +2026,17 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.
 		},
 		$with: {
 			name: (v: NonNullable<T.ConstParameter['_name']>) =>
-				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapConstParameter({ ...$edited(data), _name: admitSlot(handle, 'const_parameter', 'name', v) }, tree)
+				),
 			type: (v: NonNullable<T.ConstParameter['_type']>) =>
-				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapConstParameter({ ...$edited(data), _type: admitSlot(handle, 'const_parameter', 'type', v) }, tree)
+				),
 			value: (v: NonNullable<T.ConstParameter['_value']>) =>
-				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapConstParameter({ ...$edited(data), _value: admitSlot(handle, 'const_parameter', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1729,11 +2067,20 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		},
 		$with: {
 			name: (v: NonNullable<T.TypeParameter['_name']>) =>
-				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeParameter({ ...$edited(data), _name: admitSlot(handle, 'type_parameter', 'name', v) }, tree)
+				),
 			bounds: (v: NonNullable<T.TypeParameter['_bounds']>) =>
-				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _bounds: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeParameter({ ...$edited(data), _bounds: admitSlot(handle, 'type_parameter', 'bounds', v) }, tree)
+				),
 			defaultType: (v: NonNullable<T.TypeParameter['_default_type']>) =>
-				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _default_type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTypeParameter(
+						{ ...$edited(data), _default_type: admitSlot(handle, 'type_parameter', 'defaultType', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1761,9 +2108,16 @@ export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandl
 		},
 		$with: {
 			name: (v: NonNullable<T.LifetimeParameter['_name']>) =>
-				rebuilt(node, handle, () => wrapLifetimeParameter({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLifetimeParameter({ ...$edited(data), _name: admitSlot(handle, 'lifetime_parameter', 'name', v) }, tree)
+				),
 			bounds: (v: NonNullable<T.LifetimeParameter['_bounds']>) =>
-				rebuilt(node, handle, () => wrapLifetimeParameter({ ...$edited(data), _bounds: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLifetimeParameter(
+						{ ...$edited(data), _bounds: admitSlot(handle, 'lifetime_parameter', 'bounds', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1800,15 +2154,28 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 		},
 		$with: {
 			mutable: (v: NonNullable<T.LetDeclaration['_mutable']>) =>
-				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLetDeclaration({ ...$edited(data), _mutable: admitSlot(handle, 'let_declaration', 'mutable', v) }, tree)
+				),
 			pattern: (v: NonNullable<T.LetDeclaration['_pattern']>) =>
-				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _pattern: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLetDeclaration({ ...$edited(data), _pattern: admitSlot(handle, 'let_declaration', 'pattern', v) }, tree)
+				),
 			type: (v: NonNullable<T.LetDeclaration['_type']>) =>
-				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLetDeclaration({ ...$edited(data), _type: admitSlot(handle, 'let_declaration', 'type', v) }, tree)
+				),
 			value: (v: NonNullable<T.LetDeclaration['_value']>) =>
-				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLetDeclaration({ ...$edited(data), _value: admitSlot(handle, 'let_declaration', 'value', v) }, tree)
+				),
 			alternative: (v: NonNullable<T.LetDeclaration['_alternative']>) =>
-				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _alternative: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLetDeclaration(
+						{ ...$edited(data), _alternative: admitSlot(handle, 'let_declaration', 'alternative', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1847,9 +2214,16 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.UseDeclaration['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapUseDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapUseDeclaration(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'use_declaration', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			argument: (v: NonNullable<T.UseDeclaration['_argument']>) =>
-				rebuilt(node, handle, () => wrapUseDeclaration({ ...$edited(data), _argument: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapUseDeclaration({ ...$edited(data), _argument: admitSlot(handle, 'use_declaration', 'argument', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1879,13 +2253,16 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.Sc
 		},
 		$with: {
 			path: (v: NonNullable<T.ScopedUseList['_path']>) =>
-				rebuilt(node, handle, () => wrapScopedUseList({ ...$edited(data), _path: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapScopedUseList({ ...$edited(data), _path: admitSlot(handle, 'scoped_use_list', 'path', v) }, tree)
+				),
 			list: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.UseList as const, optional: false, make: RAW.buildUseList },
-						(v: NonNullable<T.ScopedUseList['_list']>) => wrapScopedUseList({ ...$edited(data), _list: v }, tree)
+						(v: NonNullable<T.ScopedUseList['_list']>) =>
+							wrapScopedUseList({ ...$edited(data), _list: admitSlot(handle, 'scoped_use_list', 'list', v) }, tree)
 					)
 				)
 		},
@@ -1917,7 +2294,8 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 					listSlotWith(
 						args,
 						{ kind: TSKindId.UseClauses as const, optional: true, make: RAW.buildUseClauses },
-						(v: NonNullable<T.UseList['_use_clauses']>) => wrapUseList({ ...$edited(data), _use_clauses: v }, tree)
+						(v: NonNullable<T.UseList['_use_clauses']>) =>
+							wrapUseList({ ...$edited(data), _use_clauses: admitSlot(handle, 'use_list', 'useClauses', v) }, tree)
 					)
 				)
 		},
@@ -1959,9 +2337,13 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 		},
 		$with: {
 			path: (v: NonNullable<T.UseAsClause['_path']>) =>
-				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _path: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapUseAsClause({ ...$edited(data), _path: admitSlot(handle, 'use_as_clause', 'path', v) }, tree)
+				),
 			alias: (v: NonNullable<T.UseAsClause['_alias']>) =>
-				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _alias: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapUseAsClause({ ...$edited(data), _alias: admitSlot(handle, 'use_as_clause', 'alias', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1988,7 +2370,12 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 		},
 		$with: {
 			useWildcardGroup: (v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
-				rebuilt(node, handle, () => wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapUseWildcard(
+						{ ...$edited(data), _use_wildcard_group: admitSlot(handle, 'use_wildcard', 'useWildcardGroup', v) },
+						tree
+					)
+				),
 			path: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -2002,7 +2389,10 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 						'path',
 						args,
 						(v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
-							wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree),
+							wrapUseWildcard(
+								{ ...$edited(data), _use_wildcard_group: admitSlot(handle, 'use_wildcard', 'useWildcardGroup', v) },
+								tree
+							),
 						() => readGroup_useWildcardGroup.call(node)
 					)
 				)
@@ -2045,7 +2435,8 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 							make: RAW.buildParametersElements,
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
 						},
-						(v: NonNullable<T.Parameters['_elements']>) => wrapParameters({ ...$edited(data), _elements: v }, tree)
+						(v: NonNullable<T.Parameters['_elements']>) =>
+							wrapParameters({ ...$edited(data), _elements: admitSlot(handle, 'parameters', 'elements', v) }, tree)
 					)
 				)
 		},
@@ -2093,11 +2484,17 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 		},
 		$with: {
 			reference: (v: NonNullable<T.SelfParameter['_reference']>) =>
-				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _reference: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapSelfParameter({ ...$edited(data), _reference: admitSlot(handle, 'self_parameter', 'reference', v) }, tree)
+				),
 			lifetime: (v: NonNullable<T.SelfParameter['_lifetime']>) =>
-				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _lifetime: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapSelfParameter({ ...$edited(data), _lifetime: admitSlot(handle, 'self_parameter', 'lifetime', v) }, tree)
+				),
 			mutable: (v: NonNullable<T.SelfParameter['_mutable']>) =>
-				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _mutable: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapSelfParameter({ ...$edited(data), _mutable: admitSlot(handle, 'self_parameter', 'mutable', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2125,9 +2522,19 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 		},
 		$with: {
 			mutable: (v: NonNullable<T.VariadicParameter['_mutable']>) =>
-				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapVariadicParameter(
+						{ ...$edited(data), _mutable: admitSlot(handle, 'variadic_parameter', 'mutable', v) },
+						tree
+					)
+				),
 			pattern: (v: NonNullable<T.VariadicParameter['_pattern']>) =>
-				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _pattern: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapVariadicParameter(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'variadic_parameter', 'pattern', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2158,11 +2565,17 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 		},
 		$with: {
 			mutable: (v: NonNullable<T.Parameter['_mutable']>) =>
-				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapParameter({ ...$edited(data), _mutable: admitSlot(handle, 'parameter', 'mutable', v) }, tree)
+				),
 			name: (v: NonNullable<T.Parameter['_name']>) =>
-				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapParameter({ ...$edited(data), _name: admitSlot(handle, 'parameter', 'name', v) }, tree)
+				),
 			type: (v: NonNullable<T.Parameter['_type']>) =>
-				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapParameter({ ...$edited(data), _type: admitSlot(handle, 'parameter', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2187,7 +2600,9 @@ export function wrapExternModifier(data: T.ExternModifier, tree: TreeHandle): T.
 		},
 		$with: {
 			abi: (v: NonNullable<T.ExternModifier['_abi']>) =>
-				rebuilt(node, handle, () => wrapExternModifier({ ...$edited(data), _abi: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapExternModifier({ ...$edited(data), _abi: admitSlot(handle, 'extern_modifier', 'abi', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2212,7 +2627,12 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
 		},
 		$with: {
 			content: (v: NonNullable<T.VisibilityModifier['_content']>) =>
-				rebuilt(node, handle, () => wrapVisibilityModifier({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapVisibilityModifier(
+						{ ...$edited(data), _content: admitSlot(handle, 'visibility_modifier', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2237,7 +2657,9 @@ export function wrapBracketedType(data: T.BracketedType, tree: TreeHandle): T.Br
 		},
 		$with: {
 			type: (v: NonNullable<T.BracketedType['_type']>) =>
-				rebuilt(node, handle, () => wrapBracketedType({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBracketedType({ ...$edited(data), _type: admitSlot(handle, 'bracketed_type', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2265,9 +2687,13 @@ export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle): T.Qu
 		},
 		$with: {
 			type: (v: NonNullable<T.QualifiedType['_type']>) =>
-				rebuilt(node, handle, () => wrapQualifiedType({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapQualifiedType({ ...$edited(data), _type: admitSlot(handle, 'qualified_type', 'type', v) }, tree)
+				),
 			alias: (v: NonNullable<T.QualifiedType['_alias']>) =>
-				rebuilt(node, handle, () => wrapQualifiedType({ ...$edited(data), _alias: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapQualifiedType({ ...$edited(data), _alias: admitSlot(handle, 'qualified_type', 'alias', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2292,7 +2718,9 @@ export function wrapLifetime(data: T.Lifetime, tree: TreeHandle): T.Lifetime.Par
 		},
 		$with: {
 			name: (v: NonNullable<T.Lifetime['_name']>) =>
-				rebuilt(node, handle, () => wrapLifetime({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLifetime({ ...$edited(data), _name: admitSlot(handle, 'lifetime', 'name', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2320,9 +2748,13 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.
 		},
 		$with: {
 			element: (v: NonNullable<T.ArrayType['_element']>) =>
-				rebuilt(node, handle, () => wrapArrayType({ ...$edited(data), _element: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapArrayType({ ...$edited(data), _element: admitSlot(handle, 'array_type', 'element', v) }, tree)
+				),
 			length: (v: NonNullable<T.ArrayType['_length']>) =>
-				rebuilt(node, handle, () => wrapArrayType({ ...$edited(data), _length: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapArrayType({ ...$edited(data), _length: admitSlot(handle, 'array_type', 'length', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2353,7 +2785,10 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForL
 						args,
 						{ kind: TSKindId.Lifetimes as const, optional: false, make: RAW.buildLifetimes },
 						(v: NonNullable<T.ForLifetimes['_lifetimes']>) =>
-							wrapForLifetimes({ ...$edited(data), _lifetimes: v }, tree)
+							wrapForLifetimes(
+								{ ...$edited(data), _lifetimes: admitSlot(handle, 'for_lifetimes', 'lifetimes', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -2403,11 +2838,16 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 						args,
 						{ kind: TSKindId.ForLifetimes as const, optional: true, make: RAW.buildForLifetimes },
 						(v: NonNullable<T.FunctionType['_for_lifetimes']>) =>
-							wrapFunctionType({ ...$edited(data), _for_lifetimes: v }, tree)
+							wrapFunctionType(
+								{ ...$edited(data), _for_lifetimes: admitSlot(handle, 'function_type', 'forLifetimes', v) },
+								tree
+							)
 					)
 				),
 			content: (v: NonNullable<T.FunctionType['_content']>) =>
-				rebuilt(node, handle, () => wrapFunctionType({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFunctionType({ ...$edited(data), _content: admitSlot(handle, 'function_type', 'content', v) }, tree)
+				),
 			parameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -2419,11 +2859,19 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
 						},
 						(v: NonNullable<T.FunctionType['_parameters']>) =>
-							wrapFunctionType({ ...$edited(data), _parameters: v }, tree)
+							wrapFunctionType(
+								{ ...$edited(data), _parameters: admitSlot(handle, 'function_type', 'parameters', v) },
+								tree
+							)
 					)
 				),
 			returnType: (v: NonNullable<T.FunctionType['_return_type']>) =>
-				rebuilt(node, handle, () => wrapFunctionType({ ...$edited(data), _return_type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFunctionType(
+						{ ...$edited(data), _return_type: admitSlot(handle, 'function_type', 'returnType', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2453,7 +2901,8 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Types as const, optional: false, make: RAW.buildTypes },
-						(v: NonNullable<T.TupleType['_types']>) => wrapTupleType({ ...$edited(data), _types: v }, tree)
+						(v: NonNullable<T.TupleType['_types']>) =>
+							wrapTupleType({ ...$edited(data), _types: admitSlot(handle, 'tuple_type', 'types', v) }, tree)
 					)
 				)
 		},
@@ -2492,7 +2941,12 @@ export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): 
 		},
 		$with: {
 			function: (v: NonNullable<T.GenericFunction['_function']>) =>
-				rebuilt(node, handle, () => wrapGenericFunction({ ...$edited(data), _function: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapGenericFunction(
+						{ ...$edited(data), _function: admitSlot(handle, 'generic_function', 'function', v) },
+						tree
+					)
+				),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -2504,7 +2958,10 @@ export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): 
 							element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
 						},
 						(v: NonNullable<T.GenericFunction['_type_arguments']>) =>
-							wrapGenericFunction({ ...$edited(data), _type_arguments: v }, tree)
+							wrapGenericFunction(
+								{ ...$edited(data), _type_arguments: admitSlot(handle, 'generic_function', 'typeArguments', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -2534,7 +2991,9 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		},
 		$with: {
 			type: (v: NonNullable<T.GenericType['_type']>) =>
-				rebuilt(node, handle, () => wrapGenericType({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapGenericType({ ...$edited(data), _type: admitSlot(handle, 'generic_type', 'type', v) }, tree)
+				),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -2546,7 +3005,10 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 							element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
 						},
 						(v: NonNullable<T.GenericType['_type_arguments']>) =>
-							wrapGenericType({ ...$edited(data), _type_arguments: v }, tree)
+							wrapGenericType(
+								{ ...$edited(data), _type_arguments: admitSlot(handle, 'generic_type', 'typeArguments', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -2579,7 +3041,12 @@ export function wrapGenericTypeWithTurbofish(
 		},
 		$with: {
 			type: (v: NonNullable<T.GenericTypeWithTurbofish['_type']>) =>
-				rebuilt(node, handle, () => wrapGenericTypeWithTurbofish({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapGenericTypeWithTurbofish(
+						{ ...$edited(data), _type: admitSlot(handle, 'generic_type_with_turbofish', 'type', v) },
+						tree
+					)
+				),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -2591,7 +3058,13 @@ export function wrapGenericTypeWithTurbofish(
 							element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
 						},
 						(v: NonNullable<T.GenericTypeWithTurbofish['_type_arguments']>) =>
-							wrapGenericTypeWithTurbofish({ ...$edited(data), _type_arguments: v }, tree)
+							wrapGenericTypeWithTurbofish(
+								{
+									...$edited(data),
+									_type_arguments: admitSlot(handle, 'generic_type_with_turbofish', 'typeArguments', v)
+								},
+								tree
+							)
 					)
 				)
 		},
@@ -2621,9 +3094,13 @@ export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle): T.Bounde
 		},
 		$with: {
 			left: (v: NonNullable<T.BoundedType['_left']>) =>
-				rebuilt(node, handle, () => wrapBoundedType({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapBoundedType({ ...$edited(data), _left: admitSlot(handle, 'bounded_type', 'left', v) }, tree)
+				),
 			right: (v: NonNullable<T.BoundedType['_right']>) =>
-				rebuilt(node, handle, () => wrapBoundedType({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBoundedType({ ...$edited(data), _right: admitSlot(handle, 'bounded_type', 'right', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2653,7 +3130,8 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 					listSlotWith(
 						args,
 						{ kind: TSKindId.UseBoundsElements as const, optional: true, make: RAW.buildUseBoundsElements },
-						(v: NonNullable<T.UseBounds['_bounds']>) => wrapUseBounds({ ...$edited(data), _bounds: v }, tree)
+						(v: NonNullable<T.UseBounds['_bounds']>) =>
+							wrapUseBounds({ ...$edited(data), _bounds: admitSlot(handle, 'use_bounds', 'bounds', v) }, tree)
 					)
 				)
 		},
@@ -2701,7 +3179,10 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 							element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
 						},
 						(v: NonNullable<T.TypeArguments['_elements']>) =>
-							wrapTypeArguments({ ...$edited(data), _elements: v }, tree)
+							wrapTypeArguments(
+								{ ...$edited(data), _elements: admitSlot(handle, 'type_arguments', 'elements', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -2748,7 +3229,9 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 		},
 		$with: {
 			name: (v: NonNullable<T.TypeBinding['_name']>) =>
-				rebuilt(node, handle, () => wrapTypeBinding({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeBinding({ ...$edited(data), _name: admitSlot(handle, 'type_binding', 'name', v) }, tree)
+				),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -2760,11 +3243,16 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 							element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
 						},
 						(v: NonNullable<T.TypeBinding['_type_arguments']>) =>
-							wrapTypeBinding({ ...$edited(data), _type_arguments: v }, tree)
+							wrapTypeBinding(
+								{ ...$edited(data), _type_arguments: admitSlot(handle, 'type_binding', 'typeArguments', v) },
+								tree
+							)
 					)
 				),
 			type: (v: NonNullable<T.TypeBinding['_type']>) =>
-				rebuilt(node, handle, () => wrapTypeBinding({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTypeBinding({ ...$edited(data), _type: admitSlot(handle, 'type_binding', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2795,11 +3283,17 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 		},
 		$with: {
 			lifetime: (v: NonNullable<T.ReferenceType['_lifetime']>) =>
-				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _lifetime: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapReferenceType({ ...$edited(data), _lifetime: admitSlot(handle, 'reference_type', 'lifetime', v) }, tree)
+				),
 			mutable: (v: NonNullable<T.ReferenceType['_mutable']>) =>
-				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapReferenceType({ ...$edited(data), _mutable: admitSlot(handle, 'reference_type', 'mutable', v) }, tree)
+				),
 			type: (v: NonNullable<T.ReferenceType['_type']>) =>
-				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapReferenceType({ ...$edited(data), _type: admitSlot(handle, 'reference_type', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2845,11 +3339,16 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.Abst
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.AbstractType['_type_parameters']>) =>
-							wrapAbstractType({ ...$edited(data), _type_parameters: v }, tree)
+							wrapAbstractType(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'abstract_type', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			trait: (v: NonNullable<T.AbstractType['_trait']>) =>
-				rebuilt(node, handle, () => wrapAbstractType({ ...$edited(data), _trait: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAbstractType({ ...$edited(data), _trait: admitSlot(handle, 'abstract_type', 'trait', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2881,7 +3380,9 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.Dynami
 		},
 		$with: {
 			trait: (v: NonNullable<T.DynamicType['_trait']>) =>
-				rebuilt(node, handle, () => wrapDynamicType({ ...$edited(data), _trait: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapDynamicType({ ...$edited(data), _trait: admitSlot(handle, 'dynamic_type', 'trait', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2909,9 +3410,16 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): 
 		},
 		$with: {
 			macro: (v: NonNullable<T.MacroInvocation['_macro']>) =>
-				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _macro: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMacroInvocation({ ...$edited(data), _macro: admitSlot(handle, 'macro_invocation', 'macro', v) }, tree)
+				),
 			arguments: (v: NonNullable<T.MacroInvocation['_arguments']>) =>
-				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _arguments: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapMacroInvocation(
+						{ ...$edited(data), _arguments: admitSlot(handle, 'macro_invocation', 'arguments', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2949,9 +3457,13 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 		},
 		$with: {
 			path: (v: NonNullable<T.ScopedIdentifier['_path']>) =>
-				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _path: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapScopedIdentifier({ ...$edited(data), _path: admitSlot(handle, 'scoped_identifier', 'path', v) }, tree)
+				),
 			name: (v: NonNullable<T.ScopedIdentifier['_name']>) =>
-				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapScopedIdentifier({ ...$edited(data), _name: admitSlot(handle, 'scoped_identifier', 'name', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2991,9 +3503,19 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 		},
 		$with: {
 			path: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>) =>
-				rebuilt(node, handle, () => wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _path: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapScopedTypeIdentifierInExpressionPosition(
+						{ ...$edited(data), _path: admitSlot(handle, 'scoped_type_identifier_in_expression_position', 'path', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>) =>
-				rebuilt(node, handle, () => wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapScopedTypeIdentifierInExpressionPosition(
+						{ ...$edited(data), _name: admitSlot(handle, 'scoped_type_identifier_in_expression_position', 'name', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3035,9 +3557,19 @@ export function wrapScopedTypeIdentifier(
 		},
 		$with: {
 			path: (v: NonNullable<T.ScopedTypeIdentifier['_path']>) =>
-				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _path: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapScopedTypeIdentifier(
+						{ ...$edited(data), _path: admitSlot(handle, 'scoped_type_identifier', 'path', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.ScopedTypeIdentifier['_name']>) =>
-				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapScopedTypeIdentifier(
+						{ ...$edited(data), _name: admitSlot(handle, 'scoped_type_identifier', 'name', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3065,9 +3597,16 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 		},
 		$with: {
 			operator: (v: NonNullable<T.UnaryExpression['_operator']>) =>
-				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _operator: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapUnaryExpression(
+						{ ...$edited(data), _operator: admitSlot(handle, 'unary_expression', 'operator', v) },
+						tree
+					)
+				),
 			operand: (v: NonNullable<T.UnaryExpression['_operand']>) =>
-				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _operand: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapUnaryExpression({ ...$edited(data), _operand: admitSlot(handle, 'unary_expression', 'operand', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3092,7 +3631,9 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle): T.Tr
 		},
 		$with: {
 			value: (v: NonNullable<T.TryExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapTryExpression({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTryExpression({ ...$edited(data), _value: admitSlot(handle, 'try_expression', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3123,11 +3664,20 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 		},
 		$with: {
 			left: (v: NonNullable<T.BinaryExpression['_left']>) =>
-				rebuilt(node, handle, () => wrapBinaryExpression({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapBinaryExpression({ ...$edited(data), _left: admitSlot(handle, 'binary_expression', 'left', v) }, tree)
+				),
 			operator: (v: NonNullable<T.BinaryExpression['_operator']>) =>
-				rebuilt(node, handle, () => wrapBinaryExpression({ ...$edited(data), _operator: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapBinaryExpression(
+						{ ...$edited(data), _operator: admitSlot(handle, 'binary_expression', 'operator', v) },
+						tree
+					)
+				),
 			right: (v: NonNullable<T.BinaryExpression['_right']>) =>
-				rebuilt(node, handle, () => wrapBinaryExpression({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBinaryExpression({ ...$edited(data), _right: admitSlot(handle, 'binary_expression', 'right', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3158,9 +3708,19 @@ export function wrapAssignmentExpression(
 		},
 		$with: {
 			left: (v: NonNullable<T.AssignmentExpression['_left']>) =>
-				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAssignmentExpression(
+						{ ...$edited(data), _left: admitSlot(handle, 'assignment_expression', 'left', v) },
+						tree
+					)
+				),
 			right: (v: NonNullable<T.AssignmentExpression['_right']>) =>
-				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAssignmentExpression(
+						{ ...$edited(data), _right: admitSlot(handle, 'assignment_expression', 'right', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3194,11 +3754,26 @@ export function wrapCompoundAssignmentExpr(
 		},
 		$with: {
 			left: (v: NonNullable<T.CompoundAssignmentExpr['_left']>) =>
-				rebuilt(node, handle, () => wrapCompoundAssignmentExpr({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCompoundAssignmentExpr(
+						{ ...$edited(data), _left: admitSlot(handle, 'compound_assignment_expr', 'left', v) },
+						tree
+					)
+				),
 			operator: (v: NonNullable<T.CompoundAssignmentExpr['_operator']>) =>
-				rebuilt(node, handle, () => wrapCompoundAssignmentExpr({ ...$edited(data), _operator: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCompoundAssignmentExpr(
+						{ ...$edited(data), _operator: admitSlot(handle, 'compound_assignment_expr', 'operator', v) },
+						tree
+					)
+				),
 			right: (v: NonNullable<T.CompoundAssignmentExpr['_right']>) =>
-				rebuilt(node, handle, () => wrapCompoundAssignmentExpr({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapCompoundAssignmentExpr(
+						{ ...$edited(data), _right: admitSlot(handle, 'compound_assignment_expr', 'right', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3226,9 +3801,19 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 		},
 		$with: {
 			value: (v: NonNullable<T.TypeCastExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeCastExpression(
+						{ ...$edited(data), _value: admitSlot(handle, 'type_cast_expression', 'value', v) },
+						tree
+					)
+				),
 			type: (v: NonNullable<T.TypeCastExpression['_type']>) =>
-				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTypeCastExpression(
+						{ ...$edited(data), _type: admitSlot(handle, 'type_cast_expression', 'type', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3253,7 +3838,12 @@ export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle)
 		},
 		$with: {
 			expression: (v: NonNullable<T.ReturnExpression['_expression']>) =>
-				rebuilt(node, handle, () => wrapReturnExpression({ ...$edited(data), _expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapReturnExpression(
+						{ ...$edited(data), _expression: admitSlot(handle, 'return_expression', 'expression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3278,7 +3868,12 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 		},
 		$with: {
 			expression: (v: NonNullable<T.YieldExpression['_expression']>) =>
-				rebuilt(node, handle, () => wrapYieldExpression({ ...$edited(data), _expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapYieldExpression(
+						{ ...$edited(data), _expression: admitSlot(handle, 'yield_expression', 'expression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3346,7 +3941,9 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 		},
 		$with: {
 			function: (v: NonNullable<T.CallExpression['_function']>) =>
-				rebuilt(node, handle, () => wrapCallExpression({ ...$edited(data), _function: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCallExpression({ ...$edited(data), _function: admitSlot(handle, 'call_expression', 'function', v) }, tree)
+				),
 			arguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -3358,7 +3955,10 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 							element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
 						},
 						(v: NonNullable<T.CallExpression['_arguments']>) =>
-							wrapCallExpression({ ...$edited(data), _arguments: v }, tree)
+							wrapCallExpression(
+								{ ...$edited(data), _arguments: admitSlot(handle, 'call_expression', 'arguments', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -3395,7 +3995,8 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 							make: RAW.buildArgumentsElements,
 							element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
 						},
-						(v: NonNullable<T.Arguments['_elements']>) => wrapArguments({ ...$edited(data), _elements: v }, tree)
+						(v: NonNullable<T.Arguments['_elements']>) =>
+							wrapArguments({ ...$edited(data), _elements: admitSlot(handle, 'arguments', 'elements', v) }, tree)
 					)
 				)
 		},
@@ -3440,7 +4041,12 @@ export function wrapParenthesizedExpression(
 		},
 		$with: {
 			expression: (v: NonNullable<T.ParenthesizedExpression['_expression']>) =>
-				rebuilt(node, handle, () => wrapParenthesizedExpression({ ...$edited(data), _expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapParenthesizedExpression(
+						{ ...$edited(data), _expression: admitSlot(handle, 'parenthesized_expression', 'expression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3469,7 +4075,13 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): 
 		$with: {
 			attributes: (...v: NonNullable<T.TupleExpression['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapTupleExpression({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+					wrapTupleExpression(
+						{
+							...$edited(data),
+							_attributes: admitSlot(handle, 'tuple_expression', 'attributes', restItems('attributes', v))
+						},
+						tree
+					)
 				),
 			expressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3477,7 +4089,10 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): 
 						args,
 						{ kind: TSKindId.Expressions as const, optional: false, make: RAW.buildExpressions },
 						(v: NonNullable<T.TupleExpression['_expressions']>) =>
-							wrapTupleExpression({ ...$edited(data), _expressions: v }, tree)
+							wrapTupleExpression(
+								{ ...$edited(data), _expressions: admitSlot(handle, 'tuple_expression', 'expressions', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -3511,13 +4126,16 @@ export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle)
 		},
 		$with: {
 			name: (v: NonNullable<T.StructExpression['_name']>) =>
-				rebuilt(node, handle, () => wrapStructExpression({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructExpression({ ...$edited(data), _name: admitSlot(handle, 'struct_expression', 'name', v) }, tree)
+				),
 			body: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.FieldInitializerList as const, optional: false, make: RAW.buildFieldInitializerList },
-						(v: NonNullable<T.StructExpression['_body']>) => wrapStructExpression({ ...$edited(data), _body: v }, tree)
+						(v: NonNullable<T.StructExpression['_body']>) =>
+							wrapStructExpression({ ...$edited(data), _body: admitSlot(handle, 'struct_expression', 'body', v) }, tree)
 					)
 				)
 		},
@@ -3557,7 +4175,10 @@ export function wrapFieldInitializerList(
 							make: RAW.buildFieldInitializerListElements
 						},
 						(v: NonNullable<T.FieldInitializerList['_initializers']>) =>
-							wrapFieldInitializerList({ ...$edited(data), _initializers: v }, tree)
+							wrapFieldInitializerList(
+								{ ...$edited(data), _initializers: admitSlot(handle, 'field_initializer_list', 'initializers', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -3601,10 +4222,21 @@ export function wrapShorthandFieldInitializer(
 		$with: {
 			attributes: (...v: NonNullable<T.ShorthandFieldInitializer['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapShorthandFieldInitializer({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+					wrapShorthandFieldInitializer(
+						{
+							...$edited(data),
+							_attributes: admitSlot(handle, 'shorthand_field_initializer', 'attributes', restItems('attributes', v))
+						},
+						tree
+					)
 				),
 			name: (v: NonNullable<T.ShorthandFieldInitializer['_name']>) =>
-				rebuilt(node, handle, () => wrapShorthandFieldInitializer({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapShorthandFieldInitializer(
+						{ ...$edited(data), _name: admitSlot(handle, 'shorthand_field_initializer', 'name', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3636,12 +4268,22 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 		$with: {
 			attributeItems: (...v: NonNullable<T.FieldInitializer['_attribute_item']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapFieldInitializer({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+					wrapFieldInitializer(
+						{
+							...$edited(data),
+							_attribute_item: admitSlot(handle, 'field_initializer', 'attributeItems', restItems('attributeItems', v))
+						},
+						tree
+					)
 				),
 			field: (v: NonNullable<T.FieldInitializer['_field']>) =>
-				rebuilt(node, handle, () => wrapFieldInitializer({ ...$edited(data), _field: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldInitializer({ ...$edited(data), _field: admitSlot(handle, 'field_initializer', 'field', v) }, tree)
+				),
 			value: (v: NonNullable<T.FieldInitializer['_value']>) =>
-				rebuilt(node, handle, () => wrapFieldInitializer({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFieldInitializer({ ...$edited(data), _value: admitSlot(handle, 'field_initializer', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3669,7 +4311,12 @@ export function wrapBaseFieldInitializer(
 		},
 		$with: {
 			value: (v: NonNullable<T.BaseFieldInitializer['_value']>) =>
-				rebuilt(node, handle, () => wrapBaseFieldInitializer({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBaseFieldInitializer(
+						{ ...$edited(data), _value: admitSlot(handle, 'base_field_initializer', 'value', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3700,11 +4347,23 @@ export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle): T.IfEx
 		},
 		$with: {
 			condition: (v: NonNullable<T.IfExpression['_condition']>) =>
-				rebuilt(node, handle, () => wrapIfExpression({ ...$edited(data), _condition: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapIfExpression({ ...$edited(data), _condition: admitSlot(handle, 'if_expression', 'condition', v) }, tree)
+				),
 			consequence: (v: NonNullable<T.IfExpression['_consequence']>) =>
-				rebuilt(node, handle, () => wrapIfExpression({ ...$edited(data), _consequence: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapIfExpression(
+						{ ...$edited(data), _consequence: admitSlot(handle, 'if_expression', 'consequence', v) },
+						tree
+					)
+				),
 			alternative: (v: NonNullable<T.IfExpression['_alternative']>) =>
-				rebuilt(node, handle, () => wrapIfExpression({ ...$edited(data), _alternative: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapIfExpression(
+						{ ...$edited(data), _alternative: admitSlot(handle, 'if_expression', 'alternative', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3732,9 +4391,13 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetC
 		},
 		$with: {
 			pattern: (v: NonNullable<T.LetCondition['_pattern']>) =>
-				rebuilt(node, handle, () => wrapLetCondition({ ...$edited(data), _pattern: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLetCondition({ ...$edited(data), _pattern: admitSlot(handle, 'let_condition', 'pattern', v) }, tree)
+				),
 			value: (v: NonNullable<T.LetCondition['_value']>) =>
-				rebuilt(node, handle, () => wrapLetCondition({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLetCondition({ ...$edited(data), _value: admitSlot(handle, 'let_condition', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3762,9 +4425,16 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 		},
 		$with: {
 			left: (v: NonNullable<T.LetChain['_left']>) =>
-				rebuilt(node, handle, () => wrapLetChain({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLetChain({ ...$edited(data), _left: admitSlot(handle, '_let_chain', 'left', v) }, tree)
+				),
 			rights: (...v: NonNullable<T.LetChain['_right']>[number][]) =>
-				rebuilt(node, handle, () => wrapLetChain({ ...$edited(data), _right: restItems('rights', v) }, tree))
+				rebuilt(node, handle, () =>
+					wrapLetChain(
+						{ ...$edited(data), _right: admitSlot(handle, '_let_chain', 'rights', restItems('rights', v)) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3789,7 +4459,9 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 		},
 		$with: {
 			body: (v: NonNullable<T.ElseClause['_body']>) =>
-				rebuilt(node, handle, () => wrapElseClause({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapElseClause({ ...$edited(data), _body: admitSlot(handle, 'else_clause', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3817,9 +4489,13 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 		},
 		$with: {
 			value: (v: NonNullable<T.MatchExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMatchExpression({ ...$edited(data), _value: admitSlot(handle, 'match_expression', 'value', v) }, tree)
+				),
 			body: (v: NonNullable<T.MatchExpression['_body']>) =>
-				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapMatchExpression({ ...$edited(data), _body: admitSlot(handle, 'match_expression', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3845,7 +4521,12 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 		},
 		$with: {
 			matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-				rebuilt(node, handle, () => wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMatchBlock(
+						{ ...$edited(data), _match_block_arms: admitSlot(handle, 'match_block', 'matchBlockArms', v) },
+						tree
+					)
+				),
 			arms: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -3862,7 +4543,10 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 						'arms',
 						args,
 						(v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-							wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree),
+							wrapMatchBlock(
+								{ ...$edited(data), _match_block_arms: admitSlot(handle, 'match_block', 'matchBlockArms', v) },
+								tree
+							),
 						() => readGroup_matchBlockArms.call(node)
 					)
 				),
@@ -3882,7 +4566,10 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 						'lastArm',
 						args,
 						(v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-							wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree),
+							wrapMatchBlock(
+								{ ...$edited(data), _match_block_arms: admitSlot(handle, 'match_block', 'matchBlockArms', v) },
+								tree
+							),
 						() => readGroup_matchBlockArms.call(node)
 					)
 				)
@@ -3926,12 +4613,22 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		$with: {
 			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapLastMatchArm({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+					wrapLastMatchArm(
+						{
+							...$edited(data),
+							_attributes: admitSlot(handle, 'last_match_arm', 'attributes', restItems('attributes', v))
+						},
+						tree
+					)
 				),
 			value: (v: NonNullable<T.LastMatchArm['_value']>) =>
-				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLastMatchArm({ ...$edited(data), _value: admitSlot(handle, 'last_match_arm', 'value', v) }, tree)
+				),
 			comma: (v: NonNullable<T.LastMatchArm['_comma']>) =>
-				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLastMatchArm({ ...$edited(data), _comma: admitSlot(handle, 'last_match_arm', 'comma', v) }, tree)
+				),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -3947,7 +4644,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 						},
 						'pattern',
 						args,
-						(v: NonNullable<T.LastMatchArm['_pattern']>) => wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
+						(v: NonNullable<T.LastMatchArm['_pattern']>) =>
+							wrapLastMatchArm({ ...$edited(data), _pattern: admitSlot(handle, 'last_match_arm', 'pattern', v) }, tree),
 						() => readGroup_pattern.call(node)
 					)
 				),
@@ -3966,7 +4664,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 						},
 						'condition',
 						args,
-						(v: NonNullable<T.LastMatchArm['_pattern']>) => wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
+						(v: NonNullable<T.LastMatchArm['_pattern']>) =>
+							wrapLastMatchArm({ ...$edited(data), _pattern: admitSlot(handle, 'last_match_arm', 'pattern', v) }, tree),
 						() => readGroup_pattern.call(node)
 					)
 				)
@@ -4000,9 +4699,13 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.Matc
 		},
 		$with: {
 			pattern: (v: NonNullable<T.MatchPattern['_pattern']>) =>
-				rebuilt(node, handle, () => wrapMatchPattern({ ...$edited(data), _pattern: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMatchPattern({ ...$edited(data), _pattern: admitSlot(handle, 'match_pattern', 'pattern', v) }, tree)
+				),
 			condition: (v: NonNullable<T.MatchPattern['_condition']>) =>
-				rebuilt(node, handle, () => wrapMatchPattern({ ...$edited(data), _condition: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapMatchPattern({ ...$edited(data), _condition: admitSlot(handle, 'match_pattern', 'condition', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4033,11 +4736,20 @@ export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle): 
 		},
 		$with: {
 			label: (v: NonNullable<T.WhileExpression['_label']>) =>
-				rebuilt(node, handle, () => wrapWhileExpression({ ...$edited(data), _label: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapWhileExpression({ ...$edited(data), _label: admitSlot(handle, 'while_expression', 'label', v) }, tree)
+				),
 			condition: (v: NonNullable<T.WhileExpression['_condition']>) =>
-				rebuilt(node, handle, () => wrapWhileExpression({ ...$edited(data), _condition: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapWhileExpression(
+						{ ...$edited(data), _condition: admitSlot(handle, 'while_expression', 'condition', v) },
+						tree
+					)
+				),
 			body: (v: NonNullable<T.WhileExpression['_body']>) =>
-				rebuilt(node, handle, () => wrapWhileExpression({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapWhileExpression({ ...$edited(data), _body: admitSlot(handle, 'while_expression', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4065,9 +4777,13 @@ export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle): T.
 		},
 		$with: {
 			label: (v: NonNullable<T.LoopExpression['_label']>) =>
-				rebuilt(node, handle, () => wrapLoopExpression({ ...$edited(data), _label: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapLoopExpression({ ...$edited(data), _label: admitSlot(handle, 'loop_expression', 'label', v) }, tree)
+				),
 			body: (v: NonNullable<T.LoopExpression['_body']>) =>
-				rebuilt(node, handle, () => wrapLoopExpression({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLoopExpression({ ...$edited(data), _body: admitSlot(handle, 'loop_expression', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4101,13 +4817,21 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 		},
 		$with: {
 			label: (v: NonNullable<T.ForExpression['_label']>) =>
-				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _label: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapForExpression({ ...$edited(data), _label: admitSlot(handle, 'for_expression', 'label', v) }, tree)
+				),
 			pattern: (v: NonNullable<T.ForExpression['_pattern']>) =>
-				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _pattern: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapForExpression({ ...$edited(data), _pattern: admitSlot(handle, 'for_expression', 'pattern', v) }, tree)
+				),
 			value: (v: NonNullable<T.ForExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapForExpression({ ...$edited(data), _value: admitSlot(handle, 'for_expression', 'value', v) }, tree)
+				),
 			body: (v: NonNullable<T.ForExpression['_body']>) =>
-				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapForExpression({ ...$edited(data), _body: admitSlot(handle, 'for_expression', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4132,7 +4856,9 @@ export function wrapConstBlock(data: T.ConstBlock, tree: TreeHandle): T.ConstBlo
 		},
 		$with: {
 			body: (v: NonNullable<T.ConstBlock['_body']>) =>
-				rebuilt(node, handle, () => wrapConstBlock({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapConstBlock({ ...$edited(data), _body: admitSlot(handle, 'const_block', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4158,7 +4884,13 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 		$with: {
 			parameters: (...v: NonNullable<T.ClosureParameters['_parameters']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapClosureParameters({ ...$edited(data), _parameters: restItems('parameters', v) }, tree)
+					wrapClosureParameters(
+						{
+							...$edited(data),
+							_parameters: admitSlot(handle, 'closure_parameters', 'parameters', restItems('parameters', v))
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -4185,7 +4917,7 @@ export function wrapLabel(data: T.Label, tree: TreeHandle): T.Label.Parsed {
 		},
 		$with: {
 			name: (v: NonNullable<T.Label['_name']>) =>
-				rebuilt(node, handle, () => wrapLabel({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () => wrapLabel({ ...$edited(data), _name: admitSlot(handle, 'label', 'name', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4213,9 +4945,16 @@ export function wrapBreakExpression(data: T.BreakExpression, tree: TreeHandle): 
 		},
 		$with: {
 			label: (v: NonNullable<T.BreakExpression['_label']>) =>
-				rebuilt(node, handle, () => wrapBreakExpression({ ...$edited(data), _label: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapBreakExpression({ ...$edited(data), _label: admitSlot(handle, 'break_expression', 'label', v) }, tree)
+				),
 			expression: (v: NonNullable<T.BreakExpression['_expression']>) =>
-				rebuilt(node, handle, () => wrapBreakExpression({ ...$edited(data), _expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBreakExpression(
+						{ ...$edited(data), _expression: admitSlot(handle, 'break_expression', 'expression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4240,7 +4979,12 @@ export function wrapContinueExpression(data: T.ContinueExpression, tree: TreeHan
 		},
 		$with: {
 			label: (v: NonNullable<T.ContinueExpression['_label']>) =>
-				rebuilt(node, handle, () => wrapContinueExpression({ ...$edited(data), _label: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapContinueExpression(
+						{ ...$edited(data), _label: admitSlot(handle, 'continue_expression', 'label', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4268,9 +5012,13 @@ export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle): 
 		},
 		$with: {
 			object: (v: NonNullable<T.IndexExpression['_object']>) =>
-				rebuilt(node, handle, () => wrapIndexExpression({ ...$edited(data), _object: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapIndexExpression({ ...$edited(data), _object: admitSlot(handle, 'index_expression', 'object', v) }, tree)
+				),
 			index: (v: NonNullable<T.IndexExpression['_index']>) =>
-				rebuilt(node, handle, () => wrapIndexExpression({ ...$edited(data), _index: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapIndexExpression({ ...$edited(data), _index: admitSlot(handle, 'index_expression', 'index', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4295,7 +5043,12 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): 
 		},
 		$with: {
 			expression: (v: NonNullable<T.AwaitExpression['_expression']>) =>
-				rebuilt(node, handle, () => wrapAwaitExpression({ ...$edited(data), _expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAwaitExpression(
+						{ ...$edited(data), _expression: admitSlot(handle, 'await_expression', 'expression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4323,9 +5076,13 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle): 
 		},
 		$with: {
 			value: (v: NonNullable<T.FieldExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldExpression({ ...$edited(data), _value: admitSlot(handle, 'field_expression', 'value', v) }, tree)
+				),
 			field: (v: NonNullable<T.FieldExpression['_field']>) =>
-				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _field: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFieldExpression({ ...$edited(data), _field: admitSlot(handle, 'field_expression', 'field', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4350,7 +5107,9 @@ export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle): T.Unsafe
 		},
 		$with: {
 			body: (v: NonNullable<T.UnsafeBlock['_body']>) =>
-				rebuilt(node, handle, () => wrapUnsafeBlock({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapUnsafeBlock({ ...$edited(data), _body: admitSlot(handle, 'unsafe_block', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4378,9 +5137,13 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 		},
 		$with: {
 			move: (v: NonNullable<T.AsyncBlock['_move']>) =>
-				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _move: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAsyncBlock({ ...$edited(data), _move: admitSlot(handle, 'async_block', 'move', v) }, tree)
+				),
 			body: (v: NonNullable<T.AsyncBlock['_body']>) =>
-				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAsyncBlock({ ...$edited(data), _body: admitSlot(handle, 'async_block', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4408,9 +5171,13 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Par
 		},
 		$with: {
 			move: (v: NonNullable<T.GenBlock['_move']>) =>
-				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _move: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapGenBlock({ ...$edited(data), _move: admitSlot(handle, 'gen_block', 'move', v) }, tree)
+				),
 			body: (v: NonNullable<T.GenBlock['_body']>) =>
-				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapGenBlock({ ...$edited(data), _body: admitSlot(handle, 'gen_block', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4435,7 +5202,9 @@ export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle): T.TryBlock.Par
 		},
 		$with: {
 			body: (v: NonNullable<T.TryBlock['_body']>) =>
-				rebuilt(node, handle, () => wrapTryBlock({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTryBlock({ ...$edited(data), _body: admitSlot(handle, 'try_block', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4466,11 +5235,23 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 		},
 		$with: {
 			label: (v: NonNullable<T.Block['_label']>) =>
-				rebuilt(node, handle, () => wrapBlock({ ...$edited(data), _label: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapBlock({ ...$edited(data), _label: admitSlot(handle, 'block', 'label', v) }, tree)
+				),
 			statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
-				rebuilt(node, handle, () => wrapBlock({ ...$edited(data), _statements: restItems('statements', v) }, tree)),
+				rebuilt(node, handle, () =>
+					wrapBlock(
+						{ ...$edited(data), _statements: admitSlot(handle, 'block', 'statements', restItems('statements', v)) },
+						tree
+					)
+				),
 			trailingExpression: (v: NonNullable<T.Block['_trailing_expression']>) =>
-				rebuilt(node, handle, () => wrapBlock({ ...$edited(data), _trailing_expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBlock(
+						{ ...$edited(data), _trailing_expression: admitSlot(handle, 'block', 'trailingExpression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4499,7 +5280,9 @@ export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle): T.
 		},
 		$with: {
 			name: (v: NonNullable<T.GenericPattern['_name']>) =>
-				rebuilt(node, handle, () => wrapGenericPattern({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapGenericPattern({ ...$edited(data), _name: admitSlot(handle, 'generic_pattern', 'name', v) }, tree)
+				),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -4511,7 +5294,10 @@ export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle): T.
 							element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
 						},
 						(v: NonNullable<T.GenericPattern['_type_arguments']>) =>
-							wrapGenericPattern({ ...$edited(data), _type_arguments: v }, tree)
+							wrapGenericPattern(
+								{ ...$edited(data), _type_arguments: admitSlot(handle, 'generic_pattern', 'typeArguments', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -4543,7 +5329,8 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 					listSlotWith(
 						args,
 						{ kind: TSKindId.TuplePatternElements as const, optional: true, make: RAW.buildTuplePatternElements },
-						(v: NonNullable<T.TuplePattern['_elements']>) => wrapTuplePattern({ ...$edited(data), _elements: v }, tree)
+						(v: NonNullable<T.TuplePattern['_elements']>) =>
+							wrapTuplePattern({ ...$edited(data), _elements: admitSlot(handle, 'tuple_pattern', 'elements', v) }, tree)
 					)
 				)
 		},
@@ -4585,7 +5372,8 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.Slic
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-						(v: NonNullable<T.SlicePattern['_patterns']>) => wrapSlicePattern({ ...$edited(data), _patterns: v }, tree)
+						(v: NonNullable<T.SlicePattern['_patterns']>) =>
+							wrapSlicePattern({ ...$edited(data), _patterns: admitSlot(handle, 'slice_pattern', 'patterns', v) }, tree)
 					)
 				)
 		},
@@ -4625,14 +5413,22 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
 		},
 		$with: {
 			type: (v: NonNullable<T.TupleStructPattern['_type']>) =>
-				rebuilt(node, handle, () => wrapTupleStructPattern({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTupleStructPattern(
+						{ ...$edited(data), _type: admitSlot(handle, 'tuple_struct_pattern', 'type', v) },
+						tree
+					)
+				),
 			patterns: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
 						(v: NonNullable<T.TupleStructPattern['_patterns']>) =>
-							wrapTupleStructPattern({ ...$edited(data), _patterns: v }, tree)
+							wrapTupleStructPattern(
+								{ ...$edited(data), _patterns: admitSlot(handle, 'tuple_struct_pattern', 'patterns', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -4662,13 +5458,16 @@ export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle): T.St
 		},
 		$with: {
 			type: (v: NonNullable<T.StructPattern['_type']>) =>
-				rebuilt(node, handle, () => wrapStructPattern({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructPattern({ ...$edited(data), _type: admitSlot(handle, 'struct_pattern', 'type', v) }, tree)
+				),
 			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.StructPatternElements as const, optional: true, make: RAW.buildStructPatternElements },
-						(v: NonNullable<T.StructPattern['_fields']>) => wrapStructPattern({ ...$edited(data), _fields: v }, tree)
+						(v: NonNullable<T.StructPattern['_fields']>) =>
+							wrapStructPattern({ ...$edited(data), _fields: admitSlot(handle, 'struct_pattern', 'fields', v) }, tree)
 					)
 				)
 		},
@@ -4695,7 +5494,9 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPatte
 		},
 		$with: {
 			pattern: (v: NonNullable<T.MutPattern['_pattern']>) =>
-				rebuilt(node, handle, () => wrapMutPattern({ ...$edited(data), _pattern: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapMutPattern({ ...$edited(data), _pattern: admitSlot(handle, 'mut_pattern', 'pattern', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4720,7 +5521,9 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPatte
 		},
 		$with: {
 			pattern: (v: NonNullable<T.RefPattern['_pattern']>) =>
-				rebuilt(node, handle, () => wrapRefPattern({ ...$edited(data), _pattern: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRefPattern({ ...$edited(data), _pattern: admitSlot(handle, 'ref_pattern', 'pattern', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4748,9 +5551,13 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): 
 		},
 		$with: {
 			name: (v: NonNullable<T.CapturedPattern['_name']>) =>
-				rebuilt(node, handle, () => wrapCapturedPattern({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCapturedPattern({ ...$edited(data), _name: admitSlot(handle, 'captured_pattern', 'name', v) }, tree)
+				),
 			pattern: (v: NonNullable<T.CapturedPattern['_pattern']>) =>
-				rebuilt(node, handle, () => wrapCapturedPattern({ ...$edited(data), _pattern: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapCapturedPattern({ ...$edited(data), _pattern: admitSlot(handle, 'captured_pattern', 'pattern', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4778,9 +5585,19 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 		},
 		$with: {
 			mutable: (v: NonNullable<T.ReferencePattern['_mutable']>) =>
-				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapReferencePattern(
+						{ ...$edited(data), _mutable: admitSlot(handle, 'reference_pattern', 'mutable', v) },
+						tree
+					)
+				),
 			pattern: (v: NonNullable<T.ReferencePattern['_pattern']>) =>
-				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _pattern: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapReferencePattern(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'reference_pattern', 'pattern', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4805,7 +5622,9 @@ export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle): 
 		},
 		$with: {
 			value: (v: NonNullable<T.NegativeLiteral['_value']>) =>
-				rebuilt(node, handle, () => wrapNegativeLiteral({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapNegativeLiteral({ ...$edited(data), _value: admitSlot(handle, 'negative_literal', 'value', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4833,9 +5652,19 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.St
 		},
 		$with: {
 			stringOpen: (v: NonNullable<T.StringLiteral['_string_open']>) =>
-				rebuilt(node, handle, () => wrapStringLiteral({ ...$edited(data), _string_open: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStringLiteral(
+						{ ...$edited(data), _string_open: admitSlot(handle, 'string_literal', 'stringOpen', v) },
+						tree
+					)
+				),
 			elements: (...v: NonNullable<T.StringLiteral['_elements']>[number][]) =>
-				rebuilt(node, handle, () => wrapStringLiteral({ ...$edited(data), _elements: restItems('elements', v) }, tree))
+				rebuilt(node, handle, () =>
+					wrapStringLiteral(
+						{ ...$edited(data), _elements: admitSlot(handle, 'string_literal', 'elements', restItems('elements', v)) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4866,11 +5695,32 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 		},
 		$with: {
 			rawStringLiteralStart: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_start']>) =>
-				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_start: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapRawStringLiteral(
+						{
+							...$edited(data),
+							_raw_string_literal_start: admitSlot(handle, 'raw_string_literal', 'rawStringLiteralStart', v)
+						},
+						tree
+					)
+				),
 			stringContent: (v: NonNullable<T.RawStringLiteral['_string_content']>) =>
-				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _string_content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapRawStringLiteral(
+						{ ...$edited(data), _string_content: admitSlot(handle, 'raw_string_literal', 'stringContent', v) },
+						tree
+					)
+				),
 			rawStringLiteralEnd: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_end']>) =>
-				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_end: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRawStringLiteral(
+						{
+							...$edited(data),
+							_raw_string_literal_end: admitSlot(handle, 'raw_string_literal', 'rawStringLiteralEnd', v)
+						},
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4897,7 +5747,9 @@ export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineCo
 		},
 		$with: {
 			content: (v: NonNullable<T.LineComment['_content']>) =>
-				rebuilt(node, handle, () => wrapLineComment({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLineComment({ ...$edited(data), _content: admitSlot(handle, 'line_comment', 'content', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4926,7 +5778,9 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.Bloc
 		},
 		$with: {
 			content: (v: NonNullable<T.BlockComment['_content']>) =>
-				rebuilt(node, handle, () => wrapBlockComment({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBlockComment({ ...$edited(data), _content: admitSlot(handle, 'block_comment', 'content', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4951,7 +5805,9 @@ export function wrapShebang(data: T.Shebang, tree: TreeHandle): T.Shebang.Parsed
 		},
 		$with: {
 			content: (v: NonNullable<T.Shebang['_content']>) =>
-				rebuilt(node, handle, () => wrapShebang({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapShebang({ ...$edited(data), _content: admitSlot(handle, 'shebang', 'content', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4976,7 +5832,9 @@ export function wrapMetavariable(data: T.Metavariable, tree: TreeHandle): T.Meta
 		},
 		$with: {
 			name: (v: NonNullable<T.Metavariable['_name']>) =>
-				rebuilt(node, handle, () => wrapMetavariable({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapMetavariable({ ...$edited(data), _name: admitSlot(handle, 'metavariable', 'name', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5653,7 +6511,9 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 		},
 		$with: {
 			path: (v: NonNullable<T.UseWildcardGroup['_path']>) =>
-				rebuilt(node, handle, () => wrapUseWildcardGroup({ ...$edited(data), _path: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapUseWildcardGroup({ ...$edited(data), _path: admitSlot(handle, 'use_wildcard_group', 'path', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5700,9 +6560,19 @@ export function wrapIntegerLiteralDecimal(
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralDecimal['_content']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralDecimal({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralDecimal(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_literal_decimal', 'content', v) },
+						tree
+					)
+				),
 			suffix: (v: NonNullable<T.IntegerLiteralDecimal['_suffix']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralDecimal({ ...$edited(data), _suffix: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralDecimal(
+						{ ...$edited(data), _suffix: admitSlot(handle, 'integer_literal_decimal', 'suffix', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5746,9 +6616,19 @@ export function wrapIntegerLiteralHex(data: T.IntegerLiteralHex, tree: TreeHandl
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralHex['_content']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralHex({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralHex(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_literal_hex', 'content', v) },
+						tree
+					)
+				),
 			suffix: (v: NonNullable<T.IntegerLiteralHex['_suffix']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralHex({ ...$edited(data), _suffix: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralHex(
+						{ ...$edited(data), _suffix: admitSlot(handle, 'integer_literal_hex', 'suffix', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5795,9 +6675,19 @@ export function wrapIntegerLiteralBinary(
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralBinary['_content']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralBinary({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralBinary(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_literal_binary', 'content', v) },
+						tree
+					)
+				),
 			suffix: (v: NonNullable<T.IntegerLiteralBinary['_suffix']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralBinary({ ...$edited(data), _suffix: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralBinary(
+						{ ...$edited(data), _suffix: admitSlot(handle, 'integer_literal_binary', 'suffix', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5841,9 +6731,19 @@ export function wrapIntegerLiteralOctal(data: T.IntegerLiteralOctal, tree: TreeH
 		},
 		$with: {
 			content: (v: NonNullable<T.IntegerLiteralOctal['_content']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralOctal({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralOctal(
+						{ ...$edited(data), _content: admitSlot(handle, 'integer_literal_octal', 'content', v) },
+						tree
+					)
+				),
 			suffix: (v: NonNullable<T.IntegerLiteralOctal['_suffix']>) =>
-				rebuilt(node, handle, () => wrapIntegerLiteralOctal({ ...$edited(data), _suffix: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapIntegerLiteralOctal(
+						{ ...$edited(data), _suffix: admitSlot(handle, 'integer_literal_octal', 'suffix', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5871,9 +6771,16 @@ export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle)
 		},
 		$with: {
 			byte: (v: NonNullable<T.CharLiteralPlain['_byte']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _byte: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCharLiteralPlain({ ...$edited(data), _byte: admitSlot(handle, 'char_literal_plain', 'byte', v) }, tree)
+				),
 			content: (v: NonNullable<T.CharLiteralPlain['_content']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapCharLiteralPlain(
+						{ ...$edited(data), _content: admitSlot(handle, 'char_literal_plain', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5904,9 +6811,19 @@ export function wrapCharLiteralEscapedSimple(
 		},
 		$with: {
 			byte: (v: NonNullable<T.CharLiteralEscapedSimple['_byte']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _byte: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedSimple(
+						{ ...$edited(data), _byte: admitSlot(handle, 'char_literal_escaped_simple', 'byte', v) },
+						tree
+					)
+				),
 			content: (v: NonNullable<T.CharLiteralEscapedSimple['_content']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedSimple(
+						{ ...$edited(data), _content: admitSlot(handle, 'char_literal_escaped_simple', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5937,9 +6854,19 @@ export function wrapCharLiteralEscapedUnicodeFixed(
 		},
 		$with: {
 			byte: (v: NonNullable<T.CharLiteralEscapedUnicodeFixed['_byte']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _byte: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedUnicodeFixed(
+						{ ...$edited(data), _byte: admitSlot(handle, 'char_literal_escaped_unicode_fixed', 'byte', v) },
+						tree
+					)
+				),
 			content: (v: NonNullable<T.CharLiteralEscapedUnicodeFixed['_content']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedUnicodeFixed(
+						{ ...$edited(data), _content: admitSlot(handle, 'char_literal_escaped_unicode_fixed', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5970,9 +6897,19 @@ export function wrapCharLiteralEscapedUnicodeBraced(
 		},
 		$with: {
 			byte: (v: NonNullable<T.CharLiteralEscapedUnicodeBraced['_byte']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _byte: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedUnicodeBraced(
+						{ ...$edited(data), _byte: admitSlot(handle, 'char_literal_escaped_unicode_braced', 'byte', v) },
+						tree
+					)
+				),
 			content: (v: NonNullable<T.CharLiteralEscapedUnicodeBraced['_content']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedUnicodeBraced(
+						{ ...$edited(data), _content: admitSlot(handle, 'char_literal_escaped_unicode_braced', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6003,9 +6940,19 @@ export function wrapCharLiteralEscapedHex(
 		},
 		$with: {
 			byte: (v: NonNullable<T.CharLiteralEscapedHex['_byte']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _byte: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedHex(
+						{ ...$edited(data), _byte: admitSlot(handle, 'char_literal_escaped_hex', 'byte', v) },
+						tree
+					)
+				),
 			content: (v: NonNullable<T.CharLiteralEscapedHex['_content']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapCharLiteralEscapedHex(
+						{ ...$edited(data), _content: admitSlot(handle, 'char_literal_escaped_hex', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6033,7 +6980,12 @@ export function wrapEscapeSequenceSimple(
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceSimple['_content']>) =>
-				rebuilt(node, handle, () => wrapEscapeSequenceSimple({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapEscapeSequenceSimple(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_simple', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6061,7 +7013,12 @@ export function wrapEscapeSequenceUnicodeFixed(
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceUnicodeFixed['_content']>) =>
-				rebuilt(node, handle, () => wrapEscapeSequenceUnicodeFixed({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapEscapeSequenceUnicodeFixed(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_fixed', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6089,7 +7046,12 @@ export function wrapEscapeSequenceUnicodeBraced(
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceUnicodeBraced['_content']>) =>
-				rebuilt(node, handle, () => wrapEscapeSequenceUnicodeBraced({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapEscapeSequenceUnicodeBraced(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_unicode_braced', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6114,7 +7076,12 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequenceHex['_content']>) =>
-				rebuilt(node, handle, () => wrapEscapeSequenceHex({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapEscapeSequenceHex(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_hex', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6146,12 +7113,28 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 		$with: {
 			attributes: (...v: NonNullable<T.ArrayExpressionSemi['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapArrayExpressionSemi({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+					wrapArrayExpressionSemi(
+						{
+							...$edited(data),
+							_attributes: admitSlot(handle, 'array_expression_semi', 'attributes', restItems('attributes', v))
+						},
+						tree
+					)
 				),
 			element: (v: NonNullable<T.ArrayExpressionSemi['_element']>) =>
-				rebuilt(node, handle, () => wrapArrayExpressionSemi({ ...$edited(data), _element: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapArrayExpressionSemi(
+						{ ...$edited(data), _element: admitSlot(handle, 'array_expression_semi', 'element', v) },
+						tree
+					)
+				),
 			length: (v: NonNullable<T.ArrayExpressionSemi['_length']>) =>
-				rebuilt(node, handle, () => wrapArrayExpressionSemi({ ...$edited(data), _length: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapArrayExpressionSemi(
+						{ ...$edited(data), _length: admitSlot(handle, 'array_expression_semi', 'length', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6180,7 +7163,13 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 		$with: {
 			attributes: (...v: NonNullable<T.ArrayExpressionList['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapArrayExpressionList({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+					wrapArrayExpressionList(
+						{
+							...$edited(data),
+							_attributes: admitSlot(handle, 'array_expression_list', 'attributes', restItems('attributes', v))
+						},
+						tree
+					)
 				),
 			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -6193,7 +7182,10 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 							element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
 						},
 						(v: NonNullable<T.ArrayExpressionList['_elements']>) =>
-							wrapArrayExpressionList({ ...$edited(data), _elements: v }, tree)
+							wrapArrayExpressionList(
+								{ ...$edited(data), _elements: admitSlot(handle, 'array_expression_list', 'elements', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -6224,9 +7216,16 @@ export function wrapAttributeInput(data: T.AttributeInput, tree: TreeHandle): T.
 		},
 		$with: {
 			value: (v: NonNullable<T.AttributeInput['_value']>) =>
-				rebuilt(node, handle, () => wrapAttributeInput({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAttributeInput({ ...$edited(data), _value: admitSlot(handle, 'attribute_input', 'value', v) }, tree)
+				),
 			arguments: (v: NonNullable<T.AttributeInput['_arguments']>) =>
-				rebuilt(node, handle, () => wrapAttributeInput({ ...$edited(data), _arguments: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributeInput(
+						{ ...$edited(data), _arguments: admitSlot(handle, 'attribute_input', 'arguments', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6269,17 +7268,47 @@ export function wrapClosureExpressionBlock(
 		},
 		$with: {
 			static: (v: NonNullable<T.ClosureExpressionBlock['_static']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _static: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionBlock(
+						{ ...$edited(data), _static: admitSlot(handle, 'closure_expression_block', 'static', v) },
+						tree
+					)
+				),
 			async: (v: NonNullable<T.ClosureExpressionBlock['_async']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _async: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionBlock(
+						{ ...$edited(data), _async: admitSlot(handle, 'closure_expression_block', 'async', v) },
+						tree
+					)
+				),
 			move: (v: NonNullable<T.ClosureExpressionBlock['_move']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _move: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionBlock(
+						{ ...$edited(data), _move: admitSlot(handle, 'closure_expression_block', 'move', v) },
+						tree
+					)
+				),
 			parameters: (v: NonNullable<T.ClosureExpressionBlock['_parameters']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _parameters: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionBlock(
+						{ ...$edited(data), _parameters: admitSlot(handle, 'closure_expression_block', 'parameters', v) },
+						tree
+					)
+				),
 			returnType: (v: NonNullable<T.ClosureExpressionBlock['_return_type']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _return_type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionBlock(
+						{ ...$edited(data), _return_type: admitSlot(handle, 'closure_expression_block', 'returnType', v) },
+						tree
+					)
+				),
 			body: (v: NonNullable<T.ClosureExpressionBlock['_body']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionBlock(
+						{ ...$edited(data), _body: admitSlot(handle, 'closure_expression_block', 'body', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6319,15 +7348,40 @@ export function wrapClosureExpressionExpr(
 		},
 		$with: {
 			static: (v: NonNullable<T.ClosureExpressionExpr['_static']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _static: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionExpr(
+						{ ...$edited(data), _static: admitSlot(handle, 'closure_expression_expr', 'static', v) },
+						tree
+					)
+				),
 			async: (v: NonNullable<T.ClosureExpressionExpr['_async']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _async: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionExpr(
+						{ ...$edited(data), _async: admitSlot(handle, 'closure_expression_expr', 'async', v) },
+						tree
+					)
+				),
 			move: (v: NonNullable<T.ClosureExpressionExpr['_move']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _move: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionExpr(
+						{ ...$edited(data), _move: admitSlot(handle, 'closure_expression_expr', 'move', v) },
+						tree
+					)
+				),
 			parameters: (v: NonNullable<T.ClosureExpressionExpr['_parameters']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _parameters: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionExpr(
+						{ ...$edited(data), _parameters: admitSlot(handle, 'closure_expression_expr', 'parameters', v) },
+						tree
+					)
+				),
 			body: (v: NonNullable<T.ClosureExpressionExpr['_body']>) =>
-				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapClosureExpressionExpr(
+						{ ...$edited(data), _body: admitSlot(handle, 'closure_expression_expr', 'body', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6355,7 +7409,12 @@ export function wrapReferenceExpressionRawConst(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionRawConst['_value']>) =>
-				rebuilt(node, handle, () => wrapReferenceExpressionRawConst({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapReferenceExpressionRawConst(
+						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_raw_const', 'value', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6383,7 +7442,12 @@ export function wrapReferenceExpressionRawMut(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionRawMut['_value']>) =>
-				rebuilt(node, handle, () => wrapReferenceExpressionRawMut({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapReferenceExpressionRawMut(
+						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_raw_mut', 'value', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6411,7 +7475,12 @@ export function wrapReferenceExpressionMut(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionMut['_value']>) =>
-				rebuilt(node, handle, () => wrapReferenceExpressionMut({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapReferenceExpressionMut(
+						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_mut', 'value', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6439,7 +7508,12 @@ export function wrapReferenceExpressionBare(
 		},
 		$with: {
 			value: (v: NonNullable<T.ReferenceExpressionBare['_value']>) =>
-				rebuilt(node, handle, () => wrapReferenceExpressionBare({ ...$edited(data), _value: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapReferenceExpressionBare(
+						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_bare', 'value', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6467,7 +7541,12 @@ export function wrapImplItemPositiveClause(
 		},
 		$with: {
 			trait: (v: NonNullable<T.ImplItemPositiveClause['_trait']>) =>
-				rebuilt(node, handle, () => wrapImplItemPositiveClause({ ...$edited(data), _trait: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapImplItemPositiveClause(
+						{ ...$edited(data), _trait: admitSlot(handle, 'impl_item_positive_clause', 'trait', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6495,7 +7574,12 @@ export function wrapImplItemNegativeClause(
 		},
 		$with: {
 			trait: (v: NonNullable<T.ImplItemNegativeClause['_trait']>) =>
-				rebuilt(node, handle, () => wrapImplItemNegativeClause({ ...$edited(data), _trait: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapImplItemNegativeClause(
+						{ ...$edited(data), _trait: admitSlot(handle, 'impl_item_negative_clause', 'trait', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6535,7 +7619,9 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 		},
 		$with: {
 			unsafe: (v: NonNullable<T.ImplItemBody['_unsafe']>) =>
-				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _unsafe: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapImplItemBody({ ...$edited(data), _unsafe: admitSlot(handle, 'impl_item_body', 'unsafe', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -6547,24 +7633,39 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.ImplItemBody['_type_parameters']>) =>
-							wrapImplItemBody({ ...$edited(data), _type_parameters: v }, tree)
+							wrapImplItemBody(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'impl_item_body', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			traitClause: (v: NonNullable<T.ImplItemBody['_trait_clause']>) =>
-				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _trait_clause: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapImplItemBody(
+						{ ...$edited(data), _trait_clause: admitSlot(handle, 'impl_item_body', 'traitClause', v) },
+						tree
+					)
+				),
 			type: (v: NonNullable<T.ImplItemBody['_type']>) =>
-				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapImplItemBody({ ...$edited(data), _type: admitSlot(handle, 'impl_item_body', 'type', v) }, tree)
+				),
 			whereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.ImplItemBody['_where_clause']>) =>
-							wrapImplItemBody({ ...$edited(data), _where_clause: v }, tree)
+							wrapImplItemBody(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'impl_item_body', 'whereClause', v) },
+								tree
+							)
 					)
 				),
 			body: (v: NonNullable<T.ImplItemBody['_body']>) =>
-				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapImplItemBody({ ...$edited(data), _body: admitSlot(handle, 'impl_item_body', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6601,7 +7702,9 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 		},
 		$with: {
 			unsafe: (v: NonNullable<T.ImplItemSemi['_unsafe']>) =>
-				rebuilt(node, handle, () => wrapImplItemSemi({ ...$edited(data), _unsafe: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapImplItemSemi({ ...$edited(data), _unsafe: admitSlot(handle, 'impl_item_semi', 'unsafe', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -6613,20 +7716,33 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.ImplItemSemi['_type_parameters']>) =>
-							wrapImplItemSemi({ ...$edited(data), _type_parameters: v }, tree)
+							wrapImplItemSemi(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'impl_item_semi', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			traitClause: (v: NonNullable<T.ImplItemSemi['_trait_clause']>) =>
-				rebuilt(node, handle, () => wrapImplItemSemi({ ...$edited(data), _trait_clause: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapImplItemSemi(
+						{ ...$edited(data), _trait_clause: admitSlot(handle, 'impl_item_semi', 'traitClause', v) },
+						tree
+					)
+				),
 			type: (v: NonNullable<T.ImplItemSemi['_type']>) =>
-				rebuilt(node, handle, () => wrapImplItemSemi({ ...$edited(data), _type: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapImplItemSemi({ ...$edited(data), _type: admitSlot(handle, 'impl_item_semi', 'type', v) }, tree)
+				),
 			whereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.ImplItemSemi['_where_clause']>) =>
-							wrapImplItemSemi({ ...$edited(data), _where_clause: v }, tree)
+							wrapImplItemSemi(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'impl_item_semi', 'whereClause', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -6658,7 +7774,12 @@ export function wrapVisibilityModifierPubScopeInPath(
 		},
 		$with: {
 			path: (v: NonNullable<T.VisibilityModifierPubScopeInPath['_path']>) =>
-				rebuilt(node, handle, () => wrapVisibilityModifierPubScopeInPath({ ...$edited(data), _path: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapVisibilityModifierPubScopeInPath(
+						{ ...$edited(data), _path: admitSlot(handle, 'visibility_modifier_pub_scope_in_path', 'path', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6690,7 +7811,12 @@ export function wrapVisibilityModifierPubScope(
 		},
 		$with: {
 			content: (v: NonNullable<T.VisibilityModifierPubScope['_content']>) =>
-				rebuilt(node, handle, () => wrapVisibilityModifierPubScope({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapVisibilityModifierPubScope(
+						{ ...$edited(data), _content: admitSlot(handle, 'visibility_modifier_pub_scope', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6719,7 +7845,18 @@ export function wrapVisibilityModifierPub(
 		$with: {
 			visibilityModifierPubScope: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_pub_scope']>) =>
 				rebuilt(node, handle, () =>
-					wrapVisibilityModifierPub({ ...$edited(data), _visibility_modifier_pub_scope: v }, tree)
+					wrapVisibilityModifierPub(
+						{
+							...$edited(data),
+							_visibility_modifier_pub_scope: admitSlot(
+								handle,
+								'visibility_modifier_pub',
+								'visibilityModifierPubScope',
+								v
+							)
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -6748,7 +7885,12 @@ export function wrapFunctionTypeTraitForm(
 		},
 		$with: {
 			trait: (v: NonNullable<T.FunctionTypeTraitForm['_trait']>) =>
-				rebuilt(node, handle, () => wrapFunctionTypeTraitForm({ ...$edited(data), _trait: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFunctionTypeTraitForm(
+						{ ...$edited(data), _trait: admitSlot(handle, 'function_type_trait_form', 'trait', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6773,7 +7915,15 @@ export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHan
 		},
 		$with: {
 			functionModifiers: (v: NonNullable<T.FunctionTypeFnForm['_function_modifiers']>) =>
-				rebuilt(node, handle, () => wrapFunctionTypeFnForm({ ...$edited(data), _function_modifiers: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFunctionTypeFnForm(
+						{
+							...$edited(data),
+							_function_modifiers: admitSlot(handle, 'function_type_fn_form', 'functionModifiers', v)
+						},
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6801,9 +7951,16 @@ export function wrapModItemExternal(data: T.ModItemExternal, tree: TreeHandle): 
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ModItemExternal['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapModItemExternal({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapModItemExternal(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'mod_item_external', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.ModItemExternal['_name']>) =>
-				rebuilt(node, handle, () => wrapModItemExternal({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapModItemExternal({ ...$edited(data), _name: admitSlot(handle, 'mod_item_external', 'name', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6834,11 +7991,20 @@ export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle): T.Mo
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.ModItemInline['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapModItemInline({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapModItemInline(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'mod_item_inline', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.ModItemInline['_name']>) =>
-				rebuilt(node, handle, () => wrapModItemInline({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapModItemInline({ ...$edited(data), _name: admitSlot(handle, 'mod_item_inline', 'name', v) }, tree)
+				),
 			body: (v: NonNullable<T.ModItemInline['_body']>) =>
-				rebuilt(node, handle, () => wrapModItemInline({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapModItemInline({ ...$edited(data), _body: admitSlot(handle, 'mod_item_inline', 'body', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6866,9 +8032,13 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 		},
 		$with: {
 			left: (v: NonNullable<T.OrPatternBinary['_left']>) =>
-				rebuilt(node, handle, () => wrapOrPatternBinary({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapOrPatternBinary({ ...$edited(data), _left: admitSlot(handle, 'or_pattern_binary', 'left', v) }, tree)
+				),
 			right: (v: NonNullable<T.OrPatternBinary['_right']>) =>
-				rebuilt(node, handle, () => wrapOrPatternBinary({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapOrPatternBinary({ ...$edited(data), _right: admitSlot(handle, 'or_pattern_binary', 'right', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6893,7 +8063,9 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): 
 		},
 		$with: {
 			right: (v: NonNullable<T.OrPatternPrefix['_right']>) =>
-				rebuilt(node, handle, () => wrapOrPatternPrefix({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapOrPatternPrefix({ ...$edited(data), _right: admitSlot(handle, 'or_pattern_prefix', 'right', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6918,7 +8090,9 @@ export function wrapPointerTypeConst(data: T.PointerTypeConst, tree: TreeHandle)
 		},
 		$with: {
 			type: (v: NonNullable<T.PointerTypeConst['_type']>) =>
-				rebuilt(node, handle, () => wrapPointerTypeConst({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapPointerTypeConst({ ...$edited(data), _type: admitSlot(handle, 'pointer_type_const', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6943,7 +8117,9 @@ export function wrapPointerTypeMut(data: T.PointerTypeMut, tree: TreeHandle): T.
 		},
 		$with: {
 			type: (v: NonNullable<T.PointerTypeMut['_type']>) =>
-				rebuilt(node, handle, () => wrapPointerTypeMut({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapPointerTypeMut({ ...$edited(data), _type: admitSlot(handle, 'pointer_type_mut', 'type', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6977,11 +8153,26 @@ export function wrapRangeExpressionBinary(
 		},
 		$with: {
 			start: (v: NonNullable<T.RangeExpressionBinary['_start']>) =>
-				rebuilt(node, handle, () => wrapRangeExpressionBinary({ ...$edited(data), _start: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapRangeExpressionBinary(
+						{ ...$edited(data), _start: admitSlot(handle, 'range_expression_binary', 'start', v) },
+						tree
+					)
+				),
 			operator: (v: NonNullable<T.RangeExpressionBinary['_operator']>) =>
-				rebuilt(node, handle, () => wrapRangeExpressionBinary({ ...$edited(data), _operator: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapRangeExpressionBinary(
+						{ ...$edited(data), _operator: admitSlot(handle, 'range_expression_binary', 'operator', v) },
+						tree
+					)
+				),
 			end: (v: NonNullable<T.RangeExpressionBinary['_end']>) =>
-				rebuilt(node, handle, () => wrapRangeExpressionBinary({ ...$edited(data), _end: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRangeExpressionBinary(
+						{ ...$edited(data), _end: admitSlot(handle, 'range_expression_binary', 'end', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7009,7 +8200,12 @@ export function wrapRangeExpressionPostfix(
 		},
 		$with: {
 			start: (v: NonNullable<T.RangeExpressionPostfix['_start']>) =>
-				rebuilt(node, handle, () => wrapRangeExpressionPostfix({ ...$edited(data), _start: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRangeExpressionPostfix(
+						{ ...$edited(data), _start: admitSlot(handle, 'range_expression_postfix', 'start', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7037,7 +8233,12 @@ export function wrapRangeExpressionPrefix(
 		},
 		$with: {
 			end: (v: NonNullable<T.RangeExpressionPrefix['_end']>) =>
-				rebuilt(node, handle, () => wrapRangeExpressionPrefix({ ...$edited(data), _end: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRangeExpressionPrefix(
+						{ ...$edited(data), _end: admitSlot(handle, 'range_expression_prefix', 'end', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7062,7 +8263,15 @@ export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeH
 		},
 		$with: {
 			rangeExpressionBare: (v: NonNullable<T.RangeExpressionBare['_range_expression_bare']>) =>
-				rebuilt(node, handle, () => wrapRangeExpressionBare({ ...$edited(data), _range_expression_bare: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRangeExpressionBare(
+						{
+							...$edited(data),
+							_range_expression_bare: admitSlot(handle, 'range_expression_bare', 'rangeExpressionBare', v)
+						},
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7090,7 +8299,12 @@ export function wrapExpressionStatementWithSemi(
 		},
 		$with: {
 			expression: (v: NonNullable<T.ExpressionStatementWithSemi['_expression']>) =>
-				rebuilt(node, handle, () => wrapExpressionStatementWithSemi({ ...$edited(data), _expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapExpressionStatementWithSemi(
+						{ ...$edited(data), _expression: admitSlot(handle, 'expression_statement_with_semi', 'expression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7118,9 +8332,19 @@ export function wrapForeignModItemSemi(data: T.ForeignModItemSemi, tree: TreeHan
 		},
 		$with: {
 			unsafe: (v: NonNullable<T.ForeignModItemSemi['_unsafe']>) =>
-				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _unsafe: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapForeignModItemSemi(
+						{ ...$edited(data), _unsafe: admitSlot(handle, 'foreign_mod_item_semi', 'unsafe', v) },
+						tree
+					)
+				),
 			externModifier: (v: NonNullable<T.ForeignModItemSemi['_extern_modifier']>) =>
-				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _extern_modifier: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapForeignModItemSemi(
+						{ ...$edited(data), _extern_modifier: admitSlot(handle, 'foreign_mod_item_semi', 'externModifier', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7151,11 +8375,26 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 		},
 		$with: {
 			unsafe: (v: NonNullable<T.ForeignModItemBody['_unsafe']>) =>
-				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _unsafe: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapForeignModItemBody(
+						{ ...$edited(data), _unsafe: admitSlot(handle, 'foreign_mod_item_body', 'unsafe', v) },
+						tree
+					)
+				),
 			externModifier: (v: NonNullable<T.ForeignModItemBody['_extern_modifier']>) =>
-				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _extern_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapForeignModItemBody(
+						{ ...$edited(data), _extern_modifier: admitSlot(handle, 'foreign_mod_item_body', 'externModifier', v) },
+						tree
+					)
+				),
 			body: (v: NonNullable<T.ForeignModItemBody['_body']>) =>
-				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _body: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapForeignModItemBody(
+						{ ...$edited(data), _body: admitSlot(handle, 'foreign_mod_item_body', 'body', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7185,10 +8424,21 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 		$with: {
 			attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapMatchArmWithComma({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+					wrapMatchArmWithComma(
+						{
+							...$edited(data),
+							_attributes: admitSlot(handle, 'match_arm_with_comma', 'attributes', restItems('attributes', v))
+						},
+						tree
+					)
 				),
 			value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMatchArmWithComma(
+						{ ...$edited(data), _value: admitSlot(handle, 'match_arm_with_comma', 'value', v) },
+						tree
+					)
+				),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -7205,7 +8455,10 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 						'pattern',
 						args,
 						(v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
-							wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
+							wrapMatchArmWithComma(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_with_comma', 'pattern', v) },
+								tree
+							),
 						() => readGroup_pattern.call(node)
 					)
 				),
@@ -7225,7 +8478,10 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 						'condition',
 						args,
 						(v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
-							wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
+							wrapMatchArmWithComma(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_with_comma', 'pattern', v) },
+								tree
+							),
 						() => readGroup_pattern.call(node)
 					)
 				)
@@ -7273,10 +8529,21 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 		$with: {
 			attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapMatchArmBlockEnding({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
+					wrapMatchArmBlockEnding(
+						{
+							...$edited(data),
+							_attributes: admitSlot(handle, 'match_arm_block_ending', 'attributes', restItems('attributes', v))
+						},
+						tree
+					)
 				),
 			value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMatchArmBlockEnding(
+						{ ...$edited(data), _value: admitSlot(handle, 'match_arm_block_ending', 'value', v) },
+						tree
+					)
+				),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -7293,7 +8560,10 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 						'pattern',
 						args,
 						(v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
-							wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
+							wrapMatchArmBlockEnding(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_block_ending', 'pattern', v) },
+								tree
+							),
 						() => readGroup_pattern.call(node)
 					)
 				),
@@ -7313,7 +8583,10 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 						'condition',
 						args,
 						(v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
-							wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
+							wrapMatchArmBlockEnding(
+								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_block_ending', 'pattern', v) },
+								tree
+							),
 						() => readGroup_pattern.call(node)
 					)
 				)
@@ -7344,7 +8617,12 @@ export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeH
 		},
 		$with: {
 			doc: (v: NonNullable<T.LineCommentDocOuter['_doc']>) =>
-				rebuilt(node, handle, () => wrapLineCommentDocOuter({ ...$edited(data), _doc: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLineCommentDocOuter(
+						{ ...$edited(data), _doc: admitSlot(handle, 'line_comment_doc_outer', 'doc', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7369,7 +8647,12 @@ export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeH
 		},
 		$with: {
 			doc: (v: NonNullable<T.LineCommentDocInner['_doc']>) =>
-				rebuilt(node, handle, () => wrapLineCommentDocInner({ ...$edited(data), _doc: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapLineCommentDocInner(
+						{ ...$edited(data), _doc: admitSlot(handle, 'line_comment_doc_inner', 'doc', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7397,7 +8680,12 @@ export function wrapBlockCommentDocOuter(
 		},
 		$with: {
 			doc: (v: NonNullable<T.BlockCommentDocOuter['_doc']>) =>
-				rebuilt(node, handle, () => wrapBlockCommentDocOuter({ ...$edited(data), _doc: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBlockCommentDocOuter(
+						{ ...$edited(data), _doc: admitSlot(handle, 'block_comment_doc_outer', 'doc', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7425,7 +8713,12 @@ export function wrapBlockCommentDocInner(
 		},
 		$with: {
 			doc: (v: NonNullable<T.BlockCommentDocInner['_doc']>) =>
-				rebuilt(node, handle, () => wrapBlockCommentDocInner({ ...$edited(data), _doc: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapBlockCommentDocInner(
+						{ ...$edited(data), _doc: admitSlot(handle, 'block_comment_doc_inner', 'doc', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7456,7 +8749,18 @@ export function wrapTokenTreePatternParen(
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternParen['_token_patterns']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapTokenTreePatternParen({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+					wrapTokenTreePatternParen(
+						{
+							...$edited(data),
+							_token_patterns: admitSlot(
+								handle,
+								'token_tree_pattern_paren',
+								'tokenPatterns',
+								restItems('tokenPatterns', v)
+							)
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7489,7 +8793,18 @@ export function wrapTokenTreePatternBracket(
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternBracket['_token_patterns']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapTokenTreePatternBracket({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+					wrapTokenTreePatternBracket(
+						{
+							...$edited(data),
+							_token_patterns: admitSlot(
+								handle,
+								'token_tree_pattern_bracket',
+								'tokenPatterns',
+								restItems('tokenPatterns', v)
+							)
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7522,7 +8837,18 @@ export function wrapTokenTreePatternBrace(
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternBrace['_token_patterns']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapTokenTreePatternBrace({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
+					wrapTokenTreePatternBrace(
+						{
+							...$edited(data),
+							_token_patterns: admitSlot(
+								handle,
+								'token_tree_pattern_brace',
+								'tokenPatterns',
+								restItems('tokenPatterns', v)
+							)
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7549,7 +8875,12 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle): T.
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeParen['_tokens']>[number][]) =>
-				rebuilt(node, handle, () => wrapTokenTreeParen({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
+				rebuilt(node, handle, () =>
+					wrapTokenTreeParen(
+						{ ...$edited(data), _tokens: admitSlot(handle, 'token_tree_paren', 'tokens', restItems('tokens', v)) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7575,7 +8906,12 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeBracket['_tokens']>[number][]) =>
-				rebuilt(node, handle, () => wrapTokenTreeBracket({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
+				rebuilt(node, handle, () =>
+					wrapTokenTreeBracket(
+						{ ...$edited(data), _tokens: admitSlot(handle, 'token_tree_bracket', 'tokens', restItems('tokens', v)) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7601,7 +8937,12 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle): T.
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeBrace['_tokens']>[number][]) =>
-				rebuilt(node, handle, () => wrapTokenTreeBrace({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
+				rebuilt(node, handle, () =>
+					wrapTokenTreeBrace(
+						{ ...$edited(data), _tokens: admitSlot(handle, 'token_tree_brace', 'tokens', restItems('tokens', v)) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7628,7 +8969,13 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeParen['_delim_tokens']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapDelimTokenTreeParen({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
+					wrapDelimTokenTreeParen(
+						{
+							...$edited(data),
+							_delim_tokens: admitSlot(handle, 'delim_token_tree_paren', 'delimTokens', restItems('delimTokens', v))
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7659,7 +9006,13 @@ export function wrapDelimTokenTreeBracket(
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeBracket['_delim_tokens']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapDelimTokenTreeBracket({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
+					wrapDelimTokenTreeBracket(
+						{
+							...$edited(data),
+							_delim_tokens: admitSlot(handle, 'delim_token_tree_bracket', 'delimTokens', restItems('delimTokens', v))
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7687,7 +9040,13 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeBrace['_delim_tokens']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapDelimTokenTreeBrace({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
+					wrapDelimTokenTreeBrace(
+						{
+							...$edited(data),
+							_delim_tokens: admitSlot(handle, 'delim_token_tree_brace', 'delimTokens', restItems('delimTokens', v))
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7723,11 +9082,26 @@ export function wrapFieldPatternShorthand(
 		},
 		$with: {
 			ref: (v: NonNullable<T.FieldPatternShorthand['_ref']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _ref: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldPatternShorthand(
+						{ ...$edited(data), _ref: admitSlot(handle, 'field_pattern_shorthand', 'ref', v) },
+						tree
+					)
+				),
 			mutable: (v: NonNullable<T.FieldPatternShorthand['_mutable']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldPatternShorthand(
+						{ ...$edited(data), _mutable: admitSlot(handle, 'field_pattern_shorthand', 'mutable', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.FieldPatternShorthand['_name']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _name: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFieldPatternShorthand(
+						{ ...$edited(data), _name: admitSlot(handle, 'field_pattern_shorthand', 'name', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7761,13 +9135,27 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 		},
 		$with: {
 			ref: (v: NonNullable<T.FieldPatternNamed['_ref']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _ref: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldPatternNamed({ ...$edited(data), _ref: admitSlot(handle, 'field_pattern_named', 'ref', v) }, tree)
+				),
 			mutable: (v: NonNullable<T.FieldPatternNamed['_mutable']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _mutable: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldPatternNamed(
+						{ ...$edited(data), _mutable: admitSlot(handle, 'field_pattern_named', 'mutable', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.FieldPatternNamed['_name']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapFieldPatternNamed({ ...$edited(data), _name: admitSlot(handle, 'field_pattern_named', 'name', v) }, tree)
+				),
 			pattern: (v: NonNullable<T.FieldPatternNamed['_pattern']>) =>
-				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _pattern: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFieldPatternNamed(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'field_pattern_named', 'pattern', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7798,14 +9186,22 @@ export function wrapMacroDefinitionParen(
 		},
 		$with: {
 			name: (v: NonNullable<T.MacroDefinitionParen['_name']>) =>
-				rebuilt(node, handle, () => wrapMacroDefinitionParen({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMacroDefinitionParen(
+						{ ...$edited(data), _name: admitSlot(handle, 'macro_definition_paren', 'name', v) },
+						tree
+					)
+				),
 			macroRules: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.MacroRules as const, optional: true, make: RAW.buildMacroRules },
 						(v: NonNullable<T.MacroDefinitionParen['_macro_rules']>) =>
-							wrapMacroDefinitionParen({ ...$edited(data), _macro_rules: v }, tree)
+							wrapMacroDefinitionParen(
+								{ ...$edited(data), _macro_rules: admitSlot(handle, 'macro_definition_paren', 'macroRules', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -7838,14 +9234,22 @@ export function wrapMacroDefinitionBracket(
 		},
 		$with: {
 			name: (v: NonNullable<T.MacroDefinitionBracket['_name']>) =>
-				rebuilt(node, handle, () => wrapMacroDefinitionBracket({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMacroDefinitionBracket(
+						{ ...$edited(data), _name: admitSlot(handle, 'macro_definition_bracket', 'name', v) },
+						tree
+					)
+				),
 			macroRules: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.MacroRules as const, optional: true, make: RAW.buildMacroRules },
 						(v: NonNullable<T.MacroDefinitionBracket['_macro_rules']>) =>
-							wrapMacroDefinitionBracket({ ...$edited(data), _macro_rules: v }, tree)
+							wrapMacroDefinitionBracket(
+								{ ...$edited(data), _macro_rules: admitSlot(handle, 'macro_definition_bracket', 'macroRules', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -7878,14 +9282,22 @@ export function wrapMacroDefinitionBrace(
 		},
 		$with: {
 			name: (v: NonNullable<T.MacroDefinitionBrace['_name']>) =>
-				rebuilt(node, handle, () => wrapMacroDefinitionBrace({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMacroDefinitionBrace(
+						{ ...$edited(data), _name: admitSlot(handle, 'macro_definition_brace', 'name', v) },
+						tree
+					)
+				),
 			macroRules: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.MacroRules as const, optional: true, make: RAW.buildMacroRules },
 						(v: NonNullable<T.MacroDefinitionBrace['_macro_rules']>) =>
-							wrapMacroDefinitionBrace({ ...$edited(data), _macro_rules: v }, tree)
+							wrapMacroDefinitionBrace(
+								{ ...$edited(data), _macro_rules: admitSlot(handle, 'macro_definition_brace', 'macroRules', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -7923,9 +9335,19 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 		},
 		$with: {
 			content: (v: NonNullable<T.RangePatternPrefix['_content']>) =>
-				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapRangePatternPrefix(
+						{ ...$edited(data), _content: admitSlot(handle, 'range_pattern_prefix', 'content', v) },
+						tree
+					)
+				),
 			right: (v: NonNullable<T.RangePatternPrefix['_right']>) =>
-				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRangePatternPrefix(
+						{ ...$edited(data), _right: admitSlot(handle, 'range_pattern_prefix', 'right', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7964,9 +9386,19 @@ export function wrapRangePatternWithLeftWithRight(
 		},
 		$with: {
 			content: (v: NonNullable<T.RangePatternWithLeftWithRight['_content']>) =>
-				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapRangePatternWithLeftWithRight(
+						{ ...$edited(data), _content: admitSlot(handle, 'range_pattern_with_left_with_right', 'content', v) },
+						tree
+					)
+				),
 			right: (v: NonNullable<T.RangePatternWithLeftWithRight['_right']>) =>
-				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _right: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRangePatternWithLeftWithRight(
+						{ ...$edited(data), _right: admitSlot(handle, 'range_pattern_with_left_with_right', 'right', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8005,9 +9437,19 @@ export function wrapRangePatternWithLeft(
 		},
 		$with: {
 			left: (v: NonNullable<T.RangePatternWithLeft['_left']>) =>
-				rebuilt(node, handle, () => wrapRangePatternWithLeft({ ...$edited(data), _left: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapRangePatternWithLeft(
+						{ ...$edited(data), _left: admitSlot(handle, 'range_pattern_with_left', 'left', v) },
+						tree
+					)
+				),
 			content: (v: NonNullable<T.RangePatternWithLeft['_content']>) =>
-				rebuilt(node, handle, () => wrapRangePatternWithLeft({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapRangePatternWithLeft(
+						{ ...$edited(data), _content: admitSlot(handle, 'range_pattern_with_left', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8044,9 +9486,16 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.StructItemBrace['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapStructItemBrace({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructItemBrace(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'struct_item_brace', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.StructItemBrace['_name']>) =>
-				rebuilt(node, handle, () => wrapStructItemBrace({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructItemBrace({ ...$edited(data), _name: admitSlot(handle, 'struct_item_brace', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -8058,7 +9507,10 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.StructItemBrace['_type_parameters']>) =>
-							wrapStructItemBrace({ ...$edited(data), _type_parameters: v }, tree)
+							wrapStructItemBrace(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'struct_item_brace', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			whereClause: (...args: unknown[]) =>
@@ -8067,7 +9519,10 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.StructItemBrace['_where_clause']>) =>
-							wrapStructItemBrace({ ...$edited(data), _where_clause: v }, tree)
+							wrapStructItemBrace(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'struct_item_brace', 'whereClause', v) },
+								tree
+							)
 					)
 				),
 			body: (...args: unknown[]) =>
@@ -8080,7 +9535,8 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 							make: RAW.buildFieldDeclarationList,
 							element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 						},
-						(v: NonNullable<T.StructItemBrace['_body']>) => wrapStructItemBrace({ ...$edited(data), _body: v }, tree)
+						(v: NonNullable<T.StructItemBrace['_body']>) =>
+							wrapStructItemBrace({ ...$edited(data), _body: admitSlot(handle, 'struct_item_brace', 'body', v) }, tree)
 					)
 				)
 		},
@@ -8119,9 +9575,16 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.StructItemTuple['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapStructItemTuple({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructItemTuple(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'struct_item_tuple', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.StructItemTuple['_name']>) =>
-				rebuilt(node, handle, () => wrapStructItemTuple({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructItemTuple({ ...$edited(data), _name: admitSlot(handle, 'struct_item_tuple', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -8133,7 +9596,10 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.StructItemTuple['_type_parameters']>) =>
-							wrapStructItemTuple({ ...$edited(data), _type_parameters: v }, tree)
+							wrapStructItemTuple(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'struct_item_tuple', 'typeParameters', v) },
+								tree
+							)
 					)
 				),
 			body: (...args: unknown[]) =>
@@ -8146,7 +9612,8 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 							make: RAW.buildOrderedFieldDeclarationList,
 							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 						},
-						(v: NonNullable<T.StructItemTuple['_body']>) => wrapStructItemTuple({ ...$edited(data), _body: v }, tree)
+						(v: NonNullable<T.StructItemTuple['_body']>) =>
+							wrapStructItemTuple({ ...$edited(data), _body: admitSlot(handle, 'struct_item_tuple', 'body', v) }, tree)
 					)
 				),
 			whereClause: (...args: unknown[]) =>
@@ -8155,7 +9622,10 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 						args,
 						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 						(v: NonNullable<T.StructItemTuple['_where_clause']>) =>
-							wrapStructItemTuple({ ...$edited(data), _where_clause: v }, tree)
+							wrapStructItemTuple(
+								{ ...$edited(data), _where_clause: admitSlot(handle, 'struct_item_tuple', 'whereClause', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -8188,9 +9658,16 @@ export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.StructItemUnit['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapStructItemUnit({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructItemUnit(
+						{ ...$edited(data), _visibility_modifier: admitSlot(handle, 'struct_item_unit', 'visibilityModifier', v) },
+						tree
+					)
+				),
 			name: (v: NonNullable<T.StructItemUnit['_name']>) =>
-				rebuilt(node, handle, () => wrapStructItemUnit({ ...$edited(data), _name: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapStructItemUnit({ ...$edited(data), _name: admitSlot(handle, 'struct_item_unit', 'name', v) }, tree)
+				),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -8202,7 +9679,10 @@ export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.
 							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.StructItemUnit['_type_parameters']>) =>
-							wrapStructItemUnit({ ...$edited(data), _type_parameters: v }, tree)
+							wrapStructItemUnit(
+								{ ...$edited(data), _type_parameters: admitSlot(handle, 'struct_item_unit', 'typeParameters', v) },
+								tree
+							)
 					)
 				)
 		},
@@ -8236,10 +9716,29 @@ export function wrapAttributedFieldDeclaration(
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedFieldDeclaration['_attribute_item']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapAttributedFieldDeclaration({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+					wrapAttributedFieldDeclaration(
+						{
+							...$edited(data),
+							_attribute_item: admitSlot(
+								handle,
+								'attributed_field_declaration',
+								'attributeItems',
+								restItems('attributeItems', v)
+							)
+						},
+						tree
+					)
 				),
 			fieldDeclaration: (v: NonNullable<T.AttributedFieldDeclaration['_field_declaration']>) =>
-				rebuilt(node, handle, () => wrapAttributedFieldDeclaration({ ...$edited(data), _field_declaration: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributedFieldDeclaration(
+						{
+							...$edited(data),
+							_field_declaration: admitSlot(handle, 'attributed_field_declaration', 'fieldDeclaration', v)
+						},
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8271,10 +9770,26 @@ export function wrapAttributedEnumVariant(
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedEnumVariant['_attribute_item']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapAttributedEnumVariant({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+					wrapAttributedEnumVariant(
+						{
+							...$edited(data),
+							_attribute_item: admitSlot(
+								handle,
+								'attributed_enum_variant',
+								'attributeItems',
+								restItems('attributeItems', v)
+							)
+						},
+						tree
+					)
 				),
 			enumVariant: (v: NonNullable<T.AttributedEnumVariant['_enum_variant']>) =>
-				rebuilt(node, handle, () => wrapAttributedEnumVariant({ ...$edited(data), _enum_variant: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributedEnumVariant(
+						{ ...$edited(data), _enum_variant: admitSlot(handle, 'attributed_enum_variant', 'enumVariant', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8306,9 +9821,19 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
 		},
 		$with: {
 			attributeItem: (v: NonNullable<T.AttributedParameter['_attribute_item']>) =>
-				rebuilt(node, handle, () => wrapAttributedParameter({ ...$edited(data), _attribute_item: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAttributedParameter(
+						{ ...$edited(data), _attribute_item: admitSlot(handle, 'attributed_parameter', 'attributeItem', v) },
+						tree
+					)
+				),
 			content: (v: NonNullable<T.AttributedParameter['_content']>) =>
-				rebuilt(node, handle, () => wrapAttributedParameter({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributedParameter(
+						{ ...$edited(data), _content: admitSlot(handle, 'attributed_parameter', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8344,10 +9869,26 @@ export function wrapAttributedTypeParameter(
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedTypeParameter['_attribute_item']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapAttributedTypeParameter({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+					wrapAttributedTypeParameter(
+						{
+							...$edited(data),
+							_attribute_item: admitSlot(
+								handle,
+								'attributed_type_parameter',
+								'attributeItems',
+								restItems('attributeItems', v)
+							)
+						},
+						tree
+					)
 				),
 			content: (v: NonNullable<T.AttributedTypeParameter['_content']>) =>
-				rebuilt(node, handle, () => wrapAttributedTypeParameter({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributedTypeParameter(
+						{ ...$edited(data), _content: admitSlot(handle, 'attributed_type_parameter', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8376,10 +9917,26 @@ export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHan
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedArgument['_attribute_item']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapAttributedArgument({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+					wrapAttributedArgument(
+						{
+							...$edited(data),
+							_attribute_item: admitSlot(
+								handle,
+								'attributed_argument',
+								'attributeItems',
+								restItems('attributeItems', v)
+							)
+						},
+						tree
+					)
 				),
 			expression: (v: NonNullable<T.AttributedArgument['_expression']>) =>
-				rebuilt(node, handle, () => wrapAttributedArgument({ ...$edited(data), _expression: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributedArgument(
+						{ ...$edited(data), _expression: admitSlot(handle, 'attributed_argument', 'expression', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8414,12 +9971,36 @@ export function wrapAttributedOrderedField(
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedOrderedField['_attribute_item']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapAttributedOrderedField({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+					wrapAttributedOrderedField(
+						{
+							...$edited(data),
+							_attribute_item: admitSlot(
+								handle,
+								'attributed_ordered_field',
+								'attributeItems',
+								restItems('attributeItems', v)
+							)
+						},
+						tree
+					)
 				),
 			visibilityModifier: (v: NonNullable<T.AttributedOrderedField['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapAttributedOrderedField({ ...$edited(data), _visibility_modifier: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapAttributedOrderedField(
+						{
+							...$edited(data),
+							_visibility_modifier: admitSlot(handle, 'attributed_ordered_field', 'visibilityModifier', v)
+						},
+						tree
+					)
+				),
 			type: (v: NonNullable<T.AttributedOrderedField['_type']>) =>
-				rebuilt(node, handle, () => wrapAttributedOrderedField({ ...$edited(data), _type: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapAttributedOrderedField(
+						{ ...$edited(data), _type: admitSlot(handle, 'attributed_ordered_field', 'type', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8447,9 +10028,16 @@ export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle): T.Type
 		},
 		$with: {
 			content: (v: NonNullable<T.TypeArgument['_content']>) =>
-				rebuilt(node, handle, () => wrapTypeArgument({ ...$edited(data), _content: v }, tree)),
+				rebuilt(node, handle, () =>
+					wrapTypeArgument({ ...$edited(data), _content: admitSlot(handle, 'type_argument', 'content', v) }, tree)
+				),
 			traitBounds: (v: NonNullable<T.TypeArgument['_trait_bounds']>) =>
-				rebuilt(node, handle, () => wrapTypeArgument({ ...$edited(data), _trait_bounds: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTypeArgument(
+						{ ...$edited(data), _trait_bounds: admitSlot(handle, 'type_argument', 'traitBounds', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8477,9 +10065,16 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 		},
 		$with: {
 			arms: (...v: NonNullable<T.MatchBlockArms['_arms']>[number][]) =>
-				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _arms: restItems('arms', v) }, tree)),
+				rebuilt(node, handle, () =>
+					wrapMatchBlockArms(
+						{ ...$edited(data), _arms: admitSlot(handle, 'match_block_arms', 'arms', restItems('arms', v)) },
+						tree
+					)
+				),
 			lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) =>
-				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _last_arm: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapMatchBlockArms({ ...$edited(data), _last_arm: admitSlot(handle, 'match_block_arms', 'lastArm', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8504,7 +10099,9 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		},
 		$with: {
 			content: (v: NonNullable<T.TypeIdentifier['_content']>) =>
-				rebuilt(node, handle, () => wrapTypeIdentifier({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapTypeIdentifier({ ...$edited(data), _content: admitSlot(handle, 'type_identifier', 'content', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8529,7 +10126,9 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 		},
 		$with: {
 			content: (v: NonNullable<T.FieldIdentifier['_content']>) =>
-				rebuilt(node, handle, () => wrapFieldIdentifier({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapFieldIdentifier({ ...$edited(data), _content: admitSlot(handle, 'field_identifier', 'content', v) }, tree)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8557,7 +10156,12 @@ export function wrapShorthandFieldIdentifier(
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandFieldIdentifier['_content']>) =>
-				rebuilt(node, handle, () => wrapShorthandFieldIdentifier({ ...$edited(data), _content: v }, tree))
+				rebuilt(node, handle, () =>
+					wrapShorthandFieldIdentifier(
+						{ ...$edited(data), _content: admitSlot(handle, 'shorthand_field_identifier', 'content', v) },
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

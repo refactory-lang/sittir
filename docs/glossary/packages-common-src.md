@@ -338,6 +338,18 @@ The handle in scope, or `undefined` outside any engine call. A node built with n
 
 Whether a handle's `current` is a live engine rather than an identity, told by the presence of a `render` member.
 
+### `packages/common/src/engine-scope.ts::foreignEngine`
+
+The engine a value belongs to when that engine is of another language than `identity` (`engineOf`, `sameLanguage`), else `undefined`: a value with no stamp is never foreign. The one predicate behind every cross-language refusal: an engine's `render` and `query` of a root node, and a builder's or an edit's children (`admitChildren`). Each caller names the two languages in its own message.
+
+### `packages/common/src/engine-scope.ts::admitChildren`
+
+The refusal of a child from another language's engine, at the two writers of a node's children: every generated builder that has an engine in scope (`builderHandleLines`), which a direct call, a call through an engine's build table and a built node's `$with` all reach, and a parsed node's `$with`, slot by slot (`admitSlot`). `slots` maps each slot's config key to its value; a list's items are each checked, one level down and no further. A child of another language (`foreignEngine`) throws `cannot build a <language> <kind> with a <language> node in its <slot>`. It is the early refusal: a foreign coordinate that reaches the native engine another way names no tree of it and is refused at lookup.
+
+### `packages/common/src/engine-scope.ts::admitSlot`
+
+One slot's value as a parsed node's `$with` writes it, admitted under the node's engine (`admitChildren`) and returned unchanged; under no engine it is returned unchecked. A parsed node's edit rebuilds through its wrap rather than a builder, so the wrap's setters write each new value through it (`admittedSlot`).
+
 ### `packages/common/src/engine.ts::createRenderHandle`
 
 A lazily rendered text: the render runs on first use and its text is cached. `save` writes through the native file path when the engine offers one, else writes the text. Disposing drops the cached text; any use after that throws `rendered text disposed`.

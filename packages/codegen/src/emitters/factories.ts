@@ -1560,6 +1560,13 @@ function listContentStorageKey(node: AssembledList): string {
 	return node.slots.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
 }
 
+function builderHandleLines(kind: string, slots: readonly (readonly [name: string, storage: string])[]): string[] {
+	const handle = '  const handle = currentHandle();';
+	if (slots.length === 0) return [handle];
+	const admitted = slots.map(([name, storage]) => `${name}: ${storage}`).join(', ');
+	return [handle, `  if (handle !== undefined) admitChildren(handle, '${kind}', { ${admitted} });`];
+}
+
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
@@ -1682,7 +1689,7 @@ function emitFieldCarryingFactory(
 	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
 	const spelled = spelledGroupSlots(plan);
 	lines.push(...(view?.prelude ?? []), ...groups.prelude);
-	lines.push('  const handle = currentHandle();');
+	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.configKey, f.storageKey] as const)));
 	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
@@ -1888,7 +1895,7 @@ function emitRefineFormFactory(
 			body: `${formFn}(config, { ...options, ${f.configKey}: spelling })`
 		});
 	}
-	lines.push('  const handle = currentHandle();');
+	lines.push(...builderHandleLines(node.kind, allSlots.map((f) => [f.configKey, f.storageKey] as const)));
 	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
@@ -2512,7 +2519,7 @@ function emitSeparatedListFactory(
 			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: `${fn}({ ...options, delimiter: v }, ...elements)` });
 		}
 		lines.push(...view.prelude);
-		lines.push('  const handle = currentHandle();');
+		lines.push(...builderHandleLines(node.kind, [[contentAccessorName, contentStorageKey]]));
 		lines.push('  const node = {');
 		lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 		lines.push('    $source: 2 as const,');
@@ -2576,7 +2583,7 @@ function emitTextFactory(
 	body.push(`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`);
 	if (guard) body.push(`  ${guard}`);
 	body.push(
-		'  const handle = currentHandle();',
+		...builderHandleLines(node.kind, []),
 		'  const node = {',
 		`    $type: ${typeExpr},`,
 		`    $source: 2 as const,`,
@@ -2632,7 +2639,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(
-			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
