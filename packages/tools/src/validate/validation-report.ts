@@ -57,9 +57,9 @@ export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
  * bucket code.
  *
  * `stage`/`label` are the only fields every source is guaranteed to add —
- * each underlying validator result (read-render-parse errors/mismatches/
- * accessor-throws, factory errors, coverage issues, …) has its OWN extra
- * fields (`input`, `rendered`, `key`, `accessor`, `type`, …); those are
+ * each underlying validator result (read-render-parse errors and mismatches,
+ * factory errors, coverage issues, …) has its OWN extra
+ * fields (`input`, `rendered`, `key`, `type`, …); those are
  * preserved through via spread rather than being narrowed away.
  */
 export interface ValidatorDiagnostic extends DiagnosticEntryBase {
@@ -105,11 +105,9 @@ export type SClass = (typeof S_CLASSES)[number];
 /** Codes that determine their S-class unambiguously, independent of message text. */
 const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
 	'parsekind-noninjective': 'S1',
-	'seq-with-nested-seq': 'S3',
 	'union-slot-unaddressable': 'S4',
 	'union-slot-mixed-row': 'S4',
 	'union-slot-routed-repeated': 'S4',
-	'accessor-throw': 'S4',
 	'coverage-missing-field': 'S5',
 	'layout-unreached': 'layout',
 	'layout-refused': 'layout'
