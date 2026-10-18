@@ -286,7 +286,12 @@ export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => 
 			admitted: undefined,
 			origin: request.via === 'path' && context.activeEntryPath !== null ? { kind: 'path', owner, path: context.activeEntryPath } : { kind: 'copy', owner }
 		});
-	context.deposits.set(name, insideCopy(context, () => edit(body)));
+	try {
+		context.deposits.set(name, insideCopy(context, () => edit(body)));
+	} catch (error) {
+		if (prior === undefined) context.copies.delete(name);
+		throw error;
+	}
 	return name;
 }
 

@@ -9,12 +9,13 @@ const codes = (raw: { layerDiagnostics?: readonly { code: string }[] }): string[
 const text = (value: unknown): string => JSON.stringify(value);
 
 describe('a part copy is not matched by its source kind', () => {
-	it('T1: (foo) finds no part copy of foo, so the zero-match path throws', async () => {
-		await expect(
-			evaluateTempGrammar({ extras: '', rules: "owner: ($) => $._decl, _decl: ($) => choice(seq('a', $.word), seq('b', $.word))" }, '', {
-				bindings: "rules: { owner: ($) => seq('(', copy('_decl', '1'), ')') }, edits: { owner: { '(_decl)': ($) => $.word } }"
-			})
-		).rejects.toThrow(/kind '_decl' matched zero occurrences/);
+	it('Z1: a path that matches zero occurrences resolves and records one edit-site-missing naming the kind and path', async () => {
+		const raw = await evaluateTempGrammar({ extras: '', rules: "owner: ($) => $._decl, _decl: ($) => choice(seq('a', $.word), seq('b', $.word))" }, '', {
+			bindings: "rules: { owner: ($) => seq('(', copy('_decl', '1'), ')') }, edits: { owner: { '(_decl)': ($) => $.word } }"
+		});
+		expect(raw.layerDiagnostics).toEqual([
+			expect.objectContaining({ code: 'edit-site-missing', details: expect.objectContaining({ kind: 'owner', path: '(_decl)' }), message: expect.stringMatching(/matched zero occurrences/) })
+		]);
 	}, 60_000);
 
 	it('T1b: a path walking through a part copy edits it under its own name', async () => {

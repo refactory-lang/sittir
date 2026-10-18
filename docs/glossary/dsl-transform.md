@@ -516,8 +516,10 @@ A replacing entry's function form, `($, member) => rule`: it receives the layer'
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPathPatches`
 
 Applies a path-keyed patch set: a `narrow` entry is queued, with its path, for the layer's whole-grammar phase (`wire/wire.ts::wireQueueNarrow`), and a `lead` entry goes to `queueLeadEntry`; neither walks its path here. Every other non-variant entry applies at its path, each as its own active patch site
-(`wireWithPatchSites`), then the `variant()` entries together (`applyVariantPatches`), then sibling
-defaults an `arm.default` entry displaced are cleared.
+(`wireWithPatchSites`) and through `appliedAtSite`, so an entry whose path matches nothing is its own
+`edit-site-missing` and the rest of the set still applies. An `arm.default` entry checks that its parent
+is a choice and clears the sibling defaults it displaced as part of its own site. The `variant()`
+entries then apply together (`applyVariantPatches`).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::queueLeadEntry`
 
@@ -532,7 +534,9 @@ its own variants. An absent variant only exists in the hoisted form, so when
 the set declares one (`variant(name, { absent: true })`) and the hoist does
 not happen, this throws rather than drop the declaration; `SITTIR_DEBUG=1`
 prints why the hoist bailed. The hoist runs with every variant entry as the active patch sites, since it
-applies them together; each remaining entry runs as its own site.
+applies them together; each remaining entry runs as its own site, through `appliedAtSite`. After the
+parent is registered, the sibling defaults of every `default: true` entry are cleared, in the set's
+order, except for an entry whose path matched nothing.
 
 #### body
 
@@ -869,9 +873,8 @@ A field arm keeps its field: the variant annotation lands on the field itself, s
 // here just means THIS arm doesn't have that position — the
 // choice-level recursion above catches ApplyPathSkip and leaves
 // the arm unchanged. If this seq is the top-level patch target
-// (no enclosing choice fan-out), ApplyPathSkip is never caught
-// and still propagates out of transform() as an error, same as
-// before — genuinely out-of-bounds against the ONE target shape.
+// (no enclosing choice fan-out), the skip reaches applyPatchSet,
+// which reports the set as edit-site-missing.
 ```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::wrapVariantBodyInParentPrec`
@@ -1102,6 +1105,8 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
  */
 ```
 
+A skip that reaches an entry's application (`transform.ts::appliedAtSite`) is that entry's `edit-site-missing`. Wire's part copies (`wire/wire.ts::copyPartOf`) and `narrow` entries (`verbs/narrow.ts::applyNarrowEntry`) report theirs the same way.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::PatchSet`
 
 ```text
@@ -1287,8 +1292,10 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
 // aborting the whole patch (mirrors applyWildcardToMembers's per-member
 // skip/require-at-least-one-match contract in transform-path.ts — same
 // "some siblings won't match, that's fine" semantics, just for flat
-// positional keys instead of path wildcards). Reconstruct via native
-// dsl so the choice keeps its runtime-correct shape.
+// positional keys instead of path wildcards). When no arm takes
+// the set, the choice itself is an ApplyPathSkip naming the keys.
+// Reconstruct via native dsl so the choice keeps its runtime-correct
+// shape.
 ```
 
 #### body
@@ -1301,7 +1308,9 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
 #### body
 
 ```text
-// For other types, return as-is (patches don't apply)
+// Any other rule holds no SEQ for the keys to index: an
+// ApplyPathSkip, so a choice arm of that shape is left unchanged
+// and a set whose target is one is edit-site-missing.
 ```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::withVariantAnnotation`
@@ -1784,7 +1793,7 @@ Rewrites `choice(optional(x), optional(y), …, optional(n))` to `optional(choic
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPatchSet`
 
-Applies one patch set: records its sites, then applies it in path mode when any key is a path or any value a placeholder of the listed kinds, and flat otherwise. A flat set indexes the members of the first SEQ under the rule; on a CHOICE it indexes inside every arm, so a plain index there never selects an arm.
+Applies one patch set: records its sites, then applies it in path mode when any key is a path or any value a placeholder of the listed kinds, and flat otherwise. A flat set indexes the members of the first SEQ under the rule; on a CHOICE it indexes inside every arm, so a plain index there never selects an arm. A flat set applies through `appliedAtSite`, keyed by its keys joined with `, `, so a set that no position of the rule takes is `edit-site-missing`.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::recordFieldEffect`
 
@@ -1793,6 +1802,10 @@ The option-path segment a `field()` patch renames on the patched kind: an existi
 ### `packages/codegen/src/dsl/transform/transform.ts::refuseAliasTarget`
 
 Records an alias edit that `wire/wire.ts::wireAliasTargetIssue` rejects as the layer's blocking `alias-target-invalid` diagnostic (`wire/wire.ts::wireRefuse`), naming the patched kind, the alias and the reason. The edit still applies, so the layer completes and the diagnostic gate reports it with every other refusal.
+
+### `packages/codegen/src/dsl/transform/transform.ts::appliedAtSite`
+
+Runs one entry's application and returns the rule it gives. An `ApplyPathSkip` out of it means the entry's path matches nothing. The entry is then refused as `edit-site-missing` (`wire/wire.ts::wireRefuse`), with details naming the kind and the entry's key and the skip's reason in the message, and `undefined` comes back, so the caller keeps the rule it had. Outside a layer pass, `wireRefuse` throws that message. Any other error propagates.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 

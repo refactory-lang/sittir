@@ -679,3 +679,13 @@ describe('edit() inline equals the edits entry', () => {
 		expect(inline.bindingEffects).toEqual(keyed.bindingEffects);
 	}, 60_000);
 });
+
+describe('transform() — flat-keys describe, with no context', () => {
+	it('Z7a: a flat key matching no choice arm throws outside a layer', () => {
+		expect(() => transformRule(choice(sym('a'), sym('b')), { 1: fld('x', sym('y')) } as never)).toThrow(/matched no choice arm/);
+	});
+
+	it('Z7b: a flat key on a non-SEQ throws outside a layer', () => {
+		expect(() => transformRule(sym('a'), { 0: fld('x', sym('y')) } as never)).toThrow(/holds no SEQ/);
+	});
+});
