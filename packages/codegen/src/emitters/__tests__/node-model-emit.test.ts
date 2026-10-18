@@ -24,7 +24,38 @@ describe('node-model emitter', () => {
 			['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' })]
 		]);
 		const list = buildNodeModel(makeNodeMapWith(nodes)).nodes.find((node) => node.kind === 'member_list');
-		expect(list).toMatchObject({ modelType: 'list', elementKinds: ['member'], slots: [{ multiple: true, kinds: ['member'] }] });
+		expect(list).toMatchObject({ modelType: 'list', elementKinds: ['member'], slots: [{ multiple: true, values: [{ parseKind: 'member' }] }] });
+	});
+
+	it('writes no field a reader derives or nothing reads', () => {
+		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
+		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
+		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
+		const nodes = new Map<string, AssembledNode>([
+			['member_list', new AssembledList('member_list', rule, undefined, { separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
+			['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' })]
+		]);
+		const model = buildNodeModel(makeNodeMapWith(nodes));
+		for (const key of ['factorySlots', 'supertypes', 'nodeCount', 'word', 'externals', 'extras']) expect(model).not.toHaveProperty(key);
+		for (const node of model.nodes)
+			for (const key of ['factoryName', 'hidden', 'annotations', 'isParameterless', 'stampExpression', 'interior', 'transparent', 'hasNonterminalSeparator'])
+				expect(node).not.toHaveProperty(key);
+		const slot = (model.nodes.find((node) => node.kind === 'member_list') as { slots: object[] }).slots[0]!;
+		for (const key of ['kinds', 'propertyName', 'paramName']) expect(slot).not.toHaveProperty(key);
+	});
+
+	it('writes a value\'s name only where it differs from the kind it parses as', () => {
+		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
+		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
+		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
+		const nodes = new Map<string, AssembledNode>([
+			['member_list', new AssembledList('member_list', rule, undefined, { separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
+			['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' })]
+		]);
+		const list = buildNodeModel(makeNodeMapWith(nodes)).nodes.find((node) => node.kind === 'member_list') as { slots: { values: object[] }[] };
+		const value = list.slots[0]!.values[0]!;
+		expect(value).toMatchObject({ parseKind: 'member' });
+		expect(value).not.toHaveProperty('name');
 	});
 
 	it('records the grammar root kind', () => {

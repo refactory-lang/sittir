@@ -5512,6 +5512,10 @@ Records `delimited-closer-unguarded` on a skipped delimited composite for each `
 
 The stamped delimited fact: `open` and `close` (a literal `text` or the `slot` holding the leaf), `excluded` code point ranges, `nodeKinds` and `varying`. Derived once at assembly from the render rules and the leaf patterns, and consumed by the factory emitter and the test emitter, never re-derived.
 
+### `packages/codegen/src/compiler/model/node-map.ts::slotPropertyName`
+
+A slot's property name: its camel-cased storage name, pluralized when any value is an array. `projectSlotNaming` names every slot by it, and `slotModelOf` derives a written slot's property name by it, so `node-model.json5` stores no property or parameter name.
+
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::leadingChars`
 
 The characters a pattern's accepted texts can start with: the live edges out of the start state.

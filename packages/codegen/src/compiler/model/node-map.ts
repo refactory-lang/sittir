@@ -384,6 +384,14 @@ export function snakeToCamel(name: string): string {
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
+export function slotPropertyName(slot: {
+	readonly name: string;
+	readonly values?: readonly { readonly multiplicity?: string }[];
+}): string {
+	const key = snakeToCamel(slot.name);
+	return (slot.values ?? []).some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') ? pluralize(key) : key;
+}
+
 export function pluralize(name: string): string {
 	if (name.endsWith('s') || name.endsWith('List') || name.endsWith('children') || name.endsWith('Children'))
 		return name;
@@ -1435,8 +1443,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
 			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
 	const configKey = snakeToCamel(storageName);
-	const isMulti = slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-	const propertyName = isMulti ? pluralize(configKey) : configKey;
+	const propertyName = slotPropertyName({ name: storageName, values: slot.values });
 	return {
 		storageName,
 		name: storageName,

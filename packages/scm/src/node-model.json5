@@ -1,62 +1,6 @@
 {
   "name": "scm",
   "root": "program",
-  "nodeCount": 61,
-  "word": null,
-  "supertypes": [
-    "_group_expression",
-    "_layout",
-    "_list_element",
-    "_named_node_expression",
-    "_node_identifier",
-    "definition",
-    "named_node",
-    "named_node_group"
-  ],
-  "externals": [
-    {
-      "type": "SYMBOL",
-      "name": "_tight"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_space"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_tab"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_newline"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_blankline"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_double_blankline"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_indent"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_dedent"
-    }
-  ],
-  "extras": [
-    {
-      "type": "SYMBOL",
-      "name": "comment"
-    },
-    {
-      "type": "PATTERN",
-      "value": "\\s+"
-    }
-  ],
   "polymorphVariants": {
     "string_content": {
       "definedBy": "enrich",
@@ -76,348 +20,6 @@
       "identifier": "_immediate_identifier"
     }
   },
-  "factorySlots": {
-    "program": {
-      "definitions": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "capture": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "string": {
-      "string_content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "immediate_string": {
-      "string_content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "string_content": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "parameters": {
-      "elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "comment": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "list": {
-      "definitions": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      },
-      "elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "grouping": {
-      "grouping_group": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      },
-      "elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "missing_node": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "anonymous_node": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "field_definition": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "definition": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "negated_field": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "predicate": {
-      "prefix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "parameters": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "list_element_quantifier": {
-      "quantifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "group_expression_arm": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "named_node_expression_arm": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "grouping_group": {
-      "group_expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "anchor": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "named_node_plain": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "named_node_group": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "named_node_supertyped": {
-      "supertype": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "named_node_group": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "named_node_group_children": {
-      "anchor": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "named_node_expressions": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "named_node_group_anchored_last": {
-      "anchor": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "named_node_expressions": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "last": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    }
-  },
   "spelledTrivia": {
     "reason": "ir.comment is one kind, 'comment'"
   },
@@ -429,9 +31,6 @@
       "kind": "MISSING_keyword",
       "modelType": "keyword",
       "typeName": "MissingKeyword",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"MISSING\" as const",
       "text": "MISSING",
       "factoryShape": "text"
     },
@@ -439,16 +38,12 @@
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
-      "factoryName": "blankline",
       "builderPathAlternates": [
         [
           "layout",
           "blankline"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -457,16 +52,12 @@
       "kind": "_dedent",
       "modelType": "punctuation",
       "typeName": "Dedent",
-      "factoryName": "dedent",
       "builderPathAlternates": [
         [
           "layout",
           "dedent"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"﷑\\n\" as const",
       "text": "﷑\n",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -475,16 +66,12 @@
       "kind": "_double_blankline",
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
-      "factoryName": "doubleBlankline",
       "builderPathAlternates": [
         [
           "layout",
           "doubleBlankline"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -493,8 +80,6 @@
       "kind": "_group_expression",
       "modelType": "supertype",
       "typeName": "GroupExpression",
-      "hidden": true,
-      "transparent": true,
       "subtypes": [
         "definition",
         "group_expression_arm"
@@ -504,12 +89,10 @@
       "kind": "_immediate_identifier",
       "modelType": "pattern",
       "typeName": "ImmediateIdentifier",
-      "factoryName": "immediateIdentifier",
       "irKey": "immediateIdentifier",
       "builderPath": [
         "immediateIdentifier"
       ],
-      "hidden": false,
       "pattern": "[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*",
       "leafPattern": "/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u",
       "oneSurface": true,
@@ -519,16 +102,12 @@
       "kind": "_indent",
       "modelType": "punctuation",
       "typeName": "Indent",
-      "factoryName": "indent",
       "builderPathAlternates": [
         [
           "layout",
           "indent"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -541,8 +120,6 @@
       "builderPath": [
         "layout"
       ],
-      "hidden": true,
-      "transparent": true,
       "subtypes": [
         "_blankline",
         "_dedent",
@@ -562,8 +139,6 @@
       "builderPath": [
         "listElement"
       ],
-      "hidden": true,
-      "transparent": true,
       "subtypes": [
         "capture",
         "list_element_quantifier"
@@ -573,8 +148,6 @@
       "kind": "_named_node_expression",
       "modelType": "supertype",
       "typeName": "NamedNodeExpression",
-      "hidden": true,
-      "transparent": true,
       "subtypes": [
         "definition",
         "named_node_expression_arm",
@@ -585,16 +158,12 @@
       "kind": "_newline",
       "modelType": "punctuation",
       "typeName": "Newline",
-      "factoryName": "newline",
       "builderPathAlternates": [
         [
           "layout",
           "newline"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\n\" as const",
       "text": "\n",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -603,8 +172,6 @@
       "kind": "_node_identifier",
       "modelType": "supertype",
       "typeName": "NodeIdentifier",
-      "hidden": true,
-      "transparent": true,
       "subtypes": [
         "identifier"
       ]
@@ -613,16 +180,12 @@
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
-      "factoryName": "space",
       "builderPathAlternates": [
         [
           "layout",
           "space"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\" \" as const",
       "text": " ",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -631,16 +194,12 @@
       "kind": "_tab",
       "modelType": "punctuation",
       "typeName": "Tab",
-      "factoryName": "tab",
       "builderPathAlternates": [
         [
           "layout",
           "tab"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\t\" as const",
       "text": "\t",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -649,16 +208,12 @@
       "kind": "_tight",
       "modelType": "punctuation",
       "typeName": "Tight",
-      "factoryName": "tight",
       "builderPathAlternates": [
         [
           "layout",
           "tight"
         ]
       ],
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\" as const",
       "text": "",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -667,14 +222,10 @@
       "kind": "anchor",
       "modelType": "punctuation",
       "typeName": "Anchor",
-      "factoryName": "anchor",
       "irKey": "anchor",
       "builderPath": [
         "anchor"
       ],
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\".\" as const",
       "text": ".",
       "oneSurface": true,
       "factoryShape": "constant"
@@ -683,7 +234,6 @@
       "kind": "anonymous_node",
       "modelType": "branch",
       "typeName": "AnonymousNode",
-      "factoryName": "anonymousNode",
       "irKey": "anonymousNode",
       "builderPath": [
         "anonymousNode"
@@ -694,25 +244,18 @@
           "anonymousNode"
         ]
       ],
-      "hidden": false,
       "variantOf": "definition",
       "slots": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "mixedEnum",
-          "kinds": [
-            "string"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "string",
               "parseKind": "string"
             },
             {
@@ -725,20 +268,14 @@
         },
         {
           "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_list_element"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_list_element",
               "parseKind": "_list_element"
             }
           ]
@@ -754,25 +291,18 @@
       "kind": "at",
       "modelType": "punctuation",
       "typeName": "At",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"@\" as const",
       "text": "@"
     },
     {
       "kind": "bang",
       "modelType": "punctuation",
       "typeName": "Bang",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"!\" as const",
       "text": "!"
     },
     {
       "kind": "capture",
       "modelType": "envelope",
       "typeName": "Capture",
-      "factoryName": "capture",
       "irKey": "capture",
       "builderPath": [
         "capture"
@@ -783,19 +313,13 @@
           "capture"
         ]
       ],
-      "hidden": false,
       "slots": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_immediate_identifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
@@ -831,31 +355,23 @@
       "kind": "colon",
       "modelType": "punctuation",
       "typeName": "Colon",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\":\" as const",
       "text": ":"
     },
     {
       "kind": "comment",
       "modelType": "branch",
       "typeName": "Comment",
-      "factoryName": "comment",
       "irKey": "comment",
       "builderPath": [
         "comment"
       ],
-      "hidden": false,
       "slots": [
         {
           "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [],
           "values": [
             {
               "kind": "terminal",
@@ -864,24 +380,6 @@
           ]
         }
       ],
-      "interior": {
-        "entries": [
-          {
-            "lit": ";"
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:.*)"
-          }
-        ],
-        "regex": "^;(?<content>(?:.*))$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
       "fullForm": {
         "open": {
           "texts": [
@@ -908,8 +406,6 @@
       "builderPath": [
         "definition"
       ],
-      "hidden": true,
-      "transparent": true,
       "subtypes": [
         "anonymous_node",
         "field_definition",
@@ -924,25 +420,18 @@
       "kind": "dot",
       "modelType": "punctuation",
       "typeName": "Dot",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\".\" as const",
       "text": "."
     },
     {
       "kind": "dquote",
       "modelType": "punctuation",
       "typeName": "Dquote",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\"\" as const",
       "text": "\""
     },
     {
       "kind": "escape_sequence",
       "modelType": "branch",
       "typeName": "EscapeSequence",
-      "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "builderPath": [
         "escapeSequence"
@@ -953,18 +442,14 @@
           "escapeSequence"
         ]
       ],
-      "hidden": false,
       "variantOf": "string_content",
       "slots": [
         {
           "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [],
           "values": [
             {
               "kind": "terminal",
@@ -973,24 +458,6 @@
           ]
         }
       ],
-      "interior": {
-        "entries": [
-          {
-            "lit": "\\"
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:.)"
-          }
-        ],
-        "regex": "^\\\\(?<content>(?:.))$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
       "fullForm": {
         "open": {
           "texts": [
@@ -1013,7 +480,6 @@
       "kind": "field_definition",
       "modelType": "branch",
       "typeName": "FieldDefinition",
-      "factoryName": "fieldDefinition",
       "irKey": "fieldDefinition",
       "builderPath": [
         "fieldDefinition"
@@ -1024,45 +490,32 @@
           "field"
         ]
       ],
-      "hidden": false,
       "variantOf": "definition",
       "slots": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
               "parseKind": "identifier"
             }
           ]
         },
         {
           "name": "definition",
-          "propertyName": "definition",
-          "paramName": "definition",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "definition",
               "parseKind": "definition"
             }
           ]
@@ -1078,64 +531,46 @@
       "kind": "group_expression_arm",
       "modelType": "branch",
       "typeName": "GroupExpressionArm",
-      "factoryName": "groupExpressionArm",
       "irKey": "groupExpressionArm",
       "builderPath": [
         "groupExpressionArm"
       ],
-      "hidden": false,
       "variantOf": "_group_expression",
       "slots": [
         {
           "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "group_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "group_expression_arm",
               "parseKind": "group_expression_arm"
             }
           ]
         },
         {
           "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "group_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "group_expression_arm",
               "parseKind": "group_expression_arm"
             }
           ]
@@ -1151,7 +586,6 @@
       "kind": "grouping",
       "modelType": "branch",
       "typeName": "Grouping",
-      "factoryName": "grouping",
       "irKey": "grouping",
       "builderPath": [
         "grouping"
@@ -1162,25 +596,18 @@
           "grouping"
         ]
       ],
-      "hidden": false,
       "variantOf": "definition",
       "slots": [
         {
           "name": "grouping_group",
-          "propertyName": "groupingGroups",
-          "paramName": "groupingGroups",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "storage": "verbatim",
-          "kinds": [
-            "grouping_group"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "grouping_group",
               "parseKind": "grouping_group",
               "seat": {
                 "kind": "grouping_group",
@@ -1191,20 +618,14 @@
         },
         {
           "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_list_element"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_list_element",
               "parseKind": "_list_element"
             }
           ]
@@ -1220,62 +641,42 @@
       "kind": "grouping_group",
       "modelType": "branch",
       "typeName": "GroupingGroup",
-      "factoryName": "groupingGroup",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "seated": true,
       "slots": [
         {
           "name": "group_expression",
-          "propertyName": "groupExpression",
-          "paramName": "groupExpression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "group_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "group_expression_arm",
               "parseKind": "group_expression_arm"
             }
           ]
         },
         {
           "name": "anchor",
-          "propertyName": "anchor",
-          "paramName": "anchor",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "anchor"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "anchor",
               "parseKind": "anchor"
             }
           ]
         }
       ],
-      "name": "grouping_group",
       "factoryShape": "config",
       "factoryFields": [
         "group_expression",
@@ -1286,12 +687,10 @@
       "kind": "identifier",
       "modelType": "pattern",
       "typeName": "Identifier",
-      "factoryName": "identifier",
       "irKey": "identifier",
       "builderPath": [
         "identifier"
       ],
-      "hidden": false,
       "pattern": "[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*",
       "leafPattern": "/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u",
       "oneSurface": true,
@@ -1301,29 +700,21 @@
       "kind": "immediate_string",
       "modelType": "envelope",
       "typeName": "ImmediateString",
-      "factoryName": "immediateString",
       "irKey": "immediateString",
       "builderPath": [
         "immediateString"
       ],
-      "hidden": false,
       "slots": [
         {
           "name": "string_content",
-          "propertyName": "stringContent",
-          "paramName": "stringContent",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "string_content"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "string_content",
               "parseKind": "string_content"
             }
           ]
@@ -1342,16 +733,12 @@
       "kind": "lbrack",
       "modelType": "punctuation",
       "typeName": "Lbrack",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"[\" as const",
       "text": "["
     },
     {
       "kind": "list",
       "modelType": "branch",
       "typeName": "List",
-      "factoryName": "list",
       "irKey": "list",
       "builderPath": [
         "list"
@@ -1362,45 +749,32 @@
           "list"
         ]
       ],
-      "hidden": false,
       "variantOf": "definition",
       "slots": [
         {
           "name": "definitions",
-          "propertyName": "definitions",
-          "paramName": "definitions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "storage": "verbatim",
-          "kinds": [
-            "definition"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "definition",
               "parseKind": "definition"
             }
           ]
         },
         {
           "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_list_element"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_list_element",
               "parseKind": "_list_element"
             }
           ]
@@ -1416,7 +790,6 @@
       "kind": "list_element_quantifier",
       "modelType": "envelope",
       "typeName": "ListElementQuantifier",
-      "factoryName": "listElementQuantifier",
       "irKey": "listElementQuantifier",
       "builderPath": [
         "listElementQuantifier"
@@ -1427,35 +800,24 @@
           "quantifier"
         ]
       ],
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "seated": true,
       "variantOf": "_list_element",
       "slots": [
         {
           "name": "quantifier",
-          "propertyName": "quantifier",
-          "paramName": "quantifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "quantifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "quantifier",
               "parseKind": "quantifier"
             }
           ]
         }
       ],
-      "name": "list_element_quantifier",
       "factoryShape": "direct",
       "factoryFields": [
         "quantifier"
@@ -1471,16 +833,12 @@
       "kind": "lparen",
       "modelType": "punctuation",
       "typeName": "Lparen",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(\" as const",
       "text": "("
     },
     {
       "kind": "missing_node",
       "modelType": "branch",
       "typeName": "MissingNode",
-      "factoryName": "missingNode",
       "irKey": "missingNode",
       "builderPath": [
         "missingNode"
@@ -1491,52 +849,37 @@
           "missingNode"
         ]
       ],
-      "hidden": false,
       "variantOf": "definition",
       "slots": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "identifier",
-            "string"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "identifier",
               "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "string",
               "parseKind": "string"
             }
           ]
         },
         {
           "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_list_element"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_list_element",
               "parseKind": "_list_element"
             }
           ]
@@ -1562,9 +905,7 @@
           "namedNode"
         ]
       ],
-      "hidden": true,
       "variantOf": "definition",
-      "transparent": true,
       "subtypes": [
         "named_node_plain",
         "named_node_supertyped"
@@ -1574,78 +915,56 @@
       "kind": "named_node_expression_arm",
       "modelType": "branch",
       "typeName": "NamedNodeExpressionArm",
-      "factoryName": "namedNodeExpressionArm",
       "irKey": "namedNodeExpressionArm",
       "builderPath": [
         "namedNodeExpressionArm"
       ],
-      "hidden": false,
       "variantOf": "_named_node_expression",
       "slots": [
         {
           "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "negated_field",
-            "named_node_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "negated_field",
               "parseKind": "negated_field"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "named_node_expression_arm",
               "parseKind": "named_node_expression_arm"
             }
           ]
         },
         {
           "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "negated_field",
-            "named_node_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "negated_field",
               "parseKind": "negated_field"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "named_node_expression_arm",
               "parseKind": "named_node_expression_arm"
             }
           ]
@@ -1665,8 +984,6 @@
       "builderPath": [
         "namedNodeGroup"
       ],
-      "hidden": true,
-      "transparent": true,
       "subtypes": [
         "named_node_group_anchored_last",
         "named_node_group_children"
@@ -1676,7 +993,6 @@
       "kind": "named_node_group_anchored_last",
       "modelType": "branch",
       "typeName": "NamedNodeGroupAnchoredLast",
-      "factoryName": "namedNodeGroupAnchoredLast",
       "irKey": "namedNodeGroupAnchoredLast",
       "builderPath": [
         "namedNodeGroupAnchoredLast"
@@ -1687,103 +1003,72 @@
           "anchoredLast"
         ]
       ],
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "seated": true,
       "variantOf": "named_node_group",
       "slots": [
         {
           "name": "anchor",
-          "propertyName": "anchor",
-          "paramName": "anchor",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "anchor"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "anchor",
               "parseKind": "anchor"
             }
           ]
         },
         {
           "name": "named_node_expressions",
-          "propertyName": "namedNodeExpressions",
-          "paramName": "namedNodeExpressions",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "negated_field",
-            "named_node_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "negated_field",
               "parseKind": "negated_field"
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "named_node_expression_arm",
               "parseKind": "named_node_expression_arm"
             }
           ]
         },
         {
           "name": "last",
-          "propertyName": "last",
-          "paramName": "last",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "negated_field",
-            "named_node_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "negated_field",
               "parseKind": "negated_field"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "named_node_expression_arm",
               "parseKind": "named_node_expression_arm"
             }
           ]
         }
       ],
-      "name": "named_node_group_anchored_last",
       "factoryShape": "config",
       "factoryFields": [
         "anchor",
@@ -1795,7 +1080,6 @@
       "kind": "named_node_group_children",
       "modelType": "branch",
       "typeName": "NamedNodeGroupChildren",
-      "factoryName": "namedNodeGroupChildren",
       "irKey": "namedNodeGroupChildren",
       "builderPath": [
         "namedNodeGroupChildren"
@@ -1806,69 +1090,48 @@
           "children"
         ]
       ],
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "seated": true,
       "variantOf": "named_node_group",
       "slots": [
         {
           "name": "anchor",
-          "propertyName": "anchor",
-          "paramName": "anchor",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "anchor"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "anchor",
               "parseKind": "anchor"
             }
           ]
         },
         {
           "name": "named_node_expressions",
-          "propertyName": "namedNodeExpressions",
-          "paramName": "namedNodeExpressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "storage": "verbatim",
-          "kinds": [
-            "definition",
-            "negated_field",
-            "named_node_expression_arm"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "definition",
               "parseKind": "definition"
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "negated_field",
               "parseKind": "negated_field"
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "named_node_expression_arm",
               "parseKind": "named_node_expression_arm"
             }
           ]
         }
       ],
-      "name": "named_node_group_children",
       "factoryShape": "config",
       "factoryFields": [
         "anchor",
@@ -1879,7 +1142,6 @@
       "kind": "named_node_plain",
       "modelType": "branch",
       "typeName": "NamedNodePlain",
-      "factoryName": "namedNodePlain",
       "irKey": "namedNodePlain",
       "builderPath": [
         "namedNodePlain"
@@ -1895,29 +1157,19 @@
           "plain"
         ]
       ],
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "seated": true,
       "variantOf": "named_node",
       "slots": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "mixedEnum",
-          "kinds": [
-            "identifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
               "parseKind": "identifier"
             },
             {
@@ -1930,46 +1182,33 @@
         },
         {
           "name": "named_node_group",
-          "propertyName": "namedNodeGroup",
-          "paramName": "namedNodeGroup",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "named_node_group"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "named_node_group",
               "parseKind": "named_node_group"
             }
           ]
         },
         {
           "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_list_element"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_list_element",
               "parseKind": "_list_element"
             }
           ]
         }
       ],
-      "name": "named_node_plain",
       "factoryShape": "config",
       "factoryFields": [
         "name",
@@ -1981,7 +1220,6 @@
       "kind": "named_node_supertyped",
       "modelType": "branch",
       "typeName": "NamedNodeSupertyped",
-      "factoryName": "namedNodeSupertyped",
       "irKey": "namedNodeSupertyped",
       "builderPath": [
         "namedNodeSupertyped"
@@ -1997,45 +1235,29 @@
           "supertyped"
         ]
       ],
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "seated": true,
       "variantOf": "named_node",
       "slots": [
         {
           "name": "supertype",
-          "propertyName": "supertype",
-          "paramName": "supertype",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
               "parseKind": "identifier"
             }
           ]
         },
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_immediate_identifier",
-            "immediate_string"
-          ],
           "values": [
             {
               "kind": "node-ref",
@@ -2046,53 +1268,39 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "immediate_string",
               "parseKind": "immediate_string"
             }
           ]
         },
         {
           "name": "named_node_group",
-          "propertyName": "namedNodeGroup",
-          "paramName": "namedNodeGroup",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "named_node_group"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "named_node_group",
               "parseKind": "named_node_group"
             }
           ]
         },
         {
           "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_list_element"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_list_element",
               "parseKind": "_list_element"
             }
           ]
         }
       ],
-      "name": "named_node_supertyped",
       "factoryShape": "config",
       "factoryFields": [
         "supertype",
@@ -2105,30 +1313,22 @@
       "kind": "negated_field",
       "modelType": "envelope",
       "typeName": "NegatedField",
-      "factoryName": "negatedField",
       "irKey": "negatedField",
       "builderPath": [
         "negatedField"
       ],
-      "hidden": false,
       "variantOf": "_named_node_expression",
       "slots": [
         {
           "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
               "parseKind": "identifier"
             }
           ]
@@ -2159,43 +1359,31 @@
       "kind": "parameters",
       "modelType": "envelope",
       "typeName": "Parameters",
-      "factoryName": "parameters",
       "irKey": "parameters",
       "builderPath": [
         "parameters"
       ],
-      "hidden": false,
       "slots": [
         {
           "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "storage": "verbatim",
-          "kinds": [
-            "capture",
-            "string",
-            "identifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "capture",
               "parseKind": "capture"
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "string",
               "parseKind": "string"
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "identifier",
               "parseKind": "identifier"
             }
           ]
@@ -2210,25 +1398,18 @@
       "kind": "plus",
       "modelType": "punctuation",
       "typeName": "Plus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"+\" as const",
       "text": "+"
     },
     {
       "kind": "pound",
       "modelType": "punctuation",
       "typeName": "Pound",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"#\" as const",
       "text": "#"
     },
     {
       "kind": "predicate",
       "modelType": "branch",
       "typeName": "Predicate",
-      "factoryName": "predicate",
       "irKey": "predicate",
       "builderPath": [
         "predicate"
@@ -2239,18 +1420,14 @@
           "predicate"
         ]
       ],
-      "hidden": false,
       "variantOf": "definition",
       "slots": [
         {
           "name": "prefix",
-          "propertyName": "prefix",
-          "paramName": "prefix",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [],
           "values": [
             {
               "kind": "terminal",
@@ -2268,15 +1445,10 @@
         },
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "_immediate_identifier"
-          ],
           "values": [
             {
               "kind": "node-ref",
@@ -2288,40 +1460,28 @@
         },
         {
           "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "predicate_type"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "predicate_type",
               "parseKind": "predicate_type"
             }
           ]
         },
         {
           "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "parameters"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "parameters",
               "parseKind": "parameters"
             }
           ]
@@ -2339,8 +1499,6 @@
       "kind": "predicate_type",
       "modelType": "enum",
       "typeName": "PredicateType",
-      "factoryName": "predicateType",
-      "hidden": false,
       "members": [
         {
           "kind": "qmark",
@@ -2357,29 +1515,21 @@
       "kind": "program",
       "modelType": "envelope",
       "typeName": "Program",
-      "factoryName": "program",
       "irKey": "program",
       "builderPath": [
         "program"
       ],
-      "hidden": false,
       "slots": [
         {
           "name": "definitions",
-          "propertyName": "definitions",
-          "paramName": "definitions",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "definition"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "definition",
               "parseKind": "definition"
             }
           ]
@@ -2394,17 +1544,12 @@
       "kind": "qmark",
       "modelType": "punctuation",
       "typeName": "Qmark",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"?\" as const",
       "text": "?"
     },
     {
       "kind": "quantifier",
       "modelType": "enum",
       "typeName": "Quantifier",
-      "factoryName": "quantifier",
-      "hidden": false,
       "members": [
         {
           "kind": "star",
@@ -2425,65 +1570,45 @@
       "kind": "rbrack",
       "modelType": "punctuation",
       "typeName": "Rbrack",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"]\" as const",
       "text": "]"
     },
     {
       "kind": "rparen",
       "modelType": "punctuation",
       "typeName": "Rparen",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\")\" as const",
       "text": ")"
     },
     {
       "kind": "slash",
       "modelType": "punctuation",
       "typeName": "Slash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"/\" as const",
       "text": "/"
     },
     {
       "kind": "star",
       "modelType": "punctuation",
       "typeName": "Star",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"*\" as const",
       "text": "*"
     },
     {
       "kind": "string",
       "modelType": "envelope",
       "typeName": "String",
-      "factoryName": "string",
       "irKey": "string",
       "builderPath": [
         "string"
       ],
-      "hidden": false,
       "slots": [
         {
           "name": "string_content",
-          "propertyName": "stringContent",
-          "paramName": "stringContent",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [
-            "string_content"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "string_content",
               "parseKind": "string_content"
             }
           ]
@@ -2502,36 +1627,26 @@
       "kind": "string_content",
       "modelType": "envelope",
       "typeName": "StringContent",
-      "factoryName": "stringContent",
       "irKey": "stringContent",
       "builderPath": [
         "stringContent"
       ],
-      "hidden": false,
       "slots": [
         {
           "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "storage": "verbatim",
-          "kinds": [
-            "string_content_text",
-            "escape_sequence"
-          ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "string_content_text",
               "parseKind": "string_content_text"
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "escape_sequence",
               "parseKind": "escape_sequence"
             }
           ]
@@ -2546,12 +1661,10 @@
       "kind": "string_content_text",
       "modelType": "pattern",
       "typeName": "StringContentText",
-      "factoryName": "stringContentText",
       "irKey": "stringContentText",
       "builderPath": [
         "stringContentText"
       ],
-      "hidden": false,
       "pattern": "[^\"\\\\\\n]+",
       "leafPattern": "/^(?:(?:[^\"\\\\\\n]+))$/u",
       "oneSurface": true,
@@ -2561,9 +1674,6 @@
       "kind": "underscore",
       "modelType": "keyword",
       "typeName": "Underscore",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"_\" as const",
       "text": "_",
       "factoryShape": "text"
     }

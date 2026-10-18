@@ -727,15 +727,11 @@ builder: the parent takes the group's value whole under the slot key.
 
 ### `packages/tools/src/validate/common.ts::ParsedNodeModel`
 
-```text
-/** Minimal shape of the parsed node-model.json5 — only the fields the
- * validators consume. `factoryShape`/`factoryFields` are per-node;
- * `factorySlots`/`fieldAliasMap`/`polymorphVariants` are top-level. */
-```
+The shape of a parsed `node-model.json5`, only the fields the validators read. Each slot carries its own factory flags (`registered`, `optionDefault`); the record has no top-level factory-slot table.
 
 ### `packages/tools/src/validate/common.ts::parseNodeModel`
 
-Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind.
+Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape.
 
 ### `packages/tools/src/validate/common.ts::loadBoundNameOf`
 
