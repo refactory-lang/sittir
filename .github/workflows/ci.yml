@@ -297,6 +297,10 @@ jobs:
         run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
       - name: Clippy with napi bindings (warnings denied)
         run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Clippy with the record arena (warnings denied)
+        run: cargo clippy -p sittir-core --all-targets --features arena,napi-bindings -- -D warnings
+      - name: Record arena tests
+        run: cargo test -p sittir-core --no-default-features --features arena
       - name: Typed reader debug diagnostics
         run: cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
 

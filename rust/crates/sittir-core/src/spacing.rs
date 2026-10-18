@@ -138,6 +138,21 @@ pub enum SeamStrength {
     Trivia = 4,
 }
 
+impl SeamStrength {
+    /// The strength whose discriminant is `code`.
+    #[must_use]
+    pub const fn from_code(code: u8) -> Option<Self> {
+        match code {
+            0 => Some(Self::Fallback),
+            1 => Some(Self::Cascade),
+            2 => Some(Self::Declared),
+            3 => Some(Self::Slot),
+            4 => Some(Self::Trivia),
+            _ => None,
+        }
+    }
+}
+
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
 #[must_use]
