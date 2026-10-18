@@ -2167,7 +2167,7 @@ What one edits entry has done to copies so far. `edited` names each copy whose b
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireEntryRole`
 
-What a context key does when an entry is refused. An entry may write an `undone` key, and the key is restored to its state before the entry (`wireAtomic`). A `scoped` key is set for one call's extent and restored by that call's own `finally`. An `outside` key is written only outside an entry's application (at construction, by list or rule evaluation, or by enrich), so an entry leaves nothing in it to undo. `kept` is the layer's diagnostics: the report, which keeps what a refused entry recorded. An `unreached` key is a WeakMap that an entry writes only under objects it made, and the refusal discards those with the entry's result.
+What a context key does when an entry is refused. An entry may write an `undone` key, and the key is restored to its state before the entry (`wireAtomic`). A `scoped` key is set for one call's extent and restored by that call's own `finally`. An `outside` key is written only outside an entry's application (at construction, by list or rule evaluation, or by enrich), so an entry leaves nothing in it to undo; every entry checks that claim (`wireEntry`). `kept` is the layer's diagnostics: the report, which keeps what a refused entry recorded. An `unreached` key is a WeakMap that an entry writes only under objects it made, and the refusal discards those with the entry's result.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireEntryRoles`
 
@@ -2175,15 +2175,15 @@ A role for every key of `T`, optional keys included.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES`
 
-Every `WireContext` key's role when an entry is refused (`WireEntryRole`), with `automaticVariants` and `layer` classified key by key. The type requires a role for every key, so no new field can stay out of the undo unclassified. A test checks the keys both constructors build (`withWireContext`, `wireImpl`) against it. The undo reads its `undone` keys from here (`undoneStateOf`).
+Every `WireContext` key's role when an entry is refused (`WireEntryRole`), with `automaticVariants` and `layer` classified key by key. The type requires a role for every key, so no new field can stay out of the undo unclassified. A test checks the keys both constructors build (`withWireContext`, `wireImpl`) against it. The undo reads its `undone` keys from here, and every entry checks its `outside` keys against it (`keysWithRole`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireAtomic`
 
 Runs `fn` so that a throw out of it leaves the wire state as it found it. Every `undone` collection is copied before `fn` runs and restored if it throws, and the error propagates. The entry boundary (`wireEntry`) runs through it, as do the two fan-outs that catch a skipped branch and carry on (`transform/transform-path.ts::applyWildcardToMembers`, and the choice arms of `transform/transform.ts::applyFlatPatches`). A skipped walk's copies, deposits, binding effects, lift claims and labels therefore go with it. Outside a wire context it just runs `fn`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::undoneStateOf`
+### `packages/codegen/src/dsl/wire/wire.ts::keysWithRole`
 
-One restorer for each `undone` key of a role record, descending into the keys classified key by key.
+The keys of a role record that have `role`, each with the object that holds it and its dotted path from the context (`automaticVariants.keys`), descending into the keys classified key by key. A holder that is absent (a context with no layer) has none. The undo reads its `undone` keys through it (`wireAtomic`), and the entry check its `outside` keys (`outsideMarksOf`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::restorerOf`
 
@@ -2191,7 +2191,7 @@ A restorer for one `undone` collection, keeping a copy of its current state: a M
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireEntry`
 
-Applies one edits entry (`apply`) as a unit. It opens the entry's scope (`WireEntryScope`) and runs `apply` through `wireAtomic`, so a throw undoes all of it. On success, the copies it showed join the enclosing entry's, so the enclosing entry's check also covers the displays a nested inline edit set. The copies it edited do not join, since the enclosing entry has not yet applied its own edit to them. The enclosing scope is restored either way.
+Applies one edits entry (`apply`) as a unit. It opens the entry's scope (`WireEntryScope`) and runs `apply` through `wireAtomic`, so a throw undoes all of it. On success, the copies it showed join the enclosing entry's, so the enclosing entry's check also covers the displays a nested inline edit set. The copies it edited do not join, since the enclosing entry has not yet applied its own edit to them. The enclosing scope is restored either way. Every entry also proves the `outside` classification: the values of those keys are marked before it (`outsideMarksOf`), and after it, refused or not, a changed one is an error (`refuseOutsideWrites`), so every evaluation of every grammar checks the claim.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireEntryShown`
 
@@ -2204,6 +2204,26 @@ Whether the entry applying now has already edited the copy a request names: the 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyDeposit`
 
 A copy's body as the layer holds it, or `undefined` for a name that is not a copy.
+
+### `packages/codegen/src/dsl/wire/wire.ts::RoleKey`
+
+One classified key: the object holding it, its name, and its dotted path from the context, which an error names.
+
+### `packages/codegen/src/dsl/wire/wire.ts::OutsideMark`
+
+An `outside` key as an entry found it: its value, and the size of a Map, Set or array value.
+
+### `packages/codegen/src/dsl/wire/wire.ts::outsideMarksOf`
+
+Marks every `outside` key of the context (`keysWithRole`) before an entry applies (`wireEntry`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::sizeOf`
+
+The size of a Map or Set, the length of an array, and `undefined` for any other value.
+
+### `packages/codegen/src/dsl/wire/wire.ts::refuseOutsideWrites`
+
+After an entry, an `outside` key whose value is no longer the same object, or whose collection changed size, is an error naming its path: the entry wrote state that `WIRE_ENTRY_ROLES` says no entry writes, so the classification is wrong. Every `outside` collection is a Set, where an add or a delete changes the size, or a ReadonlyMap, which the context's type keeps entries from writing. Its blind spot: an entry that adds one member to an `outside` Set and deletes another leaves the size unchanged and is not seen. Thrown from the entry's `finally`, the error replaces whatever the entry threw.
 
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 

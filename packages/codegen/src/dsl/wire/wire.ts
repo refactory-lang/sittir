@@ -319,7 +319,7 @@ export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T):
 export function wireAtomic<T>(fn: () => T): T {
 	const context = currentContext;
 	if (!context) return fn();
-	const restores = undoneStateOf(context, WIRE_ENTRY_ROLES);
+	const restores = keysWithRole(context, WIRE_ENTRY_ROLES, 'undone').map(({ holder, key }) => restorerOf(key, holder[key]));
 	try {
 		return fn();
 	} catch (error) {
@@ -328,13 +328,42 @@ export function wireAtomic<T>(fn: () => T): T {
 	}
 }
 
-function undoneStateOf(holder: object | undefined, roles: Readonly<Record<string, WireEntryRole | Readonly<Record<string, WireEntryRole>>>>): (() => void)[] {
+interface RoleKey {
+	readonly holder: Record<string, unknown>;
+	readonly key: string;
+	readonly path: string;
+}
+
+function keysWithRole(holder: object | undefined, roles: Readonly<Record<string, WireEntryRole | Readonly<Record<string, WireEntryRole>>>>, role: WireEntryRole, path = ''): RoleKey[] {
 	if (holder === undefined) return [];
-	return Object.entries(roles).flatMap(([key, role]) => {
-		const value = (holder as Record<string, unknown>)[key];
-		if (typeof role === 'object') return undoneStateOf(value as object | undefined, role);
-		return role === 'undone' ? [restorerOf(key, value)] : [];
-	});
+	const fields = holder as Record<string, unknown>;
+	return Object.entries(roles).flatMap(([key, keyRole]) =>
+		typeof keyRole === 'object'
+			? keysWithRole(fields[key] as object | undefined, keyRole, role, `${path}${key}.`)
+			: keyRole === role
+				? [{ holder: fields, key, path: `${path}${key}` }]
+				: []
+	);
+}
+
+interface OutsideMark extends RoleKey {
+	readonly value: unknown;
+	readonly size: number | undefined;
+}
+
+function outsideMarksOf(context: WireContext): OutsideMark[] {
+	return keysWithRole(context, WIRE_ENTRY_ROLES, 'outside').map((site) => ({ ...site, value: site.holder[site.key], size: sizeOf(site.holder[site.key]) }));
+}
+
+function sizeOf(value: unknown): number | undefined {
+	return value instanceof Map || value instanceof Set ? value.size : Array.isArray(value) ? value.length : undefined;
+}
+
+function refuseOutsideWrites(marks: readonly OutsideMark[]): void {
+	for (const { holder, key, path, value, size } of marks) {
+		const now = holder[key];
+		if (now !== value || sizeOf(now) !== size) throw new Error(`wire: an edits entry wrote ${path}, which WIRE_ENTRY_ROLES classifies outside`);
+	}
 }
 
 function restorerOf(key: string, value: unknown): () => void {
@@ -364,6 +393,7 @@ export function wireEntry<T>(apply: () => T): T {
 	if (!context) return apply();
 	const enclosing = context.entry;
 	const entry: WireEntryScope = { edited: new Set(), shown: new Map() };
+	const outside = outsideMarksOf(context);
 	context.entry = entry;
 	try {
 		const applied = wireAtomic(apply);
@@ -371,6 +401,7 @@ export function wireEntry<T>(apply: () => T): T {
 		return applied;
 	} finally {
 		context.entry = enclosing;
+		refuseOutsideWrites(outside);
 	}
 }
 
