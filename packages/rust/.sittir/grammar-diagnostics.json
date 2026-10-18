@@ -366,44 +366,6 @@
   },
   {
     "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "rust",
-    "message": "conflict between shorthand_field_initializer, field_initializer on '#' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "shorthand_field_initializer",
-          "field_initializer"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "shorthand_field_initializer"
-        ],
-        [
-          "field_initializer"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "identifier",
-          "'{'",
-          "attribute_item"
-        ],
-        "lookahead": "'#'",
-        "interpretations": [
-          "tuple_expression_repeat1",
-          "field_initializer_repeat1"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "conflict-unnecessary-upstream",
     "severity": "info",
     "grammar": "rust",

@@ -7672,7 +7672,7 @@ What a field wrap fields: an unfielded reference to a kind (`symbol`, matched by
 
 ### `packages/codegen/src/dsl/bind.ts::FieldWrap`
 
-A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`.
+A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`, and a repeat of the target is wrapped whole (`isWrapSite`).
 
 ### `packages/codegen/src/dsl/bind.ts::LIST_FIELDS`
 
@@ -7716,11 +7716,11 @@ Whether a rule is a wrap's target: the token's `STRING` for a token target; for 
 
 ### `packages/codegen/src/dsl/bind.ts::wrapTargets`
 
-A rule with every reachable occurrence of the target wrapped in the field. It stops at `OPAQUE_RULES` and at aliases, whose contents belong to the aliased kind.
+A rule with every reachable wrap site (`isWrapSite`) wrapped in the field. It stops at `OPAQUE_RULES` and at aliases, whose contents belong to the aliased kind.
 
 ### `packages/codegen/src/dsl/bind.ts::hasWrapTarget`
 
-Whether a rule holds a target `wrapTargets` would wrap, by the same descent.
+Whether a rule holds a wrap site `wrapTargets` would wrap (`isWrapSite`), by the same descent.
 
 ### `packages/codegen/src/dsl/bind.ts::wrapHosts`
 
@@ -7773,6 +7773,10 @@ A sequence or choice without its blank members (`isBlank`), or the node itself w
 ### `packages/codegen/src/dsl/bind.ts::lead`
 
 Builds a `Lead` from the list, the item field, the lead field and the matches it admits.
+
+### `packages/codegen/src/dsl/bind.ts::isWrapSite`
+
+The rule a field wrap wraps: the target itself (`isWrapTarget`), or a `REPEAT` or `REPEAT1` whose whole content is the target. A list child so gets one field over its repeat, `field('attributes', repeat($.attribute_item))`, the shape enrich and the authored list fields take. Fielding each item instead would give the owner a second auxiliary repeat beside a sibling rule's unfielded one, and tree-sitter a conflict on the shared first token that upstream does not have.
 
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_SIDECAR_KEYS`
 

@@ -138,10 +138,15 @@ function isWrapTarget(rule: GrammarRecord, target: FieldWrapTarget): boolean {
 	return rule.type === 'ALIAS' && rule.named === true && rule.value === target.symbol;
 }
 
+function isWrapSite(rule: GrammarRecord, target: FieldWrapTarget): boolean {
+	if (isWrapTarget(rule, target)) return true;
+	return (rule.type === 'REPEAT' || rule.type === 'REPEAT1') && isRecord(rule.content) && isWrapTarget(rule.content, target);
+}
+
 function wrapTargets(rule: unknown, target: FieldWrapTarget, field: string): unknown {
 	if (Array.isArray(rule)) return rule.map((r) => wrapTargets(r, target, field));
 	if (!isRecord(rule)) return rule;
-	if (isWrapTarget(rule, target)) return { type: 'FIELD', name: field, content: rule };
+	if (isWrapSite(rule, target)) return { type: 'FIELD', name: field, content: rule };
 	if (OPAQUE_RULES.has(rule.type) || rule.type === 'ALIAS') return rule;
 	const out: GrammarRecord = {};
 	for (const [key, value] of Object.entries(rule)) out[key] = wrapTargets(value, target, field);
@@ -151,7 +156,7 @@ function wrapTargets(rule: unknown, target: FieldWrapTarget, field: string): unk
 function hasWrapTarget(rule: unknown, target: FieldWrapTarget): boolean {
 	if (Array.isArray(rule)) return rule.some((r) => hasWrapTarget(r, target));
 	if (!isRecord(rule)) return false;
-	if (isWrapTarget(rule, target)) return true;
+	if (isWrapSite(rule, target)) return true;
 	if (OPAQUE_RULES.has(rule.type) || rule.type === 'ALIAS') return false;
 	return Object.values(rule).some((value) => hasWrapTarget(value, target));
 }

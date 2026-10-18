@@ -28868,19 +28868,19 @@ pub struct TypeIdentifierNode {
 
 impl ::sittir_core::view::KindOf for TypeIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(472)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(473) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(472) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(473)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(472)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
 }
 
@@ -28916,19 +28916,19 @@ pub struct FieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for FieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(470)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(469)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(470) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(469) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(470)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(469)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
     }
 }
 
@@ -28964,19 +28964,19 @@ pub struct ShorthandFieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for ShorthandFieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(472)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(471)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShorthandFieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(472) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(471) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShorthandFieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(472)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(471)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
     }
 }
 

@@ -1506,7 +1506,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	473, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 341
+	472, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 341
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([

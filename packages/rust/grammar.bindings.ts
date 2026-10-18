@@ -124,7 +124,7 @@ export default grammar(
 			attribute_item: { "2": field("content") },
 			const_parameter: { "4/0/1": field("default") },
 			field_expression: { "0": field("object"), "2": field("property") },
-			field_initializer: { "0/0": field("attributes") },
+			field_initializer: { "0": field("attributes") },
 			for_expression: { "2": field("left"), "4": field("right") },
 			for_lifetimes: { "2": field("lifetimes") },
 			inner_attribute_item: { "3": field("content") },
