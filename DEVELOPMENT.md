@@ -55,11 +55,31 @@ Generated packages (`packages/{rust,typescript,python}/src`, `templates/`,
 regenerate.
 
 ```bash
-pnpm run regen:all            # regenerate all three grammars
+pnpm run regen:all            # regenerate every stale grammar, skipping the fresh ones
+pnpm run regen:all --force    # regenerate every grammar (also SITTIR_REGEN_FORCE=1)
 
 # One grammar via the unified sittir CLI
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 ```
+
+`regen:all` generates every stale grammar at once, then builds their native
+bindings one at a time. A grammar is skipped, with a line saying why, only
+when its generated files verify against its sources (the check below), its
+binding was built from the current native inputs under the `gate` profile,
+the current rust toolchain and the current build flags (`RUSTFLAGS`,
+`CARGO_PROFILE_*`, `CC`/`CFLAGS`, any cargo config file cargo would read,
+and the like), and its last regeneration ran to the end, workspace check
+included. A run that fails anywhere regenerates those grammars again next
+time. When no grammar needs regenerating, `regen:all` still runs the
+workspace `cargo check` once, and fails when it does. Each of these records what it read as the work started, so a file
+edited while `regen:all` runs is picked up on the next run. When only the
+parity fixtures are out of date (the corpus under
+`packages/codegen/fixtures/<grammar>/`, the extractor's code, or the fixture
+files themselves changed), the grammar is not regenerated; its
+fixtures are re-extracted, with a `re-extracting fixtures` line saying why.
+Anything that gates a pull request runs with `--force`
+(`SITTIR_REGEN_FORCE=1 pnpm run validate:native`), so a skip never stands in
+for the gate's own regeneration.
 
 ### The local generated-output check
 
@@ -72,7 +92,19 @@ check passes when the tree is one of those pairs, or when its source inputs
 and generated files equal HEAD (or, during a merge, the commit being merged;
 both must equal the same one). So a fresh clone, a branch switch, and a merge
 of a base that regenerated all pass without regenerating. Editing codegen
-source, a grammar, or a generated file by hand does not, until you regenerate.
+source, the shared runtime it executes (any `packages/common` module codegen
+imports at run time, directly or not), a grammar, or a generated file by hand does not,
+nor does an upstream grammar or tree-sitter CLI upgrade or any other change to
+`pnpm-lock.yaml`, nor a new wasi-sdk or binaryen, until you regenerate. A
+toolchain is identified by the version tree-sitter records in its cache
+(`~/.cache/tree-sitter`), or, for one `TREE_SITTER_WASI_SDK_PATH` or
+`TREE_SITTER_BINARYEN_PATH` names, by what its `clang` or `wasm-opt` prints
+for `--version`. Generation installs a missing cached toolchain itself; a
+check without one reports the grammar stale. Each grammar's committed
+`.sittir/upstream.json` names the toolchain its parsers were built with, so a
+fresh clone with another toolchain installed is told the toolchain moved
+and to regenerate; one with none installed is trusted, since nothing there
+can have built its parsers.
 
 The file is per worktree and survives `pnpm install`. Deleting it, or
 `node_modules`, loses nothing: the tree is compared with HEAD instead.
@@ -147,7 +179,8 @@ Each grammar's render engine is a Rust N-API crate under
 
 ```bash
 cd rust/crates/sittir-rust
-pnpm run build                # release binding, written into packages/rust/native
+pnpm run build                # release binding (fat LTO), written into packages/rust/native
+pnpm run build:gate           # gate binding (optimized, no LTO): what gen and validation build
 pnpm run build:debug          # debug binding (dev only)
 ```
 
@@ -156,8 +189,11 @@ Both go through `scripts/build-native.mts <lang>`, which writes the loader
 `packages/<lang>/native/` — the directory the grammar package ships. The loader
 and typings are committed; the binaries are git-ignored.
 
-Prefer release builds when running the validators; the validation load is
-sized for the optimized binding.
+Run the validators on an optimized binding (`gate` or `release`); the
+validation load is sized for it. Each build records its profile, its native
+inputs and its binary's hash under `node_modules/.cache/sittir/native-build/`,
+and validation refuses a binding that is not what a build from the current
+inputs wrote.
 
 Rebuild natives through `pnpm exec tsx packages/cli/src/cli.ts gen --grammar
 <lang> --all --output packages/<lang>/src` (or `pnpm run validate:native`), not

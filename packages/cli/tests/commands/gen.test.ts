@@ -8,7 +8,8 @@ vi.mock('node:child_process', () => ({
 vi.mock('@sittir/codegen/run-codegen', () => ({
 	runCodegen: vi.fn().mockResolvedValue(undefined),
 	runFullRegen: vi.fn().mockResolvedValue(undefined),
-	runStandaloneSteps: vi.fn().mockResolvedValue(undefined)
+	runStandaloneSteps: vi.fn().mockResolvedValue(undefined),
+	runNativeOnly: vi.fn()
 }));
 
 // The gen action's post-generate half is real code from @sittir/tools: an
@@ -23,7 +24,7 @@ vi.mock('@sittir/tools/post-generate', () => ({
 }));
 
 import { gen } from '../../src/commands/gen.ts';
-import { runFullRegen, runCodegen, runStandaloneSteps } from '@sittir/codegen/run-codegen';
+import { runFullRegen, runCodegen, runNativeOnly, runStandaloneSteps } from '@sittir/codegen/run-codegen';
 import { emitParityFixtures } from '@sittir/tools/post-generate';
 import { spawnSync } from 'node:child_process';
 
@@ -121,6 +122,17 @@ describe('gen command', () => {
 		// --no-build-native means fixture extraction has no fresh native
 		// binary to run against — the action must skip it, not emit stale.
 		expect(vi.mocked(emitParityFixtures)).not.toHaveBeenCalled();
+	});
+	it('builds only the native binding under --native-only, then runs post-generate in a fresh process', async () => {
+		vi.clearAllMocks();
+		const program = new Command();
+		gen.register(program);
+		await program.parseAsync(['gen', '--grammar', 'rust', '--all', '--native-only', '--no-workspace-check'], { from: 'user' });
+		expect(vi.mocked(runNativeOnly)).toHaveBeenCalledWith(expect.objectContaining({ grammar: 'rust', workspaceCheck: false }));
+		expect(vi.mocked(runFullRegen)).not.toHaveBeenCalled();
+		expect(vi.mocked(runCodegen)).not.toHaveBeenCalled();
+		expect(vi.mocked(runStandaloneSteps)).not.toHaveBeenCalled();
+		expect(spawnedArgs()).toEqual(expect.arrayContaining(['gen', '--grammar', 'rust', '--post-generate-only', '--all']));
 	});
 	it('runs standalone --transpile with only --grammar (no --output/--all)', async () => {
 		vi.clearAllMocks();

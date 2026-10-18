@@ -21,7 +21,8 @@
 	},
 	"scripts": {
 		"build": "tsx ../../../scripts/build-native.mts typescript --release",
-		"build:debug": "tsx ../../../scripts/build-native.mts typescript"
+		"build:debug": "tsx ../../../scripts/build-native.mts typescript",
+		"build:gate": "tsx ../../../scripts/build-native.mts typescript --profile gate"
 	},
 	"devDependencies": {
 		"@napi-rs/cli": "^3.0.0"
