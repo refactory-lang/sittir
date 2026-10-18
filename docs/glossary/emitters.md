@@ -15100,7 +15100,7 @@ Builds an isolated assembled list whose repeated element choice includes the lis
 
 ### `packages/codegen/src/emitters/node-model.ts::printNodeModel`
 
-The text of `node-model.json5`. `generate` builds the record once (`buildNodeModel`), prints it, and hands the same record to the bindings' routes input.
+The text of `node-model.json5`, one node per line (`printRecordLines`). `generate` builds the record once (`buildNodeModel`), prints it, and hands the same record to the bindings' routes input.
 ### `packages/codegen/src/emitters/node-model.ts::enumMembersOf`
 
 An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
@@ -15205,3 +15205,27 @@ The kinds a slot holds: the distinct names (`valueNameOf`) of its node-reference
 ### `packages/codegen/src/emitters/node-model-read.ts::factorySlotMetaOf`
 
 A slot's factory metadata read back from the slot itself: its `required`, `multiple` and `nonEmpty` flags, which equal the factory map's for every kind with a factory shape, and `registered` and `optionDefault` where the slot carries them. A reader builds it only for kinds with a `factoryShape` (`buildNodeModel` throws on a kind with factory slots and no shape).
+
+### `packages/codegen/src/emitters/record-lines.ts::module`
+
+The one text format of the committed generated records (`node-model.json5`, `resolutions.json`, the validation report): one record per line, so a diff shows whole changed records.
+
+### `packages/codegen/src/emitters/record-lines.ts::printRecordLines`
+
+Prints a JSON value one record per line, ending in a newline. Each array element is a record. The top-level object, and any object holding an array, is a section: one key per line, in the writer's key order, with each value printed by the same rules. Any other object is a map: one entry per line, sorted by key. A record or map entry prints compactly on its line. The writer orders array elements; the printer sorts only map keys. `JSON.parse` reads back the value printed.
+
+### `packages/codegen/src/emitters/record-lines.ts::printBlock`
+
+One value at a nesting depth, by `printRecordLines`' rules: an array as its records, a section key by key, a map entry by entry, and anything else compactly.
+
+### `packages/codegen/src/emitters/record-lines.ts::printLines`
+
+Lines between an opening and a closing bracket, each indented one tab past the depth and joined by commas. With no lines, the brackets print together.
+
+### `packages/codegen/src/emitters/record-lines.ts::isObject`
+
+Whether a JSON value is an object (a section or a map), as opposed to a scalar or `null`.
+
+### `packages/codegen/src/emitters/record-lines.ts::Json`
+
+A JSON value as the printer walks it.

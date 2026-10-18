@@ -201,6 +201,24 @@ describe('writeValidationReport', () => {
 	});
 });
 
+describe('writeValidationReport row lines', () => {
+	it('writes each row on its own line, sorted by grammar, source and code', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-report-test-'));
+		const outPath = join(dir, 'validation-report.json');
+		const row = (grammar: string, source: 'grammar' | 'validator', code: string): ValidationReportEntry =>
+			({ source, severity: 'warning', code, grammar, backend: 'native', message: 'm' }) as ValidationReportEntry;
+		writeValidationReport([row('rust', 'validator', 'b'), row('python', 'validator', 'a'), row('rust', 'grammar', 'z'), row('rust', 'validator', 'a')], outPath);
+		const lines = readFileSync(outPath, 'utf8').split('\n').map((line) => line.trim().replace(/,$/, ''));
+		expect(lines.slice(1, -2).map((line) => JSON.parse(line) as ValidationReportEntry).map((entry) => `${entry.grammar}/${entry.source}/${entry.code}`)).toEqual([
+			'python/validator/a',
+			'rust/grammar/z',
+			'rust/validator/a',
+			'rust/validator/b'
+		]);
+		rmSync(dir, { recursive: true, force: true });
+	});
+});
+
 describe('trivia row', () => {
 	const trivia = (grammar: string, code: string): ValidationReportEntry =>
 		({

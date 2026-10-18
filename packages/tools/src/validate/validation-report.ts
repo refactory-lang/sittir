@@ -12,6 +12,9 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { load } from '../codegen-surface.ts';
+
+const { printRecordLines } = await load('recordLines');
 
 /**
  * Minimal shared shape both diagnostic sources (`grammar` static diagnostics
@@ -204,7 +207,16 @@ const REPORT_ROW_FIELDS = ['source', 'grammar', 'backend', 'code', 'severity', '
 
 /** Write the full (unbounded) entry list to `outPath` as pretty JSON, overwriting any previous report. */
 export function writeValidationReport(entries: readonly ValidationReportEntry[], outPath: string): void {
-	writeFileSync(outPath, JSON.stringify(entries, null, 2));
+	writeFileSync(outPath, printRecordLines([...entries].sort(compareReportRows)));
+}
+
+/** Report rows in a stable order: by grammar, source, backend, code, severity and message, then by the whole row. */
+function compareReportRows(a: ValidationReportEntry, b: ValidationReportEntry): number {
+	const keyOf = (row: ValidationReportEntry): readonly string[] => [row.grammar, row.source, row.backend, row.code, row.severity, row.message, JSON.stringify(row)];
+	const left = keyOf(a);
+	const right = keyOf(b);
+	for (let i = 0; i < left.length; i++) if (left[i] !== right[i]) return left[i]! < right[i]! ? -1 : 1;
+	return 0;
 }
 
 /**

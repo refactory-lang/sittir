@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -9,6 +9,7 @@ import {
 	conflictResolutionsPath,
 	ensureConflictResolutions,
 	readConflictResolutions,
+	rewriteConflictResolutions,
 	writeConflictResolutions
 } from '../conflict-resolutions-file.ts';
 
@@ -44,6 +45,22 @@ describe('the resolutions file of a package', () => {
 		expect(readConflictResolutions({ dir })).toEqual(EMPTY_CONFLICT_RESOLUTIONS);
 		writeConflictResolutions({ dir }, derived);
 		expect(readConflictResolutions({ dir })).toEqual(derived);
+	});
+
+	it('writes each resolution on its own line', () => {
+		writeConflictResolutions({ dir }, derived);
+		const lines = readFileSync(conflictResolutionsPath({ dir }), 'utf8').split('\n').map((line) => line.trim().replace(/,$/, ''));
+		for (const resolution of derived.resolutions) expect(lines).toContain(JSON.stringify(resolution));
+	});
+
+	it('is rewritten in the writer\'s format when its text differs, with its content unchanged', () => {
+		mkdirSync(join(dir, '.sittir'), { recursive: true });
+		writeFileSync(conflictResolutionsPath({ dir }), JSON.stringify(derived, null, 2));
+		rewriteConflictResolutions({ dir });
+		const text = readFileSync(conflictResolutionsPath({ dir }), 'utf8');
+		writeConflictResolutions({ dir }, derived);
+		expect(readFileSync(conflictResolutionsPath({ dir }), 'utf8')).toBe(text);
+		expect(JSON.parse(text)).toEqual(derived);
 	});
 
 	it('is not rewritten when the content is unchanged', () => {

@@ -9,7 +9,7 @@ import {
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
-import { buildNodeModel, emitNodeModel } from '../node-model.ts';
+import { buildNodeModel, emitNodeModel, printNodeModel } from '../node-model.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
@@ -99,10 +99,8 @@ describe('node-model emitter', () => {
 						values: [
 							{
 								node: { kind: 'unresolved-ref', name: 'identifier' },
-								// PR-K2: in-memory kind-id stamps must NEVER reach
-								// node-model.json5 — names stay the identity on disk
-								// (KindId-NodeRefs design §2.4; python regen renumbers
-								// parser ids, so serialized ids would be regen noise).
+								// Kind-id stamps stay in memory: names are the identity
+								// on disk, since a regen renumbers parser ids.
 								storageKindId: 42,
 								parseKind: { kind: 'unresolved-ref', name: 'decorator' },
 								parseKindId: 7,
@@ -130,9 +128,8 @@ describe('node-model emitter', () => {
 		expect(value).toMatchObject({ kind: 'node-ref', name: 'identifier', parseKind: 'decorator' });
 
 		const serialized = emitNodeModel({ grammar: 'synth', nodeMap });
-		expect(serialized).toContain('"parseKind": "decorator"');
+		expect(serialized).toContain('"parseKind":"decorator"');
 		expect(serialized).not.toContain('aliasSources');
-		// PR-K2 serialization shape: id stamps are in-memory facts only.
 		expect(serialized).not.toContain('storageKindId');
 		expect(serialized).not.toContain('parseKindId');
 		expect(serialized).not.toContain('resolvedKindId');
@@ -162,5 +159,17 @@ describe('seats', () => {
 			kind: 'comparison_comparator',
 			shape: 'elements'
 		});
+	});
+});
+
+describe('printNodeModel', () => {
+	it('prints each node on its own line', () => {
+		const nodes = new Map<string, AssembledNode>([
+			['alpha', new AssembledPattern('alpha', { type: PATTERN, value: '[a-z]+' })],
+			['beta', new AssembledPattern('beta', { type: PATTERN, value: '[0-9]+' })]
+		]);
+		const model = buildNodeModel(makeNodeMapWith(nodes));
+		const lines = printNodeModel(model).split('\n').map((line) => line.trim().replace(/,$/, ''));
+		for (const node of model.nodes) expect(lines).toContain(JSON.stringify(node));
 	});
 });

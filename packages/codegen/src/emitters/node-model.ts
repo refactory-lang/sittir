@@ -20,6 +20,7 @@ import {
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
+import { printRecordLines } from './record-lines.ts';
 import { hasOneSurface } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
@@ -141,7 +142,7 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 }
 
 export function printNodeModel(data: SerializedNodeModel): string {
-	return JSON.stringify(data, null, 2) + '\n';
+	return printRecordLines(data);
 }
 
 export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): SerializedNodeModel {

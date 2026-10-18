@@ -5,7 +5,7 @@ import { UNVERIFIED_GRAMMAR_HASH, type ConflictResolutionsFile, type DerivedReso
 import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { parseGenerateOutcome, type GenerateOutcome } from './conflict-summary.ts';
-import { readConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
+import { readConflictResolutions, rewriteConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
 import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation, type DerivationInputs } from './evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing } from './tree-sitter-cli.ts';
@@ -98,6 +98,7 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 			failure.kind === 'stale' ? conflictStaleRecord(pkg.name, failure.outcome) : conflictUnresolvableRecord(pkg.name, failure.reason, failure.report)
 		);
 	}
+	rewriteConflictResolutions(pkg);
 	console.log(`  conflicts: ${settledLine('base', result.base)}; ${settledLine('bound', result.bound)}`);
 	return result;
 }

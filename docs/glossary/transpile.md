@@ -482,11 +482,7 @@ Where a package's derived resolutions live: `.sittir/resolutions.json`.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::writeConflictResolutions`
 
-```text
-Writes the resolutions as tab-indented JSON, leaving the file untouched when
-its content is already the same, so an unchanged derivation leaves the
-committed file untouched.
-```
+Writes the resolutions one per line (`printRecordLines`), leaving the file untouched when its content is already the same, so an unchanged derivation leaves the committed file untouched.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::ensureConflictResolutions`
 
@@ -1076,11 +1072,7 @@ Where a package's derived resolutions live: `.sittir/resolutions.json`.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::writeConflictResolutions`
 
-```text
-Writes the resolutions as tab-indented JSON, leaving the file untouched when
-its content is already the same, so an unchanged derivation leaves the
-committed file untouched.
-```
+Writes the resolutions one per line (`printRecordLines`), leaving the file untouched when its content is already the same, so an unchanged derivation leaves the committed file untouched.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::ensureConflictResolutions`
 
@@ -1095,6 +1087,10 @@ Seeds a package that has no resolutions yet with the empty set, so its
 The package's saved resolutions, seeding the empty set first when there are
 none.
 ```
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::rewriteConflictResolutions`
+
+Rewrites the saved resolutions through `writeConflictResolutions`, so the committed file is in the writer's format even when the derivation reused it unchanged. The content does not change, and a file already in that format is left untouched. `generateWithDerivedConflicts` calls it once the conflicts settle.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::stopRegen`
 

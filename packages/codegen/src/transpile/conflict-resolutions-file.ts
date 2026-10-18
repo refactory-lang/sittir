@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { CONFLICT_RESOLUTIONS_FILE, EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../dsl/conflict-resolutions.ts';
 import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
+import { printRecordLines } from '../emitters/record-lines.ts';
 
 export function conflictResolutionsPath(pkg: Pick<GrammarPackage, 'dir'>): string {
 	return join(sittirDirOf(pkg), CONFLICT_RESOLUTIONS_FILE);
@@ -9,7 +10,7 @@ export function conflictResolutionsPath(pkg: Pick<GrammarPackage, 'dir'>): strin
 
 export function writeConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>, file: ConflictResolutionsFile): void {
 	const path = conflictResolutionsPath(pkg);
-	const content = `${JSON.stringify(file, null, '\t')}\n`;
+	const content = printRecordLines(file);
 	if (existsSync(path) && readFileSync(path, 'utf8') === content) return;
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, content);
@@ -17,6 +18,10 @@ export function writeConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>, file:
 
 export function ensureConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>): void {
 	if (!existsSync(conflictResolutionsPath(pkg))) writeConflictResolutions(pkg, EMPTY_CONFLICT_RESOLUTIONS);
+}
+
+export function rewriteConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>): void {
+	writeConflictResolutions(pkg, readConflictResolutions(pkg));
 }
 
 export function readConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>): ConflictResolutionsFile {
