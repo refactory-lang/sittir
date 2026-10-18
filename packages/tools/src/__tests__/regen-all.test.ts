@@ -9,6 +9,8 @@ vi.mock('@sittir/codegen/grammars', () => ({
 	stableGrammars: () => ['rust', 'typescript', 'python']
 }));
 
+const built = (status: number | null, stdout = '') => ({ status, stdout: Buffer.from(stdout) });
+
 interface Record_ {
 	source: string;
 	binarySha256: string;
@@ -49,6 +51,11 @@ vi.mock('../fixture-inputs.ts', () => {
 	const fixtureOutputs = async (_root: string, grammar: string) => ({ [`fixtures of ${grammar}`]: 'extracted' });
 	return { fixtureSources, fixtureOutputs, fixtureInputs: async (root: string, grammar: string) => ({ ...(await fixtureSources(root, grammar)), ...(await fixtureOutputs(root, grammar)) }) };
 });
+const { diagnosticsOf } = vi.hoisted(() => ({ diagnosticsOf: new Map<string, { code: string; severity: string; message: string }[]>() }));
+vi.mock('../validate/grammar-diagnostics-file.ts', async (importOriginal) => ({
+	...(await importOriginal<typeof import('../validate/grammar-diagnostics-file.ts')>()),
+	readGrammarDiagnostics: (grammar: string) => ({ entries: diagnosticsOf.get(grammar) ?? [] })
+}));
 vi.mock('../regen-record.ts', () => ({
 	readRegenRecord: (_cwd: string, grammar: string) => records.get(grammar),
 	writeRegenRecord,
@@ -95,13 +102,16 @@ beforeEach(() => {
 	runWorkspaceCheck.mockReset().mockReturnValue(0);
 	surfaceCalls.length = 0;
 	delete process.env.SITTIR_REGEN_FORCE;
+	delete process.env.SITTIR_REGEN_VERBOSE;
+	diagnosticsOf.clear();
 	spawn.mockReset().mockImplementation(fakeChild);
-	spawnSync.mockReset().mockReturnValue({ status: 0 });
+	spawnSync.mockReset().mockReturnValue(built(0));
 });
 afterEach(() => vi.restoreAllMocks());
 
 describe('regen:all sequencing', () => {
 	it('generates every grammar at once, then builds each native binding without generating again', async () => {
+		process.env.SITTIR_REGEN_VERBOSE = '1';
 		const run = import('../scripts/regen-all.ts');
 		await generationsStarted(3);
 		expect(spawn).toHaveBeenCalledTimes(3);
@@ -124,7 +134,8 @@ describe('regen:all sequencing', () => {
 		}
 	});
 
-	it("prefixes each generation's output with its grammar", async () => {
+	it("prefixes each generation's output with its grammar under --verbose", async () => {
+		process.env.SITTIR_REGEN_VERBOSE = '1';
 		const write = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 		const run = import('../scripts/regen-all.ts');
 		await generationsStarted(3);
@@ -149,6 +160,7 @@ describe('regen:all sequencing', () => {
 	});
 
 	it('skips a grammar whose generated files and native binary are fresh, and says so', async () => {
+		process.env.SITTIR_REGEN_VERBOSE = '1';
 		finished('typescript');
 		const write = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 		const run = import('../scripts/regen-all.ts');
@@ -223,6 +235,7 @@ describe('regen:all sequencing', () => {
 	});
 
 	it('regenerates a grammar whose last regeneration did not finish, however fresh its files are', async () => {
+		process.env.SITTIR_REGEN_VERBOSE = '1';
 		finished('rust', 'python');
 		fresh.add('typescript');
 		const write = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
@@ -259,7 +272,7 @@ describe('regen:all sequencing', () => {
 	});
 
 	it('leaves every grammar to regenerate after a failed workspace check, so a retry cannot pass by skipping', async () => {
-		spawnSync.mockReturnValueOnce({ status: 0 }).mockReturnValueOnce({ status: 0 }).mockReturnValueOnce({ status: 101 });
+		spawnSync.mockReturnValueOnce(built(0)).mockReturnValueOnce(built(0)).mockReturnValueOnce(built(101));
 		const exit = vi.spyOn(process, 'exit').mockImplementation(() => {
 			throw new Error('exit');
 		});
@@ -275,7 +288,7 @@ describe('regen:all sequencing', () => {
 	});
 
 	it('stops on an unsuccessful native build', async () => {
-		spawnSync.mockReturnValueOnce({ status: 0 }).mockReturnValueOnce({ status: null });
+		spawnSync.mockReturnValueOnce(built(0)).mockReturnValueOnce(built(null));
 		const exit = vi.spyOn(process, 'exit').mockImplementation(() => {
 			throw new Error('exit');
 		});
@@ -288,8 +301,76 @@ describe('regen:all sequencing', () => {
 	});
 });
 
+describe('regen:all console, quiet by default', () => {
+	it('keeps a successful generation\'s stdout to itself and passes its stderr through, prefixed', async () => {
+		const out = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		const err = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(3);
+		children[0]!.stdout.write('Generating rust IR...\n');
+		children[0]!.stderr.write('[warning] something worth seeing\n');
+		for (const child of children) child.finish(0);
+		await run;
+		expect(out).not.toHaveBeenCalledWith('[rust] Generating rust IR...\n');
+		expect(err).toHaveBeenCalledWith('[rust] [warning] something worth seeing\n');
+	});
+
+	it('prints the whole stdout of a failed generation, so a quiet run never hides the cause', async () => {
+		const out = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		vi.spyOn(process, 'exit').mockImplementation(() => {
+			throw new Error('exit');
+		});
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(3);
+		children[1]!.stdout.write('Generating typescript IR...\nthe step that broke\n');
+		children[0]!.finish(0);
+		children[1]!.finish(7);
+		children[2]!.finish(0);
+		await expect(run).rejects.toThrow('exit');
+		expect(out).toHaveBeenCalledWith('[typescript] Generating typescript IR...\n');
+		expect(out).toHaveBeenCalledWith('[typescript] the step that broke\n');
+	});
+
+	it('builds each native binding with cargo quiet and its stdout kept, and prints that stdout when the build fails', async () => {
+		spawnSync.mockReturnValueOnce(built(0, 'built\n')).mockReturnValueOnce(built(2, 'napi said why\n'));
+		const out = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		vi.spyOn(process, 'exit').mockImplementation(() => {
+			throw new Error('exit');
+		});
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(3);
+		for (const child of children) child.finish(0);
+		await expect(run).rejects.toThrow('exit');
+		const [, , options] = spawnSync.mock.calls[0]!;
+		expect(options).toMatchObject({ cwd: '/repo', stdio: ['ignore', 'pipe', 'inherit'], env: expect.objectContaining({ CARGO_TERM_QUIET: 'true' }) });
+		expect(out).not.toHaveBeenCalledWith('[rust] built\n');
+		expect(out).toHaveBeenCalledWith('[typescript] napi said why\n');
+	});
+
+	it('ends with one status line per grammar, with its diagnostic counts by severity', async () => {
+		finished('typescript');
+		diagnosticsOf.set('rust', [
+			{ code: 'a', severity: 'error', message: 'm' },
+			{ code: 'b', severity: 'info', message: 'm' },
+			{ code: 'b', severity: 'info', message: 'm' }
+		]);
+		const out = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(2);
+		for (const child of children) child.finish(0);
+		await run;
+		const lines = out.mock.calls.map((call) => String(call[0]));
+		expect(lines).toEqual([
+			'[rust] regenerated: its sources changed since the last generation · diagnostics: 1 error, 2 info\n',
+			'[typescript] skipped: its generated files match its sources, its native binary was built from the current native inputs (gate), and its fixtures were extracted from the current corpus · diagnostics: none\n',
+			'[python] regenerated: its sources changed since the last generation · diagnostics: none\n'
+		]);
+	});
+});
+
 describe('regen:all when only what the fixtures come from changed', () => {
 	it('re-extracts only the fixtures of that grammar, and says why', async () => {
+		process.env.SITTIR_REGEN_VERBOSE = '1';
 		finished('rust', 'typescript', 'python');
 		inputs.set('typescript', { 'corpus of typescript': 'v2' });
 		const write = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);

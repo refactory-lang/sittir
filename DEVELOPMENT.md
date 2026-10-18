@@ -57,13 +57,14 @@ regenerate.
 ```bash
 pnpm run regen:all            # regenerate every stale grammar, skipping the fresh ones
 pnpm run regen:all --force    # regenerate every grammar (also SITTIR_REGEN_FORCE=1)
+pnpm run regen:all --verbose  # stream every child's full output (also SITTIR_REGEN_VERBOSE=1)
 
 # One grammar via the unified sittir CLI
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 ```
 
 `regen:all` generates every stale grammar at once, then builds their native
-bindings one at a time. A grammar is skipped, with a line saying why, only
+bindings one at a time. A grammar is skipped only
 when its generated files verify against its sources (the check below), its
 binding was built from the current native inputs under the `gate` profile,
 the current rust toolchain and the current build flags (`RUSTFLAGS`,
@@ -77,6 +78,13 @@ parity fixtures are out of date (the corpus under
 `packages/codegen/fixtures/<grammar>/`, the extractor's code, or the fixture
 files themselves changed), the grammar is not regenerated; its
 fixtures are re-extracted, with a `re-extracting fixtures` line saying why.
+By default the run is quiet: each generation's stdout is kept and printed
+only if that child fails, its stderr (warnings and errors) passes through
+prefixed with the grammar, and cargo runs with `CARGO_TERM_QUIET`. The run
+ends with one line per grammar: what it did and why (regenerated, fixtures
+re-extracted, or skipped), and its diagnostic counts by severity from
+`.sittir/grammar-diagnostics.json`. `--verbose` streams everything, as each
+child prints it.
 Anything that gates a pull request runs with `--force`
 (`SITTIR_REGEN_FORCE=1 pnpm run validate:native`), so a skip never stands in
 for the gate's own regeneration.

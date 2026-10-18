@@ -253,7 +253,7 @@ the `diagnostics` list the loop ignores.
 ```text
 The summary is the last top-level JSON object on stderr: tree-sitter writes it
 after anything the grammar printed while it was evaluated, and pretty-prints
-it, so it starts at a line that is exactly `{`. Returns undefined when stderr
+it, so it starts at a line that is exactly `{` (`summaryStart`). Returns undefined when stderr
 carries no parseable summary.
 ```
 
@@ -277,6 +277,14 @@ in any order.
 ### `packages/codegen/src/transpile/conflict-summary.ts::unnecessaryConflictsOf`
 
 The conflict sets a clean run called unnecessary, read from the `UnnecessaryConflicts` diagnostics of the `--json-summary` the CLI prints (the same summary `lastSummary` finds for a failed run). A clean run with no such diagnostic gives `[]`; no summary at all (text only) also gives `[]`.
+
+### `packages/codegen/src/transpile/conflict-summary.ts::summaryStart`
+
+Where the JSON summary starts in `tree-sitter generate --json-summary` stderr: the last line that is exactly `{`, or -1 when there is none. Shared by `lastSummary` and `splitGenerateStderr`, so both read the same boundary.
+
+### `packages/codegen/src/transpile/conflict-summary.ts::splitGenerateStderr`
+
+Splits a clean `generate` run's stderr into what the grammar wrote while it was evaluated (`preamble`) and the closing JSON summary (`summary`), at `summaryStart`. Stderr with no summary is all preamble.
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::UpstreamContext`
 
@@ -573,7 +581,9 @@ out stale, or a derivation that cannot converge, become the blocking
 `conflict-resolutions-stale` or `conflict-unresolvable` record
 (`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's
 `grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops
-the regen. A settled run logs both sections' counts.
+the regen. A settled run logs both sections' counts. A clean run's JSON summary
+goes to stdout and anything the grammar wrote to stderr before it stays on
+stderr (`splitGenerateStderr`), so a quiet regen shows only the latter.
 ```
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCliCapturing`

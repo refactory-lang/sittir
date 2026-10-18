@@ -16,7 +16,7 @@ import {
 	classifyWrapEmission,
 	isSlotBearingCompound,
 	canonicalSeparatedListField,
-	warnSkippedParserSymbol,
+	reportSkippedParserSymbol,
 	aliasEnvelopesOf,
 	aliasEnvelopeIds,
 	pruneUnusedImports,
@@ -349,7 +349,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			emission === 'skip-synthesized-kind' ||
 			emission === 'skip-missing-parser-symbol'
 		) {
-			warnSkippedParserSymbol(kind, 'wrap', emission);
+			reportSkippedParserSymbol(kind, 'wrap', emission);
 		}
 		if (emission !== 'emit') return;
 		switch (node.modelType) {

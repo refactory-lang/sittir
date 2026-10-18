@@ -12730,7 +12730,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
  * `Err("unknown kind id")`, silently, with no compile error and no coverage
  * failure unless the corpus happens to exercise this exact shape. Kinds with
  * no catalog entry at all (left out by tree-sitter, inlined or synthesized;
- * see `warnSkippedParserSymbol`) never had a parser symbol to route by in
+ * see `reportSkippedParserSymbol`) never had a parser symbol to route by in
  * the first place; the phantom-kind ratchet counts them, so they are not
  * this check's concern.
  */
@@ -13261,7 +13261,7 @@ Transformation-method identifier for one sub-factory: `<parentKey>$<name>`, with
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::collectPolymorphWires`
 
-The wire sets the polymorph overlay emits: per parent, the arm routes the model settled (`armRoutesOf`: the parent's key, its filtered sub-factories and alias wires) plus the seats this walk adds — flatten seats (`flattenSeatsOf`), elements seats (`emittedElementsSeats`), tuple seats and the seats a forwarding owner takes from its list (`forwardedSeatsOf`) — and the traversal order (children, seat groups and alias children before their parent, DFS post-order). Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. The diagnostics the model recorded (ambiguous and shared-key sub-factories, context-mismatched arms) print here, as each parent is visited. The emit pass computes the wires once and hands the same map to the types emitter (seated rows) and to `emitPolymorphsOverlay`; a caller that runs outside that pass (`emitTypes`, the node-model and generated-test emitters) computes its own with `silent`.
+The wire sets the polymorph overlay emits: per parent, the arm routes the model settled (`armRoutesOf`: the parent's key, its filtered sub-factories and alias wires) plus the seats this walk adds — flatten seats (`flattenSeatsOf`), elements seats (`emittedElementsSeats`), tuple seats and the seats a forwarding owner takes from its list (`forwardedSeatsOf`) — and the traversal order (children, seat groups and alias children before their parent, DFS post-order). Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. The decisions the model recorded (ambiguous and shared-key sub-factories, context-mismatched arms) print here as notes on stdout, as each parent is visited. The emit pass computes the wires once and hands the same map to the types emitter (seated rows) and to `emitPolymorphsOverlay`; a caller that runs outside that pass (`emitTypes`, the node-model and generated-test emitters) computes its own with `silent`.
 
 A parent enters the map when it has subs, alias forms or seats: a parent with a seat and no subs still enters, because the seat rewrites its `strict`.
 
@@ -14857,9 +14857,9 @@ The literals a compound's render rule places directly under each field, keyed by
 
 The kind ids of a slot's drop set, for the reader: the `separatorKindId` stamped on each of the slot's separated values, and the kind id of each field-tagged literal. Each id is the public symbol link stamped; a separator with no stamp is an error naming it. The ids come out once each, the separators first and then the field-tagged literals.
 
-### `packages/codegen/src/emitters/shared.ts::warnSkippedParserSymbol`
+### `packages/codegen/src/emitters/shared.ts::reportSkippedParserSymbol`
 
-Says why an emitter skipped a kind `classifyParserSymbolEmission` found no parser symbol for, when there is something to say. A kind the grammar inlines is named, since inlining is the grammar's choice. A synthesized kind and a kind tree-sitter left out of the parser are skipped silently. The kinds left out are unreachable by construction: rust's `comment` is a choice over `line_comment` and `block_comment`, which extras name directly, and `_layout` is sittir's layout-trivia union. A kind that goes missing by mistake shows up in the phantom-kind ratchet (`packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts`), which only tightens.
+Says why an emitter skipped a kind `classifyParserSymbolEmission` found no parser symbol for, when there is something to say. A kind the grammar inlines is named on stdout, as a note rather than a warning, since inlining is the grammar's choice. A synthesized kind and a kind tree-sitter left out of the parser are skipped silently. The kinds left out are unreachable by construction: rust's `comment` is a choice over `line_comment` and `block_comment`, which extras name directly, and `_layout` is sittir's layout-trivia union. A kind that goes missing by mistake shows up in the phantom-kind ratchet (`packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts`), which only tightens.
 
 ### `packages/codegen/src/emitters/node-projection.ts::SCALAR_STORAGE`
 

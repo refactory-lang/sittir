@@ -4,7 +4,7 @@ import { GrammarDiagnosticError, writeGrammarDiagnosticsJson } from '../compiler
 import { UNVERIFIED_GRAMMAR_HASH, type ConflictResolutionsFile, type DerivedResolution, type ResolutionSection } from '../dsl/conflict-resolutions.ts';
 import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
-import { parseGenerateOutcome, type GenerateOutcome } from './conflict-summary.ts';
+import { parseGenerateOutcome, splitGenerateStderr, type GenerateOutcome } from './conflict-summary.ts';
 import { readConflictResolutions, rewriteConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
 import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation, type DerivationInputs } from './evaluate-for-derivation.ts';
@@ -87,7 +87,11 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 		inputs: evaluateForDerivation(pkg),
 		runGenerate: async (grammar) => {
 			const run = runTreeSitterCliCapturing(['generate', '--json-summary'], sittirDir, grammar === 'base' ? { [UNBOUND_ENV]: '1' } : {});
-			if (run.status === 0) process.stderr.write(run.stderr);
+			if (run.status === 0) {
+				const { preamble, summary } = splitGenerateStderr(run.stderr);
+				process.stderr.write(preamble);
+				process.stdout.write(summary);
+			}
 			return parseGenerateOutcome(run.status, run.stderr);
 		}
 	});

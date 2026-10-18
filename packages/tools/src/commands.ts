@@ -12,20 +12,19 @@ import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
 import { combineBuiltRender, type BuiltRenderResult } from './validate/built-render.ts';
 import { runLayoutRuns, type LayoutRunsResult } from './validate/layout-runs.ts';
-import { grammarPackage, isGrammar, sittirDirOf, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
+import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import { cachedNativeEngineProfile, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
+import { readGrammarDiagnostics } from './validate/grammar-diagnostics-file.ts';
 import { diffValidationReports, formatReportDiff, readComparableReport, reportMoved } from './validate/report-diff.ts';
 import {
 	buildValidationReport,
 	checkCodeCeilings,
 	readValidationReport,
 	writeValidationReport,
-	type GrammarDiagnosticEntry,
-	type GrammarDiagnosticsInput,
 	type CodeCeilings,
 	type ValidatorDiagnostic,
 	type ValidationReport
@@ -362,63 +361,6 @@ export async function spawnIsolatedGrammarWorker(grammar: GrammarName): Promise<
 			});
 		});
 	});
-}
-
-/**
- * Read `packages/<grammar>/.sittir/grammar-diagnostics.json` (written by
- * codegen's `writeGrammarDiagnosticsJson`, Task 13) and normalize each entry
- * into a `GrammarDiagnosticEntry` for the unified validation report.
- *
- * The on-disk shape is the real `GrammarDiagnostic | CompilerDiagnostic`
- * union (`packages/codegen/src/types/diagnostics.ts`) — it has NO `location`
- * field, but every other field it does have (`scope`, `phase`, `canProceed`,
- * `details`, `ruleId`, `subject`, `ownerKind`, `slotName`, …) is preserved
- * through unchanged. `location` is the one synthesized field, derived from
- * `ownerKind`/`slotName`: `ownerKind` alone when `slotName` is absent,
- * `${ownerKind}.${slotName}` when both are present, `undefined` when neither
- * is.
- *
- * Returns an empty array (rather than throwing) ONLY when the file doesn't
- * exist for a grammar — `gen` may not have been re-run for every grammar
- * since Task 13 landed, and that absence is expected/skippable. A file that
- * DOES exist but fails to read or parse (truncated write, permission error,
- * corrupt JSON, …) is a real error — silently folding that into "no
- * diagnostics" would recreate the exact silent-drop behavior this report is
- * meant to eliminate, and could make a successful validation run overwrite
- * the report without any grammar entries. Surface it loudly instead, as a
- * synthetic `GrammarDiagnosticEntry` carrying the file path — consistent
- * with how `runCountsCli` already surfaces whole-grammar collection
- * failures as synthetic entries rather than throwing out of the report loop.
- */
-export function readGrammarDiagnostics(grammar: GrammarName): GrammarDiagnosticsInput {
-	const path = join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json');
-	if (!existsSync(path)) return { entries: [] };
-	const text = readFileSync(path, 'utf8');
-	try {
-		const raw = JSON.parse(text) as ReadonlyArray<GrammarDiagnosticEntry & { ownerKind?: string; slotName?: string }>;
-		// Every other field (scope, phase, canProceed, details, ruleId, subject, …)
-		// is preserved via the spread — `location` is the only synthesized field,
-		// added alongside `ownerKind`/`slotName` rather than replacing them.
-		return {
-			text,
-			entries: raw.map((d) => {
-				const location = d.ownerKind ? (d.slotName ? `${d.ownerKind}.${d.slotName}` : d.ownerKind) : d.location;
-				return { ...d, location };
-			})
-		};
-	} catch (e) {
-		return {
-			text,
-			entries: [
-				{
-					code: 'grammar-diagnostics-read-error',
-					severity: 'error',
-					location: path,
-					message: `Failed to read/parse grammar diagnostics file at ${path}: ${(e as Error).message}`
-				}
-			]
-		};
-	}
 }
 
 /**

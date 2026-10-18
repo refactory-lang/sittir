@@ -1810,3 +1810,15 @@ How much of its layout the source's tree stores apart from its read-time options
 ### `packages/tools/src/validate/layout-runs.ts::runLayoutRuns`
 
 The layout rows of a grammar's corpus: how many runs, which no region's record reaches, which entries' region render was refused, and what the corpus stores (`stored`, summed over `storedLayoutOf`). The stored counts are small against the runs because the baseline is the read-time options, the tree's inferred layer over the engine's: a source's own conventions are inferred once and store nothing per gap.
+
+### `packages/tools/src/validate/grammar-diagnostics-file.ts::readGrammarDiagnostics`
+
+Reads `packages/<grammar>/.sittir/grammar-diagnostics.json` (written by codegen's `writeGrammarDiagnosticsJson`) as report entries, with `text` the file as read. Every on-disk field is kept; `location` is added from `ownerKind` (and `.slotName` when present). A missing file reads as no entries, since a grammar may not have been generated yet. A file that exists but does not parse reads as one `grammar-diagnostics-read-error` entry naming the path, so a corrupt file is reported rather than counted as clean. The validation report (`writeMergedValidationReport`) and the regen status lines (`regenerateGrammars`) both read through it.
+
+### `packages/tools/src/validate/grammar-diagnostics-file.ts::severitySummary`
+
+One phrase counting diagnostics by severity, most severe first (`SEVERITY_ORDER`), skipping severities with none: `1 error, 2 info`, or `none`.
+
+### `packages/tools/src/validate/grammar-diagnostics-file.ts::SEVERITY_ORDER`
+
+Severities from most to least severe: `fail`, `error`, `warning`, `info`. The order `severitySummary` lists counts in.
