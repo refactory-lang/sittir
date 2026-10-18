@@ -915,7 +915,7 @@ body-pattern substitution.
 
 `baseSupertypeNames` is the base grammar's supertypes list (`baseSupertypeNamesOf`): the one fact the rename path reads to tell a supertype lift from a hoisted group.
 
-`activeEntryPath` is the path of the entry applying now (`wireWithPatchSites`). `copies` holds each copy the layer made, by name, with its effect (`wireCopy`); `copyReferences` maps each reference `copy()` or a path returned to its copy, and `copyDepth` counts the copy edits applying now (`insideCopy`).
+`activeEntryPath` is the path of the entry applying now (`wireWithPatchSites`). `copies` holds each copy the layer made, by name, with its effect (`wireCopy`); `copyReferences` maps each reference `copy()` or a path returned to its copy, and `copyDepth` counts the copy edits applying now (`insideCopy`). `entry` is the scope of the edits entry applying now (`wireEntry`), or null between entries. What each key does when an entry is refused is classified once, in `WIRE_ENTRY_ROLES`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::authoredFieldSites`
 
@@ -1029,7 +1029,7 @@ A copy to make or reuse: its source, the part copied (`.` for the whole rule), a
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopy`
 
-The context's copy of a source part, made or reused, with `edit` applied to its body; returns the copy's name. The context is the rule kind being evaluated, and the name is `verbs/copy.ts::copyNameOf`'s. A copy is made only during a layer pass; elsewhere it is `edit-entry-invalid`. Its body is the source's (a deposit before the base's), or the selected part (`copyPartOf`). The body is a deposit, so the layer gains it as a rule, and the copy effect is recorded once, with the path or `copy()` origin that makes it inherit its source's options. One copy per source, part and context: a second request edits the same body. A request `from` a copy the path reached edits that copy under its own name. A reached copy is always the current kind's own, because a copy starts from its source's deposit or base body and a kind's edited body is never a deposit, so no walked body holds another kind's copy; one that is not is refused as `edit-entry-invalid` (`refuseForeignCopy`). A name the grammar already has, or a second source for one name, is `rule-name-taken` (`refuseCopyName`), and a source the grammar lacks is `edit-site-missing`; a refused copy returns `undefined`. The edit runs inside the copy (`insideCopy`). A new copy is registered before its edit runs, so a reference to it inside its own body finds no deposit and is not entered. An edit that throws, such as a path that misses inside the copy, unregisters the copy it was making, so a later entry that reaches the same source makes the copy afresh.
+The context's copy of a source part, made or reused, with `edit` applied to its body; returns the copy's name. The context is the rule kind being evaluated, and the name is `verbs/copy.ts::copyNameOf`'s. A copy is made only during a layer pass; elsewhere it is `edit-entry-invalid`. Its body is the source's (a deposit before the base's), or the selected part (`copyPartOf`). The body is a deposit, so the layer gains it as a rule, and the copy effect is recorded once, with the path or `copy()` origin that makes it inherit its source's options. One copy per source, part and context: a request from another entry edits the same body. A request `from` a copy the path reached edits that copy under its own name. A reached copy is always the current kind's own, because a copy starts from its source's deposit or base body and a kind's edited body is never a deposit, so no walked body holds another kind's copy; one that is not is refused as `edit-entry-invalid` (`refuseForeignCopy`). A name the grammar already has, or a second source for one name, is `rule-name-taken` (`refuseCopyName`), and a source the grammar lacks is `edit-site-missing`; a refused copy returns `undefined`. The edit runs inside the copy (`insideCopy`). A new copy is registered before its edit runs, so a reference to it inside its own body finds no deposit and is not entered. Within one edits entry a copy is edited once: a later reach of the same copy returns its name without editing it, so the entry only re-points or re-shows that reference (`WireEntryScope`). When an edit throws, the registration is undone by whichever caller catches the throw (`wireAtomic`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyBody`
 
@@ -1041,7 +1041,7 @@ The copy effect of a copy the context made, or `undefined` for a name that is no
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireNoteCopyDisplay`
 
-Stamps the name a copy's reference shows it under on its copy effect (`CopyEffect.display`): the source's own name for a reference that aliases back, the shown name for a named one, and none for a bare reference to a hidden copy. Its reference is made by `primitives/copy.ts::copyReference`, which calls it, and the effect log's display families read it (`verbs/effects.ts::displayFamiliesOf`).
+Stamps the name a copy's reference shows it under on its copy effect (`CopyEffect.display`): the source's own name for a reference that aliases back, the shown name for a named one, and none for a bare reference to a hidden copy. Its reference is made by `primitives/copy.ts::copyReference`, which calls it, and the effect log's display families read it (`verbs/effects.ts::displayFamiliesOf`). Within an edits entry it also records the display as the entry's (`WireEntryScope`), for the check after the entry.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyReference`
 
@@ -2160,6 +2160,50 @@ The field and alias effects the layer's patch sets had, in the order they applie
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRecordBindingEffect`
 
 Records one effect on the current wire context, in every layer.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireEntryScope`
+
+What one edits entry has done to copies so far. `edited` names each copy whose body the entry has edited, so a later reach in the same entry only re-points or re-shows it (`wireCopy`, `wireCopyEdited`). `shown` maps each copy the entry gave a reference to the display that reference shows (`wireNoteCopyDisplay`), for the check after the entry (`primitives/copy.ts::refuseSplitDisplays`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireEntryRole`
+
+What a context key does when an entry is refused. An entry may write an `undone` key, and the key is restored to its state before the entry (`wireAtomic`). A `scoped` key is set for one call's extent and restored by that call's own `finally`. An `outside` key is written only outside an entry's application (at construction, by list or rule evaluation, or by enrich), so an entry leaves nothing in it to undo. `kept` is the layer's diagnostics: the report, which keeps what a refused entry recorded. An `unreached` key is a WeakMap that an entry writes only under objects it made, and the refusal discards those with the entry's result.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireEntryRoles`
+
+A role for every key of `T`, optional keys included.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES`
+
+Every `WireContext` key's role when an entry is refused (`WireEntryRole`), with `automaticVariants` and `layer` classified key by key. The type requires a role for every key, so no new field can stay out of the undo unclassified. A test checks the keys both constructors build (`withWireContext`, `wireImpl`) against it. The undo reads its `undone` keys from here (`undoneStateOf`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireAtomic`
+
+Runs `fn` so that a throw out of it leaves the wire state as it found it. Every `undone` collection is copied before `fn` runs and restored if it throws, and the error propagates. The entry boundary (`wireEntry`) runs through it, as do the two fan-outs that catch a skipped branch and carry on (`transform/transform-path.ts::applyWildcardToMembers`, and the choice arms of `transform/transform.ts::applyFlatPatches`). A skipped walk's copies, deposits, binding effects, lift claims and labels therefore go with it. Outside a wire context it just runs `fn`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::undoneStateOf`
+
+One restorer for each `undone` key of a role record, descending into the keys classified key by key.
+
+### `packages/codegen/src/dsl/wire/wire.ts::restorerOf`
+
+A restorer for one `undone` collection, keeping a copy of its current state: a Map's entries (a Set value is copied too, since `liftClaims` adds to its sets in place), a Set's members, or an array's items. Restoring refills the same collection, so every holder of it sees the restored state. A key classified `undone` that holds no collection is an error.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireEntry`
+
+Applies one edits entry (`apply`) as a unit. It opens the entry's scope (`WireEntryScope`) and runs `apply` through `wireAtomic`, so a throw undoes all of it. On success, the copies it showed join the enclosing entry's, so the enclosing entry's check also covers the displays a nested inline edit set. The copies it edited do not join, since the enclosing entry has not yet applied its own edit to them. The enclosing scope is restored either way.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireEntryShown`
+
+The displays the entry applying now gave its copies' references (`WireEntryScope`). Empty between entries.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireCopyEdited`
+
+Whether the entry applying now has already edited the copy a request names: the request's `from` copy, or else the current kind's copy of the source part.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireCopyDeposit`
+
+A copy's body as the layer holds it, or `undefined` for a name that is not a copy.
 
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 

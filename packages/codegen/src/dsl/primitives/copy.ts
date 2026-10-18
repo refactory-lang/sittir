@@ -2,7 +2,12 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { isParserHiddenName } from '../rule-patterns.ts';
 import { recordAlias } from '../transform/transform.ts';
-import { wireCopy, wireCopyOf, wireCopyReference, wireEditCopy, wireGetCurrentRuleKind, wireNoteCopyDisplay, wireNoteCopyReference, wireRefuse } from '../wire/wire.ts';
+import type { AnyRule } from '../../types/rule.ts';
+import { RuleWalker } from '../rule-walker.ts';
+import { VerbRefusal } from '../verbs/copy.ts';
+import { wireCopy, wireCopyDeposit, wireCopyOf, wireCopyReference, wireEditCopy, wireEntryShown, wireNoteCopyDisplay, wireNoteCopyReference } from '../wire/wire.ts';
+
+const walker = new RuleWalker<AnyRule>();
 
 const symbol = (name: string): RuntimeRule => nativeRuleFn<(name: string) => RuntimeRule>('sym', 'symbol')(name);
 
@@ -20,8 +25,43 @@ export function copyReference(copy: string, source: string, shown?: string): Run
 
 export function reachedCopyReference(reference: RuntimeRule, copy: string, source: string, shown?: string): RuntimeRule {
 	const display = displayOf(reference);
-	if (shown !== undefined && shown !== display && !displaysConflict(copy, source, display, shown)) return copyReference(copy, source, shown);
+	if (shown !== undefined && shown !== display) {
+		refuseRedisplay(copy, source, display, shown);
+		return copyReference(copy, source, shown);
+	}
 	return referencedNameOf(reference) === copy ? reference : wireNoteCopyReference(repointed(reference, copy), copy);
+}
+
+export function refuseSplitDisplays(rule: RuntimeRule): RuntimeRule {
+	const shown = wireEntryShown();
+	if (shown.size === 0) return rule;
+	const displays = referenceDisplays(rule);
+	for (const [copy, display] of shown)
+		for (const other of displays.get(copy) ?? [])
+			if (other !== display)
+				throw new VerbRefusal('edit-site-conflict', `the copy '${copy}' is shown as '${display ?? copy}' and as '${other ?? copy}'`, { copy, displays: [display ?? copy, other ?? copy] });
+	return rule;
+}
+
+function referenceDisplays(rule: RuntimeRule): Map<string, Set<string | undefined>> {
+	const displays = new Map<string, Set<string | undefined>>();
+	const visit = (node: RuntimeRule | undefined): void => {
+		if (node === undefined) return;
+		const copy = copyReferencedBy(node);
+		if (copy === undefined) return walker.childrenOf(node as unknown as AnyRule).forEach((child) => visit(child as unknown as RuntimeRule));
+		const seen = displays.get(copy);
+		if (seen !== undefined) return void seen.add(displayOf(node));
+		displays.set(copy, new Set([displayOf(node)]));
+		visit(wireCopyDeposit(copy));
+	};
+	visit(rule);
+	return displays;
+}
+
+function copyReferencedBy(node: RuntimeRule): string | undefined {
+	const shown = node as unknown as { readonly type: string; readonly name?: string; readonly content?: { readonly type: string; readonly name?: string } };
+	const name = shown.type === 'SYMBOL' ? shown.name : shown.type === 'ALIAS' && shown.content?.type === 'SYMBOL' ? shown.content.name : undefined;
+	return name !== undefined && wireCopyOf(name) !== undefined ? name : undefined;
 }
 
 function displayOf(reference: RuntimeRule): string | undefined {
@@ -39,16 +79,9 @@ function repointed(reference: RuntimeRule, copy: string): RuntimeRule {
 	return alias.type === 'ALIAS' ? nativeAlias(symbol(copy), alias.named ? symbol(alias.value) : alias.value) : symbol(copy);
 }
 
-function displaysConflict(copy: string, source: string, display: string | undefined, shown: string): boolean {
-	if (display === undefined || display === source) return false;
-	const owner = wireGetCurrentRuleKind() ?? '';
-	wireRefuse({
-		code: 'edit-site-conflict',
-		ownerKind: owner,
-		message: `edits: '${owner}': the copy '${copy}' is shown as '${display}', and a path shows it as '${shown}'`,
-		details: { kind: owner, copy, displays: [display, shown] }
-	});
-	return true;
+function refuseRedisplay(copy: string, source: string, display: string | undefined, shown: string): void {
+	if (display === undefined || display === source) return;
+	throw new VerbRefusal('edit-site-conflict', `the copy '${copy}' is shown as '${display}', and a path shows it as '${shown}'`, { copy, displays: [display, shown] });
 }
 
 export function copy(source: unknown, path = '.'): RuntimeRule {

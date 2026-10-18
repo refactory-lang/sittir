@@ -11,10 +11,12 @@ export type VerbRefusalCode = 'edit-site-missing' | 'edit-entry-invalid' | 'narr
 export class VerbRefusal extends Error {
 	readonly code: VerbRefusalCode;
 	readonly reason: string;
-	constructor(code: VerbRefusalCode, reason: string) {
+	readonly details: Readonly<Record<string, unknown>>;
+	constructor(code: VerbRefusalCode, reason: string, details: Readonly<Record<string, unknown>> = {}) {
 		super(reason);
 		this.code = code;
 		this.reason = reason;
+		this.details = details;
 	}
 }
 

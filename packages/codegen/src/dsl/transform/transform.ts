@@ -13,7 +13,7 @@ import type { PathSegment } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
-import { editedCopy } from '../primitives/copy.ts';
+import { editedCopy, refuseSplitDisplays } from '../primitives/copy.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import { canonicalRuleText } from './token-forms.ts';
@@ -28,6 +28,7 @@ import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/fla
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
 import { isLeadPlaceholder, type LeadPlaceholder } from '../primitives/lead.ts';
 import { isNarrowPlaceholder, type NarrowPlaceholder } from '../primitives/narrow.ts';
+import { VerbRefusal } from '../verbs/copy.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
@@ -64,6 +65,8 @@ import {
 	wireElementSlotOf,
 	wireLiftRenamedTo,
 	wireSetLiftBody,
+	wireAtomic,
+	wireEntry,
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
@@ -174,18 +177,24 @@ function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
 
 function appliedAtSite(key: string, apply: () => RuntimeRule): RuntimeRule | undefined {
 	try {
-		return apply();
+		return wireEntry(() => refuseSplitDisplays(apply()));
 	} catch (error) {
-		if (!(error instanceof ApplyPathSkip)) throw error;
+		const refusal = siteRefusalOf(error);
+		if (refusal === undefined) throw error;
 		const owner = wireGetCurrentRuleKind() ?? '';
 		wireRefuse({
-			code: 'edit-site-missing',
+			code: refusal.code,
 			ownerKind: owner,
-			message: `edits: '${owner}' at '${key}': ${error.message}`,
-			details: { kind: owner, path: key }
+			message: `edits: '${owner}' at '${key}': ${refusal.reason}`,
+			details: { kind: owner, path: key, ...refusal.details }
 		});
 		return undefined;
 	}
+}
+
+function siteRefusalOf(error: unknown): VerbRefusal | undefined {
+	if (error instanceof VerbRefusal) return error;
+	return error instanceof ApplyPathSkip ? new VerbRefusal('edit-site-missing', error.message) : undefined;
 }
 
 function recordPatchSites(patches: PatchSet): void {
@@ -671,7 +680,7 @@ function applyFlatPatches(original: RuntimeRule, patches: Record<number | string
 		let anyApplied = false;
 		const newMembers = members.map((m) => {
 			try {
-				const patched = applyFlatPatches(m, patches);
+				const patched = wireAtomic(() => applyFlatPatches(m, patches));
 				anyApplied = true;
 				return patched;
 			} catch (e) {

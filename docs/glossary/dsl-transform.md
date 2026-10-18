@@ -210,7 +210,7 @@ Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and return
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredHiddenRule`
 
-A hidden rule between the visible kinds of a path, entered implicitly so a path reads in tree terms. The body the request names (`wire/wire.ts::wireCopyBody`) is walked for the segment as its own rule: unfielded, with no enclosing wrappers, and inside the copy (`wire/wire.ts::wireEnteringRule`, which also enters a rule that reaches itself only once). That body is the copy's when the reference is one or the context already has one, otherwise the rule's own. Only a walk that matches makes the copy, so a hidden rule that never reaches the kind stays shared. An enrich group lift is part of its owner and is never entered.
+A hidden rule between the visible kinds of a path, entered implicitly so a path reads in tree terms. The body the request names (`wire/wire.ts::wireCopyBody`) is walked for the segment as its own rule: unfielded, with no enclosing wrappers, and inside the copy (`wire/wire.ts::wireEnteringRule`, which also enters a rule that reaches itself only once). That body is the copy's when the reference is one or the context already has one, otherwise the rule's own. Only a walk that matches makes the copy, so a hidden rule that never reaches the kind stays shared. An enrich group lift is part of its owner and is never entered. A hidden copy the entry has already edited is not walked again: the reference is re-pointed at it (`wire/wire.ts::wireCopyEdited`). A second reach therefore neither applies the edit twice nor misses and leaves the reference on the shared rule.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToCopyReference`
 
@@ -388,6 +388,8 @@ whether a group seats on its parent.
  * @throws {ApplyPathSkip} If the container is empty or no member accepted the patch.
  */
 ```
+
+Each member applies atomically (`wire/wire.ts::wireAtomic`), so a member that skips leaves behind nothing its walk recorded: no copy, binding effect or lift claim.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::symbolRef`
 
@@ -1294,6 +1296,8 @@ A skip that reaches an entry's application (`transform.ts::appliedAtSite`) is th
 // "some siblings won't match, that's fine" semantics, just for flat
 // positional keys instead of path wildcards). When no arm takes
 // the set, the choice itself is an ApplyPathSkip naming the keys.
+// Each arm applies atomically (wire/wire.ts::wireAtomic), so an arm
+// left unchanged keeps nothing its attempt recorded.
 // Reconstruct via native dsl so the choice keeps its runtime-correct
 // shape.
 ```
@@ -1805,7 +1809,11 @@ Records an alias edit that `wire/wire.ts::wireAliasTargetIssue` rejects as the l
 
 ### `packages/codegen/src/dsl/transform/transform.ts::appliedAtSite`
 
-Runs one entry's application and returns the rule it gives. An `ApplyPathSkip` out of it means the entry's path matches nothing. The entry is then refused as `edit-site-missing` (`wire/wire.ts::wireRefuse`), with details naming the kind and the entry's key and the skip's reason in the message, and `undefined` comes back, so the caller keeps the rule it had. Outside a layer pass, `wireRefuse` throws that message. Any other error propagates.
+Runs one entry's application as a unit (`wire/wire.ts::wireEntry`) and returns the rule it gives. After the application, every copy the entry showed must show that one display at every reference (`primitives/copy.ts::refuseSplitDisplays`). An `ApplyPathSkip` means the entry's path matches nothing, which is `edit-site-missing`. A `VerbRefusal` out of the application, such as a display conflict, is refused with its own code (`siteRefusalOf`). A refused entry's wire state is undone to what it was before the entry. The refusal is recorded through `wire/wire.ts::wireRefuse`: its details name the kind, the entry's key and anything the refusal itself names, and its message carries the reason. `undefined` then comes back, so the caller keeps the rule it had. Outside a layer pass, `wireRefuse` throws that message. Any other error propagates, after the undo.
+
+### `packages/codegen/src/dsl/transform/transform.ts::siteRefusalOf`
+
+The refusal an error out of an entry's application stands for: a `VerbRefusal` as itself, an `ApplyPathSkip` as `edit-site-missing` with the skip's reason, and nothing for any other error.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 

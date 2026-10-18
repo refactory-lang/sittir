@@ -57,11 +57,14 @@ describe('a copy reached through a path is named by its owner', () => {
 		expect(codes(raw)).toEqual([]);
 	}, 60_000);
 
-	it('T4d: two different display names on one reference are edit-site-conflict', async () => {
+	it('T4d: two different display names on one reference are edit-site-conflict, and the entry undoes', async () => {
 		const raw = await evaluateTempGrammar({ extras: '', rules: S3_RULES }, '', {
 			bindings: "edits: { outer: { 'body:/(list as outer_list)/(fn)/1': alias('a'), 'body:/(list as other_list)/(fn)/1': alias('b') } }"
 		});
-		expect(codes(raw)).toContain('edit-site-conflict');
+		expect(raw.layerDiagnostics).toContainEqual(
+			expect.objectContaining({ code: 'edit-site-conflict', details: expect.objectContaining({ path: 'body:/(list as other_list)/(fn)/1', copy: '_list_outer', displays: ['outer_list', 'other_list'] }) })
+		);
+		expect(raw.rules._fn_outer).toMatchObject({ type: 'SEQ', members: [{ type: 'STRING', value: 'fn' }, { type: 'ALIAS', value: 'a' }] });
 	}, 60_000);
 
 	it('T4e: repeating the same display name changes nothing', async () => {

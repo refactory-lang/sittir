@@ -114,11 +114,72 @@ export interface WireContext {
 	readonly entering: Set<string>;
 	readonly copies: Map<string, CopyEffect>;
 	readonly copyReferences: WeakMap<object, string>;
+	entry: WireEntryScope | null;
 	readonly source: unknown;
 	evaluatedExternals: ReadonlySet<string>;
 	evaluatedBodies?: ReadonlyMap<string, unknown>;
 	readonly layer: WireLayer | undefined;
 }
+
+export interface WireEntryScope {
+	readonly edited: Set<string>;
+	readonly shown: Map<string, string | undefined>;
+}
+
+export type WireEntryRole = 'undone' | 'scoped' | 'outside' | 'kept' | 'unreached';
+
+type WireEntryRoles<T> = { readonly [K in keyof T]-?: WireEntryRole };
+
+export const WIRE_ENTRY_ROLES = {
+	deposits: 'undone',
+	ruleBodies: 'undone',
+	syntheticInline: 'undone',
+	inlineRemovals: 'outside',
+	liftNames: 'undone',
+	refineForms: 'undone',
+	groups: 'outside',
+	renderAs: 'outside',
+	visibleExternals: 'outside',
+	whitespaceCollisions: 'outside',
+	expectDiagnostics: 'outside',
+	expectTestFailures: 'outside',
+	reparseHosts: 'outside',
+	options: 'outside',
+	currentRuleKind: 'scoped',
+	currentDollar: 'scoped',
+	inlineWrites: 'unreached',
+	applyingEntries: 'scoped',
+	authoredRuleNames: 'outside',
+	ruleCauses: 'outside',
+	undeclaredRules: 'outside',
+	patchSites: 'undone',
+	bindingEffects: 'undone',
+	extraRuleNames: 'outside',
+	precedenceRankedNames: 'outside',
+	lists: 'outside',
+	flattenedParents: 'undone',
+	aliasTargets: 'outside',
+	editedMints: 'outside',
+	automaticVariants: { keys: 'undone', supertypeOwners: 'outside' } satisfies WireEntryRoles<AutomaticVariants>,
+	baseRuleBodies: 'outside',
+	textTokens: 'outside',
+	symbols: 'outside',
+	baseSupertypeNames: 'outside',
+	liftBodies: 'undone',
+	liftClaims: 'undone',
+	elementSupertypes: 'outside',
+	activePatchSites: 'scoped',
+	activeEntryPath: 'scoped',
+	copyDepth: 'scoped',
+	entering: 'scoped',
+	copies: 'undone',
+	copyReferences: 'unreached',
+	entry: 'scoped',
+	source: 'outside',
+	evaluatedExternals: 'outside',
+	evaluatedBodies: 'outside',
+	layer: { name: 'outside', depth: 'outside', diagnostics: 'kept', narrows: 'undone', leads: 'undone' } satisfies WireEntryRoles<WireLayer>
+} as const satisfies { readonly [K in keyof WireContext]-?: WireEntryRole | Readonly<Record<string, WireEntryRole>> };
 
 export interface WireLayer {
 	readonly name: string;
@@ -255,6 +316,79 @@ export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T):
 	}
 }
 
+export function wireAtomic<T>(fn: () => T): T {
+	const context = currentContext;
+	if (!context) return fn();
+	const restores = undoneStateOf(context, WIRE_ENTRY_ROLES);
+	try {
+		return fn();
+	} catch (error) {
+		for (const restore of restores) restore();
+		throw error;
+	}
+}
+
+function undoneStateOf(holder: object | undefined, roles: Readonly<Record<string, WireEntryRole | Readonly<Record<string, WireEntryRole>>>>): (() => void)[] {
+	if (holder === undefined) return [];
+	return Object.entries(roles).flatMap(([key, role]) => {
+		const value = (holder as Record<string, unknown>)[key];
+		if (typeof role === 'object') return undoneStateOf(value as object | undefined, role);
+		return role === 'undone' ? [restorerOf(key, value)] : [];
+	});
+}
+
+function restorerOf(key: string, value: unknown): () => void {
+	if (value instanceof Map) {
+		const saved = [...value].map(([name, entry]) => [name, entry instanceof Set ? new Set(entry) : entry] as const);
+		return () => {
+			value.clear();
+			for (const [name, entry] of saved) value.set(name, entry);
+		};
+	}
+	if (value instanceof Set) {
+		const saved = [...value];
+		return () => {
+			value.clear();
+			for (const entry of saved) value.add(entry);
+		};
+	}
+	if (Array.isArray(value)) {
+		const saved = value.slice();
+		return () => void value.splice(0, value.length, ...saved);
+	}
+	throw new Error(`wire: '${key}' is undone after a refused entry, but holds no Map, Set or array`);
+}
+
+export function wireEntry<T>(apply: () => T): T {
+	const context = currentContext;
+	if (!context) return apply();
+	const enclosing = context.entry;
+	const entry: WireEntryScope = { edited: new Set(), shown: new Map() };
+	context.entry = entry;
+	try {
+		const applied = wireAtomic(apply);
+		for (const [copy, display] of entry.shown) enclosing?.shown.set(copy, display);
+		return applied;
+	} finally {
+		context.entry = enclosing;
+	}
+}
+
+export function wireEntryShown(): ReadonlyMap<string, string | undefined> {
+	return currentContext?.entry?.shown ?? new Map();
+}
+
+export function wireCopyEdited(request: WireCopyRequest): boolean {
+	const context = currentContext;
+	const owner = context?.currentRuleKind;
+	if (!context?.entry || owner === null || owner === undefined) return false;
+	return context.entry.edited.has(request.from ?? copyNameOf(request.source, request.part, owner));
+}
+
+export function wireCopyDeposit(copy: string): RuntimeRule | undefined {
+	return currentContext?.copies.has(copy) ? currentContext.deposits.get(copy) : undefined;
+}
+
 export interface WireCopyRequest {
 	readonly source: string;
 	readonly part: string;
@@ -272,6 +406,7 @@ export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => 
 		refuseForeignCopy(owner, request.from);
 		return undefined;
 	}
+	if (context.entry?.edited.has(name)) return name;
 	const prior = context.copies.get(name);
 	const body = prior === undefined ? freshCopyBody(context, request, name, owner) : sameCopy(prior, request, owner) ? context.deposits.get(name) : undefined;
 	if (body === undefined) return undefined;
@@ -286,12 +421,8 @@ export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => 
 			admitted: undefined,
 			origin: request.via === 'path' && context.activeEntryPath !== null ? { kind: 'path', owner, path: context.activeEntryPath } : { kind: 'copy', owner }
 		});
-	try {
-		context.deposits.set(name, insideCopy(context, () => edit(body)));
-	} catch (error) {
-		if (prior === undefined) context.copies.delete(name);
-		throw error;
-	}
+	context.deposits.set(name, insideCopy(context, () => edit(body)));
+	context.entry?.edited.add(name);
 	return name;
 }
 
@@ -334,7 +465,9 @@ export function wireCopyOf(copy: string): CopyEffect | undefined {
 
 export function wireNoteCopyDisplay(copy: string, display: string | undefined): void {
 	const effect = currentContext?.copies.get(copy);
-	if (effect !== undefined) currentContext!.copies.set(copy, { ...effect, display });
+	if (effect === undefined) return;
+	currentContext!.copies.set(copy, { ...effect, display });
+	currentContext!.entry?.shown.set(copy, display);
 }
 
 export function wireCopyReference(rule: unknown): string | undefined {
@@ -569,6 +702,7 @@ export function withWireContext<T>(
 		entering: new Set(),
 		copies: new Map(),
 		copyReferences: new WeakMap(),
+		entry: null,
 		source: base,
 		evaluatedExternals: new Set(),
 		layer: undefined
@@ -793,6 +927,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		entering: new Set(),
 		copies: new Map(),
 		copyReferences: new WeakMap(),
+		entry: null,
 		source,
 		evaluatedExternals: new Set(),
 		layer

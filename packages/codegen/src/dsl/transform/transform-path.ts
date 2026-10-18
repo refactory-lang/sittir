@@ -10,7 +10,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
-import { wireCopy, wireCopyBody, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
+import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 import type { WireCopyRequest } from '../wire/wire.ts';
 import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
 import { isParserHiddenName } from '../rule-patterns.ts';
@@ -433,7 +433,9 @@ function enteredCopy(reference: RuntimeRule, request: WireCopyRequest, edit: (bo
 }
 
 function enteredHiddenRule(rule: RuntimeRule, reached: ReachedRule, segment: KindSegment, rest: readonly PathSegment[], patch: PathPatch): WalkResult {
-	const body = isParserHiddenName(reached.kind) && !isEnrichGroupLiftSymbol(rule) ? wireCopyBody(reached.request) : undefined;
+	if (!isParserHiddenName(reached.kind) || isEnrichGroupLiftSymbol(rule)) return { rule, matched: false };
+	if (wireCopyEdited(reached.request)) return { rule: enteredCopy(rule, reached.request, (body) => body), matched: true };
+	const body = wireCopyBody(reached.request);
 	const inner = body === undefined ? undefined : wireEnteringRule(reached.kind, () => walkKindMatch(body, segment, rest, patch, undefined, false));
 	return inner?.matched === true ? { rule: enteredCopy(rule, reached.request, () => inner.rule), matched: true } : { rule, matched: false };
 }
@@ -679,7 +681,7 @@ function applyWildcardToMembers(
 	let anyApplied = false;
 	for (let i = 0; i < members.length; i++) {
 		try {
-			members[i] = applyPath(members[i]!, rest, patch, enclosing);
+			members[i] = wireAtomic(() => applyPath(members[i]!, rest, patch, enclosing));
 			anyApplied = true;
 		} catch (e) {
 			if (e instanceof ApplyPathSkip) continue;

@@ -378,7 +378,7 @@ The reference to a copy. A copy of a visible rule aliases back to its source, `a
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::reachedCopyReference`
 
-The reference a path leaves at a reference it reached that already stands for a copy. With `shown` naming a display the reference does not have, the reference is the copy's, shown as `shown` (`copyReference`). Otherwise it keeps its form: the same reference when it already names the copy, else re-pointed at it (`repointed`). A reference already shown under a name of its own (not its source's) that a path shows as another is `edit-site-conflict` (`displaysConflict`), and keeps its display.
+The reference a path leaves at a reference it reached that already stands for a copy. With `shown` naming a display the reference does not have, the reference is the copy's, shown as `shown` (`copyReference`). Otherwise it keeps its form: the same reference when it already names the copy, else re-pointed at it (`repointed`). A reference already shown under a name of its own (not its source's) that a path shows as another is `edit-site-conflict` (`refuseRedisplay`), which refuses the whole entry.
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::displayOf`
 
@@ -392,9 +392,9 @@ The rule a reference names: the symbol, or the symbol an `ALIAS` shows.
 
 The same reference form naming another copy: an `ALIAS` keeps its value and namedness, and a bare symbol stays bare.
 
-### `packages/codegen/src/dsl/primitives/copy.ts::displaysConflict`
+### `packages/codegen/src/dsl/primitives/copy.ts::refuseRedisplay`
 
-Whether showing a copy's reference as `shown` conflicts with the display it has. A reference with no display, or shown as its source, takes the new name. A display of its own is refused as `edit-site-conflict` naming the kind, the copy and both displays.
+Refuses to show a copy's reference as `shown` when the reference already has a display of its own. A reference with no display, or shown as its source, takes the new name. A display of its own is a `VerbRefusal` `edit-site-conflict` naming the copy and both displays, and it refuses the entry at the entry's boundary (`transform/transform.ts::appliedAtSite`).
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::copy`
 
@@ -407,6 +407,22 @@ Whether showing a copy's reference as `shown` conflicts with the display it has.
 ### `packages/codegen/src/dsl/primitives/copy.ts::editedCopy`
 
 `edit` and `replace` on a copy's reference: the edit applies to the copy's body and the same reference comes back. Any other rule is `undefined`.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::refuseSplitDisplays`
+
+The check after an edits entry. Every copy the entry gave a display (`wire/wire.ts::wireEntryShown`) must show that display at every reference reachable from the entry's result (`referenceDisplays`). If any reference shows another, that is a `VerbRefusal` `edit-site-conflict` naming the copy and both displays. So an entry that shows one reference of a copy under a new name, and leaves another under the old one, is refused whole. A bare reference to a hidden copy shows no display and is named by the copy's own name. Returns the rule.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::referenceDisplays`
+
+The displays each copy shows across a rule. Every reference to a copy (`copyReferencedBy`) adds its display, and each copy's body is walked once, so references held in a copy's deposit count too.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copyReferencedBy`
+
+The copy a node refers to, as a bare symbol or as an alias over one, when that name is a copy the layer made (`wire/wire.ts::wireCopyOf`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::walker`
+
+The rule walker the display check descends with (`referenceDisplays`).
 
 ### `packages/codegen/src/dsl/primitives/refine.ts::module`
 
