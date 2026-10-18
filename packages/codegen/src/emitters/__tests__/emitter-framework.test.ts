@@ -18,7 +18,6 @@ function makeNodeMap(nodes: Map<string, AssembledNode> = new Map()): NodeMap {
 		name: 'test',
 		nodes,
 		signatures: { signatures: new Map() },
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		rules: {},
 		externals: [],
 		word: undefined,

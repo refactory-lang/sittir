@@ -21,7 +21,7 @@ import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts
 import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 
-import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
+import type { NodeMap, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { DroppedTokens } from './diagnostics/grammar-diagnostics.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
@@ -68,7 +68,6 @@ export interface GeneratedFiles {
 export interface GenerateConfig {
 	grammar: string;
 	outputDir: string;
-	include?: IncludeFilter;
 	strict?: boolean;
 	emitRenderModule?: boolean;
 	compilation?: Compilation;
@@ -211,7 +210,6 @@ function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
 async function compileFromPackage(pkg: GrammarPackage, cfg: GenerateConfig): Promise<Compilation> {
 	return compileGrammar({
 		package: pkg,
-		include: cfg.include,
 		generatedIdTables: await loadPackageIdTables(pkg),
 		allowDiagnostics: cfg.allowDiagnostics
 	});

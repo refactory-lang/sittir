@@ -25,6 +25,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--skip-ts-chain` — Skip the auto transpile + tree-sitter generate chain
 - `--roundtrip` — Run validator probes after generation
 - `--post-generate-only` — Run only the post-generate fixtures and probes
+- `--native-only` — Rebuild only the N-API binding from the generated sources, then run post-generate
 - `--no-build-native` — Skip the post-regen N-API rebuild
 - `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
@@ -488,15 +489,13 @@ pnpm exec tsx packages/cli/src/cli.ts tool hoisted-census [options]
 
 ### `tool inspect-refs`
 
-Inspect symbol references or derivation suggestions
+Inspect the references to a symbol: who names it with a field, and who refers to it without one
 
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--mode <mode>` — Mode: refs | suggestions (default: `refs`)
-- `--symbol <name>` — Target symbol name (refs mode) (default: `_type_identifier`)
+- `--symbol <name>` — Target symbol name (default: `_type_identifier`)
 - `--base` — Use base grammar.js instead of overrides
-- `--limit <n>` — Max entries per section (suggestions mode) (default: `10`)
 
 **Example**
 
