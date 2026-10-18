@@ -170,7 +170,12 @@ Two committed ratchets back the run (both only ever tighten):
   ceilings are checked against (a unit test pins the committed pair).
   Commit it, as `validate` wrote it, in the same commit as any change to
   `sclass-ceilings.json` or to the validated rows; otherwise leave it out,
-  since every run rewrites it.
+  since every run rewrites it. Compare two reports, such as the committed
+  one and a fresh run's, with
+  `sittir validate history --diff <base.json> <head.json>`: it prints
+  per-grammar row and per-code count deltas, then every row only one side
+  has. It exits 1 when rows moved and 2 when a side is missing, empty or
+  has no rows, so an empty side never reads as "nothing moved".
 
 ## Native engine build
 
