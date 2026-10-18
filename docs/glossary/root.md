@@ -478,6 +478,10 @@ another (`runFullRegen` calling `runCodegen`) restores the outer call's
 value rather than clearing the flag out from under it.
 ```
 
+### `packages/codegen/src/run-codegen.ts::refuseUnlessAllowed`
+
+Prints a batch of blocking diagnostics raised after compilation (dropped tokens, slots read through a hidden helper) and throws a `GrammarDiagnosticError` for those whose code `allowDiagnostics` does not list. An empty batch prints nothing.
+
 ### `packages/codegen/src/run-codegen.ts::runCodegenInternal`
 
 ```text

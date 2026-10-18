@@ -836,6 +836,14 @@ A kind and the literal tokens its template neither writes nor seats in a slot.
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDroppedTokens`
 
 The blocking `dropped-token` error for one kind: the tokens lost by its render, and the remedy, a named wrapper for the token in patches so it becomes a slot. Generation stops on it unless `dropped-token` is allowed. It is raised once the templates are emitted, because the template is the only place the loss is visible.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::HelperSlotRead`
+
+A kind whose template names a slot that only a field of a hidden helper it inlines holds: the kind, the slot, and the helper's storage name.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromHelperSlotRead`
+
+The blocking `slot-through-hidden-helper` error for one such read, naming the kind and the slot. A render body is generic over the kind's own fields trait, so it cannot reach a field of the helper, and the slot would render as absent. The remedy is to name the slot as a field of the kind itself. Generation stops on it unless `slot-through-hidden-helper` is allowed.
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::expectationsInEitherSpelling`
 
 The grammar's `expectDiagnostics` with each kind listed under both its base name and its bound name. A grammar declares its expectations in base names, and a diagnostic may name the kind either way, depending on whether it is raised before or after the grammar bindings rename it. A grammar with no renames keeps its expectations as written.

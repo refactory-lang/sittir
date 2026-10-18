@@ -141,6 +141,7 @@ import type { CodegenEmitter } from './emitter.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import type { GrammarName } from '../grammars.ts';
+import type { HelperSlotRead } from '../compiler/diagnostics/grammar-diagnostics.ts';
 import { continuationTriviaKinds, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
@@ -150,6 +151,7 @@ export interface RustRenderModuleEmit {
 	optionsRs: { path: string; contents: string };
 	libRs: { path: string; contents: string };
 	recordsTs: { path: string; contents: string };
+	helperSlotReads: readonly HelperSlotRead[];
 }
 
 export interface RenderModuleBundle {
@@ -946,14 +948,11 @@ function buildTypedTemplateBody(
 			bind(ident, f.hasNodeField ? `node.${rIdent}()` : '""');
 			continue;
 		}
-		if (f.backingNodeField) {
-			throw new Error(
-				`render body for '${struct.kind}' reads slot '${f.name}' through its hidden helper '${f.backingNodeField}', which a body over the node's fields trait cannot reach`
-			);
-		}
 		bind(
 			ident,
-			f.hasNodeField ? `View::new(node.${rIdent}(), ${template})` : `View::new(None::<&str>, ${template})`
+			f.hasNodeField && f.backingNodeField === undefined
+				? `View::new(node.${rIdent}(), ${template})`
+				: `View::new(None::<&str>, ${template})`
 		);
 	}
 
@@ -1174,8 +1173,19 @@ export function emitRenderModule(
 		recordsTs: {
 			path: `packages/${lang}/src/records.ts`,
 			contents: recordsTs(lang, support.records)
-		}
+		},
+		helperSlotReads: structs.flatMap(helperSlotReadsOf)
 	};
+}
+
+function helperSlotReadsOf(struct: EmittedStruct): HelperSlotRead[] {
+	const refs = references(struct.body);
+	const named = new Set([...refs.slots, ...refs.tests]);
+	return struct.fields.flatMap((f) =>
+		f.backingNodeField !== undefined && named.has(f.name)
+			? [{ kind: struct.kind, slot: f.name, helper: f.backingNodeField }]
+			: []
+	);
 }
 
 function recordsTs(lang: GrammarName, records: ReadonlyMap<string, RecordLayout>): string {

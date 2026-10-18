@@ -130,6 +130,26 @@ export function fromDroppedTokens(grammar: string, dropped: DroppedTokens): Gram
 	};
 }
 
+export interface HelperSlotRead {
+	readonly kind: string;
+	readonly slot: string;
+	readonly helper: string;
+}
+
+export function fromHelperSlotRead(grammar: string, read: HelperSlotRead): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'slot-through-hidden-helper',
+		severity: 'error',
+		grammar,
+		ownerKind: read.kind,
+		slotName: read.slot,
+		message: `kind '${read.kind}': its template names slot '${read.slot}', which only a field of its hidden helper '${read.helper}' holds, so a render body over the kind's own fields cannot reach it. Name '${read.slot}' as a field of '${read.kind}' itself`,
+		canProceed: false,
+		details: { helper: read.helper }
+	};
+}
+
 const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
 	'storagename-collision',
 	'nonterminal-separator-unstamped',

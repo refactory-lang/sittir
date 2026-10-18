@@ -3096,6 +3096,13 @@ so the parser is generated before the render module is emitted.
 `node.rs` imports `sittir_core::VerbatimNode`, so every verbatim
 variant the module names holds the core's type.
 
+### `packages/codegen/src/emitters/render-module.ts::helperSlotReadsOf`
+
+The slots a struct's template names (as a slot or as a gate's test) that
+are backed by a hidden helper's field (`backingNodeField`), one
+`HelperSlotRead` each. A backed field the template never names renders
+nothing either way, so it is not reported.
+
 
 #### body
 
@@ -7148,7 +7155,7 @@ other; `elementKinds` stays the kinds the items admit.
 
 ### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit`
 
-`recordsTs` is `packages/<lang>/src/records.ts` (`recordsTs`).
+`recordsTs` is `packages/<lang>/src/records.ts` (`recordsTs`). `helperSlotReads` lists the slots the templates name that only a hidden helper's field holds (`helperSlotReadsOf`); it is not a file, and the CLI refuses on it before writing.
 
 ```text
 /**
@@ -7233,11 +7240,13 @@ other; `elementKinds` stays the kinds the items admit.
 	 * field `value`), this field names the HELPER's node struct field
 	 * (e.g. `const_item_optional1`) that must be matched at render time.
 	 *
-	 * When set, the kind's render body refuses the slot: a body generic
+	 * When set, the kind's render body binds the slot absent: a body generic
 	 * over the node's fields trait reads its own fields and cannot reach the
 	 * helper's inner field (`buildTypedTemplateBody`).
 	 */
 ```
+
+A slot the template names with this set is reported as a `HelperSlotRead` (`helperSlotReadsOf`), and generation refuses it as `slot-through-hidden-helper`.
 
 ### `packages/codegen/src/emitters/render-module.ts::backingInnerRequired`
 
