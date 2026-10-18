@@ -45,7 +45,6 @@ export function makeNormalized(
 		supertypes: new Set(),
 		factoryInline: new Set(),
 		word: null,
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		...overrides
 	};
 }

@@ -28,6 +28,7 @@ const EXPECTED = [
 	'inspect-refs',
 	'inspect-type',
 	'list-kinds',
+	'node-json-census',
 	'override-census',
 	'phantom-kinds',
 	'probe-kind',

@@ -76,13 +76,15 @@ describe('buildValidationReportEntries', () => {
 describe('classifySClass', () => {
 	it.each([
 		['parsekind-noninjective', 'x', 'S1'],
-		['seq-with-nested-seq', 'x', 'S3'],
 		['union-slot-unaddressable', 'x', 'S4'],
 		['union-slot-mixed-row', 'x', 'S4'],
-		['accessor-throw', 'x', 'S4'],
 		['coverage-missing-field', 'x', 'S5']
 	] as const)('direct code %s -> %s regardless of message', (code, message, expected) => {
 		expect(classifySClass({ code, message })).toBe(expected);
+	});
+
+	it.each(['seq-with-nested-seq', 'accessor-throw'])('classifies no code that nothing reports: %s', (code) => {
+		expect(classifySClass({ code, message: 'x' })).toBeUndefined();
 	});
 
 	it.each([

@@ -144,6 +144,7 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 		},
 		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -211,6 +212,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -253,6 +255,7 @@ function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportS
 		},
 		names: () => hydrateStoredSlot(node, '_names'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -264,7 +267,7 @@ function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportS
 
 export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 	if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
-	if (!_leafRe_buildImportPrefix.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildImportPrefix.test(text))
 		throw new Error(`import_prefix: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -273,6 +276,7 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -301,6 +305,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 		prefix: () => hydrateStoredSlot(node, '_prefix'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -326,6 +331,7 @@ export function buildFutureImportStatement(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -354,6 +360,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 		moduleName: () => hydrateStoredSlot(node, '_module_name'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -415,6 +422,7 @@ function _buildImportList(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -443,6 +451,7 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 		name: () => hydrateStoredSlot(node, '_name'),
 		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -470,6 +479,7 @@ export function buildPrintStatement(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -492,6 +502,7 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -515,6 +526,7 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 		},
 		expressions: () => hydrateStoredSlots(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -543,6 +555,7 @@ export function buildExpressionStatement(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -571,6 +584,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		name: () => hydrateStoredSlot(node, '_name'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -594,6 +608,7 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 		},
 		identifier: () => hydrateStoredSlot(node, '_identifier'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -617,6 +632,7 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 		},
 		expressions: () => hydrateStoredSlot(node, '_expressions'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -640,6 +656,7 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 		},
 		expressions: () => hydrateStoredSlot(node, '_expressions'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -668,6 +685,7 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 		expressions: () => hydrateStoredSlot(node, '_expressions'),
 		cause: () => hydrateStoredSlot(node, '_cause'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -707,6 +725,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		consequence: () => hydrateStoredSlot(node, '_consequence'),
 		alternatives: () => hydrateStoredSlots(node, '_alternative'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -735,6 +754,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 		condition: () => hydrateStoredSlot(node, '_condition'),
 		consequence: () => hydrateStoredSlot(node, '_consequence'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -757,6 +777,7 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -790,6 +811,7 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 		subjects: () => hydrateStoredSlot(node, '_subjects'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -813,6 +835,7 @@ export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmp
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -851,6 +874,7 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 		guard: () => hydrateStoredSlot(node, '_guard'),
 		consequence: () => hydrateStoredSlot(node, '_consequence'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -893,6 +917,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		body: () => hydrateStoredSlot(node, '_body'),
 		alternative: () => hydrateStoredSlot(node, '_alternative'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -925,6 +950,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		body: () => hydrateStoredSlot(node, '_body'),
 		alternative: () => hydrateStoredSlot(node, '_alternative'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -964,6 +990,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 		elseClause: () => hydrateStoredSlot(node, '_else_clause'),
 		finallyClause: () => hydrateStoredSlot(node, '_finally_clause'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -996,6 +1023,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		exception: () => hydrateStoredSlot(node, '_exception'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1018,6 +1046,7 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 		},
 		block: () => hydrateStoredSlot(node, '_block'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1050,6 +1079,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		withClause: () => hydrateStoredSlot(node, '_with_clause'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1072,6 +1102,7 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 		},
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1131,6 +1162,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 		returnType: () => hydrateStoredSlot(node, '_return_type'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1192,6 +1224,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -1258,6 +1291,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1281,6 +1315,7 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1303,6 +1338,7 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1326,6 +1362,7 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 		},
 		names: () => hydrateStoredSlots(node, '_names'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1349,6 +1386,7 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 		},
 		names: () => hydrateStoredSlots(node, '_names'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1377,6 +1415,7 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 		code: () => hydrateStoredSlot(node, '_code'),
 		inClauses: () => hydrateStoredSlots(node, '_in_clause'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1403,6 +1442,7 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 		left: () => hydrateStoredSlot(node, '_left'),
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1452,6 +1492,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 		superclasses: () => hydrateStoredSlot(node, '_superclasses'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1512,6 +1553,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1538,6 +1580,7 @@ export function buildParenthesizedListSplat(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1605,6 +1648,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -1637,6 +1681,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 		decorators: () => hydrateStoredSlots(node, '_decorator'),
 		definition: () => hydrateStoredSlot(node, '_definition'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1659,6 +1704,7 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1682,6 +1728,7 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 		},
 		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1741,6 +1788,7 @@ function _buildExpressionList(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1765,6 +1813,7 @@ export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>)
 		},
 		names: () => hydrateStoredSlots(node, '_names'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1790,6 +1839,7 @@ export function buildCasePattern(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1850,6 +1900,7 @@ export function buildSimplePattern(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1878,6 +1929,7 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 		casePattern: () => hydrateStoredSlot(node, '_case_pattern'),
 		identifier: () => hydrateStoredSlot(node, '_identifier'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1947,6 +1999,7 @@ export function buildUnionPattern(
 		},
 		patterns: () => hydrateStoredSlots(node, '_patterns'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2010,6 +2063,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -2040,6 +2094,7 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 		key: () => hydrateStoredSlot(node, '_key'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2068,6 +2123,7 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 		name: () => hydrateStoredSlot(node, '_name'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2101,6 +2157,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 		operator: () => _operator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2134,6 +2191,7 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 		name: () => hydrateStoredSlot(node, '_name'),
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2172,6 +2230,7 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 		operator: () => _operator,
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2231,6 +2290,7 @@ function _buildParametersElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2286,6 +2346,7 @@ function _buildPatterns(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2348,6 +2409,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -2411,6 +2473,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -2441,6 +2504,7 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 		name: () => hydrateStoredSlot(node, '_name'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2474,6 +2538,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 		type: () => hydrateStoredSlot(node, '_type'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2499,6 +2564,7 @@ export function buildListSplatPattern(
 		},
 		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2524,6 +2590,7 @@ export function buildDictionarySplatPattern(
 		},
 		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2560,6 +2627,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2582,6 +2650,7 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 		},
 		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2615,6 +2684,7 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2648,6 +2718,7 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2676,6 +2747,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 		operator: () => _operator,
 		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2711,6 +2783,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 		left: () => hydrateStoredSlot(node, '_left'),
 		comparators: () => hydrateStoredSlots(node, '_comparators'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2745,6 +2818,7 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2781,6 +2855,7 @@ export function buildLambdaWithinForInClause(
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2814,6 +2889,7 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 		operator: () => _operator,
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2868,6 +2944,7 @@ function _buildPatternList(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2892,6 +2969,7 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2920,6 +2998,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 		object: () => hydrateStoredSlot(node, '_object'),
 		attribute: () => hydrateStoredSlot(node, '_attribute'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2954,6 +3033,7 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 		value: () => hydrateStoredSlot(node, '_value'),
 		subscripts: () => hydrateStoredSlot(node, '_subscripts'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3005,6 +3085,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		expression: _step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
 		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3035,6 +3116,7 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 		function: () => hydrateStoredSlot(node, '_function'),
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3062,6 +3144,7 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3090,6 +3173,7 @@ export function buildType(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3117,6 +3201,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 		operator: () => _operator,
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3150,6 +3235,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		name: () => hydrateStoredSlot(node, '_name'),
 		typeParameter: () => hydrateStoredSlot(node, '_type_parameter'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3176,6 +3262,7 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		left: () => hydrateStoredSlot(node, '_left'),
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3204,6 +3291,7 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 		baseType: () => hydrateStoredSlot(node, '_base_type'),
 		constraint: () => hydrateStoredSlot(node, '_constraint'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3230,6 +3318,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 		baseType: () => hydrateStoredSlot(node, '_base_type'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3258,6 +3347,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 		name: () => hydrateStoredSlot(node, '_name'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3321,6 +3411,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3383,6 +3474,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3445,6 +3537,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3510,6 +3603,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3540,6 +3634,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 		key: () => hydrateStoredSlot(node, '_key'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3568,6 +3663,7 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		body: () => hydrateStoredSlot(node, '_body'),
 		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3598,6 +3694,7 @@ export function buildDictionaryComprehension(
 		body: () => hydrateStoredSlot(node, '_body'),
 		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3626,6 +3723,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		body: () => hydrateStoredSlot(node, '_body'),
 		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3654,6 +3752,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		body: () => hydrateStoredSlot(node, '_body'),
 		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3677,6 +3776,7 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3741,6 +3841,7 @@ function _buildCollectionElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3780,6 +3881,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 		rights: () => hydrateStoredSlots(node, '_right'),
 		comma: () => _comma,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3802,6 +3904,7 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 		},
 		condition: () => hydrateStoredSlot(node, '_condition'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3835,6 +3938,7 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 		condition: () => hydrateStoredSlot(node, '_condition'),
 		alternative: () => hydrateStoredSlot(node, '_alternative'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3858,6 +3962,7 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 		},
 		strings: () => hydrateStoredSlots(node, '_string'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3891,6 +3996,7 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		contents: () => hydrateStoredSlots(node, '_content'),
 		stringEnd: () => hydrateStoredSlot(node, '_string_end'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3922,6 +4028,7 @@ export function buildStringContent(
 		},
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3960,6 +4067,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		typeConversion: () => hydrateStoredSlot(node, '_type_conversion'),
 		formatSpecifier: () => hydrateStoredSlot(node, '_format_specifier'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3989,6 +4097,7 @@ export function buildFormatSpecifier(
 		},
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4000,7 +4109,7 @@ export function buildFormatSpecifier(
 
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 	if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`);
-	if (!_leafRe_buildTypeConversion.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildTypeConversion.test(text))
 		throw new Error(`type_conversion: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -4009,6 +4118,7 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4022,7 +4132,7 @@ export function buildIdentifier<const W extends string>(
 	text: W extends _ReservedWord_buildIdentifier ? never : W
 ): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (!_leafRe_buildIdentifier.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	if (_reservedWords_buildIdentifier.has(text)) throw new Error(`identifier: '${text}' is a reserved word`);
 	const handle = currentHandle();
@@ -4032,6 +4142,7 @@ export function buildIdentifier<const W extends string>(
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4060,6 +4171,7 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4072,9 +4184,9 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
 export function buildComment(text: `#${string}`, affix: false): T.Comment.Bound;
 export function buildComment(input: string, affix: boolean = true): T.Comment.Bound {
-	const value = affix ? input : unaffixed(String(input), '#', '', 'comment');
+	const value = affix ? input : unaffixed(input, '#', '', 'comment');
 	const _content = value;
-	if (!_slotRe_buildComment_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -4087,6 +4199,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4150,6 +4263,7 @@ function _buildSimpleStatementsElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4206,6 +4320,7 @@ function _buildSubjects(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4266,6 +4381,7 @@ function _buildCasePatterns(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4326,6 +4442,7 @@ function _buildWithClauseWithItems(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4381,6 +4498,7 @@ function _buildTypes(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4455,6 +4573,7 @@ function _buildArgumentListElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4515,6 +4634,7 @@ function _buildListPatternCasePatterns(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4577,6 +4697,7 @@ function _buildDictPatternElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4637,6 +4758,7 @@ function _buildSubscripts(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4697,6 +4819,7 @@ function _buildDictionaryElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4720,6 +4843,7 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4731,7 +4855,7 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 
 export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
 	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
-	if (!_leafRe_buildFormatSpecifierText.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildFormatSpecifierText.test(text))
 		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -4740,6 +4864,7 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4799,6 +4924,7 @@ function _buildTuplePatternElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4864,6 +4990,7 @@ function _buildTupleElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4895,6 +5022,7 @@ export function buildExceptClauseExceptionAs(
 		value: () => hydrateStoredSlot(node, '_value'),
 		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4962,6 +5090,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -5031,6 +5160,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -5092,6 +5222,7 @@ function _buildPrintArguments(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5152,6 +5283,7 @@ function _buildPrintChevronArguments(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5190,6 +5322,7 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 		chevron: () => hydrateStoredSlot(node, '_chevron'),
 		printChevronArguments: () => hydrateStoredSlot(node, '_print_chevron_arguments'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5254,6 +5387,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5323,6 +5457,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5349,6 +5484,7 @@ export function buildComprehensionClauses(
 		},
 		contents: () => hydrateStoredSlots(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5367,10 +5503,10 @@ export function buildIntegerHex(
 	options?: T.IntegerHex.Options
 ): T.IntegerHex.Bound {
 	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
+	if (_prefix !== undefined && (typeof _prefix !== 'string' || !_slotRe_buildIntegerHex_prefix.test(_prefix)))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(16, '', value);
-	if (!_slotRe_buildIntegerHex_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5387,6 +5523,7 @@ export function buildIntegerHex(
 		prefix: () => hydrateStoredSlot(node, '_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5405,10 +5542,10 @@ export function buildIntegerOctal(
 	options?: T.IntegerOctal.Options
 ): T.IntegerOctal.Bound {
 	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
+	if (_prefix !== undefined && (typeof _prefix !== 'string' || !_slotRe_buildIntegerOctal_prefix.test(_prefix)))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(8, '', value);
-	if (!_slotRe_buildIntegerOctal_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5426,6 +5563,7 @@ export function buildIntegerOctal(
 		prefix: () => hydrateStoredSlot(node, '_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5444,10 +5582,10 @@ export function buildIntegerBinary(
 	options?: T.IntegerBinary.Options
 ): T.IntegerBinary.Bound {
 	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
+	if (_prefix !== undefined && (typeof _prefix !== 'string' || !_slotRe_buildIntegerBinary_prefix.test(_prefix)))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(2, '', value);
-	if (!_slotRe_buildIntegerBinary_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5465,6 +5603,7 @@ export function buildIntegerBinary(
 		prefix: () => hydrateStoredSlot(node, '_prefix'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5476,7 +5615,7 @@ export function buildIntegerBinary(
 
 export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
 	if (text.length === 0) throw new Error(`integer_decimal_long: text must be non-empty`);
-	if (!_leafRe_buildIntegerDecimalLong.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildIntegerDecimalLong.test(text))
 		throw new Error(`integer_decimal_long: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5485,6 +5624,7 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5496,7 +5636,7 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 
 export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Bound {
 	if (text.length === 0) throw new Error(`integer_decimal_imaginary: text must be non-empty`);
-	if (!_leafRe_buildIntegerDecimalImaginary.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildIntegerDecimalImaginary.test(text))
 		throw new Error(`integer_decimal_imaginary: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5505,6 +5645,7 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5520,7 +5661,7 @@ export function buildIntegerDecimalPlain<const N extends string | number | bigin
 export function buildIntegerDecimalPlain(text: string | number | bigint): T.IntegerDecimalPlain.Bound {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`integer_decimal_plain: text must be non-empty`);
-	if (!_leafRe_buildIntegerDecimalPlain.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildIntegerDecimalPlain.test(text))
 		throw new Error(`integer_decimal_plain: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5529,6 +5670,7 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5561,19 +5703,22 @@ export function buildFloatPoint(
 	>
 ): T.FloatPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (!_slotRe_buildFloatPoint_integer.test(_integer))
+	if (typeof _integer !== 'string' || !_slotRe_buildFloatPoint_integer.test(_integer))
 		throw new Error(`float_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
-	if (_fraction !== undefined && !_slotRe_buildFloatPoint_fraction.test(_fraction))
+	if (_fraction !== undefined && (typeof _fraction !== 'string' || !_slotRe_buildFloatPoint_fraction.test(_fraction)))
 		throw new Error(`float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.marker;
-	if (_marker !== undefined && !_slotRe_buildFloatPoint_marker.test(_marker))
+	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatPoint_marker.test(_marker)))
 		throw new Error(`float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (_exponent !== undefined && !_slotRe_buildFloatPoint_exponent.test(_exponent))
+	if (_exponent !== undefined && (typeof _exponent !== 'string' || !_slotRe_buildFloatPoint_exponent.test(_exponent)))
 		throw new Error(`float_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	const _imaginary = config.imaginary;
-	if (_imaginary !== undefined && !_slotRe_buildFloatPoint_imaginary.test(_imaginary))
+	if (
+		_imaginary !== undefined &&
+		(typeof _imaginary !== 'string' || !_slotRe_buildFloatPoint_imaginary.test(_imaginary))
+	)
 		throw new Error(`float_point.imaginary: text does not match pattern: ${describeValue(_imaginary)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5602,6 +5747,7 @@ export function buildFloatPoint(
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5634,19 +5780,28 @@ export function buildFloatLeadingPoint(
 	>
 ): T.FloatLeadingPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (_integer !== undefined && !_slotRe_buildFloatLeadingPoint_integer.test(_integer))
+	if (
+		_integer !== undefined &&
+		(typeof _integer !== 'string' || !_slotRe_buildFloatLeadingPoint_integer.test(_integer))
+	)
 		throw new Error(`float_leading_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
-	if (!_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
+	if (typeof _fraction !== 'string' || !_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.marker;
-	if (_marker !== undefined && !_slotRe_buildFloatLeadingPoint_marker.test(_marker))
+	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatLeadingPoint_marker.test(_marker)))
 		throw new Error(`float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (_exponent !== undefined && !_slotRe_buildFloatLeadingPoint_exponent.test(_exponent))
+	if (
+		_exponent !== undefined &&
+		(typeof _exponent !== 'string' || !_slotRe_buildFloatLeadingPoint_exponent.test(_exponent))
+	)
 		throw new Error(`float_leading_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	const _imaginary = config.imaginary;
-	if (_imaginary !== undefined && !_slotRe_buildFloatLeadingPoint_imaginary.test(_imaginary))
+	if (
+		_imaginary !== undefined &&
+		(typeof _imaginary !== 'string' || !_slotRe_buildFloatLeadingPoint_imaginary.test(_imaginary))
+	)
 		throw new Error(`float_leading_point.imaginary: text does not match pattern: ${describeValue(_imaginary)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5676,6 +5831,7 @@ export function buildFloatLeadingPoint(
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5699,16 +5855,19 @@ export function buildFloatScientific(
 	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 ): T.FloatScientific.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (!_slotRe_buildFloatScientific_integer.test(_integer))
+	if (typeof _integer !== 'string' || !_slotRe_buildFloatScientific_integer.test(_integer))
 		throw new Error(`float_scientific.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _marker = config.marker;
-	if (!_slotRe_buildFloatScientific_marker.test(_marker))
+	if (typeof _marker !== 'string' || !_slotRe_buildFloatScientific_marker.test(_marker))
 		throw new Error(`float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (!_slotRe_buildFloatScientific_exponent.test(_exponent))
+	if (typeof _exponent !== 'string' || !_slotRe_buildFloatScientific_exponent.test(_exponent))
 		throw new Error(`float_scientific.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	const _imaginary = config.imaginary;
-	if (_imaginary !== undefined && !_slotRe_buildFloatScientific_imaginary.test(_imaginary))
+	if (
+		_imaginary !== undefined &&
+		(typeof _imaginary !== 'string' || !_slotRe_buildFloatScientific_imaginary.test(_imaginary))
+	)
 		throw new Error(`float_scientific.imaginary: text does not match pattern: ${describeValue(_imaginary)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5733,6 +5892,7 @@ export function buildFloatScientific(
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5748,9 +5908,9 @@ export function buildEscapeSequenceUnicodeFixed(
 	input: string,
 	affix: boolean = true
 ): T.EscapeSequenceUnicodeFixed.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_unicode_fixed');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_fixed');
 	const _content = value;
-	if (!_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5763,6 +5923,7 @@ export function buildEscapeSequenceUnicodeFixed(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5778,9 +5939,9 @@ export function buildEscapeSequenceUnicodeWide(
 	input: string,
 	affix: boolean = true
 ): T.EscapeSequenceUnicodeWide.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_unicode_wide');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_wide');
 	const _content = value;
-	if (!_slotRe_buildEscapeSequenceUnicodeWide_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeWide_content.test(_content))
 		throw new Error(`escape_sequence_unicode_wide.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5793,6 +5954,7 @@ export function buildEscapeSequenceUnicodeWide(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5805,9 +5967,9 @@ export function buildEscapeSequenceUnicodeWide(
 export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
 export function buildEscapeSequenceHex(text: `\\${string}`, affix: false): T.EscapeSequenceHex.Bound;
 export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.EscapeSequenceHex.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_hex');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_hex');
 	const _content = value;
-	if (!_slotRe_buildEscapeSequenceHex_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5820,6 +5982,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5838,9 +6001,9 @@ export function buildEscapeSequenceOctal(
 	input: string | number | bigint,
 	affix: boolean = true
 ): T.EscapeSequenceOctal.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_octal');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_octal');
 	const _content = numberText(10, '', value);
-	if (!_slotRe_buildEscapeSequenceOctal_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceOctal_content.test(_content))
 		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5853,6 +6016,7 @@ export function buildEscapeSequenceOctal(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5865,9 +6029,9 @@ export function buildEscapeSequenceOctal(
 export function buildEscapeSequenceLineBreak(content: string, affix?: true): T.EscapeSequenceLineBreak.Bound;
 export function buildEscapeSequenceLineBreak(text: `\\${string}`, affix: false): T.EscapeSequenceLineBreak.Bound;
 export function buildEscapeSequenceLineBreak(input: string, affix: boolean = true): T.EscapeSequenceLineBreak.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_line_break');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_line_break');
 	const _content = value;
-	if (!_slotRe_buildEscapeSequenceLineBreak_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceLineBreak_content.test(_content))
 		throw new Error(`escape_sequence_line_break.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5880,6 +6044,7 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5892,9 +6057,9 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
 export function buildEscapeSequenceSimple(text: `\\${string}`, affix: false): T.EscapeSequenceSimple.Bound;
 export function buildEscapeSequenceSimple(input: string, affix: boolean = true): T.EscapeSequenceSimple.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_simple');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_simple');
 	const _content = value;
-	if (!_slotRe_buildEscapeSequenceSimple_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5907,6 +6072,7 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5919,9 +6085,9 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 export function buildEscapeSequenceNamed(content: string, affix?: true): T.EscapeSequenceNamed.Bound;
 export function buildEscapeSequenceNamed(text: `\\${string}`, affix: false): T.EscapeSequenceNamed.Bound;
 export function buildEscapeSequenceNamed(input: string, affix: boolean = true): T.EscapeSequenceNamed.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence_named');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_named');
 	const _content = value;
-	if (!_slotRe_buildEscapeSequenceNamed_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceNamed_content.test(_content))
 		throw new Error(`escape_sequence_named.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5934,6 +6100,7 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5945,7 +6112,7 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 
 export function buildLineContinuationNewline(text: string): T.LineContinuationNewline.Bound {
 	if (text.length === 0) throw new Error(`line_continuation_newline: text must be non-empty`);
-	if (!_leafRe_buildLineContinuationNewline.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildLineContinuationNewline.test(text))
 		throw new Error(`line_continuation_newline: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5954,6 +6121,7 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5984,6 +6152,7 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 		sign: () => _sign,
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6009,6 +6178,7 @@ export function buildExceptClauseExceptionList(
 		},
 		values: () => hydrateStoredSlots(node, '_value'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6034,6 +6204,7 @@ export function buildExceptClauseException(
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6062,6 +6233,7 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 		left: () => hydrateStoredSlot(node, '_left'),
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6089,6 +6261,7 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 		left: () => hydrateStoredSlot(node, '_left'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6121,6 +6294,7 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 		type: () => hydrateStoredSlot(node, '_type'),
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6180,6 +6354,7 @@ function _buildExpressionStatementTuple(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6240,6 +6415,7 @@ function _buildWithClauseBare(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? undefined,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6305,6 +6481,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6331,6 +6508,7 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 		},
 		alternatives: () => hydrateStoredSlots(node, '_alternative'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -6372,6 +6550,7 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 		},
 		newline: () => _newline,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6436,6 +6615,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInl
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6477,6 +6657,7 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 		},
 		block: () => hydrateStoredSlot(node, '_block'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6516,6 +6697,7 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 		},
 		newline: () => _newline,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6548,6 +6730,7 @@ export function buildComparisonOperatorComparator(
 		operators: () => _operators,
 		primaryExpression: () => hydrateStoredSlot(node, '_primary_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6570,6 +6753,7 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 		},
 		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6581,7 +6765,7 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 
 export function buildStringStart(text: string): T.StringStart.Bound {
 	if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
-	if (!_leafRe_buildStringStart.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildStringStart.test(text))
 		throw new Error(`string_start: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6590,6 +6774,7 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6601,7 +6786,7 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 
 export function buildStringFragment(text: string): T.StringFragment.Bound {
 	if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`);
-	if (!_leafRe_buildStringFragment.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildStringFragment.test(text))
 		throw new Error(`string_fragment: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6610,6 +6795,7 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6621,7 +6807,7 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 
 export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bound {
 	if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
-	if (!_leafRe_buildEscapeInterpolation.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildEscapeInterpolation.test(text))
 		throw new Error(`escape_interpolation: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6630,6 +6816,7 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6641,7 +6828,7 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 
 export function buildStringEnd(text: string): T.StringEnd.Bound {
 	if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
-	if (!_leafRe_buildStringEnd.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildStringEnd.test(text))
 		throw new Error(`string_end: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6650,6 +6837,7 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6695,6 +6883,7 @@ export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6717,6 +6906,7 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6739,6 +6929,7 @@ export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatEx
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)

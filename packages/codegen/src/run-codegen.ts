@@ -25,12 +25,13 @@ import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts
 import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
-import { manifestPath, writeManifestForGrammar } from './scripts/generated-manifest.ts';
+import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
 import { grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
+import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
 import { compareOrdinal } from './emitters/shared.ts';
 
@@ -213,7 +214,7 @@ function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDia
 	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
 }
 
-async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
+async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
@@ -373,43 +374,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`    ${emit.libRs.path}`);
 		console.log(`    ${emit.recordsTs.path}`);
 
-		if (buildNative !== false) {
-			const nativeCrate = nativeCrateRelDir(grammar);
-			const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build';
-			console.log(
-				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
-					`${nativeBuildScript === 'build:debug' ? ' (debug + incremental)' : ''}…`
-			);
-			clearNapiTypedefs(grammar, process.cwd());
-			try {
-				execSync(`pnpm -C ${nativeCrate} run ${nativeBuildScript}`, {
-					stdio: 'inherit',
-					cwd: process.cwd()
-				});
-			} catch (e) {
-				console.error(
-					`    N-API rebuild failed for ${grammar}. Native baseline collection will use stale templates. ` +
-						`Re-run with --no-build-native to suppress this attempt, or fix the cargo build error.`
-				);
-				throw e;
-			}
-
-			if (workspaceCheck !== false) {
-				console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
-				try {
-					execSync('cargo check --workspace --features napi-bindings', {
-						stdio: 'inherit',
-						cwd: process.cwd()
-					});
-				} catch (e) {
-					console.error(
-						`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
-							`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
-					);
-					throw e;
-				}
-			}
-		}
+		if (buildNative !== false) runNativeBuild({ grammar, nativeDebug, workspaceCheck });
 	}
 
 	const renderable = validateRenderableFromNodeMap(grammar, result.nodeMap);
@@ -429,7 +394,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 
-	writeManifestForGrammar(grammar);
+	writeManifestForGrammar(grammar, read);
 	console.log(`  → generation recorded in ${manifestPath(grammar)}`);
 
 	if (all && !noEmitDiff) {
@@ -446,12 +411,50 @@ Done! Generated:
 	return result.nodeMap;
 }
 
+function runNativeBuild({ grammar, nativeDebug, workspaceCheck }: Pick<CodegenOptions, 'grammar' | 'nativeDebug' | 'workspaceCheck'>): void {
+	const nativeCrate = nativeCrateRelDir(grammar);
+	const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build:gate';
+	console.log(
+		`  → rebuilding grammar-owned N-API binding for ${grammar}` +
+			`${nativeBuildScript === 'build:debug' ? ' (debug + incremental)' : ' (gate profile)'}…`
+	);
+	clearNapiTypedefs(grammar, process.cwd());
+	try {
+		execSync(`pnpm -C ${nativeCrate} run ${nativeBuildScript}`, {
+			stdio: 'inherit',
+			cwd: process.cwd()
+		});
+	} catch (e) {
+		console.error(
+			`    N-API rebuild failed for ${grammar}. Native baseline collection will use stale templates. ` +
+				`Re-run with --no-build-native to suppress this attempt, or fix the cargo build error.`
+		);
+		throw e;
+	}
+
+	if (workspaceCheck !== false) {
+		const status = runWorkspaceCheck(process.cwd());
+		if (status !== 0) throw new Error(`${WORKSPACE_CHECK.join(' ')} exited with ${status}`);
+	}
+}
+
+export async function runNativeOnly(opts: CodegenOptions): Promise<void> {
+	await withInternalCodegenRun(async () => {
+		const generation = recordedGeneration(opts.grammar);
+		if (generation === undefined) throw new Error(`No generation of ${opts.grammar} is on record to build the binding from: run gen --all first.`);
+		runNativeBuild(opts);
+		recordNativeBuild(opts.grammar, generation);
+		console.log(`  → generation recorded in ${manifestPath(opts.grammar)}`);
+	});
+}
+
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
 	return withInternalCodegenRun(() => runFullRegenInternal(opts));
 }
 
 async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
+	const read = sourceFingerprint(grammar);
 
 	if (!skipTsChain && !transpile && !tsGenerate) {
 		console.log(`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`);
@@ -462,5 +465,5 @@ async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		await compileParsers(grammar, pkg);
 	}
 
-	return runCodegen(opts);
+	return runCodegenInternal(opts, read);
 }

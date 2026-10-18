@@ -1,45 +1,25 @@
 /**
- * inspect/refs — merged inspect-refs + inspect-suggestions tool.
- *
- * Modes:
- *   refs        — dump every reference TO a given symbol (who names it, who doesn't).
- *   suggestions — dump derivation log from Link: inferred fields, promoted rules,
- *                 repeated shapes. Replaces the old inspect-suggestions.ts positional script.
+ * inspect/refs — dump every reference to a given symbol: who names it with a
+ * field, and who refers to it without one.
  *
  * CLI:
- *   inspect-refs [--mode refs|suggestions] [--grammar <name>] [--symbol <name>]
- *                [--base] [--limit <n>]
+ *   inspect-refs [--grammar <name>] [--symbol <name>] [--base]
  *
  * Options:
- *   --mode         refs | suggestions  (default: refs)
  *   --grammar      grammar name        (default: rust)
- *   --symbol       target symbol name  (refs mode only, default: _type_identifier)
+ *   --symbol       target symbol name  (default: _type_identifier)
  *   --base         use base grammar.js instead of overrides (where available)
- *   --limit        max entries per section in suggestions mode (default: 10)
  */
 
-// Codegen phases/loaders + their real types come from the shared
-// codegen-surface (typed invoke + import()-type aliases); no local stub
-// types or dynamic-import loader are needed here.
-import { evaluateGrammar, invoke } from '../codegen-surface.ts';
-
-// ---------------------------------------------------------------------------
-// Options
-// ---------------------------------------------------------------------------
+import { evaluateGrammar } from '../codegen-surface.ts';
 
 export interface InspectRefsOptions {
-	mode: string;
 	grammar: string;
 	symbol: string;
 	useBase: boolean;
-	limit: number;
 }
 
-// ---------------------------------------------------------------------------
-// Mode: refs
-// ---------------------------------------------------------------------------
-
-async function runRefs(args: InspectRefsOptions): Promise<number> {
+export async function run(args: InspectRefsOptions): Promise<number> {
 	const raw = await evaluateGrammar(args.grammar, { base: args.useBase });
 	const refs = raw.references.filter((r) => r.to === args.symbol);
 
@@ -63,79 +43,4 @@ async function runRefs(args: InspectRefsOptions): Promise<number> {
 	}
 
 	return 0;
-}
-
-// ---------------------------------------------------------------------------
-// Mode: suggestions
-// ---------------------------------------------------------------------------
-
-async function runSuggestions(args: InspectRefsOptions): Promise<number> {
-	const raw = await evaluateGrammar(args.grammar, { base: args.useBase });
-	process.stdout.write(`raw.references: ${raw.references.length}\n`);
-
-	const namedRefs = raw.references.filter((r) => r.fieldName !== undefined);
-	process.stdout.write(`  with fieldName: ${namedRefs.length}\n`);
-	const samples = raw.references.slice(0, 5);
-	process.stdout.write('  first 5:\n');
-	for (const r of samples) process.stdout.write(`    ${JSON.stringify(r)}\n`);
-
-	const linked = await invoke('link', 'link', raw);
-	const { derivations } = linked;
-	const { inferredFields, promotedRules, repeatedShapes } = derivations;
-
-	process.stdout.write(
-		`\n${args.grammar}: ${inferredFields.length} inferred fields, ` +
-			`${promotedRules.length} promoted rules, ` +
-			`${repeatedShapes.length} repeated shapes\n`
-	);
-
-	// By classification
-	const byClass: Record<string, number> = {};
-	for (const p of promotedRules) {
-		byClass[p.classification] = (byClass[p.classification] ?? 0) + 1;
-	}
-	process.stdout.write(`Promotions by classification: ${JSON.stringify(byClass)}\n\n`);
-
-	// Inferred fields section
-	process.stdout.write(`--- inferred fields (first ${args.limit}) ---\n`);
-	let n = 0;
-	for (const f of inferredFields) {
-		if (n++ >= args.limit) break;
-		process.stdout.write(
-			`  ${f.kind}: field('${f.fieldName}', $.${f.targetSymbol})  ` +
-				`[${f.confidence}] agreement=${f.agreement.toFixed(2)} n=${f.sampleSize}` +
-				`${f.applied ? '' : ' [held]'}\n`
-		);
-	}
-	process.stdout.write('\n');
-
-	// Promoted rules section
-	process.stdout.write(`--- promoted rules (first ${args.limit}) ---\n`);
-	n = 0;
-	for (const p of promotedRules) {
-		if (n++ >= args.limit) break;
-		process.stdout.write(`  ${p.kind}: ${p.classification}${p.applied ? '' : ' [held]'}\n`);
-	}
-	process.stdout.write('\n');
-
-	// Repeated shapes section
-	process.stdout.write(`--- repeated shapes (first ${args.limit}) ---\n`);
-	n = 0;
-	for (const s of repeatedShapes) {
-		if (n++ >= args.limit) break;
-		process.stdout.write(
-			`  ${s.suggestedName} [${s.shape}]: kinds=[${s.kinds.join(', ')}]  ` + `parents=[${s.parents.join(', ')}]\n`
-		);
-	}
-
-	return 0;
-}
-
-// ---------------------------------------------------------------------------
-// Public run entry point
-// ---------------------------------------------------------------------------
-
-export async function run(opts: InspectRefsOptions): Promise<number> {
-	if (opts.mode === 'suggestions') return runSuggestions(opts);
-	return runRefs(opts);
 }

@@ -137,7 +137,8 @@ fn rerun_if_changed_with_includes(
 				},
 				scripts: {
 					build: `tsx ../../../scripts/build-native.mts ${v.name} --release`,
-					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`
+					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`,
+					'build:gate': `tsx ../../../scripts/build-native.mts ${v.name} --profile gate`
 				},
 				devDependencies: { '@napi-rs/cli': '^3.0.0' },
 				napi: {

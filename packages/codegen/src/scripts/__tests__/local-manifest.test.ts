@@ -1,25 +1,39 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	checkoutSource,
+	computeSourceHash,
 	manifestPath,
+	recordNativeBuild,
+	recordedGeneration,
 	stagedInputPathspecs,
+	sourceFingerprint,
+	upstreamDigest,
 	verifyManifestForGrammar,
 	writeManifestForGrammar,
 	type VerifyResult
 } from '../generated-manifest.ts';
 import { withIndexSnapshot } from '../index-snapshot.ts';
+import { writeUpstreamRecord } from '../../transpile/compile-parser.ts';
+import { ensureWasmToolchain, treeSitterToolchain, treeSitterToolchainIdentity } from '../../transpile/tree-sitter-cli.ts';
+
+vi.mock('../../transpile/tree-sitter-cli.ts', async (importOriginal) => {
+	const real = await importOriginal<typeof import('../../transpile/tree-sitter-cli.ts')>();
+	return { ...real, ensureWasmToolchain: vi.fn(real.ensureWasmToolchain), treeSitterToolchainIdentity: vi.fn(real.treeSitterToolchainIdentity) };
+});
 
 const GRAMMAR = 'python';
 const GRAMMAR_SOURCE = 'packages/python/grammar.sittir.ts';
 const CODEGEN_SOURCE = 'packages/codegen/src/emit.ts';
 const CODEGEN_TEST = 'packages/codegen/src/__tests__/emit.test.ts';
 const GENERATED = 'packages/python/src/from-codegen.ts';
+const UPSTREAM_RECORD = 'packages/python/.sittir/upstream.json';
 
 let repo: string;
+let toolchainCache: string;
 
 const git = (...args: string[]): string =>
 	execFileSync(
@@ -35,10 +49,25 @@ const write = (rel: string, content: string): void => {
 
 const read = (rel: string): string => readFileSync(join(repo, rel), 'utf8');
 
-const regenerate = (): void => {
+const regenerate = (editDuringGeneration?: () => void): void => {
+	const src = checkoutSource(repo);
+	const sources = sourceFingerprint(GRAMMAR, src);
 	write('packages/python/src/from-grammar.ts', `// ${read(GRAMMAR_SOURCE)}\n`);
 	write('packages/python/src/from-codegen.ts', `// ${read(CODEGEN_SOURCE)}\n`);
-	writeManifestForGrammar(GRAMMAR, checkoutSource(repo));
+	mkdirSync(join(repo, dirname(UPSTREAM_RECORD)), { recursive: true });
+	writeUpstreamRecord(join(repo, dirname(UPSTREAM_RECORD)), { key: 'upstream', toolchain: treeSitterToolchain() });
+	editDuringGeneration?.();
+	writeManifestForGrammar(GRAMMAR, sources, src);
+};
+
+const NATIVE_TYPINGS = 'packages/python/native/index.d.ts';
+
+const buildNative = (editDuringBuild?: () => void): void => {
+	const src = checkoutSource(repo);
+	const generation = recordedGeneration(GRAMMAR, src)!;
+	write(NATIVE_TYPINGS, `// typings for ${read(GENERATED)}`);
+	editDuringBuild?.();
+	recordNativeBuild(GRAMMAR, generation, src);
 };
 
 const dropStamp = (): void => rmSync(join(repo, 'node_modules'), { recursive: true, force: true });
@@ -63,7 +92,26 @@ const mergeMasterUncommitted = (): void => {
 	}
 };
 
+const installToolchain = (dir: string, version: string): void => {
+	mkdirSync(dir, { recursive: true });
+	writeFileSync(join(dir, '.version'), version);
+};
+
+const toolchainVersion = (name: string): string => join(toolchainCache, 'tree-sitter', name, '.version');
+
+const toolchainExecutable = (dir: string, name: string, versionLine: string): void => {
+	mkdirSync(join(dir, 'bin'), { recursive: true });
+	writeFileSync(join(dir, 'bin', name), `#!/bin/sh\necho '${versionLine}'\n`);
+	chmodSync(join(dir, 'bin', name), 0o755);
+};
+
 beforeEach(() => {
+	toolchainCache = mkdtempSync(join(tmpdir(), 'sittir-toolchain-'));
+	vi.stubEnv('XDG_CACHE_HOME', toolchainCache);
+	vi.stubEnv('TREE_SITTER_WASI_SDK_PATH', undefined);
+	vi.stubEnv('TREE_SITTER_BINARYEN_PATH', undefined);
+	installToolchain(join(toolchainCache, 'tree-sitter', 'wasi-sdk'), '34.0');
+	installToolchain(join(toolchainCache, 'tree-sitter', 'binaryen'), '132');
 	repo = mkdtempSync(join(tmpdir(), 'sittir-stamp-'));
 	git('init', '-q', '-b', 'master');
 	write('.gitignore', 'node_modules\n');
@@ -77,6 +125,113 @@ beforeEach(() => {
 
 afterEach(() => {
 	rmSync(repo, { recursive: true, force: true });
+	rmSync(toolchainCache, { recursive: true, force: true });
+	vi.unstubAllEnvs();
+});
+
+describe('the wasm toolchain the parsers are built with', () => {
+	it('changes the source, and not the upstream digest, when a toolchain is replaced by another version', () => {
+		const src = checkoutSource(repo);
+		const [source, upstream] = [computeSourceHash(GRAMMAR, src), upstreamDigest(GRAMMAR, src)];
+		writeFileSync(toolchainVersion('binaryen'), '133');
+		expect(computeSourceHash(GRAMMAR, src)).not.toBe(source);
+		expect(upstreamDigest(GRAMMAR, src)).toBe(upstream);
+	});
+
+	it('reads a missing toolchain version as a changed source, never as fresh, and does not throw', () => {
+		const source = computeSourceHash(GRAMMAR, checkoutSource(repo));
+		rmSync(toolchainVersion('wasi-sdk'));
+		expect(() => computeSourceHash(GRAMMAR, checkoutSource(repo))).not.toThrow();
+		expect(computeSourceHash(GRAMMAR, checkoutSource(repo))).not.toBe(source);
+		write(GENERATED, 'edited by hand');
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
+	it('is installed when missing before a generation fingerprints its sources', () => {
+		vi.mocked(ensureWasmToolchain).mockClear();
+		vi.mocked(treeSitterToolchainIdentity).mockClear();
+		sourceFingerprint(GRAMMAR, checkoutSource(repo));
+		expect(ensureWasmToolchain).toHaveBeenCalledOnce();
+		expect(vi.mocked(ensureWasmToolchain).mock.invocationCallOrder[0]!).toBeLessThan(vi.mocked(treeSitterToolchainIdentity).mock.invocationCallOrder[0]!);
+	});
+
+	it('is only read when a generation is verified', () => {
+		vi.mocked(ensureWasmToolchain).mockClear();
+		verify();
+		expect(ensureWasmToolchain).not.toHaveBeenCalled();
+	});
+
+	it('is the one TREE_SITTER_WASI_SDK_PATH names when it is set', () => {
+		const own = join(toolchainCache, 'own-sdk');
+		toolchainExecutable(own, 'clang', 'clang version 19.1.5-wasi-sdk');
+		vi.stubEnv('TREE_SITTER_WASI_SDK_PATH', own);
+		expect(verify()).toMatchObject({
+			ok: false,
+			toolchainMoved: { committed: expect.arrayContaining(['wasi-sdk 34.0']), current: expect.arrayContaining(['wasi-sdk clang version 19.1.5-wasi-sdk']) }
+		});
+		regenerate();
+		expect(verify().ok).toBe(true);
+	});
+});
+
+describe('the toolchain a committed tree names', () => {
+	it('refuses a fresh clone whose toolchain moved since the committed generation, naming both', () => {
+		dropStamp();
+		writeFileSync(toolchainVersion('binaryen'), '133');
+		const result = verify();
+		expect(result.ok).toBe(false);
+		expect(result.toolchainMoved).toEqual({ committed: expect.arrayContaining(['binaryen 132']), current: expect.arrayContaining(['binaryen 133']) });
+	});
+
+	it('records nothing when it refuses', () => {
+		dropStamp();
+		writeFileSync(toolchainVersion('binaryen'), '133');
+		verify();
+		expect(existsSync(manifestPath(GRAMMAR, checkoutSource(repo)))).toBe(false);
+	});
+
+	it('refuses with a generation on record too', () => {
+		writeFileSync(toolchainVersion('binaryen'), '133');
+		expect(verify().ok).toBe(false);
+	});
+
+	it('refuses a staged tree whose toolchain moved', async () => {
+		dropStamp();
+		writeFileSync(toolchainVersion('binaryen'), '133');
+		expect((await verifyStaged()).toolchainMoved).toBeDefined();
+	});
+
+	it('refuses a committed tree that names no toolchain', () => {
+		rmSync(join(repo, UPSTREAM_RECORD));
+		commitAll('drop the upstream record');
+		dropStamp();
+		expect(verify()).toMatchObject({ ok: false, toolchainMoved: { committed: [], current: treeSitterToolchain() } });
+	});
+
+	it('passes a fresh clone with no toolchain installed, which cannot have built anything', () => {
+		dropStamp();
+		rmSync(join(toolchainCache, 'tree-sitter'), { recursive: true, force: true });
+		expect(verify()).toMatchObject({ ok: true, toolchainMoved: undefined });
+	});
+
+	it('passes a fresh clone verified before its toolchain is installed and again after', () => {
+		dropStamp();
+		rmSync(join(toolchainCache, 'tree-sitter'), { recursive: true, force: true });
+		expect(verify().ok).toBe(true);
+		installToolchain(join(toolchainCache, 'tree-sitter', 'wasi-sdk'), '34.0');
+		installToolchain(join(toolchainCache, 'tree-sitter', 'binaryen'), '132');
+		expect(verify()).toMatchObject({ ok: true, sourceChanged: false, toolchainMoved: undefined });
+	});
+
+	it('passes a generation on record once its toolchain is no longer installed', () => {
+		rmSync(join(toolchainCache, 'tree-sitter'), { recursive: true, force: true });
+		expect(verify()).toMatchObject({ ok: true, sourceChanged: false, toolchainMoved: undefined });
+	});
+
+	it('passes a fresh clone on the toolchain the committed tree names', () => {
+		dropStamp();
+		expect(verify()).toMatchObject({ ok: true, toolchainMoved: undefined });
+	});
 });
 
 describe('the record of a generation', () => {
@@ -148,6 +303,100 @@ describe('bindings.scm as a source', () => {
 	});
 });
 
+describe('the shared runtime generation executes as a source', () => {
+	beforeEach(() => {
+		write(
+			'packages/common/package.json',
+			JSON.stringify({
+				name: '@sittir/common',
+				exports: {
+					'.': { types: './dist/index.d.ts', import: './dist/index.js' },
+					'./error-kind': { types: './src/error-kind.ts', import: './src/error-kind.ts' }
+				}
+			})
+		);
+		write('packages/common/src/index.ts', "export { hostTemplateFor } from './reparse.ts';\nexport type { Shape } from './shape.ts';\n");
+		write('packages/common/src/reparse.ts', "import { join } from './text.ts';\nexport const hostTemplateFor = () => join('a');\n");
+		write('packages/common/src/text.ts', 'export const join = (s: string) => s;\n');
+		write('packages/common/src/shape.ts', 'export interface Shape {}\n');
+		write('packages/common/src/error-kind.ts', 'export const ERROR_KIND_ID = 65535;\n');
+		write('packages/common/src/engine.ts', 'export const unrelated = 1;\n');
+		write(
+			CODEGEN_SOURCE,
+			"import { hostTemplateFor } from '@sittir/common';\nimport type { Shape } from '@sittir/common';\nimport { ERROR_KIND_ID } from '@sittir/common/error-kind';\nconst emitted = \"import { unrelated } from './engine.ts';\";\n"
+		);
+		regenerate();
+		commitAll('common in use');
+	});
+
+	for (const rel of ['packages/common/src/reparse.ts', 'packages/common/src/text.ts', 'packages/common/src/index.ts', 'packages/common/src/error-kind.ts']) {
+		it(`changes the source when ${rel}, which generation runs, changes`, async () => {
+			write(rel, `${read(rel)}// edited\n`);
+			expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+			git('add', '-A');
+			expect(await verifyStaged()).toMatchObject({ ok: false, sourceChanged: true });
+		});
+	}
+
+	for (const rel of ['packages/common/src/engine.ts', 'packages/common/src/shape.ts']) {
+		it(`leaves the source alone when ${rel}, which generation does not run, changes`, async () => {
+			write(rel, `${read(rel)}// edited\n`);
+			expect(verify().ok).toBe(true);
+			git('add', '-A');
+			expect((await verifyStaged()).ok).toBe(true);
+		});
+	}
+});
+
+describe('the upstream grammar as a source', () => {
+	const UPSTREAM = 'packages/python/node_modules/tree-sitter-python';
+	const NESTED = 'packages/python/node_modules/tree-sitter-javascript';
+
+	beforeEach(() => {
+		write('packages/python/base.ts', "export { default } from 'tree-sitter-python/grammar.js';\n");
+		write(`${UPSTREAM}/package.json`, JSON.stringify({ name: 'tree-sitter-python', version: '0.25.0', dependencies: { 'tree-sitter-javascript': '^0.25.0', 'node-addon-api': '^8' } }));
+		write(`${UPSTREAM}/grammar.js`, 'module.exports = grammar({ name: "python" });\n');
+		write(`${UPSTREAM}/src/scanner.c`, 'int scan;\n');
+		write(`${UPSTREAM}/src/parser.c`, 'int parse;\n');
+		write(`${NESTED}/package.json`, JSON.stringify({ name: 'tree-sitter-javascript', version: '0.25.0' }));
+		write(`${NESTED}/grammar.js`, 'module.exports = grammar({ name: "javascript" });\n');
+		regenerate();
+		commitAll('upstream installed');
+	});
+
+	for (const [what, rel, edit] of [
+		['a new upstream version', `${UPSTREAM}/package.json`, JSON.stringify({ name: 'tree-sitter-python', version: '0.25.1' })],
+		["the upstream's grammar", `${UPSTREAM}/grammar.js`, 'module.exports = grammar({ name: "python", extras: [] });\n'],
+		["the upstream's scanner", `${UPSTREAM}/src/scanner.c`, 'int scan2;\n'],
+		["a grammar the upstream builds on", `${NESTED}/grammar.js`, 'module.exports = grammar({ name: "javascript", word: null });\n'],
+		['the base entry', 'packages/python/base.ts', "export { default } from 'tree-sitter-python/grammar.js';\nexport const extra = 1;\n"]
+	] as const) {
+		it(`changes the source when ${what} changes, with nothing tracked changed`, () => {
+			write(rel, edit);
+			expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+		});
+	}
+
+	it("leaves the source alone when only the upstream's generated parser changes", () => {
+		write(`${UPSTREAM}/src/parser.c`, 'int parse2;\n');
+		expect(verify().ok).toBe(true);
+	});
+
+	it('changes the source when only the lockfile changes, with the generation on record', () => {
+		write('pnpm-lock.yaml', "lockfileVersion: '9.0'\n");
+		regenerate();
+		commitAll('lockfile');
+		write('pnpm-lock.yaml', "lockfileVersion: '9.0'\n# a dependency moved\n");
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
+	it('does not trust the committed tree once the lockfile differs from it', () => {
+		dropStamp();
+		write('pnpm-lock.yaml', 'lockfileVersion: 9\n');
+		expect(verify()).toMatchObject({ ok: false, differs: ['pnpm-lock.yaml'] });
+	});
+});
+
 describe('the vocabulary as a source', () => {
 	const VOCABULARY = 'packages/types/src/vocabulary/declaration.ts';
 
@@ -179,6 +428,33 @@ describe('the vocabulary as a source', () => {
 });
 
 describe('whether the source is the one the generated output came from', () => {
+	it('records a generated file first written during the generation, so deleting it fails', () => {
+		write(GRAMMAR_SOURCE, 'grammar two');
+		regenerate(() => write('packages/python/src/emitted-late.ts', 'late\n'));
+		rmSync(join(repo, 'packages/python/src/emitted-late.ts'));
+		expect(verify()).toMatchObject({ ok: false, missing: ['packages/python/src/emitted-late.ts'] });
+	});
+
+	it('holds after a native build that rewrites only its own typings', () => {
+		buildNative();
+		expect(verify().ok).toBe(true);
+	});
+
+	it('refuses to record a native build when a generated file changed since the generation', () => {
+		expect(() => buildNative(() => write(GENERATED, 'hand edit\n'))).toThrow(`${GENERATED} changed since the generation`);
+		expect(verify()).toMatchObject({ ok: false, modified: [GENERATED] });
+	});
+
+	it('records a native build against the source the generation read', () => {
+		buildNative(() => write(GRAMMAR_SOURCE, 'grammar edited mid-build'));
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
+	it('fails when a source input is edited while the generation runs', () => {
+		regenerate(() => write(GRAMMAR_SOURCE, 'grammar edited mid-run'));
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
 	it('holds for an uncommitted tree that was just regenerated', () => {
 		write(CODEGEN_SOURCE, 'codegen two');
 		regenerate();

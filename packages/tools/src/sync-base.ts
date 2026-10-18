@@ -12,7 +12,7 @@ export interface SyncBaseOptions {
 export interface SyncBaseTarget {
 	readonly roots: Readonly<Record<string, readonly string[]>>;
 	verify(grammar: string): boolean;
-	regenerate(grammars: readonly string[]): void;
+	regenerate(grammars: readonly string[]): void | Promise<void>;
 }
 
 const inRoot = (path: string, root: string): boolean => path === root || path.startsWith(`${root}/`);
@@ -21,7 +21,7 @@ export function grammarOfGeneratedPath(path: string, roots: SyncBaseTarget['root
 	return Object.keys(roots).find((grammar) => (roots[grammar] ?? []).some((root) => inRoot(path, root)));
 }
 
-export function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (line: string) => void = console.log): number {
+export async function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (line: string) => void = console.log): Promise<number> {
 	const { cwd } = opts;
 	const git = (args: string[], tolerate = false): string => {
 		try {
@@ -81,7 +81,7 @@ export function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (li
 	if (affected.size > 0) {
 		const grammars = [...affected].sort();
 		out(`sync-base: regenerating ${grammars.join(', ')}`);
-		target.regenerate(grammars);
+		await target.regenerate(grammars);
 	}
 
 	const allRoots = Object.values(target.roots).flat();
@@ -110,8 +110,8 @@ export async function repoSyncTarget(): Promise<{ target: SyncBaseTarget; cwd: s
 		target: {
 			roots,
 			verify: (grammar) => manifest.verifyManifestForGrammar(grammar as GrammarName).ok,
-			regenerate(grammars) {
-				const status = regenerateGrammars(grammars, cwd);
+			async regenerate(grammars) {
+				const status = await regenerateGrammars(grammars, cwd, { force: true });
 				if (status !== 0) throw new Error(`sync-base: regenerating ${grammars.join(', ')} failed (exit ${status})`);
 			}
 		}

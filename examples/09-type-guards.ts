@@ -8,9 +8,9 @@ export function summarizeTopLevelItems(source: string) {
 
 	for (const stmt of file.statements()) {
 		if (rs.is.functionItem(stmt)) {
-			summaries.push(`Function: ${rs.render(stmt.name())}`);
+			summaries.push(`Function: ${stmt.name()}`);
 		} else if (rs.is.structItem(stmt)) {
-			summaries.push(`Struct: ${rs.render(stmt.name())}`);
+			summaries.push(`Struct: ${stmt.name()}`);
 		}
 	}
 

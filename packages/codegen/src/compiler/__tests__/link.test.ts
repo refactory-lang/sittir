@@ -26,7 +26,6 @@ import {
 	reportKindIdStampMisses,
 	type KindIdStampMisses
 } from '../link.ts';
-import type { DerivationLog } from '../types.ts';
 import type { Rule, SymbolRef, SymbolRule, StringRule, PatternRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
@@ -616,16 +615,10 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		const linked = link(raw);
 		const assignment = linked.rules['assignment'] as any;
 		expect(assignment.type).not.toBe('polymorph');
-		// Originally this asserted a suggestion-only promotedRules entry from
-		// the heterogeneous-field-choice HEURISTIC. That heuristic was
-		// retired: polymorph classification now comes ONLY from explicit
-		// variant() metadata (structural derivation via
-		// deriveStructuralVariantChildren / emitVariantChildDerivations) and
-		// from hidden/supertype-rule classification — explicit overrides over
-		// inference. A visible choice with heterogeneous fields must produce
-		// NO polymorph entry at all: no mutation AND no suggestion.
+		// Polymorph classification comes only from variant() metadata and
+		// hidden/supertype-rule classification: a visible choice with
+		// heterogeneous fields stays a choice.
 		expect(assignment.type).toBe('CHOICE');
-		expect(linked.derivations.promotedRules.filter((p) => p.kind === 'assignment')).toEqual([]);
 	});
 
 	it('applyOverridePolymorphs pushes ambient scaffold into variant-child hidden rules when they live deep in the parent rule', () => {
@@ -689,16 +682,11 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			visibility_modifier_pub_self: { type: SYMBOL, name: 'self' },
 			visibility_modifier_pub_super: { type: SYMBOL, name: 'super' }
 		};
-		const derivations: DerivationLog = {
-			inferredFields: [],
-			promotedRules: [],
-			repeatedShapes: []
-		};
 		// The variant children come from the arms' variant annotations
 		// (`deriveVariantChildren`), so the inner choice's two annotated
 		// symbols are found without an explicit pairs argument.
 		stampLabelProvenance(rules, undefined);
-		applyOverridePolymorphs(rules, derivations);
+		applyOverridePolymorphs(rules);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
 		expect(rules['visibility_modifier']!.type).toBe('CHOICE');
 		// Each variant-child hidden rule now has its body wrapped in the
@@ -709,12 +697,6 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		expect(selfBody.members.map((m) => (m.type === 'STRING' ? m.value : m.type))).toEqual(['(', 'SYMBOL', ')']);
 		const superBody = rules['visibility_modifier_pub_super']!;
 		expect(superBody.type).toBe('SEQ');
-		// Variant-child derivations emitted for downstream use.
-		const derivedKinds = derivations.promotedRules
-			.filter((p) => p.kind === 'visibility_modifier_pub_self' || p.kind === 'visibility_modifier_pub_super')
-			.map((p) => p.kind)
-			.sort();
-		expect(derivedKinds).toEqual(['visibility_modifier_pub_self', 'visibility_modifier_pub_super']);
 	});
 
 	it('applyOverridePolymorphs leaves rule as choice when registered variant children match found choice (de-polymorph)', () => {
@@ -842,8 +824,6 @@ describe('liftSeparators lifts a choice-of-literals separator without a diagnost
 			diagnostics,
 			supertypes: new Set(),
 			externalRoles: new Map(),
-			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-			applyPromotedRules: true,
 			hiddenNamedArmChoices: new Set()
 		});
 	}
@@ -892,8 +872,6 @@ describe('liftSeparators: a list whose first element carries a required separato
 			diagnostics: new DiagnosticSink(),
 			supertypes: new Set(),
 			externalRoles: new Map(),
-			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-			applyPromotedRules: true,
 			hiddenNamedArmChoices: new Set()
 		});
 	const item: Rule<'link'> = { type: FIELD, name: 'item', content: { type: SYMBOL, name: 'item' } } as Rule<'link'>;
@@ -931,8 +909,6 @@ describe('liftSeparators: a separated list inside a longer seq', () => {
 			diagnostics: new DiagnosticSink(),
 			supertypes: new Set(),
 			externalRoles: new Map(),
-			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-			applyPromotedRules: true,
 			hiddenNamedArmChoices: new Set()
 		});
 	const item: Rule<'link'> = { type: SYMBOL, name: 'item' } as Rule<'link'>;
@@ -995,8 +971,6 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 			diagnostics: new DiagnosticSink(),
 			supertypes: new Set(),
 			externalRoles: new Map(),
-			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-			applyPromotedRules: true,
 			hiddenNamedArmChoices: new Set()
 		});
 	}

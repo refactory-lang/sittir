@@ -484,16 +484,6 @@ and `IsPath` depend on. `packages/<grammar>/base.ts` re-exports the upstream `gr
 tsconfig `paths` types as this shape (see `emitUpstreamDeclarationSource`). Never hand-edited: `emit-grammar-shape.ts` rewrites
 it and `grammar-shape-fresh.test.ts` fails when it is stale.
 
-### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::BASE_ENTRY`
-
-The per-package file that names the upstream grammar (`base.ts`). It is the
-one place a grammar's upstream package is written down: `grammar.sittir.ts`
-imports the base from it, and the shape emitter reads its `import raw from
-'<upstream grammar.js>'` line to find the matching `src/grammar.json`, so a
-grammar's runtime base and its type-level shape cannot name different sources.
-`base.ts` is loaded by Node type stripping (through tree-sitter's grammar
-run), so it holds only erasable syntax.
-
 ### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::upstreamDeclarationFile`
 
 Where a grammar's declaration of its upstream module lives:
