@@ -641,7 +641,7 @@ Shared leaf module, consumed by `generated-manifest.ts` (manifest verification),
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::ManifestSource`
 
-Where a verification reads from: `root`, the directory holding the grammar packages; `visible`, the repo-relative paths git would track there; and `checkout`, the git checkout that git is asked about and whose local manifest is read. For the working tree the two directories are the same (`checkoutSource`). A snapshot of the index passes its scratch directory as `root` and the real checkout as `checkout`; that difference is also what turns off the host-binary check and the recording of pairs.
+Where a verification reads from: `root`, the directory holding the grammar packages; `visible`, the repo-relative paths git would track there; and `checkout`, the git checkout that git is asked about and whose local manifest is read. For the working tree the two directories are the same (`checkoutSource`). A snapshot of the index passes its scratch directory as `root` and the real checkout as `checkout`; that difference is also what turns off the host-binary check and the recording of pairs. A source is a snapshot: its visible paths are read once, and the codegen hash and each grammar's upstream digest are kept for its life, so a long-lived process takes a fresh source (`checkoutSource`) to see later edits.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::checkoutSource`
 
