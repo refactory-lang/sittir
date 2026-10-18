@@ -15,7 +15,7 @@ pub mod side;
 use std::collections::HashMap;
 use std::fmt;
 
-pub use cell::{Cell, ListCell};
+pub use cell::{Cell, ListCell, ParsedLink};
 pub use rows::TreeArena;
 pub use side::{SideRecord, SideSlot, Sides};
 

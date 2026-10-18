@@ -4,6 +4,7 @@
 //! a read outside its record.
 
 use super::{Address, Arena, ArenaError, StringRef};
+use crate::slot::ChangedEdges;
 use crate::types::{KindId, NodeIndex, Span, TreeId};
 
 /// The tag word that opens each cell.
@@ -30,10 +31,10 @@ pub enum Cell {
     ParsedLeaf { kind: KindId, span: Span, row: NodeIndex },
     /// A captured interior string of a parsed node: its byte span.
     ParsedText { span: Span },
-    /// A child with a record of its own: in this cell's arena, or, `tree`
-    /// set, a parsed record in that tree's arena, which a built record names
-    /// for an untouched parsed child.
-    Child { kind: KindId, at: Address, tree: Option<TreeId> },
+    /// A child with a record of its own: in this cell's arena, or, `link`
+    /// set, a parsed record in another tree's arena, which a built record
+    /// names for an untouched parsed child.
+    Child { kind: KindId, at: Address, link: Option<ParsedLink> },
     /// A unit, which carries no text. `KindId::BLANK` is a blank arm.
     Unit { kind: KindId },
     /// A built leaf: its text in the string table, and its own header-only
@@ -41,6 +42,17 @@ pub enum Cell {
     BuiltLeaf { kind: KindId, text: StringRef, record: Address },
     /// A captured interior string of a built node: its text in the string table.
     BuiltText { text: StringRef },
+}
+
+/// A built record's link to an untouched parsed child: the tree whose arena
+/// holds the child's record, and the edges whose neighbour the built holder
+/// changed at this site. The site's fact is stamped here, never in the shared
+/// parsed record, so two built parents sharing the child can differ; a built
+/// child carries its own in its side record instead.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ParsedLink {
+    pub tree: TreeId,
+    pub changed: ChangedEdges,
 }
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
@@ -61,14 +73,20 @@ fn span(start: u32, end: u32) -> Result<Span, ArenaError> {
     if start <= end { Ok(Span { start, end }) } else { Err(malformed("cell span end", end)) }
 }
 
-/// The arena a child's record is in, as one word: its tree plus one, or 0
-/// for the cell's own arena.
-fn tree_word(tree: Option<TreeId>) -> Result<u32, ArenaError> {
-    tree.map_or(Ok(0), |tree| tree.0.checked_add(1).ok_or(malformed("child record tree", tree.0)))
+/// A child's link as two words: the tree plus one, or 0 for the cell's own
+/// arena, then the changed edges, leading 1 and trailing 2.
+fn link_words(link: Option<ParsedLink>) -> Result<[u32; 2], ArenaError> {
+    let Some(ParsedLink { tree, changed }) = link else { return Ok([0, 0]) };
+    let tree = tree.0.checked_add(1).ok_or(malformed("child record tree", tree.0))?;
+    Ok([tree, u32::from(changed.leading) | u32::from(changed.trailing) << 1])
 }
 
-fn read_tree(word: u32) -> Option<TreeId> {
-    word.checked_sub(1).map(TreeId)
+fn read_link(tree: u32, changed: u32) -> Result<Option<ParsedLink>, ArenaError> {
+    match (tree.checked_sub(1), changed) {
+        (None, 0) => Ok(None),
+        (None, _) | (Some(_), 4..) => Err(malformed("child changed edges", changed)),
+        (Some(tree), _) => Ok(Some(ParsedLink { tree: TreeId(tree), changed: ChangedEdges { leading: changed & 1 != 0, trailing: changed & 2 != 0 } })),
+    }
 }
 
 fn record(word: u32) -> Result<Address, ArenaError> {
@@ -82,8 +100,8 @@ impl Cell {
         match self {
             Cell::Absent => 1,
             Cell::Unit { .. } => 2,
-            Cell::ParsedText { .. } | Cell::BuiltText { .. } | Cell::Child { .. } => 4,
-            Cell::Coordinate { .. } | Cell::ParsedLeaf { .. } | Cell::BuiltLeaf { .. } => 5,
+            Cell::ParsedText { .. } | Cell::BuiltText { .. } => 4,
+            Cell::Coordinate { .. } | Cell::ParsedLeaf { .. } | Cell::Child { .. } | Cell::BuiltLeaf { .. } => 5,
         }
     }
 
@@ -102,7 +120,10 @@ impl Cell {
             Cell::Coordinate { kind, index, span } => [tag::COORDINATE, named(kind)?, index.0, span.start, span.end],
             Cell::ParsedLeaf { kind, span, row } => [tag::PARSED_LEAF, named(kind)?, span.start, span.end, row.0],
             Cell::ParsedText { span } => [tag::PARSED_LEAF, 0, span.start, span.end, 0],
-            Cell::Child { kind, at, tree } => [tag::CHILD, named(kind)?, record(at.0)?.0, tree_word(tree)?, 0],
+            Cell::Child { kind, at, link } => {
+                let [tree, changed] = link_words(link)?;
+                [tag::CHILD, named(kind)?, record(at.0)?.0, tree, changed]
+            }
             Cell::Unit { kind } => [tag::UNIT, u32::from(kind.0), 0, 0, 0],
             Cell::BuiltLeaf { kind, text, record: at } => {
                 let [offset, len] = text_words(text)?;
@@ -133,7 +154,7 @@ impl Cell {
                     kind => Ok(Cell::ParsedLeaf { kind, span, row: NodeIndex(field(4)?) }),
                 }
             }
-            tag::CHILD => Ok(Cell::Child { kind: named_kind(field(1)?)?, at: record(field(2)?)?, tree: read_tree(field(3)?) }),
+            tag::CHILD => Ok(Cell::Child { kind: named_kind(field(1)?)?, at: record(field(2)?)?, link: read_link(field(3)?, field(4)?)? }),
             tag::UNIT => Ok(Cell::Unit { kind: kind(field(1)?)? }),
             tag::BUILT_LEAF => {
                 let text = StringRef::from_offset(field(2)?, field(3)?);
@@ -228,9 +249,10 @@ mod tests {
             Cell::Coordinate { kind: KindId(12), index: NodeIndex(40), span },
             Cell::ParsedLeaf { kind: KindId(13), span, row: NodeIndex(41) },
             Cell::ParsedText { span },
-            Cell::Child { kind: KindId(14), at: record, tree: None },
-            Cell::Child { kind: KindId(14), at: record, tree: Some(TreeId(0)) },
-            Cell::Child { kind: KindId(14), at: record, tree: Some(TreeId(9)) },
+            Cell::Child { kind: KindId(14), at: record, link: None },
+            Cell::Child { kind: KindId(14), at: record, link: Some(ParsedLink { tree: TreeId(0), changed: ChangedEdges::default() }) },
+            Cell::Child { kind: KindId(14), at: record, link: Some(ParsedLink { tree: TreeId(9), changed: ChangedEdges { leading: true, trailing: false } }) },
+            Cell::Child { kind: KindId(14), at: record, link: Some(ParsedLink { tree: TreeId(9), changed: ChangedEdges { leading: true, trailing: true } }) },
             Cell::Unit { kind: KindId(15) },
             Cell::Unit { kind: KindId::BLANK },
             Cell::BuiltLeaf { kind: KindId(16), text, record },
@@ -259,12 +281,16 @@ mod tests {
     }
 
     #[test]
-    fn a_child_names_its_record_s_tree_beside_its_address() {
+    fn a_child_names_its_record_s_tree_and_the_site_s_changed_edges() {
         let mut words = [7; 5];
-        Cell::Child { kind: KindId(3), at: Address(6), tree: Some(TreeId(0)) }.encode(&mut words).expect("it fits");
+        let link = |tree, trailing| Some(ParsedLink { tree: TreeId(tree), changed: ChangedEdges { leading: false, trailing } });
+        Cell::Child { kind: KindId(3), at: Address(6), link: link(0, false) }.encode(&mut words).expect("it fits");
         assert_eq!(words, [tag::CHILD, 3, 6, 1, 0], "tree 0 is one, apart from the cell's own arena");
-        Cell::Child { kind: KindId(3), at: Address(6), tree: None }.encode(&mut words).expect("it fits");
+        Cell::Child { kind: KindId(3), at: Address(6), link: link(4, true) }.encode(&mut words).expect("it fits");
+        assert_eq!(words, [tag::CHILD, 3, 6, 5, 2]);
+        Cell::Child { kind: KindId(3), at: Address(6), link: None }.encode(&mut words).expect("it fits");
         assert_eq!(words, [tag::CHILD, 3, 6, 0, 0]);
+        assert!(Cell::Child { kind: KindId(3), at: Address(6), link: None }.encode(&mut [0; 4]).is_err(), "a child takes five words");
     }
 
     #[test]
@@ -281,9 +307,9 @@ mod tests {
         let mut words = [0; 5];
         for cell in [
             Cell::Coordinate { kind: KindId::BLANK, index: NodeIndex(1), span },
-            Cell::Child { kind: KindId::BLANK, at: Address(4), tree: None },
-            Cell::Child { kind: KindId(2), at: Address::NONE, tree: None },
-            Cell::Child { kind: KindId(2), at: Address(4), tree: Some(TreeId(u32::MAX)) },
+            Cell::Child { kind: KindId::BLANK, at: Address(4), link: None },
+            Cell::Child { kind: KindId(2), at: Address::NONE, link: None },
+            Cell::Child { kind: KindId(2), at: Address(4), link: Some(ParsedLink { tree: TreeId(u32::MAX), changed: ChangedEdges::default() }) },
         ] {
             assert!(cell.encode(&mut words).is_err(), "{cell:?}");
         }
@@ -302,6 +328,9 @@ mod tests {
             vec![tag::COORDINATE, 2, 1, 9, 3],
             vec![tag::CHILD, 2],
             vec![tag::CHILD, 2, 4],
+            vec![tag::CHILD, 2, 4, 0],
+            vec![tag::CHILD, 2, 4, 0, 1],
+            vec![tag::CHILD, 2, 4, 3, 4],
             vec![tag::UNIT],
         ] {
             assert!(Cell::decode(&words).is_err(), "{words:?}");
