@@ -2081,7 +2081,7 @@ Every other `ir` path that builds this kind, present only when there is one: eac
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.annotations`
 
 The declarations stamped on the node's rule (`hoisted`, `variant`,
-`variantOf`, `default`, `preference`), read straight off the rule.
+`variantOf`, `default`), read straight off the rule.
 `withKindFacts` keeps the bag on a root that a pass rebuilds. Nothing
 downstream of the node reads `hoisted` here: whether the node seats on its
 parent is `seated`.
@@ -3450,9 +3450,10 @@ baked into one, and reads its declaration here. Absent until
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SeatedChild`
 
-The child a seated site belongs to: the kind that occupies the position, and
-the node field carrying that kind's own trailing edge. A seated site
-writes no field of its own — the parent fills the child's.
+The child a seated site belongs to: the kind that occupies the position and
+its display name. The edge the site decides is the child's own trailing edge,
+which the site carries as its address (`spacing`). A seated site writes no
+field of its own — the parent fills the child's.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seatedSites`
 
@@ -3461,7 +3462,8 @@ kind, so an attribute takes the same gap after it among statements as among
 parameters; a seated site narrows it to one (parent kind, slot, child kind)
 so the two can differ. One per admitted child kind of every heterogeneous
 repeat slot, addressed `(<parent>)/<slot>:/(<child>)/after` and born with
-that path stamped rather than spelled flat for `pathOf` to decompose.
+that path stamped rather than spelled flat for `pathOf` to decompose. Its
+address is the child's edge, keyed under the slot (`siteKey`).
 
 Seats are grouped by (kind, slot) and their admitted kinds unioned, because
 more than one render rule can reach the same slot. The admitted kinds come
@@ -3540,8 +3542,8 @@ Registering a site as a choice drops the slot's cached storage class (`storageIn
  * is its option key, the arms a user may pick (each a kind, or bitflag text
  * for the delimiter), the arm that applies when nothing is set, where it
  * came from — declared by `preference()`, synthesized for a separator's
- * spacing, or synthesized for a list's optional flank — and for separator
- * spacing which gap it governs.
+ * spacing, or synthesized for a list's optional flank — and for synthesized
+ * spacing the address of the gap it governs (`spacing`).
  */
 ```
 
@@ -3651,10 +3653,10 @@ The catalog kinds of a list's separator token arms (`AssembledList.separatorToke
 
 Every synthesized spacing site the render rules hold, in rule order: for a
 separator or flank the kind whose rule carries the multiplicity, the slot
-the rule id maps to, the label, the side and the resolved default; for a
-token seam the kind whose seq holds the choice, the token's kind name as
-the slot, the field name (`<token>_<side>`) as the address, the declared
-or default label, and side `seam`. A seam whose token is the kind's own
+the rule id maps to, the address (`spacing`) and its label, and the resolved
+default; for a token seam the kind whose seq holds the choice, the token's
+kind name as the slot, and the field name (`<token>_<side>`) as the key. Each
+site carries the address its part was minted with; nothing parses one back. A seam whose token is the kind's own
 display is the kind's edge, and its site is stamped `kindEdge` here, where
 that is known. Rule order is what the depth walk
 (`validateIndentDepth`, `DEPTH_SITES`) relies on: a flank's start precedes
@@ -3665,8 +3667,8 @@ is an error, since they share one node field.
 A kind edge that opens or closes with a choice of two or more tokens
 (`edgeLiterals`), where the member beside the seam is a slot with no
 multiplicity, also gets one arm site per token: address `<token>_<side>`, the
-edge's own arms and default, and `edgeArm` naming the edge's address as its
-parent, the token, and the token's kind id (stamped where the render rules
+edge's own arms and default, its own seam address (the arm token, on the
+edge's side), and `edgeArm` carrying the token's kind id (stamped where the render rules
 recorded the arm's default from the token's catalog entry). A face on one token then resolves that arm alone, and the
 edge's own address reaches the edge and every arm. An edge whose first or last
 member is optional or a run has no slot to read an arm from and keeps its single
@@ -3994,10 +3996,9 @@ print inside the referencing kind, so they own no seam sites.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamChoice`
 
-The whitespace choice of one seam, token or kind edge: field name the
-address `<token>_<side>`, label the one the grammar declared for that
-address on the kind or the address itself, side `seam`, the resolved
-default arm, and the grammar's seam arms (`SeamArms`). `resolveSeam`'s
+The whitespace choice of one seam, token or kind edge: its address
+(`SeamAddress`), field name that address's label `<token>_<side>`, the
+resolved default arm, and the grammar's seam arms (`SeamArms`). `resolveSeam`'s
 `origin` rides along on the `SpacingPart` into `whitespaceChoice`, which
 stamps it beside `default: true` on the resolved arm's member — the one
 place this fact is decided; nothing downstream re-derives it.
@@ -4015,26 +4016,27 @@ A site whose arms are narrower than the grammar's (a line-terminated after edge)
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isSeamChoice`
 
-A spacing choice whose label parses as a token seam label, which is how
-the template emitter and `spacingSitesOf` tell a seam choice from a
-separator's.
+A whitespace choice whose members carry a seam address, which is how the
+template emitter and `spacingSitesOf` tell a seam choice from a separator's or
+a flank's.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamPartOf`
 
-The `SpacingPart` of a seam choice, side `seam`.
+The `SpacingPart` of a seam choice, its address typed as a `SeamAddress`; a
+choice that is not a seam is an error.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamChoiceDefault`
 
 Reads back everything a seam choice's resolved default arm was stamped
-with, in one scan of its members — the label (the same address
-`isSeamChoice` parses off member 0), the `origin` (`undefined` for a
+with, in one scan of its members — the label (member 0's address,
+spelled by `spacingLabelOf`), the `origin` (`undefined` for a
 separator gap's whitespace choice, which `resolver.resolveSeparator`
 builds without one), and the arm itself, read off the default member's
 `annotations.arm`, which `whitespaceChoice` stamps as it builds the
 member. The template emitter's `seamChoiceBetween` is the one
 caller — it reads both facts off a single found node rather than scanning
-twice, and never inspects an `annotations.preference` address itself to
-guess either one.
+twice, and never reads a member's address itself to guess either
+one.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isAnyWhitespaceChoice`
 
@@ -4261,20 +4263,12 @@ The display of every node: the names an `options:` block may use as kinds
 The display at one reference site: the alias target when the reference is
 aliased, else its storage name.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::SpacingSide`
-
-```text
-/** Which gap a synthesized whitespace choice governs: before or after a
- *  separator token, the single gap of an unseparated repeat, the start or
- *  end flank of an array, or a token seam (`seam`), whose side is carried
- *  by its label. */
-```
-
 ### `packages/codegen/src/compiler/model/render-rules.ts::SpacingPart`
 
 One whitespace choice of a spaced separator, flank or seam: the node
-field it becomes (the site key), its label, its side, its default arm and
-the arms it admits, read from the choice's own members.
+field it becomes (the site key), its address (`spacing`, which its label is
+spelled from), its default arm and the arms it admits, read from the choice's
+own members.
 
 `edgeLiterals` is set only on a kind edge whose seq opens or closes with a
 literal token or a choice of tokens: the public names of those tokens (one
@@ -4287,8 +4281,8 @@ choice's own annotations by `whitespaceChoice` and read back by `partOf`, so
 The start choice, the array rule and the end choice of a flanked array, a
 three-member seq without a rule id whose outer members are five-arm
 whitespace choices, or undefined for any other rule. A list kind's edge
-seams wrap its flank wrapper in the same shape with the same arm set; the
-labels tell them apart, since a flank label never parses as a seam label.
+seams wrap its flank wrapper in the same shape with the same arm set; their
+addresses tell them apart: a flank's outer choices both carry flank addresses.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flankedSlots`
 
@@ -4343,9 +4337,9 @@ cascade, since a coordinate of that kind is written from the edge's own site.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf`
 
-A site's address decomposed into path segments. It is the only place the flat
-spellings — seam, separator, flank — are read, so retiring them is a deletion
-here rather than a search.
+A site's address decomposed into path segments, read from the address a
+spacing site carries (`spacing`), and from the key and label of a declared
+preference. No spelled seam, separator or flank key is parsed here.
 
 A seam is named after one of three things, and each takes its own segment. A
 seam whose name is the rule's own kind is that kind's edge, and takes no
@@ -4360,9 +4354,9 @@ minted from it — a site can carry one only if the catalog existed when the sit
 was made. So the absence of an entry is not a phase that ran too early; it means
 the seam names a field, which is the remaining case.
 
-A separator is named by its own label rather than by its address, because a
-gap with no token spells its address `<slot>_separator_space`, which reads as
-a token named after the slot. The label says which it is: a token separator
+A separator is named by its address rather than by its key, because a gap
+with no token keys as `<slot>_separator_space`, which reads as a token named
+after the slot. The address says which it is: a token separator
 carries the token's text as a literal segment and a side; the empty gap
 carries neither, so it addresses as `<slot>:/separator` — one place, whether
 or not a token sits in it.
@@ -4958,6 +4952,18 @@ boundary is not a site: `withTokenSeams` writes neither the left token's after
 face nor the member's before face there. When a nullable member is absent, the
 member after it keeps its own before face, so the absent case is never left
 without a seam of its own.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::gapAddressesOf`
+
+The addresses of a repeat's separator gaps: before and after its separator
+token, or the single gap of an unseparated repeat under the `empty` token.
+`withSpacedSeparator` builds one whitespace choice for each.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::resolveRenderRules`
+
+Both render-rule passes, with the `options:` block resolved between them.
+`stamp` runs on the spaced rules before each seam pass: seam fallbacks read
+the static-spacing stamp, and a declared separator arm can move it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias.aliasTypeId`
 

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { addressSites, matchAddress, matchAddressWith, resolveLabels } from '../site-addresses.ts';
+import { parseSpacingAddress } from '../../../dsl/primitives/spacing.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { assemble, AssembleCtx } from '../../assemble.ts';
 import { makeNormalized } from '../../__tests__/make-normalized.ts';
@@ -78,7 +79,7 @@ const site = (kind: string, address: string, slot = 'x', label = address): RuleS
 	slot,
 	address,
 	label,
-	side: 'before',
+	spacing: parseSpacingAddress(label)!,
 	defaultArm: 'tight',
 	arms: ['tight', 'space']
 });
@@ -310,15 +311,15 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 	const kindEntries = [{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 }] as unknown as KindEntryLike[];
 	const sites = addressSites(
 		[
-			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeLiterals: ['lparen'] },
-			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after' },
-			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
+			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', spacing: parseSpacingAddress('args_before')!, edgeLiterals: ['lparen'] },
+			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after', spacing: parseSpacingAddress('args_after')! },
+			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', spacing: parseSpacingAddress('lparen_before')! }
 		],
 		kindEntries
 	, makeSiteKindsNodeMap([
-			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeLiterals: ['lparen'] },
-			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after' },
-			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
+			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', spacing: parseSpacingAddress('args_before')!, edgeLiterals: ['lparen'] },
+			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after', spacing: parseSpacingAddress('args_after')! },
+			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', spacing: parseSpacingAddress('lparen_before')! }
 		]));
 	it('matches the grammar-wide token face through the cascade path and marks the hit as cascaded', () => {
 		const hits = matchAddressWith(parsePreferencePath('_/"("/before'), sites, NO_SUPERTYPES);
@@ -351,9 +352,9 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 describe('a kind row over a kind and its members refines a site the wildcard only cascades onto', () => {
 	const kindEntries = [{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 }] as unknown as KindEntryLike[];
 	const raw = [
-		{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeLiterals: ['lparen'] },
-		{ kind: 'args_in', slot: 'args_in', address: 'args_in_before', label: 'args_in_before' },
-		{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
+		{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', spacing: parseSpacingAddress('args_before')!, edgeLiterals: ['lparen'] },
+		{ kind: 'args_in', slot: 'args_in', address: 'args_in_before', label: 'args_in_before', spacing: parseSpacingAddress('args_in_before')! },
+		{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', spacing: parseSpacingAddress('lparen_before')! }
 	];
 	const sites = addressSites(raw, kindEntries, makeSiteKindsNodeMap(raw));
 	const members = new Map<string, readonly string[]>([['args', ['args_in']]]);
@@ -381,7 +382,7 @@ describe('a kind edge over a choice of tokens cascades only a unanimous face', (
 		{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 3 },
 		{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 4 }
 	] as unknown as KindEntryLike[];
-	const sites = addressSites([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] }], kindEntries, makeSiteKindsNodeMap([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] }]));
+	const sites = addressSites([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', spacing: parseSpacingAddress('range_before')!, edgeLiterals: ['dot_dot', 'dot_dot_eq'] }], kindEntries, makeSiteKindsNodeMap([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', spacing: parseSpacingAddress('range_before')!, edgeLiterals: ['dot_dot', 'dot_dot_eq'] }]));
 	const resolve = (rows: { path: string; arm: string }[]) =>
 		[...resolveLabels(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`);
 
@@ -408,9 +409,9 @@ describe('a kind edge over a choice of tokens has one arm site per token', () =>
 		{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 4 }
 	] as unknown as KindEntryLike[];
 	const inputs = [
-		{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] },
-		{ kind: 'range', slot: 'dot_dot', address: 'dot_dot_before', label: 'dot_dot_before', edgeArm: { parent: 'range_before', token: 'dot_dot' } },
-		{ kind: 'range', slot: 'dot_dot_eq', address: 'dot_dot_eq_before', label: 'dot_dot_eq_before', edgeArm: { parent: 'range_before', token: 'dot_dot_eq' } }
+		{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', spacing: parseSpacingAddress('range_before')!, edgeLiterals: ['dot_dot', 'dot_dot_eq'] },
+		{ kind: 'range', slot: 'dot_dot', address: 'dot_dot_before', label: 'dot_dot_before', spacing: parseSpacingAddress('dot_dot_before')!, edgeArm: {} },
+		{ kind: 'range', slot: 'dot_dot_eq', address: 'dot_dot_eq_before', label: 'dot_dot_eq_before', spacing: parseSpacingAddress('dot_dot_eq_before')!, edgeArm: {} }
 	];
 	const sites = addressSites(inputs, kindEntries, makeSiteKindsNodeMap(inputs));
 	const resolve = (rows: { path: string; arm: string }[]) =>
