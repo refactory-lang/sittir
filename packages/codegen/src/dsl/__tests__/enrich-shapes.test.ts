@@ -57,3 +57,32 @@ describe('the shapes enrich records', () => {
 		expect(enrichShapesOf(second)).toEqual([]);
 	});
 });
+
+describe('the shapes enrich records when it rewrites a choice', () => {
+	const alias = (value: string, content: unknown) => ({ type: 'ALIAS', named: true, value, content });
+	const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
+	const token = (content: unknown) => ({ type: 'TOKEN', content });
+
+	it('records an alias over a choice as alias-over-choice, and writes the distributed form', () => {
+		const result = enriched({ parent: alias('x', choice(sym('a'), sym('b'))), a: str('a'), b: str('b') });
+		expect(codesOf(result, 'parent')).toContain('alias-over-choice');
+		expect((result.grammar.rules.parent as { type: string }).type).toBe('CHOICE');
+	});
+
+	it('records a token over a choice of strings as leaf-enum-token', () => {
+		const result = enriched({ op: token(choice(str('+'), str('-'))) });
+		expect(codesOf(result, 'op')).toContain('leaf-enum-token');
+	});
+
+	it('records a choice whose every member is optional as shared-optional-choice, and not a choice with a required member', () => {
+		const shared = enriched({ parent: seq(str('('), choice(optional(field('a', sym('x'))), optional(field('b', sym('y')))), str(')')), x: str('x'), y: str('y') });
+		expect(codesOf(shared, 'parent')).toContain('shared-optional-choice');
+		const required = enriched({ parent: seq(str('('), choice(optional(field('a', sym('x'))), field('b', sym('y'))), str(')')), x: str('x'), y: str('y') });
+		expect(codesOf(required, 'parent')).not.toContain('shared-optional-choice');
+	});
+
+	it('records nothing for a rule none of the three rewrites touch', () => {
+		const result = enriched({ plain: seq(str('('), field('a', sym('x')), str(')')), x: str('x') });
+		expect(codesOf(result, 'plain')).toEqual([]);
+	});
+});
