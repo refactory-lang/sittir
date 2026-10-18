@@ -35,8 +35,10 @@ An alias edit's effect: the member displayed as `from` now shows as `to`. On inh
 ### `packages/codegen/src/dsl/verbs/effects.ts::displayFamiliesOf`
 
 The display families an effect log declares (`rule-transforms.ts::DisplayFamilies`): each display that alias effects
-give two or more distinct members (`AliasEffect.to`), with those members (`from`). A display that one member shows,
-however often, is not a family. Enrich's fixpoint run reads them (`layer.ts::enrichFixpoint`).
+give two or more distinct members (`AliasEffect.to`), with those members (`from`). A copy shown as its source
+(`CopyEffect.display` is its `source`) puts the source and the copy in the source's family, since the tree shows both
+storages under the source's name. A display that one member shows, however often, is not a family. Enrich's fixpoint
+run reads them (`layer.ts::enrichFixpoint`).
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::RenameEffect`
 
@@ -44,7 +46,7 @@ A kind rename's effect: the kind `from` is now `to` wherever a kind is named. On
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect`
 
-A copy a verb made: the rule `copy`, made from `source` (`part` is `.` for the whole rule) for the context `context`. `display` is the name the copy shows under when it is visible. `admitted` is the admitted kind a narrowing made the copy as the form of: the kind the copy is shown in place of. `origin` says which edit made it. The copy effect is the copy's form-of fact; the projections read `splitFrom`, `leadFrom` and the lead entries from it.
+A copy a verb made: the rule `copy`, made from `source` (`part` is `.` for the whole rule) for the context `context`. `display` is the name the copy shows under when it is visible: a narrowing records it, and a copy's reference stamps it (`wire/wire.ts::wireNoteCopyDisplay`). `admitted` is the admitted kind a narrowing made the copy as the form of: the kind the copy is shown in place of. `origin` says which edit made it. The copy effect is the copy's form-of fact; the projections read `splitFrom`, `leadFrom` and the lead entries from it.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::Effect`
 

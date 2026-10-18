@@ -402,6 +402,14 @@ One blocking `hidden-terminal-nonliteral` record per `hiddenTerminalNonliteralSi
 
 One blocking `eof-in-token` record per rule that holds `eof()` anywhere under a `token()` or `token.immediate()`, naming the rule as `ownerKind`. A lexical token cannot match the end of input. tree-sitter's DSL forbids the shape, and the record refuses it at evaluate (`evaluateRecords`) instead of leaving it to the parser generator.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastDiagnostics`
+
+One blocking `eof-not-last` record per site the prediction stamps (`dsl/symbol-table.ts::EofNotLast`), naming the authored rule as `ownerKind`. A production that continues past the end of the input is one tree-sitter drops, while the model, which reads `eof()` as blank, would still build it, so its nodes would never reparse. The details carry the site's `kind`, `ending` and `repetition`.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastMessage`
+
+The message of an `eof-not-last` record: the followed rule that always ends input, the repetition whose item ends at `eof()`, or the production that continues after `eof()`.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
 
 One blocking `field-optional-delimiter` record per authored-compound slot
@@ -495,7 +503,7 @@ throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is 
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::evaluateRecords`
 
-The records answerable from the evaluated grammar alone, before link: the prediction records, the
+The records answerable from the evaluated grammar alone, before link: the prediction records, `eof-in-token` and `eof-not-last`, the
 `expect-diagnostics-invalid` entries, the `groups:` entries the layer pass found matching nothing (`body-pattern-zero-match`) and the diagnostics the layer passes recorded (`RawGrammar.layerDiagnostics`).
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseStage`

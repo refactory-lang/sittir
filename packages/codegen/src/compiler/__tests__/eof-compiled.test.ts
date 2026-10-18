@@ -17,8 +17,8 @@ const compiled = async (rules: string): Promise<NodeMap> => assemble(AssembleCtx
 
 describe('eof() through the compiler', () => {
 	it('gives seq($.x, eof()) the same node keys, node class and value count as seq($.x)', async () => {
-		const withEof = await compiled("source: ($) => repeat($.r), r: ($) => seq($.x, eof()), x: () => 'a'");
-		const without = await compiled("source: ($) => repeat($.r), r: ($) => seq($.x), x: () => 'a'");
+		const withEof = await compiled("source: ($) => optional($.r), r: ($) => seq($.x, eof()), x: () => 'a'");
+		const without = await compiled("source: ($) => optional($.r), r: ($) => seq($.x), x: () => 'a'");
 		expect([...withEof.nodes.keys()]).toEqual([...without.nodes.keys()]);
 		expect(withEof.nodes.get('r')?.constructor).toBe(without.nodes.get('r')?.constructor);
 		const members = (map: NodeMap) => ((map.nodes.get('r') as unknown as { simplifiedRule: { members?: unknown[] } }).simplifiedRule.members ?? []).length;
@@ -26,8 +26,8 @@ describe('eof() through the compiler', () => {
 	}, 60_000);
 
 	it('assembles a rule whose body is eof() exactly as a rule whose body is blank()', async () => {
-		const withEof = await compiled("source: ($) => repeat($.root), e: ($) => eof(), root: ($) => seq($.e, 'x')");
-		const withBlank = await compiled("source: ($) => repeat($.root), e: ($) => blank(), root: ($) => seq($.e, 'x')");
+		const withEof = await compiled("source: ($) => optional($.root), e: ($) => eof(), root: ($) => seq('x', $.e)");
+		const withBlank = await compiled("source: ($) => optional($.root), e: ($) => blank(), root: ($) => seq('x', $.e)");
 		expect([...withEof.nodes.keys()]).toEqual([...withBlank.nodes.keys()]);
 		expect(withEof.nodes.get('root')?.constructor).toBe(withBlank.nodes.get('root')?.constructor);
 	}, 60_000);
@@ -53,5 +53,27 @@ describe('eof() in the grammar.json the CLI writes', () => {
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}
+	}, 60_000);
+});
+
+describe('eof() collapses to the node it stands for', () => {
+	const shape = (map: NodeMap, name: string) => ({ keys: [...map.nodes.keys()], ctor: map.nodes.get(name)?.constructor });
+
+	it('assembles a production that is only eof() as a blank() production', async () => {
+		const withEof = await compiled("source: ($) => optional($.r), r: ($) => seq(eof())");
+		const withBlank = await compiled('source: ($) => optional($.r), r: ($) => blank()');
+		expect(shape(withEof, 'r')).toEqual(shape(withBlank, 'r'));
+	}, 60_000);
+
+	it('assembles seq($.x, eof()) inside optional(...) as seq($.x) inside optional(...)', async () => {
+		const withEof = await compiled("source: ($) => optional($.r), r: ($) => seq('(', optional(seq($.x, eof()))), x: () => 'a'");
+		const without = await compiled("source: ($) => optional($.r), r: ($) => seq('(', optional(seq($.x))), x: () => 'a'");
+		expect(shape(withEof, 'r')).toEqual(shape(without, 'r'));
+	}, 60_000);
+
+	it("assembles seq($.x, eof()) inside field('f', ...) as seq($.x) inside field('f', ...)", async () => {
+		const withEof = await compiled("source: ($) => optional($.r), r: ($) => field('f', seq($.x, eof())), x: () => 'a'");
+		const without = await compiled("source: ($) => optional($.r), r: ($) => field('f', seq($.x)), x: () => 'a'");
+		expect(shape(withEof, 'r')).toEqual(shape(without, 'r'));
 	}, 60_000);
 });

@@ -111,6 +111,7 @@ export interface WireContext {
 	activePatchSites: readonly string[];
 	activeEntryPath: string | null;
 	copyDepth: number;
+	readonly entering: Set<string>;
 	readonly copies: Map<string, CopyEffect>;
 	readonly copyReferences: WeakMap<object, string>;
 	readonly source: unknown;
@@ -258,6 +259,7 @@ export interface WireCopyRequest {
 	readonly source: string;
 	readonly part: string;
 	readonly via: 'path' | 'copy';
+	readonly from?: string;
 }
 
 export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => RuntimeRule): string | undefined {
@@ -266,6 +268,10 @@ export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => 
 	if (context?.layer === undefined || owner === null || owner === undefined)
 		throw new VerbRefusal('edit-entry-invalid', `copy('${request.source}'): a copy is made only during a layer pass: in a rule callback, a replacing function or a helper`);
 	const name = copyNameOf(request.source, request.part, owner);
+	if (request.from !== undefined && request.from !== name) {
+		refuseForeignCopy(owner, request.from);
+		return undefined;
+	}
 	const prior = context.copies.get(name);
 	const body = prior === undefined ? freshCopyBody(context, request, name, owner) : sameCopy(prior, request, owner) ? context.deposits.get(name) : undefined;
 	if (body === undefined) return undefined;
@@ -284,8 +290,15 @@ export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => 
 	return name;
 }
 
-export function wireInsideCopy<T>(fn: () => T): T {
-	return currentContext === null ? fn() : insideCopy(currentContext, fn);
+export function wireEnteringRule<T>(rule: string, fn: () => T): T | undefined {
+	const context = currentContext;
+	if (context === null || context.entering.has(rule)) return undefined;
+	context.entering.add(rule);
+	try {
+		return insideCopy(context, fn);
+	} finally {
+		context.entering.delete(rule);
+	}
 }
 
 function insideCopy<T>(context: WireContext, fn: () => T): T {
@@ -301,16 +314,22 @@ export function wireIsInsideCopy(): boolean {
 	return (currentContext?.copyDepth ?? 0) > 0;
 }
 
-export function wireCopyBody(source: string, part: string): RuntimeRule | undefined {
+export function wireCopyBody(request: WireCopyRequest): RuntimeRule | undefined {
 	const context = currentContext;
 	const owner = context?.currentRuleKind;
 	if (context === null || owner === null || owner === undefined) return undefined;
-	const name = copyNameOf(source, part, owner);
-	return context.copies.has(name) ? context.deposits.get(name) : part === '.' ? sourceBodyOf(context, source) : undefined;
+	if (request.from !== undefined) return context.deposits.get(request.from);
+	const name = copyNameOf(request.source, request.part, owner);
+	return context.copies.has(name) ? context.deposits.get(name) : request.part === '.' ? sourceBodyOf(context, request.source) : undefined;
 }
 
-export function wireCopySource(copy: string): string | undefined {
-	return currentContext?.copies.get(copy)?.source;
+export function wireCopyOf(copy: string): CopyEffect | undefined {
+	return currentContext?.copies.get(copy);
+}
+
+export function wireNoteCopyDisplay(copy: string, display: string | undefined): void {
+	const effect = currentContext?.copies.get(copy);
+	if (effect !== undefined) currentContext!.copies.set(copy, { ...effect, display });
 }
 
 export function wireCopyReference(rule: unknown): string | undefined {
@@ -344,6 +363,15 @@ function refuseCopyName(owner: string, request: WireCopyRequest, name: string): 
 		ownerKind: owner,
 		message: `copy: '${request.source}' at '${request.part}' copies to '${name}', which the grammar already names`,
 		details: { kind: owner, source: request.source, part: request.part, copy: name }
+	});
+}
+
+function refuseForeignCopy(owner: string, copy: string): void {
+	wireRefuse({
+		code: 'edit-entry-invalid',
+		ownerKind: owner,
+		message: `edits: '${owner}': a path reaches the copy '${copy}', which another kind made`,
+		details: { kind: owner, copy }
 	});
 }
 
@@ -533,6 +561,7 @@ export function withWireContext<T>(
 		activePatchSites: [],
 		activeEntryPath: null,
 		copyDepth: 0,
+		entering: new Set(),
 		copies: new Map(),
 		copyReferences: new WeakMap(),
 		source: base,
@@ -756,6 +785,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		activePatchSites: [],
 		activeEntryPath: null,
 		copyDepth: 0,
+		entering: new Set(),
 		copies: new Map(),
 		copyReferences: new WeakMap(),
 		source,

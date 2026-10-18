@@ -190,27 +190,31 @@ A `(kind)` segment, matched from the root of the current rule (`walkKindMatch`).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToSymbol`
 
-The `(kind)` segment at one symbol. A symbol that names a copy counts as its source (`wireCopySource`), so a second path through the same context finds the reference the first left.
+The `(kind)` segment at one symbol. A symbol that names a whole copy counts as its source (`reachedRule`), so a second path through the same context finds the reference the first left. A part copy is a hidden rule of its own, not a node of its source's kind.
 - A symbol of another kind may be a hidden rule the path enters implicitly (`enteredHiddenRule`).
 - A reference already in a field is skipped (see `walkKindMatch`).
 - The last segment, without `as`, patches the reference itself.
-- With more segments, or with `as`, the path enters the rule: the rest applies inside the context's copy of it (`enteredCopy`), and the reference becomes the copy's (`primitives/copy.ts::copyReference`), shown as `as` when the segment names one.
+- With more segments, or with `as`, the path enters the rule: the rest applies inside the context's copy of it (`enteredCopy`), and the reference becomes the copy's, shown as `as` when the segment names one.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::ReachedRule`
+
+What a path finds at a reference: the kind a `(kind)` segment matches it as, and the copy request that enters it (`wire/wire.ts::WireCopyRequest`).
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::reachedRule`
+
+The `ReachedRule` of a referenced name. A name that is no copy is its own kind, and entering it asks for the context's copy of it. A copy (`wire/wire.ts::wireCopyOf`) is entered as itself (`from`): a whole copy matches as its source's kind, and a part copy as its own name.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredCopy`
 
-Applies `edit` to the context's copy of `source` (`wire/wire.ts::wireCopy`) and returns the reference to it. A reference that already names the copy is returned as it is, so re-entering a copy never wraps its reference twice. When the copy is refused, the reference is left alone.
-
-### `packages/codegen/src/dsl/transform/transform-path.ts::entering`
-
-The hidden rules the walk is inside, so a hidden rule that reaches itself is entered once.
+Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and returns the reference to it. A reference that entered a rule becomes the new copy's (`primitives/copy.ts::copyReference`), shown as `shown` when the segment names one. A reference that entered a copy keeps its form (`primitives/copy.ts::reachedCopyReference`), so re-entering a copy never wraps its reference twice. When the copy is refused, the reference is left alone.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredHiddenRule`
 
-A hidden rule between the visible kinds of a path, entered implicitly so a path reads in tree terms. Its body, or its copy's when the context already has one (`wire/wire.ts::wireCopyBody`), is walked for the segment as its own rule: unfielded, with no enclosing wrappers, and inside the copy (`wire/wire.ts::wireInsideCopy`). Only a walk that matches makes the copy, so a hidden rule that never reaches the kind stays shared. An enrich group lift is part of its owner and is never entered.
+A hidden rule between the visible kinds of a path, entered implicitly so a path reads in tree terms. The body the request names (`wire/wire.ts::wireCopyBody`) is walked for the segment as its own rule: unfielded, with no enclosing wrappers, and inside the copy (`wire/wire.ts::wireEnteringRule`, which also enters a rule that reaches itself only once). That body is the copy's when the reference is one or the context already has one, otherwise the rule's own. Only a walk that matches makes the copy, so a hidden rule that never reaches the kind stays shared. An enrich group lift is part of its owner and is never entered.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToCopyReference`
 
-The `(kind)` segment at an `ALIAS` that shows a copy. A kind-match does not see through aliases, but a copy's reference is its source's site. It matches when the copy's source is the kind, and the reference stays: the last segment patches the whole reference, and more segments apply inside the copy. Any other node is no leaf (`undefined`).
+The `(kind)` segment at an `ALIAS` that shows a copy. A kind-match does not see through aliases, but a copy's reference is its source's site. It matches when the copy is a whole copy of the kind (`reachedRule`). The last segment without `as` patches the whole reference; more segments, or `as`, apply inside the copy and return its reference (`enteredCopy`). Any other node is no leaf (`undefined`).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::KindSegment`
 

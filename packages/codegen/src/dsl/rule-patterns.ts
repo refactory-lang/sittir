@@ -275,7 +275,7 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 		const r = m as Record<string, unknown>;
 		const t = typeof r.type === 'string' ? r.type : '';
 
-		if (isStringType(t) || typeEq(t, 'TOKEN') || isBlank(r)) continue;
+		if (isStringType(t) || typeEq(t, 'TOKEN') || typeEq(t, EOF) || isBlank(r)) continue;
 
 		if (rulesBag && isSymbolType(t)) {
 			const name = typeof r.name === 'string' ? r.name : undefined;

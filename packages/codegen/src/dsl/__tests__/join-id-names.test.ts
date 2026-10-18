@@ -55,7 +55,7 @@ describe('joinIdNames', () => {
 		const raw = {
 			name: 'demo',
 			rules: {},
-			predictedKinds: { entries: [], keyCollisions: [{ key: 'bslashk', symbols: ['anon_sym_BSLASHk', 'anon_sym_BSLASHK'] }] }
+			predictedKinds: { entries: [], eofNotLast: [], keyCollisions: [{ key: 'bslashk', symbols: ['anon_sym_BSLASHk', 'anon_sym_BSLASHK'] }] }
 		} as unknown as RawGrammar;
 		expect(evaluateRecords(raw)).toEqual([
 			expect.objectContaining({

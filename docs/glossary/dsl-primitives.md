@@ -374,7 +374,27 @@ The kind a source names: a string, or a `$` value read the way the runtime's `al
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::copyReference`
 
-The reference to a copy. A copy of a visible rule aliases back to its source, `alias($._copy, $.source)`, so the tree shows the source's kind; a copy of a hidden rule is `$._copy`. Shown as another name, the reference is `alias($._copy, $.shown)` and the alias `(source, shown)` is recorded (`transform/transform.ts::recordAlias`). The reference is noted as the copy's (`wire/wire.ts::wireNoteCopyReference`).
+The reference to a copy. A copy of a visible rule aliases back to its source, `alias($._copy, $.source)`, so the tree shows the source's kind; a copy of a hidden rule is `$._copy`. Shown as another name, the reference is `alias($._copy, $.shown)` and the alias `(source, shown)` is recorded (`transform/transform.ts::recordAlias`). The name the reference shows is stamped on the copy effect (`wire/wire.ts::wireNoteCopyDisplay`), so a copy that aliases back declares the display family of its source and itself. The reference is noted as the copy's (`wire/wire.ts::wireNoteCopyReference`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::reachedCopyReference`
+
+The reference a path leaves at a reference it reached that already stands for a copy. With `shown` naming a display the reference does not have, the reference is the copy's, shown as `shown` (`copyReference`). Otherwise it keeps its form: the same reference when it already names the copy, else re-pointed at it (`repointed`). A reference already shown under a name of its own (not its source's) that a path shows as another is `edit-site-conflict` (`displaysConflict`), and keeps its display.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::displayOf`
+
+The name a reference shows: an `ALIAS`'s value, or none for a bare symbol.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::referencedNameOf`
+
+The rule a reference names: the symbol, or the symbol an `ALIAS` shows.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::repointed`
+
+The same reference form naming another copy: an `ALIAS` keeps its value and namedness, and a bare symbol stays bare.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::displaysConflict`
+
+Whether showing a copy's reference as `shown` conflicts with the display it has. A reference with no display, or shown as its source, takes the new name. A display of its own is refused as `edit-site-conflict` naming the kind, the copy and both displays.
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::copy`
 

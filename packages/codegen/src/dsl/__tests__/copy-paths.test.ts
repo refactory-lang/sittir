@@ -2,6 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
 import { projection, withoutIds } from './_parse-projection.ts';
 
+// Every layer that is not meant to fail must leave no layer diagnostic.
+async function evaluateClean(...args: Parameters<typeof evaluateTempGrammar>): ReturnType<typeof evaluateTempGrammar> {
+	const raw = await evaluateTempGrammar(...args);
+	expect(raw.layerDiagnostics ?? []).toEqual([]);
+	return raw;
+}
+
 // The splitGrammar outputs for the touched kinds of each base, computed from
 // splitGrammar on the base evaluated without bindings.
 const PIN_S1 = {
@@ -402,7 +409,7 @@ const pick = (rules: Record<string, unknown>, names: readonly string[]): Record<
 
 describe('a copy path matches the split it spells', () => {
 	it('S1: a direct copy of a body with its options matches the split of the body', async () => {
-		const path = await evaluateTempGrammar({ extras: '', rules: S1_RULES }, S1_OPTIONS, {
+		const path = await evaluateClean({ extras: '', rules: S1_RULES }, S1_OPTIONS, {
 			bindings: "edits: { owner: { '(body)': ($) => alias(copy('body'), $.context_body) } }"
 		});
 		const projected = projection(path);
@@ -412,7 +419,7 @@ describe('a copy path matches the split it spells', () => {
 	}, 60_000);
 
 	it('S2: a copy through a hidden rule matches the split of the arm', async () => {
-		const path = await evaluateTempGrammar({ extras: '', rules: S2_RULES }, '', {
+		const path = await evaluateClean({ extras: '', rules: S2_RULES }, '', {
 			bindings: "edits: { owner: { '(a)': ($) => alias(copy('a'), $.owner_a) } }"
 		});
 		const projected = projection(path);
@@ -423,7 +430,7 @@ describe('a copy path matches the split it spells', () => {
 	}, 60_000);
 
 	it('S2b: a copy through a hidden choice matches the split of the arm', async () => {
-		const path = await evaluateTempGrammar({ extras: '', rules: S2_CHOICE_RULES }, '', {
+		const path = await evaluateClean({ extras: '', rules: S2_CHOICE_RULES }, '', {
 			bindings: "edits: { owner: { '(a)': ($) => alias(copy('a'), $.owner_a) } }"
 		});
 		const projected = projection(path);
@@ -434,7 +441,7 @@ describe('a copy path matches the split it spells', () => {
 	}, 60_000);
 
 	it('S3: a copy through a hidden rule and a container matches the split of the rust shape', async () => {
-		const path = await evaluateTempGrammar({ extras: '', rules: S3_RULES }, '', {
+		const path = await evaluateClean({ extras: '', rules: S3_RULES }, '', {
 			bindings: "edits: { outer: { 'body:/(list as outer_list)/(fn)': ($) => alias(copy('fn'), $.method) } }"
 		});
 		const projected = projection(path);
@@ -444,7 +451,7 @@ describe('a copy path matches the split it spells', () => {
 	}, 60_000);
 
 	it('S4: a second copy in the same context reuses the container and the hidden copy', async () => {
-		const path = await evaluateTempGrammar({ extras: '', rules: S3_RULES }, '', {
+		const path = await evaluateClean({ extras: '', rules: S3_RULES }, '', {
 			bindings:
 				"edits: { outer: { 'body:/(list as outer_list)/(fn)': ($) => alias(copy('fn'), $.method), 'body:/(list as outer_list)/(konst)': ($) => alias(copy('konst'), $.assoc) } }"
 		});
@@ -457,7 +464,7 @@ describe('a copy path matches the split it spells', () => {
 
 describe('a copy path names its copies by the spelling of the path', () => {
 	it('C1: an unnamed container segment references the copy back to its source name', async () => {
-		const raw = await evaluateTempGrammar({ extras: '', rules: S3_RULES }, '', {
+		const raw = await evaluateClean({ extras: '', rules: S3_RULES }, '', {
 			bindings: "edits: { outer: { 'body:/(list)/(fn)': ($) => alias(copy('fn'), $.method) } }"
 		});
 		expect(raw.rules.outer).toMatchObject({
@@ -467,7 +474,7 @@ describe('a copy path names its copies by the spelling of the path', () => {
 	}, 60_000);
 
 	it('C2: a part copy names the arm by its path and is referenced bare', async () => {
-		const raw = await evaluateTempGrammar({ extras: '', rules: "owner: ($) => $._decl, _decl: ($) => choice(seq('a', $.word), seq('b', $.word))" }, '', {
+		const raw = await evaluateClean({ extras: '', rules: "owner: ($) => $._decl, _decl: ($) => choice(seq('a', $.word), seq('b', $.word))" }, '', {
 			bindings: "rules: { owner: ($) => seq('(', copy('_decl', '1'), ')') }"
 		});
 		expect(raw.rules._decl_1_owner).toMatchObject({ type: 'SEQ', members: [{ type: 'STRING', value: 'b' }, { type: 'SYMBOL', name: 'word' }] });
@@ -482,7 +489,7 @@ describe('a copy path names its copies by the spelling of the path', () => {
 	}, 60_000);
 
 	it('C4: an alias on a symbol inside a copied context relabels the reference and mints no copy of the symbol', async () => {
-		const raw = await evaluateTempGrammar({ extras: '', rules: S3_RULES }, '', {
+		const raw = await evaluateClean({ extras: '', rules: S3_RULES }, '', {
 			bindings: "edits: { outer: { 'body:/(list as outer_list)/(fn)': alias('method') } }"
 		});
 		expect(raw.rules._stmt_outer).toMatchObject({
@@ -493,8 +500,8 @@ describe('a copy path names its copies by the spelling of the path', () => {
 	}, 60_000);
 
 	it('C5: a literal split names the copy of a member whose name field is replaced in the copy', async () => {
-		const raw = await evaluateTempGrammar(
-			{ extras: '', rules: "cls: ($) => seq('{', repeat($.meth), '}'), meth: ($) => seq(field('name', $.prop), '(', ')'), prop: () => /[a-z]+/" },
+		const raw = await evaluateClean(
+			{ extras: '', rules: "cls: ($) => seq('{', repeat(choice($.meth, $.field_def)), '}'), meth: ($) => seq(field('name', $.prop), '(', ')'), field_def: ($) => seq('let', $.prop), prop: () => /[a-z]+/" },
 			'',
 			{
 				bindings: "edits: { cls: { '(meth)': ($, member) => choice(member, alias(replace(copy('meth'), 'name:', alias('constructor', $.prop)), $.ctor)) } }"
@@ -512,20 +519,37 @@ describe('a copy path names its copies by the spelling of the path', () => {
 			type: 'SEQ',
 			members: [
 				{ type: 'STRING', value: '{' },
-				{
-					type: 'REPEAT',
-					content: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'meth' }, { type: 'ALIAS', named: true, value: 'ctor', content: { type: 'SYMBOL', name: '_meth_cls' } }] }
-				},
+				{ type: 'FIELD', name: 'elements', metadata: { fieldSource: 'enriched' }, content: { type: 'REPEAT', content: { type: 'CHOICE' } } },
 				{ type: 'STRING', value: '}' }
 			]
 		});
+		const arms = JSON.stringify((raw.rules.cls as { members: { content: { content: unknown } }[] }).members[1]!.content.content);
+		expect(arms).toContain('"name":"meth"');
+		expect(arms).toContain('"value":"ctor"');
+		expect(arms).toContain('"name":"_meth_cls"');
+		expect(arms).toContain('"name":"field_def"');
+	}, 60_000);
+
+	it('C5 refusal: a repeated single kind that an edit turns into a choice is a layer-not-enrich-fixpoint naming the field it would add', async () => {
+		const raw = await evaluateTempGrammar(
+			{ extras: '', rules: "cls: ($) => seq('{', repeat($.meth), '}'), meth: ($) => seq('(', ')'), prop: () => /[a-z]+/" },
+			'',
+			{ bindings: "edits: { cls: { '(meth)': ($, member) => choice(member, $.prop) } }" }
+		);
+		expect(raw.layerDiagnostics).toContainEqual(
+			expect.objectContaining({
+				code: 'layer-not-enrich-fixpoint',
+				details: expect.objectContaining({ rules: ['cls'], addedFields: [{ rule: 'cls', field: 'elements' }] }),
+				proposal: expect.stringContaining("field('elements', \u2026)")
+			})
+		);
 	}, 60_000);
 });
 
 describe('the source keeps its labels after a copy is named', () => {
 	it('keeps the source labels and inherits the copy label under the copy name, without projection', async () => {
-		const base = await evaluateTempGrammar({ extras: '', rules: S1_RULES }, S1_OPTIONS, { bindings: '' });
-		const raw = await evaluateTempGrammar({ extras: '', rules: S1_RULES }, S1_OPTIONS, {
+		const base = await evaluateClean({ extras: '', rules: S1_RULES }, S1_OPTIONS, { bindings: '' });
+		const raw = await evaluateClean({ extras: '', rules: S1_RULES }, S1_OPTIONS, {
 			bindings: "edits: { owner: { '(body)': ($) => alias(copy('body'), $.context_body) } }"
 		});
 		const options = raw.options as Record<string, unknown>;

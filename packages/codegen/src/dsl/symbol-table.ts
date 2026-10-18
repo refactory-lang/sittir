@@ -807,6 +807,7 @@ interface Variable {
 	name: string;
 	kind: VariableKind;
 	rule: InternedRule;
+	owner?: string;
 }
 
 interface ProductionStep {
@@ -999,6 +1000,54 @@ function completedProductions(productions: readonly ProductionStep[][]): Product
 	});
 }
 
+function alwaysEndingInput(productions: ReadonlyMap<string, readonly ProductionStep[][]>): Set<string> {
+	const ending = new Set([...productions].filter(([, alternatives]) => alternatives.length > 0).map(([key]) => key));
+	const endsInput = (production: readonly ProductionStep[]): boolean => {
+		const last = production.at(-1);
+		return last !== undefined && (last.key === END_STEP_KEY || ending.has(last.key));
+	};
+	let changed = true;
+	while (changed) {
+		changed = false;
+		for (const key of ending) {
+			if (productions.get(key)!.every(endsInput)) continue;
+			ending.delete(key);
+			changed = true;
+		}
+	}
+	return ending;
+}
+
+export interface EofNotLast {
+	readonly kind: string;
+	readonly ending: string | undefined;
+	readonly repetition: boolean;
+}
+
+function eofNotLastSites(syntax: readonly Variable[], productions: ReadonlyMap<string, readonly ProductionStep[][]>): EofNotLast[] {
+	const ending = alwaysEndingInput(productions);
+	const byKey = new Map(syntax.map((variable) => [`nt:${variable.name}`, variable]));
+	const reasonOf = (key: string, seen: ReadonlySet<string>): Pick<EofNotLast, 'ending' | 'repetition'> => {
+		const variable = byKey.get(key)!;
+		if (variable.owner === undefined) return { ending: variable.name, repetition: false };
+		const lasts = (productions.get(key) ?? []).map((production) => production.at(-1)!.key);
+		const authored = lasts.find((last) => last !== END_STEP_KEY && !seen.has(last) && ending.has(last));
+		return authored === undefined ? { ending: undefined, repetition: true } : reasonOf(authored, new Set([...seen, key]));
+	};
+	const sites = new Map<string, EofNotLast>();
+	for (const variable of syntax) {
+		for (const production of productions.get(`nt:${variable.name}`) ?? []) {
+			for (const step of production.slice(0, -1)) {
+				if (step.key !== END_STEP_KEY && !ending.has(step.key)) continue;
+				const reason = step.key === END_STEP_KEY ? { ending: undefined, repetition: false } : reasonOf(step.key, new Set([step.key]));
+				const site: EofNotLast = { kind: variable.owner ?? variable.name, ...reason };
+				sites.set(JSON.stringify(site), site);
+			}
+		}
+	}
+	return [...sites.values()];
+}
+
 const C_SYMBOL_CHARACTER_NAMES: Readonly<Record<string, string>> = {
 	'~': 'TILDE',
 	'`': 'BQUOTE',
@@ -1102,7 +1151,7 @@ function expandRepeats(variables: Variable[]): Variable[] {
 					const name = `${variable.name}_repeat${++count}`;
 					const key = `nt:${name}`;
 					expansions.set(JSON.stringify(inner), key);
-					auxiliaries.push({ name, kind: 'auxiliary', rule: repeatOf(key, inner) });
+					auxiliaries.push({ name, kind: 'auxiliary', rule: repeatOf(key, inner), owner: variable.name });
 					return { type: 'SYM', key };
 				}
 				case 'META':
@@ -1178,6 +1227,7 @@ function clearDefaultAliases(
 
 export interface PredictedSymbolTable extends ParserSymbolTable {
 	readonly undefinedNames: readonly string[];
+	readonly eofNotLast: readonly EofNotLast[];
 }
 
 export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTable {
@@ -1241,7 +1291,9 @@ export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTa
 
 	const syntax = expandRepeats(variables);
 	const byKey = new Map(syntax.map((variable) => [`nt:${variable.name}`, variable]));
-	const productions = new Map(syntax.map((variable) => [`nt:${variable.name}`, completedProductions(productionsOf(variable.rule))]));
+	const flattened = new Map(syntax.map((variable) => [`nt:${variable.name}`, productionsOf(variable.rule)]));
+	const eofNotLast = eofNotLastSites(syntax, flattened);
+	const productions = new Map([...flattened].map(([key, alternatives]) => [key, completedProductions(alternatives)]));
 	const inline = new Set(grammar.inline.filter((name) => live.has(name)).map((name) => replace(resolve(name))));
 	const reachable = new Set<string>();
 	const queue = [`nt:${variables[0]!.name}`, ...extraKeys];
@@ -1339,12 +1391,13 @@ export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTa
 			supertypes: supertypeCNames,
 			tokenCount
 		},
-		undefinedNames: [...undefinedNames]
+		undefinedNames: [...undefinedNames],
+		eofNotLast
 	};
 }
 
 export type PredictedKinds =
-	| { readonly entries: readonly GeneratedKindEntry[]; readonly keyCollisions: readonly KindKeyCollision[] }
+	| { readonly entries: readonly GeneratedKindEntry[]; readonly keyCollisions: readonly KindKeyCollision[]; readonly eofNotLast: readonly EofNotLast[] }
 	| { readonly failure: string; readonly undefinedNames: readonly string[] };
 
 export function undefinedNamesOf(kinds: PredictedKinds | undefined): readonly string[] {
@@ -1405,6 +1458,7 @@ export interface PredictedKindCatalog {
 	readonly entries: readonly GeneratedKindEntry[];
 	readonly undefinedNames: readonly string[];
 	readonly keyCollisions: readonly KindKeyCollision[];
+	readonly eofNotLast: readonly EofNotLast[];
 }
 
 export function predictKindCatalog(
@@ -1415,15 +1469,15 @@ export function predictKindCatalog(
 	const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: 'predicted' }, grammar)).map(
 		({ lexicalRank: _lexicalRank, ...entry }) => entry
 	);
-	return { entries, undefinedNames: table.undefinedNames, keyCollisions: collisions };
+	return { entries, undefinedNames: table.undefinedNames, keyCollisions: collisions, eofNotLast: table.eofNotLast };
 }
 
 export function predictedKindsOf(
 	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
 ): PredictedKinds {
 	try {
-		const { entries, undefinedNames, keyCollisions } = predictKindCatalog(grammar);
-		if (undefinedNames.length === 0) return { entries, keyCollisions };
+		const { entries, undefinedNames, keyCollisions, eofNotLast } = predictKindCatalog(grammar);
+		if (undefinedNames.length === 0) return { entries, keyCollisions, eofNotLast };
 		return {
 			failure: `symbol-table: ${undefinedNames.map((name) => `'${name}'`).join(', ')} name no rule and no external`,
 			undefinedNames

@@ -433,7 +433,14 @@ function leadEffectOf(lead: LeadCopies, rules: Readonly<Record<string, unknown>>
 
 export function displayFamiliesOf(effects: readonly Effect[]): DisplayFamilies {
 	const members = new Map<string, Set<string>>();
-	for (const effect of effects) if (effect.kind === 'alias') members.set(effect.to, (members.get(effect.to) ?? new Set()).add(effect.from));
+	const add = (display: string, member: string): void => void members.set(display, (members.get(display) ?? new Set()).add(member));
+	for (const effect of effects) {
+		if (effect.kind === 'alias') add(effect.to, effect.from);
+		if (effect.kind === 'copy' && effect.display === effect.source) {
+			add(effect.display, effect.source);
+			add(effect.display, effect.copy);
+		}
+	}
 	return new Map([...members].filter(([, froms]) => froms.size >= 2));
 }
 

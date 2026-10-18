@@ -10,8 +10,9 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
-import { wireCopy, wireCopyBody, wireCopySource, wireGetLiftBody, wireInsideCopy, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
-import { copyReference } from '../primitives/copy.ts';
+import { wireCopy, wireCopyBody, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
+import type { WireCopyRequest } from '../wire/wire.ts';
+import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
 import { isParserHiddenName } from '../rule-patterns.ts';
 
 interface RuntimeDsl {
@@ -407,31 +408,34 @@ function applyKindMatchToSymbol(
 	enclosing: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
 ): WalkResult {
-	const name = (rule as unknown as { name: string }).name;
-	const source = wireCopySource(name) ?? name;
-	if (source !== segment.name) return enteredHiddenRule(rule, source, segment, rest, patch);
+	const reached = reachedRule((rule as unknown as { name: string }).name);
+	if (reached.kind !== segment.name) return enteredHiddenRule(rule, reached, segment, rest, patch);
 	if (insideNamedField) return { rule, matched: false };
 	if (rest.length === 0 && segment.as === undefined) return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
-	return { rule: enteredCopy(rule, source, (body) => applyPath(body, rest, patch), segment.as), matched: true };
+	return { rule: enteredCopy(rule, reached.request, (body) => applyPath(body, rest, patch), segment.as), matched: true };
 }
 
-function enteredCopy(rule: RuntimeRule, source: string, edit: (body: RuntimeRule) => RuntimeRule, shown?: string): RuntimeRule {
-	const made = wireCopy({ source, part: '.', via: 'path' }, edit);
-	return made === undefined || made === (rule as unknown as { name: string }).name ? rule : copyReference(made, source, shown);
+interface ReachedRule {
+	readonly kind: string;
+	readonly request: WireCopyRequest;
 }
 
-const entering = new Set<string>();
+function reachedRule(name: string): ReachedRule {
+	const copy = wireCopyOf(name);
+	if (copy === undefined) return { kind: name, request: { source: name, part: '.', via: 'path' } };
+	return { kind: copy.part === '.' ? copy.source : name, request: { source: copy.source, part: copy.part, via: 'path', from: name } };
+}
 
-function enteredHiddenRule(rule: RuntimeRule, source: string, segment: KindSegment, rest: readonly PathSegment[], patch: PathPatch): WalkResult {
-	const body = isParserHiddenName(source) && !isEnrichGroupLiftSymbol(rule) && !entering.has(source) ? wireCopyBody(source, '.') : undefined;
-	if (body === undefined) return { rule, matched: false };
-	entering.add(source);
-	try {
-		const inner = wireInsideCopy(() => walkKindMatch(body, segment, rest, patch, undefined, false));
-		return inner.matched ? { rule: enteredCopy(rule, source, () => inner.rule), matched: true } : { rule, matched: false };
-	} finally {
-		entering.delete(source);
-	}
+function enteredCopy(reference: RuntimeRule, request: WireCopyRequest, edit: (body: RuntimeRule) => RuntimeRule, shown?: string): RuntimeRule {
+	const made = wireCopy(request, edit);
+	if (made === undefined) return reference;
+	return request.from === undefined ? copyReference(made, request.source, shown) : reachedCopyReference(reference, made, request.source, shown);
+}
+
+function enteredHiddenRule(rule: RuntimeRule, reached: ReachedRule, segment: KindSegment, rest: readonly PathSegment[], patch: PathPatch): WalkResult {
+	const body = isParserHiddenName(reached.kind) && !isEnrichGroupLiftSymbol(rule) ? wireCopyBody(reached.request) : undefined;
+	const inner = body === undefined ? undefined : wireEnteringRule(reached.kind, () => walkKindMatch(body, segment, rest, patch, undefined, false));
+	return inner?.matched === true ? { rule: enteredCopy(rule, reached.request, () => inner.rule), matched: true } : { rule, matched: false };
 }
 
 function walkKindMatch(
@@ -457,12 +461,11 @@ function applyKindMatchToCopyReference(
 ): WalkResult | undefined {
 	const content = (rule as unknown as { content?: RuntimeRule }).content;
 	if (rule.type !== 'ALIAS' || content?.type !== 'SYMBOL') return undefined;
-	const source = wireCopySource((content as unknown as { name: string }).name);
-	if (source === undefined) return undefined;
-	if (source !== segment.name || insideNamedField) return { rule, matched: false };
+	const reached = reachedRule((content as unknown as { name: string }).name);
+	if (reached.request.from === undefined) return undefined;
+	if (reached.kind !== segment.name || insideNamedField) return { rule, matched: false };
 	if (rest.length === 0 && segment.as === undefined) return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
-	enteredCopy(content, source, (body) => applyPath(body, rest, patch));
-	return { rule, matched: true };
+	return { rule: enteredCopy(rule, reached.request, (body) => applyPath(body, rest, patch), segment.as), matched: true };
 }
 
 function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | undefined, insideNamedField: boolean, leaf: WalkLeaf): WalkResult {

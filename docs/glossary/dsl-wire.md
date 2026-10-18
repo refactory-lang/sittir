@@ -1025,19 +1025,23 @@ Runs a patch application with the given sites as the active ones (`WireContext.a
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireCopyRequest`
 
-A copy to make or reuse: its source, the part copied (`.` for the whole rule), and whether a path or a `copy()` call asks for it.
+A copy to make or reuse: its source, the part copied (`.` for the whole rule), and whether a path or a `copy()` call asks for it. `from` names the copy a path reached, when the reference it entered already stands for one; the request then edits that copy.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopy`
 
-The context's copy of a source part, made or reused, with `edit` applied to its body; returns the copy's name. The context is the rule kind being evaluated, and the name is `verbs/copy.ts::copyNameOf`'s. A copy is made only during a layer pass; elsewhere it is `edit-entry-invalid`. Its body is the source's (a deposit before the base's), or the selected part (`copyPartOf`). The body is a deposit, so the layer gains it as a rule, and the copy effect is recorded once, with the path or `copy()` origin that makes it inherit its source's options. One copy per source, part and context: a second request edits the same body. A name the grammar already has, or a second source for one name, is `rule-name-taken` (`refuseCopyName`), and a source the grammar lacks is `edit-site-missing`; a refused copy returns `undefined`. The edit runs inside the copy (`insideCopy`).
+The context's copy of a source part, made or reused, with `edit` applied to its body; returns the copy's name. The context is the rule kind being evaluated, and the name is `verbs/copy.ts::copyNameOf`'s. A copy is made only during a layer pass; elsewhere it is `edit-entry-invalid`. Its body is the source's (a deposit before the base's), or the selected part (`copyPartOf`). The body is a deposit, so the layer gains it as a rule, and the copy effect is recorded once, with the path or `copy()` origin that makes it inherit its source's options. One copy per source, part and context: a second request edits the same body. A request `from` a copy the path reached edits that copy under its own name. A reached copy is always the current kind's own, because a copy starts from its source's deposit or base body and a kind's edited body is never a deposit, so no walked body holds another kind's copy; one that is not is refused as `edit-entry-invalid` (`refuseForeignCopy`). A name the grammar already has, or a second source for one name, is `rule-name-taken` (`refuseCopyName`), and a source the grammar lacks is `edit-site-missing`; a refused copy returns `undefined`. The edit runs inside the copy (`insideCopy`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyBody`
 
-The body the context's copy of a source part has, or would start from: the copy's when it exists, otherwise the source's for a whole copy. It makes nothing, so a walk can look before it copies.
+The body the copy a request names has, or would start from: a reached copy's own body (`from`), the context's copy when it exists, otherwise the source's for a whole copy. It makes nothing, so a walk can look before it copies.
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireCopySource`
+### `packages/codegen/src/dsl/wire/wire.ts::wireCopyOf`
 
-The source of a copy the context made, or `undefined` for a name that is no copy.
+The copy effect of a copy the context made, or `undefined` for a name that is no copy. A path reads its source and part from it (`transform/transform-path.ts::reachedRule`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireNoteCopyDisplay`
+
+Stamps the name a copy's reference shows it under on its copy effect (`CopyEffect.display`): the source's own name for a reference that aliases back, the shown name for a named one, and none for a bare reference to a hidden copy. Its reference is made by `primitives/copy.ts::copyReference`, which calls it, and the effect log's display families read it (`verbs/effects.ts::displayFamiliesOf`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyReference`
 
@@ -1051,9 +1055,13 @@ Notes a reference as standing for a copy, so `alias`, `edit` and `replace` act o
 
 Applies `edit` to a copy's body, inside the copy.
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireInsideCopy`
+### `packages/codegen/src/dsl/wire/wire.ts::wireEnteringRule`
 
-Runs `fn` inside a copy (`insideCopy`), for a walk that edits a body before the copy is made.
+Runs `fn` while a path is inside the hidden rule `rule` (`WireContext.entering`), and inside a copy (`insideCopy`), for a walk that edits a body before the copy is made. A rule already being entered returns `undefined` without running `fn`, so a hidden rule that reaches itself is entered once; so does a call outside a wire context.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.entering`
+
+The hidden rules a path walk is inside (`wireEnteringRule`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::insideCopy`
 
@@ -1074,6 +1082,10 @@ Whether a request reuses the copy a name already holds. A request for another so
 ### `packages/codegen/src/dsl/wire/wire.ts::refuseCopyName`
 
 The `rule-name-taken` refusal of a copy, naming the kind, the source, the part and the name.
+
+### `packages/codegen/src/dsl/wire/wire.ts::refuseForeignCopy`
+
+The `edit-entry-invalid` refusal of a path that reached a copy another kind made, naming the kind and the copy.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::freshCopyBody`
 
