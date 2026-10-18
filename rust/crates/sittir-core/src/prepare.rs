@@ -247,6 +247,27 @@ pub fn seat_site(table: &[Option<SiteId>], kind: KindId) -> Option<SiteId> {
     table.get(kind.index()).copied().flatten()
 }
 
+/// A list slot's present items, counted: the gap fills address each by its
+/// place among them.
+pub trait PresentItems {
+    fn present(&self) -> usize;
+}
+
+/// A list slot's present items as the gap fills write their edges: an edge
+/// already set keeps its arm.
+pub trait GapItems: PresentItems {
+    /// Item `at`'s edge on `side` takes `seam`, unless something set it.
+    fn fill_gap(&mut self, at: usize, side: Side, seam: SeamArm);
+}
+
+/// A list slot's present items as the seated gap fill writes them: the
+/// element a seat table seats in each (`SeatTarget`).
+pub trait SeatItems: PresentItems {
+    /// The site item `at`'s seated element reads in `table`, if it has one,
+    /// and that element's `after` edge takes the site's arm unless set.
+    fn fill_seat(&mut self, at: usize, table: &[Option<SiteId>], ctx: &RenderContext<'_>);
+}
+
 /// Give every gap between two present items of a list slot the classes its
 /// stored layout holds (`layout::SlotLayout`): the side before the
 /// separator onto the earlier item's `after` edge, the side after it onto
@@ -258,14 +279,21 @@ pub fn fill_slot_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
     items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
     slot: Option<&crate::layout::SlotLayout>,
 ) {
+    if slot.is_some_and(|slot| slot.before.is_some() || slot.after.is_some()) {
+        fill_gaps(&mut items.flatten().collect::<Vec<_>>(), slot);
+    }
+}
+
+/// `fill_slot_gaps` over any slot's present items.
+pub fn fill_gaps(items: &mut impl GapItems, slot: Option<&crate::layout::SlotLayout>) {
     let Some(slot) = slot.filter(|slot| slot.before.is_some() || slot.after.is_some()) else { return };
-    let mut present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
-    for index in 1..present.len() {
+    let seam = |arm| SeamArm { arm, strength: crate::spacing::SeamStrength::Slot };
+    for index in 1..items.present() {
         if let Some(arm) = slot.before {
-            set_gap_edge(present[index - 1], Side::After, arm);
+            items.fill_gap(index - 1, Side::After, seam(arm));
         }
         if let Some(arm) = slot.after {
-            set_gap_edge(present[index], Side::Before, arm);
+            items.fill_gap(index, Side::Before, seam(arm));
         }
     }
 }
@@ -288,22 +316,47 @@ pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
     }
 }
 
-fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: KindId) {
-    let seam = SeamArm { arm, strength: crate::spacing::SeamStrength::Slot };
-    match item {
-        SlotValue::Coord(coord) => {
-            let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
-            match side {
-                Side::Before => edges.before.get_or_insert(seam),
-                Side::After => edges.after.get_or_insert(seam),
-            };
-        }
-        SlotValue::Node(t) => {
-            if let Some(edges) = t.gap_edges() {
+impl<T, const ADJACENT: bool> PresentItems for Vec<&mut SlotValue<T, ADJACENT>> {
+    fn present(&self) -> usize {
+        self.len()
+    }
+}
+
+impl<T: Prepare, const ADJACENT: bool> GapItems for Vec<&mut SlotValue<T, ADJACENT>> {
+    fn fill_gap(&mut self, at: usize, side: Side, seam: SeamArm) {
+        match &mut *self[at] {
+            SlotValue::Coord(coord) => {
+                let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
                 match side {
-                    Side::Before => edges.before.get_or_insert(EdgeArm::from(seam)),
-                    Side::After => edges.after.get_or_insert(EdgeArm::from(seam)),
+                    Side::Before => edges.before.get_or_insert(seam),
+                    Side::After => edges.after.get_or_insert(seam),
                 };
+            }
+            SlotValue::Node(t) => {
+                if let Some(edges) = t.gap_edges() {
+                    match side {
+                        Side::Before => edges.before.get_or_insert(EdgeArm::from(seam)),
+                        Side::After => edges.after.get_or_insert(EdgeArm::from(seam)),
+                    };
+                }
+            }
+        }
+    }
+}
+
+impl<T: SeatTarget, const ADJACENT: bool> SeatItems for Vec<&mut SlotValue<T, ADJACENT>> {
+    fn fill_seat(&mut self, at: usize, table: &[Option<SiteId>], ctx: &RenderContext<'_>) {
+        match &mut *self[at] {
+            SlotValue::Node(t) => {
+                if let Some((edges, site)) = t.seat_target(table, ctx) {
+                    edges.after.get_or_insert(EdgeArm::from(ctx.options.site_arm(site)));
+                }
+            }
+            SlotValue::Coord(coord) => {
+                if let Some(site) = coord_seat(coord, table, ctx) {
+                    let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
+                    edges.after.get_or_insert(ctx.options.site_arm(site));
+                }
             }
         }
     }
@@ -320,22 +373,13 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     table: &[Option<SiteId>],
     ctx: &RenderContext<'_>,
 ) {
-    let present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
-    let last = present.len().saturating_sub(1);
-    for item in present.into_iter().take(last) {
-        match item {
-            SlotValue::Node(t) => {
-                if let Some((edges, site)) = t.seat_target(table, ctx) {
-                    edges.after.get_or_insert(EdgeArm::from(ctx.options.site_arm(site)));
-                }
-            }
-            SlotValue::Coord(coord) => {
-                if let Some(site) = coord_seat(coord, table, ctx) {
-                    let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
-                    edges.after.get_or_insert(ctx.options.site_arm(site));
-                }
-            }
-        }
+    fill_seats(&mut items.flatten().collect::<Vec<_>>(), table, ctx);
+}
+
+/// `fill_seated_gaps` over any slot's present items.
+pub fn fill_seats(items: &mut impl SeatItems, table: &[Option<SiteId>], ctx: &RenderContext<'_>) {
+    for at in 0..items.present().saturating_sub(1) {
+        items.fill_seat(at, table, ctx);
     }
 }
 
