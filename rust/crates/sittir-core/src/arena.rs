@@ -11,6 +11,7 @@
 pub mod cell;
 pub mod rows;
 pub mod side;
+mod write;
 
 use std::collections::HashMap;
 use std::fmt;
@@ -106,6 +107,9 @@ pub enum ArenaError {
     BadString(StringRef),
     /// A word no writer writes there: `what` names the field, `word` holds it.
     Malformed { what: &'static str, word: u32 },
+    /// A node's layout names a list slot, by its wire key, that has no
+    /// stamped cell in the node's record.
+    UnknownSlot(Box<str>),
 }
 
 impl fmt::Display for ArenaError {
@@ -119,6 +123,7 @@ impl fmt::Display for ArenaError {
                 write!(f, "bytes {}..{} of string chunk {} are not a string the arena wrote", at.byte, u64::from(at.byte) + u64::from(at.len), at.chunk)
             }
             ArenaError::Malformed { what, word } => write!(f, "{what} {word} is not one a record writer writes"),
+            ArenaError::UnknownSlot(key) => write!(f, "the layout names slot `{key}`, which has no stamped cell in its record"),
         }
     }
 }
