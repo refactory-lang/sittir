@@ -114,7 +114,7 @@ The grammar's completion record, from `node_modules/.cache/sittir/regen/<grammar
 
 ### `packages/tools/src/regen-record.ts::writeRegenRecord`
 
-Writes the grammar's completion record, beside its destination and renamed into place.
+Writes the grammar's completion record with `writeFileAtomic`, loaded through the codegen surface.
 
 ### `packages/tools/src/regen-record.ts::clearRegenRecord`
 
@@ -131,10 +131,6 @@ What parity fixture extraction reads for one grammar under `root`, hashed (`cont
 ### `packages/tools/src/fixture-inputs.ts::fixtureOutputs`
 
 The fixture files extraction writes for one grammar under `root`, hashed (`contentHashes`), so a hand edit or deletion of one counts too.
-
-### `packages/tools/src/fixture-inputs.ts::contentHashes`
-
-The SHA-256 of each of `files` under `root` that exists, by repo-relative path. A missing file is left out, so adding or removing one changes the result.
 
 ### `packages/tools/src/fixture-inputs.ts::corpusFiles`
 

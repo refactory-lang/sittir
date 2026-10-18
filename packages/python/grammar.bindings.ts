@@ -102,6 +102,7 @@ export const renames = {
 export default grammar(
 	enrich(sittir),
 	wire({
+		generated: true,
 		edits: {
 			_expression_within_for_in_clause: { "-1": alias("lambda_expression") },
 			assignment_eq: { "0": field("name"), "1/1": field("value") },

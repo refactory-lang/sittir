@@ -1,12 +1,14 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { basename, join, relative, dirname } from 'node:path';
+import { basename, join, relative } from 'node:path';
 import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts';
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { moduleClosure } from './module-closure.ts';
+import { sha256File } from '../util/content-hash.ts';
+import { writeFileAtomic } from '../util/write-file-atomic.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 import { readUpstreamRecord } from '../transpile/compile-parser.ts';
 import { ensureWasmToolchain, treeSitterToolchain, treeSitterToolchainIdentity, wasmToolchainInstalled } from '../transpile/tree-sitter-cli.ts';
@@ -84,10 +86,6 @@ function walk(path: string, out: string[]): void {
 	if (stat.isDirectory()) {
 		for (const name of readdirSync(path)) walk(join(path, name), out);
 	}
-}
-
-function sha256(file: string): string {
-	return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
 export function gitVisiblePaths(root: string): ReadonlySet<string> {
@@ -330,7 +328,7 @@ export function computeSourceHash(grammar: GrammarName, src: ManifestSource = wo
 
 function hashGeneratedFiles(grammar: GrammarName, src: ManifestSource): Record<string, string> {
 	const files: Record<string, string> = {};
-	for (const f of collectFiles(grammar, src)) files[relative(src.root, f)] = sha256(f);
+	for (const f of collectFiles(grammar, src)) files[relative(src.root, f)] = sha256File(f);
 	return files;
 }
 
@@ -348,11 +346,7 @@ function readManifest(grammar: GrammarName, src: ManifestSource): Manifest | und
 function recordGeneration(grammar: GrammarName, src: ManifestSource, files: Readonly<Record<string, string>>, pair: GenerationPair): void {
 	const earlier = (readManifest(grammar, src)?.known ?? []).filter((known) => !samePair(known, pair));
 	const manifest: Manifest = { files, known: [...earlier, pair].slice(-KNOWN_PAIR_LIMIT) };
-	const path = manifestPath(grammar, src);
-	mkdirSync(dirname(path), { recursive: true });
-	const scratch = `${path}.${process.pid}.tmp`;
-	writeFileSync(scratch, JSON.stringify(manifest, null, 2) + '\n');
-	renameSync(scratch, path);
+	writeFileAtomic(manifestPath(grammar, src), JSON.stringify(manifest, null, 2) + '\n');
 }
 
 export interface SourceFingerprint {

@@ -76,7 +76,9 @@ const MODULES = {
 	nodeModel: '../../codegen/src/emitters/node-model.ts',
 	sourceParser: '../../codegen/src/transpile/source-parser.ts',
 	evaluateForDerivation: '../../codegen/src/transpile/evaluate-for-derivation.ts',
-	wrap: '../../codegen/src/emitters/wrap.ts'
+	wrap: '../../codegen/src/emitters/wrap.ts',
+	contentHash: '../../codegen/src/util/content-hash.ts',
+	writeFileAtomic: '../../codegen/src/util/write-file-atomic.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -127,6 +129,8 @@ export interface CodegenSurface {
 	sourceParser: typeof import('../../codegen/src/transpile/source-parser.ts');
 	evaluateForDerivation: typeof import('../../codegen/src/transpile/evaluate-for-derivation.ts');
 	wrap: typeof import('../../codegen/src/emitters/wrap.ts');
+	contentHash: typeof import('../../codegen/src/util/content-hash.ts');
+	writeFileAtomic: typeof import('../../codegen/src/util/write-file-atomic.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;

@@ -7,7 +7,8 @@ const SENTINEL = 'layer-record-sentinel';
 const record = (depth: number): LayerRecord => ({
 	depth,
 	upstream: { name: SENTINEL, rules: {} },
-	enrichment: { grammar: { name: SENTINEL, rules: {} } },
+	generated: false,
+	fixpoint: () => ({ checked: { grammar: { name: SENTINEL, rules: {} } }, diagnostics: [] }),
 	resolutions: EMPTY_CONFLICT_RESOLUTIONS,
 	deadMints: new Set([SENTINEL]),
 	textTokens: [SENTINEL],

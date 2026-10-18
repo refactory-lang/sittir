@@ -66,16 +66,30 @@ writes the vocabulary's flags module (`printFlagsModule`, built as nodes with `@
 hash covers, then each grammar's `grammar.bindings.ts` (`bindingsModule`), and
 prints its convergence (`grammarBindingsSummary`). `--check` also
 reports where the bindings and the authored vocabulary disagree
-(`vocabularyDisagreements`), and whether the flags module is current
-(`flagsCurrent`). A cycle, a container capture with no direct
+(`vocabularyDisagreements`), whether the flags module is current
+(`flagsCurrent`), and whether each grammar.bindings.ts is enrich's fixpoint over
+grammar.sittir.ts (`generatedLayerReport`). `--write` refuses a layer it wrote that
+is not (`generatedLayerFixpoint`). A cycle, a container capture with no direct
 target, a container slot left uncaptured, a form with no entry for its supertype's
-claim, a failed compile, a disagreement or a stale flags module is a non-zero
-exit.
+claim, a failed compile, a disagreement, a stale flags module or a layer that is not enrich's
+fixpoint is a non-zero exit.
 ```
 
 ### `packages/tools/src/inventory/index.ts::flagsCurrent`
 
 Whether the committed flags module is the one the vocabulary's `Flag` declarations imply (`printFlagsModule`); a missing module is not current. The check is async because the module is rendered by the engine.
+
+### `packages/tools/src/inventory/index.ts::generatedLayerFixpoint`
+
+The producer check of one grammar's generated layer: the diagnostics of its top layer's fixpoint check (`compiler/evaluate.ts::generatedLayerDiagnostics`). The compile leaves that check to this inventory and to `gen`, so a layer that enrich would still change fails where it is written or regenerated.
+
+### `packages/tools/src/inventory/index.ts::GeneratedLayerReport`
+
+What `generatedLayerReport` prints, a line per grammar with any diagnostic under it, and whether any grammar failed.
+
+### `packages/tools/src/inventory/index.ts::generatedLayerReport`
+
+`--check`'s fixpoint report: for each grammar, whether its `grammar.bindings.ts` is enrich's fixpoint over `grammar.sittir.ts` (`generatedLayerFixpoint`), with the diagnostics formatted under the ones that are not (`formatGrammarDiagnostics`). Any such grammar fails the check.
 
 ### `packages/tools/src/inventory/flags.ts::printFlagsModule`
 

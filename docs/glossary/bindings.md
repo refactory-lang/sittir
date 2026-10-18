@@ -584,7 +584,7 @@ Where `bindings-inventory --write` writes a grammar's generated layer: `grammars
 
 ### `packages/codegen/src/bindings/module.ts::printBindingsModule`
 
-The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exports the hash of the sources it was derived from (`hash`, which `loadBindingsHash` reads) and the kind renames as data (`renames`, each kind to its vocabulary name, which no layer applies), and its default export is `grammar(enrich(sittir), wire({ edits }))` over the layer it imports (`editEntries`). The splits are computed and reported by the inventory but not printed. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. Codegen reads the binding facts from `bindings.scm` through the pinned reader, never from this module.
+The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exports the hash of the sources it was derived from (`hash`, which `loadBindingsHash` reads) and the kind renames as data (`renames`, each kind to its vocabulary name, which no layer applies), and its default export is `grammar(enrich(sittir), wire({ generated: true, edits }))` over the layer it imports (`editEntries`). `generated` marks it as its generator's, so the generator checks it is enrich's fixpoint, not the compile (`dsl/layer.ts::completeLayer`). The splits are computed and reported by the inventory but not printed. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. Codegen reads the binding facts from `bindings.scm` through the pinned reader, never from this module.
 
 ### `packages/codegen/src/bindings/module.ts::loadBindingsHash`
 
@@ -1001,7 +1001,7 @@ Resolves the read a reply answers, rethrowing a reply of syntax lines as `Bindin
 
 Marks where the reply starts on the child's stdout, so anything the pinned build prints before it is skipped.
 
-### `packages/codegen/src/bindings/read.ts::runPinned`
+### `packages/codegen/src/bindings/read.ts::askReader`
 
 Sends one run to the process's child, starting it on the first run, and waits for its reply, typed by the mode's row of `PinnedReaderModes`. The reply crosses the process as JSON, so its value is the mode's output by the child's contract, not by a check.
 
@@ -1048,6 +1048,18 @@ A `require` resolved from this module, used to locate the files the child is sta
 ### `packages/codegen/src/bindings/read.ts::reader`
 
 The one child every read shares, started by the first read and replaced if it exits.
+
+### `packages/codegen/src/bindings/read.ts::runPinned`
+
+One pinned read: the stored answer for this mode and input when the code the child would run is unchanged (`readsMemo`), and otherwise the child's (`askReader`), which is then stored. The input is keyed by its JSON, the text the child is sent.
+
+### `packages/codegen/src/bindings/read.ts::readsMemo`
+
+The process's store of pinned reads (`pinnedMemo`), made on the first read: in `PINNED_READS_DIR` under the pinned build's directory (`bootstrapDir`), for the digest (`readerDigest`) of the child's entry, its tsconfig and the lockfile, which stands for installed dependencies as it does for the closure. The child keeps the code it loaded for the whole process, so the digest is taken once as well.
+
+### `packages/codegen/src/bindings/read.ts::PINNED_READS_DIR`
+
+The directory under the pinned build's directory that holds the stored pinned reads.
 
 ### `packages/codegen/src/bindings/facts.ts::bindingsPathIn`
 
@@ -1630,3 +1642,27 @@ Projects a capture whose route crosses the list by appending its own selector to
 
 
 Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.
+
+### `packages/codegen/src/bindings/pinned-memo.ts::module`
+
+Pinned reads kept on disk. A pinned read is a function of the pinned build, its mode, its input and the workspace code the child runs, so while all four are unchanged a stored answer stands in for the child's, and a process that finds every read stored never starts the child. The entries live in the pinned build's directory, which the pin sha names, so a new pin starts with none and the old pin's go with its directory.
+
+### `packages/codegen/src/bindings/pinned-memo.ts::PinnedMemo`
+
+The store under `dir` for code whose digest is `reader`. A read's entry is `<dir>/<mode>/<sha256 of input>.json`. It answers when its `reader` is this digest and it holds a value; otherwise `run` answers and its value replaces the entry (`writeFileAtomic`), so each mode and input has one entry, the latest code's answer. A rejected `run` stores nothing, so a failure is never memoized. Two checkouts whose reader code differs replace each other's entry for the same input, each paying one child start.
+
+### `packages/codegen/src/bindings/pinned-memo.ts::MemoEntry`
+
+One stored read: the digest of the code it was answered under (`readerDigest`) and the value the child returned. The value reached the parent as JSON over the child's pipe, so storing it as JSON loses nothing.
+
+### `packages/codegen/src/bindings/pinned-memo.ts::readerDigest`
+
+The identity of the code the child runs: the content hashes (`contentHashes`) of `entry`'s import closure (`moduleClosure`, the derivation the generated manifest and the native build freshness use) and of `inputs`, files that change what that code does without being imported by it. Paths are relative to `root`, so two checkouts holding the same code get the same digest and one's stored reads serve the other.
+
+### `packages/codegen/src/bindings/pinned-memo.ts::storedEntry`
+
+The entry stored at `file`, or nothing when there is none or its bytes are not a JSON object. An entry that does not parse, half-written by a process that died or edited by hand, is never trusted: the read runs and the entry is rewritten. A read error other than a missing file is thrown.
+
+### `packages/codegen/src/bindings/pinned-memo.ts::pinnedMemo`
+
+The store under `dir` for code whose digest is `reader`. A read's entry is `<dir>/<mode>/<sha256 of input>.json`. It answers when its `reader` is this digest and it holds a value; otherwise `run` answers and its value replaces the entry (`writeFileAtomic`), so each mode and input has one entry, the latest code's answer. A rejected `run` stores nothing, so a failure is never memoized. Two checkouts whose reader code differs replace each other's entry for the same input, each paying one child start.

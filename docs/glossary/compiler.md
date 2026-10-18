@@ -1631,7 +1631,7 @@ caller resolves it once. Hydrate then runs on the collected grammar with
 Before it evaluates anything it refuses a stale generated layer (`bindings/hash.ts::assertBindingsFresh`
 over the hash the package's `grammar.bindings.ts` exports, which `bindings/module.ts::loadBindingsHash` reads, and its `bindings.scm`), so
 codegen never runs with grammar bindings derived from other sources than the ones on disk, and never evaluates a layer it refuses.
-With `unbound` it compiles layer 1 (`grammars.ts::layerPath`) and skips that check: the
+With `checkGeneratedLayers` it also gates a generated top layer's fixpoint check (`evaluate.ts::generatedLayerDiagnostics`), which `gen` asks for. With `unbound` it compiles layer 1 (`grammars.ts::layerPath`) and skips the staleness check: the
 base grammar's compilation, whose model the grammar bindings are derived against.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
@@ -2152,6 +2152,10 @@ and folds both stages into `diagnosticRecords`. A stage's records are `stages.ra
 `deriveDiagnosticRecords` over the stages and the compiled grammar; empty when the grammar evaluated no stages.
 The override census and the patch-site labels read it.
 
+### `packages/codegen/src/compiler/compile.ts::CompileGrammarConfig`
+
+`compileGrammar`'s config: the package, the generated id tables to link against, the diagnostic codes allowed through the gate, `unbound` to compile layer 1, and `checkGeneratedLayers` to gate a generated top layer's fixpoint check.
+
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
 
 The grammar's `rules:` entries that carry a `reauthored` or `vocabulary`
@@ -2355,9 +2359,7 @@ boundary; a caller that wants the DSL's own shape calls it directly.
 
 ### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
-Imports a grammar layer's file and hands the module's default or named export, as its top-level `grammar()` call
-produced it, to `evaluatedGrammarOf`. A layer's file evaluates to the same grammar wherever it is imported from, so
-which file is imported is the whole choice of layer (`grammars.ts::layerPath`).
+The evaluated grammar of a layer's file: what it exports (`importedGrammar`) through `evaluatedGrammarOf`. A layer's file evaluates to the same grammar wherever it is imported from, so which file is imported is the whole choice of layer (`grammars.ts::layerPath`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluatedGrammarOf`
 
@@ -2367,7 +2369,7 @@ The evaluated grammar of a `grammar()` result: what the runtime built, with what
 stage bases (`evaluatedStages`). An inheriting layer's projections (`splitFrom`, `leadFrom`, `renamedFrom` and
 `bindingEffects`) are spread onto it. The dead enrich mints become `orphanedSyntheticGroups`, the conflict-derivation
 records `derivationRecords`, the text-token names `textTokens`, and the diagnostics the layer passes recorded
-`layerDiagnostics`. A grammar no layer pass completed (an upstream `grammar.js`) carries none of them, and comes back
+`layerDiagnostics`, which leave out a generated layer's fixpoint check (`generatedLayerDiagnostics`). A grammar no layer pass completed (an upstream `grammar.js`) carries none of them, and comes back
 as a copy of what its `grammar()` call produced. The result is a spread copy, so whatever a caller adds never reaches
 the imported module's grammar, which the module cache keeps. A test reads an in-process layer's evaluated grammar
 through it.
@@ -9218,6 +9220,14 @@ Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) 
 ### `packages/codegen/src/compiler/evaluate.ts::blank`
 
 tree-sitter's `blank()`: the `BLANK` node, built as tree-sitter builds it (`dsl/builders.ts::structuralBuilder`), so enrich and wire read the same empty rule under both runtimes. The compile boundary lowers it (`canonical-rules.ts::canonicalRule`).
+
+### `packages/codegen/src/compiler/evaluate.ts::importedGrammar`
+
+A grammar layer's file imported: the module's default or named export, as its top-level `grammar()` call produced it. The module cache keeps it, so a second import of the same file in a process is the same result and the same layer record.
+
+### `packages/codegen/src/compiler/evaluate.ts::generatedLayerDiagnostics`
+
+The producer check of a generated top layer: the diagnostics of its fixpoint check (`dsl/layer-record.ts::LayerRecord`'s `fixpoint`), or none when the file's top layer is authored, since the compile already reports an authored layer's check. It imports the file (`importedGrammar`), so after an evaluation of the same file the check runs on the record that evaluation built, and it runs inside the DSL globals (`withDslGlobals`), which the check's enrich may call. `compile.ts::compileGrammar` (for `gen`) and the bindings inventory call it; no other evaluation runs it.
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalChoiceRule`
 

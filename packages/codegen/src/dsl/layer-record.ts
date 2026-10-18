@@ -40,10 +40,16 @@ export interface StageBases {
 	readonly inherited: LayerRecord | undefined;
 }
 
+export interface LayerFixpoint {
+	readonly checked: GrammarResult;
+	readonly diagnostics: readonly GrammarDiagnostic[];
+}
+
 export interface LayerRecord {
 	readonly depth: number;
 	readonly upstream: GrammarJson;
-	readonly enrichment: GrammarResult;
+	readonly generated: boolean;
+	readonly fixpoint: () => LayerFixpoint;
 	readonly resolutions: ConflictResolutionsInput;
 	readonly deadMints: ReadonlySet<string>;
 	readonly textTokens: readonly string[];

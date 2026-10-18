@@ -326,6 +326,7 @@ export const renames = {
 export default grammar(
 	enrich(sittir),
 	wire({
+		generated: true,
 		edits: {
 			let_item: { "1": field("name") },
 			call: { "0/0": alias("callee") },

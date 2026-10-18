@@ -14,7 +14,7 @@ import {
 } from './enrich.ts';
 import type { TransformPatchMap } from '../grammar-shapes/path-type.ts';
 import type { ExternalRole } from '../types/ir.ts';
-import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type LayerRecord, type LayerRecords, type StageBases } from './layer-record.ts';
+import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type LayerFixpoint, type LayerRecord, type LayerRecords, type StageBases } from './layer-record.ts';
 import { withRoleScope } from './primitives/role.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
 import { RuleWalker } from './rule-walker.ts';
@@ -55,6 +55,7 @@ export type LayerConfig<B extends GrammarJson = any> = Omit<WireConfig<EnrichedG
 	readonly name?: string;
 	readonly resolutions?: ConflictResolutionsInput;
 	readonly contexts?: ContextsConfig;
+	readonly generated?: true;
 };
 
 type LayerCallback = (this: unknown, $: unknown, previous?: unknown) => unknown;
@@ -256,19 +257,30 @@ function layerResult(ctx: LayerCtx, bodies: ReadonlyMap<string, unknown>, lists:
 	});
 }
 
-function enrichFixpoint(
-	result: GrammarResult,
-	base: GrammarResult,
-	displayFamilies: DisplayFamilies
-): { readonly checked: GrammarResult; readonly changed: readonly string[]; readonly addedFields: readonly EnrichAddedField[] } {
+function enrichFixpoint(result: GrammarResult, ctx: LayerCtx, displayFamilies: DisplayFamilies): LayerFixpoint {
 	const before = baseRulesOf<unknown>(result) ?? {};
-	const checked = enrich(withEnrichSidecarsOf(result, base), { displayFamilies }) as unknown as GrammarResult;
+	const checked = enrich(withEnrichSidecarsOf(result, ctx.base), { displayFamilies }) as unknown as GrammarResult;
 	const after = baseRulesOf<unknown>(checked) ?? {};
 	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])]
 		.filter((name) => JSON.stringify(before[name]) !== JSON.stringify(after[name]))
 		.sort();
+	if (changed.length === 0) return { checked, diagnostics: [] };
 	const addedFields = changed.flatMap((rule) => fieldsAddedTo(before[rule], after[rule]).map((field) => ({ rule, field })));
-	return { checked, changed, addedFields };
+	return {
+		checked,
+		diagnostics: [
+			{
+				scope: 'grammar',
+				code: 'layer-not-enrich-fixpoint',
+				severity: 'fail',
+				canProceed: false,
+				grammar: ctx.name,
+				message: `enrich changes ${changed.join(', ')} in layer '${ctx.name}', so the layer is not enrich's fixpoint`,
+				proposal: fixpointProposal(changed, addedFields),
+				details: { layer: ctx.name, depth: ctx.depth, rules: changed, addedFields }
+			}
+		]
+	};
 }
 
 interface EnrichAddedField {
@@ -315,7 +327,7 @@ function intake(source: GrammarResult, ctx: IntakeCtx): GrammarResult {
 		}) as unknown as GrammarResult;
 	if (config.resolutions !== undefined)
 		throw new Error(`wire(): '${ctx.name}' gives resolutions, which belong to the first layer; its layer applies its section of the first layer's file`);
-	return inherited.enrichment;
+	return inherited.fixpoint().checked;
 }
 
 function wireConfigOf(config: LayerConfig, ctx: Pick<IntakeCtx, 'name' | 'inherited'>): WireConfig<any> {
@@ -461,23 +473,18 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 		supertypes
 	};
 	const effects = [...(ctx.inherited?.effects ?? []), ...ctx.effects];
-	const { checked, changed, addedFields } = enrichFixpoint(layerResult(ctx, bodies, lists), ctx.base, displayFamiliesOf(effects));
-	if (changed.length > 0)
-		ctx.diagnostics.push({
-			scope: 'grammar',
-			code: 'layer-not-enrich-fixpoint',
-			severity: 'fail',
-			canProceed: false,
-			grammar: ctx.name,
-			message: `enrich changes ${changed.join(', ')} in layer '${ctx.name}', so the layer is not enrich's fixpoint`,
-			proposal: fixpointProposal(changed, addedFields),
-			details: { layer: ctx.name, depth, rules: changed, addedFields }
-		});
+	const result = layerResult(ctx, bodies, lists);
+	const displayFamilies = displayFamiliesOf(effects);
+	let fixpointResult: LayerFixpoint | undefined;
+	const fixpoint = (): LayerFixpoint => (fixpointResult ??= enrichFixpoint(result, ctx, displayFamilies));
+	const generated = ctx.config.generated === true;
+	if (!generated) ctx.diagnostics.push(...fixpoint().diagnostics);
 	const own = ownRecordsOf(wire, { supertypes: [...symbolNamesOf(supertypes)], roles, unmatchedGroups: unmatchedGroupPatterns(rules, baseRules, wire) });
 	const record: LayerRecord = {
 		depth,
 		upstream: ctx.upstream,
-		enrichment: checked,
+		generated,
+		fixpoint,
 		resolutions: ctx.resolutions,
 		deadMints,
 		textTokens: [...getEnrichTextTokens(ctx.base).keys()].filter((name) => !deadMints.has(name)),

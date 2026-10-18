@@ -64,6 +64,7 @@ export const renames = ${renamesData(bindings.renames)};
 export default grammar(
 	enrich(sittir),
 	wire({
+		generated: true,
 		edits: ${editEntries(bindings)}
 	})
 );

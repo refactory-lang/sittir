@@ -120,6 +120,7 @@ export const renames = {
 export default grammar(
 	enrich(sittir),
 	wire({
+		generated: true,
 		edits: {
 			attribute_item: { "2": field("content") },
 			const_parameter: { "4/0/1": field("default") },

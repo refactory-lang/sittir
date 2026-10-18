@@ -1,10 +1,10 @@
 import { spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { EvaluatedGrammar } from '../compiler/types.ts';
 import { baseNamesOf } from '../dsl/bind.ts';
 import { layerPath, type GrammarPackage } from '../grammars.ts';
+import { sha256 } from '../util/content-hash.ts';
 import type { UpstreamContext } from './derive-conflicts.ts';
 import { treeSitterPruned, type TreeSitterGrammarDoc } from './prune-grammar-json.ts';
 import { treeSitterCliVersion } from './tree-sitter-cli.ts';
@@ -56,7 +56,7 @@ function byJson(left: unknown, right: unknown): number {
 
 export function grammarHash<G extends TreeSitterGrammarDoc>(evaluated: G, treeSitterVersion: string): string {
 	const grammar = { ...treeSitterPruned(evaluated).grammar, conflicts: undefined, derivationRecords: undefined };
-	return createHash('sha256').update(JSON.stringify(canonical({ grammar, treeSitterVersion }))).digest('hex');
+	return sha256(JSON.stringify(canonical({ grammar, treeSitterVersion })));
 }
 
 export function derivationInputsOf(evaluated: EvaluatedGrammar): GrammarDerivationInputs {
