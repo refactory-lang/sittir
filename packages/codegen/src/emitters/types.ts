@@ -944,7 +944,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 	};
 	if (surface.mainType === undefined) {
 		emit('Bound', 'NodeMethodsOf', false);
-		emit('Parsed', 'HoldsTree', false);
+		emit('Parsed', 'NodeMethodsOf, HoldsTree', false);
 		return;
 	}
 	for (const [name, of, byKindId, held] of [

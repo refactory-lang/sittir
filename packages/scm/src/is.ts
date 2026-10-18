@@ -155,6 +155,22 @@ export interface IsGuards {
 		| TSKindId.Indent
 		| TSKindId.Dedent
 	>;
+	quantifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>;
+	identifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
+	immediateIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateIdentifier };
+	predicateType<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.Qmark | TSKindId.Bang>;
+	stringContentText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContentText };
+	anchor<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Anchor>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -176,6 +192,9 @@ const _supertype_namedNode_ids = new Set<number>([61, 62]);
 const _supertype_listElement_ids = new Set<number>([39, 54]);
 const _supertype_namedNodeGroup_ids = new Set<number>([63, 64]);
 const _supertype_layout_ids = new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]);
+
+const _enum_quantifier_ids = new Set<number>([2, 3, 4]);
+const _enum_predicateType_ids = new Set<number>([4, 18]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[34, _supertype_definition_ids],
@@ -241,5 +260,11 @@ export const is = Object.freeze({
 	namedNode: _supertype_namedNode_guard,
 	listElement: _supertype_listElement_guard,
 	namedNodeGroup: _supertype_namedNodeGroup_guard,
-	layout: _sg(_supertype_layout_ids)
+	layout: _sg(_supertype_layout_ids),
+	quantifier: _sg(_enum_quantifier_ids),
+	identifier: _g(TSKindId.Identifier),
+	immediateIdentifier: _g(TSKindId.ImmediateIdentifier),
+	predicateType: _sg(_enum_predicateType_ids),
+	stringContentText: _g(TSKindId.StringContentText),
+	anchor: _mg(TSKindId.Anchor)
 }) as unknown as IsGuards;

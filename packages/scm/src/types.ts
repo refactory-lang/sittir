@@ -2252,7 +2252,7 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2272,7 +2272,7 @@ export namespace ImmediateIdentifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ImmediateIdentifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -2292,7 +2292,7 @@ export namespace StringContentText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringContentText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;

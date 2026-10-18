@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
 import type { ReparseHosts } from '@sittir/common';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
-import type { TriviaFacts } from '@sittir/types';
+import type { QuerySlots, TriviaFacts } from '@sittir/types';
 
 export type FactoryEntry = ((...args: any[]) => unknown) | number | object;
 export type Hydrate = (value: unknown, tree: TreeHandle, depth?: number) => unknown;
@@ -26,7 +26,7 @@ export interface GrammarModules {
 	'ir.ts': { readonly ir: Record<string, unknown> };
 	'consts.ts': { readonly TOKEN_INTERIORS: Readonly<Record<string, TokenInterior>> };
 	'reparse-hosts.ts': { readonly REPARSE_HOSTS: ReparseHosts };
-	'utils.ts': { readonly triviaFacts: TriviaFacts };
+	'utils.ts': { readonly triviaFacts: TriviaFacts; readonly querySlots: QuerySlots };
 }
 
 export type GrammarFile = keyof GrammarModules | 'node-model.json5' | 'factories/bundle.ts';

@@ -11,7 +11,7 @@ export function renameProcess(source: string) {
 	const processFn = rs
 		.parse(source)
 		.statements()
-		.find((statement) => rs.is.functionItem(statement) && rs.render(statement.name()).toString() === 'process');
+		.find((statement) => rs.is.functionItem(statement) && statement.name().$render() === 'process');
 	if (processFn === undefined || !rs.is.functionItem(processFn)) return undefined;
 
 	return processFn.$with.name(rs.build.identifier('handle'));
