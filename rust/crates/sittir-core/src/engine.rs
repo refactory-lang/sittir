@@ -409,6 +409,10 @@ pub struct ParsedTree<G: EngineGrammar> {
     work: crate::layout::LayoutWorkCounter,
     /// The sides a write set, in the store of the engine that parsed the tree.
     written: TriviaStore<G::Trivia>,
+    /// The tree's records, each written on its node's first read, and the
+    /// row index that reaches them (`tree_arena`).
+    #[cfg(feature = "arena")]
+    arena: std::sync::Mutex<crate::arena::TreeArena>,
 }
 
 impl<G: EngineGrammar> Drop for ParsedTree<G> {
@@ -534,6 +538,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// This tree's identity — the tag carried by every handle it mints.
     pub fn tree_id(&self) -> TreeId {
         self.tree_id
+    }
+
+    /// The tree's records and their row index, held while the guard lives:
+    /// every route that reads a node reaches or writes its record here.
+    #[cfg(feature = "arena")]
+    pub fn tree_arena(&self) -> std::sync::MutexGuard<'_, crate::arena::TreeArena> {
+        self.arena.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
     }
 
     /// The parsed tree-sitter tree.
@@ -1418,6 +1429,8 @@ impl<G: EngineGrammar> Engine<G> {
             items: std::sync::Mutex::new(HashMap::new()),
             work: crate::layout::LayoutWorkCounter::default(),
             written: self.written.clone(),
+            #[cfg(feature = "arena")]
+            arena: std::sync::Mutex::new(crate::arena::TreeArena::new()),
         })
     }
 
@@ -1927,6 +1940,17 @@ mod tests {
         let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots");
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 2 } };
         assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn each_tree_keeps_its_own_records() {
+        let (one, _) = parsed("fn f() {}");
+        let (two, _) = parsed("fn g() {}");
+        let row = NodeIndex::new(1);
+        let at = one.tree_arena().record_or_write(row, |arena| arena.push(&[1, 2])).expect("written");
+        assert_eq!(one.tree_arena().record(row), Some(at), "a later read reaches the record");
+        assert_eq!(two.tree_arena().record(row), None, "another tree's row has a record of its own");
     }
 
     fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryCoordinate]) -> Vec<String> {

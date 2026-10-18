@@ -1,20 +1,22 @@
 //! Arena storage for records: fixed chunks of `u32` words that never move,
 //! and a string table of UTF-8 bytes in chunks that never move either.
 //!
-//! [`cell`] encodes and decodes one slot's cell, and [`side`] a record's
-//! side record. A built record's trivia is outside it, in the engine's
+//! [`cell`] encodes and decodes one slot's cell, [`side`] a record's side
+//! record, and [`rows`] keeps a parsed tree's arena with its row index. A built record's trivia is outside it, in the engine's
 //! store of written sides (`trivia_store`).
 //!
 //! An arena only appends: no record is freed or moved, so an address names
 //! one record for as long as the arena lives.
 
 pub mod cell;
+pub mod rows;
 pub mod side;
 
 use std::collections::HashMap;
 use std::fmt;
 
 pub use cell::{Cell, ListCell};
+pub use rows::TreeArena;
 pub use side::{SideRecord, SideSlot, Sides};
 
 /// A native node type's view over its records: a struct's is its
