@@ -539,6 +539,21 @@ List groups, unaliased, and phantom kinds
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
 ```
 
+### `tool node-json-census`
+
+Census what node JSON and the reviver rest on: unwrapped text leaves, kinds the coercer cannot build, slot value shapes, comment kinds
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool node-json-census [options]
+```
+
 ### `tool override-census`
 
 List hand-written rules and patch sites, with the diagnostic records they resolve across the raw, enriched and final stages

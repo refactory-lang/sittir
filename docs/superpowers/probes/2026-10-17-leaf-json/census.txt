@@ -1,0 +1,1286 @@
+# python: 116 corpus entries parsed, 0 skipped
+## 1. text-leaf kinds with no wrap (12 of 18; instances = corpus nodes, rendering = those already carrying $render)
+  escape_interpolation	instances 10	rendering 0
+  format_specifier_text	instances 10	rendering 0
+  identifier	instances 917	rendering 0
+  import_prefix	instances 4	rendering 0
+  integer_decimal_imaginary	instances 7	rendering 0
+  integer_decimal_long	instances 1	rendering 0
+  integer_decimal_plain	instances 148	rendering 0
+  line_continuation_newline	instances 0	rendering 0
+  string_end	instances 137	rendering 0
+  string_fragment	instances 162	rendering 0
+  string_start	instances 137	rendering 0
+  type_conversion	instances 2	rendering 0
+## 2. corpus kinds that are not keys of _fromMap and not units (0; 19 unit kinds revive to their kind id)
+## 3. slot value shapes by kind and accessor (corpus instance counts)
+  _simple_pattern.content	kind-id 6, node 118
+  _simple_statements.elements	node 442
+  aliased_import.name	node 1
+  aliased_import.alias	node 1
+  argument_list.arguments	node 63, undefined 36
+  argument_list_elements.items	list 63
+  as_pattern.expression	node 6
+  as_pattern.alias	node 6
+  as_pattern_target.content	node 6
+  assert_statement.expressions	list 3
+  assignment_eq.left	node 44
+  assignment_eq.right	kind-id 2, node 42
+  assignment_type.left	node 1
+  assignment_type.type	node 1
+  assignment_typed.left	node 3
+  assignment_typed.type	node 3
+  assignment_typed.right	node 3
+  attribute.object	node 45
+  attribute.attribute	node 45
+  augmented_assignment.left	node 13
+  augmented_assignment.operator	kind-id 13
+  augmented_assignment.right	node 13
+  await.expression	node 4
+  binary_operator.left	node 29
+  binary_operator.operator	kind-id 29
+  binary_operator.right	node 29
+  block.statements	list 146
+  boolean_operator.left	node 12
+  boolean_operator.operator	kind-id 12
+  boolean_operator.right	node 12
+  call.function	node 95
+  call.arguments	node 95
+  case_as_pattern.casePattern	node 4
+  case_as_pattern.identifier	node 4
+  case_clause.casePatterns	node 56
+  case_clause.guard	node 2, undefined 54
+  case_clause.consequence	node 56
+  case_list_pattern.elements	node 14
+  case_pattern.content	node 144
+  case_patterns.items	list 56
+  case_tuple_pattern.elements	node 4
+  chevron.expression	node 2
+  class_definition.name	node 7
+  class_definition.typeParameters	undefined 7
+  class_definition.superclasses	node 5, undefined 2
+  class_definition.body	node 7
+  class_pattern.name	node 20
+  class_pattern.arguments	node 15, undefined 5
+  collection_elements.items	list 20
+  comparison_operator.left	node 10
+  comparison_operator.comparators	list 10
+  comparison_operator_comparator.operators	kind-id 14
+  comparison_operator_comparator.primaryExpression	node 14
+  complex_pattern.sign	boolean 5
+  complex_pattern.real	node 5
+  complex_pattern.operator	kind-id 5
+  complex_pattern.imaginary	node 5
+  comprehension_clauses.contents	list 14
+  concatenated_string.strings	list 3
+  conditional_expression.body	node 4
+  conditional_expression.condition	kind-id 1, node 3
+  conditional_expression.alternative	node 4
+  constrained_type.baseType	node 2
+  constrained_type.constraint	node 2
+  decorated_definition.decorators	list 4
+  decorated_definition.definition	node 4
+  decorator.expression	node 5
+  default_parameter.name	node 7
+  default_parameter.value	node 7
+  delete_statement.expressions	node 1
+  dict_pattern.elements	node 9
+  dict_pattern_elements.items	list 9
+  dictionary.elements	node 7, undefined 5
+  dictionary_comprehension.body	node 2
+  dictionary_comprehension.clauses	node 2
+  dictionary_elements.items	list 7
+  dictionary_splat.expression	node 7
+  dictionary_splat_pattern.target	node 6
+  dotted_name.names	list 73
+  elif_clause.condition	node 1
+  elif_clause.consequence	node 1
+  else_clause.body	node 7
+  escape_sequence_hex.content	string 5
+  escape_sequence_line_break.content	string 4
+  escape_sequence_named.content	string 1
+  escape_sequence_octal.content	string 4
+  escape_sequence_simple.content	string 21
+  escape_sequence_unicode_fixed.content	string 1
+  except_clause.group	boolean 7
+  except_clause.exception	node 6, undefined 1
+  except_clause.body	node 7
+  except_clause_exception.content	node 6
+  except_clause_exception_as.value	node 5
+  except_clause_exception_as.alias	node 2, undefined 3
+  except_clause_exception_list.values	list 1
+  exec_statement.code	node 4
+  exec_statement.inClauses	list 4
+  expression_list.items	list 13
+  expression_statement.content	kind-id 6, node 340
+  expression_statement_tuple.items	list 2
+  finally_clause.block	node 2
+  float_leading_point.integer	undefined 11
+  float_leading_point.fraction	string 11
+  float_leading_point.marker	string 1, undefined 10
+  float_leading_point.exponent	string 1, undefined 10
+  float_leading_point.imaginary	undefined 11
+  float_point.integer	string 11
+  float_point.fraction	string 7, undefined 4
+  float_point.marker	string 2, undefined 9
+  float_point.exponent	string 2, undefined 9
+  float_point.imaginary	string 2, undefined 9
+  float_scientific.integer	string 5
+  float_scientific.marker	string 5
+  float_scientific.exponent	string 5
+  float_scientific.imaginary	string 1, undefined 4
+  for_in_clause.async	boolean 19
+  for_in_clause.left	node 19
+  for_in_clause.rights	list 19
+  for_in_clause.comma	boolean 19
+  for_statement.async	boolean 7
+  for_statement.left	node 7
+  for_statement.right	node 7
+  for_statement.body	node 7
+  for_statement.alternative	node 1, undefined 6
+  format_expression.content	node 4
+  format_specifier.elements	list 10
+  function_definition.async	boolean 40
+  function_definition.name	node 40
+  function_definition.typeParameters	node 1, undefined 39
+  function_definition.parameters	node 40
+  function_definition.returnType	node 4, undefined 36
+  function_definition.body	node 40
+  future_import_statement.content	node 3
+  generator_expression.body	node 5
+  generator_expression.clauses	node 5
+  generic_type.name	node 21
+  generic_type.typeParameter	node 21
+  global_statement.names	list 2
+  if_clause.condition	kind-id 3, node 1
+  if_statement.condition	node 16
+  if_statement.consequence	node 16
+  if_statement.alternatives	list 16
+  import_from_statement.moduleName	node 8
+  import_from_statement.content	kind-id 1, node 7
+  import_list.names	list 10
+  import_statement.names	node 3
+  integer_binary.prefix	string 3
+  integer_binary.content	string 3
+  integer_hex.prefix	string 2
+  integer_hex.content	string 2
+  integer_octal.prefix	string 3
+  integer_octal.content	string 3
+  interpolation.expression	node 31
+  interpolation.debug	boolean 31
+  interpolation.typeConversion	node 1, undefined 30
+  interpolation.formatSpecifier	node 10, undefined 21
+  key_value_pattern.key	node 15
+  key_value_pattern.value	node 15
+  keyword_argument.name	node 7
+  keyword_argument.value	kind-id 1, node 6
+  keyword_pattern.name	node 16
+  keyword_pattern.value	node 16
+  lambda.parameters	node 3, undefined 1
+  lambda.body	kind-id 1, node 3
+  lambda_parameters.parametersElements	node 3
+  lambda_within_for_in_clause.parameters	undefined 2
+  lambda_within_for_in_clause.body	kind-id 2
+  list.collectionElements	node 18, undefined 2
+  list_comprehension.body	node 5
+  list_comprehension.clauses	node 5
+  list_pattern_case_patterns.items	list 33
+  list_splat.expression	node 17
+  list_splat_pattern.target	node 11
+  match_block.content	node 19
+  match_block_block.alternatives	list 19
+  match_statement.subjects	node 19
+  match_statement.body	node 19
+  module.statements	list 116
+  named_expression.name	node 11
+  named_expression.value	node 11
+  names.content	node 3
+  nonlocal_statement.names	list 1
+  not_operator.argument	kind-id 1, node 5
+  pair.key	node 5
+  pair.value	kind-id 1, node 4
+  parameters.elements	node 26, undefined 14
+  parameters_elements.items	list 29
+  parenthesized_expression.expression	node 12
+  parenthesized_import_list.importList	node 2
+  parenthesized_list_splat.content	node 3
+  pattern_list.items	list 17
+  print_arguments.items	list 22
+  print_chevron_arguments.items	list 1
+  print_statement.content	node 24
+  print_statement_chevron.chevron	node 2
+  print_statement_chevron.printChevronArguments	node 1, undefined 1
+  print_statement_plain.printArguments	node 22
+  raise_statement.expressions	node 3, undefined 1
+  raise_statement.cause	node 1, undefined 3
+  relative_import.prefix	node 4
+  relative_import.name	node 2, undefined 2
+  return_statement.expressions	kind-id 2, node 14, undefined 2
+  set.collectionElements	node 2
+  set_comprehension.body	node 2
+  set_comprehension.clauses	node 2
+  simple_pattern_negative.sign	boolean 30
+  simple_pattern_negative.value	node 30
+  simple_statements_elements.items	list 448
+  slice.start	node 2, undefined 2
+  slice.stop	node 1, undefined 3
+  slice.step	node 1, undefined 3
+  slice_group.expression	undefined 1
+  splat_pattern.operator	kind-id 5
+  splat_pattern.name	node 5
+  splat_type.operator	kind-id 9
+  splat_type.name	node 9
+  string.stringStart	node 137
+  string.contents	list 137
+  string.stringEnd	node 137
+  string_content.elements	list 140
+  subjects.subjects	list 19
+  subscript.value	node 21
+  subscript.subscripts	node 21
+  subscripts.subscripts	list 21
+  suite_block.block	node 146
+  suite_empty.newline	kind-id 2
+  suite_inline.elements	node 6
+  try_statement.body	node 3
+  try_statement.exceptClauses	list 3
+  try_statement.elseClause	node 2, undefined 1
+  try_statement.finallyClause	node 2, undefined 1
+  tuple.elements	node 19, undefined 4
+  tuple_elements.items	list 19
+  tuple_pattern.elements	node 4
+  tuple_pattern_elements.items	list 4
+  type.content	kind-id 2, node 70
+  type_alias_statement.left	node 7
+  type_alias_statement.right	node 7
+  type_parameter.types	node 22
+  typed_default_parameter.name	node 2
+  typed_default_parameter.type	node 2
+  typed_default_parameter.value	node 2
+  typed_parameter.name	node 7
+  typed_parameter.type	node 7
+  types.items	list 22
+  unary_operator.operator	kind-id 9
+  unary_operator.argument	node 9
+  union_pattern.patterns	list 7
+  union_type.left	node 1
+  union_type.right	node 1
+  while_statement.condition	node 4
+  while_statement.body	node 4
+  while_statement.alternative	node 1, undefined 3
+  with_clause_bare.items	list 3
+  with_clause_paren.withItems	node 1
+  with_clause_with_items.items	list 1
+  with_item.value	node 6
+  with_statement.async	boolean 4
+  with_statement.withClause	node 4
+  with_statement.body	node 4
+  yield.content	node 7, undefined 1
+  yield_from_clause.expression	node 3
+## 4. comment kinds (trivia kinds minus layout) (1)
+  comment
+## 5. corpus entries whose read threw while enumerating nodes (0)
+# regex: 32 corpus entries parsed, 5 skipped
+## 1. text-leaf kinds with no wrap (13 of 14; instances = corpus nodes, rendering = those already carrying $render)
+  character_class_escape_text1	instances 3	rendering 0
+  character_class_escape_text2	instances 2	rendering 0
+  class_character	instances 47	rendering 0
+  control_escape	instances 0	rendering 0
+  control_letter_escape	instances 1	rendering 0
+  decimal_digits	instances 13	rendering 0
+  decimal_escape	instances 1	rendering 0
+  flags	instances 6	rendering 0
+  group_name	instances 9	rendering 0
+  pattern_character	instances 108	rendering 0
+  posix_class_name	instances 1	rendering 0
+  unicode_character_escape	instances 0	rendering 0
+  unicode_property_value	instances 2	rendering 0
+## 2. corpus kinds that are not keys of _fromMap and not units (0; 8 unit kinds revive to their kind id)
+## 3. slot value shapes by kind and accessor (corpus instance counts)
+  alternation.terms	list 3
+  anonymous_capturing_group.pattern	node 2
+  backreference_escape.groupName	node 1
+  character_class.negation	boolean 13
+  character_class.leading	boolean 13
+  character_class.classAtoms	list 13
+  character_class.trailing	boolean 13
+  character_class_escape.content	node 5
+  character_class_escape_arm.characterClassEscapeText2	node 2
+  character_class_escape_arm.unicodePropertyValueExpression	node 2
+  class_range.start	kind-id 1, node 12
+  class_range.end	kind-id 1, node 12
+  count_quantifier.content	node 9
+  count_quantifier.lazy	boolean 9
+  count_quantifier_arm.decimalDigits	node 9
+  count_quantifier_arm.countQuantifierGroup	node 5, undefined 4
+  count_quantifier_group.decimalDigits	node 4, undefined 1
+  identity_escape.content	string 13
+  inline_flags_group_disable.disabled	node 2
+  inline_flags_group_disable.pattern	node 1, undefined 1
+  inline_flags_group_enable.enabled	node 2
+  inline_flags_group_enable.pattern	node 1, undefined 1
+  inline_flags_group_toggle.enabled	node 1
+  inline_flags_group_toggle.disabled	node 1
+  inline_flags_group_toggle.pattern	node 1
+  lazy.content	kind-id 2
+  lookahead_assertion.content	kind-id 2
+  lookahead_assertion.pattern	node 2
+  lookaround_assertion.content	node 4
+  lookbehind_assertion.content	kind-id 2
+  lookbehind_assertion.pattern	node 2
+  named_capturing_group.content	kind-id 7
+  named_capturing_group.groupName	node 7
+  named_capturing_group.pattern	node 7
+  named_group_backreference.groupName	node 1
+  non_capturing_group.pattern	node 1
+  one_or_more.lazy	boolean 2
+  optional.lazy	boolean 1
+  pattern.content	node 49
+  posix_character_class.posixClassName	node 1
+  term.termGroups	list 52
+  term_group.content	kind-id 32, node 159
+  term_group.quantifier	node 20, undefined 171
+  unicode_property_name.content	node 1
+  unicode_property_value_expression.unicodePropertyValueExpressionGroup	node 1, undefined 1
+  unicode_property_value_expression.unicodePropertyValue	node 2
+  unicode_property_value_expression_group.unicodePropertyName	node 1
+  zero_or_more.lazy	boolean 8
+## 4. comment kinds (trivia kinds minus layout) (0)
+## 5. corpus entries whose read threw while enumerating nodes (5)
+  1	control_escape_text1 (kind 45) at index 4 is no member of the type it was read into
+  1	control_escape_text2 (kind 46) at index 4 is no member of the type it was read into
+  1	unicode_character_escape_text1 (kind 43) at index 5 is no member of the type it was read into
+  1	unicode_character_escape_text1 (kind 43) at index 7 is no member of the type it was read into
+  1	unicode_character_escape_text1 (kind 43) at index 8 is no member of the type it was read into
+# rust: 149 corpus entries parsed, 0 skipped
+## 1. text-leaf kinds with no wrap (14 of 21; instances = corpus nodes, rendering = those already carrying $render)
+  _block_comment_content	instances 0	rendering 0
+  block_comment_regular	instances 0	rendering 0
+  char_literal_empty	instances 0	rendering 0
+  doc_comment	instances 0	rendering 0
+  float_literal	instances 11	rendering 0
+  identifier	instances 700	rendering 0
+  line_comment_extra_slashes	instances 0	rendering 0
+  line_comment_regular	instances 0	rendering 0
+  raw_string_literal_content	instances 9	rendering 0
+  raw_string_literal_end	instances 9	rendering 0
+  raw_string_literal_start	instances 9	rendering 0
+  string_content	instances 60	rendering 0
+  string_open	instances 57	rendering 0
+  token_repetition_pattern_text	instances 6	rendering 0
+## 2. corpus kinds that are not keys of _fromMap and not units (0; 45 unit kinds revive to their kind id)
+## 3. slot value shapes by kind and accessor (corpus instance counts)
+  _let_chain.left	node 5
+  _let_chain.rights	list 5
+  abstract_type.typeParameters	node 1, undefined 9
+  abstract_type.trait	node 10
+  arguments.elements	node 32, undefined 23
+  arguments_elements.items	list 38
+  array_expression_list.attributes	list 7
+  array_expression_list.elements	node 6, undefined 1
+  array_expression_semi.attributes	list 2
+  array_expression_semi.element	node 2
+  array_expression_semi.length	node 2
+  array_type.element	kind-id 4, node 7
+  array_type.length	node 10, undefined 1
+  assignment_expression.left	node 2
+  assignment_expression.right	kind-id 1, node 1
+  associated_type.name	node 4
+  associated_type.typeParameters	node 1, undefined 3
+  associated_type.bounds	node 2, undefined 2
+  associated_type.whereClause	undefined 4
+  async_block.move	boolean 4
+  async_block.body	node 4
+  attribute.path	node 28
+  attribute.input	node 18, undefined 10
+  attribute_input.value	node 3, undefined 15
+  attribute_input.arguments	node 15, undefined 3
+  attribute_item.attribute	node 24
+  attributed_argument.attributeItems	list 54
+  attributed_argument.expression	node 54
+  attributed_enum_variant.attributeItems	list 8
+  attributed_enum_variant.enumVariant	node 8
+  attributed_field_declaration.attributeItems	list 15
+  attributed_field_declaration.fieldDeclaration	node 15
+  attributed_ordered_field.attributeItems	list 9
+  attributed_ordered_field.visibilityModifier	node 3, undefined 6
+  attributed_ordered_field.type	kind-id 5, node 4
+  attributed_parameter.attributeItem	node 2, undefined 56
+  attributed_parameter.content	kind-id 3, node 55
+  attributed_type_parameter.attributeItems	list 45
+  attributed_type_parameter.content	node 45
+  await_expression.expression	node 8
+  base_field_initializer.value	node 1
+  binary_expression.left	node 34
+  binary_expression.operator	kind-id 34
+  binary_expression.right	node 34
+  block.label	undefined 124
+  block.statements	list 124
+  block.trailingExpression	node 24, undefined 100
+  bounded_type.left	node 10
+  bounded_type.right	node 10
+  bracketed_type.type	node 3
+  break_expression.label	node 1, undefined 2
+  break_expression.expression	kind-id 1, undefined 2
+  call_expression.function	node 55
+  call_expression.arguments	node 55
+  captured_pattern.name	node 7
+  captured_pattern.pattern	node 7
+  char_literal_escaped_hex.byte	boolean 1
+  char_literal_escaped_hex.content	string 1
+  char_literal_escaped_simple.byte	boolean 4
+  char_literal_escaped_simple.content	string 4
+  char_literal_escaped_unicode_braced.byte	boolean 2
+  char_literal_escaped_unicode_braced.content	string 2
+  char_literal_plain.byte	boolean 4
+  char_literal_plain.content	string 4
+  closure_expression_block.static	boolean 1
+  closure_expression_block.async	boolean 1
+  closure_expression_block.move	boolean 1
+  closure_expression_block.parameters	node 1
+  closure_expression_block.returnType	node 1
+  closure_expression_block.body	node 1
+  closure_expression_expr.static	boolean 9
+  closure_expression_expr.async	boolean 9
+  closure_expression_expr.move	boolean 9
+  closure_expression_expr.parameters	node 9
+  closure_expression_expr.body	kind-id 1, node 8
+  closure_parameters.parameters	list 10
+  compound_assignment_expr.left	node 3
+  compound_assignment_expr.operator	kind-id 3
+  compound_assignment_expr.right	node 3
+  const_block.body	node 4
+  const_item.visibilityModifier	node 1, undefined 7
+  const_item.name	node 8
+  const_item.type	kind-id 5, node 3
+  const_item.value	node 7, undefined 1
+  const_parameter.name	node 3
+  const_parameter.type	kind-id 3
+  const_parameter.value	node 1, undefined 2
+  continue_expression.label	node 2, undefined 1
+  declaration_list.declarations	list 38
+  delim_token_tree_brace.delimTokens	list 5
+  delim_token_tree_bracket.delimTokens	list 3
+  delim_token_tree_paren.delimTokens	list 47
+  dynamic_type.trait	node 4
+  else_clause.body	node 5
+  enum_item.visibilityModifier	node 4
+  enum_item.name	node 4
+  enum_item.typeParameters	node 2, undefined 2
+  enum_item.whereClause	undefined 4
+  enum_item.body	node 4
+  enum_variant.visibilityModifier	undefined 8
+  enum_variant.name	node 8
+  enum_variant.body	node 5, undefined 3
+  enum_variant.value	node 2, undefined 6
+  enum_variant_list.elements	node 4
+  enum_variant_list_elements.items	list 4
+  escape_sequence_hex.content	string 4
+  escape_sequence_simple.content	string 4
+  expression_statement.content	node 214
+  expression_statement_with_semi.expression	kind-id 3, node 163
+  expressions.items	list 6
+  extern_crate_declaration.visibilityModifier	node 1, undefined 2
+  extern_crate_declaration.name	node 3
+  extern_crate_declaration.alias	node 1, undefined 2
+  extern_modifier.abi	node 7, undefined 1
+  field_declaration.visibilityModifier	node 5, undefined 10
+  field_declaration.name	node 15
+  field_declaration.type	kind-id 5, node 10
+  field_declaration_list.elements	node 7, undefined 6
+  field_declaration_list_elements.items	list 7
+  field_expression.value	kind-id 3, node 25
+  field_expression.field	node 28
+  field_identifier.content	node 49
+  field_initializer.attributeItems	list 7
+  field_initializer.field	node 7
+  field_initializer.value	node 7
+  field_initializer_list.initializers	node 5, undefined 1
+  field_initializer_list_elements.items	list 5
+  field_pattern_named.ref	boolean 3
+  field_pattern_named.mutable	boolean 3
+  field_pattern_named.name	node 3
+  field_pattern_named.pattern	kind-id 1, node 2
+  field_pattern_shorthand.ref	boolean 4
+  field_pattern_shorthand.mutable	boolean 4
+  field_pattern_shorthand.name	node 4
+  for_expression.label	node 2, undefined 5
+  for_expression.pattern	node 7
+  for_expression.value	node 7
+  for_expression.body	node 7
+  for_lifetimes.lifetimes	node 1
+  foreign_mod_item_body.unsafe	boolean 3
+  foreign_mod_item_body.externModifier	node 3
+  foreign_mod_item_body.body	node 3
+  function_item.visibilityModifier	node 9, undefined 55
+  function_item.functionModifiers	node 7, undefined 57
+  function_item.name	node 64
+  function_item.typeParameters	node 9, undefined 55
+  function_item.parameters	node 64
+  function_item.returnType	kind-id 9, node 7, undefined 48
+  function_item.whereClause	node 4, undefined 60
+  function_item.body	node 64
+  function_modifiers.modifiers	list 9
+  function_signature_item.visibilityModifier	node 1, undefined 4
+  function_signature_item.functionModifiers	undefined 5
+  function_signature_item.name	node 5
+  function_signature_item.typeParameters	undefined 5
+  function_signature_item.parameters	node 5
+  function_signature_item.returnType	node 2, undefined 3
+  function_signature_item.whereClause	undefined 5
+  function_type.forLifetimes	node 1, undefined 9
+  function_type.content	node 10
+  function_type.parameters	node 10
+  function_type.returnType	kind-id 3, node 5, undefined 2
+  function_type_fn_form.functionModifiers	node 2, undefined 3
+  function_type_trait_form.trait	node 5
+  gen_block.move	boolean 4
+  gen_block.body	node 4
+  generic_function.function	node 2
+  generic_function.typeArguments	node 2
+  generic_pattern.name	node 1
+  generic_pattern.typeArguments	node 1
+  generic_type.type	node 49
+  generic_type.typeArguments	node 49
+  generic_type_with_turbofish.type	node 2
+  generic_type_with_turbofish.typeArguments	node 2
+  higher_ranked_trait_bound.typeParameters	node 3
+  higher_ranked_trait_bound.type	node 3
+  if_expression.condition	node 17
+  if_expression.consequence	node 17
+  if_expression.alternative	node 5, undefined 12
+  impl_item_body.unsafe	boolean 17
+  impl_item_body.typeParameters	node 8, undefined 9
+  impl_item_body.traitClause	node 12, undefined 5
+  impl_item_body.type	kind-id 1, node 16
+  impl_item_body.whereClause	node 6, undefined 11
+  impl_item_body.body	node 17
+  impl_item_negative_clause.trait	node 1
+  impl_item_positive_clause.trait	node 13
+  impl_item_semi.unsafe	boolean 2
+  impl_item_semi.typeParameters	node 2
+  impl_item_semi.traitClause	node 2
+  impl_item_semi.type	node 2
+  impl_item_semi.whereClause	undefined 2
+  index_expression.object	node 3
+  index_expression.index	node 3
+  inner_attribute_item.attribute	node 4
+  integer_literal_binary.content	string 1
+  integer_literal_binary.suffix	string 1
+  integer_literal_decimal.content	string 146
+  integer_literal_decimal.suffix	string 14, undefined 132
+  integer_literal_hex.content	string 1
+  integer_literal_hex.suffix	string 1
+  integer_literal_octal.content	string 1
+  integer_literal_octal.suffix	string 1
+  label.name	node 7
+  last_match_arm.attributes	list 13
+  last_match_arm.pattern	kind-id 6, node 7
+  last_match_arm.value	kind-id 1, node 12
+  last_match_arm.comma	boolean 13
+  let_condition.pattern	node 13
+  let_condition.value	kind-id 1, node 12
+  let_declaration.mutable	boolean 36
+  let_declaration.pattern	kind-id 1, node 35
+  let_declaration.type	kind-id 6, undefined 30
+  let_declaration.value	kind-id 2, node 30, undefined 4
+  let_declaration.alternative	node 3, undefined 33
+  lifetime.name	node 47
+  lifetime_parameter.name	node 14
+  lifetime_parameter.bounds	undefined 14
+  lifetimes.items	list 1
+  loop_expression.label	node 2
+  loop_expression.body	node 2
+  macro_definition_brace.name	node 5
+  macro_definition_brace.macroRules	node 5
+  macro_definition_bracket.name	node 1
+  macro_definition_bracket.macroRules	node 1
+  macro_invocation.macro	node 30
+  macro_invocation.arguments	node 30
+  macro_rule.left	node 7
+  macro_rule.right	node 7
+  macro_rules.items	list 6
+  match_arm_block_ending.attributes	list 2
+  match_arm_block_ending.pattern	node 2
+  match_arm_block_ending.value	node 2
+  match_arm_with_comma.attributes	list 25
+  match_arm_with_comma.pattern	node 25
+  match_arm_with_comma.value	kind-id 1, node 24
+  match_block.matchBlockArms	node 13
+  match_block_arms.arms	list 13
+  match_block_arms.lastArm	node 13
+  match_expression.value	node 13
+  match_expression.body	node 13
+  match_pattern.pattern	kind-id 6, node 34
+  match_pattern.condition	node 4, undefined 36
+  metavariable.name	string 10
+  mod_item_external.visibilityModifier	node 2, undefined 1
+  mod_item_external.name	node 3
+  mod_item_inline.visibilityModifier	undefined 6
+  mod_item_inline.name	node 6
+  mod_item_inline.body	node 6
+  mut_pattern.pattern	node 3
+  negative_literal.value	node 2
+  non_special_token.content	kind-id 53, node 73
+  or_pattern_binary.left	node 18
+  or_pattern_binary.right	node 18
+  or_pattern_prefix.right	node 1
+  ordered_field_declaration_list.attributes	node 7
+  ordered_field_declaration_list_elements.items	list 7
+  parameter.mutable	boolean 37
+  parameter.name	kind-id 1, node 36
+  parameter.type	kind-id 13, node 24
+  parameters.elements	node 45, undefined 34
+  parameters_elements.items	list 45
+  parenthesized_expression.expression	node 10
+  patterns.items	list 26
+  pointer_type_const.type	kind-id 2, node 2
+  pointer_type_mut.type	node 7
+  qualified_type.type	node 2
+  qualified_type.alias	node 2
+  range_expression_bare.rangeExpressionBare	kind-id 1
+  range_expression_binary.start	node 11
+  range_expression_binary.operator	kind-id 11
+  range_expression_binary.end	node 11
+  range_expression_postfix.start	node 2
+  range_expression_prefix.end	node 1
+  range_pattern_prefix.content	kind-id 2
+  range_pattern_prefix.right	node 2
+  range_pattern_with_left.left	node 5
+  range_pattern_with_left.content	kind-id 1, node 4
+  range_pattern_with_left_with_right.content	kind-id 4
+  range_pattern_with_left_with_right.right	node 4
+  raw_string_literal.rawStringLiteralStart	node 9
+  raw_string_literal.stringContent	node 9
+  raw_string_literal.rawStringLiteralEnd	node 9
+  ref_pattern.pattern	node 4
+  reference_expression_bare.value	node 6
+  reference_expression_mut.value	node 1
+  reference_expression_raw_const.value	node 2
+  reference_expression_raw_mut.value	node 1
+  reference_pattern.mutable	boolean 2
+  reference_pattern.pattern	node 2
+  reference_type.lifetime	node 8, undefined 11
+  reference_type.mutable	boolean 19
+  reference_type.type	kind-id 6, node 13
+  removed_trait_bound.type	node 3
+  return_expression.expression	kind-id 1, node 4, undefined 2
+  scoped_identifier.path	kind-id 3, node 32, undefined 3
+  scoped_identifier.name	kind-id 1, node 37
+  scoped_type_identifier.path	kind-id 1, node 17, undefined 1
+  scoped_type_identifier.name	node 19
+  scoped_type_identifier_in_expression_position.path	node 1
+  scoped_type_identifier_in_expression_position.name	node 1
+  scoped_use_list.path	node 6
+  scoped_use_list.list	node 6
+  self_parameter.reference	boolean 13
+  self_parameter.lifetime	node 1, undefined 12
+  self_parameter.mutable	boolean 13
+  shebang.content	string 2
+  shorthand_field_identifier.content	node 4
+  shorthand_field_initializer.attributes	list 3
+  shorthand_field_initializer.name	node 3
+  slice_pattern.patterns	node 1
+  source_file.shebang	node 2, undefined 147
+  source_file.statements	list 149
+  static_item.visibilityModifier	undefined 3
+  static_item.ref	boolean 3
+  static_item.mutable	boolean 3
+  static_item.name	node 3
+  static_item.type	kind-id 2, node 1
+  static_item.value	node 2, undefined 1
+  string_literal.stringOpen	node 57
+  string_literal.elements	list 57
+  struct_expression.name	node 6
+  struct_expression.body	node 6
+  struct_item_brace.visibilityModifier	undefined 9
+  struct_item_brace.name	node 9
+  struct_item_brace.typeParameters	node 5, undefined 4
+  struct_item_brace.whereClause	undefined 9
+  struct_item_brace.body	node 9
+  struct_item_tuple.visibilityModifier	node 2, undefined 3
+  struct_item_tuple.name	node 5
+  struct_item_tuple.typeParameters	node 1, undefined 4
+  struct_item_tuple.body	node 5
+  struct_item_tuple.whereClause	undefined 5
+  struct_item_unit.visibilityModifier	undefined 3
+  struct_item_unit.name	node 3
+  struct_item_unit.typeParameters	undefined 3
+  struct_pattern.type	node 4
+  struct_pattern.fields	node 4
+  struct_pattern_elements.items	list 4
+  token_binding_pattern.name	node 5
+  token_binding_pattern.type	kind-id 5
+  token_repetition.tokens	list 3
+  token_repetition.separator	node 3
+  token_repetition.operator	kind-id 3
+  token_repetition_pattern.tokenPatterns	list 3
+  token_repetition_pattern.separator	node 3
+  token_repetition_pattern.operator	kind-id 3
+  token_tree_brace.tokens	list 4
+  token_tree_paren.tokens	list 6
+  token_tree_pattern_bracket.tokenPatterns	list 1
+  token_tree_pattern_paren.tokenPatterns	list 7
+  trait_bounds.bounds	list 31
+  trait_item.visibilityModifier	node 6, undefined 6
+  trait_item.unsafe	boolean 12
+  trait_item.name	node 12
+  trait_item.typeParameters	node 3, undefined 9
+  trait_item.bounds	node 3, undefined 9
+  trait_item.whereClause	node 1, undefined 11
+  trait_item.body	node 12
+  try_block.body	node 1
+  try_expression.value	node 9
+  tuple_expression.attributes	list 6
+  tuple_expression.expressions	node 6
+  tuple_pattern.elements	node 10
+  tuple_pattern_elements.items	list 10
+  tuple_struct_pattern.type	node 26
+  tuple_struct_pattern.patterns	node 25, undefined 1
+  tuple_type.types	node 8
+  type_argument.content	kind-id 6, node 59
+  type_argument.traitBounds	node 1, undefined 64
+  type_arguments.elements	node 56
+  type_arguments_elements.items	list 56
+  type_binding.name	node 7
+  type_binding.typeArguments	node 2, undefined 5
+  type_binding.type	kind-id 2, node 5
+  type_cast_expression.value	node 7
+  type_cast_expression.type	kind-id 4, node 3
+  type_identifier.content	node 328
+  type_item.visibilityModifier	undefined 31
+  type_item.name	node 31
+  type_item.typeParameters	node 4, undefined 27
+  type_item.whereClause	node 2, undefined 29
+  type_item.type	kind-id 3, node 28
+  type_item.trailingWhereClause	node 2, undefined 29
+  type_parameter.name	node 28
+  type_parameter.bounds	node 9, undefined 19
+  type_parameter.defaultType	node 1, undefined 27
+  type_parameters.elements	node 39
+  type_parameters_elements.items	list 39
+  types.items	list 8
+  unary_expression.operator	kind-id 7
+  unary_expression.operand	kind-id 1, node 6
+  union_item.visibilityModifier	node 1
+  union_item.name	node 1
+  union_item.typeParameters	undefined 1
+  union_item.whereClause	undefined 1
+  union_item.body	node 1
+  unsafe_block.body	node 1
+  use_as_clause.path	node 3
+  use_as_clause.alias	node 3
+  use_bounds.bounds	node 1, undefined 1
+  use_bounds_elements.items	list 1
+  use_clauses.items	list 6
+  use_declaration.visibilityModifier	node 1, undefined 12
+  use_declaration.argument	node 13
+  use_list.useClauses	node 6
+  use_wildcard.useWildcardGroup	node 3, undefined 1
+  use_wildcard_group.path	node 2, undefined 1
+  variadic_parameter.mutable	boolean 2
+  variadic_parameter.pattern	node 1, undefined 1
+  visibility_modifier.content	kind-id 5, node 31
+  visibility_modifier_pub.visibilityModifierPubScope	node 4, undefined 27
+  visibility_modifier_pub_scope.content	kind-id 3, node 1
+  visibility_modifier_pub_scope_in_path.path	node 1
+  where_clause.wherePredicates	node 13, undefined 2
+  where_predicate.left	kind-id 1, node 15
+  where_predicate.bounds	node 16
+  where_predicates.items	list 13
+  while_expression.label	undefined 4
+  while_expression.condition	node 4
+  while_expression.body	node 4
+  yield_expression.expression	kind-id 1, node 1
+## 4. comment kinds (trivia kinds minus layout) (2)
+  block_comment
+  line_comment
+## 5. corpus entries whose read threw while enumerating nodes (0)
+# scm: 19 corpus entries parsed, 0 skipped
+## 1. text-leaf kinds with no wrap (3 of 3; instances = corpus nodes, rendering = those already carrying $render)
+  _immediate_identifier	instances 36	rendering 0
+  identifier	instances 150	rendering 0
+  string_content_text	instances 35	rendering 0
+## 2. corpus kinds that are not keys of _fromMap and not units (0; 5 unit kinds revive to their kind id)
+## 3. slot value shapes by kind and accessor (corpus instance counts)
+  anonymous_node.name	kind-id 3, node 26
+  anonymous_node.elements	list 29
+  capture.name	node 27
+  escape_sequence.content	string 4
+  field_definition.name	node 27
+  field_definition.definition	node 27
+  group_expression_arm.left	node 13
+  group_expression_arm.right	node 13
+  grouping.groupingGroups	list 18
+  grouping.elements	list 18
+  grouping_group.groupExpression	node 31
+  grouping_group.anchor	boolean 31
+  immediate_string.stringContent	node 1
+  list.definitions	list 11
+  list.elements	list 11
+  list_element_quantifier.quantifier	kind-id 6
+  missing_node.name	node 2, undefined 1
+  missing_node.elements	list 3
+  named_node_expression_arm.left	node 15
+  named_node_expression_arm.right	node 15
+  named_node_group_anchored_last.anchor	boolean 12
+  named_node_group_anchored_last.namedNodeExpressions	list 12
+  named_node_group_anchored_last.last	node 12
+  named_node_group_children.anchor	boolean 28
+  named_node_group_children.namedNodeExpressions	list 28
+  named_node_plain.name	kind-id 5, node 115
+  named_node_plain.namedNodeGroup	node 40, undefined 80
+  named_node_plain.elements	list 120
+  named_node_supertyped.supertype	node 2
+  named_node_supertyped.name	node 2
+  named_node_supertyped.namedNodeGroup	undefined 2
+  named_node_supertyped.elements	list 2
+  negated_field.identifier	node 2
+  parameters.elements	list 7
+  predicate.prefix	kind-id 8
+  predicate.name	node 8
+  predicate.type	kind-id 8
+  predicate.parameters	node 7, undefined 1
+  program.definitions	list 19
+  string.stringContent	node 33
+  string_content.contents	list 34
+## 4. comment kinds (trivia kinds minus layout) (1)
+  comment
+## 5. corpus entries whose read threw while enumerating nodes (0)
+# typescript: 119 corpus entries parsed, 0 skipped
+## 1. text-leaf kinds with no wrap (16 of 20; instances = corpus nodes, rendering = those already carrying $render)
+  _template_chars	instances 12	rendering 0
+  html_comment	instances 0	rendering 0
+  identifier	instances 335	rendering 0
+  jsx_text	instances 0	rendering 0
+  number_binary	instances 0	rendering 0
+  number_decimal	instances 36	rendering 0
+  number_float_leading_point	instances 0	rendering 0
+  number_float_point	instances 0	rendering 0
+  number_float_scientific	instances 0	rendering 0
+  number_hex	instances 0	rendering 0
+  number_octal	instances 0	rendering 0
+  regex_flags	instances 0	rendering 0
+  regex_pattern	instances 0	rendering 0
+  statement_identifier	instances 0	rendering 0
+  unescaped_double_string_fragment	instances 33	rendering 0
+  unescaped_single_string_fragment	instances 41	rendering 0
+## 2. corpus kinds that are not keys of _fromMap and not units (0; 28 unit kinds revive to their kind id)
+## 3. slot value shapes by kind and accessor (corpus instance counts)
+  _lhs_expression.content	node 67
+  abstract_class_declaration.decorators	list 5
+  abstract_class_declaration.name	node 5
+  abstract_class_declaration.typeParameters	undefined 5
+  abstract_class_declaration.heritage	undefined 5
+  abstract_class_declaration.body	node 5
+  abstract_method_signature.accessibilityModifier	kind-id 1, undefined 3
+  abstract_method_signature.override	boolean 4
+  abstract_method_signature.accessorKind	kind-id 1, undefined 3
+  abstract_method_signature.name	node 4
+  abstract_method_signature.optional	boolean 4
+  abstract_method_signature.typeParameters	undefined 4
+  abstract_method_signature.parameters	node 4
+  abstract_method_signature.returnType	node 4
+  ambient_declaration.content	node 28
+  ambient_declaration_global.body	node 1
+  ambient_declaration_module.name	node 1
+  ambient_declaration_module.type	node 1
+  ambient_declaration_module.terminator	kind-id 1
+  arguments.elements	list 25
+  array.elements	list 2
+  array_type.type	kind-id 1, node 19
+  arrow_function.async	boolean 3
+  arrow_function.content	node 3
+  arrow_function.body	node 3
+  arrow_function_parameter.parameter	node 1
+  as_expression.expression	node 6
+  as_expression.typeAnnotation	kind-id 2, node 4
+  asserts.value	node 4
+  asserts_annotation.asserts	node 2
+  assignment_expression.using	boolean 4
+  assignment_expression.left	node 4
+  assignment_expression.right	node 4
+  augmented_assignment_expression.left	node 2
+  augmented_assignment_expression.operator	kind-id 2
+  augmented_assignment_expression.right	node 2
+  binary_expression.left	node 17
+  binary_expression.operator	kind-id 17
+  binary_expression.right	node 17
+  binary_expression.binaryExpressionIn	undefined 17
+  break_statement.label	undefined 6
+  break_statement.terminator	kind-id 6
+  call_expression_call.function	kind-id 1, node 18
+  call_expression_call.typeArguments	node 7, undefined 12
+  call_expression_call.arguments	node 19
+  call_expression_member.function	node 1
+  call_expression_member.typeArguments	node 1
+  call_expression_member.arguments	node 1
+  call_signature.typeParameters	node 1, undefined 2
+  call_signature.parameters	node 3
+  call_signature.returnType	node 3
+  catch_clause.catchClauseGroup	node 3
+  catch_clause.body	node 3
+  catch_clause_group.parameter	node 3
+  catch_clause_group.type	node 1, undefined 2
+  class.decorators	list 1
+  class.name	undefined 1
+  class.typeParameters	undefined 1
+  class.heritage	undefined 1
+  class.body	node 1
+  class_body.members	list 41
+  class_body_member_declaration.member	node 31
+  class_body_member_declaration.terminator	kind-id 31
+  class_body_member_method.decorators	list 15
+  class_body_member_method.methodDefinition	node 15
+  class_body_member_method.terminator	kind-id 15
+  class_body_member_method_sig.methodSignature	node 2
+  class_body_member_method_sig.terminator	kind-id 2
+  class_declaration.decorators	list 35
+  class_declaration.name	node 35
+  class_declaration.typeParameters	node 4, undefined 31
+  class_declaration.heritage	node 12, undefined 23
+  class_declaration.body	node 35
+  class_declaration.terminator	kind-id 35
+  class_heritage.content	node 12
+  class_heritage_extends_clause.extendsClause	node 12
+  class_heritage_extends_clause.implementsClause	node 5, undefined 7
+  class_static_block.terminator	kind-id 2
+  class_static_block.body	node 2
+  conditional_type.left	node 17
+  conditional_type.right	kind-id 1, node 16
+  conditional_type.consequence	node 17
+  conditional_type.alternative	kind-id 6, node 11
+  constraint.content	kind-id 7
+  constraint.type	kind-id 3, node 4
+  constructor_type.abstract	boolean 4
+  constructor_type.typeParameters	node 1, undefined 3
+  constructor_type.parameters	node 4
+  constructor_type.type	kind-id 2, node 2
+  continue_statement.label	undefined 2
+  continue_statement.terminator	kind-id 2
+  debugger_statement.terminator	kind-id 2
+  decorator.expression	node 11
+  decorator_call_expression.function	node 2
+  decorator_call_expression.typeArguments	node 1, undefined 1
+  decorator_call_expression.arguments	node 2
+  decorator_member_expression.object	kind-id 1, node 1
+  decorator_member_expression.property	node 2
+  decorator_parenthesized_expression.expression	node 1
+  do_statement.body	node 2
+  do_statement.condition	node 2
+  do_statement.terminator	kind-id 2
+  else_clause.body	node 2
+  enum_assignment.name	node 8
+  enum_assignment.value	node 8
+  enum_body.elements	node 4
+  enum_body_element_name.name	node 8
+  enum_body_elements.items	list 4
+  enum_declaration.const	boolean 4
+  enum_declaration.name	node 4
+  enum_declaration.body	node 4
+  escape_sequence.content	string 5
+  export_clause.exportSpecifiers	node 4
+  export_specifier.exportKind	undefined 6
+  export_specifier.name	node 6
+  export_specifier.alias	node 1, undefined 5
+  export_specifiers.items	list 4
+  export_statement_default_declaration.decorators	list 30
+  export_statement_default_declaration.content	node 30
+  export_statement_default_declaration_default_kw.content	node 6
+  export_statement_default_from.type	boolean 6
+  export_statement_default_from.content	node 6
+  export_statement_default_from.terminator	kind-id 6
+  export_statement_default_from_clause_from.exportClause	node 4
+  export_statement_default_from_clause_from.source	node 3, undefined 1
+  export_statement_default_from_ns_from.namespaceExport	node 1
+  export_statement_default_from_ns_from.source	node 1
+  export_statement_default_from_star_from.source	node 1
+  export_statement_equals_export.expression	node 2
+  export_statement_equals_export.terminator	kind-id 2
+  expression_statement.expression	node 47
+  expression_statement.terminator	kind-id 47
+  extends_clause.types	list 12
+  extends_clause_single.value	node 13
+  extends_clause_single.typeArguments	node 7, undefined 6
+  extends_type_clause.types	list 2
+  finally_clause.body	node 3
+  flow_maybe_type.type	node 4
+  for_header_lhs.left	node 2
+  for_header_lhs.operator	kind-id 2
+  for_header_lhs.right	kind-id 2
+  for_in_statement.await	boolean 2
+  for_in_statement.header	node 2
+  for_in_statement.body	node 2
+  for_statement.initializer	kind-id 2, node 1
+  for_statement.condition	kind-id 2, node 1
+  for_statement.increment	node 1, undefined 2
+  for_statement.body	node 3
+  formal_parameters.elements	node 50, undefined 42
+  formal_parameters_elements.items	list 50
+  function_declaration.async	boolean 16
+  function_declaration.name	node 16
+  function_declaration.typeParameters	node 4, undefined 12
+  function_declaration.parameters	node 16
+  function_declaration.returnType	node 11, undefined 5
+  function_declaration.body	node 16
+  function_declaration.terminator	kind-id 16
+  function_expression.async	boolean 1
+  function_expression.name	undefined 1
+  function_expression.typeParameters	undefined 1
+  function_expression.parameters	node 1
+  function_expression.returnType	undefined 1
+  function_expression.body	node 1
+  function_signature.async	boolean 15
+  function_signature.name	node 15
+  function_signature.typeParameters	node 2, undefined 13
+  function_signature.parameters	node 15
+  function_signature.returnType	node 12, undefined 3
+  function_signature.terminator	kind-id 15
+  function_type.typeParameters	undefined 17
+  function_type.parameters	node 17
+  function_type.returnType	kind-id 5, node 12
+  generator_function_declaration.async	boolean 1
+  generator_function_declaration.name	node 1
+  generator_function_declaration.typeParameters	node 1
+  generator_function_declaration.parameters	node 1
+  generator_function_declaration.returnType	node 1
+  generator_function_declaration.body	node 1
+  generator_function_declaration.terminator	kind-id 1
+  generic_type.name	node 34
+  generic_type.typeArguments	node 34
+  if_statement.condition	node 3
+  if_statement.consequence	node 3
+  if_statement.alternative	node 2, undefined 1
+  implements_clause.types	list 5
+  import_alias.name	node 3
+  import_alias.value	node 3
+  import_alias.terminator	kind-id 3
+  import_attribute.attributeKind	kind-id 1
+  import_attribute.object	node 1
+  import_clause.content	node 13
+  import_clause_default_import.identifier	node 5
+  import_clause_default_import.importClauseGroup	node 3, undefined 2
+  import_clause_group.content	node 3
+  import_specifier_as.importKind	undefined 3
+  import_specifier_as.name	node 3
+  import_specifier_as.alias	node 3
+  import_specifier_name.importKind	kind-id 3, undefined 11
+  import_specifier_name.name	node 14
+  import_specifiers.items	list 11
+  import_statement.importClause	kind-id 3, undefined 10
+  import_statement.fromClause	node 13
+  import_statement.importAttribute	node 1, undefined 12
+  import_statement.terminator	kind-id 13
+  import_statement_clause_from.importClause	node 13
+  import_statement_clause_from.source	node 13
+  index_signature_colon.sign	undefined 11
+  index_signature_colon.readonly	boolean 11
+  index_signature_colon.name	node 11
+  index_signature_colon.indexType	kind-id 3, node 8
+  index_signature_colon.type	node 11
+  index_signature_mapped_type_clause.sign	kind-id 1, undefined 5
+  index_signature_mapped_type_clause.readonly	boolean 6
+  index_signature_mapped_type_clause.mappedTypeClause	node 6
+  index_signature_mapped_type_clause.type	node 6
+  index_type_query.type	node 16
+  infer_type.name	node 6
+  infer_type.type	kind-id 2, undefined 4
+  instantiation_expression.expression	node 3
+  instantiation_expression.typeArguments	node 3
+  interface_body.content	node 18
+  interface_declaration.name	node 18
+  interface_declaration.typeParameters	node 1, undefined 17
+  interface_declaration.extendsTypeClause	node 2, undefined 16
+  interface_declaration.body	node 18
+  internal_module.name	node 6
+  internal_module.body	node 6
+  intersection_type.left	kind-id 1, node 12
+  intersection_type.right	kind-id 3, node 10
+  lexical_declaration.kind	kind-id 40
+  lexical_declaration.declarators	list 40
+  lexical_declaration.terminator	kind-id 40
+  literal_type.content	kind-id 9, node 28
+  literal_type_negative_number.argument	node 3
+  lookup_type.type	node 12
+  lookup_type.indexType	kind-id 3, node 9
+  mapped_type_clause.name	node 6
+  mapped_type_clause.type	node 6
+  mapped_type_clause.alias	node 2, undefined 4
+  member_expression.object	kind-id 5, node 13
+  member_expression.separator	kind-id 18
+  member_expression.property	node 18
+  method_definition.accessibilityModifier	kind-id 4, undefined 11
+  method_definition.static	boolean 15
+  method_definition.override	boolean 15
+  method_definition.readonly	boolean 15
+  method_definition.async	boolean 15
+  method_definition.accessorKind	undefined 15
+  method_definition.name	node 15
+  method_definition.optional	boolean 15
+  method_definition.typeParameters	undefined 15
+  method_definition.parameters	node 15
+  method_definition.returnType	node 3, undefined 12
+  method_definition.body	node 15
+  method_signature.accessibilityModifier	kind-id 5, undefined 11
+  method_signature.static	boolean 16
+  method_signature.override	boolean 16
+  method_signature.readonly	boolean 16
+  method_signature.async	boolean 16
+  method_signature.accessorKind	undefined 16
+  method_signature.name	node 16
+  method_signature.optional	boolean 16
+  method_signature.typeParameters	node 2, undefined 14
+  method_signature.parameters	node 16
+  method_signature.returnType	node 11, undefined 5
+  module.name	node 10
+  module.body	node 9, undefined 1
+  named_imports.importSpecifiers	node 11
+  namespace_export.moduleExportName	node 1
+  nested_identifier.object	node 4
+  nested_identifier.property	node 4
+  nested_type_identifier.module	node 4
+  nested_type_identifier.name	node 4
+  new_expression.constructor_	node 1
+  new_expression.typeArguments	node 1
+  new_expression.arguments	node 1
+  non_null_expression.expression	node 5
+  object.properties	list 6
+  object_pattern.properties	list 1
+  object_type.opening	kind-id 34
+  object_type.members	node 28, undefined 6
+  object_type.closing	kind-id 34
+  object_type_content.items	list 42
+  omitting_type_annotation.type	kind-id 1
+  opting_type_annotation.type	kind-id 1
+  optional_parameter.decorators	list 6
+  optional_parameter.accessibilityModifier	undefined 6
+  optional_parameter.override	boolean 6
+  optional_parameter.readonly	boolean 6
+  optional_parameter.pattern	node 6
+  optional_parameter.type	node 6
+  optional_parameter.value	undefined 6
+  optional_tuple_parameter.name	node 1
+  optional_tuple_parameter.type	node 1
+  optional_type.type	kind-id 1
+  pair.key	node 8
+  pair.value	kind-id 3, node 5
+  parenthesized_expression_typed.expression	kind-id 4, node 6
+  parenthesized_expression_typed.type	node 1, undefined 9
+  parenthesized_type.type	kind-id 1, node 10
+  private_property_identifier.content	string 1
+  program.hashBangLine	undefined 119
+  program.statements	list 119
+  property_identifier.content	node 130
+  property_signature.accessibilityModifier	kind-id 1, undefined 33
+  property_signature.static	boolean 34
+  property_signature.override	boolean 34
+  property_signature.readonly	boolean 34
+  property_signature.name	node 34
+  property_signature.optional	boolean 34
+  property_signature.type	node 34
+  public_field_definition.decorators	list 19
+  public_field_definition.declare	boolean 19
+  public_field_definition.accessibilityModifier	kind-id 4, undefined 15
+  public_field_definition.static	boolean 19
+  public_field_definition.override	boolean 19
+  public_field_definition.readonly	boolean 19
+  public_field_definition.abstract	boolean 19
+  public_field_definition.accessor	boolean 19
+  public_field_definition.name	node 19
+  public_field_definition.optionality	kind-id 5, undefined 14
+  public_field_definition.type	node 17, undefined 2
+  public_field_definition.value	node 9, undefined 10
+  readonly_type.type	node 6
+  required_parameter.decorators	list 59
+  required_parameter.accessibilityModifier	undefined 59
+  required_parameter.override	boolean 59
+  required_parameter.readonly	boolean 59
+  required_parameter.pattern	kind-id 2, node 57
+  required_parameter.type	node 43, undefined 16
+  required_parameter.value	undefined 59
+  rest_pattern.lhsExpression	node 3
+  rest_type.type	node 1
+  return_statement.expression	kind-id 2, node 7, undefined 2
+  return_statement.terminator	kind-id 11
+  satisfies_expression.expression	node 4
+  satisfies_expression.typeAnnotation	node 4
+  shorthand_property_identifier.content	node 4
+  shorthand_property_identifier_pattern.content	node 1
+  statement_block.statements	list 72
+  statement_block.terminator	kind-id 72
+  string_double.elements	list 33
+  string_single.elements	list 40
+  subscript_expression.object	node 2
+  subscript_expression.optionalChain	boolean 2
+  subscript_expression.index	node 2
+  switch_body.cases	list 2
+  switch_case.value	node 2
+  switch_case.bodies	list 2
+  switch_default.bodies	list 2
+  switch_statement.value	node 2
+  switch_statement.body	node 2
+  template_literal_type.elements	list 12
+  template_string.elements	list 1
+  template_substitution.expression	node 2
+  template_type.type	node 16
+  ternary_expression.condition	node 1
+  ternary_expression.consequence	node 1
+  ternary_expression.alternative	node 1
+  throw_statement.expression	node 2
+  throw_statement.terminator	kind-id 2
+  try_statement.body	node 3
+  try_statement.handler	node 3
+  try_statement.finalizer	node 3
+  tuple_parameter.name	node 2
+  tuple_parameter.type	node 2
+  tuple_type.tupleTypeMembers	node 7, undefined 1
+  tuple_type_members.items	list 7
+  type_alias_declaration.name	node 70
+  type_alias_declaration.typeParameters	node 17, undefined 53
+  type_alias_declaration.value	kind-id 1, node 69
+  type_alias_declaration.terminator	kind-id 70
+  type_annotation.type	kind-id 90, node 106
+  type_arguments.types	node 57
+  type_assertion.typeArguments	node 2
+  type_assertion.expression	node 2
+  type_identifier.content	node 446
+  type_parameter.const	boolean 48
+  type_parameter.name	node 48
+  type_parameter.constraint	node 7, undefined 41
+  type_parameter.value	undefined 48
+  type_parameters.elements	node 33
+  type_parameters_elements.items	list 33
+  type_predicate.name	kind-id 2, node 4
+  type_predicate.type	kind-id 2, node 4
+  type_predicate_annotation.typePredicate	node 4
+  type_query.expression	node 15
+  type_query_call_expression.function	kind-id 1
+  type_query_call_expression.arguments	node 1
+  type_query_call_expression_in_type_annotation.function	kind-id 1
+  type_query_call_expression_in_type_annotation.arguments	node 1
+  type_query_instantiation_expression.function	node 1
+  type_query_instantiation_expression.typeArguments	node 1
+  type_query_member_expression.object	kind-id 1, node 2
+  type_query_member_expression.content	kind-id 3
+  type_query_member_expression.property	node 3
+  type_query_member_expression_in_type_annotation.object	node 1
+  type_query_member_expression_in_type_annotation.property	node 1
+  types.items	list 57
+  unary_expression.operator	kind-id 3
+  unary_expression.argument	node 3
+  union_type.left	kind-id 4, node 14, undefined 2
+  union_type.right	kind-id 3, node 17
+  update_expression_postfix.argument	node 3
+  update_expression_postfix.operator	kind-id 3
+  variable_declaration.declarators	list 15
+  variable_declaration.terminator	kind-id 15
+  variable_declarator_definite.name	node 2
+  variable_declarator_definite.type	node 2
+  variable_declarator_plain.name	node 55
+  variable_declarator_plain.type	node 35, undefined 20
+  variable_declarator_plain.value	node 19, undefined 36
+  yield_expression.expression	node 1
+## 4. comment kinds (trivia kinds minus layout) (3)
+  comment_block
+  comment_line
+  html_comment
+## 5. corpus entries whose read threw while enumerating nodes (0)

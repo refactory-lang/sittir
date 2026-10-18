@@ -67,7 +67,8 @@ const MODULES = {
 	from: '../../codegen/src/emitters/from.ts',
 	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts',
 	bind: '../../codegen/src/dsl/bind.ts',
-	nodeModel: '../../codegen/src/emitters/node-model.ts'
+	nodeModel: '../../codegen/src/emitters/node-model.ts',
+	wrap: '../../codegen/src/emitters/wrap.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -111,6 +112,7 @@ export interface CodegenSurface {
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
 	bind: typeof import('../../codegen/src/dsl/bind.ts');
 	nodeModel: typeof import('../../codegen/src/emitters/node-model.ts');
+	wrap: typeof import('../../codegen/src/emitters/wrap.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
