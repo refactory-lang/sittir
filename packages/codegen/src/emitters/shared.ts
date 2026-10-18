@@ -1061,24 +1061,12 @@ export function warnSkippedParserSymbol(
 	emitter: 'factory' | 'wrap',
 	emission: Exclude<ParserSymbolEmission, 'emit'>
 ): void {
-	switch (emission) {
-		case 'skip-inline-kind':
-			console.warn(
-				`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
-					`Skipping ${emitter} emission. ` +
-					`Future: map to decomposition.`
-			);
-			return;
-		case 'skip-synthesized-kind':
-			return;
-		case 'skip-missing-parser-symbol':
-			console.warn(
-				`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
-					`NOT in the grammar's inline: array. Skipping ${emitter} ` +
-					`emission. Investigate why tree-sitter dropped this rule.`
-			);
-			return;
-	}
+	if (emission !== 'skip-inline-kind') return;
+	console.warn(
+		`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
+			`Skipping ${emitter} emission. ` +
+			`Future: map to decomposition.`
+	);
 }
 
 function isHiddenStructuralFactoryKind(kind: string, node: AssembledNode): boolean {

@@ -12729,10 +12729,10 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
  * arriving at this position falls through to the generated catch-all
  * `Err("unknown kind id")`, silently, with no compile error and no coverage
  * failure unless the corpus happens to exercise this exact shape. Kinds with
- * no catalog entry at all (VAPORIZED / inline / synthesized — see
- * `warnSkippedParserSymbol`) never had a parser symbol to route by in the
- * first place; that's a separate, already-surfaced condition, not this
- * check's concern.
+ * no catalog entry at all (left out by tree-sitter, inlined or synthesized;
+ * see `warnSkippedParserSymbol`) never had a parser symbol to route by in
+ * the first place; the phantom-kind ratchet counts them, so they are not
+ * this check's concern.
  */
 ```
 
@@ -14856,6 +14856,10 @@ The literals a compound's render rule places directly under each field, keyed by
 ### `packages/codegen/src/emitters/shared.ts::slotDropKindIds`
 
 The kind ids of a slot's drop set, for the reader: the `separatorKindId` stamped on each of the slot's separated values, and the kind id of each field-tagged literal. Each id is the public symbol link stamped; a separator with no stamp is an error naming it. The ids come out once each, the separators first and then the field-tagged literals.
+
+### `packages/codegen/src/emitters/shared.ts::warnSkippedParserSymbol`
+
+Says why an emitter skipped a kind `classifyParserSymbolEmission` found no parser symbol for, when there is something to say. A kind the grammar inlines is named, since inlining is the grammar's choice. A synthesized kind and a kind tree-sitter left out of the parser are skipped silently. The kinds left out are unreachable by construction: rust's `comment` is a choice over `line_comment` and `block_comment`, which extras name directly, and `_layout` is sittir's layout-trivia union. A kind that goes missing by mistake shows up in the phantom-kind ratchet (`packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts`), which only tightens.
 
 ### `packages/codegen/src/emitters/node-projection.ts::SCALAR_STORAGE`
 

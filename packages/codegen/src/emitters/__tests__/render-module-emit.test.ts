@@ -74,7 +74,6 @@ describe('buildSupertypeNodeSet', () => {
 			name: 'test',
 			nodes: new Map(),
 			signatures: { signatures: new Map() },
-			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			rules: {},
 			externals: [],
 			word: undefined

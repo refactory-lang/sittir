@@ -183,41 +183,6 @@ export interface LinkedRefineForm extends RefineForm {
 	readonly narrowedFields: readonly NarrowedField[];
 }
 
-export interface DerivationLog {
-	readonly inferredFields: InferredFieldEntry[];
-	readonly promotedRules: PromotedRuleEntry[];
-	readonly repeatedShapes: RepeatedShapeEntry[];
-}
-
-export interface InferredFieldEntry {
-	readonly kind: string;
-	readonly fieldName: string;
-	readonly targetSymbol: string;
-	readonly confidence: 'high' | 'medium' | 'low';
-	readonly agreement: number;
-	readonly sampleSize: number;
-	readonly applied: boolean;
-}
-
-export interface RepeatedShapeEntry {
-	readonly suggestedName: string;
-	readonly kinds: readonly string[];
-	readonly parents: readonly string[];
-	readonly shape: 'supertype' | 'group';
-}
-
-export interface PromotedRuleEntry {
-	readonly kind: string;
-	readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';
-	readonly applied: boolean;
-	readonly polymorphCandidates?: readonly {
-		readonly choiceArmCount: number;
-		readonly armNames: readonly string[];
-		readonly path: string;
-		readonly fieldWrapperName?: string;
-	}[];
-}
-
 export interface LinkedGrammar {
 	readonly name: string;
 	readonly root?: string;
@@ -235,7 +200,6 @@ export interface LinkedGrammar {
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly references: SymbolRef[];
-	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
@@ -249,13 +213,6 @@ export interface LinkedGrammar {
 	readonly wordMatcher?: RegExp;
 	readonly splicedNames?: ReadonlySet<string>;
 	readonly generatedIdTables?: GeneratedIdTables;
-}
-
-type DerivedFieldSource = 'enriched' | 'inferred';
-
-export interface IncludeFilter {
-	readonly rules?: readonly 'promoted'[];
-	readonly fields?: readonly DerivedFieldSource[];
 }
 
 export interface NormalizedGrammar {
@@ -273,7 +230,6 @@ export interface NormalizedGrammar {
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
-	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
@@ -310,7 +266,6 @@ export interface SimplifiedGrammar {
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
-	readonly derivations: DerivationLog;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
 
@@ -342,7 +297,6 @@ export interface NodeMap {
 	readonly displayUnions?: DisplayUnions;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly signatures: SignaturePool;
-	readonly derivations: DerivationLog;
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
