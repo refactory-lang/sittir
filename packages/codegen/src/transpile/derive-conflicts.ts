@@ -76,11 +76,9 @@ export type Converged = Extract<DerivationResult, { readonly kind: 'converged' }
 export async function pruneUnnecessary(input: DerivationInput, converged: Converged, unnecessary: readonly (readonly string[])[]): Promise<DerivationResult> {
 	let { resolutions, iterations } = converged;
 	let pending = unnecessary;
-	const dropped: (readonly string[])[] = [];
 	for (;;) {
 		const drop = resolutions.filter((entry) => pending.some((set) => sameConflictSet(set, entry.resolution.symbols)));
 		if (drop.length === 0) return { kind: 'converged', resolutions, iterations };
-		dropped.push(...drop.map((entry) => entry.resolution.symbols));
 		resolutions = resolutions.filter((entry) => !drop.includes(entry));
 		iterations++;
 		const outcome = await input.generate(resolutions);
