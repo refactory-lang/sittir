@@ -328,6 +328,10 @@ The single computed namespace of a kind. `Bound`, `Parsed` and `Empty` are the k
 
 The union over a declared supertype's members of the node each id-keyed map holds for it: a member with a `$type` resolves through the map, and a stored kind id passes through. It is the one derivation behind both `S.Bound` (the `.Bound` map) and `S.Parsed` (the `.Parsed` map), so the two unions can never disagree about which members a supertype has.
 
+### `packages/types/src/node-surface.ts::FormsHolding`
+
+The members of a supertype union whose `$with` setter for a slot admits a given value. A union's `$with` is the intersection of its members' setters, which is the sound type for a call that must work on every member, so a slot whose members disagree on its value type refuses all values at the union. The helper distributes over the union and keeps a member when one overload of its own `$with` setter takes the value as first argument, so it is derived from the same slot types the setters are and cannot drift from them. Overloads are read through `SetterParameters`, since inferring from an overloaded type sees only its last signature: an optional slot's nullary clearing overload and a list slot's rest overload would otherwise hide the overload that takes the node. The nullary overload admits nothing. Comparison is `[Value] extends Params`, not distributive over `Value`, so a union-valued `Value` must fit whole. A member without that setter, or whose setter does not admit the value, drops out; if none admits it the result is `never`.
+
 ### `packages/types/src/node-surface.ts::BoundWithNode`
 
 `$with` for an engine-bound node: the same admitted slot setters as `WithNode`, but each returns the node itself, since a bound node is not tied to a tree and needs no retyped accessor. A tree-bound node keeps `WithNode`, whose setters return the node with the replaced slot reading as `.Bound`.
