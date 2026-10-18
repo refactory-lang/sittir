@@ -11,7 +11,7 @@
 
 **Tech Stack:** TypeScript codegen emitters, generated `@sittir/<lang>` packages, the `@sittir/common` runtime, vitest.
 
-**Owner:** TBD (brainstorm assigns).
+**Owner:** sittir-implement, paired with sittir-test.
 
 ## Rulings (maintainer, 2026-10-16 and 2026-10-17)
 
