@@ -316,7 +316,8 @@ export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends Propert
 		? unknown
 		: IndentOption<R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string, API['indentChar']> & {
 				readonly [K in Exclude<keyof R, keyof API['options'] | Extra | SharedOptionKeys<API>>]: never;
-			} & LayoutKeysCheck<API, R>;
+			} & LayoutKeysCheck<API, R> &
+				SharedLayoutValues<API>;
 
 /** The render options every language shares, which a grammar-independent engine (`Engine<LanguageAPI>`, whose `options` is `object`) can pass. */
 interface SharedLayout {
@@ -325,6 +326,8 @@ interface SharedLayout {
 }
 
 type IsGeneric<API extends LanguageAPI> = IsExactly<API['options'], object>;
+
+type SharedLayoutValues<API extends LanguageAPI> = IsGeneric<API> extends true ? { readonly layout?: SharedLayout } : unknown;
 
 type SharedOptionKeys<API extends LanguageAPI> = IsGeneric<API> extends true ? 'layout' : never;
 

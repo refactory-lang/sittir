@@ -93,5 +93,11 @@ export function renderGeneric(engine: Engine<LanguageAPI>, node: LanguageAPI['no
 	engine.render(node, { layout: { newline: '\n' } });
 	// @ts-expect-error a key no language declares is still refused
 	engine.render(node, { nope: true });
+	// @ts-expect-error a line ending is a string
+	engine.render(node, { layout: { newline: 42 } });
+	// @ts-expect-error a line ending is a string, not an object
+	engine.render(node, { layout: { newline: {} } });
+	// @ts-expect-error an indent unit is a string
+	engine.render(node, { layout: { indent: 42 } });
 	return engine.render(node).toString();
 }
