@@ -48,9 +48,6 @@ import type {
 	RawGrammar,
 	LinkedGrammar,
 	ExternalRole,
-	IncludeFilter,
-	DerivationLog,
-	RepeatedShapeEntry,
 	RefineForm,
 	LinkedRefineForm,
 	NarrowedField,
@@ -97,7 +94,6 @@ import { auxTokenKinds } from './diagnostics/catalog-coverage.ts';
 import { createRuleId } from './rule-catalog.ts';
 
 export interface LinkOptions {
-	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly diagnostics?: DiagnosticSink;
 }
@@ -106,8 +102,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly supertypes: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly inline?: readonly string[];
-	readonly derivations: DerivationLog;
-	readonly applyPromotedRules: boolean;
 	readonly hiddenNamedArmChoices: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
 	readonly root: string | undefined;
@@ -117,8 +111,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 			supertypes: ReadonlySet<string>;
 			externalRoles: Map<string, ExternalRole>;
 			inline?: readonly string[];
-			derivations: DerivationLog;
-			applyPromotedRules: boolean;
 			hiddenNamedArmChoices: ReadonlySet<string>;
 			kindEntries?: readonly GeneratedKindEntry[];
 		}
@@ -127,8 +119,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.supertypes = init.supertypes;
 		this.externalRoles = init.externalRoles;
 		this.inline = init.inline;
-		this.derivations = init.derivations;
-		this.applyPromotedRules = init.applyPromotedRules;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
 		this.kindEntries = init.kindEntries ?? [];
 		this.root = rootRuleName(init.grammar.rules);
@@ -150,7 +140,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 }
 
 export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
-	const include = ctx?.include;
 	const generatedIdTables = stampVisibleExternals(ctx?.generatedIdTables, evaluated);
 	const kindEntries = kindCatalogOf(generatedIdTables, evaluated);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
@@ -159,15 +148,6 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const factoryInline = new Set(raw.factoryInline);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
 	const references = [...raw.references];
-
-	const includeRules = new Set(include?.rules ?? (['promoted'] as const));
-	const applyPromotedRules = includeRules.has('promoted');
-
-	const derivations: DerivationLog = {
-		inferredFields: [],
-		promotedRules: [],
-		repeatedShapes: []
-	};
 
 	const hiddenNamedArmChoices = collectHiddenNamedArmChoices(raw.rules);
 	const wordMatcherRegex = compileWordMatcher(raw.word, raw.rules);
@@ -179,8 +159,6 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		supertypes,
 		externalRoles,
 		inline: raw.inline,
-		derivations,
-		applyPromotedRules,
 		hiddenNamedArmChoices,
 		kindEntries
 	});
@@ -224,12 +202,10 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(rawRules, linkCtx);
 
-	classifyAndLogHiddenRules(rules, linkCtx);
+	classifyHiddenRules(rules, linkCtx);
 
 	stampLabelProvenance(rules, raw.automaticVariants);
-	applyOverridePolymorphs(rules, derivations);
-
-	collectRepeatedShapes(rules, derivations.repeatedShapes);
+	applyOverridePolymorphs(rules);
 	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(rawRules);
 	const topLevelAliasBodies = collectTopLevelAliasBodies(
 		rules,
@@ -303,7 +279,6 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		fileTypes: raw.fileTypes,
 		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom, variantOf: ownedVariants(variantChildren, references) },
 		references,
-		derivations,
 		displayUnions,
 		topLevelAliasBodies,
 		leafTextPatterns: collectLeafTextPatterns(rules),
@@ -684,22 +659,12 @@ function reportVaporizedKinds(
 	});
 }
 
-function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
-	const { inline, supertypes, derivations, applyPromotedRules, kindEntries } = ctx;
+function classifyHiddenRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
+	const { inline, supertypes, kindEntries } = ctx;
 	for (const [name, rule] of Object.entries(rules)) {
 		if (isParserHiddenKind(name, kindEntries) || inline?.includes(name) === true || supertypes.has(name)) {
-			const { rule: reclassified, classification } = classifyHiddenRule(rule, ctx, name, rules);
-			const classified = reclassified === rule ? reclassified : withKindFacts(reclassified, rule);
-			if (classified !== rule && classification !== undefined) {
-				derivations.promotedRules.push({
-					kind: name,
-					classification,
-					applied: applyPromotedRules
-				});
-				if (applyPromotedRules) rules[name] = classified;
-			} else {
-				rules[name] = classified;
-			}
+			const reclassified = classifyHiddenRule(rule, ctx, name, rules);
+			rules[name] = reclassified === rule ? reclassified : withKindFacts(reclassified, rule);
 		}
 	}
 	foldAliasLiteralsIntoEnumRules(rules);
@@ -1379,10 +1344,7 @@ export interface VariantChoiceLocation {
 	suffix: Rule<'link'>[];
 }
 
-export function applyOverridePolymorphs(
-	rules: Record<string, Rule<'link'>>,
-	derivations: DerivationLog
-): void {
+export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>): void {
 	const structural = deriveVariantChildren(rules);
 	const parentToChildren = new Map<string, string[]>();
 	for (const [parentKind, variantChildren] of structural) {
@@ -1396,8 +1358,6 @@ export function applyOverridePolymorphs(
 
 		const found = findVariantChoice(rule);
 		if (!found) continue;
-
-		emitVariantChildDerivations(parentKind, children, derivations);
 
 		const variantChildSymbolNames = new Set(children.map((c) => polymorphVisibleName(parentKind, c)));
 		const symbolInNames = (r: Rule<'link'>): boolean => {
@@ -1419,17 +1379,6 @@ export function applyOverridePolymorphs(
 			pushAmbientScaffoldIntoVariantChildren(rules, parentKind, children);
 			continue;
 		}
-	}
-}
-
-function emitVariantChildDerivations(parentKind: string, children: string[], derivations: DerivationLog): void {
-	for (const child of children) {
-		const variantChildKind = `${parentKind}_${child}`;
-		derivations.promotedRules.push({
-			kind: variantChildKind,
-			classification: 'polymorph',
-			applied: true
-		});
 	}
 }
 
@@ -1798,26 +1747,21 @@ function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'
 	return rule;
 }
 
-interface ClassifyResult {
-	readonly rule: Rule<'link'>;
-	readonly classification?: 'enum' | 'supertype';
-}
-
 function classifyHiddenRule(
 	rule: Rule<'link'>,
 	ctx: LinkCtx,
 	name: string,
 	rules: Record<string, Rule<'link'>>
-): ClassifyResult {
+): Rule<'link'> {
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || seatedOf(rule.annotations, findOwnKindEntry(ctx.kindEntries, name))) {
-		return { rule };
+		return rule;
 	}
 
 	if (rule.type === CHOICE) {
 		return classifyHiddenChoiceRule(rule, ctx, name, rules);
 	}
 
-	return { rule };
+	return rule;
 }
 
 function flattenNestedChoiceMembers(members: readonly Rule<'link'>[]): Rule<'link'>[] {
@@ -1837,7 +1781,7 @@ function classifyHiddenChoiceRule(
 	ctx: LinkCtx,
 	name: string,
 	rules: Record<string, Rule<'link'>>
-): ClassifyResult {
+): Rule<'link'> {
 	const { supertypes, hiddenNamedArmChoices } = ctx;
 	const shape = hiddenChoiceClass(rule, (n) => rules[n], hiddenNamedArmChoices.has(name));
 	const enumMembers = rule.members.map((m): StringRule<'link'> | SymbolRule<'link'> | undefined => {
@@ -1865,12 +1809,9 @@ function classifyHiddenChoiceRule(
 		enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)
 	) {
 		const allStrings = enumMembers.every((m): m is StringRule<'link'> => m.type === STRING);
-		return {
-			rule: allStrings
-				? normalizeEnumMembers(enumMembers as StringRule<'link'>[])
-				: ({ type: CHOICE, members: enumMembers } as ChoiceRule<'link'>),
-			classification: 'enum'
-		};
+		return allStrings
+			? normalizeEnumMembers(enumMembers as StringRule<'link'>[])
+			: ({ type: CHOICE, members: enumMembers } as ChoiceRule<'link'>);
 	}
 
 	if (
@@ -1892,20 +1833,17 @@ function classifyHiddenChoiceRule(
 				})
 				.filter((n): n is string => n !== null);
 			return {
-				rule: {
-					type: SUPERTYPE,
-					name,
-					subtypes,
-					...(rule.id === undefined ? {} : { id: rule.id }),
-					...(supertypes.has(name) ? { declared: true as const } : {}),
-					...(variantArms.length > 0 ? { variantArms } : {})
-				} satisfies SupertypeRule<'link'>,
-				classification: 'supertype'
-			};
+				type: SUPERTYPE,
+				name,
+				subtypes,
+				...(rule.id === undefined ? {} : { id: rule.id }),
+				...(supertypes.has(name) ? { declared: true as const } : {}),
+				...(variantArms.length > 0 ? { variantArms } : {})
+			} satisfies SupertypeRule<'link'>;
 		}
 	}
 
-	return { rule };
+	return rule;
 }
 
 function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'>[] {
@@ -1986,99 +1924,6 @@ export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
 		}
 	}
 	return parents;
-}
-
-function collectRepeatedShapes(rules: Record<string, Rule<'link'>>, out: RepeatedShapeEntry[]): void {
-	const existingSupertypeKeys = new Set<string>();
-	for (const rule of Object.values(rules)) {
-		if (rule.type === SUPERTYPE) {
-			existingSupertypeKeys.add(
-				rule.subtypes
-					.map((s) => s.name)
-					.sort()
-					.join('\n')
-			);
-		}
-	}
-
-	const parentsByKey = new Map<string, Set<string>>();
-	for (const [parentName, rule] of Object.entries(rules)) {
-		collectFieldKindSets(rule, (kinds) => {
-			if (kinds.length < 2) return;
-			const key = [...kinds].sort().join('\n');
-			let bucket = parentsByKey.get(key);
-			if (!bucket) {
-				bucket = new Set<string>();
-				parentsByKey.set(key, bucket);
-			}
-			bucket.add(parentName);
-		});
-	}
-
-	for (const [key, parents] of parentsByKey) {
-		if (parents.size < 2) continue;
-		if (existingSupertypeKeys.has(key)) continue;
-		const kinds = key.split('\n');
-		const shape: 'supertype' | 'group' = kinds.every((k) => /^[\w]+$/.test(k)) ? 'supertype' : 'group';
-		out.push({
-			suggestedName: suggestSharedName(kinds),
-			kinds,
-			parents: [...parents].sort(),
-			shape
-		});
-	}
-}
-
-function collectFieldKindSets(rule: Rule<'link'>, yield_: (kinds: readonly string[]) => void): void {
-	switch (rule.type) {
-		case FIELD: {
-			const kinds = directContentKinds(rule.content);
-			if (kinds.length > 0) yield_(kinds);
-			collectFieldKindSets(rule.content, yield_);
-			return;
-		}
-		case SEQ:
-		case CHOICE:
-			for (const m of rule.members) collectFieldKindSets(m, yield_);
-			return;
-		case OPTIONAL:
-		case REPEAT:
-		case TOKEN:
-			collectFieldKindSets(rule.content, yield_);
-			return;
-	}
-}
-
-function directContentKinds(rule: Rule<'link'>): string[] {
-	switch (rule.type) {
-		case SYMBOL:
-			return [rule.name];
-		case SUPERTYPE:
-			return rule.subtypes.map((s) => s.name);
-		case CHOICE:
-			return rule.members.flatMap(directContentKinds);
-		case OPTIONAL:
-		case REPEAT:
-		case TOKEN:
-			return directContentKinds(rule.content);
-		default:
-			return [];
-	}
-}
-
-function suggestSharedName(kinds: readonly string[]): string {
-	const words = kinds.map((k) => k.split('_').filter(Boolean));
-	if (words.length === 0) return '_shared';
-	const first = words[0]!;
-	let suffix: string[] = [];
-	for (let i = 1; i <= first.length; i++) {
-		const tail = first.slice(first.length - i);
-		if (words.every((w) => w.length >= i && w.slice(w.length - i).join('_') === tail.join('_'))) {
-			suffix = tail;
-		} else break;
-	}
-	if (suffix.length > 0) return '_' + suffix.join('_');
-	return `_shared_${kinds.length}`;
 }
 
 function liftTerminatedList(seq: SeqRule<'link'>, ctx: LinkCtx): Rule<'link'> | null {

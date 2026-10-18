@@ -39,6 +39,58 @@ It is part of the grammar hash: a different CLI can build different tables
 from the same grammar, so its conflicts must be derived again.
 ```
 
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::WASM_TOOLCHAINS`
+
+The two toolchains `tree-sitter build --wasm` compiles a parser with: wasi-sdk and binaryen, each with the variable that points the CLI at a toolchain of one's own instead of the one it installs (`TREE_SITTER_WASI_SDK_PATH`, `TREE_SITTER_BINARYEN_PATH`) and the executable the CLI runs from that directory's `bin` (`clang`, `wasm-opt`).
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::TOOLCHAIN_VERSION_FILE`
+
+The file in a cached toolchain's directory that names its version. The CLI writes it when it installs a toolchain, and replaces a cached toolchain whose version is not the one it pins. A toolchain named by its variable has none: the CLI runs its executable without checking a version.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::TOOLCHAIN_PROBE_GRAMMAR`
+
+The smallest grammar that builds: one rule matching `x`. Building its wasm makes the CLI install whatever toolchain it is missing.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCacheDir`
+
+Where the CLI caches its toolchains, resolved as it resolves it: `$XDG_CACHE_HOME/tree-sitter` when that is an absolute path, otherwise `~/.cache/tree-sitter`, and `AppData/Local/tree-sitter` under the home directory on Windows.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::ToolchainSource`
+
+Where a toolchain's version is read from (`path`) and how (`read`, which gives `undefined` when the path is missing).
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::toolchainSource`
+
+A toolchain's `ToolchainSource`. When its variable names a directory, the executable the CLI runs from there, read by `executableVersion`. Otherwise its `TOOLCHAIN_VERSION_FILE` under `treeSitterCacheDir`, read as its trimmed contents.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::executableVersion`
+
+The first line an executable prints for `--version`. An executable that fails to run gives `<path> --version failed`, which no working toolchain reports, so a broken one reads as a different toolchain rather than throwing.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterToolchain`
+
+What builds a parser, as a list: the CLI version, then each toolchain's name and version (`toolchainSource`). It is the one derivation of that fact: `treeSitterToolchainIdentity` joins it, `ensureUpstreamWasm` hashes it into the upstream key and writes it beside the key in `.sittir/upstream.json`, and verification compares that committed list with this one (`toolchainMove`). It only reads: a missing version file or executable stands in as `<toolchain>: no <path>`, which no recorded list can contain, because every generation installs the toolchain before it fingerprints (`ensureWasmToolchain`). A check on a checkout without the toolchain therefore reads as stale, never as current, and does not throw.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterToolchainIdentity`
+
+`treeSitterToolchain` as one string, joined by NUL. The upstream digest (`upstreamDigest`) hashes it, so a parser built by another CLI or toolchain reads as stale.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::missingToolchains`
+
+The `ToolchainSource` paths that do not exist, split by where they come from: `named` for a toolchain a variable names (its executable), `cached` for one the CLI installs (its version file).
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::wasmToolchainInstalled`
+
+Whether every wasm toolchain is present (`missingToolchains` finds nothing). It is the one test of "installed": `ensureWasmToolchain` returns early on it, and verification skips the toolchain comparison without it (`toolchainMove`), since a toolchain that is not installed cannot have built anything here.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::installWasmToolchain`
+
+Builds `TOOLCHAIN_PROBE_GRAMMAR` to wasm in a temporary directory, with the CLI's output shown, so the CLI downloads and installs the toolchains it is missing.
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::ensureWasmToolchain`
+
+Does nothing when `wasmToolchainInstalled`. Otherwise throws naming the executable when a toolchain named by its variable lacks it, without installing: the CLI never installs into a directory it was pointed at, so installing cannot help. Otherwise installs the cached toolchains when a version file is missing (`install`, by default `installWasmToolchain`), then throws naming each version file still missing. Whatever is about to fingerprint for a write calls it first, before `treeSitterToolchainIdentity` is read: `sourceFingerprint`, `ensureUpstreamWasm`, and `regenerateGrammars` in the tools, once per run. Verification never calls it.
+
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCli`
 
 Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary, with the given stdio, in the parent's environment. It and `runTreeSitterCliCapturing` are the only ways to run the CLI; both resolve it through `treeSitterCliPath`. Which layer a run builds is the `grammar.js` in `cwd` (`scratch-entry.ts::withScratchEntry` makes one for layer 1), never a variable of the environment.
@@ -488,9 +540,21 @@ Builds `.sittir/parser.wasm` from the sources the last `tree-sitter generate` le
 
 Builds the wasm only when `.sittir/parser.wasm` is missing, and reports whether it did. The wasm is committed and every regen rebuilds it, so this is a backstop for a missing file (the vitest global setup), not a staleness check: a present wasm is never rebuilt, and a grammar edit reaches it through a regen.
 
-### `packages/codegen/src/transpile/compile-parser.ts::UPSTREAM_KEY`
+### `packages/codegen/src/transpile/compile-parser.ts::UPSTREAM_RECORD`
 
-`.sittir/upstream.json`, which records the key the committed `upstream.wasm` was built at.
+`.sittir/upstream.json`, the committed `UpstreamRecord`.
+
+### `packages/codegen/src/transpile/compile-parser.ts::UpstreamRecord`
+
+What a generation built the committed `upstream.wasm` and parser with: the upstream key (`upstreamKeyOf`) and the toolchain list hashed into it (`treeSitterToolchain`), written side by side from the same list so the two never disagree. The list is the committed tree's record of its toolchain, which verification compares when no local generation vouches for the tree (`toolchainMove`).
+
+### `packages/codegen/src/transpile/compile-parser.ts::readUpstreamRecord`
+
+The `UpstreamRecord` in a `.sittir` directory, or `undefined` where none is. Its fields are optional, since a record written before the toolchain list was added has only the key.
+
+### `packages/codegen/src/transpile/compile-parser.ts::writeUpstreamRecord`
+
+Writes an `UpstreamRecord` into a `.sittir` directory, tab-indented with a trailing newline.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::withUpstreamGrammar`
 
@@ -498,7 +562,7 @@ Stages the unmodified upstream grammar in a fresh temporary directory: a `gramma
 
 ### `packages/codegen/src/transpile/compile-parser.ts::upstreamKeyOf`
 
-The staged grammar's key: the tree-sitter CLI version, the `grammar.json` that `generate --no-parser` writes, and each staged scanner file by its path in the staging directory and its contents, in sorted order. A scanner that delegates to a header (typescript's) is keyed on the header too. Equal keys mean the same parser, so the key decides whether the judge is rebuilt without generating a parser.
+The staged grammar's key: what builds the parser (the given `treeSitterToolchain` list, by default the current one), the `grammar.json` that `generate --no-parser` writes, and each staged scanner file by its path in the staging directory and its contents, in sorted order. A scanner that delegates to a header (typescript's) is keyed on the header too. Equal keys mean the same parser, so the key decides whether the judge is rebuilt without generating a parser.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::buildUpstreamWasm`
 
@@ -506,7 +570,7 @@ Generates and builds the staged upstream grammar to the given wasm path with the
 
 ### `packages/codegen/src/transpile/compile-parser.ts::ensureUpstreamWasm`
 
-Writes `.sittir/upstream.wasm`, the upstream judge, when its key differs from the recorded one or the file is missing, and records the key. The regen runs it beside `buildParserWasm`, so the judge follows every change to the upstream grammar and costs only the key when nothing changed.
+Writes `.sittir/upstream.wasm`, the upstream judge, when its key differs from the recorded one or the file is missing, after installing a missing wasm toolchain (`ensureWasmToolchain`). It then writes the `UpstreamRecord` whether or not it rebuilt, so the committed toolchain list is current even when the key was. The regen runs it beside `buildParserWasm`, so the judge follows every change to the upstream grammar and costs only the key when nothing changed.
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::NODE_FLOOR`
 

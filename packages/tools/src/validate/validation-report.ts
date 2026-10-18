@@ -11,7 +11,7 @@
  * before calling in.
  */
 
-import { writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 /**
  * Minimal shared shape both diagnostic sources (`grammar` static diagnostics
@@ -57,9 +57,9 @@ export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
  * bucket code.
  *
  * `stage`/`label` are the only fields every source is guaranteed to add —
- * each underlying validator result (read-render-parse errors/mismatches/
- * accessor-throws, factory errors, coverage issues, …) has its OWN extra
- * fields (`input`, `rendered`, `key`, `accessor`, `type`, …); those are
+ * each underlying validator result (read-render-parse errors and mismatches,
+ * factory errors, coverage issues, …) has its OWN extra
+ * fields (`input`, `rendered`, `key`, `type`, …); those are
  * preserved through via spread rather than being narrowed away.
  */
 export interface ValidatorDiagnostic extends DiagnosticEntryBase {
@@ -105,11 +105,9 @@ export type SClass = (typeof S_CLASSES)[number];
 /** Codes that determine their S-class unambiguously, independent of message text. */
 const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
 	'parsekind-noninjective': 'S1',
-	'seq-with-nested-seq': 'S3',
 	'union-slot-unaddressable': 'S4',
 	'union-slot-mixed-row': 'S4',
 	'union-slot-routed-repeated': 'S4',
-	'accessor-throw': 'S4',
 	'coverage-missing-field': 'S5',
 	'layout-unreached': 'layout',
 	'layout-refused': 'layout'
@@ -176,6 +174,31 @@ export function buildValidationReportEntries(
 	}
 	return entries;
 }
+
+/** Read a report `writeValidationReport` wrote. A missing, empty or unparseable file, or one that is not an array, throws naming the path. */
+export function readValidationReport(path: string): ValidationReportEntry[] {
+	if (!existsSync(path)) throw new Error(`validation report not found: ${path}`);
+	const text = readFileSync(path, 'utf8');
+	if (text.trim() === '') throw new Error(`validation report is empty: ${path}`);
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(text);
+	} catch (e) {
+		throw new Error(`validation report is not valid JSON: ${path}: ${(e as Error).message}`);
+	}
+	if (!Array.isArray(parsed)) throw new Error(`validation report is not an array: ${path}`);
+	parsed.forEach((row: unknown, index) => {
+		if (typeof row !== 'object' || row === null || Array.isArray(row))
+			throw new Error(`validation report row ${index} is not an object: ${path}`);
+		const missing = REPORT_ROW_FIELDS.filter((f) => typeof (row as Record<string, unknown>)[f] !== 'string');
+		if (missing.length > 0)
+			throw new Error(`validation report row ${index} lacks the string field(s) ${missing.join(', ')}: ${path}`);
+	});
+	return parsed as ValidationReportEntry[];
+}
+
+/** The string fields every report row carries, whichever source wrote it. */
+const REPORT_ROW_FIELDS = ['source', 'grammar', 'backend', 'code', 'severity', 'message'] as const;
 
 /** Write the full (unbounded) entry list to `outPath` as pretty JSON, overwriting any previous report. */
 export function writeValidationReport(entries: readonly ValidationReportEntry[], outPath: string): void {

@@ -2836,39 +2836,13 @@ The whole-text regex of every linked rule that composes to one (`composeTokenTex
 // this synthetic one.
 ```
 
-### `packages/codegen/src/compiler/link.ts::classifyAndLogHiddenRules`
+### `packages/codegen/src/compiler/link.ts::classifyHiddenRules`
 
-```text
-/**
- * Classify every hidden or grammar-declared-supertype rule and record it in
- * the derivation log.
- *
- * @param rules - Mutable resolved rules map; entries are replaced when
- *   classification succeeds and `ctx.applyPromotedRules` is true.
- * @param ctx - Link phase context. `ctx.inline` lists names from
- *   `grammar.inline`, hidden even without an underscore prefix;
- *   `ctx.supertypes` is the grammar-declared supertype set; `ctx.derivations`
- *   gets promoted classifications appended; `ctx.applyPromotedRules` false
- *   means classifications are logged but the rule map is NOT mutated.
- * @remarks
- *   A kind is "hidden" when its name starts with `_` OR appears in the
- *   grammar's `inline:` array — the latter catches grammars that don't follow
- *   the convention. Tree-sitter's supertype feature marks visible rules whose
- *   CST node never appears — classifying them here prevents the polymorph
- *   promoter from producing bogus variant maps for kinds like ts `primary_type`
- *   that should be a single SupertypeRule<'link'>.
- */
-```
+Classifies every hidden, inlined or grammar-declared-supertype rule in place (`classifyHiddenRule`): a hidden choice of literals becomes an enum, and a hidden choice of kinds becomes a supertype. A kind is hidden when its name starts with `_` or it appears in the grammar's `inline:` array, which catches grammars that don't follow the convention. Tree-sitter's supertype feature marks visible rules whose node never appears; classifying them here keeps the polymorph promoter from producing variant maps for kinds like typescript's `primary_type`, which is a single supertype.
 
 #### body
 
-```text
-// Branch on the RETURNED classification only — never re-read a stamp off
-// `classified.rule`. See ClassifyResult. When classification actually
-// changed the shape, `withKindFacts` carries the original rule's `hidden`
-// and `inlinedFrom` stamps onto the reclassified shape — classification
-// builds a fresh EnumRule/SupertypeRule that would otherwise lose them.
-```
+When classification changed the shape, `withKindFacts` carries the original rule's `hidden` and `inlinedFrom` stamps onto the new shape, since classification builds a fresh enum or supertype rule that would otherwise lose them.
 
 ### `packages/codegen/src/compiler/link.ts::topLevelAliasOf`
 
@@ -2999,26 +2973,6 @@ ordinary union.
 // rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
 // ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
 // view with a cast.
-```
-
-### `packages/codegen/src/compiler/link.ts::emitVariantChildDerivations`
-
-```text
-/**
- * Emit derivation log entries for each variant child kind of a polymorph parent.
- *
- * @param parentKind - The grammar kind that owns the polymorph.
- * @param children - Short child suffixes from `variant()` declarations; each
- *   produces a visible kind named `${parentKind}_${child}` in the parse tree.
- * @param derivations - Derivation log; one entry per child is appended.
- * @remarks
- *   The `variant()` naming convention produces visible kinds named
- *   `${parentKind}_${child}` (the alias target tree-sitter creates). Emitting
- *   each as a derivation records in the derivation log what the parse
- *   tree carries vs what sittir's typed surface presents. Without this,
- *   the reader would have to infer polymorph-internal shape from
- *   grammar-specific knowledge.
- */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::pushAmbientScaffoldIntoVariantChildren`
@@ -3272,103 +3226,6 @@ tree has.
  *   it's visible, so consumers of `else_clause` are NOT block-bearers
  *   themselves (the `else_clause` renders flush-left).
  */
-```
-
-### `packages/codegen/src/compiler/link.ts::collectRepeatedShapes`
-
-```text
-/**
- * Walk every rule's field content-type unions and flag kind sets
- * that appear in ≥2 distinct parent rules. Each unique set becomes
- * a `RepeatedShapeEntry` recorded in the derivation log as a review
- * candidate — the grammar author can then declare a shared
- * supertype (choice of the kinds) or a group and replace the
- * repeated union with a single reference.
- *
- * Non-mutating: purely additive to `derivations.repeatedShapes`.
- * Doesn't reshape `rules`, so downstream classification is
- * unaffected regardless of include filter.
- *
- * Heuristics:
- *   - Kind sets smaller than 2 are skipped (single-type fields
- *     don't benefit from a supertype).
- *   - Sets that already match an existing supertype's subtypes are
- *     skipped — no value in suggesting what's already declared.
- *   - Shape is tagged `supertype` when every kind in the set is a
- *     named visible rule (candidates for a choice-of-symbols),
- *     `group` otherwise.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// collectRepeatedShapes — suggestion pass for shared supertypes/groups
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Build the set of already-declared supertype signatures so we
-// don't duplicate-suggest what the grammar author already wrote.
-```
-
-#### body
-
-```text
-// Parent map: sorted kind key → set of parent rule names that
-// host a field with exactly this content-type set.
-```
-
-#### body
-
-```text
-// Suggest a `supertype` when every kind looks like a named
-// rule kind (letters/underscores/digits, not operator
-// punctuation). Otherwise fall back to `group`.
-```
-
-### `packages/codegen/src/compiler/link.ts::collectFieldKindSets`
-
-```text
-/**
- * Walk a rule tree and invoke `yield_` for every `field` node's
- * content-type set. Strips supertype references to their subtypes
- * before yielding, matching the way the from emitter classifies
- * resolver kind lists.
- */
-```
-
-#### body
-
-```text
-// Walk into the content too — nested fields get yielded
-// on their own.
-```
-
-### `packages/codegen/src/compiler/link.ts::directContentKinds`
-
-```text
-/**
- * Extract the immediate concrete kind set a rule expression
- * resolves to. Unwraps seq/choice/optional/repeat/variant but
- * stops at field/symbol boundaries.
- */
-```
-
-### `packages/codegen/src/compiler/link.ts::suggestSharedName`
-
-```text
-/** Suggest a readable shared name from the kind set. */
-```
-
-#### body
-
-```text
-// Longest common suffix works surprisingly well for grammars —
-// `binary_expression` / `call_expression` / `field_expression`
-// all share `_expression`. Fall back to the kinds count when
-// nothing common sticks out.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::liftSeq`
@@ -4666,7 +4523,7 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 ```text
 // Slot-grouping diagnostic: propose-promotion only. Records never drive
 // codegen behavior (feedback_metadata_not_behavior) — they surface for the
-// author via the derivation log and regen console output.
+// author as diagnostics in the regen console output.
 // Pass inlineKinds so auto-group helpers (_*_repeat1/_*_optional1) are
 // treated as slot-position bodies (they represent seq content of inlined
 // repeats), while normal branch kinds are silent at the top level.
@@ -5383,33 +5240,6 @@ The source kind a rule id was minted under, decoded; the other inverse of `creat
 	 */
 ```
 
-### `packages/codegen/src/compiler/generate.ts::include`
-
-```text
-/**
-	 * Which derived source tags are accepted into the rule tree.
-	 * Defaults to all derived sources (permissive). `grammar` and
-	 * `override` are always-on and can't be filtered out — this
-	 * controls which DERIVATIONS Link's inference / promotion passes
-	 * mutate the rule tree with.
-	 *
-	 * Entries EXCLUDED from this filter still appear in the
-	 * `derivations` log
-	 * so you can review what Link inferred and either adopt it into
-	 * grammar.sittir.ts or leave it in the log.
-	 *
-	 * @example
-	 * // Strict base pipeline — no inference / promotion:
-	 * { include: { rules: [], fields: [] } }
-	 *
-	 * // Accept promotion, review inference:
-	 * { include: { rules: ['promoted'], fields: [] } }
-	 *
-	 * // Default (permissive): everything applied.
-	 * { include: undefined }
-	 */
-```
-
 ### `packages/codegen/src/compiler/generate.ts::strict`
 
 ```text
@@ -5522,15 +5352,14 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
  *
  * Holds the rule-resolution walk's state (`rules`, inherited from `BaseCtx`,
  * `supertypes`, `externalRoles`) and the hidden-rule classification cluster
- * (`inline`, `derivations`, `applyPromotedRules`, `hiddenNamedArmChoices`):
+ * (`inline`, `hiddenNamedArmChoices`):
  * pass-constant and pass-shared state for one `link()` call.
  * `currentName`/per-rule `name` stay explicit trailing params, as in
  * `resolveRule(rule, ctx, name)`.
  *
- * `externalRoles` and `derivations` are write-through accumulators mutated
- * during the resolve/classify walks (role-lookup memoization and the
- * promoted-rules log, respectively) — kept as plain mutable fields rather
- * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
+ * `externalRoles` is a write-through accumulator mutated during the resolve
+ * walk (role-lookup memoization), kept as a plain mutable field rather than
+ * wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
  *
  * Every
  * `ctx.rules` / `ctx.grammar.rules` read site inside this file was checked
@@ -5579,25 +5408,6 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 
 ```text
 /** Members of the outer seq that appear after the choice. */
-```
-
-### `packages/codegen/src/compiler/link.ts::ClassifyResult`
-
-```text
-/**
- * Result of classifying a hidden (or grammar-declared-supertype) rule.
- *
- * The classifier returns its classification ALONGSIDE the rule, and the
- * caller (`classifyAndLogHiddenRules`) reads ONLY the return value to decide
- * whether to log a derivation and mutate the rule map — it never re-reads a
- * tag off `rule`: a compiler decision does not key on a stamp it re-inspects.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// classifyHiddenRule — determine what a hidden rule IS
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/compiler/link.ts::classification`
@@ -5885,47 +5695,6 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
  *  link tree for it. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::DerivationLog`
-
-```text
-/**
- * DerivationLog — sidecar record of everything Link inferred / promoted.
- *
- * Populated unconditionally by Link's derivation passes and recorded
- * regardless of whether Link actually applied the mutation to the rule
- * tree. No emitter consumes it; it is a diagnostics record pinned by
- * link's tests.
- *
- * Whether a derivation is ALSO applied (mutating the rule tree) is
- * governed by `IncludeFilter` — excluded sources still appear in the
- * log but don't land in the generated packages.
- */
-```
-
-### `packages/codegen/src/compiler/types.ts::inferredFields`
-
-```text
-/** Field-name inferences: parent wants a bare symbol wrapped in field(). */
-```
-
-### `packages/codegen/src/compiler/types.ts::promotedRules`
-
-```text
-/** Rule-level promotions: enum, supertype, terminal, polymorph classifications. */
-```
-
-### `packages/codegen/src/compiler/types.ts::repeatedShapes`
-
-```text
-/**
-	 * Repeated-shape candidates — sets of kinds that appear as field
-	 * content unions in ≥2 distinct parent rules. Suggested as either
-	 * a grammar-level supertype (choice-of-symbols) or a shared group
-	 * so the grammar author can collapse the repetition with a single
-	 * named rule. Non-mutating — these are suggestions only.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::kind`
 
 ```text
@@ -6134,23 +5903,6 @@ grammar no wire ran over; then no label is automatic.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::DerivedFieldSource`
-
-```text
-/**
- * Derived source tags that can be toggled via GenerateConfig.include.
- * `grammar` and `override` are always-on — user-authored content cannot
- * be filtered out.
- *
- * (debt: source-homonym resolution, decision 6) `DerivedRuleSource` (the
- * type alias formerly here, `= 'promoted'`) is deleted — a single-literal
- * alias adds nothing, and the name invited confusion with the unrelated
- * `RuleSource`/`author` authorship vocabulary. This `IncludeFilter.rules`
- * knob is a different axis (an opt-in include/exclude filter for link's
- * INFERRED classifications, declared by the caller), not a provenance fact.
- */
-```
-
 ### `packages/codegen/src/compiler/types.ts::rules`
 
 ```text
@@ -6336,16 +6088,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 * each slot's source-rule positions are registered. Lets consumers walking a
 	 * rule tree look up the slot's propertyName / storageName / paramName directly.
 	 * See feedback_ruleid_backpointer.
-	 */
-```
-
-### `packages/codegen/src/compiler/types.ts::derivations`
-
-```text
-/**
-	 * Sidecar log of every derivation Link produced. Emitters read
-	 * this to surface suggestions regardless of whether the mutation
-	 * was applied to the rule tree (governed by IncludeFilter).
 	 */
 ```
 
@@ -7498,28 +7240,6 @@ adds.
 #### body
 
 ```text
-// Resolve include defaults: undefined means "include everything".
-// Explicit empty arrays mean "include nothing of this category".
-```
-
-#### body
-
-```text
-// Derivation log — populated unconditionally; each entry records
-// whether the mutation was also applied.
-```
-
-#### body
-
-```text
-// inferredFields stays empty: the statistical field-name-inference pass was
-// deleted (it was apply=false / analysis-only). suggested-overrides emission
-// is disabled for now, so nothing reads this.
-```
-
-#### body
-
-```text
 // Compute the hidden-choice classification guard from the RAW
 // (pre-resolveRule) rules — hoisted above the resolve loop (pure function
 // of `raw.rules`, independent of it) so ONE LinkCtx instance can serve
@@ -7886,7 +7606,7 @@ the rules as they stand mid-link (past wire's alias injection and
 `resolveRule`), after `stampLabelProvenance`. The only
 structural mutation is `pushAmbientScaffoldIntoVariantChildren`, for a parent
 whose choice holds none of the children's own members (typescript's
-`public_field_definition`); every other parent only records its derivation.
+`public_field_definition`); every other parent is left as it is.
 
 ### `packages/codegen/src/compiler/link.ts::findVariantChoice`
 
@@ -8485,14 +8205,11 @@ identifiers and numbers are read through the C parser, as the name tables are.
  * them.
  *
  * - Evaluate  produces {@link RawGrammar}.
- * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
+ * - Link      produces {@link LinkedGrammar}.
  * - Normalize produces {@link NormalizedGrammar}.
  * - Simplify  (a sub-stage of Normalize) produces {@link SimplifiedGrammar}.
  * - Assemble  produces {@link NodeMap}.
- *
- * Diagnostic / suggester-input types live here too ({@link DerivationLog}
- * and its entry types, {@link IncludeFilter}) because they flow between
- * Link and the suggester emitter, not through the rule tree itself.
+
  *
  * The Rule model (Rule union + type guards + SymbolRef) stays in
  * `./rule.ts`. The AssembledNode hierarchy currently stays in `rule.ts`
@@ -8585,7 +8302,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.constructor`
+### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx::constructor`
 
 #### body
 
@@ -9432,7 +9149,7 @@ lexical), passed through from the owning node's derive ctx so slots resolve
 alias envelopes the same way element and value derivation does.
 ```
 
-### `packages/codegen/src/compiler/link.ts::LinkCtx.sourceSymbols`
+### `packages/codegen/src/compiler/link.ts::LinkCtx::sourceSymbols`
 
 The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar.predictedKinds`), asked through `catalogSymbolSource`, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 

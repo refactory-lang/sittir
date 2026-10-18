@@ -14798,7 +14798,7 @@ export namespace ImportPrefix {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ImportPrefix;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14818,7 +14818,7 @@ export namespace TypeConversion {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.TypeConversion;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14838,7 +14838,7 @@ export namespace Identifier {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14858,7 +14858,7 @@ export namespace FormatSpecifierText {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.FormatSpecifierText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14878,7 +14878,7 @@ export namespace IntegerDecimalLong {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalLong;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14898,7 +14898,7 @@ export namespace IntegerDecimalImaginary {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalImaginary;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14918,7 +14918,7 @@ export namespace IntegerDecimalPlain {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalPlain;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14938,7 +14938,7 @@ export namespace LineContinuationNewline {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.LineContinuationNewline;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14958,7 +14958,7 @@ export namespace StringStart {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringStart;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14978,7 +14978,7 @@ export namespace StringFragment {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -14998,7 +14998,7 @@ export namespace EscapeInterpolation {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.EscapeInterpolation;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
@@ -15018,7 +15018,7 @@ export namespace StringEnd {
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export interface Parsed extends HoldsTree {
+	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringEnd;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;

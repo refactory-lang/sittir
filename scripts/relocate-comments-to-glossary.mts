@@ -182,7 +182,7 @@ function qualify(targets: Decl[], d: Decl): string {
   const outer = targets
     .filter((o) => o !== d && contains(o, d.start, d.end))
     .sort((a, b) => a.start.line - b.start.line);
-  return [...outer.map((o) => o.name), d.name].join('.');
+  return [...outer.map((o) => o.name), d.name].join('::');
 }
 
 /** The declarations of one file that get glossary entries: not nested inside any function body. */

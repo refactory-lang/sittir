@@ -42,6 +42,9 @@ tree-sitter-language = { workspace = true }
 [build-dependencies]
 napi-build = "2"
 cc = { workspace = true }
+
+[lints]
+workspace = true
 `
 		},
 		{
@@ -134,7 +137,8 @@ fn rerun_if_changed_with_includes(
 				},
 				scripts: {
 					build: `tsx ../../../scripts/build-native.mts ${v.name} --release`,
-					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`
+					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`,
+					'build:gate': `tsx ../../../scripts/build-native.mts ${v.name} --profile gate`
 				},
 				devDependencies: { '@napi-rs/cli': '^3.0.0' },
 				napi: {
@@ -164,8 +168,12 @@ unsafe extern "C" {
 }
 
 /// The generated \`.sittir\` ${v.Name} parser.
+// SAFETY: \`tree_sitter_${v.name}\` is the generated parser's entry point, compiled
+// and linked by build.rs; it returns the parser's static \`TSLanguage\`, which is
+// the pointer \`LanguageFn::from_raw\` expects.
 pub const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_${v.name}) };
 
+#[must_use]
 pub fn language() -> tree_sitter::Language {
     LANGUAGE.into()
 }

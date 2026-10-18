@@ -145,6 +145,7 @@ pub struct Walk {
 
 impl Walk {
     /// The bytes of the node at descendant `index`, which lies under the walk's start.
+    #[must_use]
     pub fn span(&self, index: NodeIndex) -> (u32, u32) {
         let at = index.offset_from(self.base) as usize;
         (self.nodes.start[at], self.nodes.end[at])
@@ -159,6 +160,7 @@ fn is_entry(node: &tree_sitter::Node<'_>) -> bool {
 /// not an extra or `ERROR`, and has width. Width is read from the tree here;
 /// a built node's child has the width of its rendered text, so a stored
 /// automatic semicolon, which renders `"\n"`, has width there.
+#[must_use]
 pub fn holds_sides(node: &tree_sitter::Node<'_>) -> bool {
     let span = Span::of(node);
     node.is_named() && !is_entry(node) && span.end > span.start
@@ -166,6 +168,7 @@ pub fn holds_sides(node: &tree_sitter::Node<'_>) -> bool {
 
 /// Whether `node` is empty: no child of it holds sides (`holds_sides`), so
 /// the assignment gives it the trivia between its own tokens as `inner`.
+#[must_use]
 pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
     let mut cursor = node.walk();
     let holds = node.children(&mut cursor).any(|child| holds_sides(&child));
@@ -174,8 +177,14 @@ pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
 
 /// The walk under `node`, the node at descendant `index` of its tree. The
 /// walk's start has no edge tokens of its own: they would lie at its bounds.
+#[must_use]
 pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk {
-    let count = node.descendant_count();
+    struct Frame {
+        at_index: u32,
+        before: usize,
+        at: u32,
+    }
+    let count = crate::read::descendant_count(&node) as usize;
     let mut nodes = Nodes {
         kind: vec![KindId::BLANK; count],
         parent: vec![NONE; count],
@@ -188,11 +197,6 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
     };
     let mut tokens: Vec<Token> = Vec::new();
     let mut entries: Vec<NodeIndex> = Vec::new();
-    struct Frame {
-        at_index: u32,
-        before: usize,
-        at: u32,
-    }
     let mut frames: Vec<Frame> = Vec::new();
     let hidden = |tokens: &mut Vec<Token>, owner: u32, from: u32, to: u32| {
         let Some(text) = source.get(from as usize..to as usize) else { return };
@@ -200,8 +204,8 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         if trimmed.is_empty() {
             return;
         }
-        let start = from + (text.len() - text.trim_start().len()) as u32;
-        tokens.push(Token { start, end: start + trimmed.len() as u32, node: index + owner, own: true });
+        let start = from + crate::types::narrow(text.len() - text.trim_start().len());
+        tokens.push(Token { start, end: start + crate::types::narrow(trimmed.len()), node: index + owner, own: true });
     };
     let mut cursor = node.walk();
     loop {
@@ -212,8 +216,8 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
         nodes.kind[i] = crate::read::grammar_id(&node);
         nodes.start[i] = start;
         nodes.end[i] = end;
-        nodes.count[i] = node.descendant_count() as u32;
-        let depth = frames.len() as u32;
+        nodes.count[i] = crate::read::descendant_count(&node);
+        let depth = crate::types::narrow(frames.len());
         if let Some(frame) = frames.last() {
             nodes.parent[i] = frame.at_index;
             nodes.depth[i] = depth;
@@ -267,6 +271,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
 
 /// The tokens under the node at `index` of `tree`, in source order
 /// (`TriviaTable`'s walk, from that node).
+#[must_use]
 pub fn tokens(tree: &tree_sitter::Tree, source: &str, index: NodeIndex) -> Vec<Token> {
     let mut cursor = tree.walk();
     crate::read::goto(&mut cursor, index);
@@ -398,6 +403,7 @@ pub struct TriviaTable {
 impl TriviaTable {
     /// The table of `tree`, parsed from `source`, whose grammar's surface
     /// kinds are `kinds` and whose indentation level is `unit` spaces wide.
+    #[must_use]
     pub fn assign(tree: &tree_sitter::Tree, source: &str, kinds: SurfaceKinds, unit: u32) -> Self {
         let Walk { tokens, entries, nodes, base } = walk(tree.root_node(), NodeIndex::ROOT, source);
         let local = |index: NodeIndex| index.offset_from(base);
@@ -443,7 +449,7 @@ impl TriviaTable {
             let left = k.checked_sub(1).map(|k| &tokens[k]);
             let right = tokens.get(k);
             let from = left.map_or(0, |token| token.end);
-            let to = right.map_or(source.len() as u32, |token| token.start);
+            let to = right.map_or(crate::types::narrow(source.len()), |token| token.start);
             let left_row = left.map(|token| row(token.end));
             excess.close_until(from, &mut table);
             let mut at = from;
@@ -468,7 +474,7 @@ impl TriviaTable {
                 match place {
                     Place::Side(node, side) if !edge => {
                         let joined = at == from && left.is_some_and(|left| left.start == left.end) && table.runs.last().is_some_and(|run| run.end == at);
-                        let run = RunId(table.runs.len() as u32);
+                        let run = RunId(crate::types::narrow(table.runs.len()));
                         table.runs.push(LayoutRun { start: at, end: until, node, side, owner: global(owner), carries: true });
                         parted.placed(&mut table.runs, joined);
                         table.push(place, Assigned::Layout { run, start: at, end: until, owner: global(owner), depth });
@@ -522,23 +528,26 @@ impl TriviaTable {
 
     /// The layout members no side takes: between two of their owner's own
     /// tokens, with no named child beside them.
+    #[must_use]
     pub fn unowned(&self) -> &[NodeIndex] {
         &self.unowned
     }
 
     /// Every run of whitespace a side takes, in source order (`LayoutRun`).
+    #[must_use]
     pub fn runs(&self) -> &[LayoutRun] {
         &self.runs
     }
 
     /// The run `id` names.
+    #[must_use]
     pub fn run(&self, id: RunId) -> LayoutRun {
         self.runs[id.index()]
     }
 
     /// Every run's id, in source order.
     pub fn run_ids(&self) -> impl Iterator<Item = RunId> {
-        (0..self.runs.len() as u32).map(RunId)
+        (0..crate::types::narrow(self.runs.len())).map(RunId)
     }
 }
 

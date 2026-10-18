@@ -51,6 +51,7 @@ pub enum Address {
 
 impl Address {
     /// A handle tagged with the tree the address names.
+    #[must_use]
     pub fn tree_handle(&self) -> crate::types::TreeHandle {
         match *self {
             Address::Own { handle } => handle,
@@ -404,7 +405,7 @@ mod tests {
         let ctx = QueryCtx { source, stamp: &stamp, router: &router };
         let mut cursor = tree.walk();
         let mut out = Vec::new();
-        for index in (0..tree.root_node().descendant_count() as u32).map(crate::types::NodeIndex::new) {
+        for index in (0..crate::read::descendant_count(&tree.root_node())).map(crate::types::NodeIndex::new) {
             crate::read::goto(&mut cursor, index);
             if cursor.node().kind() == kind {
                 out.push(plan.holds(&mut cursor, &ctx));

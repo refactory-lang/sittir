@@ -38,7 +38,6 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 		externalRoles: new Map<string, ExternalRole>(),
 		word: null,
 		references: [],
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		...overrides
 	};
 }

@@ -25,7 +25,8 @@ pub const DEBUG_READ_CHECKS: bool = cfg!(feature = "read-debug-checks");
 
 /// The kind `node` has in the grammar, the key of every flag, edge and seat
 /// table. The one call of `Node::grammar_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Node::grammar_id`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn grammar_id(node: &Node<'_>) -> KindId {
     KindId(node.grammar_id())
 }
@@ -34,40 +35,46 @@ pub fn grammar_id(node: &Node<'_>) -> KindId {
 /// else the grammar id. Tables are keyed on the grammar id (`grammar_id`),
 /// never on this one; the display id is for the places that carry an alias
 /// envelope. The one call of `Node::kind_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Node::kind_id`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn display_id(node: &Node<'_>) -> KindId {
     KindId(node.kind_id())
 }
 
 /// The field the cursor's child is tagged with in its parent, none when it is
 /// unfielded. The one call of `TreeCursor::field_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::field_id`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn field_id(cursor: &TreeCursor<'_>) -> Option<FieldId> {
     cursor.field_id().map(|field| FieldId(field.get()))
 }
 
 /// `node`'s first child tagged with `field`. The one call of
 /// `Node::child_by_field_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Node::child_by_field_id`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn child_by_field<'t>(node: &Node<'t>, field: FieldId) -> Option<Node<'t>> {
     node.child_by_field_id(field.get())
 }
 
 /// The grammar's name for `field`. The one call of `Language::field_name_for_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Language::field_name_for_id`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn field_name(language: &Language, field: FieldId) -> Option<&str> {
     language.field_name_for_id(field.get())
 }
 
 /// The grammar's name for `kind`. The one call of `Language::node_kind_for_id`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Language::node_kind_for_id`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn kind_name(language: &Language, kind: KindId) -> Option<&str> {
     language.node_kind_for_id(kind.get())
 }
 
 /// The kind the grammar names `name`, named or anonymous; `KindId::BLANK`
 /// when it names none. The one call of `Language::id_for_node_kind`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `Language::id_for_node_kind`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn kind_named(language: &Language, name: &str, named: bool) -> KindId {
     KindId(language.id_for_node_kind(name, named))
 }
@@ -93,6 +100,7 @@ impl Depth {
     }
 
     /// `self`, deepened to at least `levels`: a kind whose items arrive with it.
+    #[must_use]
     pub fn at_least(self, levels: u32) -> Depth {
         match (self, NonZeroU32::new(levels)) {
             (Depth::Levels(own), Some(min)) if own < min => Depth::Levels(min),
@@ -198,12 +206,19 @@ pub struct SnapshotCtx<'s> {
 impl<'s> SnapshotCtx<'s> {
     /// A snapshot of the node at `root`, measuring from the byte `holder`,
     /// or from the source's start when absent.
+    #[must_use]
     pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>, root: NodeIndex) -> Self {
         let holder = holder.and_then(|byte| lines.point(byte)).unwrap_or(crate::points::Point::ZERO);
         Self { lines, root, holder: std::cell::Cell::new(holder), replaced: std::cell::RefCell::default() }
     }
 
     /// `span`'s two ends as points measured from the holder's start.
+    ///
+    /// # Panics
+    ///
+    /// If `span` lies outside the source the line table measures; a read
+    /// node's span always lies inside it.
+    #[must_use]
     pub fn span_of(&self, span: Span) -> crate::points::PointSpan {
         let holder = self.holder.get();
         let point = |byte: u32| self.lines.point(byte).expect("a node's bytes lie in its source").offset_from(holder);
@@ -225,22 +240,26 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
+    #[must_use]
     pub fn with_relaxes(self, relaxes: fn(KindId, KindId) -> bool) -> Self {
         Self { relaxes, ..self }
     }
 
     /// This context, reading a snapshot measured as `snapshot` measures.
+    #[must_use]
     pub fn snapshot(self, snapshot: &'s SnapshotCtx<'s>) -> Self {
         Self { snapshot: Some(snapshot), ..self }
     }
 
     /// This context, seating each node's sides from `sides`.
+    #[must_use]
     pub fn with_sides(self, sides: &'s dyn SideLookup) -> Self {
         Self { sides: Some(sides), ..self }
     }
 
     /// This context, reading a unit variant inline past the depth, as a
     /// client that stores it as its bare kind holds it.
+    #[must_use]
     pub fn inline_units(self) -> Self {
         Self { inline_units: true, ..self }
     }
@@ -250,12 +269,14 @@ impl<'s> ReadCtx<'s> {
     /// kept a coordinate: within the depth, on a read that seats no sides,
     /// and on one that reads units inline. A coordinate frames itself with
     /// its sides; an inline unit has no layout, so its holder frames it.
+    #[must_use]
     pub fn reads_leaf_inline(&self, depth: Depth) -> bool {
         depth.below().is_some() || self.sides.is_none() || self.inline_units
     }
 
     /// This context, with the neighbours of the node at `index` changed on
     /// the edges `changed` gives.
+    #[must_use]
     pub fn with_changed(self, index: NodeIndex, changed: ChangedEdges) -> Self {
         Self { changed: Some((index, changed)), ..self }
     }
@@ -318,6 +339,7 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// `layout`, holding the sides of the node's unit children (`units`).
+    #[must_use]
     pub fn layout_with_units<T: crate::trivia::FromTriviaText + 'static>(
         &self,
         index: NodeIndex,
@@ -334,6 +356,7 @@ impl<'s> ReadCtx<'s> {
     /// holder, which its slot stores as a bare kind, as this context seats
     /// them: `None` when the context seats none, when the read keeps the unit
     /// a coordinate (`reads_leaf_inline`), or when the unit has none.
+    #[must_use]
     pub fn unit_sides<T: crate::trivia::FromTriviaText + 'static>(&self, index: NodeIndex, depth: Depth) -> Option<NodeTrivia<T>> {
         if !self.reads_leaf_inline(depth) {
             return None;
@@ -376,23 +399,27 @@ impl<'s> ReadCtx<'s> {
     /// route: the display id where the grammar claims the node by it (an alias
     /// envelope) or where the node is a relaxed keyword read as its word rule,
     /// the grammar id everywhere else.
+    #[must_use]
     pub fn stamped_kind(&self, grammar: KindId, display: KindId) -> KindId {
         if display != grammar && ((self.shows)(display) || (self.relaxes)(grammar, display)) { display } else { grammar }
     }
 
     /// [`Self::stamped_kind`] of a parsed node.
+    #[must_use]
     pub fn node_kind(&self, node: &tree_sitter::Node<'_>) -> KindId {
         self.stamped_kind(grammar_id(node), display_id(node))
     }
 
     /// Where the node the cursor is on came from: each native node's own
     /// (`NodeLayout::at`, or `::span` in a snapshot).
+    #[must_use]
     pub fn at_of(&self, cursor: &TreeCursor<'_>) -> Origin {
         self.origin(&cursor.node(), index_of(cursor))
     }
 
     /// Where the node at `index` came from: its coordinate, or in a snapshot
     /// its span from this context's holder.
+    #[must_use]
     pub fn origin(&self, node: &Node<'_>, index: NodeIndex) -> Origin {
         let at = self.coordinate(node, index);
         match self.snapshot {
@@ -403,6 +430,7 @@ impl<'s> ReadCtx<'s> {
 
     /// The coordinate of a surveyed child: its tree and index, its span and its
     /// stamped kind (`ReadCtx::stamped_kind`).
+    #[must_use]
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
             kind: Some(self.stamped_kind(child.grammar, child.display)),
@@ -414,15 +442,17 @@ impl<'s> ReadCtx<'s> {
     /// whole source: tree-sitter's root starts at the first token, and the
     /// root stands for the file, whose leading and trailing bytes its
     /// coordinate render must keep.
+    #[must_use]
     pub fn coordinate(&self, node: &Node<'_>, index: NodeIndex) -> NodeCoordinate {
         let span = if index == NodeIndex::ROOT { Span::whole(self.source) } else { Span::of(node) };
         NodeCoordinate {
             kind: Some(self.node_kind(node)),
-            ..NodeCoordinate::new(self.tree_id, index, index + node.descendant_count() as u32, span)
+            ..NodeCoordinate::new(self.tree_id, index, index + descendant_count(node), span)
         }
     }
 
     /// The source text a node spans.
+    #[must_use]
     pub fn text(&self, node: &Node<'_>) -> &'s str {
         &self.source[Span::of(node).range()]
     }
@@ -430,22 +460,33 @@ impl<'s> ReadCtx<'s> {
 
 /// The index of the node the cursor is on: its descendant index from the
 /// tree's root, which `TreeCursor::goto_descendant` reaches again.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::descendant_index`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn index_of(cursor: &TreeCursor<'_>) -> NodeIndex {
-    NodeIndex(cursor.descendant_index() as u32)
+    NodeIndex(crate::types::narrow(cursor.descendant_index()))
 }
 
 /// How many preorder positions the cursor's node lies past the node the
 /// cursor was created at: a node's index is its subtree root's index plus
 /// this. The one other call of `TreeCursor::descendant_index`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::descendant_index`, which clippy.toml disallows outside this module")]
+#[must_use]
 pub fn offset_of(cursor: &TreeCursor<'_>) -> u32 {
-    cursor.descendant_index() as u32
+    crate::types::narrow(cursor.descendant_index())
+}
+
+/// How many nodes the subtree at `node` holds, itself included: its index
+/// plus this is the index just past its subtree. The one call of
+/// `Node::descendant_count`.
+#[allow(clippy::disallowed_methods, reason = "wraps `Node::descendant_count`, which clippy.toml disallows outside this function")]
+#[must_use]
+pub fn descendant_count(node: &Node<'_>) -> u32 {
+    crate::types::narrow(node.descendant_count())
 }
 
 /// Moves a cursor created at the tree's root to the node at `index`. The one
 /// call of `TreeCursor::goto_descendant`.
-#[allow(clippy::disallowed_methods)]
+#[allow(clippy::disallowed_methods, reason = "wraps `TreeCursor::goto_descendant`, which clippy.toml disallows outside this module")]
 pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) {
     cursor.goto_descendant(index.index());
 }
@@ -470,6 +511,7 @@ pub struct Child {
 impl Child {
     /// The child the cursor is on, its index numbered from the cursor's
     /// root.
+    #[must_use]
     pub fn at(cursor: &TreeCursor<'_>) -> Child {
         let node = cursor.node();
         Child {
@@ -479,7 +521,7 @@ impl Child {
             field: field_id(cursor),
             named: node.is_named(),
             trivia: node.is_extra() || node.is_error(),
-            descendants: node.descendant_count() as u32,
+            descendants: descendant_count(&node),
             start: Span::of(&node).start,
             end: Span::of(&node).end,
         }
@@ -487,6 +529,7 @@ impl Child {
 }
 
 impl Child {
+    #[must_use]
     pub fn width(&self) -> u32 {
         self.end - self.start
     }
@@ -496,6 +539,7 @@ impl Child {
 /// non-trivia children each starting where the one before ends, from the
 /// node's start to its end. A text leaf whose children tile it reads the text
 /// it spans.
+#[must_use]
 pub fn tiles(children: &[Child], span: Span) -> bool {
     let mut at = span.start;
     for child in children {
@@ -512,6 +556,7 @@ pub fn tiles(children: &[Child], span: Span) -> bool {
 /// least one and all of them display the same id. A multi-token enum member
 /// is an alias over its tokens, so each token displays the member's id, and
 /// a node whose tokens display different ids spells none of them.
+#[must_use]
 pub fn spelled_id(children: &[Child]) -> Option<KindId> {
     let mut tokens = children.iter().filter(|child| !child.trivia);
     let first = tokens.next()?;
@@ -622,18 +667,21 @@ pub trait ReadNode: Sized {
     /// takes any named child, a choice or an enum its members.
     fn takes_tagged(grammar: KindId, display: KindId, named: bool) -> bool;
     /// Whether a node with these ids is stored as a unit variant.
+    #[must_use]
     fn scalar(grammar: KindId, display: KindId) -> bool {
         let _ = (grammar, display);
         false
     }
     /// Whether this native node claims a node by its display id: an alias
     /// envelope, or another alias kind the grammar models.
+    #[must_use]
     fn shows(display: KindId) -> bool {
         let _ = display;
         false
     }
     /// What an optional slot of this type holds when no child came: the
     /// blank arm of a choice that has one, as a parsed node keeps its blank.
+    #[must_use]
     fn blank() -> Option<Self> {
         None
     }
@@ -656,6 +704,7 @@ pub trait ReadNode: Sized {
     }
     /// How a node with these ids finds its slots (`Router`); `None` for a
     /// node this native node does not admit, or one with no slots.
+    #[must_use]
     fn router(grammar: KindId, display: KindId) -> Option<Router> {
         let _ = (grammar, display);
         None
@@ -753,6 +802,7 @@ pub trait HasLayout<L> {
 
 /// A layout holding only where its node came from: `at` for a node read
 /// from a live tree, `span` for a snapshot node.
+#[must_use]
 pub fn placed_at<T>(at: Origin) -> NodeLayout<T> {
     match at {
         Origin::Tree(coord) => NodeLayout { at: Some(coord), ..NodeLayout::default() },
@@ -788,6 +838,7 @@ impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
 /// a content read through a hidden child names that child). An envelope reads
 /// its content under the context it was read under, so its content's trivia
 /// is measured from the envelope's holder.
+#[must_use]
 pub fn envelope_layout<T: crate::trivia::FromTriviaText + 'static>(
     taken: Option<Box<NodeLayout<T>>>,
     index: NodeIndex,
@@ -977,8 +1028,9 @@ impl<V> Elided<V> {
         }
     }
     /// Where the next item pushed arrives: after every item and hole so far.
+    #[must_use]
     pub fn arrival(&self) -> ItemIndex {
-        ItemIndex(self.items.len() as u32)
+        ItemIndex(crate::types::narrow(self.items.len()))
     }
 
     /// The position in `positions` of the item that arrived at `arrival`:
@@ -989,7 +1041,7 @@ impl<V> Elided<V> {
             return Some(arrival);
         }
         let before = self.items.get(..arrival.index())?;
-        let segment = before.iter().filter(|item| item.is_none()).count() as u32;
+        let segment = crate::types::narrow(before.iter().filter(|item| item.is_none()).count());
         let first = before.last().is_none_or(Option::is_none);
         first.then_some(ItemIndex(segment))
     }
@@ -1142,9 +1194,16 @@ pub struct Interior {
 }
 
 impl Interior {
+    #[must_use]
     pub const fn new(pattern: &'static str) -> Self {
         Self { pattern, compiled: OnceLock::new() }
     }
+    /// The captures of the pattern in `text`, compiling it on first use.
+    ///
+    /// # Panics
+    ///
+    /// If the pattern does not compile; the derive expansion compiled it
+    /// already, so it does.
     pub fn captures<'t>(&self, text: &'t str) -> Option<Captures<'t>> {
         self.compiled
             .get_or_init(|| regex::Regex::new(self.pattern).expect("the expansion compiled this pattern"))
@@ -1188,7 +1247,9 @@ pub fn capture<F: FromCapture>(captures: &Captures<'_>, name: &str, at: SlotSite
 /// that item is a unit variant, the flank is present when the list holds
 /// more anonymous unfielded tokens than the separators between its items and
 /// the mandatory flank tokens account for.
+#[must_use]
 pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> crate::types::Delimiter {
+    use crate::types::Delimiter;
     let item_children: Vec<(&Child, bool)> = children
         .iter()
         .zip(routes)
@@ -1207,7 +1268,6 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
         _ => others > item_children.len().saturating_sub(1) + mandatory as usize,
     };
     let Span { start, end } = Span::of(list);
-    use crate::types::Delimiter;
     let mut flags = Delimiter::NONE;
     if leading.is_some_and(|mandatory| flank(item_children.first(), mandatory, &|child| start < child.start)) {
         flags = flags.with(Delimiter::LEADING);
@@ -1312,7 +1372,7 @@ mod tests {
             let measure = SnapshotCtx::new(&lines, None, root);
             let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure).with_sides(&EdgeRun);
             let side = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at.clone(), false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
-            side.into_iter().map(|entry| entry.value.node().map(|text| text.text.to_string()).expect("a snapshot entry is text")).collect::<Vec<_>>()
+            side.into_iter().map(|entry| entry.value.node().map(|text| text.text.clone()).expect("a snapshot entry is text")).collect::<Vec<_>>()
         };
         assert_eq!(leading(NodeIndex::ROOT), [" ", "// w"], "a node inside the snapshot keeps the run its neighbour faces");
         assert_eq!(leading(NodeIndex(3)), ["// w"], "the snapshot's own node drops the run toward a neighbour outside it");
@@ -1354,11 +1414,11 @@ mod tests {
         let tree = parser.parse(source, None).unwrap();
         let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false);
         let mut cursor = tree.walk();
-        for index in (0..tree.root_node().descendant_count() as u32).map(NodeIndex::new) {
+        for index in (0..crate::read::descendant_count(&tree.root_node())).map(NodeIndex::new) {
             goto(&mut cursor, index);
             let Origin::Tree(coordinate) = ctx.at_of(&cursor) else { panic!("a live read names a coordinate") };
             assert_eq!(coordinate.index, index);
-            assert_eq!(coordinate.end, index + cursor.node().descendant_count() as u32);
+            assert_eq!(coordinate.end, index + crate::read::descendant_count(&cursor.node()));
         }
     }
 

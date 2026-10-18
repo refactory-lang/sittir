@@ -539,7 +539,7 @@ function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReCon
 	const reConst = leafReConsts.get(node.kind);
 	if (reConst) {
 		guards.push(
-			`if (!${reConst}.test(text)) ${patternMismatchThrow(node.kind, 'text')}`
+			`if (typeof text !== 'string' || !${reConst}.test(text)) ${patternMismatchThrow(node.kind, 'text')}`
 		);
 	}
 	const reservedConst = leafReConsts.get(reservedGuardKey(node.kind));
@@ -1653,7 +1653,7 @@ function emitFieldCarryingFactory(
 						: numericLiteralSignature(fn, numericSlotShape(ownText.slot)!, 'content', builtName).replace(/\): /, ', affix?: true): '),
 					`${exportKw}function ${fn}(text: ${ownText.spelledType}, affix: false): ${builtName};`,
 					`${exportKw}function ${fn}(input: ${ownTextContentType(ownText)}, affix: boolean = true): ${builtName} {`,
-					`  const value = affix ? input : unaffixed(String(input), ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`
+					`  const value = affix ? input : unaffixed(input, ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`
 				];
 	if (leadingOptions !== undefined) {
 		lines.push(...leadingOptionsSplit(leadingOptions, 'children', strictParamType(surface.param)));
@@ -1674,7 +1674,7 @@ function emitFieldCarryingFactory(
 		const requiredUnfilled = isRequired(f) && !registeredSet.has(f) && !slotFilledWhenOmitted(f, nodeMap);
 		if (guard !== undefined) {
 			lines.push(
-				`  if (${requiredUnfilled ? '' : `${f.storageKey} !== undefined && `}!${guard}.test(${f.storageKey})) ${patternMismatchThrow(`${node.kind}.${f.name}`, f.storageKey)}`
+				`  if (${requiredUnfilled ? '' : `${f.storageKey} !== undefined && `}(typeof ${f.storageKey} !== 'string' || !${guard}.test(${f.storageKey}))) ${patternMismatchThrow(`${node.kind}.${f.name}`, f.storageKey)}`
 			);
 		}
 	}

@@ -32,7 +32,7 @@ fn one_level_leaves_every_statement_with_structure_a_coordinate() {
         let source = probe_input(name);
         let file = root(&parse(&source), &source, Depth::ONE);
         let statements = file.statements;
-        assert!(!statements.is_empty());
+        assert_ne!(statements, [] as [sittir_core::SlotValue<sittir_rust::render::node::StatementNode>; 0]);
         assert!(statements.iter().all(|s| s.coord().is_some()), "{name}: every statement is past one level");
     }
 }
@@ -62,7 +62,7 @@ fn every_read_node_names_its_own_node() {
         let ctx = ReadCtx::new(&source, sittir_core::types::TreeId(1), <sittir_rust::render::AnyNode as sittir_core::read::ReadNode>::shows);
         let file = root(&tree, &source, Depth::ONE);
         let at = file.layout.as_ref().and_then(|layout| layout.at.as_ref()).expect("the root names itself");
-        assert_eq!((at.tree, at.index, at.span.start, at.span.end), (sittir_core::types::TreeId(1), sittir_core::types::NodeIndex::ROOT, 0, source.len() as u32));
+        assert_eq!((at.tree, at.index, at.span.start, at.span.end), (sittir_core::types::TreeId(1), sittir_core::types::NodeIndex::ROOT, 0, sittir_core::types::narrow(source.len())));
         let functions = file.statements.into_iter().filter_map(|s| s.coord().cloned()).filter(|c| c.kind == Some(kind_ids::FUNCTION_ITEM));
         for coord in functions {
             let read: FunctionItemNode = read_at::<FunctionItemNode>(&mut tree.walk(), &ctx, coord.index, Depth::ONE).unwrap();
@@ -101,7 +101,7 @@ fn a_parameter_branch_reads_its_ordinary_list_variant() {
 /// The index of the first node of kind `kind` in `tree`.
 fn first_of(tree: &tree_sitter::Tree, kind: sittir_core::KindId) -> sittir_core::types::NodeIndex {
     let mut cursor = tree.walk();
-    (0..tree.root_node().descendant_count() as u32)
+    (0..sittir_core::read::descendant_count(&tree.root_node()))
         .map(sittir_core::types::NodeIndex::new)
         .find(|&i| {
             sittir_core::read::goto(&mut cursor, i);

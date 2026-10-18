@@ -20,7 +20,7 @@ export function interfaceToPythonDataclass(tsSource: string) {
 		if (!ts.is.propertySignature(member)) return [];
 		const annotation = member.type()?.type();
 		const rawType = annotation === undefined ? 'Any' : ts.render(annotation).toString();
-		return [`    ${ts.render(member.name())}: ${typeMap[rawType] ?? rawType}`];
+		return [`    ${member.name()}: ${typeMap[rawType] ?? rawType}`];
 	});
 
 	return ['@dataclass', `class ${ts.render(iface.name())}:`, ...(fields.length > 0 ? fields : ['    pass'])].join('\n');

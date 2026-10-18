@@ -352,7 +352,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		displayUnions: normalized.displayUnions,
 		terminalAliasWireIds: normalized.terminalAliasWireIds,
 		signatures: computeSignatures(nodes),
-		derivations: normalized.derivations,
 		normalizedRules: normalized.normalizedRules,
 		word: normalized.word,
 		wordMatcher: normalized.wordMatcher,

@@ -2,7 +2,7 @@
 //! its start node and adds that node's index; these tests hold that rule to
 //! tree-sitter over whole sources, so it calls the cursor's numbering
 //! directly rather than through `sittir_core::read`.
-#![allow(clippy::disallowed_methods)]
+#![allow(clippy::disallowed_methods, reason = "these tests hold sittir_core::read to the cursor numbering tree-sitter gives directly")]
 
 use tree_sitter::{Language, Node, Parser, Tree};
 
@@ -37,7 +37,7 @@ fn check(language: &Language, source: &str) {
     let nodes = indexed(&tree);
     for (i, (index, node)) in nodes.iter().enumerate() {
         assert_eq!(*index, i, "pre-order position");
-        let end = index + node.descendant_count();
+        let end = index + sittir_core::read::descendant_count(node) as usize;
         let mut cursor = node.walk();
         for (d, (expected_index, expected)) in nodes[*index..end].iter().enumerate() {
             cursor.goto_descendant(d);
@@ -50,7 +50,7 @@ fn check(language: &Language, source: &str) {
             let child = node.child(position).unwrap();
             let (expected, _) = nodes.iter().find(|(_, n)| *n == child).unwrap();
             assert_eq!(at, *expected, "child {position} of {index}");
-            at += child.descendant_count();
+            at += sittir_core::read::descendant_count(&child) as usize;
         }
         if let Some((_, after)) = nodes.get(end) {
             let mut ancestor = after.parent();

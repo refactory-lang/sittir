@@ -25,6 +25,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--skip-ts-chain` — Skip the auto transpile + tree-sitter generate chain
 - `--roundtrip` — Run validator probes after generation
 - `--post-generate-only` — Run only the post-generate fixtures and probes
+- `--native-only` — Rebuild only the N-API binding from the generated sources, then run post-generate
 - `--no-build-native` — Skip the post-regen N-API rebuild
 - `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
@@ -94,11 +95,15 @@ pnpm exec tsx packages/cli/src/cli.ts validate probe-factory [grammars] [options
 
 ### `validate history`
 
-Print last N validation history entries
+Print last N validation history entries, or diff two validation reports
 
 **Arguments**
 
 - `n` (optional) — Number of entries to show
+
+**Options**
+
+- `--diff <reports...>` — Diff two validation-report.json files, <base> <head>: per-grammar row and per-code count deltas, then every moved row; exits 1 when rows moved, 2 when a side is missing, empty or has no rows
 
 **Example**
 
@@ -488,15 +493,13 @@ pnpm exec tsx packages/cli/src/cli.ts tool hoisted-census [options]
 
 ### `tool inspect-refs`
 
-Inspect symbol references or derivation suggestions
+Inspect the references to a symbol: who names it with a field, and who refers to it without one
 
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--mode <mode>` — Mode: refs | suggestions (default: `refs`)
-- `--symbol <name>` — Target symbol name (refs mode) (default: `_type_identifier`)
+- `--symbol <name>` — Target symbol name (default: `_type_identifier`)
 - `--base` — Use base grammar.js instead of overrides
-- `--limit <n>` — Max entries per section (suggestions mode) (default: `10`)
 
 **Example**
 
@@ -537,6 +540,21 @@ List groups, unaliased, and phantom kinds
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
+```
+
+### `tool node-json-census`
+
+Census what node JSON and the reviver rest on: unwrapped text leaves, kinds the coercer cannot build, slot value shapes, comment kinds
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool node-json-census [options]
 ```
 
 ### `tool output-gate`

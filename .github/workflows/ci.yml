@@ -148,11 +148,12 @@ jobs:
           name: bindings-x86_64-unknown-linux-gnu
           path: /tmp/016-bindings
       - name: Stage `.node` artifacts into the grammar packages
-        # The artifact keeps the upload step's paths
-        # (`packages/<grammar>/native/*.node`). Copy them back into the
-        # workspace so each grammar package's loader finds its binary.
+        # The artifact keeps the upload step's repo-relative paths: each
+        # `packages/<grammar>/native/*.node` and the build stamp under
+        # `node_modules/.cache/sittir/native-build/` that the loader checks
+        # it against. Copy both back into the workspace.
         run: |
-          cp -R /tmp/016-bindings/. packages/
+          cp -R /tmp/016-bindings/. ./
           find packages -path "*/native/*.node" -print
       - name: Resolve base SHA
         id: base
@@ -222,7 +223,7 @@ jobs:
           path: /tmp/published-bindings
       - name: Stage `.node` artifacts into the grammar packages
         run: |
-          cp -R /tmp/published-bindings/. packages/
+          cp -R /tmp/published-bindings/. ./
           find packages -path "*/native/*.node" -print
       - name: Install the pinned Rust toolchain
         uses: ./.github/actions/rust-toolchain
@@ -262,7 +263,7 @@ jobs:
           path: /tmp/054-bindings
       - name: Stage `.node` artifacts into the grammar packages
         run: |
-          cp -R /tmp/054-bindings/. packages/
+          cp -R /tmp/054-bindings/. ./
           find packages -path "*/native/*.node" -print
       - name: Collect fresh metrics (native backend)
         run: |
@@ -295,6 +296,8 @@ jobs:
         run: cargo check --workspace
       - name: Clippy (warnings denied)
         run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
+      - name: Clippy with napi bindings (warnings denied)
+        run: cargo clippy --workspace --all-targets -- -D warnings
       - name: Typed reader debug diagnostics
         run: cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
 
@@ -467,7 +470,7 @@ jobs:
       # host); the failure path is the build step above.
       - name: cargo test parity (native targets only)
         if: matrix.cross == false
-        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
+        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --nocapture
       # `if: !cancelled()` — without this, a failure in either test step
       # above skips this step entirely by
       # GitHub Actions' default fail-fast-within-job behavior, even
@@ -485,6 +488,8 @@ jobs:
           name: bindings-${{ matrix.target }}
           path: |
             packages/*/native/*.node
+            node_modules/.cache/sittir/native-build/
+          include-hidden-files: true
           if-no-files-found: ignore
 
   # Spec 012 T060 — surface parity counts in PR job summary so review

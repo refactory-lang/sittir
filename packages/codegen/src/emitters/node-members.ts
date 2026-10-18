@@ -53,6 +53,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	lines.push(...(spec.extra ?? []));
 	lines.push(
 		'    $render: () => renderText(handle, node),',
+		'    toString: () => node.$render(),',
 		'    $trivia: {',
 		"      leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),",
 		"      trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),",

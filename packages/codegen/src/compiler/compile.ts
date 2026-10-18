@@ -10,7 +10,7 @@ import { dynamicPrecedenceRecords } from './diagnostics/dynamic-precedence.ts';
 import { blockedRecords, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
-import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
+import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from './types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { diagnoseEvaluationStages, type StageDiagnoses } from './stage.ts';
 import { authoredRuleNames, diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
@@ -34,7 +34,6 @@ export interface Compilation {
 
 export interface CompileGrammarConfig {
 	readonly package: GrammarPackage;
-	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly allowDiagnostics?: ReadonlySet<string>;
 	readonly unbound?: boolean;
@@ -47,7 +46,6 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	const diagnosis = diagnoseGrammar({
 		grammar,
 		evaluated,
-		include: cfg.include,
 		generatedIdTables: cfg.generatedIdTables,
 		allowDiagnostics: cfg.allowDiagnostics
 	});
@@ -82,7 +80,6 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 export interface DiagnoseGrammarConfig {
 	readonly grammar: string;
 	readonly evaluated: RawGrammar;
-	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly allowDiagnostics?: ReadonlySet<string>;
 }
@@ -123,7 +120,6 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 
 	const collected = collectGrammarDiagnosticsForGrammar({
 		rawGrammar: evaluated,
-		include: cfg.include,
 		generatedIdTables: cfg.generatedIdTables
 	});
 	const diagnosticRecords =

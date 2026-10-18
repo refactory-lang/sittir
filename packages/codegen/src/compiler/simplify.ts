@@ -41,8 +41,7 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 		fileTypes: NO_FILE_TYPES,
 		rules,
 		supertypes: new Set(),
-		word: null,
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }
+		word: null
 	};
 }
 import { inlineRefs, fuseHeadRepeatLists, type InlineRefsCtx } from '../dsl/rule-transforms.ts';

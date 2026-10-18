@@ -107,6 +107,57 @@ export interface IsGuards {
 	layout<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
+	anyCharacter<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.AnyCharacter>;
+	startAssertion<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.StartAssertion>;
+	endAssertion<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.EndAssertion>;
+	boundaryAssertion<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.BoundaryAssertion>;
+	nonBoundaryAssertion<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.NonBoundaryAssertion>;
+	patternCharacter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PatternCharacter };
+	posixClassName<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PosixClassName };
+	classCharacter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassCharacter };
+	flags<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Flags };
+	decimalEscape<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DecimalEscape };
+	unicodeCharacterEscape<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodeCharacterEscape };
+	unicodePropertyValue<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyValue };
+	controlEscape<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ControlEscape };
+	controlLetterEscape<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ControlLetterEscape };
+	groupName<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GroupName };
+	decimalDigits<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DecimalDigits };
+	characterClassEscapeText1<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeText1 };
+	characterClassEscapeText2<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeText2 };
+	negation<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -170,5 +221,24 @@ export const is = Object.freeze({
 	unicodePropertyName: _g(TSKindId.UnicodePropertyName),
 	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
 	inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
-	layout: _sg(_supertype_layout_ids)
+	layout: _sg(_supertype_layout_ids),
+	anyCharacter: _mg(TSKindId.AnyCharacter),
+	startAssertion: _mg(TSKindId.StartAssertion),
+	endAssertion: _mg(TSKindId.EndAssertion),
+	boundaryAssertion: _mg(TSKindId.BoundaryAssertion),
+	nonBoundaryAssertion: _mg(TSKindId.NonBoundaryAssertion),
+	patternCharacter: _g(TSKindId.PatternCharacter),
+	posixClassName: _g(TSKindId.PosixClassName),
+	classCharacter: _g(TSKindId.ClassCharacter),
+	flags: _g(TSKindId.Flags),
+	decimalEscape: _g(TSKindId.DecimalEscape),
+	unicodeCharacterEscape: _g(TSKindId.UnicodeCharacterEscape),
+	unicodePropertyValue: _g(TSKindId.UnicodePropertyValue),
+	controlEscape: _g(TSKindId.ControlEscape),
+	controlLetterEscape: _g(TSKindId.ControlLetterEscape),
+	groupName: _g(TSKindId.GroupName),
+	decimalDigits: _g(TSKindId.DecimalDigits),
+	characterClassEscapeText1: _g(TSKindId.CharacterClassEscapeText1),
+	characterClassEscapeText2: _g(TSKindId.CharacterClassEscapeText2),
+	negation: _mg(TSKindId.Negation)
 }) as unknown as IsGuards;

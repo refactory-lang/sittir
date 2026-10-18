@@ -1244,6 +1244,94 @@ export interface IsGuards {
 		| TSKindId.Indent
 		| TSKindId.Dedent
 	>;
+	import_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Import>;
+	emptyStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.EmptyStatement>;
+	optionalChain<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.OptionalChain>;
+	unescapedDoubleStringFragment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnescapedDoubleStringFragment };
+	unescapedSingleStringFragment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnescapedSingleStringFragment };
+	regexPattern<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RegexPattern };
+	regexFlags<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RegexFlags };
+	identifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
+	this_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.This>;
+	super_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Super>;
+	true_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.True>;
+	false_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.False>;
+	null_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Null>;
+	undefined<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Undefined>;
+	accessibilityModifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>;
+	overrideModifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.OverrideModifier>;
+	existentialType<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ExistentialType>;
+	predefinedType<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.Unique
+		| TSKindId.VoidKeyword
+		| TSKindId.UnknownKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.NeverKeyword
+		| TSKindId.ObjectKeyword
+	>;
+	usingDeclarationArm<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.UsingDeclarationArm>;
+	numberDecimal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberDecimal };
+	emptyMember<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.EmptyMember>;
+	optionalChainMarker<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.OptionalChainMarker>;
+	metaPropertyNewTarget<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.MetaPropertyNewTarget>;
+	metaPropertyImportMeta<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.MetaPropertyImportMeta>;
+	htmlComment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.HtmlComment };
+	jsxText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.JsxText };
+	templateChars<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TemplateChars };
+	automaticSemicolon<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.AutomaticSemicolon>;
+	functionSignatureAutomaticSemicolon<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.FunctionSignatureAutomaticSemicolon>;
+	ternaryQmark<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TernaryQmark };
+	ErrorRecovery<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ErrorRecovery };
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -1301,6 +1389,9 @@ const _supertype_enumBodyElement_ids = new Set<number>([386, 322]);
 const _supertype_exportStatementDefault_ids = new Set<number>([427, 428]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
+
+const _enum_accessibilityModifier_ids = new Set<number>([34, 35, 36]);
+const _enum_predefinedType_ids = new Set<number>([40, 41, 42, 43, 44, 144, 77, 145, 146, 46]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[189, _supertype_exportStatement_ids],
@@ -1687,5 +1778,36 @@ export const is = Object.freeze({
 	enumBodyElement: _supertype_enumBodyElement_guard,
 	exportStatementDefault: _supertype_exportStatementDefault_guard,
 	numberBigint: _supertype_numberBigint_guard,
-	layout: _sg(_supertype_layout_ids)
+	layout: _sg(_supertype_layout_ids),
+	import_: _mg(TSKindId.Import),
+	emptyStatement: _mg(TSKindId.EmptyStatement),
+	optionalChain: _mg(TSKindId.OptionalChain),
+	unescapedDoubleStringFragment: _g(TSKindId.UnescapedDoubleStringFragment),
+	unescapedSingleStringFragment: _g(TSKindId.UnescapedSingleStringFragment),
+	regexPattern: _g(TSKindId.RegexPattern),
+	regexFlags: _g(TSKindId.RegexFlags),
+	identifier: _g(TSKindId.Identifier),
+	this_: _mg(TSKindId.This),
+	super_: _mg(TSKindId.Super),
+	true_: _mg(TSKindId.True),
+	false_: _mg(TSKindId.False),
+	null_: _mg(TSKindId.Null),
+	undefined: _mg(TSKindId.Undefined),
+	accessibilityModifier: _sg(_enum_accessibilityModifier_ids),
+	overrideModifier: _mg(TSKindId.OverrideModifier),
+	existentialType: _mg(TSKindId.ExistentialType),
+	predefinedType: _sg(_enum_predefinedType_ids),
+	usingDeclarationArm: _mg(TSKindId.UsingDeclarationArm),
+	numberDecimal: _g(TSKindId.NumberDecimal),
+	emptyMember: _mg(TSKindId.EmptyMember),
+	optionalChainMarker: _mg(TSKindId.OptionalChainMarker),
+	metaPropertyNewTarget: _mg(TSKindId.MetaPropertyNewTarget),
+	metaPropertyImportMeta: _mg(TSKindId.MetaPropertyImportMeta),
+	htmlComment: _g(TSKindId.HtmlComment),
+	jsxText: _g(TSKindId.JsxText),
+	templateChars: _g(TSKindId.TemplateChars),
+	automaticSemicolon: _mg(TSKindId.AutomaticSemicolon),
+	functionSignatureAutomaticSemicolon: _mg(TSKindId.FunctionSignatureAutomaticSemicolon),
+	ternaryQmark: _g(TSKindId.TernaryQmark),
+	ErrorRecovery: _g(TSKindId.ErrorRecovery)
 }) as unknown as IsGuards;

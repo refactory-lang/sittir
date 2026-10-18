@@ -676,6 +676,13 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
     - The stage gate is not byte-identical, as ruled. Aliasing in place leaves the alias entry's up-front placeholder mint (`_lambda_expression`) blank, and it stays in the `python.top` evaluated snapshot, following the `_kw_*` convention. `grammarHash` is now taken over the grammar tree-sitter sees (`treeSitterPruned`, the prune `grammar.json` gets), so every grammar's `resolutions.json` hash moves once; the resolution arrays are unchanged. That is the only output-gate difference, apart from python's regenerated `grammar.bindings.ts`.
     - The hash change shares the 5.1 commit: the pre-commit check compares a commit's staged codegen source with the last regen, which covered both changes.
 
+### The master merges after Task 5.1
+
+**Landed** on `feat/authoring-dsl`: 3d41b7a2f merges master at 04bd0dc55, where the typed model is named `Node`, and f79b0223d merges master at b43780cd6, tree-sitter 0.27.1 and the dependency update. They are separate merges so that the rows the CLI moves are measured on their own. Both are gated against the 913f2cfec reference:
+- 3d41b7a2f: every generated file that moves is explained by the merged commits. The rename, `render/transport.rs` → `render/node.rs`, and master's new `descriptor.ts` and `kinds.ts` carry this branch's kinds and slots. The rows are unchanged. Master's two new `query-slot-is` tests read this branch's slot names (rust `let_declaration`'s `name`; typescript `member_expression`'s `optionalChain`).
+- f79b0223d: only `.sittir` parser artifacts move, and each `resolutions.json` moves in its `grammarHash` only, which includes the CLI version. python cov moves 147 → 149, 0.27.1's own: its `node-types.json` lists `as_pattern_target` and `match_block`, and leaves out the inlined supertypes. Master at b43780cd6 reads the same. `VERIFIED_TREE_SITTER` pins 0.27.1 after 0.27.1's `dsl.js` was checked to keep the call order. It moves to `dsl/shared.ts`, so `wire`'s refusals name it too.
+- From here, a gate against the 913f2cfec reference expects these differences, and "byte-identical to Stage 5's commit" means equal to f79b0223d.
+
 ---
 
 ## Stage 6: paths that enter rules, and `copy()` for authors
@@ -706,6 +713,12 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - Spec §4.3's typescript literal split gives a hidden copy of `method_definition`, aliased `constructor_declaration`, whose name is the literal.
   - `copy()` outside the pass is `edit-entry-invalid`.
 - [ ] **Step 2:** Implement, then delete `splitGrammar`. Run the suite and the gate. Commit.
+  - **Landed:** c92203b76 on `feat/authoring-dsl`. Against f79b0223d no generated file moves, every evaluated-grammar snapshot equals Task 5.1's, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - "Gives the rules `splitGrammar` gives" is equality under the parse projection: a hidden copy aliased to N counts as rule N, the alias is dropped, and `splitFrom`, the lists and the options are compared under the same renaming. The projection is the test helper `dsl/__tests__/_parse-projection.ts`. The expected values were pinned from `splitGrammar` at c5e6b8eb8, before it was deleted.
+    - Copies are wire deposits (`wire.ts::wireCopy`), and the copy effect sits in the wire context, so a copy inherits its source's options through `splitFrom` and `inheritSplitOptions`. Part copies and the copy references live in `wire.ts` and `primitives/copy.ts`; `verbs/copy.ts` is unchanged. `cloneToward` and `fieldReferences` are deleted with `splitGrammar` instead of moving: entering a path makes the clones, and a path's `name:` segment names the container field, so neither has a caller.
+    - A copy keeps its members' `variantOf` stamps, and a replacement inside a copy carries the label of the arm it replaced.
+    - `(kind)` looks through a field enrich synthesized, and skips only one an author or a layer wrote.
+    - Alias effects rewrite `(from)` segments and leave `_labels` heads alone, as spec §1.7's effect table says, so a named copy leaves its source's labels.
 
 ---
 

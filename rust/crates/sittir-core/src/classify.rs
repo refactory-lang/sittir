@@ -41,6 +41,7 @@ pub fn classify_whitespace(ws: &str, allowed: &[KindId], table: &WhitespaceTable
 /// else a break per row crossed and `b`'s column as its indentation. What
 /// geometry cannot give (tabs, trailing spaces, line endings) is left to the
 /// options. Columns count bytes, as a point's do.
+#[must_use]
 pub fn geometry_gap_text(a: &crate::points::PointSpan, b: &crate::points::PointSpan) -> String {
     let last = a.last_row();
     if b.start.row == last {

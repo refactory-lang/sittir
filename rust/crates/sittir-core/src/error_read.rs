@@ -18,9 +18,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for ErrorRead {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with, object_with_present, present};
         let kind = val.kind.map(|kind| u32::from(kind.0));
+        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe {
             let layout = match val.at {
-                Origin::Tree(at) => object_with(env, &[(c"at", crate::slot::coordinate_to_napi(env, at)?)])?,
+                Origin::Tree(at) => object_with(env, &[(c"at", crate::slot::coordinate_to_napi(env, &at)?)])?,
                 Origin::Snapshot(span) => object_with(env, &[(c"span", crate::points::PointSpan::to_napi_value(env, span)?)])?,
             };
             object_with_present(env, &[present(env, c"$type", kind)?, Some((c"$_layout", layout)), present(env, c"$text", Some(val.text))?])
