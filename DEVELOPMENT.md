@@ -95,10 +95,16 @@ of a base that regenerated all pass without regenerating. Editing codegen
 source, the shared runtime it executes (any `packages/common` module codegen
 imports at run time, directly or not), a grammar, or a generated file by hand does not,
 nor does an upstream grammar or tree-sitter CLI upgrade or any other change to
-`pnpm-lock.yaml`, nor a new wasi-sdk or binaryen under tree-sitter's cache
-(`~/.cache/tree-sitter`, or the directories `TREE_SITTER_WASI_SDK_PATH` and
-`TREE_SITTER_BINARYEN_PATH` name), until you regenerate. Generation installs
-a missing toolchain itself; a check without one reports the grammar stale.
+`pnpm-lock.yaml`, nor a new wasi-sdk or binaryen, until you regenerate. A
+toolchain is identified by the version tree-sitter records in its cache
+(`~/.cache/tree-sitter`), or, for one `TREE_SITTER_WASI_SDK_PATH` or
+`TREE_SITTER_BINARYEN_PATH` names, by what its `clang` or `wasm-opt` prints
+for `--version`. Generation installs a missing cached toolchain itself; a
+check without one reports the grammar stale. Each grammar's committed
+`.sittir/upstream.json` names the toolchain its parsers were built with, so a
+fresh clone with another toolchain installed is told the toolchain moved
+and to regenerate; one with none installed is trusted, since nothing there
+can have built its parsers.
 
 The file is per worktree and survives `pnpm install`. Deleting it, or
 `node_modules`, loses nothing: the tree is compared with HEAD instead.

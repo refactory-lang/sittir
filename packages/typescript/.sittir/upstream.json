@@ -1,3 +1,8 @@
 {
-	"key": "676eb47af2cba7e3956a79a9471002f54b9382359bd143cc7d3e2bdfab14f7ba"
+	"key": "676eb47af2cba7e3956a79a9471002f54b9382359bd143cc7d3e2bdfab14f7ba",
+	"toolchain": [
+		"tree-sitter-cli 0.27.1",
+		"wasi-sdk 34.0",
+		"binaryen 132"
+	]
 }

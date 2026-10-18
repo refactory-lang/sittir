@@ -8,7 +8,8 @@ import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { moduleClosure } from './module-closure.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
-import { ensureWasmToolchain, treeSitterToolchainIdentity } from '../transpile/tree-sitter-cli.ts';
+import { readUpstreamRecord } from '../transpile/compile-parser.ts';
+import { ensureWasmToolchain, treeSitterToolchain, treeSitterToolchainIdentity, wasmToolchainInstalled } from '../transpile/tree-sitter-cli.ts';
 import {
 	BASE_ENTRY,
 	GRAMMAR_ENTRY,
@@ -403,6 +404,21 @@ export interface VerifyResult {
 	extra: string[];
 	differs: string[];
 	stale: string[];
+	toolchainMoved: ToolchainMove | undefined;
+}
+
+export interface ToolchainMove {
+	readonly committed: readonly string[];
+	readonly current: readonly string[];
+}
+
+function toolchainMove(grammar: GrammarName, src: ManifestSource): ToolchainMove | undefined {
+	if (!wasmToolchainInstalled()) return undefined;
+	const sittirDir = join(src.root, relative(REPO_ROOT, grammarPackageDir(grammar)), '.sittir');
+	const committed = readUpstreamRecord(sittirDir)?.toolchain ?? [];
+	const current = treeSitterToolchain();
+	const same = committed.length === current.length && committed.every((entry, i) => entry === current[i]);
+	return same ? undefined : { committed, current };
 }
 
 export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSource = worktreeSource()): VerifyResult {
@@ -414,7 +430,8 @@ export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSour
 		modified: [],
 		extra: [],
 		differs: [],
-		stale: []
+		stale: [],
+		toolchainMoved: undefined
 	};
 	const files = hashGeneratedFiles(grammar, src);
 	const pair: GenerationPair = { source: computeSourceHash(grammar, src), outputs: outputsDigest(files), upstream: upstreamDigest(grammar, src) };
@@ -424,7 +441,8 @@ export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSour
 	if (!(manifest?.known.some((known) => samePair(known, pair)) ?? false)) {
 		const differs = differencesFromTrustedCommit(grammar, src);
 		if (differs.length === 0 && (recordedUpstream === undefined || recordedUpstream === pair.upstream)) {
-			if (isCheckout(src)) recordGeneration(grammar, src, files, pair);
+			result.toolchainMoved = toolchainMove(grammar, src);
+			if (result.toolchainMoved === undefined && isCheckout(src)) recordGeneration(grammar, src, files, pair);
 		} else if (manifest === undefined) {
 			result.differs = differs;
 		} else {
@@ -451,7 +469,8 @@ export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSour
 		result.modified.length === 0 &&
 		result.extra.length === 0 &&
 		result.differs.length === 0 &&
-		result.stale.length === 0;
+		result.stale.length === 0 &&
+		result.toolchainMoved === undefined;
 	return result;
 }
 
@@ -477,6 +496,10 @@ export function assertGeneratedManifestsClean(
 		for (const f of r.extra) lines.push(`    EXTRA   : ${f}`);
 		for (const f of r.differs) lines.push(`    DIFFERS FROM HEAD: ${f}`);
 		for (const f of r.stale) lines.push(`    STALE-BINARY: ${f} — rebuild the napi crate`);
+		if (r.toolchainMoved !== undefined) {
+			const named = (toolchain: readonly string[]): string => (toolchain.length === 0 ? 'none' : toolchain.join(', '));
+			lines.push(`    TOOLCHAIN MOVED since generation (committed ${named(r.toolchainMoved.committed)}, current ${named(r.toolchainMoved.current)}): regenerate`);
+		}
 	}
 	lines.push('');
 	lines.push('To restore canonical state, regenerate the affected grammar(s):');

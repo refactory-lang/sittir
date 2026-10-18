@@ -503,13 +503,27 @@ Where a grammar's local manifest lives: under the checkout's `node_modules/.cach
 
 Whether the grammar's generated files came from its current source inputs. The rule, stated here and nowhere else: the pair in the tree (its source hash and the digest of its generated files) is a known-good pair in the local manifest, or the tree's source inputs and generated roots equal one trusted commit (`differencesFromTrustedCommit`).
 
-A tree equal to a trusted commit is trusted only while its installed upstream (`upstreamDigest`) equals the newest recorded generation's: `node_modules` is invisible to git, so an upstream that moved under an unchanged tree would otherwise pass. With no generation on record there is nothing to compare, and the committed tree is trusted as before.
+A tree equal to a trusted commit is trusted only while its installed upstream (`upstreamDigest`) equals the newest recorded generation's: `node_modules` is invisible to git, so an upstream that moved under an unchanged tree would otherwise pass. With no generation on record there is nothing to compare locally.
 
-A tree found equal to a trusted commit has its pair recorded, so that a later hand edit is named file by file and a branch switch does not cost a comparison every time. Only a checkout records; a snapshot of the index never writes.
+It is also trusted only while the toolchain the committed tree names equals the installed one (`toolchainMove`), with or without a manifest: the toolchain is not in any commit, so the committed `.sittir/upstream.json` is the only record of what built the committed parsers. A move is reported in `toolchainMoved`, and nothing is recorded. With no toolchain installed there is nothing to compare: nothing here can have built the parsers, and a generation installs the toolchain before it runs, so the committed tree is trusted.
+
+A tree found equal to a trusted commit, on its toolchain, has its pair recorded, so that a later hand edit is named file by file and a branch switch does not cost a comparison every time. Only a checkout records; a snapshot of the index never writes.
 
 When neither holds, what is reported depends on what is known locally. With a manifest, the files are compared with the hashes it holds (`modified`, `missing`, `extra`) and `sourceChanged` says the source hash is not the one of the last recorded generation. With none, there is nothing to compare file by file, so `differs` lists the paths that differ from HEAD.
 
 Host binaries are checked for staleness only in a checkout, and in that checkout, since binaries are never part of a commit. The upstream is likewise read from the checkout's installed packages, since an index snapshot has none.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::VerifyResult`
+
+What `verifyManifestForGrammar` found for one grammar: `ok`, and each reason it is not. `toolchainMoved` is set when the tree equals a trusted commit but was generated with another toolchain than the current one.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::ToolchainMove`
+
+The toolchain list a committed tree names (`committed`, empty when its `.sittir/upstream.json` has none) and the current one (`current`).
+
+### `packages/codegen/src/scripts/generated-manifest.ts::toolchainMove`
+
+`undefined` when the wasm toolchain is not installed (`wasmToolchainInstalled`). Otherwise the `ToolchainMove` for a grammar when the list in its `.sittir/upstream.json`, read from the source's root (so a staged snapshot reads the staged record), differs from `treeSitterToolchain`; `undefined` when they are equal.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::differencesFromTrustedCommit`
 

@@ -4,7 +4,8 @@ import { tmpdir } from 'node:os';
 import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { Language, Parser } from 'web-tree-sitter';
-import { buildUpstreamWasm, ensureParserWasm, upstreamKeyOf, withUpstreamGrammar } from '../compile-parser.ts';
+import { buildUpstreamWasm, ensureParserWasm, readUpstreamRecord, upstreamKeyOf, withUpstreamGrammar, writeUpstreamRecord } from '../compile-parser.ts';
+import { treeSitterToolchain } from '../tree-sitter-cli.ts';
 
 const realPythonDir = join(__dirname, '../../../../', 'python');
 const realPythonSittir = join(realPythonDir, '.sittir');
@@ -76,6 +77,25 @@ describe('ensureParserWasm', () => {
 			rmSync(cache, { recursive: true, force: true });
 		}
 	}, 300_000);
+
+	it('hashes the toolchain list its record names into the key', () => {
+		withUpstreamGrammar(realPythonDir, (dir, scannerFiles) => {
+			const toolchain = treeSitterToolchain();
+			expect(upstreamKeyOf(dir, scannerFiles, toolchain)).toBe(upstreamKeyOf(dir, scannerFiles));
+			expect(upstreamKeyOf(dir, scannerFiles, [...toolchain.slice(0, -1), 'binaryen 999'])).not.toBe(upstreamKeyOf(dir, scannerFiles, toolchain));
+		});
+	}, 300_000);
+
+	it('reads back the upstream record it writes, and nothing where none is', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-upstream-record-'));
+		try {
+			expect(readUpstreamRecord(dir)).toBeUndefined();
+			writeUpstreamRecord(dir, { key: 'k', toolchain: ['tree-sitter-cli 1', 'wasi-sdk 2', 'binaryen 3'] });
+			expect(readUpstreamRecord(dir)).toEqual({ key: 'k', toolchain: ['tree-sitter-cli 1', 'wasi-sdk 2', 'binaryen 3'] });
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
 
 	it('leaves a present parser.wasm untouched', () => {
 		const wasmPath = join(pythonDir, '.sittir', 'parser.wasm');

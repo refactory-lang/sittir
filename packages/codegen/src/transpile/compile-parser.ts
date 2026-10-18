@@ -3,10 +3,24 @@ import { existsSync, mkdirSync, mkdtempSync, copyFileSync, readFileSync, rmSync,
 import { tmpdir } from 'node:os';
 import { join, relative, resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { ensureWasmToolchain, runTreeSitterCli, treeSitterToolchainIdentity } from './tree-sitter-cli.ts';
+import { ensureWasmToolchain, runTreeSitterCli, treeSitterToolchain } from './tree-sitter-cli.ts';
 import { BASE_ENTRY, UPSTREAM_GENERATION_CONFLICTS, UPSTREAM_WASM, upstreamPackage, type GrammarName } from '../grammars.ts';
 
-const UPSTREAM_KEY = 'upstream.json';
+const UPSTREAM_RECORD = 'upstream.json';
+
+export interface UpstreamRecord {
+	readonly key: string;
+	readonly toolchain: readonly string[];
+}
+
+export function readUpstreamRecord(sittirDir: string): Partial<UpstreamRecord> | undefined {
+	const path = join(sittirDir, UPSTREAM_RECORD);
+	return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as Partial<UpstreamRecord>) : undefined;
+}
+
+export function writeUpstreamRecord(sittirDir: string, record: UpstreamRecord): void {
+	writeFileSync(join(sittirDir, UPSTREAM_RECORD), `${JSON.stringify(record, null, '\t')}\n`);
+}
 
 export function buildParserWasm(grammarDir: string): string {
 	const sittirDir = join(grammarDir, '.sittir');
@@ -42,9 +56,9 @@ function upstreamEntryOf(grammarDir: string): string {
 	return `import base from ${base};\nexport default grammar(base, { name: base.grammar.name, rules: {}, conflicts: ($, previous) => previous.concat([${pairs}]) });\n`;
 }
 
-export function upstreamKeyOf(dir: string, scannerFiles: readonly string[]): string {
+export function upstreamKeyOf(dir: string, scannerFiles: readonly string[], toolchain: readonly string[] = treeSitterToolchain()): string {
 	runTreeSitterCli(['generate', '--no-parser'], dir, 'pipe');
-	const hash = createHash('sha256').update(treeSitterToolchainIdentity()).update(readFileSync(join(dir, 'src', 'grammar.json')));
+	const hash = createHash('sha256').update(toolchain.join('\0')).update(readFileSync(join(dir, 'src', 'grammar.json')));
 	for (const file of [...scannerFiles].sort()) hash.update(relative(dir, file)).update(readFileSync(file));
 	return hash.digest('hex');
 }
@@ -61,16 +75,18 @@ export function buildUpstreamWasm(grammarDir: string, out: string): string {
 export function ensureUpstreamWasm(grammarDir: string): { readonly wasmPath: string; readonly built: boolean } {
 	const sittirDir = join(grammarDir, '.sittir');
 	const wasmPath = join(sittirDir, UPSTREAM_WASM);
-	const keyPath = join(sittirDir, UPSTREAM_KEY);
-	const recorded = existsSync(keyPath) ? (JSON.parse(readFileSync(keyPath, 'utf8')) as { key?: string }).key : undefined;
+	const recorded = readUpstreamRecord(sittirDir)?.key;
 	ensureWasmToolchain();
+	const toolchain = treeSitterToolchain();
 	return withUpstreamGrammar(grammarDir, (dir, scannerFiles) => {
-		const key = upstreamKeyOf(dir, scannerFiles);
-		if (key === recorded && existsSync(wasmPath)) return { wasmPath, built: false };
-		runTreeSitterCli(['generate'], dir, 'pipe');
-		runTreeSitterCli(['build', '--wasm', '-o', wasmPath], dir, 'pipe');
-		writeFileSync(keyPath, `${JSON.stringify({ key }, null, '\t')}\n`);
-		return { wasmPath, built: true };
+		const key = upstreamKeyOf(dir, scannerFiles, toolchain);
+		const built = key !== recorded || !existsSync(wasmPath);
+		if (built) {
+			runTreeSitterCli(['generate'], dir, 'pipe');
+			runTreeSitterCli(['build', '--wasm', '-o', wasmPath], dir, 'pipe');
+		}
+		writeUpstreamRecord(sittirDir, { key, toolchain });
+		return { wasmPath, built };
 	});
 }
 
