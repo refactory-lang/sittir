@@ -493,15 +493,13 @@ pnpm exec tsx packages/cli/src/cli.ts tool hoisted-census [options]
 
 ### `tool inspect-refs`
 
-Inspect symbol references or derivation suggestions
+Inspect the references to a symbol: who names it with a field, and who refers to it without one
 
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--mode <mode>` — Mode: refs | suggestions (default: `refs`)
-- `--symbol <name>` — Target symbol name (refs mode) (default: `_type_identifier`)
+- `--symbol <name>` — Target symbol name (default: `_type_identifier`)
 - `--base` — Use base grammar.js instead of overrides
-- `--limit <n>` — Max entries per section (suggestions mode) (default: `10`)
 
 **Example**
 
