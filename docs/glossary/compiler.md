@@ -3878,26 +3878,6 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 // skip the choice wrapper (shape is already correct).
 ```
 
-### `packages/codegen/src/compiler/normalize.ts::dedupeSeqMembers`
-
-```text
-/**
- * Collapse adjacent duplicates inside a `seq`:
- *
- *   seq(x, x, y) → seq(x, y)
- *
- * Uses `rulesEqual` for structural equality. Only collapses
- * adjacent duplicates; non-adjacent duplicates are almost always
- * intentional repetition in the grammar.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// dedupeSeqMembers
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/compiler/normalize.ts::inlineSingleUseHidden`
 
 ```text
@@ -9036,14 +9016,15 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
  * compiler/normalize.ts — Normalize phase.
  *
  * Restructures seq/choice/optional/repeat for SIMPLIFICATION (fan-out,
- * factoring, prefix/suffix extraction, wrapper collapsing, dedupe,
+ * factoring, prefix/suffix extraction, wrapper collapsing,
  * single-use hidden-rule inlining). Does NOT change named content.
  * Non-lossy.
  *
  * Variant tagging lives in Link — that is classification, not simplification.
  * Pipeline order is fixed in
- * `normalizeGrammar()` below: collapse → fan-out → factor → dedupe → inline →
- * re-collapse.
+ * `normalizeGrammar()` below: drop blanks → collapse → fan-out → factor →
+ * inline → re-collapse. A sequence keeps every member it names: two
+ * equal adjacent members are two children (`seq("'", "'")` is `''`).
  */
 ```
 

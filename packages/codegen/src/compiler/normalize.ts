@@ -231,7 +231,6 @@ function applyNormalizationPasses(
 	rules = rebuildEach(rules, (rule) => collapseWrappers(rule, ctx));
 	rules = rebuildEach(rules, (rule) => fanOutSeqChoices(rule, ctx));
 	rules = rebuildEach(rules, (rule) => factorChoiceBranches(rule, ctx));
-	rules = rebuildEach(rules, (rule) => dedupeSeqMembers(rule, ctx));
 	const before = rules;
 	rules = inlineSingleUseHidden(rules, ctx, preserveKinds);
 	for (const name of Object.keys(rules)) {
@@ -463,30 +462,6 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 		case TOKEN:
 		case FIELD:
 			return { ...rule, content: factorChoiceBranches(rule.content) };
-		default:
-			return rule;
-	}
-}
-
-export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
-	switch (rule.type) {
-		case SEQ: {
-			const members = rule.members.map((m) => dedupeSeqMembers(m));
-			const deduped: Rule<'link'>[] = [];
-			for (const m of members) {
-				const prev = deduped[deduped.length - 1];
-				if (prev && rulesEqual(prev, m)) continue;
-				deduped.push(m);
-			}
-			return { ...rule, members: deduped };
-		}
-		case CHOICE:
-			return { ...rule, members: rule.members.map((m) => dedupeSeqMembers(m)) };
-		case OPTIONAL:
-		case REPEAT:
-		case TOKEN:
-		case FIELD:
-			return { ...rule, content: dedupeSeqMembers(rule.content) };
 		default:
 			return rule;
 	}
