@@ -704,6 +704,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
    It holds no trivia and no unit sides. A parsed node's are in its tree's table; a built node's are in the built trivia table, a unit's keyed by (record address, slot word, item).
 4. **A view names its children's view types through the native type**, not by a name derived from another: the derive implements `HasRecord` for every native node type, struct and choice, with `type Record<'a>`. A struct's view is `<Ident>Record<'a>`, a choice's is an enum over its variants' views selected by the cell's kind, and a cell's accessor yields `<T as HasRecord>::Record<'a>`.
 5. **A blank arm** (id 0) is tag 4 with kind 0, distinct from tag 0, absent.
+6. **A coordinate in a built record** (ruled 2026-10-17). A tag-1 cell names no tree, since a parsed arena names its tree once. A built record's untouched parsed child is therefore a tag-3 child naming a parsed record in that tree's own arena, written when a builder takes the child. Every width stays stamped and independent of the arena, and a parsed node stays identified by (tree, row). The alternatives were a sixth word in built arenas only (a width that depends on the arena) and a six-word tag for every child slot.
 
 At the cutover, a parsed leaf is identified by (tree, row) and a parsed unit by its record.
 

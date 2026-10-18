@@ -15227,12 +15227,21 @@ A presence word holds 32 presence bits, one word of the `u32` arena.
 
 The cell widths, one per form a slot holds:
 
-- `node`, 5: anything carried in a `SlotValue`, whose arms may all be units,
-  since `SlotValue::Coord` holds an untouched parsed child (tag, kind, index,
-  byte start and end);
-- `text`, 4: a leaf's text (tag, kind, and a byte span, or a string-table
-  offset and length);
-- `list`, 2: a run's offset and length, its items in cells of their own width.
+- `node`, 5: anything carried in a `SlotValue`, whose arms may all be units.
+  The widest forms take five words: a parsed record's untouched child (tag,
+  kind, index, byte start and end), a parsed leaf (tag, kind, byte span and
+  its row) and a built leaf (tag, kind, string-table offset and length, and
+  its own header-only record);
+- `text`, 4: a captured interior string (tag, kind 0, and a byte span or a
+  string-table offset and length);
+- `list`, 2: a run's packed address and its length, its items in cells of
+  their own width.
+
+A built record's untouched parsed child is a child cell (tag, kind, record
+address) naming a parsed record in that child's tree's own arena, written
+when a builder takes the child. So a slot's width never depends on which
+arena holds its record, and a parsed node stays identified by its tree and
+row.
 
 The derive checks each against the slot's type (`sittir_core::record`).
 

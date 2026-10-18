@@ -21,7 +21,9 @@ pub mod tag {
 pub enum Cell {
     /// The slot holds nothing.
     Absent,
-    /// An untouched node of the arena's tree: its row and byte span.
+    /// An untouched node of a parsed arena's tree: its row and byte span.
+    /// A built record names an untouched parsed child by a `Child` cell
+    /// instead, at a parsed record in that child's tree's arena.
     Coordinate { kind: KindId, index: NodeIndex, span: Span },
     /// A parsed leaf: its byte span in the tree's source and its row there,
     /// which keys its sides in the tree's trivia table. It has no record.
