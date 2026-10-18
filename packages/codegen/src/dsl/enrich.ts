@@ -173,9 +173,14 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
-		enrichedRules[name] = distributeInlineAliasChoices(rule, {
-			inlineBodyOf: (target) => (inlineNames.has(target) ? (enrichedRules[target] ?? rulesBag[target]) : undefined)
-		});
+		enrichedRules[name] = ctx.shapes.noted(
+			'alias-over-choice',
+			name,
+			rule,
+			distributeInlineAliasChoices(rule, {
+				inlineBodyOf: (target) => (inlineNames.has(target) ? (enrichedRules[target] ?? rulesBag[target]) : undefined)
+			})
+		);
 	}
 	const enrichedSymbols = enrichSymbolSource(ctx, { ...enrichedRules, ...ctx.kwRules, ...ctx.clauseGroupRules });
 	const unaliased = unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols, families: authored.displayFamilies ?? new Map() });
@@ -190,8 +195,13 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
-		const factored = factorSharedOptional(distributeLeafEnum(rule as unknown as RuntimeRule)) as unknown as Rule;
-		if (factored !== rule) enrichedRules[name] = factored;
+		const leafEnumed = distributeLeafEnum(rule as unknown as RuntimeRule);
+		const factored = factorSharedOptional(leafEnumed) as unknown as Rule;
+		if (leafEnumed !== (rule as unknown as RuntimeRule)) ctx.shapes.record('leaf-enum-token', name);
+		if (factored !== rule) {
+			if (factored !== (leafEnumed as unknown as Rule)) ctx.shapes.record('shared-optional-choice', name);
+			enrichedRules[name] = factored;
+		}
 	}
 	const tokenFormParents: string[] = [];
 	const tokenFormSites = tokenFormFieldSites(enrichedRules, authored.fieldSites);
