@@ -90,16 +90,18 @@ For each of the five grammars, the tool reports:
 
 **Files:**
 - Modify `packages/codegen/src/emitters/node-members.ts`: add `toString: () => node.$render(),` to `nodeMemberLines`.
-- Modify `packages/codegen/src/emitters/wrap.ts`: emit one `wrapLeaf(data, tree)` per grammar from `nodeMemberLines({ accessors: [], parsed: true, inner })`, keeping `data.$type`. Add a `_wrapTable` entry for each text-leaf kind id.
+- Modify `packages/codegen/src/emitters/wrap.ts`: emit one `wrapLeaf(data, tree)` per grammar from `nodeMemberLines({ accessors: [], parsed: true, inner })`, keeping `data.$type`. Add a `_wrapTable` entry for each text-leaf kind id. The text-leaf set is the model's one fact, `isPatternLeaf` (every pattern node with a kind id): `wrapLeaf` registration and the census both read it. `leafTextChecks` is a different fact, the kinds a bare string can build, which also holds lexed compounds and aliases of a pattern leaf (those have wraps) and leaves out a pattern with no text pattern of its own, so it stays as it is.
+- Modify `packages/codegen/src/emitters/is.ts`: emit `is.<kind>` for every node kind, leaf kinds included (pattern, keyword, punctuation, enum).
 - Modify the types emitter, so a leaf's `Parsed` extends `NodeMethodsOf` beside `HoldsTree`.
 - Modify `packages/types/src/engine-api.ts`: add `toString(): string` to `NodeMethods`, with JSDoc.
 - Examples: `07-read-source.ts:15`, `09-type-guards.ts:11`, `12-cross-language-migration.ts:22` (the `member.name()` call only), `14-format-preserving-transform.ts:14`, and `23-read-query-with.ts:94` if Task 0 shows the parameter is a leaf. These move from `engine.render(x)` to `x.$render()`, or to `${x}` inside template strings.
-- Glossary: in `emitters.md`, `wrapLeaf` and `nodeMemberLines`; in `packages-types-src.md`, `NodeMethods`.
+- Glossary: in `emitters.md`, `wrapLeaf`, `nodeMemberLines`, and the `is.ts` entries that say per-kind guards exist only for structural kinds (they now say every node kind has one); in `compiler-model.md`, `isPatternLeaf`; in `packages-types-src.md`, `NodeMethods`.
 
 **Contracts (for sittir-test):**
 - C1.1 A parsed leaf (rust `fn f() {}`, `name()`) has `$render()` equal to its text, `toString()` equal to `$render()`, and `` `${leaf}` `` equal to its text.
 - C1.2 The same holds for a built leaf (`rs.build.identifier('x')`) and for a leaf that is a list item (typescript parameters).
 - C1.3 A parsed leaf keeps `$type` (the kind id), its tree token and `$trivia`. It passes `rs.is.identifier`, and a strict slot still admits it (`$with.name(leaf)` renders).
+- C1.3a Every node kind, leaf or structural, has `is.<kind>`: a pattern leaf (`is.identifier`), a keyword or punctuation unit read as its kind id, and an enum, each narrowing a node or a bare kind id the way a structural kind's guard does.
 - C1.4 At the type level, `leaf.$render()` and `leaf.toString()` type-check on `T.Identifier.Parsed` (`expectTypeOf`).
 - C1.5 A structural node's `toString()` equals its `$render()`.
 - C1.6 Each changed example's output is unchanged (the examples' own tests).
@@ -145,6 +147,7 @@ For each of the five grammars, the tool reports:
 - C2.5 A kind-enum slot (python comparison operators, rust binary operators) writes `{ $type: <name> }`, and a keyword presence writes `true`.
 - C2.6 A parsed node and a built node of the same source give equal JSON.
 - C2.7 An `ERROR` node writes `{ $type: 'ERROR', $text }`.
+- C2.8 A string slot (scm `escape_sequence.content`) writes its string as it is, and no kind is inferred from the text.
 
 ### Task 3: `engine.reviver`
 
@@ -175,6 +178,7 @@ The walk runs once at the root, not in each reviver call. The order is the same,
 - C3.7 Comments revive: a rust item with a leading line comment round-trips, and its render includes the comment.
 - C3.8 Kind facts, not JSON shape: `JSON.parse('{"$type":"block"}', rs.reviver)` is a built `block` with `statements()` equal to `[]`, not a kind id. A unit, such as rust `{ "$type": "mutable_specifier" }` or a python comparison operator, revives to its kind id.
 - C3.9 The reviver is bound: `const { reviver } = rs; JSON.parse(text, reviver)` revives the same as `JSON.parse(text, rs.reviver)`.
+- C3.10 A string slot (scm `escape_sequence.content`) revives through `buildByKind` as the same string, with no kind inferred from the text.
 
 ### Task 4: Gates, review and PR
 
