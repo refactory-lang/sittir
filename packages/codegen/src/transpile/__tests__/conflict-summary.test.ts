@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { conflictKey, parseGenerateOutcome, type ConflictReport } from '../conflict-summary.ts';
+import { conflictKey, parseGenerateOutcome, unnecessaryConflictsOf, type ConflictReport } from '../conflict-summary.ts';
 
 const report: ConflictReport = {
 	symbol_sequence: ['expression'],
@@ -45,7 +45,7 @@ describe('parseGenerateOutcome', () => {
 	});
 
 	it('treats exit 0 as clean even when tree-sitter printed warnings', () => {
-		expect(parseGenerateOutcome(0, 'Warning: unnecessary conflicts:\n  `a`, `b`\n')).toEqual({ kind: 'clean' });
+		expect(parseGenerateOutcome(0, 'Warning: unnecessary conflicts:\n  `a`, `b`\n')).toEqual({ kind: 'clean', unnecessary: [] });
 	});
 
 	it('surfaces a summary that is not a conflict as an error', () => {
@@ -75,5 +75,13 @@ describe('conflictKey', () => {
 		const [first, second] = report.possible_interpretations;
 		const other: ConflictReport = { ...report, possible_interpretations: [first!, { ...second!, variable_name: 'assignment' }] };
 		expect(conflictKey(other)).not.toBe(conflictKey(report));
+	});
+
+	it('reads every unnecessary set from the summary the CLI prints on a clean run', () => {
+		const summary = JSON.stringify({ diagnostics: [{ UnnecessaryConflicts: [['a', 'b'], ['c', 'd', 'e']] }], error: null }, null, 2);
+		expect(unnecessaryConflictsOf(summary + '\n')).toEqual([['a', 'b'], ['c', 'd', 'e']]);
+		expect(unnecessaryConflictsOf('Warning: rule e contains a seq rule with a single element.\n' + summary + '\n')).toEqual([['a', 'b'], ['c', 'd', 'e']]);
+		expect(unnecessaryConflictsOf(JSON.stringify({ diagnostics: [], error: null }, null, 2) + '\n')).toEqual([]);
+		expect(unnecessaryConflictsOf('')).toEqual([]);
 	});
 });
