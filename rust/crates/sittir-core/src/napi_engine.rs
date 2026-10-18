@@ -188,8 +188,9 @@ macro_rules! napi_engine {
             /// and its error regions.
             #[::napi_derive::napi]
             pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
-                let tree_id = self.claim_tree_id(&env)?;
-                let parsed = self.engine.parse(&source, tree_id).map_err(::napi::Error::from_reason)?;
+                let claim = self.claim_tree_id(&env)?;
+                let tree_id = claim.id();
+                let parsed = self.engine.parse(&source, claim).map_err(::napi::Error::from_reason)?;
                 let json = ::serde_json::json!({
                     "treeId": tree_id,
                     "options": parsed.inferred_options(),
@@ -517,7 +518,7 @@ macro_rules! napi_engine {
             /// next id lives there, so a coordinate minted by any engine names
             /// no tree in any other, whatever grammar it speaks. Ids are never
             /// reused, so exhausting them is the honest end state.
-            fn claim_tree_id(&mut self, env: &::napi::Env) -> ::napi::Result<$crate::types::TreeId> {
+            fn claim_tree_id(&mut self, env: &::napi::Env) -> ::napi::Result<$crate::engine::TreeClaim> {
                 const KEY: &str = "__sittirNextTreeId";
                 let mut global = env.get_global()?;
                 let next: Option<f64> = ::napi::bindgen_prelude::JsObjectValue::get_named_property(&global, KEY)?;

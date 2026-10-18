@@ -465,8 +465,28 @@ static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32
 /// with its own copy of this counter; the napi engine therefore claims from
 /// the JavaScript process instead (`claim_tree_id_from`), and this counter
 /// serves engines built in Rust alone.
-pub fn claim_tree_id() -> Option<TreeId> {
-    claim_tree_id_from_counter(&NEXT_TREE_ID).map(TreeId)
+#[must_use]
+pub fn claim_tree_id() -> Option<TreeClaim> {
+    claim_tree_id_from_counter(&NEXT_TREE_ID).map(|id| TreeClaim(TreeId(id)))
+}
+
+/// The one claim on a tree id a parse consumes (`Engine::parse`): minted only
+/// by `claim_tree_id` and `claim_tree_id_from`, and neither copied nor
+/// cloned, so each tree a counter serves holds an id its own claim minted.
+#[derive(Debug, PartialEq, Eq)]
+pub struct TreeClaim(TreeId);
+
+impl TreeClaim {
+    /// The id this claim is on.
+    #[must_use]
+    pub fn id(&self) -> TreeId {
+        self.0
+    }
+
+    /// The id, the claim spent on it.
+    fn into_id(self) -> TreeId {
+        self.0
+    }
 }
 
 fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<u32> {
@@ -485,13 +505,13 @@ fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<
 
 /// Mint the next tree id from a counter shared by every image in the
 /// process. `next` is the last value the owner recorded (none on the first
-/// claim); the id and the value to record come back together, or nothing
+/// claim); the claim and the value to record come back together, or nothing
 /// once `MAX_TREE_ID` has been claimed — the owner then records nothing, so
 /// the counter stays put and no id is ever reused.
 #[must_use]
-pub fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeId, f64)> {
+pub fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeClaim, f64)> {
     let id = crate::types::exact_whole(next.unwrap_or(0.0)).ok().and_then(|whole| u32::try_from(whole).ok()).filter(|&id| id <= MAX_TREE_ID)?;
-    Some((TreeId(id), f64::from(id) + 1.0))
+    Some((TreeClaim(TreeId(id)), f64::from(id) + 1.0))
 }
 
 /// Pack a tree id and a node index into one self-identifying handle.
@@ -1364,12 +1384,14 @@ impl<G: EngineGrammar> Engine<G> {
         self.grammar.render_module_hash()
     }
 
-    /// Parse source and return an owned `ParsedTree` tagged with `tree_id`.
+    /// Parse source and return an owned `ParsedTree` under the id `claim` is
+    /// on (`claim_tree_id`, `claim_tree_id_from`).
     ///
-    /// The caller owns id assignment because it owns the set of live trees;
-    /// ids must be distinct across every tree a caller can still reach, or
-    /// handles stop being unambiguous.
-    pub fn parse(&mut self, source: &str, tree_id: TreeId) -> Result<ParsedTree<G>, String> {
+    /// # Errors
+    ///
+    /// The parser's failure.
+    pub fn parse(&mut self, source: &str, claim: TreeClaim) -> Result<ParsedTree<G>, String> {
+        let tree_id = claim.into_id();
         let tree = self.parser.parse(source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
@@ -1881,10 +1903,16 @@ mod tests {
         crate::read::kind_named(&language, name, true)
     }
 
+    /// A claim on the next id of the image's counter.
+    fn claim() -> TreeClaim {
+        claim_tree_id().expect("a claim")
+    }
+
     fn parsed(source: &str) -> (ParsedTree<TestGrammar>, TreeHandle) {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
-        let tree = engine.parse(source, crate::types::TreeId(1)).expect("parse");
-        (tree, encode_handle(crate::types::TreeId(1), crate::types::NodeIndex(0)))
+        let tree = engine.parse(source, claim()).expect("parse");
+        let handle = encode_handle(tree.tree_id(), crate::types::NodeIndex(0));
+        (tree, handle)
     }
 
     #[test]
@@ -1894,7 +1922,7 @@ mod tests {
         let error = tree.read_error(index).expect("an ERROR reads");
         let crate::read::Origin::Tree(at) = &error.at else { panic!("a live read names a coordinate") };
         assert_eq!((error.text.as_str(), at.span.start, at.span.end), ("@@", 10, 12));
-        assert_eq!((error.kind, at.kind, at.tree), (Some(KindId(u16::MAX)), Some(KindId(u16::MAX)), TreeId(1)));
+        assert_eq!((error.kind, at.kind, at.tree), (Some(KindId(u16::MAX)), Some(KindId(u16::MAX)), tree.tree_id()));
         assert_eq!(tree.read_error(NodeIndex::ROOT), None);
         let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots");
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 2 } };
@@ -2108,7 +2136,7 @@ mod tests {
         let comment = index_of_kind(&tree, "line_comment", 0);
         let leading = tree.trivia_side(f, TriviaSide::Leading);
         let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
-        assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (TreeId(1), comment, 0, 4));
+        assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (tree.tree_id(), comment, 0, 4));
         let newline = TriviaEntry::new(SlotValue::Node(TestTrivia::Newline));
         assert_eq!(leading[1..], *std::slice::from_ref(&newline));
         assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), []);
@@ -2181,8 +2209,8 @@ mod tests {
     #[test]
     fn an_engine_s_trees_write_to_its_store_and_take_their_sides_with_them() {
         let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
-        let first = engine.parse("fn f() {}\n", crate::types::TreeId(1)).expect("parse");
-        let second = engine.parse("fn f() {}\n", crate::types::TreeId(2)).expect("parse");
+        let first = engine.parse("fn f() {}\n", claim()).expect("parse");
+        let second = engine.parse("fn f() {}\n", claim()).expect("parse");
         let f = index_of_kind(&first, "function_item", 0);
         first.write_trivia_side(f, TriviaSide::Leading, Vec::new());
         second.write_trivia_side(f, TriviaSide::Trailing, Vec::new());
@@ -2195,12 +2223,12 @@ mod tests {
     }
 
     fn table(tree: ParsedTree<TestGrammar>) -> HashMap<crate::types::TreeId, ParsedTree<TestGrammar>> {
-        HashMap::from([(crate::types::TreeId(1), tree)])
+        HashMap::from([(tree.tree_id(), tree)])
     }
 
     fn coordinate(tree: &ParsedTree<TestGrammar>, index: crate::types::NodeIndex) -> NodeCoordinate {
         let node = node_at_index(tree.tree(), index).expect("a node");
-        NodeCoordinate::new(crate::types::TreeId(1), index, index + crate::read::descendant_count(&node), Span::of(&node))
+        NodeCoordinate::new(tree.tree_id(), index, index + crate::read::descendant_count(&node), Span::of(&node))
     }
 
     #[test]
@@ -2236,18 +2264,20 @@ mod tests {
     #[test]
     fn the_tree_table_hands_out_a_tree_and_its_read_context() {
         let (tree, _) = parsed("fn f() {}\n");
+        let id = tree.tree_id();
         let sources = table(tree);
-        let (tree, ctx) = sources.read_ctx(crate::types::TreeId(1)).expect("tree 1 is live");
+        let (tree, ctx) = sources.read_ctx(id).expect("the tree is live");
         assert_eq!(tree.root_node().kind(), "source_file");
         assert_eq!(ctx.text(&tree.root_node()), "fn f() {}\n");
-        assert!(sources.read_ctx(crate::types::TreeId(2)).is_none());
+        assert!(sources.read_ctx(TreeId(id.0 + 1)).is_none());
     }
 
     #[test]
     fn a_value_with_no_read_reads_no_coordinate() {
         let (tree, _) = parsed("fn f() {}\n");
+        let id = tree.tree_id();
         let sources = table(tree);
-        let (tree, ctx) = sources.read_ctx(crate::types::TreeId(1)).expect("tree 1 is live");
+        let (tree, ctx) = sources.read_ctx(id).expect("the tree is live");
         assert!(<TestTrivia as crate::prepare::Prepare>::read_coordinate(tree, &ctx, NodeIndex::ROOT).is_none());
     }
 }

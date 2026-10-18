@@ -4,7 +4,7 @@
 //! a read outside its record.
 
 use super::{Address, Arena, ArenaError, StringRef};
-use crate::types::{KindId, NodeIndex, Span};
+use crate::types::{KindId, NodeIndex, Span, TreeId};
 
 /// The tag word that opens each cell.
 pub mod tag {
@@ -30,8 +30,10 @@ pub enum Cell {
     ParsedLeaf { kind: KindId, span: Span, row: NodeIndex },
     /// A captured interior string of a parsed node: its byte span.
     ParsedText { span: Span },
-    /// A child with a record of its own.
-    Child { kind: KindId, at: Address },
+    /// A child with a record of its own: in this cell's arena, or, `tree`
+    /// set, a parsed record in that tree's arena, which a built record names
+    /// for an untouched parsed child.
+    Child { kind: KindId, at: Address, tree: Option<TreeId> },
     /// A unit, which carries no text. `KindId::BLANK` is a blank arm.
     Unit { kind: KindId },
     /// A built leaf: its text in the string table, and its own header-only
@@ -59,6 +61,16 @@ fn span(start: u32, end: u32) -> Result<Span, ArenaError> {
     if start <= end { Ok(Span { start, end }) } else { Err(malformed("cell span end", end)) }
 }
 
+/// The arena a child's record is in, as one word: its tree plus one, or 0
+/// for the cell's own arena.
+fn tree_word(tree: Option<TreeId>) -> Result<u32, ArenaError> {
+    tree.map_or(Ok(0), |tree| tree.0.checked_add(1).ok_or(malformed("child record tree", tree.0)))
+}
+
+fn read_tree(word: u32) -> Option<TreeId> {
+    word.checked_sub(1).map(TreeId)
+}
+
 fn record(word: u32) -> Result<Address, ArenaError> {
     if word == Address::NONE.0 { Err(malformed("cell record address", word)) } else { Ok(Address(word)) }
 }
@@ -70,8 +82,7 @@ impl Cell {
         match self {
             Cell::Absent => 1,
             Cell::Unit { .. } => 2,
-            Cell::Child { .. } => 3,
-            Cell::ParsedText { .. } | Cell::BuiltText { .. } => 4,
+            Cell::ParsedText { .. } | Cell::BuiltText { .. } | Cell::Child { .. } => 4,
             Cell::Coordinate { .. } | Cell::ParsedLeaf { .. } | Cell::BuiltLeaf { .. } => 5,
         }
     }
@@ -91,7 +102,7 @@ impl Cell {
             Cell::Coordinate { kind, index, span } => [tag::COORDINATE, named(kind)?, index.0, span.start, span.end],
             Cell::ParsedLeaf { kind, span, row } => [tag::PARSED_LEAF, named(kind)?, span.start, span.end, row.0],
             Cell::ParsedText { span } => [tag::PARSED_LEAF, 0, span.start, span.end, 0],
-            Cell::Child { kind, at } => [tag::CHILD, named(kind)?, record(at.0)?.0, 0, 0],
+            Cell::Child { kind, at, tree } => [tag::CHILD, named(kind)?, record(at.0)?.0, tree_word(tree)?, 0],
             Cell::Unit { kind } => [tag::UNIT, u32::from(kind.0), 0, 0, 0],
             Cell::BuiltLeaf { kind, text, record: at } => {
                 let [offset, len] = text_words(text)?;
@@ -122,7 +133,7 @@ impl Cell {
                     kind => Ok(Cell::ParsedLeaf { kind, span, row: NodeIndex(field(4)?) }),
                 }
             }
-            tag::CHILD => Ok(Cell::Child { kind: named_kind(field(1)?)?, at: record(field(2)?)? }),
+            tag::CHILD => Ok(Cell::Child { kind: named_kind(field(1)?)?, at: record(field(2)?)?, tree: read_tree(field(3)?) }),
             tag::UNIT => Ok(Cell::Unit { kind: kind(field(1)?)? }),
             tag::BUILT_LEAF => {
                 let text = StringRef::from_offset(field(2)?, field(3)?);
@@ -217,10 +228,13 @@ mod tests {
             Cell::Coordinate { kind: KindId(12), index: NodeIndex(40), span },
             Cell::ParsedLeaf { kind: KindId(13), span, row: NodeIndex(41) },
             Cell::ParsedText { span },
-            Cell::Child { kind: KindId(14), at: record },
+            Cell::Child { kind: KindId(14), at: record, tree: None },
+            Cell::Child { kind: KindId(14), at: record, tree: Some(TreeId(0)) },
+            Cell::Child { kind: KindId(14), at: record, tree: Some(TreeId(9)) },
             Cell::Unit { kind: KindId(15) },
             Cell::Unit { kind: KindId::BLANK },
             Cell::BuiltLeaf { kind: KindId(16), text, record },
+            Cell::BuiltLeaf { kind: KindId::ERROR, text, record },
             Cell::BuiltText { text },
         ]
     }
@@ -245,6 +259,15 @@ mod tests {
     }
 
     #[test]
+    fn a_child_names_its_record_s_tree_beside_its_address() {
+        let mut words = [7; 5];
+        Cell::Child { kind: KindId(3), at: Address(6), tree: Some(TreeId(0)) }.encode(&mut words).expect("it fits");
+        assert_eq!(words, [tag::CHILD, 3, 6, 1, 0], "tree 0 is one, apart from the cell's own arena");
+        Cell::Child { kind: KindId(3), at: Address(6), tree: None }.encode(&mut words).expect("it fits");
+        assert_eq!(words, [tag::CHILD, 3, 6, 0, 0]);
+    }
+
+    #[test]
     fn a_blank_arm_is_a_unit_apart_from_absent() {
         let mut words = [7; 5];
         Cell::Unit { kind: KindId::BLANK }.encode(&mut words).expect("it fits");
@@ -258,8 +281,9 @@ mod tests {
         let mut words = [0; 5];
         for cell in [
             Cell::Coordinate { kind: KindId::BLANK, index: NodeIndex(1), span },
-            Cell::Child { kind: KindId::BLANK, at: Address(4) },
-            Cell::Child { kind: KindId(2), at: Address::NONE },
+            Cell::Child { kind: KindId::BLANK, at: Address(4), tree: None },
+            Cell::Child { kind: KindId(2), at: Address::NONE, tree: None },
+            Cell::Child { kind: KindId(2), at: Address(4), tree: Some(TreeId(u32::MAX)) },
         ] {
             assert!(cell.encode(&mut words).is_err(), "{cell:?}");
         }
@@ -277,6 +301,7 @@ mod tests {
             vec![tag::COORDINATE, 70_000, 1, 0, 0],
             vec![tag::COORDINATE, 2, 1, 9, 3],
             vec![tag::CHILD, 2],
+            vec![tag::CHILD, 2, 4],
             vec![tag::UNIT],
         ] {
             assert!(Cell::decode(&words).is_err(), "{words:?}");
