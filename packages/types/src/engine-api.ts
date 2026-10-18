@@ -315,10 +315,21 @@ export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends Propert
 	IsExactly<R, API['options']> extends true
 		? unknown
 		: IndentOption<R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string, API['indentChar']> & {
-				readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never;
+				readonly [K in Exclude<keyof R, keyof API['options'] | Extra | SharedOptionKeys<API>>]: never;
 			} & LayoutKeysCheck<API, R>;
 
-type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly layout?: infer G } ? NonNullable<G> : object;
+/** The render options every language shares, which a grammar-independent engine (`Engine<LanguageAPI>`, whose `options` is `object`) can pass. */
+interface SharedLayout {
+	readonly indent?: string;
+	readonly newline?: string;
+}
+
+type IsGeneric<API extends LanguageAPI> = IsExactly<API['options'], object>;
+
+type SharedOptionKeys<API extends LanguageAPI> = IsGeneric<API> extends true ? 'layout' : never;
+
+type DeclaredLayout<API extends LanguageAPI> =
+	IsGeneric<API> extends true ? SharedLayout : API['options'] extends { readonly layout?: infer G } ? NonNullable<G> : object;
 
 type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?: infer L extends object }
 	? { readonly layout?: { readonly [K in Exclude<keyof L, keyof DeclaredLayout<API>>]: never } }

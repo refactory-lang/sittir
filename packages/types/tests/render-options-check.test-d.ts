@@ -86,3 +86,12 @@ withRender(plain, { render: { layout: { indent: ' ' } } });
 
 // @ts-expect-error a key inside layout the language's render options do not declare
 withRender(spaced, { render: { layout: { indent: ' ', width: 80 } } });
+
+/** A caller holding a grammar-independent engine passes the layout group every language shares. */
+export function renderGeneric(engine: Engine<LanguageAPI>, node: LanguageAPI['node']): string {
+	engine.render(node, { layout: { indent: '  ' } });
+	engine.render(node, { layout: { newline: '\n' } });
+	// @ts-expect-error a key no language declares is still refused
+	engine.render(node, { nope: true });
+	return engine.render(node).toString();
+}
