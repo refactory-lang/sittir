@@ -517,7 +517,11 @@ export function describeValue(v: unknown): string {
 	try {
 		return JSON.stringify(v, (_key, value) => (typeof value === 'bigint' ? `${value}n` : value)) ?? String(v);
 	} catch {
-		return String(v);
+		try {
+			return String(v);
+		} catch {
+			return Object.prototype.toString.call(v);
+		}
 	}
 }
 

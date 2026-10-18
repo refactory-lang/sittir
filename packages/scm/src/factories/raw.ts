@@ -42,6 +42,7 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 		},
 		definitions: () => hydrateStoredSlots(node, '_definitions'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -55,9 +56,9 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
 export function buildEscapeSequence(text: `\\${string}`, affix: false): T.EscapeSequence.Bound;
 export function buildEscapeSequence(input: string, affix: boolean = true): T.EscapeSequence.Bound {
-	const value = affix ? input : unaffixed(String(input), '\\', '', 'escape_sequence');
+	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence');
 	const _content = value;
-	if (!_slotRe_buildEscapeSequence_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequence_content.test(_content))
 		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -70,6 +71,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -81,7 +83,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (!_leafRe_buildIdentifier.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -90,6 +92,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -101,7 +104,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 
 export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bound {
 	if (text.length === 0) throw new Error(`_immediate_identifier: text must be non-empty`);
-	if (!_leafRe_buildImmediateIdentifier.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildImmediateIdentifier.test(text))
 		throw new Error(`_immediate_identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -110,6 +113,7 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -132,6 +136,7 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -171,6 +176,7 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 		},
 		stringContent: () => hydrateStoredSlot(node, '_string_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -212,6 +218,7 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 		},
 		stringContent: () => hydrateStoredSlot(node, '_string_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -237,6 +244,7 @@ export function buildStringContent(
 		},
 		contents: () => hydrateStoredSlots(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -262,6 +270,7 @@ export function buildParameters(
 		},
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -274,9 +283,9 @@ export function buildParameters(
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
 export function buildComment(text: `;${string}`, affix: false): T.Comment.Bound;
 export function buildComment(input: string, affix: boolean = true): T.Comment.Bound {
-	const value = affix ? input : unaffixed(String(input), ';', '', 'comment');
+	const value = affix ? input : unaffixed(input, ';', '', 'comment');
 	const _content = value;
-	if (!_slotRe_buildComment_content.test(_content))
+	if (typeof _content !== 'string' || !_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -289,6 +298,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -317,6 +327,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 		definitions: () => hydrateStoredSlots(node, '_definitions'),
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -352,6 +363,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 		groupingGroups: () => hydrateStoredSlots(node, '_grouping_group'),
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -382,6 +394,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 		name: () => hydrateStoredSlot(node, '_name'),
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -411,6 +424,7 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 		name: () => hydrateStoredSlot(node, '_name'),
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -439,6 +453,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 		name: () => hydrateStoredSlot(node, '_name'),
 		definition: () => hydrateStoredSlot(node, '_definition'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -461,6 +476,7 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 		},
 		identifier: () => hydrateStoredSlot(node, '_identifier'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -499,6 +515,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 		type: () => _type,
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -524,6 +541,7 @@ export function buildListElementQuantifier(
 		},
 		quantifier: () => _quantifier,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -552,6 +570,7 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 		left: () => hydrateStoredSlot(node, '_left'),
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -580,6 +599,7 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 		left: () => hydrateStoredSlot(node, '_left'),
 		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -608,6 +628,7 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 		groupExpression: () => hydrateStoredSlot(node, '_group_expression'),
 		anchor: () => _anchor,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -619,7 +640,7 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 
 export function buildStringContentText(text: string): T.StringContentText.Bound {
 	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
-	if (!_leafRe_buildStringContentText.test(text))
+	if (typeof text !== 'string' || !_leafRe_buildStringContentText.test(text))
 		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -628,6 +649,7 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 		$named: true as const,
 		$text: text,
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -663,6 +685,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 		namedNodeGroup: () => hydrateStoredSlot(node, '_named_node_group'),
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -701,6 +724,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 		namedNodeGroup: () => hydrateStoredSlot(node, '_named_node_group'),
 		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -735,6 +759,7 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 		anchor: () => _anchor,
 		namedNodeExpressions: () => hydrateStoredSlots(node, '_named_node_expressions'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -777,6 +802,7 @@ export function buildNamedNodeGroupAnchoredLast(
 		namedNodeExpressions: () => hydrateStoredSlots(node, '_named_node_expressions'),
 		last: () => hydrateStoredSlot(node, '_last'),
 		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)

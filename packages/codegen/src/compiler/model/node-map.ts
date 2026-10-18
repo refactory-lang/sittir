@@ -1575,6 +1575,10 @@ export function isTerminalNode(node: AssembledNode): node is AssembledPattern | 
 	return node.modelType === 'pattern' || isKindIdStored(node);
 }
 
+export function isPatternLeaf(node: AssembledNode): node is AssembledPattern {
+	return node instanceof AssembledPattern;
+}
+
 export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }

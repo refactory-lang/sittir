@@ -78,6 +78,14 @@ export interface GrammarTypeMap {
 
 export interface NodeMethods<Trivia = any> {
 	$render(): string;
+	/**
+	 * The node's rendered text, the same as `$render()`, so a node interpolated into a template string or
+	 * concatenated with a string gives its text. A parsed leaf, a built leaf and a structural node alike.
+	 *
+	 * @returns The text the engine renders for the node.
+	 * @throws As `$render()` does, when the node cannot render.
+	 */
+	toString(): string;
 	$trivia: TriviaSetter<this, Trivia>;
 }
 

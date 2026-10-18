@@ -348,9 +348,9 @@ describe('refusals', () => {
 		expect(() => py.query(draft as never)).toThrow(/\$commit\(\)/);
 	});
 
-	it('a parsed leaf is plain data with no $query; engine.query gives it an empty facet', () => {
+	it('a parsed leaf carries $query like any node; its facet is empty', () => {
 		const leaf = descendants().ofType(K.Identifier).find()!;
-		expect('$query' in leaf).toBe(false);
+		expect(typeof (leaf as { $query?: unknown }).$query).toBe('function');
 		expect(Object.keys(py.query(leaf))).toEqual(['$children', '$descendants']);
 		expect(Array.from(py.query(leaf).$descendants)).toEqual([]);
 		expect(Array.from(py.query(leaf).$children)).toEqual([]);

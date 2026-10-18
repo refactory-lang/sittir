@@ -88,7 +88,7 @@ An ERROR region read as a value. `$text` is the region's own bytes. As a trivia 
 
 ### `packages/types/src/engine-api.ts::NodeMethods`
 
-The members every built and wrapped node carries: `$render` and `$trivia` over the grammar's trivia union (`Trivia`, defaulting to `any` like `TriviaSetter`'s). The polymorphic `this` makes it self-referential, because a `$trivia` position setter writes the node's own trivia and hands back that same node, typed as the same kind. NodeNs' default `Built` is the node with these methods.
+The members every built and wrapped node carries: `$render`, `toString` (its text, so a node renders inside a template string) and `$trivia` over the grammar's trivia union (`Trivia`, defaulting to `any` like `TriviaSetter`'s). The polymorphic `this` makes it self-referential, because a `$trivia` position setter writes the node's own trivia and hands back that same node, typed as the same kind. NodeNs' default `Built` is the node with these methods.
 
 ### `packages/types/src/engine-api.ts::GrammarInnerTrivia`
 
@@ -156,7 +156,7 @@ What `render` accepts: any of the language's nodes, a `Renderable` of the langua
 
 ### `packages/types/src/engine-api.ts::Renderable`
 
-Anything keyed by one of the language's kind ids that carries `$render` or holds the tree it was parsed from: every `.Bound`, every `.Parsed` (a parsed leaf is plain data with no methods and passes by its tree), and a `$with` draft, whose replaced slot reads as `.Bound` while the rest keeps its parsed surface. `$render` is declared once, on `NodeMethods`, the tree once, on `HoldsTree`, and a draft is exactly what a node method's own `this` type produces, so the parameter is the declarations' own types rather than a union that would have to enumerate each surface a node can take.
+Anything keyed by one of the language's kind ids that carries `$render` or holds the tree it was parsed from: every `.Bound`, every `.Parsed`, and a `$with` draft, whose replaced slot reads as `.Bound` while the rest keeps its parsed surface. `$render` is declared once, on `NodeMethods`, the tree once, on `HoldsTree`, and a draft is exactly what a node method's own `this` type produces, so the parameter is the declarations' own types rather than a union that would have to enumerate each surface a node can take.
 
 ### `packages/types/src/engine-api.ts::RenderCall`
 

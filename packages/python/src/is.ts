@@ -1003,6 +1003,74 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalPlain };
 	};
+	importPrefix<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportPrefix };
+	wildcardImport<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.WildcardImport>;
+	passStatement<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.PassStatement>;
+	breakStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.BreakStatement>;
+	continueStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ContinueStatement>;
+	ellipsis<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Ellipsis>;
+	notEscapeSequence<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.NotEscapeSequence>;
+	typeConversion<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeConversion };
+	identifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
+	true_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.True>;
+	false_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.False>;
+	none<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.None>;
+	positionalSeparator<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.PositionalSeparator>;
+	keywordSeparator<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.KeywordSeparator>;
+	formatSpecifierText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifierText };
+	wildcardPattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.WildcardPattern>;
+	integerDecimalLong<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalLong };
+	integerDecimalImaginary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalImaginary };
+	integerDecimalPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalPlain };
+	lineContinuationNewline<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNewline };
+	lineContinuationNul<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.LineContinuationNul>;
+	stringStart<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringStart };
+	stringFragment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringFragment };
+	escapeInterpolation<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeInterpolation };
+	stringEnd<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringEnd };
+	indent<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Indent>;
+	dedent<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Dedent>;
+	newline<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Newline>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -1368,5 +1436,33 @@ export const is = Object.freeze({
 	float: _supertype_float_guard,
 	lineContinuation: _supertype_lineContinuation_guard,
 	layout: _sg(_supertype_layout_ids),
-	integerDecimal: _supertype_integerDecimal_guard
+	integerDecimal: _supertype_integerDecimal_guard,
+	importPrefix: _g(TSKindId.ImportPrefix),
+	wildcardImport: _mg(TSKindId.WildcardImport),
+	passStatement: _mg(TSKindId.PassStatement),
+	breakStatement: _mg(TSKindId.BreakStatement),
+	continueStatement: _mg(TSKindId.ContinueStatement),
+	ellipsis: _mg(TSKindId.Ellipsis),
+	notEscapeSequence: _mg(TSKindId.NotEscapeSequence),
+	typeConversion: _g(TSKindId.TypeConversion),
+	identifier: _g(TSKindId.Identifier),
+	true_: _mg(TSKindId.True),
+	false_: _mg(TSKindId.False),
+	none: _mg(TSKindId.None),
+	positionalSeparator: _mg(TSKindId.PositionalSeparator),
+	keywordSeparator: _mg(TSKindId.KeywordSeparator),
+	formatSpecifierText: _g(TSKindId.FormatSpecifierText),
+	wildcardPattern: _mg(TSKindId.WildcardPattern),
+	integerDecimalLong: _g(TSKindId.IntegerDecimalLong),
+	integerDecimalImaginary: _g(TSKindId.IntegerDecimalImaginary),
+	integerDecimalPlain: _g(TSKindId.IntegerDecimalPlain),
+	lineContinuationNewline: _g(TSKindId.LineContinuationNewline),
+	lineContinuationNul: _mg(TSKindId.LineContinuationNul),
+	stringStart: _g(TSKindId.StringStart),
+	stringFragment: _g(TSKindId.StringFragment),
+	escapeInterpolation: _g(TSKindId.EscapeInterpolation),
+	stringEnd: _g(TSKindId.StringEnd),
+	indent: _mg(TSKindId.Indent),
+	dedent: _mg(TSKindId.Dedent),
+	newline: _mg(TSKindId.Newline)
 }) as unknown as IsGuards;

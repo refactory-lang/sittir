@@ -1254,6 +1254,220 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedHex };
 	};
+	emptyStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.EmptyStatement>;
+	fragmentSpecifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.BlockKeyword
+		| TSKindId.ExprKeyword
+		| TSKindId.Expr2021Keyword
+		| TSKindId.IdentKeyword
+		| TSKindId.ItemKeyword
+		| TSKindId.LifetimeKeyword
+		| TSKindId.LiteralKeyword
+		| TSKindId.MetaKeyword
+		| TSKindId.PatKeyword
+		| TSKindId.PatParamKeyword
+		| TSKindId.PathKeyword
+		| TSKindId.StmtKeyword
+		| TSKindId.TtKeyword
+		| TSKindId.TyKeyword
+		| TSKindId.VisKeyword
+	>;
+	unitType<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.UnitType>;
+	neverType<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.NeverType>;
+	mutableSpecifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.MutableSpecifier>;
+	unitExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.UnitExpression>;
+	remainingFieldPattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.RemainingFieldPattern>;
+	booleanLiteral<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.TrueKeyword | TSKindId.FalseKeyword>;
+	innerLineDocCommentMarker<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.InnerLineDocCommentMarker>;
+	outerLineDocCommentMarker<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.OuterLineDocCommentMarker>;
+	identifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
+	self<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Self>;
+	super_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Super>;
+	crate<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Crate>;
+	primitiveType<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+	>;
+	tokenRepetitionPatternText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenRepetitionPatternText };
+	stringOpen<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringOpen };
+	tokenTreePunctuation<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.Caret
+		| TSKindId.Bang
+		| TSKindId.Amp
+		| TSKindId.Pipe
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.LtLt
+		| TSKindId.GtGt
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.CaretEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.LtLtEq
+		| TSKindId.GtGtEq
+		| TSKindId.Eq
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.Gt
+		| TSKindId.Lt
+		| TSKindId.GtEq
+		| TSKindId.LtEq
+		| TSKindId.At
+		| TSKindId.Underscore
+		| TSKindId.Dot
+		| TSKindId.DotDot
+		| TSKindId.DotDotDot
+		| TSKindId.DotDotEq
+		| TSKindId.Comma
+		| TSKindId.Semi
+		| TSKindId.Colon
+		| TSKindId.ColonColon
+		| TSKindId.DashGt
+		| TSKindId.EqGt
+		| TSKindId.Pound
+		| TSKindId.Qmark
+	>;
+	tokenKeywords<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Squote
+		| TSKindId.AsKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.BreakKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.ContinueKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.EnumKeyword
+		| TSKindId.FnKeyword
+		| TSKindId.ForKeyword
+		| TSKindId.GenKeyword
+		| TSKindId.IfKeyword
+		| TSKindId.ImplKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.LoopKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.ModKeyword
+		| TSKindId.PubKeyword
+		| TSKindId.ReturnKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.StructKeyword
+		| TSKindId.TraitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.UnsafeKeyword
+		| TSKindId.UseKeyword
+		| TSKindId.WhereKeyword
+		| TSKindId.WhileKeyword
+	>;
+	implItemUnsafeMarker<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ImplItemUnsafeMarker>;
+	charLiteralEmpty<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEmpty };
+	lineCommentExtraSlashes<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineCommentExtraSlashes };
+	lineCommentRegular<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineCommentRegular };
+	blockCommentRegular<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockCommentRegular };
+	rangePatternWithLeftBare<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.RangePatternWithLeftBare>;
+	wildcardPattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.WildcardPattern>;
+	floatLiteral<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatLiteral };
+	stringContent<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContent };
+	rawStringLiteralContent<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralContent };
+	outerDocCommentMarker<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.OuterDocCommentMarker>;
+	innerDocCommentMarker<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.InnerDocCommentMarker>;
+	rawStringLiteralStart<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralStart };
+	rawStringLiteralEnd<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralEnd };
+	docComment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DocComment };
+	blockCommentContent<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockCommentContent };
+	stringClose<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringClose };
+	errorSentinel<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ErrorSentinel };
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
@@ -1317,6 +1531,18 @@ const _supertype_escapeSequence_ids = new Set<number>([151, 152, 153, 154]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
+
+const _enum_fragmentSpecifier_ids = new Set<number>([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]);
+const _enum_booleanLiteral_ids = new Set<number>([117, 118]);
+const _enum_primitiveType_ids = new Set<number>([59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75]);
+const _enum_tokenTreePunctuation_ids = new Set<number>([
+	8, 76, 9, 87, 88, 80, 29, 55, 79, 77, 78, 85, 86, 89, 90, 91, 92, 93, 96, 94, 95, 97, 98, 38, 81, 82, 44, 43, 84, 83,
+	116, 136, 110, 101, 49, 137, 130, 2, 4, 47, 131, 3, 26, 10
+]);
+const _enum_tokenKeywords_ids = new Set<number>([
+	50, 48, 113, 111, 108, 35, 109, 51, 33, 39, 42, 52, 102, 56, 45, 106, 104, 138, 139, 99, 36, 140, 41, 37, 32, 112, 46,
+	40, 105
+]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[177, _supertype_statement_ids],
@@ -1714,5 +1940,42 @@ export const is = Object.freeze({
 	escapeSequence: _supertype_escapeSequence_guard,
 	comment: _supertype_comment_guard,
 	layout: _sg(_supertype_layout_ids),
-	charLiteralEscaped: _supertype_charLiteralEscaped_guard
+	charLiteralEscaped: _supertype_charLiteralEscaped_guard,
+	emptyStatement: _mg(TSKindId.EmptyStatement),
+	fragmentSpecifier: _sg(_enum_fragmentSpecifier_ids),
+	unitType: _mg(TSKindId.UnitType),
+	neverType: _mg(TSKindId.NeverType),
+	mutableSpecifier: _mg(TSKindId.MutableSpecifier),
+	unitExpression: _mg(TSKindId.UnitExpression),
+	remainingFieldPattern: _mg(TSKindId.RemainingFieldPattern),
+	booleanLiteral: _sg(_enum_booleanLiteral_ids),
+	innerLineDocCommentMarker: _mg(TSKindId.InnerLineDocCommentMarker),
+	outerLineDocCommentMarker: _mg(TSKindId.OuterLineDocCommentMarker),
+	identifier: _g(TSKindId.Identifier),
+	self: _mg(TSKindId.Self),
+	super_: _mg(TSKindId.Super),
+	crate: _mg(TSKindId.Crate),
+	primitiveType: _sg(_enum_primitiveType_ids),
+	tokenRepetitionPatternText: _g(TSKindId.TokenRepetitionPatternText),
+	stringOpen: _g(TSKindId.StringOpen),
+	tokenTreePunctuation: _sg(_enum_tokenTreePunctuation_ids),
+	tokenKeywords: _sg(_enum_tokenKeywords_ids),
+	implItemUnsafeMarker: _mg(TSKindId.ImplItemUnsafeMarker),
+	charLiteralEmpty: _g(TSKindId.CharLiteralEmpty),
+	lineCommentExtraSlashes: _g(TSKindId.LineCommentExtraSlashes),
+	lineCommentRegular: _g(TSKindId.LineCommentRegular),
+	blockCommentRegular: _g(TSKindId.BlockCommentRegular),
+	rangePatternWithLeftBare: _mg(TSKindId.RangePatternWithLeftBare),
+	wildcardPattern: _mg(TSKindId.WildcardPattern),
+	floatLiteral: _g(TSKindId.FloatLiteral),
+	stringContent: _g(TSKindId.StringContent),
+	rawStringLiteralContent: _g(TSKindId.RawStringLiteralContent),
+	outerDocCommentMarker: _mg(TSKindId.OuterDocCommentMarker),
+	innerDocCommentMarker: _mg(TSKindId.InnerDocCommentMarker),
+	rawStringLiteralStart: _g(TSKindId.RawStringLiteralStart),
+	rawStringLiteralEnd: _g(TSKindId.RawStringLiteralEnd),
+	docComment: _g(TSKindId.DocComment),
+	blockCommentContent: _g(TSKindId.BlockCommentContent),
+	stringClose: _g(TSKindId.StringClose),
+	errorSentinel: _g(TSKindId.ErrorSentinel)
 }) as unknown as IsGuards;
