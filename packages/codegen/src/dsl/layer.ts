@@ -1,6 +1,7 @@
 import { enrichShapeDiagnostics, enrichShapesOf, type EnrichShape } from './enrich-shapes.ts';
 import type { GrammarJson, SymbolRule } from '../grammar-shapes/grammar-json.ts';
 import type { Rule } from '../types/rule.ts';
+import { FIELD } from '../types/rule-types.ts'; // @rule-type-consts
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionRecord, type ConflictResolutionsInput } from './conflict-resolutions.ts';
 import {
 	enrich,
@@ -17,6 +18,7 @@ import type { ExternalRole } from '../types/ir.ts';
 import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type LayerRecord, type LayerRecords, type StageBases } from './layer-record.ts';
 import { withRoleScope } from './primitives/role.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
+import { RuleWalker } from './rule-walker.ts';
 import type { DisplayFamilies } from './rule-transforms.ts';
 import { baseRulesOf, VERIFIED_TREE_SITTER } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
@@ -259,14 +261,47 @@ function enrichFixpoint(
 	result: GrammarResult,
 	base: GrammarResult,
 	displayFamilies: DisplayFamilies
-): { readonly checked: GrammarResult; readonly changed: readonly string[]; readonly shapes: readonly EnrichShape[] } {
+): {
+	readonly checked: GrammarResult;
+	readonly changed: readonly string[];
+	readonly addedFields: readonly EnrichAddedField[];
+	readonly shapes: readonly EnrichShape[];
+} {
 	const before = baseRulesOf<unknown>(result) ?? {};
 	const checked = enrich(withEnrichSidecarsOf(result, base), { displayFamilies }) as unknown as GrammarResult;
 	const after = baseRulesOf<unknown>(checked) ?? {};
-	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter(
-		(name) => JSON.stringify(before[name]) !== JSON.stringify(after[name])
+	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])]
+		.filter((name) => JSON.stringify(before[name]) !== JSON.stringify(after[name]))
+		.sort();
+	const addedFields = changed.flatMap((rule) => fieldsAddedTo(before[rule], after[rule]).map((field) => ({ rule, field })));
+	return { checked, changed, addedFields, shapes: enrichShapesOf(checked) };
+}
+
+interface EnrichAddedField {
+	readonly rule: string;
+	readonly field: string;
+}
+
+function fieldNamesOf(rule: unknown): string[] {
+	if (!isRecord(rule)) return [];
+	return new RuleWalker<Rule<'evaluate'>>().fold(rule as unknown as Rule<'evaluate'>, [] as string[], (names, node) => (node.type === FIELD ? [...names, node.name] : names));
+}
+
+function fieldsAddedTo(before: unknown, after: unknown): string[] {
+	const had = fieldNamesOf(before);
+	return fieldNamesOf(after).filter((name) => {
+		const at = had.indexOf(name);
+		if (at >= 0) had.splice(at, 1);
+		return at < 0;
+	});
+}
+
+function fixpointProposal(changed: readonly string[], addedFields: readonly EnrichAddedField[]): string {
+	const fields = [...new Set(addedFields.map(({ rule }) => rule))].map(
+		(rule) => `${addedFields.filter((added) => added.rule === rule).map(({ field }) => `field('${field}', …)`).join(', ')} to '${rule}'`
 	);
-	return { checked, changed: changed.sort(), shapes: enrichShapesOf(checked) };
+	const adds = fields.length === 0 ? '' : ` Enrich adds ${fields.join('; ')}.`;
+	return `Write what enrich changes in ${changed.join(', ')} into the layer's entries.${adds}`;
 }
 
 interface IntakeCtx {
@@ -338,6 +373,7 @@ function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, confi
 		symbols,
 		stageBases: inherited?.stageBases ?? (departsFromBase(wire, config) ? { name, raw: source, enriched: completed, inherited } : undefined)
 	};
+	for (const copy of wire.copies.values()) if (copy.part === '.') ctx.lists.enlist(copy.source, copy.copy);
 	applyNarrows(layer.narrows, ctx);
 	applyLeads(layer.leads, ctx);
 	return { evaluated, ctx };
@@ -361,7 +397,7 @@ function layerView(name: string, rules: Record<string, Rule>, evaluated: Omit<La
 
 function resolvedEffects(view: GrammarRecord, wire: WireContext): readonly Effect[] {
 	const own = wire.bindingEffects.filter((effect): effect is SegmentEffect | AliasEffect => effect.kind === 'segment' || effect.kind === 'alias');
-	return effectsForOwners(view, own) as readonly Effect[];
+	return effectsForOwners(view, [...own, ...wire.copies.values()]) as readonly Effect[];
 }
 
 function normalizedBody(body: unknown, name: string): Rule {
@@ -431,7 +467,7 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 		supertypes
 	};
 	const effects = [...(ctx.inherited?.effects ?? []), ...ctx.effects];
-	const { checked, changed, shapes } = enrichFixpoint(layerResult(ctx, bodies, lists), ctx.base, displayFamiliesOf(effects));
+	const { checked, changed, addedFields, shapes } = enrichFixpoint(layerResult(ctx, bodies, lists), ctx.base, displayFamiliesOf(effects));
 	ctx.diagnostics.push(...enrichShapeDiagnostics(ctx.name, shapes));
 	if (changed.length > 0)
 		ctx.diagnostics.push({
@@ -441,7 +477,8 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 			canProceed: false,
 			grammar: ctx.name,
 			message: `enrich changes ${changed.join(', ')} in layer '${ctx.name}', so the layer is not enrich's fixpoint`,
-			details: { layer: ctx.name, depth, rules: changed }
+			proposal: fixpointProposal(changed, addedFields),
+			details: { layer: ctx.name, depth, rules: changed, addedFields }
 		});
 	const own = ownRecordsOf(wire, { supertypes: [...symbolNamesOf(supertypes)], roles, unmatchedGroups: unmatchedGroupPatterns(rules, baseRules, wire) });
 	const record: LayerRecord = {

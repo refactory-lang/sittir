@@ -226,7 +226,7 @@ describe('the enrich fixpoint of a layer', () => {
 			const first = layer(upstream({ program: ($: Symbols) => repeat(choice($.item!, $.a!, $.b!)), a: ($: Symbols) => seq('(', $.item!), b: ($: Symbols) => seq('[', $.item!) }), {});
 			const second = layer(first, { rules: { pair: ($: Symbols) => seq(alias($.a!, $.shown), alias($.b!, $.shown)) } });
 			expect(layerRecordOf(second)?.diagnostics).toContainEqual(
-				expect.objectContaining({ code: 'layer-not-enrich-fixpoint', canProceed: false, details: { layer: 'up', depth: 2, rules: ['pair'] } })
+				expect.objectContaining({ code: 'layer-not-enrich-fixpoint', canProceed: false, details: { layer: 'up', depth: 2, rules: ['pair'], addedFields: [{ rule: 'pair', field: 'a' }, { rule: 'pair', field: 'b' }] }, proposal: "Write what enrich changes in pair into the layer's entries. Enrich adds field('a', …), field('b', …) to 'pair'." })
 			);
 			expect(layerRecordOf(first)?.diagnostics).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 		});

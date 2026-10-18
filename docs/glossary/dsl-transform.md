@@ -12,54 +12,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::parsePath`
 
-```text
-/**
- * Parse a path string into segments. Throws on malformed input.
- *
- * Segment forms:
- *   - `N`       — positional index (0-based)
- *   - `-N`      — reverse index from the end (`-1` = last member)
- *   - `_`       — wildcard: matches every sibling at this level
- *   - `(name)`  — kind-match: finds every occurrence of symbol `name`
- *                 in the current subtree, skipping pre-fielded ones.
- *                 Parentheses are required.
- *   - `name:`   — field traversal: descend through field('name', ...)
- *                 at the current position. Hard-errors on mismatch.
- *   - `"text"`  — literal: the member whose fixed text is `text`.
- *                 Quotes are required, and a literal may contain the
- *                 path separator.
- *   - `.`       — the rule itself (an empty segment list), for a patch
- *                 that annotates the whole rule (`group()`).
- *
- * Migration errors:
- *   - `*`       — use `_` instead
- *   - bare kind name — use `(name)` instead
- */
-```
+Parses a path string into segments, and throws on malformed input.
 
-#### body
+- `N` / `-N`: a member by index (`-1` is the last).
+- `_`: every member at this level.
+- `(name)`: every reference to `name` in the subtree (see `walkKindMatch`). Followed by more segments, it enters the referenced rule (`applyKindMatchToSymbol`).
+- `(name as shown)`: the same reference, entered as a copy shown as `shown` (`KIND_SEGMENT`).
+- `name:`: the field `name` (`descendThroughNamedField`).
+- `"text"`: the member whose fixed text is `text`. A literal may contain the path separator.
+- `.`: the rule itself, an empty segment list.
 
-```text
-// Wildcard syntax.
-```
+A bare kind name and `*` are refused with the spelling to use instead. The ASCII-identifier patterns stay inline rather than using `util/isAsciiIdentifier`, because this file is bundled into the transpiled `grammar.js` override runtime.
 
-#### body
+### `packages/codegen/src/dsl/transform/transform-path.ts::KIND_SEGMENT`
 
-```text
-// Kind-match syntax: (name).
-```
-
-#### body
-
-```text
-// Field-traversal syntax: name:.
-```
-
-#### body
-
-```text
-// ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
-```
+A `(kind)` or `(kind as name)` segment: the kind, and the name its copy is shown as.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::splitSegments`
 
@@ -215,96 +182,59 @@ Whether the wrappers the walk has descended through (`enclosing`) include a toke
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughNamedField`
 
-```text
-/**
- * Descend through a named field wrapper, verifying that the current rule is a
- * field wrapper with the expected name. Hard-errors on mismatch.
- *
- * @remarks
- * Field traversal is strict by design — silently skipping a mismatched field
- * name would be a footgun (e.g. `body:` silently passing through `name:`
- * because both are field wrappers at that position). Hard-errors surface
- * typos immediately.
- *
- * @param rule - The rule at the current path position.
- * @param fieldName - The expected field name.
- * @param rest - Remaining path segments after this descent.
- * @param patch - Patch value or function to apply at the addressed position.
- * @param enclosing - The prec and token wrappers the walk has descended through.
- * @returns Reconstructed field wrapper with the patched inner content.
- * @throws {Error} If the rule is not a field wrapper, or if the field name doesn't match.
- */
-```
+`name:` addresses the field `name`. At a field of that name the path continues inside its content; at a field of another name it is an error, so a typo is never skipped over. Any other rule is searched for the fields of that name (`walkMatches`), without entering a field of another name or a referenced rule, and the path continues inside each one. A subtree with no such field is an `ApplyPathSkip`.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::dispatchKindMatch`
 
-```text
-/**
- * Dispatch a kind-match path segment, starting the recursive subtree walk
- * from the root of the current rule.
- *
- * @remarks
- * Kind-match is scope-agnostic — it finds every occurrence of the target
- * kind anywhere in the current subtree and applies the patch at each site,
- * skipping occurrences already inside a named field. Dispatched before
- * container/wrapper handling because kind matching works through arbitrary
- * composition (seq, choice, wrapper chains) without consuming a positional
- * slot.
- *
- * @param rule - The rule to search for matching symbol occurrences.
- * @param kindName - The symbol kind name to match against.
- * @param rest - Remaining path segments after the kind-match step.
- * @param patch - Patch value or function to apply at each matched symbol.
- * @param enclosing - The prec and token wrappers the walk has descended through.
- * @returns The rule with all matching occurrences patched.
- */
-```
-
-### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatch`
-
-```text
-/**
- * Recursively descend into the subtree, applying `patch` to every
- * `symbol` reference whose name matches `targetKind`. Occurrences
- * already inside a named `field(name, ...)` wrapper are skipped —
- * re-wrapping a pre-fielded symbol is almost always unintended
- * (e.g. leaving rust's `field('length', _expression)` alone when
- * the list-form `_expression` gets `field('elements')`).
- *
- * Throws `ApplyPathSkip` when zero matches are found — a kind-match
- * that reaches nothing is a typo magnet, same as wildcard.
- */
-```
-
-#### body
-
-```text
-// Track whether we matched anything so callers can error on zero.
-```
+A `(kind)` segment, matched from the root of the current rule (`walkKindMatch`). A match of zero references is an `ApplyPathSkip`: a kind-match that reaches nothing is a typo magnet, as a wildcard is.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToSymbol`
 
-```text
-/**
- * Apply a kind-match patch to a symbol rule that names the target kind.
- *
- * @remarks
- * This is the terminal case of kind-match descent. The remaining path
- * segments (if any) are applied to the symbol itself; when `rest` is
- * empty the patch is applied directly. Occurrences already inside a
- * named field wrapper are skipped — re-wrapping a pre-fielded symbol is
- * almost always unintended (e.g. leaving rust's `field('length',
- * _expression)` alone when the list-form `_expression` is targeted).
- *
- * @param rule - The symbol rule to test and potentially patch.
- * @param targetKind - The kind name that must match `rule.name`.
- * @param rest - Remaining path segments after the kind-match step.
- * @param patch - Patch value or function to apply when the name matches.
- * @param enclosing - The prec and token wrappers the walk has descended through.
- * @param insideNamedField - Whether this symbol is already inside a named field.
- * @returns `{ rule, matched }` — `matched` is `false` when name or field guard fails.
- */
-```
+The `(kind)` segment at one symbol. A symbol that names a whole copy counts as its source (`reachedRule`), so a second path through the same context finds the reference the first left. A part copy is a hidden rule of its own, not a node of its source's kind.
+- A symbol of another kind may be a hidden rule the path enters implicitly (`enteredHiddenRule`).
+- A reference already in a field is skipped (see `walkKindMatch`).
+- The last segment, without `as`, patches the reference itself.
+- With more segments, or with `as`, the path enters the rule: the rest applies inside the context's copy of it (`enteredCopy`), and the reference becomes the copy's, shown as `as` when the segment names one.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::ReachedRule`
+
+What a path finds at a reference: the kind a `(kind)` segment matches it as, and the copy request that enters it (`wire/wire.ts::WireCopyRequest`).
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::reachedRule`
+
+The `ReachedRule` of a referenced name. A name that is no copy is its own kind, and entering it asks for the context's copy of it. A copy (`wire/wire.ts::wireCopyOf`) is entered as itself (`from`): a whole copy matches as its source's kind, and a part copy as its own name.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::enteredCopy`
+
+Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and returns the reference to it. A reference that entered a rule becomes the new copy's (`primitives/copy.ts::copyReference`), shown as `shown` when the segment names one. A reference that entered a copy keeps its form (`primitives/copy.ts::reachedCopyReference`), so re-entering a copy never wraps its reference twice. When the copy is refused, the reference is left alone.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::enteredHiddenRule`
+
+A hidden rule between the visible kinds of a path, entered implicitly so a path reads in tree terms. The body the request names (`wire/wire.ts::wireCopyBody`) is walked for the segment as its own rule: unfielded, with no enclosing wrappers, and inside the copy (`wire/wire.ts::wireEnteringRule`, which also enters a rule that reaches itself only once). That body is the copy's when the reference is one or the context already has one, otherwise the rule's own. Only a walk that matches makes the copy, so a hidden rule that never reaches the kind stays shared. An enrich group lift is part of its owner and is never entered. A hidden copy the entry has already edited is not walked again: the reference is re-pointed at it (`wire/wire.ts::wireCopyEdited`). A second reach therefore neither applies the edit twice nor misses and leaves the reference on the shared rule.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToCopyReference`
+
+The `(kind)` segment at an `ALIAS` that shows a copy. A kind-match does not see through aliases, but a copy's reference is its source's site. It matches when the copy is a whole copy of the kind (`reachedRule`). The last segment without `as` patches the whole reference; more segments, or `as`, apply inside the copy and return its reference (`enteredCopy`). Any other node is no leaf (`undefined`).
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::KindSegment`
+
+The `(kind)` segment of a path.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::PathPatch`
+
+What a path applies at the member it reaches: a rule, or a function of the member and its enclosing wrappers.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::WalkResult`
+
+A walked subtree and whether anything in it matched.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::WalkLeaf`
+
+A walk's match test at one node: a result for a node it decides, or `undefined` to keep descending.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::walkMatches`
+
+Walks a subtree to the nodes its leaf decides, and rebuilds only the parts that matched. Prec wrappers are seen through and stacked as enclosing wrappers. Containers and other wrappers are descended. A field marks its content as fielded, unless enrich synthesized it (`fieldSource: 'enriched'`): whether a path reaches a reference doesn't depend on how enrich wraps a list. Strings, patterns and blanks are leaves no walk descends.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isWalkableNode`
 
@@ -459,6 +389,8 @@ whether a group seats on its parent.
  */
 ```
 
+Each member applies atomically (`wire/wire.ts::wireAtomic`), so a member that skips leaves behind nothing its walk recorded: no copy, binding effect or lift claim.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::symbolRef`
 
 A reference to the rule `name`, built through the runtime-injected `sym`
@@ -507,7 +439,11 @@ calls.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::replace`
 
-`replace(previous, path, rule)`: the inline spelling of a replacing entry, `transform(previous, { [path]: rule })`. `rule` is a rule or a replacing function (`ReplacingFn`), so it records the patch site and effects the entry records.
+`replace(previous, path, rule)`: the inline spelling of a replacing entry, `edit(previous, { [path]: rule })`. `rule` is a rule or a replacing function (`ReplacingFn`), so it records the patch site and effects the entry records. On a copy's reference it replaces in the copy's body (`edit`).
+
+### `packages/codegen/src/dsl/transform/transform.ts::edit`
+
+`edit(previous, ...sets)`: `transform` for an authoring call. On a reference `copy()` returned, the sets apply to the copy's body and the same reference comes back (`primitives/copy.ts::editedCopy`); any other rule is transformed. Wire's own lowering calls `transform`, so a rule callback that returns a copy's reference still gets its kind's `edits:` applied to its own rule.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::withDirectVariants`
 
@@ -525,7 +461,11 @@ A `refine(forms)` entry at a path other than `.` is refused (`edit-entry-invalid
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveAt`
 
-Resolves an entry at the member a path reached: first the same-site check (`refuseSameSite`), then `resolvePatch`, and the result is noted as an inline write when a rule callback, not an `edits:` set, applied it. Every route that rewrites one member goes through it: path entries, variant entries and flat positional entries.
+Resolves an entry at the member a path reached: first the same-site check (`refuseSameSite`), then `resolvePatch`. Inside a copy, a replacement keeps the label of the arm it replaced (`automatic-variants.ts::carriedLabel`), because a copy keeps its members' `variantOf` stamps. The result is noted as an inline write when a rule callback, not an `edits:` set, applied it. Every route that rewrites one member goes through it: path entries, variant entries and flat positional entries.
+
+### `packages/codegen/src/dsl/transform/transform.ts::replacesMember`
+
+Whether an entry replaces its member outright: a replacing function or a rule. A placeholder edits the member in place, so the member keeps its label itself.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::refuseSameSite`
 
@@ -578,8 +518,10 @@ A replacing entry's function form, `($, member) => rule`: it receives the layer'
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPathPatches`
 
 Applies a path-keyed patch set: a `narrow` entry is queued, with its path, for the layer's whole-grammar phase (`wire/wire.ts::wireQueueNarrow`), and a `lead` entry goes to `queueLeadEntry`; neither walks its path here. Every other non-variant entry applies at its path, each as its own active patch site
-(`wireWithPatchSites`), then the `variant()` entries together (`applyVariantPatches`), then sibling
-defaults an `arm.default` entry displaced are cleared.
+(`wireWithPatchSites`) and through `appliedAtSite`, so an entry whose path matches nothing is its own
+`edit-site-missing` and the rest of the set still applies. An `arm.default` entry checks that its parent
+is a choice and clears the sibling defaults it displaced as part of its own site. The `variant()`
+entries then apply together (`applyVariantPatches`).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::queueLeadEntry`
 
@@ -594,7 +536,9 @@ its own variants. An absent variant only exists in the hoisted form, so when
 the set declares one (`variant(name, { absent: true })`) and the hoist does
 not happen, this throws rather than drop the declaration; `SITTIR_DEBUG=1`
 prints why the hoist bailed. The hoist runs with every variant entry as the active patch sites, since it
-applies them together; each remaining entry runs as its own site.
+applies them together; each remaining entry runs as its own site, through `appliedAtSite`. After the
+parent is registered, the sibling defaults of every `default: true` entry are cleared, in the set's
+order, except for an entry whose path matched nothing.
 
 #### body
 
@@ -931,9 +875,8 @@ A field arm keeps its field: the variant annotation lands on the field itself, s
 // here just means THIS arm doesn't have that position — the
 // choice-level recursion above catches ApplyPathSkip and leaves
 // the arm unchanged. If this seq is the top-level patch target
-// (no enclosing choice fan-out), ApplyPathSkip is never caught
-// and still propagates out of transform() as an error, same as
-// before — genuinely out-of-bounds against the ONE target shape.
+// (no enclosing choice fan-out), the skip reaches applyPatchSet,
+// which reports the set as edit-site-missing.
 ```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::wrapVariantBodyInParentPrec`
@@ -1038,7 +981,11 @@ the arm it replaced instead of losing its label.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::aliasInPlace`
 
-`alias(name)` at a symbol member: the member becomes `alias(member, $.name)`, keeping what it carries. The alias renames that kind in option paths, so its effect `(from, to)` is recorded in every layer, and above the first layer the alias is checked (`refuseAliasTarget`).
+`alias(name)` at a symbol member: the member becomes `alias(member, $.name)`, keeping what it carries, and the alias is recorded (`recordAlias`).
+
+### `packages/codegen/src/dsl/transform/transform.ts::recordAlias`
+
+Records an alias `(from, to)` in every layer: the alias rewrites `(from)` segments in option paths. Above the first layer the alias is checked (`refuseAliasTarget`).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::hoistedUnlessToken`
 
@@ -1159,6 +1106,8 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
  * masked as "wildcard matched zero".
  */
 ```
+
+A skip that reaches an entry's application (`transform.ts::appliedAtSite`) is that entry's `edit-site-missing`. Wire's part copies (`wire/wire.ts::copyPartOf`) and `narrow` entries (`verbs/narrow.ts::applyNarrowEntry`) report theirs the same way.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::PatchSet`
 
@@ -1345,8 +1294,12 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
 // aborting the whole patch (mirrors applyWildcardToMembers's per-member
 // skip/require-at-least-one-match contract in transform-path.ts — same
 // "some siblings won't match, that's fine" semantics, just for flat
-// positional keys instead of path wildcards). Reconstruct via native
-// dsl so the choice keeps its runtime-correct shape.
+// positional keys instead of path wildcards). When no arm takes
+// the set, the choice itself is an ApplyPathSkip naming the keys.
+// Each arm applies atomically (wire/wire.ts::wireAtomic), so an arm
+// left unchanged keeps nothing its attempt recorded.
+// Reconstruct via native dsl so the choice keeps its runtime-correct
+// shape.
 ```
 
 #### body
@@ -1359,7 +1312,9 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
 #### body
 
 ```text
-// For other types, return as-is (patches don't apply)
+// Any other rule holds no SEQ for the keys to index: an
+// ApplyPathSkip, so a choice arm of that shape is left unchanged
+// and a set whose target is one is edit-site-missing.
 ```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::withVariantAnnotation`
@@ -1766,37 +1721,7 @@ Applies a patch at a path in one rule of a rule set, after wire has evaluated it
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::walkKindMatch`
 
-#### body
-
-```text
-// Prec wrappers are transparent.
-```
-
-#### body
-
-```text
-// Field: descend into content but mark insideNamedField=true so nested
-// `_expression` references inside already-fielded symbols don't get
-// re-wrapped.
-```
-
-#### body
-
-```text
-// Other wrappers — descend transparently.
-```
-
-#### body
-
-```text
-// Containers — descend into every member.
-```
-
-#### body
-
-```text
-// Leaf types we don't descend into (string, pattern, blank, etc.).
-```
+Every reference to the segment's kind in a subtree (`walkMatches`). A symbol is decided by `applyKindMatchToSymbol`, and a copy's reference by `applyKindMatchToCopyReference`. A reference already in a field an author or a layer wrote is skipped, because re-wrapping a fielded symbol is almost always unintended: rust's `field('length', _expression)` stays alone when the list-form `_expression` gets `field('elements')`.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::applyToMembers`
 
@@ -1872,7 +1797,7 @@ Rewrites `choice(optional(x), optional(y), …, optional(n))` to `optional(choic
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPatchSet`
 
-Applies one patch set: records its sites, then applies it in path mode when any key is a path or any value a placeholder of the listed kinds, and flat otherwise. A flat set indexes the members of the first SEQ under the rule; on a CHOICE it indexes inside every arm, so a plain index there never selects an arm.
+Applies one patch set: records its sites, then applies it in path mode when any key is a path or any value a placeholder of the listed kinds, and flat otherwise. A flat set indexes the members of the first SEQ under the rule; on a CHOICE it indexes inside every arm, so a plain index there never selects an arm. A flat set applies through `appliedAtSite`, keyed by its keys joined with `, `, so a set that no position of the rule takes is `edit-site-missing`.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::recordFieldEffect`
 
@@ -1881,6 +1806,14 @@ The option-path segment a `field()` patch renames on the patched kind: an existi
 ### `packages/codegen/src/dsl/transform/transform.ts::refuseAliasTarget`
 
 Records an alias edit that `wire/wire.ts::wireAliasTargetIssue` rejects as the layer's blocking `alias-target-invalid` diagnostic (`wire/wire.ts::wireRefuse`), naming the patched kind, the alias and the reason. The edit still applies, so the layer completes and the diagnostic gate reports it with every other refusal.
+
+### `packages/codegen/src/dsl/transform/transform.ts::appliedAtSite`
+
+Runs one entry's application as a unit (`wire/wire.ts::wireEntry`) and returns the rule it gives. After the application, every copy the entry showed must show that one display at every reference (`primitives/copy.ts::refuseSplitDisplays`). An `ApplyPathSkip` means the entry's path matches nothing, which is `edit-site-missing`. A `VerbRefusal` out of the application, such as a display conflict, is refused with its own code (`siteRefusalOf`). A refused entry's wire state is undone to what it was before the entry. The refusal is recorded through `wire/wire.ts::wireRefuse`: its details name the kind, the entry's key and anything the refusal itself names, and its message carries the reason. `undefined` then comes back, so the caller keeps the rule it had. Outside a layer pass, `wireRefuse` throws that message. Any other error propagates, after the undo.
+
+### `packages/codegen/src/dsl/transform/transform.ts::siteRefusalOf`
+
+The refusal an error out of an entry's application stands for: a `VerbRefusal` as itself, an `ApplyPathSkip` as `edit-site-missing` with the skip's reason, and nothing for any other error.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 

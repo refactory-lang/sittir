@@ -228,6 +228,20 @@ export function withAuthoredLabel<T>(site: T, label: RuleAnnotations, automatic:
 	return out;
 }
 
+export function carriedLabel<T>(site: T, original: unknown, automatic: AutomaticVariants): T {
+	const core = coreOf(original as ArmShape);
+	const annotations = annotationsOf(core);
+	if (annotations?.variantOf === undefined || annotationsOf(coreOf(site as ArmShape))?.variantOf !== undefined) return site;
+	const { variant, variantOf, default: isDefault } = annotations;
+	const label: RuleAnnotations = { variantOf, ...(variant === undefined ? {} : { variant }), ...(isDefault === true ? { default: true } : {}) };
+	const automaticLabel = automatic.keys.has(automaticVariantKey(core) ?? '');
+	const out = throughPrec(site as ArmShape, (siteCore) => withAnnotations(siteCore, label)) as T;
+	const key = automaticVariantKey(coreOf(out as ArmShape));
+	if (key !== undefined && automaticLabel) automatic.keys.add(key);
+	else if (key !== undefined) automatic.keys.delete(key);
+	return out;
+}
+
 export function relabelledArm(site: unknown, original: unknown, automatic: AutomaticVariants): unknown {
 	const core = coreOf(original as ArmShape);
 	const annotations = annotationsOf(core);

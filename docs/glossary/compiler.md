@@ -4150,6 +4150,10 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 // Only stamp when non-default (single → undefined per combineMultiplicity).
 ```
 
+### `packages/codegen/src/compiler/normalize.ts::blanksDropped`
+
+The first normalization pass: every `EOF` becomes blank, and a `SEQ` drops every blank member (`dsl/rule-patterns.ts::isBlank`), whether it came from `eof()`, `blank()` or a sequence that emptied below it. So `seq(a, eof())` and `seq(a, blank())` both normalize as `seq(a)`, and a sequence of nothing but blanks is itself blank to its parent. A blank takes no slot, has no child and renders no text, so the model sees exactly what the sequence without it gives: a rule whose body is only `eof()` assembles as one whose body is `blank()`. It runs before any pass that reads a sequence's members as structure; distributing a sequence over its one choice member (`fanOutSeqChoices`) would otherwise read an empty choice as zero arms and leave the rule nothing. Everything before normalize (the evaluated grammar, grammar.json, the symbol-table prediction) keeps `EOF` and blanks as tree-sitter does.
+
 ### `packages/codegen/src/compiler/opaque-facts.ts::opaqueFacts`
 
 ```text
@@ -7369,6 +7373,10 @@ alias target, as in tree-sitter's `alias()`.
 // A choice with no members; `isBlank` reads it and tree-sitter's BLANK as
 // the same rule.
 ```
+
+### `packages/codegen/src/compiler/evaluate.ts::eof`
+
+tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`normalize.ts::blanksDropped`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions`
 

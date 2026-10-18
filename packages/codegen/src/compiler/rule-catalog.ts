@@ -2,6 +2,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	IMMEDIATE_TOKEN,
 	INDENT,
@@ -213,6 +214,7 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		case DEDENT:
 		case NEWLINE:
 		case SYMBOL:
+		case EOF:
 			return [];
 		default:
 			return assertNever(params.rule);
@@ -249,6 +251,7 @@ function withIdentifiedChildren(args: {
 		case DEDENT:
 		case NEWLINE:
 		case SYMBOL:
+		case EOF:
 			return { ...rule, id };
 		default:
 			return assertNever(rule);

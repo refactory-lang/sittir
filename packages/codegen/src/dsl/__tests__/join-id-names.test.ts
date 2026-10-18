@@ -54,7 +54,8 @@ describe('joinIdNames', () => {
 	it('a recorded collision is a blocking kind-key-collision record naming both symbols', () => {
 		const raw = {
 			name: 'demo',
-			predictedKinds: { entries: [], keyCollisions: [{ key: 'bslashk', symbols: ['anon_sym_BSLASHk', 'anon_sym_BSLASHK'] }] }
+			rules: {},
+			predictedKinds: { entries: [], eofNotLast: [], keyCollisions: [{ key: 'bslashk', symbols: ['anon_sym_BSLASHk', 'anon_sym_BSLASHK'] }] }
 		} as unknown as RawGrammar;
 		expect(evaluateRecords(raw)).toEqual([
 			expect.objectContaining({

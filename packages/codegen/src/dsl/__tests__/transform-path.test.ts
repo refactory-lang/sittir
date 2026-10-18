@@ -262,7 +262,7 @@ describe('applyPath()', () => {
 			});
 		});
 
-		it('throws when the rule at that position is not a field wrapper', () => {
+		it('throws when the subtree at that position holds no field of the name', () => {
 			const rule = seq(sym('identifier'), sym('body'));
 			expect(() =>
 				applyPath(
@@ -273,7 +273,12 @@ describe('applyPath()', () => {
 					],
 					sym('new_body')
 				)
-			).toThrow(/path segment 'body:' at this level expects a field\('body', \.\.\.\) wrapper; got type 'SYMBOL'/);
+			).toThrow(/path segment 'body:' names no field of this subtree/);
+		});
+
+		it('applies a path inside the field that a field segment finds among a seq', () => {
+			const rule = seq(str('x'), fld('body', seq(sym('a'), sym('b'))));
+			expect(applyPath(rule, parsePath('body:/0'), sym('c'))).toEqual(seq(str('x'), fld('body', seq(sym('c'), sym('b')))));
 		});
 
 		it('throws when the field name at that position does not match', () => {
@@ -673,4 +678,14 @@ describe('edit() inline equals the edits entry', () => {
 		expect(inline.patchSites).toEqual(keyed.patchSites);
 		expect(inline.bindingEffects).toEqual(keyed.bindingEffects);
 	}, 60_000);
+});
+
+describe('transform() — flat-keys describe, with no context', () => {
+	it('Z7a: a flat key matching no choice arm throws outside a layer', () => {
+		expect(() => transformRule(choice(sym('a'), sym('b')), { 1: fld('x', sym('y')) } as never)).toThrow(/matched no choice arm/);
+	});
+
+	it('Z7b: a flat key on a non-SEQ throws outside a layer', () => {
+		expect(() => transformRule(sym('a'), { 0: fld('x', sym('y')) } as never)).toThrow(/holds no SEQ/);
+	});
 });

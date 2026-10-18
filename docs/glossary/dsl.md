@@ -1260,7 +1260,7 @@ It reads rules through `realizesEmpty` (`types/runtime-shapes.ts`), the same emp
  *  runtime-shapes but keeps this module self-contained. */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::collectSlots`
+### `packages/codegen/src/dsl/rule-patterns.ts::collectSlots`
 
 ```text
 /**
@@ -1273,6 +1273,8 @@ It reads rules through `realizesEmpty` (`types/runtime-shapes.ts`), the same emp
  * non-blank rule. Pure literals (`string`, `token`) and `blank` are dropped.
  */
 ```
+
+`eof()` is dropped too: it matches no text and holds no slot, so `seq($.x, eof())` is one slot, as `seq($.x)` is, and a group it is in lifts as the same hidden rule.
 
 #### body
 
@@ -2335,12 +2337,19 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::edit`
 
-The authoring name of `transform/transform.ts::transform`: `edit(previous, ...sets)` applies each set, keyed by path as an `edits:` entry is, to the rule a `rules:` callback received. It is the same application as the kind's `edits:` entry, which the layer lowers to `edit(result, edits[K])` after the callback, so it records the same patch sites and effects. `transform` stays the internal name the lowering calls.
-
+The authoring view of `transform/transform.ts::edit`: `edit(previous, ...sets)` applies each set, keyed by path as an `edits:` entry is, to the rule a `rules:` callback received, or to a copy's body when `previous` is a reference `copy()` returned. It is the same application as the kind's `edits:` entry, which the layer lowers to `transform(result, edits[K])` after the callback, so it records the same patch sites and effects.
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::replace`
 
-The authoring view of `transform/transform.ts::replace`: `replace(previous, path, rule)`, where `rule` is a rule or `($, member) => rule`, replaces the member at `path` in a rule a `rules:` callback holds. It is the inline spelling of a replacing `edits:` entry and records the same patch site and effects.
+The authoring view of `transform/transform.ts::replace`: `replace(previous, path, rule)`, where `rule` is a rule or `($, member) => rule`, replaces the member at `path` in a rule a `rules:` callback holds, or in a copy's body when `previous` is a reference `copy()` returned. It is the inline spelling of a replacing `edits:` entry and records the same patch site and effects.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringCopy`
+
+`copy(source, path?)`'s authoring signature: a kind's name or `$.name`, and a part path.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::copy`
+
+The authoring view of `primitives/copy.ts::copy`.
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringAlias`
 
@@ -2826,6 +2835,10 @@ display (`armDisplayOf`, `labelOf` with the owner's `supertypeOwners`
 membership) through `withAutomaticLabel`, so the name matches what the site
 now spells and the new key is recorded. Used by `resolveAliasPlaceholder`'s
 lift/mint/rename branches and `replaceInBodyRt`'s group substitution.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::carriedLabel`
+
+A replacement carrying the label of the arm it replaced, for a copy, which keeps its members' `variantOf` stamps. The label is copied as it was (`variant`, `variantOf`, `default`) and stays automatic when it was automatic, so a later layer re-derives it as it re-derives the source's. A site that has a label of its own, or an original with none, is returned as it is.
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::flagWalker`
 
@@ -3403,6 +3416,10 @@ The runtime's global `grammar(base, options)`, typed generic over the base: `enr
 // would declare a type, not the global value, and a generic param on the
 // container would make bare `token(...)` uninstantiable).
 ```
+
+### `packages/codegen/src/dsl/authoring-globals.d.ts::eof`
+
+The global `eof()` a grammar file calls. Under tree-sitter's CLI it is tree-sitter's own builder; under sittir's evaluate it is `compiler/evaluate.ts::eof`. Both give `{ type: 'EOF' }`.
 
 ### `packages/codegen/src/dsl/rule-walker.ts::module`
 
@@ -7019,7 +7036,7 @@ A symbol's kind in tree-sitter's variable tables: `named`, `hidden` (underscore-
 
 ### `packages/codegen/src/dsl/symbol-table.ts::Variable`
 
-One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place.
+One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place. A `_repeatN` that repeat expansion mints carries its `owner`, the rule it was expanded from, so a fact about it is reported on that rule (`eofNotLastSites`).
 
 ### `packages/codegen/src/dsl/symbol-table.ts::ProductionStep`
 
@@ -7028,6 +7045,10 @@ One step of a flattened production: the symbol key and, when one applies, the al
 ### `packages/codegen/src/dsl/symbol-table.ts::BLANK_RULE`
 
 The interned empty rule.
+
+### `packages/codegen/src/dsl/symbol-table.ts::END_STEP_KEY`
+
+The step key `productionsOf` gives an `EOF`: tree-sitter's built-in end symbol, which no rule or token owns.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::sameShape`
 
@@ -7051,7 +7072,23 @@ Rewrites every `SYM` key in an interned rule.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::productionsOf`
 
-Flattens an interned rule into its productions: a `CHOICE` contributes each member's productions (deduped), a `SEQ` the cartesian product of its members', and the innermost alias applies to every step under it.
+Flattens an interned rule into its productions: a `CHOICE` contributes each member's productions (deduped), a `SEQ` the cartesian product of its members', an `EOF` one end step (`END_STEP_KEY`), and the innermost alias applies to every step under it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::completedProductions`
+
+A variable's productions as tree-sitter keeps them after `eof()`: a production with an end step anywhere but last is dropped, since it can never complete, and a trailing end step is removed (the production then needs end-of-input lookahead). It runs once per variable, on the whole rule, so an `EOF` that a later `SEQ` member follows is caught.
+
+### `packages/codegen/src/dsl/symbol-table.ts::alwaysEndingInput`
+
+The nonterminals every derivation of which ends the input: each of whose productions ends in an end step or in such a nonterminal. It is the greatest fixpoint, so a repetition of an input-ending item counts, while `choice('\n', eof())`, which can end without the input ending, does not.
+
+### `packages/codegen/src/dsl/symbol-table.ts::EofNotLast`
+
+A rule with a production the parser can never produce, because something follows the end of the input in it: `kind` is the authored rule holding the production. `ending` is the rule that always ends input and is followed, or none when an `eof()` itself is. `repetition` marks a repetition in `kind` whose item ends at `eof()`, so it can never repeat.
+
+### `packages/codegen/src/dsl/symbol-table.ts::eofNotLastSites`
+
+Every `EofNotLast` of a grammar's flattened productions, before `completedProductions` drops any: a step that is an end step, or a nonterminal in `alwaysEndingInput`, anywhere but last. A repeat helper is reported on its owner. A helper that ends input is explained by the authored rule its productions end in, or as a repetition ending at `eof()` when they end in the end step itself.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
 
@@ -7091,11 +7128,11 @@ Predicts the parser's symbol table from the evaluated grammar by porting tree-si
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
-A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported.
+A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported. `eofNotLast` lists the rules with a production that continues past the end of the input (`eofNotLastSites`).
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions and `eofNotLast` sites, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
 
@@ -7115,7 +7152,7 @@ Compares the predicted kind catalog with the parser's row by row on `PREDICTED_K
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
-The rows `predictKindCatalog` predicts, with the grammar's undefined names and key collisions beside them.
+The rows `predictKindCatalog` predicts, with the grammar's undefined names, key collisions and `eofNotLast` sites beside them.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
 
@@ -7348,8 +7385,25 @@ Fills the options from a pass's output: `name` when the config gives none, its l
 
 Runs enrich once over a layer's result, with the sidecars of the base it completed (`enrich.ts::withEnrichSidecarsOf`)
 and the display families an effect log declares (`verbs/effects.ts::displayFamiliesOf`), and names every rule enrich
-would add, remove or change, sorted. A merge a layer declared therefore passes. The checked result is the record's
-`enrichment`, which the layer above takes as its base.
+would add, remove or change, sorted, with the fields enrich adds to them (`fieldsAddedTo`), so the diagnostic can name the
+field the author must write (`fixpointProposal`). A merge a layer declared therefore passes. The checked result is the
+record's `enrichment`, which the layer above takes as its base.
+
+### `packages/codegen/src/dsl/layer.ts::EnrichAddedField`
+
+A field enrich would add to a rule of a layer's result: the rule and the field's name.
+
+### `packages/codegen/src/dsl/layer.ts::fieldNamesOf`
+
+The names of every field in a rule, once per field.
+
+### `packages/codegen/src/dsl/layer.ts::fieldsAddedTo`
+
+The field names a rule's enriched form has beyond its own, counted per name, so a second field of a name it already has counts.
+
+### `packages/codegen/src/dsl/layer.ts::fixpointProposal`
+
+The `layer-not-enrich-fixpoint` proposal: the rules whose change the layer's entries must write, and the fields enrich adds to each, by name (e.g. `field('elements', …)` to `cls` when an edit turns a list's single-kind element into a choice), so the author knows what to write.
 
 ### `packages/codegen/src/dsl/layer.ts::configOptions`
 
@@ -7401,7 +7455,7 @@ normalizes it and laid over the base's rules. The pass evaluates the lists (`eva
 layer's effects resolved per owner, and runs the queued entries as the whole-grammar phase: the `narrow` entries
 (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`). The stage bases are the ones its
 base's record carries, or, for the first layer that departs from its base (`departsFromBase`), its source and the
-base it completed.
+base it completed. Each whole copy wire made joins the supertype and inline lists its source is in, before the queued entries run.
 
 ### `packages/codegen/src/dsl/layer.ts::departsFromBase`
 
@@ -7419,7 +7473,7 @@ What `evaluatedLists` reads: the completed base, the layer's `$` and the evaluat
 
 ### `packages/codegen/src/dsl/layer.ts::resolvedEffects`
 
-The layer's field (segment) and alias effects, resolved per owner (`verbs/effects.ts::effectsForOwners`) over the layer's grammar view: the rules as its edits leave them, with the layer's supertypes, where a field effect's reach stops.
+The layer's field (segment) and alias effects, resolved per owner (`verbs/effects.ts::effectsForOwners`) over the layer's grammar view: the rules as its edits leave them, with the layer's supertypes, where a field effect's reach stops. The copies wire made follow them (`wire/wire.ts::wireCopy`).
 
 ### `packages/codegen/src/dsl/layer.ts::normalizedBody`
 
@@ -7748,14 +7802,6 @@ Whether every visible kind that reaches a hidden host makes the same edit in the
 ### `packages/codegen/src/dsl/bind.ts::fieldWrapGrammar`
 
 The grammar with a batch of field wraps applied: each checked (`fieldWrapIssue`), each target wrapped in every host, and the owning kinds' option segments that named the child (`kind:`, or a token's quoted text) rewritten to the new `field:`.
-
-### `packages/codegen/src/dsl/bind.ts::fieldReferences`
-
-A rule with every reference to `symbol` that is not already in a field wrapped in `field`.
-
-### `packages/codegen/src/dsl/bind.ts::splitGrammar`
-
-The grammar with each placement split applied. The split kind is minted under its new name from the base kind's body. Each intermediate kind of `within`, and each hidden rule on the way that reaches the target, is cloned per outer kind with the reference replaced: a hidden rule as `<base>_<outer>`, a visible container under the name its `containers` entry gives. The outer kind then references the clones. A clone of a supertype or an inline rule is listed beside its base (`mintLists`), and a visible container is fielded where its placements reference it. `splitFrom` records each minted name's base. A split that flips hiddenness, names no placement, or mints a name the grammar already has is an error.
 
 ### `packages/codegen/src/dsl/bind.ts::baseNamesOf`
 

@@ -254,6 +254,18 @@ describe('displayFamiliesOf', () => {
 		];
 		expect(displayFamiliesOf(effects)).toEqual(new Map([['lambda_expression', new Set(['lambda', 'inner_lambda'])]]));
 	});
+
+	it('declares the family of a copy shown as its source, as the source and the copy', () => {
+		const effects = [{ kind: 'copy', copy: '_body_owner', source: 'body', display: 'body', origin: { kind: 'copy', owner: 'owner' } }] as unknown as Effect[];
+		expect(displayFamiliesOf(effects)).toEqual(new Map([['body', new Set(['body', '_body_owner'])]]));
+	});
+
+	it('declares nothing for a copy shown as another display, or with none', () => {
+		const other = [{ kind: 'copy', copy: '_body_owner', source: 'body', display: 'other', origin: { kind: 'copy', owner: 'owner' } }] as unknown as Effect[];
+		const none = [{ kind: 'copy', copy: '_body_owner', source: 'body', origin: { kind: 'copy', owner: 'owner' } }] as unknown as Effect[];
+		expect(displayFamiliesOf(other)).toEqual(new Map());
+		expect(displayFamiliesOf(none)).toEqual(new Map());
+	});
 });
 
 describe('provenanceOf', () => {

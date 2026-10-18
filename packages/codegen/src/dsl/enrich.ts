@@ -40,6 +40,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	IMMEDIATE_TOKEN,
 	INDENT,
@@ -2452,6 +2453,7 @@ function fieldOwnerPrefixedLists(
 			case INDENT:
 			case DEDENT:
 			case NEWLINE:
+			case EOF:
 			case 'BLANK':
 				return node;
 			default:

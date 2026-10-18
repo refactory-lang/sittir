@@ -90,3 +90,16 @@ describe('refusalOf', () => {
 		})).toThrow('not a refusal');
 	});
 });
+
+describe('copy() outside a layer pass', () => {
+	it('refuses the call as edit-entry-invalid', async () => {
+		const authoring = (await import('../dsl-authoring.ts')) as unknown as { copy?: (source: string) => unknown };
+		let thrown: unknown;
+		try {
+			authoring.copy?.('_expression');
+		} catch (error) {
+			thrown = error;
+		}
+		expect(thrown).toMatchObject({ code: 'edit-entry-invalid' });
+	});
+});

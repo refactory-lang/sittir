@@ -134,13 +134,13 @@ function renamePath(path: string, rename: (name: string) => string, kindHead: bo
 	return [kindHead ? rename(head) : renameSegment(head, rename, fields), ...rest.map((s) => renameSegment(s, rename, fields))].join('/');
 }
 
-function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>): unknown {
+function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>, labelHeads = true): unknown {
 	if (!isRecord(record) || isPreference(record)) return record;
 	const out: GrammarRecord = {};
 	for (const [key, value] of Object.entries(record)) {
 		const to = renamePath(key, rename, kindHead, fields);
 		if (to in out) throw new Error(`bind: options '${key}' renames to '${to}', which the options already name`);
-		out[to] = renameOptionPaths(value, rename, key === LABELS_KEY, fields);
+		out[to] = renameOptionPaths(value, rename, key === LABELS_KEY && labelHeads, fields, labelHeads);
 	}
 	return out;
 }
@@ -350,7 +350,7 @@ export function rewriteInherited(records: LayerRecords, ctx: EffectCtx): LayerRe
 	let out: GrammarRecord = { ...records };
 	if (out.options !== undefined) {
 		if (segments.length > 0) out.options = rewriteOwnedSegments(out.options, segments);
-		if (aliases.size > 0) out.options = renameOptionPaths(out.options, (name) => aliases.get(name) ?? name, false, fields);
+		if (aliases.size > 0) out.options = renameOptionPaths(out.options, (name) => aliases.get(name) ?? name, false, fields, false);
 	}
 	if (renames.size > 0) out = renameRecords(out, (name) => renames.get(name) ?? name, fields);
 	if (out.options !== undefined && Object.keys(splitFrom).length > 0) out.options = inheritSplitOptions({ options: out.options, rules: ctx.rules }, splitFrom);
@@ -433,7 +433,14 @@ function leadEffectOf(lead: LeadCopies, rules: Readonly<Record<string, unknown>>
 
 export function displayFamiliesOf(effects: readonly Effect[]): DisplayFamilies {
 	const members = new Map<string, Set<string>>();
-	for (const effect of effects) if (effect.kind === 'alias') members.set(effect.to, (members.get(effect.to) ?? new Set()).add(effect.from));
+	const add = (display: string, member: string): void => void members.set(display, (members.get(display) ?? new Set()).add(member));
+	for (const effect of effects) {
+		if (effect.kind === 'alias') add(effect.to, effect.from);
+		if (effect.kind === 'copy' && effect.display === effect.source) {
+			add(effect.display, effect.source);
+			add(effect.display, effect.copy);
+		}
+	}
 	return new Map([...members].filter(([, froms]) => froms.size >= 2));
 }
 

@@ -1,4 +1,4 @@
-export { edit, replace } from './dsl-authoring.ts';
+export { copy, edit, replace } from './dsl-authoring.ts';
 export { role } from './primitives/role.ts';
 export { pendingBase as enrich, layerOptions as wire } from './layer.ts';
 export { alias } from './primitives/alias.ts';

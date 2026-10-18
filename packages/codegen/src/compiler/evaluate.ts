@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, PATTERN, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, EOF, FIELD, PATTERN, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type { AliasRule, FieldRule, PatternRule, Rule, StringRule, SymbolRule, TokenRule } from '../types/rule.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
@@ -134,6 +134,10 @@ function alias(rule: Input, value: string | Rule<'evaluate'> | ReferenceError): 
 
 function blank(): Rule<'evaluate'> {
 	return { type: CHOICE, members: [] };
+}
+
+function eof(): Rule<'evaluate'> {
+	return { type: EOF };
 }
 
 function string(value: string): StringRule<'evaluate'> {
@@ -501,6 +505,7 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 		reserved: (contextName: string, content: Input) => structuralBuilder.reserved(contextName, coerceToRule(content)),
 		alias,
 		blank,
+		eof,
 		indent: () => structuralBuilder.indent(),
 		dedent: () => structuralBuilder.dedent()
 	};

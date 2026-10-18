@@ -1,5 +1,5 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
-import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, EOF, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { isBuilderTextLeaf, seamNeedsSpace, wordCharPredicate } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral, ruleListParts } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -657,6 +657,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			return DEDENT_BODY;
 
 		case SUPERTYPE:
+		case EOF:
 			return EMPTY;
 
 		default: {

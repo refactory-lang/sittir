@@ -35,8 +35,10 @@ An alias edit's effect: the member displayed as `from` now shows as `to`. On inh
 ### `packages/codegen/src/dsl/verbs/effects.ts::displayFamiliesOf`
 
 The display families an effect log declares (`rule-transforms.ts::DisplayFamilies`): each display that alias effects
-give two or more distinct members (`AliasEffect.to`), with those members (`from`). A display that one member shows,
-however often, is not a family. Enrich's fixpoint run reads them (`layer.ts::enrichFixpoint`).
+give two or more distinct members (`AliasEffect.to`), with those members (`from`). A copy shown as its source
+(`CopyEffect.display` is its `source`) puts the source and the copy in the source's family, since the tree shows both
+storages under the source's name. A display that one member shows, however often, is not a family. Enrich's fixpoint
+run reads them (`layer.ts::enrichFixpoint`).
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::RenameEffect`
 
@@ -44,7 +46,7 @@ A kind rename's effect: the kind `from` is now `to` wherever a kind is named. On
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect`
 
-A copy a verb made: the rule `copy`, made from `source` (`part` is `.` for the whole rule) for the context `context`. `display` is the name the copy shows under when it is visible. `admitted` is the admitted kind a narrowing made the copy as the form of: the kind the copy is shown in place of. `origin` says which edit made it. The copy effect is the copy's form-of fact; the projections read `splitFrom`, `leadFrom` and the lead entries from it.
+A copy a verb made: the rule `copy`, made from `source` (`part` is `.` for the whole rule) for the context `context`. `display` is the name the copy shows under when it is visible: a narrowing records it, and a copy's reference stamps it (`wire/wire.ts::wireNoteCopyDisplay`). `admitted` is the admitted kind a narrowing made the copy as the form of: the kind the copy is shown in place of. `origin` says which edit made it. The copy effect is the copy's form-of fact; the projections read `splitFrom`, `leadFrom` and the lead entries from it.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::Effect`
 
@@ -96,7 +98,7 @@ An options path under a rename. Its head is a kind when `kindHead` (a top-level 
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::renameOptionPaths`
 
-An options record with every path key renamed, recursively, leaving preference values alone. The keys under `LABELS_KEY` are addresses whose heads are kinds. Two keys renaming to one path is an error.
+An options record with every path key renamed, recursively, leaving preference values alone. The keys under `LABELS_KEY` are addresses whose heads are kinds; with `labelHeads` false the heads stay, as an alias rewrites only `(from)` segments. Two keys renaming to one path is an error.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::SegmentRewrite`
 
@@ -164,7 +166,7 @@ Every record `RECORD_RENAMES` names, under a kind rename, with the field names t
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::rewriteInherited`
 
-The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind heads), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
+The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind or label heads, so a named copy leaves its source's labels where they are), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::LeadCopies`
 
@@ -216,7 +218,7 @@ The blocking codes a verb refuses with: `edit-site-missing` (an entry names no r
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal`
 
-A refusal a verb throws: its `code` and its `reason`. The caller words it for its own surface: the layer's lead driver records it as a diagnostic naming the entry (`verbs/lead.ts::applyLeads`), and the lead derivation reports its reason on the claims (`bindings/leads.ts::deriveLeads`).
+A refusal a verb throws: its `code`, its `reason`, and any `details` it names (none by default). When one is thrown out of an edits entry's application, the entry's boundary records it, merging its details into the diagnostic's (`transform/transform.ts::appliedAtSite`). The caller words it for its own surface: the layer's lead driver records it as a diagnostic naming the entry (`verbs/lead.ts::applyLeads`), and the lead derivation reports its reason on the claims (`bindings/leads.ts::deriveLeads`).
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::MintLists`
 

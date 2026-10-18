@@ -4,16 +4,12 @@ import {
 	isRecord,
 	listedNames,
 	OPAQUE_RULES,
-	replaceSymbols,
 	supertypesOf,
-	symbolNames,
 	transparentReach,
 	unwrapPrec,
 	type GrammarRecord
 } from './rule-patterns.ts';
-import { mintLists } from './verbs/copy.ts';
 import {
-	inheritSplitOptions,
 	renameKeys,
 	renameRecords,
 	renameValue,
@@ -256,79 +252,6 @@ export function fieldWrapGrammar(grammar: GrammarRecord, wraps: readonly FieldWr
 	const out: GrammarRecord = { ...grammar, rules };
 	if ('options' in grammar) out.options = rewriteOwnedSegments(grammar.options, slots);
 	carryHiddenFacts(grammar, out, (name) => name);
-	return out;
-}
-
-function fieldReferences(rule: unknown, symbol: string, field: string, inField = false): unknown {
-	if (Array.isArray(rule)) return rule.map((r) => fieldReferences(r, symbol, field, inField));
-	if (!isRecord(rule)) return rule;
-	if (rule.type === 'SYMBOL' && rule.name === symbol && !inField) return { type: 'FIELD', name: field, content: rule };
-	const out: GrammarRecord = {};
-	for (const [key, value] of Object.entries(rule)) out[key] = fieldReferences(value, symbol, field, inField || rule.type === 'FIELD');
-	return out;
-}
-
-export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): GrammarRecord {
-	const rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) };
-	const { supertypes, inline, enlist } = mintLists(grammar);
-	const splitFrom: Record<string, string> = {};
-	const reaches = (from: string, target: string, seen: Set<string> = new Set()): boolean => {
-		if (from === target) return true;
-		if (seen.has(from) || !(from in rules)) return false;
-		seen.add(from);
-		return [...symbolNames(rules[from])].some((name) => name === target || (isParserHiddenName(name) && reaches(name, target, seen)));
-	};
-	const mint = (base: string, name: string, body: unknown): string => {
-		if (name in rules && splitFrom[name] !== base) throw new Error(`bind: split '${base}' → '${name}', which the grammar already names`);
-		rules[name] = body;
-		splitFrom[name] = base;
-		enlist(base, name);
-		return name;
-	};
-	const visiting = new Set<string>();
-	const clones = new Map<string, string>();
-	const containerFields = new Map<string, string>();
-	const cloneToward = (name: string, target: string, replacement: string, outer: string, container?: Split['containers'][number]): string => {
-		const base = mappedName(splitFrom, name);
-		const key = `${base}\u0000${outer}`;
-		const clone = clones.get(key) ?? (isParserHiddenName(base) || container === undefined ? `${base}_${outer}` : container.name);
-		clones.set(key, clone);
-		if (!isParserHiddenName(base) && container !== undefined) containerFields.set(clone, container.field);
-		if (visiting.has(clone)) return clone;
-		visiting.add(clone);
-		const from = splitFrom[clone] === base ? rules[clone] : rules[base];
-		splitFrom[clone] = base;
-		const body = replaceSymbols(from, (ref) =>
-			ref === target ? replacement : isParserHiddenName(ref) && reaches(ref, target) ? cloneToward(ref, target, replacement, outer) : ref
-		);
-		visiting.delete(clone);
-		return mint(base, clone, body);
-	};
-	for (const split of splits) {
-		if (!(split.kind in rules)) throw new Error(`bind: split source '${split.kind}' is no rule of the grammar`);
-		if (isParserHiddenName(split.kind) !== isParserHiddenName(split.as)) throw new Error(`bind: split '${split.kind}' → '${split.as}' flips hiddenness`);
-		const outer = split.within[split.within.length - 1];
-		if (outer === undefined) throw new Error(`bind: split '${split.kind}' → '${split.as}' names no placement`);
-		mint(split.kind, split.as, rules[split.kind]);
-		let target = split.kind;
-		let replacement = split.as;
-		split.within.slice(0, -1).forEach((ancestor, index) => {
-			replacement = cloneToward(ancestor, target, replacement, outer, split.containers[index]);
-			target = ancestor;
-		});
-		const outerTarget = target;
-		const outerReplacement = replacement;
-		rules[outer] = replaceSymbols(rules[outer], (ref) =>
-			ref === outerTarget ? outerReplacement : isParserHiddenName(ref) && reaches(ref, outerTarget) ? cloneToward(ref, outerTarget, outerReplacement, outer) : ref
-		);
-	}
-	const placements = new Set([...splits.map((split) => split.within[split.within.length - 1]!), ...Object.keys(splitFrom)]);
-	for (const [container, field] of containerFields)
-		for (const host of placements) if (host in rules) rules[host] = fieldReferences(rules[host], container, field);
-	const out: GrammarRecord = { ...grammar, rules, supertypes, inline };
-	carryHiddenFacts(grammar, out, (name) => name);
-	out.splitFrom = { ...(isRecord(grammar.splitFrom) ? grammar.splitFrom : {}), ...splitFrom };
-	if ('options' in grammar) out.options = inheritSplitOptions(grammar, splitFrom);
 	return out;
 }
 
