@@ -71,7 +71,7 @@ describe('engine scope', () => {
 	});
 
 	it('tells one language from another by its descriptor, not its name', () => {
-		expect(sameLanguage(identity, { ...identity, options: { indent: '\t' } })).toBe(true);
+		expect(sameLanguage(identity, { ...identity, options: { layout: { indent: '\t' } } })).toBe(true);
 		const namesake = { ...identity, language: { ...identity.language } };
 		expect(sameLanguage(identity, namesake)).toBe(false);
 	});

@@ -94,6 +94,15 @@ export interface GrammarInnerTrivia<N, Trivia> {
 	inner(...items: GrammarTriviaEntry<Trivia>[]): N;
 }
 
+/**
+ * The render options every language shares, under the `layout` group: what a caller holding an
+ * `Engine<LanguageAPI>` can pass to `render`. A language's own options add its kinds' option sites
+ * and narrow `layout` to the units it admits.
+ */
+export interface CommonRenderOptions {
+	readonly layout?: { readonly indent?: string; readonly newline?: string };
+}
+
 export interface LanguageAPI {
 	readonly name: string;
 	readonly build: object;
@@ -103,7 +112,7 @@ export interface LanguageAPI {
 	readonly root: AnyUntypedNode & ParsedRoot;
 	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
-	readonly options: object;
+	readonly options: object & CommonRenderOptions;
 	readonly indentChar: string;
 	readonly empty: GrammarTypeMap['empty'];
 	readonly portable?: PortableSurface;
@@ -315,24 +324,10 @@ export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends Propert
 	IsExactly<R, API['options']> extends true
 		? unknown
 		: IndentOption<R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string, API['indentChar']> & {
-				readonly [K in Exclude<keyof R, keyof API['options'] | Extra | SharedOptionKeys<API>>]: never;
-			} & LayoutKeysCheck<API, R> &
-				SharedLayoutValues<API>;
+				readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never;
+			} & LayoutKeysCheck<API, R>;
 
-/** The render options every language shares, which a grammar-independent engine (`Engine<LanguageAPI>`, whose `options` is `object`) can pass. */
-interface SharedLayout {
-	readonly indent?: string;
-	readonly newline?: string;
-}
-
-type IsGeneric<API extends LanguageAPI> = IsExactly<API['options'], object>;
-
-type SharedLayoutValues<API extends LanguageAPI> = IsGeneric<API> extends true ? { readonly layout?: SharedLayout } : unknown;
-
-type SharedOptionKeys<API extends LanguageAPI> = IsGeneric<API> extends true ? 'layout' : never;
-
-type DeclaredLayout<API extends LanguageAPI> =
-	IsGeneric<API> extends true ? SharedLayout : API['options'] extends { readonly layout?: infer G } ? NonNullable<G> : object;
+type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly layout?: infer G } ? NonNullable<G> : object;
 
 type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?: infer L extends object }
 	? { readonly layout?: { readonly [K in Exclude<keyof L, keyof DeclaredLayout<API>>]: never } }
