@@ -2858,9 +2858,10 @@ same single `SpacingWriter` wrap; a second entry point would be a second
 place the root seam policy could drift. It takes the render context and
 builds the writer from it: `.with_table(&options::WHITESPACE)` so
 `w.site(...)` resolves against this grammar's whitespace vocabulary,
-`.with_indent(&ctx.options.indent)`, `.with_recording(ctx.recording)` so a
-recording render (a parsed tree's layout baseline) records the line breaks it
-writes, and `.with_sources(ctx.sources)` so a
+`.with_indent(&ctx.options.indent)`, `.with_recording(recording)` with the
+`Option<&mut Baseline>` it takes beside the context, so a recording render (a
+parsed tree's layout baseline) records the line breaks it writes into a
+baseline the writer alone borrows, and `.with_sources(ctx.sources)` so a
 `Coord` slot slices its bytes from the tree the engine still holds. It wraps
 the output `String` once, never per level, and calls
 `node.render(&mut w)`.
@@ -2888,10 +2889,11 @@ Takes the generated kind entries so the emitted `with_literal_merge_pairs` table
 
 The render entry the napi engine calls: `RenderRoot` is the root in the
 same `SlotValue` carrier every slot position uses, and
-`render_node_parts(mut node, ctx)` runs the prepare walk over the
+`render_node_parts(mut node, ctx, recording)` runs the prepare walk over the
 whole tree (`Prepare::prepare(&mut node, ctx)?`) before a single byte
 is written, then renders through `render_node_dispatch` with the same
-context. A coordinate the sources cannot resolve fails here, before the
+context and the baseline to record into, if any (the napi render passes
+none; a parsed tree's `render_read` passes its baseline). A coordinate the sources cannot resolve fails here, before the
 writer exists.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
@@ -14839,7 +14841,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyNode` and renders it through `render_node_parts`, answering the text (the records a parsed tree's layout baseline is read from), whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyNode` and renders it through `render_node_parts` into the baseline it is handed, answering the text (the records a parsed tree's layout baseline is read from), whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 

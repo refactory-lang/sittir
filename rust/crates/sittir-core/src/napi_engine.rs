@@ -37,7 +37,7 @@
 /// - `$any` — the grammar's any-native node: what `read` reads a node into, and
 ///   the parent type it reads any parent's routes with.
 /// - `$options` — the grammar's `sittir_core::options::Options<Sites>` (`render::options::Options`), read through its address trie; the shape `EngineOptions.options` and `render`/`render_to_file` accept.
-/// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
+/// - `$render_parts` — `fn($render_root, &RenderContext, Option<&mut Baseline>) -> Result<(Source, String), _>`.
 /// - `$abi` — the render node ABI version this crate was generated against.
 /// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
 #[macro_export]
@@ -473,12 +473,8 @@ macro_rules! napi_engine {
                         None => base,
                     };
                     let table = &resolved;
-                    let ctx = $crate::prepare::RenderContext {
-                        options: table,
-                        sources: &*trees,
-                        recording: None,
-                    };
-                    let (_, canonical) = $render_parts(node, &ctx).map_err(|e| {
+                    let ctx = $crate::prepare::RenderContext { options: table, sources: &*trees };
+                    let (_, canonical) = $render_parts(node, &ctx, None).map_err(|e| {
                         ::napi::Error::from_reason(format!("render_node failed: {e}"))
                     })?;
                     Ok($crate::line_endings::spell(canonical, &table.newline))

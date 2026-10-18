@@ -466,7 +466,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'fn render_function_item<N: FunctionItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
 		);
 		expect(nodeRs).toContain(
-			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
@@ -537,7 +537,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(nodeRs).toMatch(/::sittir_core::prepare::Setting::fill\(&mut parts\.\w+, ctx\.options\.site_arm\(options::/);
 		expect(nodeRs).toContain('        prepare_function_item(self, ctx)\n');
 		expect(nodeRs).toContain(
-			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'

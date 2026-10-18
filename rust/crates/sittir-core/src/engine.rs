@@ -62,8 +62,16 @@ pub trait EngineGrammar: Copy {
     /// (`ParsedTree::recorded`), and answers the text. Refuses a read the
     /// model has no route for, naming it, and a render that fails. A grammar
     /// with no nodes renders nothing.
-    fn render_read(self, tree: &tree_sitter::Tree, index: crate::types::NodeIndex, depth: crate::read::Depth, ctx: &crate::read::ReadCtx<'_>, render: &crate::prepare::RenderContext<'_>) -> Result<String, String> {
-        let _ = (tree, index, depth, ctx, render);
+    fn render_read(
+        self,
+        tree: &tree_sitter::Tree,
+        index: crate::types::NodeIndex,
+        depth: crate::read::Depth,
+        ctx: &crate::read::ReadCtx<'_>,
+        render: &crate::prepare::RenderContext<'_>,
+        baseline: &mut crate::baseline::Baseline,
+    ) -> Result<String, String> {
+        let _ = (tree, index, depth, ctx, render, baseline);
         Ok(String::new())
     }
     /// The children of the node at `index` of `tree` as its read routes
@@ -1021,11 +1029,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if let Some(record) = records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&(index, depth)) {
             return Arc::clone(record);
         }
-        let recorded = std::cell::RefCell::new(crate::baseline::Baseline::default());
+        let mut recorded = crate::baseline::Baseline::default();
         let sides = WithoutLayout(self);
         let ctx = self.read_ctx().with_sides(&sides);
-        let render = crate::prepare::RenderContext { options: &self.read_options, sources: &sides, recording: Some(&recorded) };
-        let record = Arc::new(self.grammar.render_read(&self.tree, index, depth, &ctx, &render).map(|_| recorded.into_inner()));
+        let render = crate::prepare::RenderContext { options: &self.read_options, sources: &sides };
+        let rendered = self.grammar.render_read(&self.tree, index, depth, &ctx, &render, &mut recorded);
+        let record = Arc::new(rendered.map(|_| recorded));
         records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert((index, depth), Arc::clone(&record));
         record
     }

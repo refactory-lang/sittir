@@ -21,7 +21,7 @@ impl SourceTable for NoSources {
 #[test]
 fn an_empty_suite_block_closes_the_indent_it_opened() {
     let options = options::defaults();
-    let ctx = RenderContext { options: &options, sources: &NoSources, recording: None };
+    let ctx = RenderContext { options: &options, sources: &NoSources };
     let block = BlockNode {
         layout: None,
         statements: Vec::new(),
@@ -32,6 +32,6 @@ fn an_empty_suite_block_closes_the_indent_it_opened() {
         block: ::sittir_core::SlotValue::Node(block),
     };
     let root: RenderRoot = ::sittir_core::SlotValue::Node(AnyNode::SuiteBlock(suite));
-    let (_, rendered) = render_node_parts(root, &ctx).expect("render");
+    let (_, rendered) = render_node_parts(root, &ctx, None).expect("render");
     assert!(!rendered.contains('\u{FDD0}'));
 }

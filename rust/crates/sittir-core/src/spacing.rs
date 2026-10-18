@@ -338,7 +338,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// Records the line breaks the render writes at each gap into
     /// `baseline`, when one is given (`baseline::Recorder`).
     #[must_use]
-    pub fn with_recording(mut self, baseline: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>) -> Self {
+    pub fn with_recording(mut self, baseline: Option<&'a mut crate::baseline::Baseline>) -> Self {
         self.recorder = baseline.map(crate::baseline::Recorder::new);
         self
     }
@@ -1054,7 +1054,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(sources) = self.sources else { return Ok(None) };
         let Some(mut frame) = sources.sides(coord) else { return Ok(None) };
         if let Some(options) = self.options {
-            frame.prepare(&crate::prepare::RenderContext { options, sources, recording: None })?;
+            frame.prepare(&crate::prepare::RenderContext { options, sources })?;
         }
         Ok(Some(frame))
     }

@@ -39,7 +39,7 @@ fn arms(ids: &[u16]) -> Vec<SeamArm> {
 }
 
 fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<'a> {
-    RenderContext { options, sources, recording: None }
+    RenderContext { options, sources }
 }
 
 #[test]

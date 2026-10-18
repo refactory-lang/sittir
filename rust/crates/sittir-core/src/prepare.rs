@@ -13,9 +13,6 @@ use crate::slot::{NodeCoordinate, SeamArm, SlotValue};
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
-    /// Where a recording render writes the line breaks it writes at each
-    /// gap (`SpacingWriter::with_recording`); `None` on any other render.
-    pub recording: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>,
 }
 
 mod target;
@@ -659,11 +656,7 @@ mod tests {
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<KindId> {
         let sources = Sources(HashMap::from([(crate::types::TreeId(3), Arc::from(source))]));
         let options = ResolvedOptions::default();
-        let ctx = RenderContext {
-            options: &options,
-            sources: &sources,
-            recording: None,
-        };
+        let ctx = RenderContext { options: &options, sources: &sources };
         root_flanks(Some(super::EdgeItem::Coord(std::borrow::Cow::Borrowed(first))), None, None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
             .before
             .map(|edge| edge.arm)
@@ -692,7 +685,7 @@ mod tests {
     fn trailing(last: Option<KindId>, rebuilt: bool, default: u8) -> u8 {
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
-        let ctx = RenderContext { options: &options, sources: &sources, recording: None };
+        let ctx = RenderContext { options: &options, sources: &sources };
         let source = rebuilt.then(|| coordinate(2, 7));
         super::source_trailing_delimiter(source.as_ref(), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
     }

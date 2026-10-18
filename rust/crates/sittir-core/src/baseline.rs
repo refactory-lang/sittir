@@ -29,7 +29,6 @@
 //! framed or sliced inside it by its index, with the breaks written around
 //! each (`Baseline::frame`).
 
-use std::cell::RefCell;
 use std::collections::HashMap;
 
 use crate::types::NodeIndex;
@@ -172,7 +171,7 @@ struct Run {
 /// anchors waiting for the next text, and the open frames.
 #[derive(Debug)]
 pub struct Recorder<'a> {
-    baseline: &'a RefCell<Baseline>,
+    baseline: &'a mut Baseline,
     written: Tally,
     ended: Tally,
     last_end: Option<Tally>,
@@ -189,7 +188,7 @@ pub struct Recorder<'a> {
 }
 
 impl<'a> Recorder<'a> {
-    pub fn new(baseline: &'a RefCell<Baseline>) -> Self {
+    pub fn new(baseline: &'a mut Baseline) -> Self {
         Self {
             baseline,
             written: Tally::default(),
@@ -245,7 +244,7 @@ impl<'a> Recorder<'a> {
             }
             parent.items.push(item);
         }
-        self.baseline.borrow_mut().frames.insert(index, FrameItems { open, close: self.ended, items: frame.items });
+        self.baseline.frames.insert(index, FrameItems { open, close: self.ended, items: frame.items });
         self.close(end);
     }
 
@@ -285,14 +284,13 @@ impl<'a> Recorder<'a> {
             return;
         }
         let (prev, now) = (self.last_end, self.written);
-        let mut baseline = self.baseline.borrow_mut();
+        let baseline = &mut *self.baseline;
         for start in self.opens.drain(..) {
             baseline.opens.entry(start).or_insert((prev, now));
         }
         for (end, at) in self.closes.drain(..) {
             baseline.closes.insert(end, (at, now));
         }
-        drop(baseline);
         self.before_run = None;
         self.text_before = now;
         for frame in self.frames.iter_mut().rev().take_while(|frame| frame.open.is_none()) {
@@ -367,7 +365,7 @@ impl<'a> Recorder<'a> {
         let before = self.last_end;
         let first = run.resolved_opens.iter().map(|&(start, _)| start).chain(run.opens.iter().copied()).min();
         self.before_run = first.map(|first| (first, self.ended));
-        let mut baseline = self.baseline.borrow_mut();
+        let baseline = &mut *self.baseline;
         for (end, at) in self.closes.drain(..) {
             baseline.closes.insert(end, (at, base));
         }
@@ -377,7 +375,6 @@ impl<'a> Recorder<'a> {
         for (end, (at, now)) in run.resolved_closes {
             baseline.closes.insert(end, (base.plus(at), base.plus(now)));
         }
-        drop(baseline);
         self.opens.extend(run.opens);
         self.closes.extend(run.closes.into_iter().map(|(end, at)| (end, base.plus(at))));
         self.last_end = run.last_end.map(|end| base.plus(end)).or(self.last_end);
@@ -399,8 +396,8 @@ mod tests {
 
     #[test]
     fn a_frame_closing_after_its_node_trailing_run_was_written_closes_before_the_run() {
-        let baseline = RefCell::new(Baseline::default());
-        let mut recorder = Recorder::new(&baseline);
+        let mut baseline = Baseline::default();
+        let mut recorder = Recorder::new(&mut baseline);
         recorder.open(14);
         text(&mut recorder, "b");
         recorder.close(15);
@@ -415,13 +412,13 @@ mod tests {
         recorder.close(15);
         recorder.open(20);
         text(&mut recorder, "x");
-        assert_eq!(baseline.borrow().between(15, 16), Some(Tally { spaces: 1, ..Tally::default() }));
+        assert_eq!(baseline.between(15, 16), Some(Tally { spaces: 1, ..Tally::default() }));
     }
 
     #[test]
     fn a_trailing_run_after_text_with_no_anchor_measures_from_that_text() {
-        let baseline = RefCell::new(Baseline::default());
-        let mut recorder = Recorder::new(&baseline);
+        let mut baseline = Baseline::default();
+        let mut recorder = Recorder::new(&mut baseline);
         text(&mut recorder, "this");
         recorder.start_run();
         recorder.open(10);
@@ -431,6 +428,6 @@ mod tests {
         recorder.emitted(" ");
         recorder.emitted("/* c */");
         recorder.wrote_run();
-        assert_eq!(baseline.borrow().between(9, 10), Some(Tally { spaces: 1, ..Tally::default() }));
+        assert_eq!(baseline.between(9, 10), Some(Tally { spaces: 1, ..Tally::default() }));
     }
 }
