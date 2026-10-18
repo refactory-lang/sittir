@@ -10,11 +10,7 @@ import { isPreference, type PreferencePlaceholder } from '../primitives/preferen
 import { INDENT_KEY, LABELS_KEY, type OptionsConfig } from './options-block.ts';
 import type { ReparseHostsConfig } from './reparse-hosts.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
-import {
-	parseFlankAddress,
-	parseSeamLabel,
-	parseSpacingLabel
-} from '../primitives/spacing.ts';
+import { parseSpacingAddress } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
@@ -1229,9 +1225,7 @@ function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 
 function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
 	if (rules.has(key) || rules.has(`_${key}`)) return false;
-	return (
-		parseSpacingLabel(key) !== undefined || parseSeamLabel(key) !== undefined || parseFlankAddress(key) !== undefined
-	);
+	return parseSpacingAddress(key) !== undefined;
 }
 
 function assertNoSpacingAddressPatches(edits: EditsConfig, rules: ReadonlySet<string>): void {

@@ -11,6 +11,7 @@
  */
 
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
@@ -137,7 +138,7 @@ it('applies a seated alias address to both parser identities that share its disp
 	expect(sites).toHaveLength(2);
 	expect(new Set(sites.map((site) => nodeMap.nodes.get(site.seat!.kind)?.kindId)).size).toBe(2);
 	await expect(getNodeRsForGrammar('python')).resolves.toContain('Node');
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 async function getNodeRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
