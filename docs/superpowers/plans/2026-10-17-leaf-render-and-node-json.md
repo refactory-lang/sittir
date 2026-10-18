@@ -11,6 +11,8 @@
 
 **Tech Stack:** TypeScript codegen emitters, generated `@sittir/<lang>` packages, the `@sittir/common` runtime, vitest.
 
+**Owner:** TBD (brainstorm assigns).
+
 ## Rulings (maintainer, 2026-10-16 and 2026-10-17)
 
 - **Leaves stay nodes.** A leaf keeps `$type`, its tree token and its trivia, and is never flattened to a string. Admission is unchanged: a leaf is admitted by its tree token or by `$render`.
@@ -25,6 +27,15 @@
 - **The reviver is the only way back.** There is no `fromJSON`. The reviver builds through the internal build-by-kind path that the generic build entry will expose later, and that public entry stays its own decision. An unknown kind or slot throws, naming its JSON path.
 - **The round-trip runs as a corpus vitest**, not as a validator row.
 - Bare kind-id units get no `$render`, since they become records in the arena step.
+- **Members are own enumerable properties.** `toString` and `toJSON` are members of the node literal that `nodeMemberLines` writes, like `$render`, `$trivia`, `$with` and the accessors. `nodedata-shape.test.ts` pins that `Object.keys` lists those. One rule covers every node member. `JSON.stringify` calls `toJSON` whether or not it is enumerable, so the rule doesn't affect serialization. Making the members non-enumerable is the separate `$with`-enumerability case, outside this plan.
+
+## Order with the arena work
+
+The arena plan (`2026-10-10-arena-tables.md`, on `feat/records`) changes how a leaf is stored, not the leaf's surface. One emitter path derives that surface.
+
+- **This plan lands first.** `wrapLeaf`, the leaf `Parsed` types, and `toString`/`toJSON` in `nodeMemberLines` go to master, and `feat/records` takes them at its next master merge.
+- **The arena work builds on it.** Task 9's record-backed wraps take their node members from `nodeMemberLines`, which that plan's Task 9 step 1 now states. A parsed leaf on the record wire is a tag-2 cell (kind, start, end, row) with no record. Its record-backed wrap hydrates the cell into the same `wrapLeaf` members, with `$text` decoded from the cell's byte span.
+- **Arena Stage B touches no TypeScript emitter.** It changes the Rust core, the derive, codegen's Rust render emitter and the napi methods. The leaf types are not touched by either plan's arena tasks.
 
 ## Constraints
 
@@ -44,6 +55,9 @@
 | The coercer builds any kind by name from a loose config (`_fromMap`, `_resolveByKind`), and a leaf tag takes `{ $type, text }` | `factories/coerce.ts` | read |
 | `$trivia.leading()` with no items returns that side's entries | `common/src/utils.ts::triviaSide` | glossary |
 | `triviaFacts.layout` is the set of layout kind ids, so any trivia entry outside it is a comment | `packages/<lang>/src/utils.ts` | read |
+| The unit kind set (`unitKindIds`) is emitted only to Rust (`kind_ids.rs` `units`). No TypeScript table holds it, and the text-leaf set exists in TypeScript only as the coercer's `_leafRegistry` keys | `emitters/wrap.ts::unitKindIds`, `emitters/kind-id-rust.ts`, `factories/coerce.ts` | read |
+| Arena Stage B files: `sittir-core` (cells, side record, built trivia table), `sittir-node-macros` (record writer, `…Record<'a>` views, `HasRecord`), `emitters/render-module.ts` (prepare generic over the fields trait), and the napi methods. Arena Task 9 files: `emitters/wrap.ts` (record-backed wraps beside today's), `common/src/engine.ts`, and `common/src/read.ts` | `2026-10-10-arena-tables.md`, Tasks 8 and 9 | read |
+| No `sittir tool` reports per-slot value shapes or which read kinds the coercer can build. `walk` counts kinds only | `sittir tool --help` | read |
 
 ## Review Focus
 
@@ -57,9 +71,14 @@
 
 ### Task 0: Census (no code)
 
-**Files:** create `docs/superpowers/probes/2026-10-17-leaf-json/census.py` and `census.txt` (kept, never promoted).
+**Files:** no existing tool covers this census, so it is a new tool, `sittir tool node-json-census`, following the tool conventions in `.claude/project-workflow.md`:
+- create `packages/tools/src/census/node-json-census.ts` (`export async function run(opts: NodeJsonCensusOptions)`);
+- re-export it from `packages/tools/src/index.ts`;
+- create `packages/cli/src/commands/tool/node-json-census.ts` and register it in `toolModules`.
 
-For each of the five grammars, record:
+Its output for the five grammars is committed as `docs/superpowers/probes/2026-10-17-leaf-json/census.txt`.
+
+For each of the five grammars, the tool reports:
 1. the text-leaf kinds with no wrap, by name;
 2. the kinds a read of the corpus can produce that are not keys of `_fromMap` (kinds the reviver could not build);
 3. the value shapes `querySlots` accessors return (node, list view, kind id, boolean, string, undefined), by kind and slot;
@@ -84,7 +103,7 @@ For each of the five grammars, record:
 - C1.4 At the type level, `leaf.$render()` and `leaf.toString()` type-check on `T.Identifier.Parsed` (`expectTypeOf`).
 - C1.5 A structural node's `toString()` equals its `$render()`.
 - C1.6 Each changed example's output is unchanged (the examples' own tests).
-- C1.7 In `nodedata-shape.test.ts`, the leaf and branch shape cases still pass. `Object.keys` now also lists `toString` and `toJSON`, so that expectation gains both.
+- C1.7 In `nodedata-shape.test.ts`, the leaf and branch shape cases still pass. `Object.keys` now also lists `toString` and `toJSON`, as own enumerable members like `$render` (see Rulings), so that expectation gains both.
 
 **Gates:**
 - The regen diff is limited to `wrap.ts` (the leaf wrap and its table entries), `types.ts` (leaf `Parsed`), and the `toString` line in builders and wraps.
@@ -96,7 +115,11 @@ For each of the five grammars, record:
 **Files:**
 - Create `packages/common/src/node-json.ts` with `nodeJSON(node, facts): NodeJSON`.
 - Modify `nodeMemberLines`: add `toJSON: () => nodeJSON(node, jsonFacts),`.
-- Modify the utils emitter: `export const jsonFacts = { slots: querySlots, names: KIND_NAMES, layout: triviaFacts.layout }`. It bundles three existing tables and adds no new one.
+- Modify the utils emitter to emit `kindFacts = { leaves, units }`, each set from its one derivation:
+  - `leaves` is the text-leaf kinds that `wrapLeaf` registers, from the same function;
+  - `units` is `unitKindIds(nodeMap)`, which `kind_ids.rs` already emits.
+
+  Also emit `export const jsonFacts = { slots: querySlots, names: KIND_NAMES, layout: triviaFacts.layout, kinds: kindFacts }`.
 - Modify `packages/types/src/node-surface.ts`: add `NodeJSON` (with JSDoc), and add `toJSON(): NodeJSON` to `NodeMethods`.
 - Glossary: in `packages-common-src.md`, `nodeJSON`.
 
@@ -127,15 +150,17 @@ For each of the five grammars, record:
 
 **Files:**
 - Modify the coerce emitter: export `buildByKind(name, config)`, the existing `_resolveByKind` with a leaf's `$text` mapped to `text`, and expose it on the language hooks.
-- Modify `packages/common/src/create-engine.ts`: add `reviver(key, value)`. For `key !== ''` it returns `value` unchanged. At the root it walks the parsed value inside the engine's handle, building each `{ $type }` object children first and tracking its JSON path, and returns the result through `settle`.
+- Modify `packages/common/src/create-engine.ts`: add `reviver(key, value)`, a function bound to its engine (an arrow function in the engine's closure), so `JSON.parse(text, rs.reviver)` works without `.bind`. For `key !== ''` it returns `value` unchanged. At the root it walks the parsed value inside the engine's handle, building each `{ $type }` object children first and tracking its JSON path, and returns the result through `settle`.
 - Modify `packages/types/src/engine-api.ts`: add `Engine.reviver`, with JSDoc.
 - Glossary: in `packages-common-src.md`, `reviveNode`.
 
 **The walk:**
 - A kind name resolves through `kinds`. An unknown name, or `ERROR`, throws with its path: `$.body.statements[2]: unknown kind 'foo'`.
 - A key outside `$type`, `$text`, the three comment keys and the kind's `querySlots` accessors throws: `$.name: function_item has no slot 'nmae'`.
-- A unit kind with no slots revives to its kind id.
-- A leaf builds through `buildByKind(name, $text)`, and a compound through `buildByKind(name, slots)`.
+- What the kind is decides how it revives, from the stamped `kindFacts`, never from which keys the object has:
+  - a kind in `units` revives to its kind id;
+  - a kind in `leaves` builds through `buildByKind(name, $text)`;
+  - every other kind is a compound and builds through `buildByKind(name, slots)`, even with no slot keys.
 - Comments go back through `$trivia.leading(...)`, `.trailing(...)` and `.inner(...)`.
 
 The walk runs once at the root, not in each reviver call. The order is the same, children first, and it is the only way to know the path, because JSON's reviver passes only the key.
@@ -148,6 +173,8 @@ The walk runs once at the root, not in each reviver call. The order is the same,
 - C3.5 Under `verifyStructure: 'runtime'`, JSON missing a required slot is refused at `JSON.parse`. Under the default it parses, and is refused at render.
 - C3.6 The reviver refuses a tree containing an `ERROR` node, naming its path.
 - C3.7 Comments revive: a rust item with a leading line comment round-trips, and its render includes the comment.
+- C3.8 Kind facts, not JSON shape: `JSON.parse('{"$type":"block"}', rs.reviver)` is a built `block` with `statements()` equal to `[]`, not a kind id. A unit, such as rust `{ "$type": "mutable_specifier" }` or a python comparison operator, revives to its kind id.
+- C3.9 The reviver is bound: `const { reviver } = rs; JSON.parse(text, reviver)` revives the same as `JSON.parse(text, rs.reviver)`.
 
 ### Task 4: Gates, review and PR
 
