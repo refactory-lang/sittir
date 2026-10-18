@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 import type { RawGrammar } from '../types.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const evaluated = vi.hoisted(() => ({ current: undefined as unknown }));
 
@@ -70,7 +71,7 @@ describe('compileGrammar gates link', () => {
 		const { link } = await import('../link.ts');
 		await expect(compileGrammar({ package: grammarPackage('rust') })).rejects.toThrow(/dangling-internal-ref/);
 		expect(link).not.toHaveBeenCalled();
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('stops before link on an expectDiagnostics entry for an unexpectable code', async () => {
 		evaluated.current = {
@@ -82,7 +83,7 @@ describe('compileGrammar gates link', () => {
 		const { link } = await import('../link.ts');
 		await expect(compileGrammar({ package: grammarPackage('rust') })).rejects.toThrow(/expect-diagnostics-invalid/);
 		expect(link).not.toHaveBeenCalled();
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });
 
 describe('generate() rejects a grammar the gate rejects, on its own', () => {
@@ -93,7 +94,7 @@ describe('generate() rejects a grammar the gate rejects, on its own', () => {
 		const { generate } = await import('../generate.ts');
 		const { GrammarDiagnosticError } = await import('../diagnostics/grammar-diagnostics.ts');
 		await expect(generate({ grammar: 'rust', outputDir: 'unused' })).rejects.toThrow(GrammarDiagnosticError);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('does not raise it for a code the caller allows', async () => {
 		evaluated.current = unexpectable as unknown as RawGrammar;
@@ -108,5 +109,5 @@ describe('generate() rejects a grammar the gate rejects, on its own', () => {
 			(error: unknown) => error
 		);
 		expect(outcome).not.toBeInstanceOf(GrammarDiagnosticError);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });

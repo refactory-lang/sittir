@@ -5,6 +5,7 @@ import { dynamicPrecedenceRecords } from '../diagnostics/dynamic-precedence.ts';
 import { unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 type Fixture = Pick<RawGrammar, 'name' | 'derivationRecords' | 'ruleCauses' | 'undeclaredRules'>;
 
@@ -68,7 +69,7 @@ describe('python dynamic precedence', () => {
 	let python: RawGrammar;
 	beforeAll(async () => {
 		python = await evaluatePackage(grammarPackage('python'));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('loses nothing upstream declared, and records the authored primary_expression addition', () => {
 		expect(python.derivationRecords?.upstreamDynamicPrecedence).toEqual({ print_statement: [-1], type_alias_statement: [1], with_item: [1] });

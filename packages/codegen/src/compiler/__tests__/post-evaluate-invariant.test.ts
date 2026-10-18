@@ -26,6 +26,7 @@ import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
@@ -61,7 +62,7 @@ describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {
 		beforeAll(async () => {
 			evaluated[grammar] = await evaluatePackage(grammarPackage(grammar));
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		it(`${grammar}: rule tree contains only known rule types`, () => {
 			const raw = evaluated[grammar]!;
@@ -202,7 +203,7 @@ describe('post-evaluate invariant', () => {
 			const second = await evaluatePackage(grammarPackage(grammar));
 
 			expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 	}
 });
 

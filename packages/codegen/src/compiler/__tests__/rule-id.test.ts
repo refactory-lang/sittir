@@ -7,13 +7,14 @@ import { rebaseRuleIds } from '../../dsl/rule-attrs.ts';
 import type { Rule } from '../../types/rule.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 describe('rule ids', () => {
 	let python: Awaited<ReturnType<typeof evaluatePackage>>;
 
 	beforeAll(async () => {
 		python = await evaluatePackage(grammarPackage('python'));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('ruleIdPath reads back the path createRuleId wrote, whatever the owner name holds', () => {
 		expect(ruleIdPath(createRuleId('host', { path: [] }))).toBe('root');

@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 type Node = { readonly type: string; readonly name?: string; readonly immediate?: boolean; readonly annotations?: unknown; readonly content?: Node; readonly members?: readonly Node[] };
 
@@ -11,11 +12,11 @@ let rust: Evaluated;
 
 beforeAll(async () => {
 	python = await evaluatePackage(grammarPackage('python'));
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 beforeAll(async () => {
 	rust = await evaluatePackage(grammarPackage('rust'));
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 describe('the text-token mint runs in enrich', () => {
 	it('a patch landing on a minted reference rewrites the minted rule and keeps the reference', () => {

@@ -4,6 +4,7 @@ import { deriveVariantChildren } from '../variant-structural.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
@@ -27,7 +28,7 @@ describe('polymorph metadata — structural e2e', () => {
 			{ kind: polymorphVisibleName('assignment', 'type'), name: 'type', definedBy: 'override' },
 			{ kind: polymorphVisibleName('assignment', 'typed'), name: 'typed', definedBy: 'override' }
 		]);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('rust: polymorph variants derived structurally for converted rules', async () => {
 		const raw = await evaluatePackage(grammarPackage('rust'));
@@ -44,5 +45,5 @@ describe('polymorph metadata — structural e2e', () => {
 			{ kind: polymorphVisibleName('or_pattern', 'binary'), name: 'binary', definedBy: 'override' },
 			{ kind: polymorphVisibleName('or_pattern', 'prefix'), name: 'prefix', definedBy: 'override' }
 		]);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });

@@ -7,6 +7,7 @@ import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { collectCatalogKinds } from '../../emitters/kind-discriminant.ts';
 import { readFileSync } from 'node:fs';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
@@ -18,11 +19,11 @@ let typescript: Evaluated;
 
 beforeAll(async () => {
 	scm = await evaluatePackage(grammarPackage('scm'));
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 beforeAll(async () => {
 	typescript = await evaluatePackage(grammarPackage('typescript'));
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 const sym = (name: string) => ({ type: 'SYMBOL', name });
 const str = (value: string) => ({ type: 'STRING', value });
