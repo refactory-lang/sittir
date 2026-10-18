@@ -103,6 +103,25 @@ type Resolve<R, ByKindId> = R extends number
 
 export type SupertypeSurface<S, ByKindId> = Resolve<S, ByKindId>;
 
+/**
+ * The forms of a supertype union whose `$with` setter for `Slot` admits `Value`.
+ *
+ * A union's `$with.<slot>` is the intersection of its forms' setters, so a value only some forms accept is refused
+ * by the union (`never`). Narrow with this helper, or with the form's `is` guard, and set on the result.
+ *
+ * @typeParam Union - a supertype's `Parsed` or `Bound` union.
+ * @typeParam Slot - a slot name settable through `$with`.
+ * @typeParam Value - the value the setter must admit.
+ * @example `FormsHolding<CallExpression.Parsed, 'arguments', Arguments.Parsed>` is the call and member forms.
+ */
+export type FormsHolding<Union, Slot extends string, Value> = Union extends {
+	readonly $with: { readonly [K in Slot]: (value: infer Param) => unknown };
+}
+	? [Value] extends [Param]
+		? Union
+		: never
+	: never;
+
 export type ListView<E, O> = ReadonlyArray<E> & Readonly<O>;
 
 type MethodKeys<N> = keyof { [P in keyof N as N[P] extends () => unknown ? P : never]: 1 };
@@ -289,5 +308,6 @@ type SurfaceOf<N, ByChild> = Storage<N> &
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;
 export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed>;
+/** `$with` for a tree-bound node: one setter per slot returning the node with that slot replaced. On a supertype union the setters intersect, so a slot whose forms disagree on its value type refuses every value; `FormsHolding` names the forms that accept one. */
 export type WithNode<Self, ByBound, Of = Self> = WithOf<Self, ByBound, Of>;
 export type BoundWithNode<Self, ByBound, Of = Self> = Setters<Self, ByBound, true, Of>;
