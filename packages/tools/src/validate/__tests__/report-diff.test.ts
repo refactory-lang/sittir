@@ -47,6 +47,14 @@ describe('readValidationReport', () => {
 	});
 });
 
+describe('readValidationReport rows', () => {
+	it('refuses an element that is not a row, naming the path and the index', () => {
+		const good = row('rust', 'x', 'm');
+		for (const bad of [1, null, {}, [], { ...good, grammar: 7 }, { ...good, message: undefined }])
+			expect(() => readValidationReport(file('rows.json', JSON.stringify([good, bad])))).toThrow(/row 1 .*rows\.json/);
+	});
+});
+
 describe('readComparableReport', () => {
 	it('refuses a report with no rows, so an empty side never reads as nothing moved', () => {
 		expect(() => readComparableReport(file('none.json', '[]'))).toThrow(/no rows.*none\.json/);

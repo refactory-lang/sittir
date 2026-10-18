@@ -189,8 +189,18 @@ export function readValidationReport(path: string): ValidationReportEntry[] {
 		throw new Error(`validation report is not valid JSON: ${path}: ${(e as Error).message}`);
 	}
 	if (!Array.isArray(parsed)) throw new Error(`validation report is not an array: ${path}`);
+	parsed.forEach((row: unknown, index) => {
+		if (typeof row !== 'object' || row === null || Array.isArray(row))
+			throw new Error(`validation report row ${index} is not an object: ${path}`);
+		const missing = REPORT_ROW_FIELDS.filter((f) => typeof (row as Record<string, unknown>)[f] !== 'string');
+		if (missing.length > 0)
+			throw new Error(`validation report row ${index} lacks the string field(s) ${missing.join(', ')}: ${path}`);
+	});
 	return parsed as ValidationReportEntry[];
 }
+
+/** The string fields every report row carries, whichever source wrote it. */
+const REPORT_ROW_FIELDS = ['source', 'grammar', 'backend', 'code', 'severity', 'message'] as const;
 
 /** Write the full (unbounded) entry list to `outPath` as pretty JSON, overwriting any previous report. */
 export function writeValidationReport(entries: readonly ValidationReportEntry[], outPath: string): void {
