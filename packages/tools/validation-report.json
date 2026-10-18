@@ -572,7 +572,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "dictionary_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -589,7 +589,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "generator_expression",
-    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -606,7 +606,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "list_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -623,7 +623,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "set_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -1158,7 +1158,7 @@
     "code": "unclassifiable-shape",
     "severity": "error",
     "ownerKind": "_let_chain",
-    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -1175,7 +1175,7 @@
     "code": "unclassifiable-shape",
     "severity": "error",
     "ownerKind": "predicate",
-    "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "nested-seq",
@@ -3993,6 +3993,175 @@
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "message": "conflict between primary_expression, _parameter_name, _parameter_name_formal_parameter on '(' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name",
+          "_parameter_name_formal_parameter"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name"
+        ],
+        [
+          "_parameter_name_formal_parameter"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "'readonly'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name",
+          "_parameter_name_formal_parameter"
+        ]
+      }
+    }
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "message": "conflict between primary_expression, _parameter_name_receiver on ',' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "this"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "message": "conflict between primary_type, _parameter_name_receiver on ')' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_type"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "this"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "message": "conflict between primary_expression, primary_type, _parameter_name_receiver on ')' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "primary_type"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "'('",
+          "this"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_expression",
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
     "code": "conflict-unnecessary-upstream",
     "severity": "info",
     "message": "upstream declares the conflict primary_expression, rest_pattern, which the reshaped grammar never reports",
@@ -4146,7 +4315,7 @@
     "code": "unclassifiable-shape",
     "severity": "error",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -4163,7 +4332,7 @@
     "code": "union-slot-mixed-row",
     "severity": "error",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Resolve with variant(name) in patches: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Resolve with variant(name) in edits: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
     "canProceed": false,
     "location": "binary_expression",
     "sClass": "S4"
@@ -4176,7 +4345,7 @@
     "code": "unclassifiable-shape",
     "severity": "error",
     "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -4184,6 +4353,24 @@
       "ruleId": "rule:public_field_definition:root"
     },
     "location": "public_field_definition"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "export_statement_default_declaration",
+    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "declaration"
+      ]
+    },
+    "location": "export_statement_default_declaration"
   },
   {
     "source": "validator",
@@ -5305,21 +5492,6 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "predefined_type"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "string_fragment",
-    "count": 1,
-    "entries": [
-      "Ambient declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "string_fragment"
   },
   {
     "source": "validator",
