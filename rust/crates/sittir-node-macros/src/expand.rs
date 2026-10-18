@@ -130,7 +130,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     #[inline(never)]
                     fn #read_fn(
                         _cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                        _ctx: &__rt::ReadCtx<'_>,
+                        _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
                         ::core::result::Result::Ok(#unit)
@@ -138,7 +138,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     #[inline(never)]
                     fn #boxed_fn(
                         _cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                        _ctx: &__rt::ReadCtx<'_>,
+                        _ctx: &mut __rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
                         ::core::result::Result::Ok(::std::boxed::Box::new(#unit))
@@ -165,7 +165,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     #[inline(never)]
                     fn #read_fn(
                         cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                        ctx: &__rt::ReadCtx<'_>,
+                        ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
                         ::core::result::Result::Ok(#ident::#name(<#ty as __rt::ReadNode>::read(cursor, ctx, depth)?))
@@ -173,7 +173,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     #[inline(never)]
                     fn #boxed_fn(
                         cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                        ctx: &__rt::ReadCtx<'_>,
+                        ctx: &mut __rt::ReadCtx<'_>,
                         depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
                         let payload = <#ty as __rt::ReadNode>::read(cursor, ctx, depth)?;
@@ -250,10 +250,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         const _: () = {
             use ::sittir_core::read as __rt;
             use ::sittir_core::types::KindId as __Kind;
-            type __Read<T> = fn(&mut ::tree_sitter::TreeCursor<'_>, &__rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
+            type __Read<T> = fn(&mut ::tree_sitter::TreeCursor<'_>, &mut __rt::ReadCtx<'_>, __rt::Depth) -> ::core::result::Result<T, __rt::ReadError>;
             fn __unadmitted<T>(
                 cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                _ctx: &__rt::ReadCtx<'_>,
+                _ctx: &mut __rt::ReadCtx<'_>,
                 _depth: __rt::Depth,
             ) -> ::core::result::Result<T, __rt::ReadError> {
                 ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
@@ -299,7 +299,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #[allow(unused_variables)]
                 fn read(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                    ctx: &__rt::ReadCtx<'_>,
+                    ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
@@ -312,7 +312,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #[allow(unused_variables)]
                 fn read_boxed(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                    ctx: &__rt::ReadCtx<'_>,
+                    ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
                     let node = cursor.node();
@@ -391,7 +391,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                 }
                 fn read(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                    _ctx: &__rt::ReadCtx<'_>,
+                    _ctx: &mut __rt::ReadCtx<'_>,
                     _depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     __resolve(cursor).ok_or_else(|| __rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
@@ -598,7 +598,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                 #[allow(unused_mut, unused_variables)]
                 fn read(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
-                    ctx: &__rt::ReadCtx<'_>,
+                    ctx: &mut __rt::ReadCtx<'_>,
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let __node = cursor.node();

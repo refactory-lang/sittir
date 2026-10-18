@@ -457,7 +457,7 @@ pub trait Prepare {
     /// type (`read::read_coordinate`), when the type reads; `None` for a
     /// value no read produces.
     #[must_use]
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>>
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &mut crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>>
     where
         Self: Sized,
     {
@@ -536,8 +536,8 @@ fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> R
         return Ok(None);
     }
     let Some((tree, read)) = ctx.sources.read_ctx(coord.tree) else { return Ok(None) };
-    let read = read.with_changed(coord.index, coord.changed());
-    match T::read_coordinate(tree, &read, coord.index) {
+    let mut read = read.with_changed(coord.index, coord.changed());
+    match T::read_coordinate(tree, &mut read, coord.index) {
         None => Ok(None),
         Some(Ok(node)) => Ok(Some(node)),
         Some(Err(error)) => Err(CoordinateError::Unread { handle: coord.handle(), detail: format!("{error:?}") }),
@@ -587,7 +587,7 @@ impl<T: Prepare> Prepare for Box<T> {
         (**self).prepare(ctx)
     }
 
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>> {
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &mut crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>> {
         T::read_coordinate(tree, ctx, index).map(|read| read.map(Box::new))
     }
 

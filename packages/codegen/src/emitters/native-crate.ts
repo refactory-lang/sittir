@@ -229,14 +229,14 @@ impl EngineGrammar for ${v.Name}Grammar {
         &<render::options::Sites as sittir_core::options::OptionSites>::TABLES
     }
 
-    fn read_units(self, tree: &tree_sitter::Tree, ctx: &sittir_core::read::ReadCtx<'_>, index: sittir_core::types::NodeIndex) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
+    fn read_units(self, tree: &tree_sitter::Tree, ctx: &mut sittir_core::read::ReadCtx<'_>, index: sittir_core::types::NodeIndex) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
         sittir_core::read::read_at::<AnyNode>(&mut tree.walk(), ctx, index, sittir_core::read::Depth::ONE)
             .ok()
             .and_then(|mut any| sittir_core::read::HasLayout::<Option<Box<sittir_core::layout::NodeLayout<Self::Trivia>>>>::take_layout(&mut any))
             .map_or_else(Vec::new, |layout| layout.units)
     }
 
-    fn render_read(self, tree: &tree_sitter::Tree, index: sittir_core::types::NodeIndex, depth: sittir_core::read::Depth, ctx: &sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>, baseline: &mut sittir_core::baseline::Baseline) -> std::result::Result<String, String> {
+    fn render_read(self, tree: &tree_sitter::Tree, index: sittir_core::types::NodeIndex, depth: sittir_core::read::Depth, ctx: &mut sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>, baseline: &mut sittir_core::baseline::Baseline) -> std::result::Result<String, String> {
         let node = sittir_core::read::read_at::<AnyNode>(&mut tree.walk(), ctx, index, depth)
             .map_err(|refusal| refusal.describe(&|kind| self.kind_name(kind)))?;
         render_node_parts(sittir_core::SlotValue::Node(node), render, Some(baseline)).map(|(_, text)| text).map_err(|error| error.to_string())

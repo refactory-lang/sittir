@@ -154,7 +154,7 @@ fn parse_rust(source: &str) -> tree_sitter::Tree {
 
 /// Read the tree's root into `T`, as tree 7, seating no sides.
 fn read<T: ReadNode>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Result<T, ReadError> {
-    T::read(&mut tree.walk(), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
+    T::read(&mut tree.walk(), &mut ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
 }
 
 /// A tree's trivia table as a read's side lookup, each entry as a parsed
@@ -203,7 +203,7 @@ impl SideLookup for Table<'_> {
 fn read_seated<T: ReadNode>(source: &str, kind: KindId, nth: usize, depth: Depth) -> Result<T, ReadError> {
     let tree = parse(&sittir_rust::language(), source);
     let table = Table::of(&tree, source);
-    let read = T::read(&mut find(&tree, kind, nth), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows).with_sides(&table), depth);
+    let read = T::read(&mut find(&tree, kind, nth), &mut ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows).with_sides(&table), depth);
     read
 }
 
@@ -231,7 +231,7 @@ fn read_nth<T: ReadNode>(
     nth: usize,
     depth: Depth,
 ) -> Result<T, ReadError> {
-    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
+    T::read(&mut find(tree, kind, nth), &mut ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
 }
 
 /// What the read placed on a node beside its own coordinate, which every read
@@ -790,16 +790,16 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let source = "// lead\nfn f() { fn g() {} } // trail\n";
     let tree = parse_rust(source);
     let table = Table::of(&tree, source);
-    let ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <File as ReadNode>::shows).with_sides(&table);
-    let whole: File = File::read(&mut tree.walk(), &ctx, Depth::All).unwrap();
-    let shallow: File = File::read(&mut tree.walk(), &ctx, Depth::ONE).unwrap();
+    let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <File as ReadNode>::shows).with_sides(&table);
+    let whole: File = File::read(&mut tree.walk(), &mut ctx, Depth::All).unwrap();
+    let shallow: File = File::read(&mut tree.walk(), &mut ctx, Depth::ONE).unwrap();
     let index = shallow.statements[0].coord().unwrap().index;
-    let outer: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
+    let outer: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &mut ctx, index, Depth::All).unwrap();
     assert_eq!(&outer, function(&whole, 0));
     assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7)]);
 
     let inner_row = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 1));
-    let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &ctx, inner_row, Depth::All).unwrap();
+    let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &mut ctx, inner_row, Depth::All).unwrap();
     let body = function(&whole, 0).body.node().unwrap();
     assert_eq!(&inner, body.statements[0].node().unwrap());
 }
@@ -869,8 +869,8 @@ fn a_coordinate_reads_one_level_into_its_generated_node() {
     let source = "fn f() { g(); }\n";
     let tree = parse_rust(source);
     let index = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 0));
-    let ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <FunctionItemNode as ReadNode>::shows);
-    let read = FunctionItemNode::read_coordinate(&tree, &ctx, index).expect("a generated node reads a coordinate").unwrap();
+    let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <FunctionItemNode as ReadNode>::shows);
+    let read = FunctionItemNode::read_coordinate(&tree, &mut ctx, index).expect("a generated node reads a coordinate").unwrap();
     let direct = read_nth::<FunctionItemNode>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
     assert_eq!(read, direct);
 }

@@ -53,7 +53,7 @@ pub trait EngineGrammar: Copy {
     /// The sides of the unit children of the node at `index` of `tree`, by
     /// slot and item: the node read one level down by `ctx`
     /// (`NodeLayout::units`). None for a grammar with no nodes.
-    fn read_units(self, tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Vec<crate::layout::UnitSides<Self::Trivia>> {
+    fn read_units(self, tree: &tree_sitter::Tree, ctx: &mut crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Vec<crate::layout::UnitSides<Self::Trivia>> {
         let _ = (tree, ctx, index);
         Vec::new()
     }
@@ -67,7 +67,7 @@ pub trait EngineGrammar: Copy {
         tree: &tree_sitter::Tree,
         index: crate::types::NodeIndex,
         depth: crate::read::Depth,
-        ctx: &crate::read::ReadCtx<'_>,
+        ctx: &mut crate::read::ReadCtx<'_>,
         render: &crate::prepare::RenderContext<'_>,
         baseline: &mut crate::baseline::Baseline,
     ) -> Result<String, String> {
@@ -563,14 +563,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The node at `index` read into `T`, `depth` levels down, seating no
     /// sides; index 0 is the root.
     pub fn read<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
-        crate::read::read_at::<T>(&mut self.tree.walk(), &self.read_ctx(), index, depth)
+        crate::read::read_at::<T>(&mut self.tree.walk(), &mut self.read_ctx(), index, depth)
     }
 
     /// The sides of the unit children of the node at `index`, by slot and
     /// item, as a render read seats them for a client that stores each unit
     /// as its bare kind (`EngineGrammar::read_units`, `ReadCtx::inline_units`).
     pub fn unit_sides(&self, index: crate::types::NodeIndex) -> Vec<crate::layout::UnitSides<G::Trivia>> {
-        self.grammar.read_units(&self.tree, &self.seating_ctx().inline_units(), index)
+        self.grammar.read_units(&self.tree, &mut self.seating_ctx().inline_units(), index)
     }
 
     /// The `ERROR` node at `index` read as the bytes its coordinate spans, or
@@ -584,7 +584,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `ERROR`.
     pub fn snapshot_error(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Option<crate::ErrorRead> {
         let measure = self.snapshot_measure(index, holder);
-        self.error_under(index, &self.read_ctx().snapshot(&measure))
+        self.error_under(index, &self.read_ctx().snapshot(measure))
     }
 
     fn error_under(&self, index: crate::types::NodeIndex, ctx: &crate::read::ReadCtx<'_>) -> Option<crate::ErrorRead> {
@@ -623,7 +623,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// `holder`, or from its own start when absent.
     pub fn snapshot<T: crate::read::ReadNode>(&self, index: crate::types::NodeIndex, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
         let measure = self.snapshot_measure(index, holder);
-        crate::read::read_at::<T>(&mut self.tree.walk(), &self.seating_ctx().snapshot(&measure), index, crate::read::Depth::All)
+        crate::read::read_at::<T>(&mut self.tree.walk(), &mut self.seating_ctx().snapshot(measure), index, crate::read::Depth::All)
     }
 
     /// Reject a handle minted by a different tree.
@@ -1031,9 +1031,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         let mut recorded = crate::baseline::Baseline::default();
         let sides = WithoutLayout(self);
-        let ctx = self.read_ctx().with_sides(&sides);
+        let mut ctx = self.read_ctx().with_sides(&sides);
         let render = crate::prepare::RenderContext { options: &self.read_options, sources: &sides };
-        let rendered = self.grammar.render_read(&self.tree, index, depth, &ctx, &render, &mut recorded);
+        let rendered = self.grammar.render_read(&self.tree, index, depth, &mut ctx, &render, &mut recorded);
         let record = Arc::new(rendered.map(|_| recorded));
         records.lock().unwrap_or_else(std::sync::PoisonError::into_inner).insert((index, depth), Arc::clone(&record));
         record
@@ -2310,7 +2310,7 @@ mod tests {
         let (tree, _) = parsed("fn f() {}\n");
         let id = tree.tree_id();
         let sources = table(tree);
-        let (tree, ctx) = sources.read_ctx(id).expect("the tree is live");
-        assert!(<TestTrivia as crate::prepare::Prepare>::read_coordinate(tree, &ctx, NodeIndex::ROOT).is_none());
+        let (tree, mut ctx) = sources.read_ctx(id).expect("the tree is live");
+        assert!(<TestTrivia as crate::prepare::Prepare>::read_coordinate(tree, &mut ctx, NodeIndex::ROOT).is_none());
     }
 }
