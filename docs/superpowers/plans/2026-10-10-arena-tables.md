@@ -45,6 +45,13 @@ alone selects a list. Keep the layout-token allowlist for the core's default-off
 cardinality and kind-admission checks remain active. This supersedes unconditional refusal of
 unrouted children in the inherited typed-reader constraints, per shared-arena ruling 7.
 
+**No interior-mutability cells (the maintainer, 2026-10-18).** Shared mutable state in the engine
+is a `&mut` borrow threaded where it is written, or a lock's owner (`Mutex`, `RwLock`), never a
+`Cell` or `RefCell`, so exclusive access is proved at compile time. A render's layout baseline is
+borrowed by its writer alone, and the reader threads `&mut ReadCtx`, whose snapshot owns its holder
+stack. The napi live-tree table, a `thread_local!` cell, is replaced with the native packaging
+change (each tree owned by its JavaScript object, no addon table).
+
 ---
 
 ## 3a, the parsed-tree trivia table
@@ -692,7 +699,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
 2. The derive expands, per declaration, inside `records_codec!`:
    - a **record writer** (node → records, children before parents), and the cell writer per choice. A read writes its records through the typed reader's native nodes; writing records straight from the tree, with no native node between, is a Task 10 optimization row, since the slot routing must stay in the one reader;
    - a **fields trait**: one accessor per slot and the layout facts the render reads, with generic associated types for each slot's value. The node struct implements it over its fields, and a **record view** (`…Record<'a>`, the arena and the record's address) implements it over the record's cells, bounds-checking every word it reads and refusing any malformed cell.
-3. Codegen's render bodies (`render-module.ts`) are generic over the fields trait, so one body renders a native node and a record. Prepare over a record resolves into side arrays keyed by record address, never into the record.
+3. Codegen's render bodies (`render-module.ts`) are generic over the fields trait, so one body renders a native node and a record. Prepare over a record resolves into side arrays keyed by record address, never into the record: one prepared overlay per render, keyed by place (step 1a). A record's prepare handles hold only their place, and every prepare operation takes the one `&mut` overlay (ruled 2026-10-18), so the borrow checker proves the walk's exclusive access with no runtime borrow. A native node's prepare keeps writing in place, its output unchanged byte for byte.
 4. Add the napi methods beside today's (Interfaces). `read_many` takes a `wire` argument (ruling 2).
 
 **Checks the writer runs** (the maintainer, 2026-10-17). The record writer encodes native nodes their builder or the typed reader already checked, so it runs no `verifyStructure` check of its own. The views' bounds and malformed-cell refusals always run: they are memory safety, not type-proved facts. At the cutover, whoever appends a built record runs the type-proved checks once, as the builder does today.
