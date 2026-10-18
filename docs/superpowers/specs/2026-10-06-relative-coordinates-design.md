@@ -227,7 +227,8 @@ Arena storage holds both kinds of node (ruling 6 above), so the record layout fi
 must allow:
 
 - **Children by record address.** A record names each child by its record's address; a shared child
-  is one record named twice.
+  is one record named twice. A child whose slot admits only non-recursive, fixed-size kinds is the
+  exception: it is stored inline, in the parent's cell (shared arena, § Packed AST is definitive).
 - **Tree facts on parsed records.** A parsed node's record carries its tree, index and end, so
   identity and the fold check read the record.
 - **Build order for built records.** Builders append records as they build, children before
@@ -239,8 +240,9 @@ must allow:
 - **Prepare beside the records.** What prepare resolves per render (edges, spacing, list-gap
   classes, trivia joins) goes into side arrays keyed by record address, never into the records.
 
-The record step settles two semantics of eager built records: whether a setter writes in place or
-appends (one child record may sit under two parents), and how records nothing names are reclaimed.
+Records and cells are immutable once written: a setter appends a new record and never writes in
+place, so one child record may sit under two parents. How records nothing names are reclaimed is
+still open; the arena-tables plan carries it as the trigger for resetting a built arena.
 
 ## Sequencing
 

@@ -31,9 +31,9 @@ The grammar-generated packed, immutable AST is Sittir's **canonical constructed-
 
 **Two origins, one representation:** a generated native reader projects Tree-sitter nodes directly into typed binary records, without a JavaScript AST intermediate. This is a projection and copy of selected facts, **not** a zero-copy view of Tree-sitter's internal tree memory. Parsed source and Tree-sitter remain authoritative for untouched source-backed subtrees, with lazy record materialization and coordinate folding. Builders write immutable records directly, without first creating an object graph to serialize at render. Both feed the same native renderer. A record can be materialized later, but is published once.
 
-**Storage contract:** codegen derives kind-specific record layouts and emits identical Rust/TypeScript layout metadata. Store booleans, presence bits, fixed literals, enum/choice discriminants and suitable numeric scalars inline; use the narrowest correct width (for example `u16` for kind IDs only when the grammar's ID range fits). Optional scalar fields use presence bits or tagged inline storage. Recursive child references are fixed-size arena addresses; they do not themselves require an independent allocation. Lists are offset/length references into arena runs; strings are offset/length references into UTF-8 storage. Record headers, alignment, addressing, optional tags, capacity slack and list-run storage count toward actual footprint. The current generic five-word cell is a **prototype encoding**, not a mandated per-field physical layout. Prefer immutable, kind-specific packed layouts unless measurements or correctness require a uniform cell. Persistent records live in heap-backed arena chunks, **not on the call stack**; temporary Rust values may use stack space. Arena allocation is amortized by chunks, not necessarily allocation-free.
+**Storage contract:** codegen derives kind-specific record layouts and emits identical Rust/TypeScript layout metadata. Store booleans, presence bits, fixed literals, enum/choice discriminants and suitable numeric scalars inline; use the narrowest correct width (for example `u16` for kind IDs only when the grammar's ID range fits). Optional scalar fields use presence bits or tagged inline storage. A child whose slot admits only non-recursive, fixed-size kinds is stored inline: the parent's cell holds the child's words, at a width the layout pass stamps like any other, and no address. Recursive child references are fixed-size arena addresses; they do not themselves require an independent allocation. Lists are offset/length references into arena runs; strings are offset/length references into UTF-8 storage. Record headers, alignment, addressing, optional tags, capacity slack and list-run storage count toward actual footprint. The current generic five-word cell is a **prototype encoding**, not a mandated per-field physical layout. Prefer immutable, kind-specific packed layouts unless measurements or correctness require a uniform cell. Persistent records live in heap-backed arena chunks, **not on the call stack**; temporary Rust values may use stack space. Arena allocation is amortized by chunks, not necessarily allocation-free.
 
-**Immutability and sharing:** a `$with`/replacement produces a new record and shares unchanged child references. No mutable cell is required solely to support updates. Native arena ownership, reference lifetimes and any cross-arena references must remain valid as snapshots, trees and wrappers are retained or disposed. Parsed-tree trivia stays in its tree table, and a built node's trivia is in the built nodes' own native table, keyed by record address and side and outside the record, so writing a side never changes a record (§ Trivia). Explicitly distinguish mutable *ownership/registry metadata* from immutable *node contents*.
+**Immutability and sharing:** records and their cells are immutable once written. A `$with`/replacement produces a new record and shares unchanged child references; only a recursive slot, a list and a link into another arena take an address, so an edit copies only the path to the change. No mutable cell is required solely to support updates. A slot holds a tree coordinate, a string reference, a record address or an inline child. A parsed node's record is written on its first read, of any kind, and is its storage from then on. Writing it leaves the parent's cell as it was: a parent's coordinate stays a coordinate, and a read reaches the child's record through its tree's index from row to record. The arena and that index only append. Native arena ownership, reference lifetimes and any cross-arena references must remain valid as snapshots, trees and wrappers are retained or disposed. Trivia is a layout overlay, not node contents: a parsed tree's assigned sides stay in its tree table, and every written side, parsed or built, is in one native store outside the records, so writing a side never changes a record (§ Trivia). Explicitly distinguish mutable *ownership/registry metadata* from immutable *node contents*.
 
 **Boundary and wrappers:** an external `ArrayBuffer` exposing native UTF-8 source or arena chunks avoids copying bytes but still uses N-API for exposure and does not imply concurrent `SharedArrayBuffer` semantics. JavaScript wrapper allocation and method representation are separate from the packed AST. Prototype-based accessors can be benchmarked independently against both object and record storage; they are **not** a prerequisite for adopting records, nor automatically authorized by this decision. Avoid conflating V8 `heapUsed` with total resident/native/external memory.
 
@@ -219,8 +219,8 @@ pub enum FunctionModifiersModifierNodeSlot {
   kind admission. A render from data writes fixed syntax from the template, and an untouched node
   slices it from the source.
 - The edge, gap and flank fields the render side stamps today stay as they are. Trivia is not a
-  field of a native node: a parsed node's is in its tree's trivia table, and a built node's in its
-  record (§ Trivia).
+  field of a native node: a parsed node's assigned sides are in its tree's trivia table, and every
+  written side is in the written-sides store, outside the record (§ Trivia).
 
 ### What the macro expands
 
@@ -389,14 +389,19 @@ and never stored. One walk at read assigns a gap's entries to a side of one of t
 children beside it. A side holds one value, its comments and its line layout, and a node's sides
 travel with it.
 
-- **A parsed tree's table** is on the native `ParsedTree`, keyed by (node, side). One token walk
-  builds it from the source and the tree, and it holds every write to the tree's trivia, each
-  marking its side edited. It lands in step 3, ahead of the record wire, which it does not need;
-  the arena-tables plan (`docs/superpowers/plans/2026-10-10-arena-tables.md`) holds the order.
-- **A built node's trivia** is in its own native table, keyed by the node's record address and side, outside the record. It travels with the node when the node is placed, and
-  writing a side updates the table, never the immutable record or a record that shares it. It
-  lands with the record step (ruling 6.3), when built nodes get arena storage. Until then a built
-  node keeps its trivia on the node, and `$trivia` reads the same on parsed and built nodes.
+- **A parsed tree's table** is on the native `ParsedTree`, keyed by (node, side): the sides one
+  token walk assigns from the source and the tree. It lands in step 3, ahead of the record wire,
+  which it does not need; the arena-tables plan (`docs/superpowers/plans/2026-10-10-arena-tables.md`)
+  holds the order.
+- **Written sides are one native store,** keyed by place: a parsed node by its tree and row, a
+  built record by its address, and a built unit by its holder's address, its slot's word and its
+  item. A read takes a place's written side, else the side its tree assigned. A write replaces one
+  place's side and marks it edited, and a tree's edited ranges are a query over its row places. The
+  store is outside every record: writing a side never changes a record or a record that shares it,
+  so trivia is a layout overlay and not part of the immutable node. A built node's sides travel
+  with it when it is placed. The store lands with the record step (ruling 6.3), when built nodes
+  get arena storage. Until then a built node keeps its trivia on the node, and `$trivia` reads the
+  same on parsed and built nodes.
 - **A parsed node's record holds no trivia:** its tree's table does. Prepare resolves no trivia
   joins beside the records.
 - **The render reads trivia from native storage only.** A node with no edited side within its
@@ -440,7 +445,7 @@ members in the builder's literal — changed all three, and the maintainer ruled
   query (`line_gaps`, `line_gaps_of`), and the outside trivia a folded coordinate carries in
   `SlotValue::Coord`.
 - At the record step: the napi decode of `SlotValue`, and the trivia nodes (`NodeTrivia`,
-  `TriviaEntry`) with built nodes' trivia on the node, which the built nodes' tables replace.
+  `TriviaEntry`) with built nodes' trivia on the node, which the written-sides store replaces.
 
 **Generated, per grammar**
 
@@ -616,9 +621,9 @@ raised (11).
    2. **Relative coordinates**, re-based on rows and narrowed to what rows leave (§ Relationship to
       other designs). This settles a detached node's coordinate.
    3. **The definitive record format**, laid out once for Rust and TypeScript: records in both directions, parsed nodes over lazily materialized records with no fold walk, built nodes written directly as immutable records, and the N-API object codecs removed at cutover. Object-wire measurements are re-taken beside record measurements to optimize and verify the implementation; numerical performance superiority is not a prerequisite for adoption (§ The wire; § Packed AST is definitive).
-      Built nodes' trivia lands in this step, in their own native table (§ Trivia). The parsed
-      tree's table lands in this step too, ahead of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with both
-      tables is a feature of its own.
+      The written-sides store, which holds built nodes' trivia, lands in this step (§ Trivia). The parsed
+      tree's table lands in this step too, ahead of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with the
+      table and the store is a feature of its own.
 
    Relative coordinates come after the typed reader so that they are designed against rows, not
    the handles the reader removes, and before the record wire so that the record layout, which
