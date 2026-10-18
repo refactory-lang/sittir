@@ -917,7 +917,7 @@ mod tests {
 
         let none: Option<&NodeLayout<MockTrivia>> = None;
         assert_eq!(none.edges(), Edges::NONE);
-        assert!(none.slot_tokens("_items").is_empty());
+        assert_eq!(none.slot_tokens("_items"), []);
         assert!(none.list_units("_items").is_none());
         let mut out = String::new();
         let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
@@ -934,7 +934,7 @@ mod tests {
         let some = Some(&layout);
         assert_eq!(some.edges(), edges);
         assert_eq!(some.slot_tokens("_items"), &[None, Some(KindId(7))]);
-        assert!(some.slot_tokens("_other").is_empty());
+        assert_eq!(some.slot_tokens("_other"), []);
         assert_eq!(some.list_units("_items").map(|(slot, _)| slot), Some("_items"));
     }
 

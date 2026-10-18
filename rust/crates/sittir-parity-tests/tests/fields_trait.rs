@@ -128,5 +128,5 @@ fn the_accessors_answer_the_fields() {
     assert!(FunctionFields::name(&function).is_present());
     assert!(!FunctionFields::return_type(&function).is_present());
     assert_eq!(sittir_core::view::SlotItems::count(&FunctionFields::parameters(&function)), 1);
-    assert!(FunctionFields::layout(&function).edges() == sittir_core::options::Edges::NONE);
+    assert_eq!(FunctionFields::layout(&function).edges(), sittir_core::options::Edges::NONE);
 }
