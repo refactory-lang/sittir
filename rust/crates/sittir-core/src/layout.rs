@@ -56,6 +56,12 @@ pub struct NodeLayout<T> {
     /// (`$_layout.separator`, `ParsedTree::separator_before`). A read writes
     /// it; a node without a tree carries it as data.
     pub separator: Option<KindId>,
+    /// The byte span in its tree's source of each of a token interior's
+    /// captures, one per capture field at the index the derive stamps it
+    /// (`None` where its group did not match). A read writes it; a built node
+    /// has none. It never crosses: a record keeps each span in its capture's
+    /// cell.
+    pub captures: Vec<Option<crate::types::Span>>,
 }
 
 /// A list slot's layout: the class its separator gaps take before and after
@@ -286,6 +292,7 @@ impl<T> Default for NodeLayout<T> {
             units: Vec::new(),
             slots: Vec::new(),
             separator: None,
+            captures: Vec::new(),
         }
     }
 }
@@ -575,6 +582,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                 units: property(env, napi_val, c"units")?.unwrap_or_default(),
                 slots: property(env, napi_val, c"slots")?.unwrap_or_default(),
                 separator: property(env, napi_val, c"separator")?,
+                captures: Vec::new(),
             })
         }
     }

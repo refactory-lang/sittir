@@ -694,19 +694,25 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
     regex::Regex::new(&flagged)
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
     let flagged = LitStr::new(&flagged, pattern.span());
-    let mut inits = common_inits(fields, None, false);
-    let mut captures = Vec::new();
-    for field in fields {
-        if let Role::Slot(slot) = &field.role {
-            let capture = slot
-                .capture
-                .as_ref()
-                .ok_or_else(|| syn::Error::new_spanned(field.ident, "a token interior's slot names its capture"))?;
-            let (name, ty) = (field.ident, field.ty);
-            inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, index })?,));
-            captures.push(capture);
-        }
+    let layout = fields.iter().find(|field| matches!(field.role, Role::Layout)).map(|field| field.ident);
+    let mut inits = common_inits(fields, layout, false);
+    let captured = capture_fields(fields)?;
+    for (field, capture) in &captured {
+        let (name, ty) = (field.ident, field.ty);
+        inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, index })?,));
     }
+    let captures: Vec<&LitStr> = captured.iter().map(|&(_, capture)| capture).collect();
+    let spans = match layout {
+        Some(layout) => {
+            inits.push(quote!(#layout: Some(__layout),));
+            quote! {
+                let base = ::sittir_core::types::Span::of(&cursor.node()).start;
+                let mut __layout = ctx.layout(index, __at, true);
+                __layout.captures = ::std::vec![#(__rt::capture_span(&captures, #captures, base)),*];
+            }
+        }
+        None => quote!(),
+    };
     let pass = pass(0);
     let router = spelling_router();
     Ok(Body {
@@ -724,9 +730,25 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
             let captures = __INTERIOR
                 .captures(ctx.text(&cursor.node()))
                 .ok_or(__rt::ReadError::Interior { kind: __KIND, index })?;
+            #spans
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
     })
+}
+
+/// A token interior's capture fields with their captures, in declaration
+/// order: a field's place here is its stamped capture index, the one the read
+/// writes its span at (`NodeLayout::captures`) and the record writer reads it
+/// from.
+pub(crate) fn capture_fields<'f, 'a>(fields: &'f [Field<'a>]) -> syn::Result<Vec<(&'f Field<'a>, &'f LitStr)>> {
+    fields
+        .iter()
+        .filter_map(|field| match &field.role {
+            Role::Slot(slot) => Some((field, slot)),
+            _ => None,
+        })
+        .map(|(field, slot)| slot.capture.as_ref().map(|capture| (field, capture)).ok_or_else(|| syn::Error::new_spanned(field.ident, "a token interior's slot names its capture")))
+        .collect()
 }
 
 fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {

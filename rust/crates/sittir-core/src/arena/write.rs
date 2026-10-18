@@ -71,6 +71,7 @@ mod tests {
             units: Vec::new(),
             slots: vec![SlotLayout { slot: "_items".to_owned(), before: Some(KindId(7)), after: None, separator: Some(KindId(8)), tokens: vec![None, Some(KindId(8))] }],
             separator: Some(KindId(9)),
+            captures: Vec::new(),
         }
     }
 

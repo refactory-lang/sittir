@@ -713,6 +713,9 @@ fn a_token_interior_reads_its_slots_from_its_text() {
     let tree = parse_rust(source);
     let decimal: Decimal = read_nth(&tree, source, kind::INTEGER_LITERAL_DECIMAL, 0, Depth::ONE).unwrap();
     assert_eq!((decimal.content.as_str(), decimal.suffix.as_deref()), ("1_000", Some("u8")));
+    let span = |start, end| Some(sittir_core::types::Span { start, end });
+    let captures = decimal.layout.as_deref().map(|layout| layout.captures.clone());
+    assert_eq!(captures, Some(vec![span(14, 19), span(19, 21)]), "each capture's span in the source, at its field's stamped index");
 }
 
 /// The layout an envelope's content keeps: the coordinate the envelope holds, which names the content's node, and nothing else.

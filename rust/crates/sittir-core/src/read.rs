@@ -1240,6 +1240,13 @@ pub fn capture<F: FromCapture>(captures: &Captures<'_>, name: &str, at: SlotSite
     F::from_capture(captures.name(name).map(|m| m.as_str()), at)
 }
 
+/// Where a capture lies in its tree's source, for the captures of the text
+/// of a node that starts at byte `base`: `None` when its group did not match.
+#[must_use]
+pub fn capture_span(captures: &Captures<'_>, name: &str, base: u32) -> Option<Span> {
+    captures.name(name).map(|m| Span { start: base + crate::types::narrow(m.start()), end: base + crate::types::narrow(m.end()) })
+}
+
 /// A list's delimiter flags, as today's `_hasSeparatorFlank` computes them.
 /// `leading` and `trailing` are `Some(mandatory)` for each flank the kind
 /// leaves optional, with the mandatory flank tokens on the other side. A
