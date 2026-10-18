@@ -94,6 +94,15 @@ export interface GrammarInnerTrivia<N, Trivia> {
 	inner(...items: GrammarTriviaEntry<Trivia>[]): N;
 }
 
+/**
+ * The render options every language shares, under the `layout` group: what a caller holding an
+ * `Engine<LanguageAPI>` can pass to `render`. A language's own options add its kinds' option sites
+ * and narrow `layout` to the units it admits.
+ */
+export interface CommonRenderOptions {
+	readonly layout?: { readonly indent?: string; readonly newline?: string };
+}
+
 export interface LanguageAPI {
 	readonly name: string;
 	readonly build: object;
@@ -103,7 +112,7 @@ export interface LanguageAPI {
 	readonly root: AnyUntypedNode & ParsedRoot;
 	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
-	readonly options: object;
+	readonly options: object & CommonRenderOptions;
 	readonly indentChar: string;
 	readonly empty: GrammarTypeMap['empty'];
 	readonly portable?: PortableSurface;
