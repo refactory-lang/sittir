@@ -1,4 +1,4 @@
-import { enrichShapeDiagnostics, enrichShapesOf, type EnrichShape } from './enrich-shapes.ts';
+import { enrichShapeDiagnostics, enrichShapesOf } from './enrich-shapes.ts';
 import type { GrammarJson, SymbolRule } from '../grammar-shapes/grammar-json.ts';
 import type { Rule } from '../types/rule.ts';
 import { FIELD } from '../types/rule-types.ts'; // @rule-type-consts
