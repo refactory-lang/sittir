@@ -103,11 +103,25 @@ type Resolve<R, ByKindId> = R extends number
 
 export type SupertypeSurface<S, ByKindId> = Resolve<S, ByKindId>;
 
+/** The parameter lists of every overload of a setter; the pattern lists the most overloads a setter carries, and a source with fewer matches it with repeats. */
+type SetterParameters<Setter> = Setter extends {
+	(...args: infer A1): unknown;
+	(...args: infer A2): unknown;
+	(...args: infer A3): unknown;
+	(...args: infer A4): unknown;
+}
+	? A1 | A2 | A3 | A4
+	: never;
+
+type TakesFirst<Lists, Value> = Lists extends unknown ? ([Value] extends Lists ? true : never) : never;
+
 /**
  * The forms of a supertype union whose `$with` setter for `Slot` admits `Value`.
  *
  * A union's `$with.<slot>` is the intersection of its forms' setters, so a value only some forms accept is refused
- * by the union (`never`). Narrow with this helper, or with the form's `is` guard, and set on the result.
+ * by the union (`never`). Narrow with this helper, or with the form's `is` guard, and set on the result. A form
+ * admits the value when one of its setter's overloads takes it as a first argument; the clearing overload of an
+ * optional slot takes no argument and admits nothing.
  *
  * @typeParam Union - a supertype's `Parsed` or `Bound` union.
  * @typeParam Slot - a slot name settable through `$with`.
@@ -115,11 +129,11 @@ export type SupertypeSurface<S, ByKindId> = Resolve<S, ByKindId>;
  * @example `FormsHolding<CallExpression.Parsed, 'arguments', Arguments.Parsed>` is the call and member forms.
  */
 export type FormsHolding<Union, Slot extends string, Value> = Union extends {
-	readonly $with: { readonly [K in Slot]: (value: infer Param) => unknown };
+	readonly $with: { readonly [K in Slot]: infer Setter };
 }
-	? [Value] extends [Param]
-		? Union
-		: never
+	? [TakesFirst<SetterParameters<Setter>, Value>] extends [never]
+		? never
+		: Union
 	: never;
 
 export type ListView<E, O> = ReadonlyArray<E> & Readonly<O>;
