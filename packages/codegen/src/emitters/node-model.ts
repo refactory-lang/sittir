@@ -81,7 +81,6 @@ interface SerializedNodeBase {
 interface SerializedCompoundNode extends SerializedNodeBase {
 	modelType: 'branch' | 'envelope' | 'polymorph' | 'alias';
 	slots: SerializedSlot[];
-	separator?: string;
 	fullForm?: FullForm;
 }
 
@@ -285,7 +284,6 @@ function serializeCompoundNode(
 		modelType: node.modelType,
 		slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires, factorySlots))
 	};
-	if (node.separator !== undefined) out.separator = node.separator;
 	if (node.fullForm !== undefined) out.fullForm = node.fullForm;
 	return out;
 }

@@ -7028,18 +7028,6 @@ The kind the parser shows at the value's site: the alias target where one applie
 	 */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::separator`
-
-```text
-/**
-	 * Repeat-list separator surfaced when the assembled rule was a
-	 * `repeat` / `repeat1` (the former-container shape).
-	 * Field-carrying branches don't surface this — the repeat separator
-	 * is reachable via the per-value metadata on the relevant
-	 * `AssembledNonterminal` slot.
-	 */
-```
-
 ### `packages/codegen/src/emitters/node-model.ts::text`
 
 ```text
@@ -12459,43 +12447,7 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
 
 ### `packages/codegen/src/emitters/render-module.ts::collectMetaData`
 
-#### body
-
-```text
-// Separator — scan slot values for stamped separators (set by
-// deriveSlotsRawFromLeafAttr via stampListFactsOnValues for named
-// field slots). Falls back to node.separator (the
-// `AbstractAssembledCompound.separator` getter, overridden on
-// `AssembledList`) for container-shaped nodes whose separator lives on
-// the rule rather than slot values.
-//
-// This scan runs uniformly across every `isSlotBearingCompound` node
-// (see that predicate's doc comment, emitters/shared.ts) so it doesn't
-// silently skip `'list'`-classified nodes alongside `'branch'`/
-// `'envelope'`/`'polymorph'`. The base `AbstractAssembledCompound.separator`
-// getter is permanently dead for branch/envelope/polymorph (0/468 branches
-// ever had a REPEAT-shaped simplifiedRule — wrapper-deletion always
-// converts it to a leaf attribute first) but `AssembledList`'s override is
-// NOT dead: its `rule` is always the raw REPEAT/REPEAT1 rule by
-// construction, so the fallback is live for it even though it's a no-op
-// for the other three.
-```
-
-#### body
-
-```text
-// 1. Check field slot values for a stamped separator.
-```
-
-#### body
-
-```text
-// 2. Fall back to node.separator (from simplified rule / raw rule) for
-//    list-container nodes where the separator lives on the top-level
-//    repeat and children are inferred/positional (no
-//    deriveSlotsRawFromLeafAttr path). Live only for `AssembledList`;
-//    a no-op for the other three compound classes.
-```
+Each list-shaped kind's separator, by kind: the first separator stamped on an array value of its slots, or, for a list (`AssembledList.separator`), the separator of its repeat rule when no slot value carries one. The scan covers every slot-bearing compound (`isSlotBearingCompound`), lists included.
 
 ### `packages/codegen/src/emitters/render-module.ts::libRsContents`
 

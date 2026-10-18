@@ -567,9 +567,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 					}
 				}
 			}
-			if (sep === undefined && node instanceof AbstractAssembledCompound) {
-				sep = node.separator ?? undefined;
-			}
+			if (sep === undefined && node instanceof AssembledList) sep = node.separator;
 			if (sep !== undefined) separators.set(kind, sep);
 		}
 	}

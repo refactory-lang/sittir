@@ -1844,10 +1844,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
 	}
 
-	get separator(): string | undefined {
-		return undefined;
-	}
-
 	#computing = false;
 
 	override get parameterless(): boolean {
@@ -2407,7 +2403,7 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 		return this.terminatedSeparator && this.trailingDelimiter === 'optional';
 	}
 
-	override get separator(): string | undefined {
+	get separator(): string | undefined {
 		return extractSeparatorString(this.rule.separator);
 	}
 }
