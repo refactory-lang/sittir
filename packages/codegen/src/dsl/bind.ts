@@ -13,7 +13,6 @@ import {
 	renameKeys,
 	renameRecords,
 	renameValue,
-	rewriteOwnedSegments,
 	type BindingEffect,
 	type Lead,
 	type LeadMatch
@@ -91,7 +90,7 @@ export function renameGrammar(grammar: GrammarRecord, renames: Readonly<Record<s
 	return out;
 }
 
-function fieldHosts(rules: GrammarRecord, owner: string, field: string, stop: ReadonlySet<string>): string[] {
+export function fieldHosts(rules: GrammarRecord, owner: string, field: string, stop: ReadonlySet<string>): string[] {
 	return [...transparentReach(rules, owner, stop)].filter((name) => fieldNames(rules[name]).has(field));
 }
 
@@ -106,51 +105,15 @@ export function fieldRenameIssue(grammar: GrammarRecord, rename: FieldRename, ba
 	return undefined;
 }
 
-function renameFields(rule: unknown, from: string, to: string): unknown {
-	if (Array.isArray(rule)) return rule.map((r) => renameFields(r, from, to));
-	if (!isRecord(rule)) return rule;
-	const out: GrammarRecord = {};
-	for (const [key, value] of Object.entries(rule)) out[key] = renameFields(value, from, to);
-	if (rule.type === 'FIELD' && rule.name === from) out.name = to;
-	return out;
-}
-
-export function fieldRenameGrammar(grammar: GrammarRecord, renames: readonly FieldRename[]): GrammarRecord {
-	const original = isRecord(grammar.rules) ? grammar.rules : {};
-	const rules: GrammarRecord = { ...original };
-	const stop = supertypesOf(grammar);
-	for (const rename of renames) {
-		const issue = fieldRenameIssue(grammar, rename, renames);
-		if (issue !== undefined) throw new Error(`bind: field '${rename.owner}.${rename.from}' → '${rename.to}': ${issue}`);
-	}
-	for (const rename of renames) {
-		for (const host of fieldHosts(original, rename.owner, rename.from, stop)) rules[host] = renameFields(rules[host], rename.from, rename.to);
-	}
-	const out: GrammarRecord = { ...grammar, rules };
-	if ('options' in grammar) out.options = rewriteOwnedSegments(grammar.options, renames.map((r) => ({ owner: r.owner, from: `${r.from}:`, to: `${r.to}:` })));
-	carryHiddenFacts(grammar, out, (name) => name);
-	return out;
-}
-
 function isWrapTarget(rule: GrammarRecord, target: FieldWrapTarget): boolean {
 	if ('token' in target) return rule.type === 'STRING' && rule.value === target.token;
 	if (rule.type === 'SYMBOL') return rule.name === target.symbol;
 	return rule.type === 'ALIAS' && rule.named === true && rule.value === target.symbol;
 }
 
-function isWrapSite(rule: GrammarRecord, target: FieldWrapTarget): boolean {
+export function isWrapSite(rule: GrammarRecord, target: FieldWrapTarget): boolean {
 	if (isWrapTarget(rule, target)) return true;
 	return (rule.type === 'REPEAT' || rule.type === 'REPEAT1') && isRecord(rule.content) && isWrapTarget(rule.content, target);
-}
-
-function wrapTargets(rule: unknown, target: FieldWrapTarget, field: string): unknown {
-	if (Array.isArray(rule)) return rule.map((r) => wrapTargets(r, target, field));
-	if (!isRecord(rule)) return rule;
-	if (isWrapSite(rule, target)) return { type: 'FIELD', name: field, content: rule };
-	if (OPAQUE_RULES.has(rule.type) || rule.type === 'ALIAS') return rule;
-	const out: GrammarRecord = {};
-	for (const [key, value] of Object.entries(rule)) out[key] = wrapTargets(value, target, field);
-	return out;
 }
 
 function hasWrapTarget(rule: unknown, target: FieldWrapTarget): boolean {
@@ -161,7 +124,7 @@ function hasWrapTarget(rule: unknown, target: FieldWrapTarget): boolean {
 	return Object.values(rule).some((value) => hasWrapTarget(value, target));
 }
 
-function wrapHosts(rules: GrammarRecord, wrap: FieldWrap, stop: ReadonlySet<string>): string[] {
+export function wrapHosts(rules: GrammarRecord, wrap: FieldWrap, stop: ReadonlySet<string>): string[] {
 	return [...transparentReach(rules, wrap.owner, stop)].filter((name) => hasWrapTarget(rules[name], wrap.target));
 }
 
@@ -236,28 +199,6 @@ function sharersAgree(
 ): boolean {
 	const sharers = Object.keys(rules).filter((name) => !isParserHiddenName(name) && transparentReach(rules, name, stop).has(host));
 	return sharers.every((owner) => batch.some((edit) => edit.owner === owner && sameEdit(edit, request)));
-}
-
-export function fieldWrapGrammar(grammar: GrammarRecord, wraps: readonly FieldWrap[]): GrammarRecord {
-	const original = isRecord(grammar.rules) ? grammar.rules : {};
-	const rules: GrammarRecord = { ...original };
-	const stop = supertypesOf(grammar);
-	for (const wrap of wraps) {
-		const issue = fieldWrapIssue(grammar, wrap, wraps);
-		if (issue !== undefined) throw new Error(`bind: field '${wrap.owner}.${wrap.field}': ${issue}`);
-	}
-	for (const wrap of wraps) {
-		for (const host of wrapHosts(original, wrap, stop)) rules[host] = wrapTargets(rules[host], wrap.target, wrap.field);
-	}
-	const slots = wraps.map((wrap) => ({
-		owner: wrap.owner,
-		from: 'symbol' in wrap.target ? `${wrap.target.symbol}:` : JSON.stringify(wrap.target.token),
-		to: `${wrap.field}:`
-	}));
-	const out: GrammarRecord = { ...grammar, rules };
-	if ('options' in grammar) out.options = rewriteOwnedSegments(grammar.options, slots);
-	carryHiddenFacts(grammar, out, (name) => name);
-	return out;
 }
 
 export function baseNamesOf(

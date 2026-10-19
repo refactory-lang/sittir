@@ -560,23 +560,33 @@ The kinds one path names that the grammar bindings may merge under the path's na
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::grammarBindingsPatches`
 
-```text
-The grammar changes as patch-stage edits. bind.ts's field renames and wraps
-stay the one derivation of what changes; this only finds where, walking each
-rule before and after the edit side by side and turning every difference into
-a patch at that position. Enrich's group lifts and visible-group aliases are
-transparent at the patch stage, as are precedence wrappers, so the walk passes
-through them without a path segment, and a lift's body is patched through the
-first rule reaching it; an edited lift no rule reaches is an error. Alias
-patches are found the same way over the fielded rules, dropping sites already
-directly under an ALIAS.
+The grammar changes as patch-stage edits: each field rename and wrap the derivation accepted, and each alias, as a patch at the position where it applies in layer 1's rules. Each request is resolved on those rules directly.
 
-A set whose keys are all plain indices is read flat: a key indexes the members
-of the first SEQ under the root, and on a CHOICE root inside every arm. The
-walk's paths mean path mode, where a CHOICE root's index picks the arm, so such
-a key is written as the same position counted from the end, which reads in path
-mode.
-```
+- A rename applies at every `FIELD` of its name in the hosts `bind.ts::fieldHosts` finds. Renames apply in order, so one can rename another's result.
+- A wrap applies at a site `bind.ts::isWrapSite` matches in the hosts `bind.ts::wrapHosts` finds, and its field is the patch. Nothing below a wrapped site is wrapped again, and a wrap does not reach inside `OPAQUE_RULES`, aliases (whose contents belong to the aliased kind) or a visible group's alias.
+- Enrich's group lifts and visible-group aliases are transparent at the patch stage, as are precedence wrappers, so the walk passes through them without a path segment. A lift's body is patched through the first rule reaching it. A lift no rule reaches but that would take an edit is an error.
+
+Alias patches are positions in the fielded rules: a wrapped site gains a `0` segment for its new `FIELD`, so an alias below a wrap is addressed through the field. A site directly under an `ALIAS` other than a visible group's is dropped, since that alias names it already. Each rule's patch sets go through `pathMode`, on the root below its precedence wrappers; for the alias set that is the fielded root, a `FIELD` when the root itself is wrapped.
+
+### `packages/codegen/src/bindings/grammar-bindings.ts::WalkSite`
+
+Where the patch walk stands: the rule whose fields it is in (`host`, which changes when the walk enters a lift), whether a wrap may still apply, the path in layer 1's geometry (for field patches), the path in the fielded geometry (for alias patches), and the type of the rule that holds the site.
+
+### `packages/codegen/src/bindings/grammar-bindings.ts::byHost`
+
+Requests grouped by each host rule they apply in, in request order.
+
+### `packages/codegen/src/bindings/grammar-bindings.ts::pathText`
+
+A walk path as a patch key: its indices joined by `/`, or `.` for the root.
+
+### `packages/codegen/src/bindings/grammar-bindings.ts::unwrappedPrec`
+
+A rule below its precedence wrappers.
+
+### `packages/codegen/src/bindings/grammar-bindings.ts::pathMode`
+
+A rule's patches as keys that read in path mode. A set whose keys are all plain indices is read flat: a key indexes the members of the first SEQ under the root, and on a CHOICE root inside every arm. The walk's paths mean path mode, where a CHOICE root's index picks the arm, so on a root that is not a SEQ such a key is written as the same position counted from the end, which reads in path mode. A set holding a deeper key or the root key reads in path mode already.
 
 ### `packages/codegen/src/bindings/module.ts::bindingsModulePath`
 

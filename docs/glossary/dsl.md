@@ -7724,25 +7724,13 @@ The rules in the owner's transparent reach that use a field: where a rename of t
 
 Why a field rename cannot apply, or nothing. The owner must be a rule, and the field one it reaches. A hidden host that another kind shares must be renamed the same way for every sharer in the same batch. The new name must not already be a field of the owner.
 
-### `packages/codegen/src/dsl/bind.ts::renameFields`
-
-A rule with every `FIELD` named `from` renamed `to`.
-
-### `packages/codegen/src/dsl/bind.ts::fieldRenameGrammar`
-
-The grammar with a batch of field renames applied: each checked first (`fieldRenameIssue`, against the whole batch), then renamed in every host, and the owning kinds' `field:` option segments rewritten to the new names.
-
 ### `packages/codegen/src/dsl/bind.ts::isWrapTarget`
 
 Whether a rule is a wrap's target: the token's `STRING` for a token target; for a symbol target, the `SYMBOL` itself or a named `ALIAS` with that value.
 
-### `packages/codegen/src/dsl/bind.ts::wrapTargets`
-
-A rule with every reachable wrap site (`isWrapSite`) wrapped in the field. It stops at `OPAQUE_RULES` and at aliases, whose contents belong to the aliased kind.
-
 ### `packages/codegen/src/dsl/bind.ts::hasWrapTarget`
 
-Whether a rule holds a wrap site `wrapTargets` would wrap (`isWrapSite`), by the same descent.
+Whether a rule holds a wrap site (`isWrapSite`). It stops at `OPAQUE_RULES` and at aliases, whose contents belong to the aliased kind.
 
 ### `packages/codegen/src/dsl/bind.ts::wrapHosts`
 
@@ -7771,10 +7759,6 @@ Whether two requests make the same edit apart from their owner: the same rename,
 ### `packages/codegen/src/dsl/bind.ts::sharersAgree`
 
 Whether every visible kind that reaches a hidden host makes the same edit in the batch. A shared hidden rule is renamed once for all of them, so they must all ask for it.
-
-### `packages/codegen/src/dsl/bind.ts::fieldWrapGrammar`
-
-The grammar with a batch of field wraps applied: each checked (`fieldWrapIssue`), each target wrapped in every host, and the owning kinds' option segments that named the child (`kind:`, or a token's quoted text) rewritten to the new `field:`.
 
 ### `packages/codegen/src/dsl/bind.ts::baseNamesOf`
 
