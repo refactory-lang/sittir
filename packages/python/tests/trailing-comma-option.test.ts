@@ -10,8 +10,8 @@ describe('the trailing comma after a comprehension for clause is an optional-fie
 	});
 
 	it('the render option chooses the comma and defaults to none', () => {
-		expect(py.build.forInClause({ left: 'x', right: 'a' }).$render()).toBe('for x in a');
-		expect(py.build.forInClause({ left: 'x', right: 'a' }, { trailingComma: py.kinds.Comma }).$render()).toBe('for x in a,');
-		expect(py.build.forInClause({ left: 'x', right: 'a' }, { trailingComma: null }).$render()).toBe('for x in a');
+		expect(py.build.forInClause({ left: 'x', right: ['a', 'b'] }).$render()).toBe('for x in a, b');
+		expect(py.build.forInClause({ left: 'x', right: ['a', 'b'] }, { trailingComma: py.kinds.Comma }).$render()).toBe('for x in a, b,');
+		expect(py.build.forInClause({ left: 'x', right: ['a', 'b'] }, { trailingComma: null }).$render()).toBe('for x in a, b');
 	});
 });
