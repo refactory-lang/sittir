@@ -110,7 +110,7 @@ describe('emitPortableSurface', () => {
 			'\t"expression": { readonly $path: "expression"; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
 		);
 		expect(text).toContain(
-			'\t"expression.call": PortableGuard<PortableIds["expression.call"], TestNode> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
+			'\t"expression.call": PortableGuard<PortableIds["expression.call"], TestNode, TSKindId> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
 		);
 		expect(text).toContain('export interface PortableIs { readonly "expression": PortableIsAt["expression"] }');
 		expect(text).toContain("import type { TestNode } from './types.js';");
