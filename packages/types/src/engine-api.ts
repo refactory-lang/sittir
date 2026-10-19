@@ -4,8 +4,8 @@ import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
 import type { PortableRows, PortableSurface } from './portable.ts';
 
-export interface TriviaFacts {
-	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
+export interface TriviaFacts<Kind extends number | string = number | string> {
+	kindName(type: Kind): string | undefined;
 	readonly kinds: ReadonlySet<string>;
 	/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
 	readonly innerKinds: ReadonlySet<string>;
@@ -67,7 +67,7 @@ export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
 	readonly language: LanguageIdentity<API>;
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
-	readonly trivia: TriviaFacts;
+	readonly trivia: TriviaFacts<API['kindId']>;
 	/** The rows the language's portable classifications are read from, when its grammar has bindings. */
 	readonly portable?: PortableRows;
 }
@@ -114,6 +114,7 @@ export interface LanguageAPI {
 	readonly root: AnyUntypedNode & ParsedRoot;
 	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
+	readonly kindId: number;
 	readonly options: object & CommonRenderOptions;
 	readonly indentChar: string;
 	readonly empty: GrammarTypeMap['empty'];
@@ -136,8 +137,9 @@ export interface Language<API extends LanguageAPI> {
 	 * to the copy instead). Each narrows a node of this language by its kind, and refuses
 	 * a node of another language or a value no engine stamped. A supertype or member guard also takes a bare kind id, and passes
 	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine. On a grammar with bindings,
-	 * `is.portable` holds the shared portable guards, the same object for every language: each takes a node alone and refuses a
-	 * bare kind id, since a bare id carries no language.
+	 * `is.portable` holds the language's portable guards: a view over the shared portable tree, with the same paths, whose guards
+	 * read a node of this language or a kind id of it (a keyword leaf such as `u8` classifies). A kind id is read through the rows an
+	 * engine of the language loaded, so a guard given one before any engine of the language exists throws.
 	 */
 	readonly is: API['is'];
 	/** The language's kind ids by name, the same object as every engine's `kinds`. On a grammar with bindings, `kinds.portable` holds the shared portable kinds. */
@@ -178,7 +180,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly renderModuleHash: string;
 	readonly build: API['build'];
-	readonly trivia: TriviaFacts;
+	readonly trivia: TriviaFacts<API['kindId']>;
 	readonly querySlots: QuerySlots;
 	readonly queryFlags?: QueryFlags;
 	readonly querySlotFlags?: QuerySlotFlags;

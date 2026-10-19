@@ -23,6 +23,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		"import { bindRuntime } from '@sittir/common/utils';",
 		`import { KIND_NAMES, type ${map} } from './types.js';`,
 		"import { INNER_SITES } from './consts.js';",
+		"import type { TSKindId } from './kinds.js';",
 		'',
 		...emitTriviaFacts(
 			whitespaceTrivia(config.nodeMap),
@@ -61,7 +62,7 @@ function emitTriviaFacts(
 					`    whitespace: Object.freeze({ run: /${whitespace.run.source}/${whitespace.run.flags}, kindIdByText: Object.freeze(${JSON.stringify(Object.fromEntries(whitespace.kindIdByText))}) })`
 				])
 	];
-	return ['export const triviaFacts = Object.freeze({', facts.join(',\n'), '} satisfies TriviaFacts);'];
+	return ['export const triviaFacts = Object.freeze({', facts.join(',\n'), '} satisfies TriviaFacts<TSKindId>);'];
 }
 
 type QuerySlotRow = readonly [accessor: string, slot: number, keyword?: string];
