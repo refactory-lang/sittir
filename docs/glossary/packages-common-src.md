@@ -683,9 +683,17 @@ The elements a list reads through its own reader, none for an absent list. An ow
 
 A list option an owner reads from its list's stored `_<option>`, or the option's default. The value is read when the owner is built.
 
+### `packages/common/src/node-data.ts::slotSeparatorOf`
+
+The separator a list writes between its items, as a grammar id: its live tree's for a parsed list (its slot's stored separator where its source's gaps differ from what the read-time options render, else the one those options render, which also answers a list with no gap to measure), else that of the list it was rebuilt from. Rebuilding a list with this separator reproduces its source's separators, since the stored separator is the majority of its gaps.
+
+### `packages/common/src/utils.ts::defineListSeparator`
+
+Defines the `separator` of a wrapped list or list owner as a shared, non-enumerable getter, one function per owner accessor: the list's own stored `_separator` when it has one, else the separator its tree answers (`slotSeparatorOf`). It is a getter because the tree's answer measures the list's gaps and records its render, which a wrapped list pays on first read, not at wrap time. An owner names its list accessor, so the getter reads the list the owner holds; a list defines it on itself.
+
 ### `packages/common/src/utils.ts::defineListIndices`
 
-Defines the index positions of a wrapped list or list owner: one getter per position, shared by every wrapped list and not enumerable. A wrapped owner's items are unread until first use, so an index must hydrate them on demand, and a per-node getter would force dictionary mode; one shared getter per position reads the item through `listItemsOf` from whichever list calls it. The getters are the only getters a wrapped node carries.
+Defines the index positions of a wrapped list or list owner: one getter per position, shared by every wrapped list and not enumerable. A wrapped owner's items are unread until first use, so an index must hydrate them on demand, and a per-node getter would force dictionary mode; one shared getter per position reads the item through `listItemsOf` from whichever list calls it. The getters are the only getters a wrapped node carries, together with the `separator` getter of a wrapped list or list owner (`defineListSeparator`), which is shared in the same way.
 
 ### `packages/common/src/utils.ts::refuseReadStub`
 

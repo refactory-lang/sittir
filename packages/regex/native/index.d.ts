@@ -57,6 +57,14 @@ export declare class SittirEngine {
    */
   slotLayouts(treeId: TreeId, index: NodeIndex): object[]
   /**
+   * The separator the list at `index` of the live tree `treeId`
+   * writes between its items, as a grammar id: the one its source
+   * spells where the slot stores one, else the one the read-time
+   * options render. Null for a node that is no list. Refuses as
+   * `triviaSide` does.
+   */
+  slotSeparator(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
+  /**
    * The separator before the node at `index` of the live tree
    * `treeId` as an item of its parent's list slot, as a grammar id,
    * where its source spells another than the one the slot renders.

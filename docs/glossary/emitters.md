@@ -13706,6 +13706,10 @@ The side of a seated site's edge, read from the parsed label of the child's
 edge address the site carries (`seat.field`). A seat whose label is not the
 seated kind's own edge is a malformed site and fails generation.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::separatorSitesOf`
+
+Per kind id of a list, the spacing site its items' separator reads (`SEPARATOR_SITES`, carried in `ResolvedOptions::separator_sites`). A parsed list with no gap to measure (none or one item) answers the separator the read-time options render through this table, the same site the render reads, so a list's answer never comes from a default the render does not use. A kind with two separator sites, or a separator site on a kind with no id, fails at generation.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::seatTablesOf`
 
 Groups every seated spacing site by its list (kind, slot) into a
@@ -14840,11 +14844,11 @@ The lines a group seat adds to a node's builder: a reader of the seated group, h
 
 ### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
 
-The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options; after the literal, the index positions. Built and wrapped owners hold no items until first use (`LIST_READ`), read them through the owner's own list accessor (so `at`, an index and iteration return what the accessors return, hydrated), and take the shared index getters; only the view before the literal differs. A wrapped owner hands `ownerView` its own `hydrate`, so a list stored as a stub is read wrapped; a raw factory has already resolved its list through `hydrateStored`, and refuses a list that is still a read stub (`refuseReadStub`) before the literal.
+The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options (a wrapped owner's `separator` is defined after the literal by `defineListSeparator`, naming its list accessor); after the literal, the index positions. Built and wrapped owners hold no items until first use (`LIST_READ`), read them through the owner's own list accessor (so `at`, an index and iteration return what the accessors return, hydrated), and take the shared index getters; only the view before the literal differs. A wrapped owner hands `ownerView` its own `hydrate`, so a list stored as a stub is read wrapped; a raw factory has already resolved its list through `hydrateStored`, and refuses a list that is still a read stub (`refuseReadStub`) before the literal.
 
 ### `packages/codegen/src/emitters/node-members.ts::listSelfViewParts`
 
-The same lines for a separated list node that is the list itself: its own stored elements instead of an owner's view, and its options read from its own storage keys, hoisted before the literal in a wrap. A built list and a wrapped list read their items the same way, on first use and through the list's own items accessor (`ownerElements(node, reader)`), so `at`, an index and iteration return what the accessor returns: a built list's accessor hydrates a stored coordinate (`hydrateStoredSlots`), a wrapped list's reads its storage (`hydrateSlots`).
+The same lines for a separated list node that is the list itself: its own stored elements instead of an owner's view, and its options read from its own storage keys, hoisted before the literal in a wrap. A wrapped list's `separator` is not a member of its literal: `defineListSeparator` defines it after the literal as a shared getter, because the tree's answer measures the list on first use; a built list keeps the value its builder was given or the kind's declared default. A built list and a wrapped list read their items the same way, on first use and through the list's own items accessor (`ownerElements(node, reader)`), so `at`, an index and iteration return what the accessor returns: a built list's accessor hydrates a stored coordinate (`hydrateStoredSlots`), a wrapped list's reads its storage (`hydrateSlots`).
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstName`
 

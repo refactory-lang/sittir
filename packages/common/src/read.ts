@@ -25,6 +25,8 @@ export interface TreeHandle {
 	unitSides?(index: number): unknown[];
 	/** The stored layout of each list slot of the node at descendant `index` that stores any (`NodeLayout.slots`). */
 	slotLayouts?(index: number): unknown[];
+	/** The separator the list at descendant `index` writes between its items: its slot's stored one, else the read-time options'. */
+	slotSeparator?(index: number): number | undefined;
 	/** The separator before the node at descendant `index` as a list item, where it is not its slot's (`NodeLayout.separator`). */
 	separatorBefore?(index: number): number | undefined;
 	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */

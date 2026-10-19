@@ -254,6 +254,20 @@ export function separatorOf(node: object): number | undefined {
 	return source === undefined ? undefined : from?.separatorBefore?.(decodeIndex(source.treeHandle));
 }
 
+/**
+ * The separator a list writes between its items, as a grammar id: its tree's for a parsed list
+ * (its slot's stored one, else the one the read-time options render), else that of the list it
+ * was rebuilt from (`sourceOf`); `undefined` when none answers.
+ */
+export function slotSeparatorOf(node: object): number | undefined {
+	const tree = treeOf(node);
+	const index = indexOf(node);
+	if (tree?.slotSeparator !== undefined && index !== undefined) return tree.slotSeparator(index);
+	const source = sourceOf(node);
+	const from = source === undefined ? undefined : sourceTree(source);
+	return source === undefined ? undefined : from?.slotSeparator?.(decodeIndex(source.treeHandle));
+}
+
 /** One unit child's sides as a tree gives them (`NodeLayout.units`): its slot's wire key and its item there. */
 interface UnitSidesData {
 	readonly slot: string;
