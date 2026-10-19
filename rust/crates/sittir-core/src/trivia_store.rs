@@ -91,6 +91,42 @@ impl<T: Clone> TriviaStore<T> {
         self.read().get(&(place, side)).cloned()
     }
 
+    /// The sides writes gave the node at `place`, as its trivia, or `None`
+    /// when no write gave it any.
+    #[must_use]
+    pub fn sides(&self, place: Place) -> Option<crate::trivia::NodeTrivia<T>> {
+        let sides = self.read();
+        let side = |side| sides.get(&(place, side)).cloned();
+        let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
+        (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then_some(trivia)
+    }
+
+    /// The sides writes gave each built unit `holder`'s record holds, by the
+    /// unit's slot word and its item there, in that order.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn units(&self, holder: crate::arena::Address) -> Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)> {
+        let first = (Place::Unit(Site { holder, word: 0, item: crate::types::ItemIndex(0) }), TriviaSide::Leading);
+        let mut units: Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)> = Vec::new();
+        for ((place, side), entries) in self.read().range(first..) {
+            let Place::Unit(site) = *place else { break };
+            if site.holder != holder {
+                break;
+            }
+            if units.last().is_none_or(|unit| (unit.0, unit.1) != (site.word, site.item)) {
+                units.push((site.word, site.item, crate::trivia::NodeTrivia::default()));
+            }
+            let Some(unit) = units.last_mut() else { continue };
+            let held = match side {
+                TriviaSide::Leading => &mut unit.2.leading,
+                TriviaSide::Trailing => &mut unit.2.trailing,
+                TriviaSide::Inner => &mut unit.2.inner,
+            };
+            *held = Some(entries.clone());
+        }
+        units
+    }
+
     /// `side` of the node at `place` holds `entries`, in place of what it held.
     pub fn write_side(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>) {
         self.write().insert((place, side), entries);
@@ -192,5 +228,31 @@ mod tests {
         assert_eq!(store.side(record, TriviaSide::Leading), Some(vec![entry("// r")]));
         assert_eq!(store.side(unit, TriviaSide::Trailing), Some(vec![entry("// u")]));
         assert_eq!(store.len(), 2);
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_node_s_written_sides_read_as_its_trivia_and_a_holder_s_units_as_theirs() {
+        use crate::arena::Address;
+        use crate::trivia::NodeTrivia;
+        use crate::types::ItemIndex;
+        let store = TriviaStore::<TriviaText>::new();
+        let record = Place::Record(Address(5));
+        assert_eq!(store.sides(record), None, "no write gave it a side");
+        store.write_side(record, TriviaSide::Inner, Vec::new());
+        assert_eq!(store.sides(record), Some(NodeTrivia { leading: None, trailing: None, inner: Some(Vec::new()) }));
+        let unit = |holder, word, item| Place::Unit(Site { holder: Address(holder), word, item: ItemIndex(item) });
+        store.write_side(unit(5, 7, 1), TriviaSide::Trailing, vec![entry("// b")]);
+        store.write_side(unit(5, 2, 0), TriviaSide::Leading, vec![entry("// a")]);
+        store.write_side(unit(5, 7, 1), TriviaSide::Leading, Vec::new());
+        store.write_side(unit(6, 2, 0), TriviaSide::Leading, vec![entry("// other")]);
+        assert_eq!(
+            store.units(Address(5)),
+            [
+                (2, ItemIndex(0), NodeTrivia { leading: Some(vec![entry("// a")]), trailing: None, inner: None }),
+                (7, ItemIndex(1), NodeTrivia { leading: Some(Vec::new()), trailing: Some(vec![entry("// b")]), inner: None }),
+            ]
+        );
+        assert_eq!(store.units(Address(4)), []);
     }
 }

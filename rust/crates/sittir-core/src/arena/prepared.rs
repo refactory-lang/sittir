@@ -33,7 +33,7 @@ pub struct PreparedNode<T> {
     /// from. Its trivia is untrimmed: changed edges are a site's fact, so the
     /// render drops the layout runs at the edges its site marks changed. Its
     /// edges are the overlay's (`Prepared::edges`).
-    pub layout: Option<NodeLayout<T>>,
+    pub layout: Option<Box<NodeLayout<T>>>,
 }
 
 impl<T> Default for PreparedNode<T> {
@@ -71,9 +71,10 @@ impl<T> PreparedNode<T> {
 pub struct Prepared<T> {
     nodes: HashMap<Place, PreparedNode<T>>,
     sites: HashMap<Site<Place>, Edges>,
-    /// The seams of the kind an untouched coordinate child names, by its site:
-    /// a coordinate renders its slice between them.
-    coordinates: HashMap<Site<Place>, CoordinateEdges>,
+    /// The seams of the kind an untouched parsed child names, by its site:
+    /// it renders its slice between them. A site prepare reached whose kind
+    /// has no edge row holds none.
+    coordinates: HashMap<Site<Place>, Option<CoordinateEdges>>,
     /// A unit child's own kind's edges, by its site: a unit has no place of
     /// its own to key them by.
     units: HashMap<Site<Place>, Edges>,
@@ -148,14 +149,20 @@ impl<T> Prepared<T> {
         })
     }
 
-    /// The seams prepare resolved for the coordinate child at `site`.
+    /// The seams prepare resolved for the untouched parsed child at `site`.
     #[must_use]
     pub fn coordinate_edges(&self, site: Site<Place>) -> Option<CoordinateEdges> {
-        self.coordinates.get(&site).copied()
+        self.coordinates.get(&site).copied().flatten()
     }
 
-    /// The seams of the coordinate child at `site`, for prepare to resolve.
-    pub fn set_coordinate_edges(&mut self, site: Site<Place>, edges: CoordinateEdges) {
+    /// The seams of the untouched parsed child at `site`, for a holder's gap
+    /// and seat fills to set.
+    pub fn coordinate_edges_mut(&mut self, site: Site<Place>) -> &mut Option<CoordinateEdges> {
+        self.coordinates.entry(site).or_default()
+    }
+
+    /// The untouched parsed child at `site` renders between `edges`.
+    pub fn set_coordinate_edges(&mut self, site: Site<Place>, edges: Option<CoordinateEdges>) {
         self.coordinates.insert(site, edges);
     }
 

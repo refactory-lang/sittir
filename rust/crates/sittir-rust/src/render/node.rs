@@ -17648,7 +17648,7 @@ impl ::sittir_core::render::Render for TypeArgumentContentNodeSlotRecord<'_> {
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SOURCE_FILE, words = 9, fields = SourceFileFields, prepare = SourceFilePrepare, view = SourceFileNodeRecord)]
+#[node(kind = kind::SOURCE_FILE, words = 9, fields = SourceFileFields, prepare = SourceFilePrepare, view = SourceFileNodeRecord, prepare_fn = prepare_source_file)]
 pub struct SourceFileNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17782,7 +17782,7 @@ impl ::sittir_core::render::Render for EmptyStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT, words = 7, fields = ExpressionStatementFields, prepare = ExpressionStatementPrepare, view = ExpressionStatementNodeRecord)]
+#[node(kind = kind::EXPRESSION_STATEMENT, words = 7, fields = ExpressionStatementFields, prepare = ExpressionStatementPrepare, view = ExpressionStatementNodeRecord, prepare_fn = prepare_expression_statement, seat_through = content)]
 pub struct ExpressionStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17851,7 +17851,7 @@ fn prepare_expression_statement<N: ExpressionStatementPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_RULE, layout = [kind::EQ_GT], words = 12, fields = MacroRuleFields, prepare = MacroRulePrepare, view = MacroRuleNodeRecord)]
+#[node(kind = kind::MACRO_RULE, layout = [kind::EQ_GT], words = 12, fields = MacroRuleFields, prepare = MacroRulePrepare, view = MacroRuleNodeRecord, prepare_fn = prepare_macro_rule)]
 pub struct MacroRuleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17925,7 +17925,7 @@ fn prepare_macro_rule<N: MacroRulePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_BINDING_PATTERN, layout = [kind::COLON], words = 12, fields = TokenBindingPatternFields, prepare = TokenBindingPatternPrepare, view = TokenBindingPatternNodeRecord)]
+#[node(kind = kind::TOKEN_BINDING_PATTERN, layout = [kind::COLON], words = 12, fields = TokenBindingPatternFields, prepare = TokenBindingPatternPrepare, view = TokenBindingPatternNodeRecord, prepare_fn = prepare_token_binding_pattern)]
 pub struct TokenBindingPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17999,7 +17999,7 @@ fn prepare_token_binding_pattern<N: TokenBindingPatternPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_REPETITION_PATTERN, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionPatternFields, prepare = TokenRepetitionPatternPrepare, view = TokenRepetitionPatternNodeRecord)]
+#[node(kind = kind::TOKEN_REPETITION_PATTERN, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionPatternFields, prepare = TokenRepetitionPatternPrepare, view = TokenRepetitionPatternNodeRecord, prepare_fn = prepare_token_repetition_pattern)]
 pub struct TokenRepetitionPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18171,7 +18171,7 @@ impl ::sittir_core::render::Render for FragmentSpecifierEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_REPETITION, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionFields, prepare = TokenRepetitionPrepare, view = TokenRepetitionNodeRecord)]
+#[node(kind = kind::TOKEN_REPETITION, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionFields, prepare = TokenRepetitionPrepare, view = TokenRepetitionNodeRecord, prepare_fn = prepare_token_repetition)]
 pub struct TokenRepetitionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18255,7 +18255,7 @@ fn prepare_token_repetition<N: TokenRepetitionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_NON_SPECIAL_TOKEN, words = 7, fields = NonSpecialTokenFields, prepare = NonSpecialTokenPrepare, view = NonSpecialTokenNodeRecord)]
+#[node(kind = kind::_NON_SPECIAL_TOKEN, words = 7, fields = NonSpecialTokenFields, prepare = NonSpecialTokenPrepare, view = NonSpecialTokenNodeRecord, prepare_fn = prepare_non_special_token, seat_through = content)]
 pub struct NonSpecialTokenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18324,7 +18324,7 @@ fn prepare_non_special_token<N: NonSpecialTokenPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ATTRIBUTE_ITEM, layout = [kind::POUND, kind::LBRACK, kind::RBRACK], words = 7, fields = AttributeItemFields, prepare = AttributeItemPrepare, view = AttributeItemNodeRecord)]
+#[node(kind = kind::ATTRIBUTE_ITEM, layout = [kind::POUND, kind::LBRACK, kind::RBRACK], words = 7, fields = AttributeItemFields, prepare = AttributeItemPrepare, view = AttributeItemNodeRecord, prepare_fn = prepare_attribute_item)]
 pub struct AttributeItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18394,7 +18394,7 @@ fn prepare_attribute_item<N: AttributeItemPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INNER_ATTRIBUTE_ITEM, layout = [kind::POUND, kind::BANG | kind::BANG2, kind::LBRACK, kind::RBRACK], words = 7, fields = InnerAttributeItemFields, prepare = InnerAttributeItemPrepare, view = InnerAttributeItemNodeRecord)]
+#[node(kind = kind::INNER_ATTRIBUTE_ITEM, layout = [kind::POUND, kind::BANG | kind::BANG2, kind::LBRACK, kind::RBRACK], words = 7, fields = InnerAttributeItemFields, prepare = InnerAttributeItemPrepare, view = InnerAttributeItemNodeRecord, prepare_fn = prepare_inner_attribute_item)]
 pub struct InnerAttributeItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18464,7 +18464,7 @@ fn prepare_inner_attribute_item<N: InnerAttributeItemPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ATTRIBUTE, words = 12, fields = AttributeFields, prepare = AttributePrepare, view = AttributeNodeRecord)]
+#[node(kind = kind::ATTRIBUTE, words = 12, fields = AttributeFields, prepare = AttributePrepare, view = AttributeNodeRecord, prepare_fn = prepare_attribute)]
 pub struct AttributeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18538,7 +18538,7 @@ fn prepare_attribute<N: AttributePrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECLARATION_LIST, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DeclarationListFields, prepare = DeclarationListPrepare, view = DeclarationListNodeRecord)]
+#[node(kind = kind::DECLARATION_LIST, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DeclarationListFields, prepare = DeclarationListPrepare, view = DeclarationListNodeRecord, prepare_fn = prepare_declaration_list)]
 pub struct DeclarationListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18614,7 +18614,7 @@ fn prepare_declaration_list<N: DeclarationListPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNION_ITEM, layout = [kind::UNION_KEYWORD], words = 27, fields = UnionItemFields, prepare = UnionItemPrepare, view = UnionItemNodeRecord)]
+#[node(kind = kind::UNION_ITEM, layout = [kind::UNION_KEYWORD], words = 27, fields = UnionItemFields, prepare = UnionItemPrepare, view = UnionItemNodeRecord, prepare_fn = prepare_union_item)]
 pub struct UnionItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18700,7 +18700,7 @@ fn prepare_union_item<N: UnionItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_ITEM, layout = [kind::ENUM_KEYWORD], words = 27, fields = EnumItemFields, prepare = EnumItemPrepare, view = EnumItemNodeRecord)]
+#[node(kind = kind::ENUM_ITEM, layout = [kind::ENUM_KEYWORD], words = 27, fields = EnumItemFields, prepare = EnumItemPrepare, view = EnumItemNodeRecord, prepare_fn = prepare_enum_item)]
 pub struct EnumItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18786,7 +18786,7 @@ fn prepare_enum_item<N: EnumItemPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = EnumVariantListFields, prepare = EnumVariantListPrepare, view = EnumVariantListNodeRecord)]
+#[node(kind = kind::ENUM_VARIANT_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = EnumVariantListFields, prepare = EnumVariantListPrepare, view = EnumVariantListNodeRecord, prepare_fn = prepare_enum_variant_list)]
 pub struct EnumVariantListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18856,7 +18856,7 @@ fn prepare_enum_variant_list<N: EnumVariantListPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT, layout = [kind::EQ], words = 22, fields = EnumVariantFields, prepare = EnumVariantPrepare, view = EnumVariantNodeRecord)]
+#[node(kind = kind::ENUM_VARIANT, layout = [kind::EQ], words = 22, fields = EnumVariantFields, prepare = EnumVariantPrepare, view = EnumVariantNodeRecord, prepare_fn = prepare_enum_variant)]
 pub struct EnumVariantNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18938,7 +18938,7 @@ fn prepare_enum_variant<N: EnumVariantPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldDeclarationListFields, prepare = FieldDeclarationListPrepare, view = FieldDeclarationListNodeRecord)]
+#[node(kind = kind::FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldDeclarationListFields, prepare = FieldDeclarationListPrepare, view = FieldDeclarationListNodeRecord, prepare_fn = prepare_field_declaration_list)]
 pub struct FieldDeclarationListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19008,7 +19008,7 @@ fn prepare_field_declaration_list<N: FieldDeclarationListPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION, layout = [kind::COLON], words = 17, fields = FieldDeclarationFields, prepare = FieldDeclarationPrepare, view = FieldDeclarationNodeRecord)]
+#[node(kind = kind::FIELD_DECLARATION, layout = [kind::COLON], words = 17, fields = FieldDeclarationFields, prepare = FieldDeclarationPrepare, view = FieldDeclarationNodeRecord, prepare_fn = prepare_field_declaration)]
 pub struct FieldDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19086,7 +19086,7 @@ fn prepare_field_declaration<N: FieldDeclarationPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = OrderedFieldDeclarationListFields, prepare = OrderedFieldDeclarationListPrepare, view = OrderedFieldDeclarationListNodeRecord)]
+#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = OrderedFieldDeclarationListFields, prepare = OrderedFieldDeclarationListPrepare, view = OrderedFieldDeclarationListNodeRecord, prepare_fn = prepare_ordered_field_declaration_list)]
 pub struct OrderedFieldDeclarationListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19156,7 +19156,7 @@ fn prepare_ordered_field_declaration_list<N: OrderedFieldDeclarationListPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI], words = 17, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare, view = ExternCrateDeclarationNodeRecord)]
+#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI], words = 17, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare, view = ExternCrateDeclarationNodeRecord, prepare_fn = prepare_extern_crate_declaration)]
 pub struct ExternCrateDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19234,7 +19234,7 @@ fn prepare_extern_crate_declaration<N: ExternCrateDeclarationPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONST_ITEM, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 22, fields = ConstItemFields, prepare = ConstItemPrepare, view = ConstItemNodeRecord)]
+#[node(kind = kind::CONST_ITEM, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 22, fields = ConstItemFields, prepare = ConstItemPrepare, view = ConstItemNodeRecord, prepare_fn = prepare_const_item)]
 pub struct ConstItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19316,7 +19316,7 @@ fn prepare_const_item<N: ConstItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STATIC_ITEM, layout = [kind::STATIC_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 23, fields = StaticItemFields, prepare = StaticItemPrepare, view = StaticItemNodeRecord)]
+#[node(kind = kind::STATIC_ITEM, layout = [kind::STATIC_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 23, fields = StaticItemFields, prepare = StaticItemPrepare, view = StaticItemNodeRecord, prepare_fn = prepare_static_item)]
 pub struct StaticItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19404,7 +19404,7 @@ fn prepare_static_item<N: StaticItemPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ITEM, layout = [kind::TYPE_KEYWORD, kind::EQ, kind::SEMI], words = 32, fields = TypeItemFields, prepare = TypeItemPrepare, view = TypeItemNodeRecord)]
+#[node(kind = kind::TYPE_ITEM, layout = [kind::TYPE_KEYWORD, kind::EQ, kind::SEMI], words = 32, fields = TypeItemFields, prepare = TypeItemPrepare, view = TypeItemNodeRecord, prepare_fn = prepare_type_item)]
 pub struct TypeItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19494,7 +19494,7 @@ fn prepare_type_item<N: TypeItemPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord)]
+#[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item)]
 pub struct FunctionItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19592,7 +19592,7 @@ fn prepare_function_item<N: FunctionItemPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 37, fields = FunctionSignatureItemFields, prepare = FunctionSignatureItemPrepare, view = FunctionSignatureItemNodeRecord)]
+#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 37, fields = FunctionSignatureItemFields, prepare = FunctionSignatureItemPrepare, view = FunctionSignatureItemNodeRecord, prepare_fn = prepare_function_signature_item)]
 pub struct FunctionSignatureItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19686,7 +19686,7 @@ fn prepare_function_signature_item<N: FunctionSignatureItemPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_MODIFIERS, words = 4, fields = FunctionModifiersFields, prepare = FunctionModifiersPrepare, view = FunctionModifiersNodeRecord)]
+#[node(kind = kind::FUNCTION_MODIFIERS, words = 4, fields = FunctionModifiersFields, prepare = FunctionModifiersPrepare, view = FunctionModifiersNodeRecord, prepare_fn = prepare_function_modifiers)]
 pub struct FunctionModifiersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19762,7 +19762,7 @@ fn prepare_function_modifiers<N: FunctionModifiersPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHERE_CLAUSE, min_depth = 2, layout = [kind::WHERE_KEYWORD], words = 7, fields = WhereClauseFields, prepare = WhereClausePrepare, view = WhereClauseNodeRecord)]
+#[node(kind = kind::WHERE_CLAUSE, min_depth = 2, layout = [kind::WHERE_KEYWORD], words = 7, fields = WhereClauseFields, prepare = WhereClausePrepare, view = WhereClauseNodeRecord, prepare_fn = prepare_where_clause)]
 pub struct WhereClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19832,7 +19832,7 @@ fn prepare_where_clause<N: WhereClausePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHERE_PREDICATE, words = 12, fields = WherePredicateFields, prepare = WherePredicatePrepare, view = WherePredicateNodeRecord)]
+#[node(kind = kind::WHERE_PREDICATE, words = 12, fields = WherePredicateFields, prepare = WherePredicatePrepare, view = WherePredicateNodeRecord, prepare_fn = prepare_where_predicate)]
 pub struct WherePredicateNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19906,7 +19906,7 @@ fn prepare_where_predicate<N: WherePredicatePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRAIT_ITEM, layout = [kind::TRAIT_KEYWORD], words = 33, fields = TraitItemFields, prepare = TraitItemPrepare, view = TraitItemNodeRecord)]
+#[node(kind = kind::TRAIT_ITEM, layout = [kind::TRAIT_KEYWORD], words = 33, fields = TraitItemFields, prepare = TraitItemPrepare, view = TraitItemNodeRecord, prepare_fn = prepare_trait_item)]
 pub struct TraitItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19999,7 +19999,7 @@ fn prepare_trait_item<N: TraitItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSOCIATED_TYPE, layout = [kind::TYPE_KEYWORD, kind::SEMI], words = 22, fields = AssociatedTypeFields, prepare = AssociatedTypePrepare, view = AssociatedTypeNodeRecord)]
+#[node(kind = kind::ASSOCIATED_TYPE, layout = [kind::TYPE_KEYWORD, kind::SEMI], words = 22, fields = AssociatedTypeFields, prepare = AssociatedTypePrepare, view = AssociatedTypeNodeRecord, prepare_fn = prepare_associated_type)]
 pub struct AssociatedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20081,7 +20081,7 @@ fn prepare_associated_type<N: AssociatedTypePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRAIT_BOUNDS, layout = [kind::COLON], words = 4, fields = TraitBoundsFields, prepare = TraitBoundsPrepare, view = TraitBoundsNodeRecord)]
+#[node(kind = kind::TRAIT_BOUNDS, layout = [kind::COLON], words = 4, fields = TraitBoundsFields, prepare = TraitBoundsPrepare, view = TraitBoundsNodeRecord, prepare_fn = prepare_trait_bounds)]
 pub struct TraitBoundsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20161,7 +20161,7 @@ fn prepare_trait_bounds<N: TraitBoundsPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::HIGHER_RANKED_TRAIT_BOUND, layout = [kind::FOR_KEYWORD], words = 12, fields = HigherRankedTraitBoundFields, prepare = HigherRankedTraitBoundPrepare, view = HigherRankedTraitBoundNodeRecord)]
+#[node(kind = kind::HIGHER_RANKED_TRAIT_BOUND, layout = [kind::FOR_KEYWORD], words = 12, fields = HigherRankedTraitBoundFields, prepare = HigherRankedTraitBoundPrepare, view = HigherRankedTraitBoundNodeRecord, prepare_fn = prepare_higher_ranked_trait_bound)]
 pub struct HigherRankedTraitBoundNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20235,7 +20235,7 @@ fn prepare_higher_ranked_trait_bound<N: HigherRankedTraitBoundPrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REMOVED_TRAIT_BOUND, layout = [kind::QMARK], words = 7, fields = RemovedTraitBoundFields, prepare = RemovedTraitBoundPrepare, view = RemovedTraitBoundNodeRecord)]
+#[node(kind = kind::REMOVED_TRAIT_BOUND, layout = [kind::QMARK], words = 7, fields = RemovedTraitBoundFields, prepare = RemovedTraitBoundPrepare, view = RemovedTraitBoundNodeRecord, prepare_fn = prepare_removed_trait_bound)]
 pub struct RemovedTraitBoundNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20305,7 +20305,7 @@ fn prepare_removed_trait_bound<N: RemovedTraitBoundPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeParametersFields, prepare = TypeParametersPrepare, view = TypeParametersNodeRecord)]
+#[node(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeParametersFields, prepare = TypeParametersPrepare, view = TypeParametersNodeRecord, prepare_fn = prepare_type_parameters)]
 pub struct TypeParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20375,7 +20375,7 @@ fn prepare_type_parameters<N: TypeParametersPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONST_PARAMETER, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ], words = 17, fields = ConstParameterFields, prepare = ConstParameterPrepare, view = ConstParameterNodeRecord)]
+#[node(kind = kind::CONST_PARAMETER, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ], words = 17, fields = ConstParameterFields, prepare = ConstParameterPrepare, view = ConstParameterNodeRecord, prepare_fn = prepare_const_parameter)]
 pub struct ConstParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20453,7 +20453,7 @@ fn prepare_const_parameter<N: ConstParameterPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETER, layout = [kind::EQ], words = 17, fields = TypeParameterFields, prepare = TypeParameterPrepare, view = TypeParameterNodeRecord)]
+#[node(kind = kind::TYPE_PARAMETER, layout = [kind::EQ], words = 17, fields = TypeParameterFields, prepare = TypeParameterPrepare, view = TypeParameterNodeRecord, prepare_fn = prepare_type_parameter)]
 pub struct TypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20531,7 +20531,7 @@ fn prepare_type_parameter<N: TypeParameterPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIFETIME_PARAMETER, words = 12, fields = LifetimeParameterFields, prepare = LifetimeParameterPrepare, view = LifetimeParameterNodeRecord)]
+#[node(kind = kind::LIFETIME_PARAMETER, words = 12, fields = LifetimeParameterFields, prepare = LifetimeParameterPrepare, view = LifetimeParameterNodeRecord, prepare_fn = prepare_lifetime_parameter)]
 pub struct LifetimeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20605,7 +20605,7 @@ fn prepare_lifetime_parameter<N: LifetimeParameterPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LET_DECLARATION, layout = [kind::LET_KEYWORD, kind::COLON, kind::EQ, kind::ELSE_KEYWORD, kind::SEMI], words = 23, fields = LetDeclarationFields, prepare = LetDeclarationPrepare, view = LetDeclarationNodeRecord)]
+#[node(kind = kind::LET_DECLARATION, layout = [kind::LET_KEYWORD, kind::COLON, kind::EQ, kind::ELSE_KEYWORD, kind::SEMI], words = 23, fields = LetDeclarationFields, prepare = LetDeclarationPrepare, view = LetDeclarationNodeRecord, prepare_fn = prepare_let_declaration)]
 pub struct LetDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20690,7 +20690,7 @@ fn prepare_let_declaration<N: LetDeclarationPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_DECLARATION, layout = [kind::USE_KEYWORD, kind::SEMI], words = 12, fields = UseDeclarationFields, prepare = UseDeclarationPrepare, view = UseDeclarationNodeRecord)]
+#[node(kind = kind::USE_DECLARATION, layout = [kind::USE_KEYWORD, kind::SEMI], words = 12, fields = UseDeclarationFields, prepare = UseDeclarationPrepare, view = UseDeclarationNodeRecord, prepare_fn = prepare_use_declaration)]
 pub struct UseDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20764,7 +20764,7 @@ fn prepare_use_declaration<N: UseDeclarationPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_USE_LIST, layout = [kind::COLON_COLON], words = 12, fields = ScopedUseListFields, prepare = ScopedUseListPrepare, view = ScopedUseListNodeRecord)]
+#[node(kind = kind::SCOPED_USE_LIST, layout = [kind::COLON_COLON], words = 12, fields = ScopedUseListFields, prepare = ScopedUseListPrepare, view = ScopedUseListNodeRecord, prepare_fn = prepare_scoped_use_list)]
 pub struct ScopedUseListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20838,7 +20838,7 @@ fn prepare_scoped_use_list<N: ScopedUseListPrepare + ?Sized>(node: &mut N, overl
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = UseListFields, prepare = UseListPrepare, view = UseListNodeRecord)]
+#[node(kind = kind::USE_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = UseListFields, prepare = UseListPrepare, view = UseListNodeRecord, prepare_fn = prepare_use_list)]
 pub struct UseListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20908,7 +20908,7 @@ fn prepare_use_list<N: UseListPrepare + ?Sized>(node: &mut N, overlay: &mut N::O
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_AS_CLAUSE, layout = [kind::AS_KEYWORD], words = 12, fields = UseAsClauseFields, prepare = UseAsClausePrepare, view = UseAsClauseNodeRecord)]
+#[node(kind = kind::USE_AS_CLAUSE, layout = [kind::AS_KEYWORD], words = 12, fields = UseAsClauseFields, prepare = UseAsClausePrepare, view = UseAsClauseNodeRecord, prepare_fn = prepare_use_as_clause)]
 pub struct UseAsClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20982,7 +20982,7 @@ fn prepare_use_as_clause<N: UseAsClausePrepare + ?Sized>(node: &mut N, overlay: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_WILDCARD, layout = [kind::STAR], words = 7, fields = UseWildcardFields, prepare = UseWildcardPrepare, view = UseWildcardNodeRecord)]
+#[node(kind = kind::USE_WILDCARD, layout = [kind::STAR], words = 7, fields = UseWildcardFields, prepare = UseWildcardPrepare, view = UseWildcardNodeRecord, prepare_fn = prepare_use_wildcard)]
 pub struct UseWildcardNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21052,7 +21052,7 @@ fn prepare_use_wildcard<N: UseWildcardPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParametersFields, prepare = ParametersPrepare, view = ParametersNodeRecord)]
+#[node(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParametersFields, prepare = ParametersPrepare, view = ParametersNodeRecord, prepare_fn = prepare_parameters)]
 pub struct ParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21122,7 +21122,7 @@ fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SELF_PARAMETER, layout = [kind::SELF], words = 8, fields = SelfParameterFields, prepare = SelfParameterPrepare, view = SelfParameterNodeRecord)]
+#[node(kind = kind::SELF_PARAMETER, layout = [kind::SELF], words = 8, fields = SelfParameterFields, prepare = SelfParameterPrepare, view = SelfParameterNodeRecord, prepare_fn = prepare_self_parameter)]
 pub struct SelfParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21198,7 +21198,7 @@ fn prepare_self_parameter<N: SelfParameterPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VARIADIC_PARAMETER, layout = [kind::COLON, kind::DOT_DOT_DOT], words = 8, fields = VariadicParameterFields, prepare = VariadicParameterPrepare, view = VariadicParameterNodeRecord)]
+#[node(kind = kind::VARIADIC_PARAMETER, layout = [kind::COLON, kind::DOT_DOT_DOT], words = 8, fields = VariadicParameterFields, prepare = VariadicParameterPrepare, view = VariadicParameterNodeRecord, prepare_fn = prepare_variadic_parameter)]
 pub struct VariadicParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21271,7 +21271,7 @@ fn prepare_variadic_parameter<N: VariadicParameterPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETER, layout = [kind::COLON], words = 13, fields = ParameterFields, prepare = ParameterPrepare, view = ParameterNodeRecord)]
+#[node(kind = kind::PARAMETER, layout = [kind::COLON], words = 13, fields = ParameterFields, prepare = ParameterPrepare, view = ParameterNodeRecord, prepare_fn = prepare_parameter)]
 pub struct ParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21348,7 +21348,7 @@ fn prepare_parameter<N: ParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTERN_MODIFIER, layout = [kind::EXTERN_KEYWORD], words = 7, fields = ExternModifierFields, prepare = ExternModifierPrepare, view = ExternModifierNodeRecord)]
+#[node(kind = kind::EXTERN_MODIFIER, layout = [kind::EXTERN_KEYWORD], words = 7, fields = ExternModifierFields, prepare = ExternModifierPrepare, view = ExternModifierNodeRecord, prepare_fn = prepare_extern_modifier)]
 pub struct ExternModifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21418,7 +21418,7 @@ fn prepare_extern_modifier<N: ExternModifierPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER, words = 7, fields = VisibilityModifierFields, prepare = VisibilityModifierPrepare, view = VisibilityModifierNodeRecord)]
+#[node(kind = kind::VISIBILITY_MODIFIER, words = 7, fields = VisibilityModifierFields, prepare = VisibilityModifierPrepare, view = VisibilityModifierNodeRecord, prepare_fn = prepare_visibility_modifier, seat_through = content)]
 pub struct VisibilityModifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21487,7 +21487,7 @@ fn prepare_visibility_modifier<N: VisibilityModifierPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BRACKETED_TYPE, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = BracketedTypeFields, prepare = BracketedTypePrepare, view = BracketedTypeNodeRecord)]
+#[node(kind = kind::BRACKETED_TYPE, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = BracketedTypeFields, prepare = BracketedTypePrepare, view = BracketedTypeNodeRecord, prepare_fn = prepare_bracketed_type)]
 pub struct BracketedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21557,7 +21557,7 @@ fn prepare_bracketed_type<N: BracketedTypePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::QUALIFIED_TYPE, layout = [kind::AS_KEYWORD], words = 12, fields = QualifiedTypeFields, prepare = QualifiedTypePrepare, view = QualifiedTypeNodeRecord)]
+#[node(kind = kind::QUALIFIED_TYPE, layout = [kind::AS_KEYWORD], words = 12, fields = QualifiedTypeFields, prepare = QualifiedTypePrepare, view = QualifiedTypeNodeRecord, prepare_fn = prepare_qualified_type)]
 pub struct QualifiedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21631,7 +21631,7 @@ fn prepare_qualified_type<N: QualifiedTypePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIFETIME, layout = [kind::SQUOTE], words = 7, fields = LifetimeFields, prepare = LifetimePrepare, view = LifetimeNodeRecord)]
+#[node(kind = kind::LIFETIME, layout = [kind::SQUOTE], words = 7, fields = LifetimeFields, prepare = LifetimePrepare, view = LifetimeNodeRecord, prepare_fn = prepare_lifetime)]
 pub struct LifetimeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21701,7 +21701,7 @@ fn prepare_lifetime<N: LifetimePrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 12, fields = ArrayTypeFields, prepare = ArrayTypePrepare, view = ArrayTypeNodeRecord)]
+#[node(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 12, fields = ArrayTypeFields, prepare = ArrayTypePrepare, view = ArrayTypeNodeRecord, prepare_fn = prepare_array_type)]
 pub struct ArrayTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21775,7 +21775,7 @@ fn prepare_array_type<N: ArrayTypePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_LIFETIMES, min_depth = 2, layout = [kind::FOR_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = ForLifetimesFields, prepare = ForLifetimesPrepare, view = ForLifetimesNodeRecord)]
+#[node(kind = kind::FOR_LIFETIMES, min_depth = 2, layout = [kind::FOR_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = ForLifetimesFields, prepare = ForLifetimesPrepare, view = ForLifetimesNodeRecord, prepare_fn = prepare_for_lifetimes)]
 pub struct ForLifetimesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21845,7 +21845,7 @@ fn prepare_for_lifetimes<N: ForLifetimesPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE, layout = [kind::DASH_GT], words = 22, fields = FunctionTypeFields, prepare = FunctionTypePrepare, view = FunctionTypeNodeRecord)]
+#[node(kind = kind::FUNCTION_TYPE, layout = [kind::DASH_GT], words = 22, fields = FunctionTypeFields, prepare = FunctionTypePrepare, view = FunctionTypeNodeRecord, prepare_fn = prepare_function_type)]
 pub struct FunctionTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21927,7 +21927,7 @@ fn prepare_function_type<N: FunctionTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TupleTypeFields, prepare = TupleTypePrepare, view = TupleTypeNodeRecord)]
+#[node(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TupleTypeFields, prepare = TupleTypePrepare, view = TupleTypeNodeRecord, prepare_fn = prepare_tuple_type)]
 pub struct TupleTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22045,7 +22045,7 @@ impl ::sittir_core::render::Render for UnitTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_FUNCTION, layout = [kind::COLON_COLON], words = 12, fields = GenericFunctionFields, prepare = GenericFunctionPrepare, view = GenericFunctionNodeRecord)]
+#[node(kind = kind::GENERIC_FUNCTION, layout = [kind::COLON_COLON], words = 12, fields = GenericFunctionFields, prepare = GenericFunctionPrepare, view = GenericFunctionNodeRecord, prepare_fn = prepare_generic_function)]
 pub struct GenericFunctionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22119,7 +22119,7 @@ fn prepare_generic_function<N: GenericFunctionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE, words = 12, fields = GenericTypeFields, prepare = GenericTypePrepare, view = GenericTypeNodeRecord)]
+#[node(kind = kind::GENERIC_TYPE, words = 12, fields = GenericTypeFields, prepare = GenericTypePrepare, view = GenericTypeNodeRecord, prepare_fn = prepare_generic_type)]
 pub struct GenericTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22193,7 +22193,7 @@ fn prepare_generic_type<N: GenericTypePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE_WITH_TURBOFISH, layout = [kind::COLON_COLON], words = 12, fields = GenericTypeWithTurbofishFields, prepare = GenericTypeWithTurbofishPrepare, view = GenericTypeWithTurbofishNodeRecord)]
+#[node(kind = kind::GENERIC_TYPE_WITH_TURBOFISH, layout = [kind::COLON_COLON], words = 12, fields = GenericTypeWithTurbofishFields, prepare = GenericTypeWithTurbofishPrepare, view = GenericTypeWithTurbofishNodeRecord, prepare_fn = prepare_generic_type_with_turbofish)]
 pub struct GenericTypeWithTurbofishNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22267,7 +22267,7 @@ fn prepare_generic_type_with_turbofish<N: GenericTypeWithTurbofishPrepare + ?Siz
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BOUNDED_TYPE, layout = [kind::PLUS], words = 12, fields = BoundedTypeFields, prepare = BoundedTypePrepare, view = BoundedTypeNodeRecord)]
+#[node(kind = kind::BOUNDED_TYPE, layout = [kind::PLUS], words = 12, fields = BoundedTypeFields, prepare = BoundedTypePrepare, view = BoundedTypeNodeRecord, prepare_fn = prepare_bounded_type)]
 pub struct BoundedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22341,7 +22341,7 @@ fn prepare_bounded_type<N: BoundedTypePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_BOUNDS, min_depth = 2, layout = [kind::USE_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = UseBoundsFields, prepare = UseBoundsPrepare, view = UseBoundsNodeRecord)]
+#[node(kind = kind::USE_BOUNDS, min_depth = 2, layout = [kind::USE_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = UseBoundsFields, prepare = UseBoundsPrepare, view = UseBoundsNodeRecord, prepare_fn = prepare_use_bounds)]
 pub struct UseBoundsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22411,7 +22411,7 @@ fn prepare_use_bounds<N: UseBoundsPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeArgumentsFields, prepare = TypeArgumentsPrepare, view = TypeArgumentsNodeRecord)]
+#[node(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeArgumentsFields, prepare = TypeArgumentsPrepare, view = TypeArgumentsNodeRecord, prepare_fn = prepare_type_arguments)]
 pub struct TypeArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22481,7 +22481,7 @@ fn prepare_type_arguments<N: TypeArgumentsPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_BINDING, layout = [kind::EQ], words = 17, fields = TypeBindingFields, prepare = TypeBindingPrepare, view = TypeBindingNodeRecord)]
+#[node(kind = kind::TYPE_BINDING, layout = [kind::EQ], words = 17, fields = TypeBindingFields, prepare = TypeBindingPrepare, view = TypeBindingNodeRecord, prepare_fn = prepare_type_binding)]
 pub struct TypeBindingNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22559,7 +22559,7 @@ fn prepare_type_binding<N: TypeBindingPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_TYPE, layout = [kind::AMP], words = 13, fields = ReferenceTypeFields, prepare = ReferenceTypePrepare, view = ReferenceTypeNodeRecord)]
+#[node(kind = kind::REFERENCE_TYPE, layout = [kind::AMP], words = 13, fields = ReferenceTypeFields, prepare = ReferenceTypePrepare, view = ReferenceTypeNodeRecord, prepare_fn = prepare_reference_type)]
 pub struct ReferenceTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22684,7 +22684,7 @@ impl ::sittir_core::render::Render for NeverTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_TYPE, layout = [kind::IMPL_KEYWORD, kind::FOR_KEYWORD], words = 12, fields = AbstractTypeFields, prepare = AbstractTypePrepare, view = AbstractTypeNodeRecord)]
+#[node(kind = kind::ABSTRACT_TYPE, layout = [kind::IMPL_KEYWORD, kind::FOR_KEYWORD], words = 12, fields = AbstractTypeFields, prepare = AbstractTypePrepare, view = AbstractTypeNodeRecord, prepare_fn = prepare_abstract_type)]
 pub struct AbstractTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22758,7 +22758,7 @@ fn prepare_abstract_type<N: AbstractTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DYNAMIC_TYPE, layout = [kind::DYN_KEYWORD], words = 7, fields = DynamicTypeFields, prepare = DynamicTypePrepare, view = DynamicTypeNodeRecord)]
+#[node(kind = kind::DYNAMIC_TYPE, layout = [kind::DYN_KEYWORD], words = 7, fields = DynamicTypeFields, prepare = DynamicTypePrepare, view = DynamicTypeNodeRecord, prepare_fn = prepare_dynamic_type)]
 pub struct DynamicTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22856,7 +22856,7 @@ impl ::sittir_core::render::Render for MutableSpecifierNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_INVOCATION, layout = [kind::BANG | kind::BANG2], words = 12, fields = MacroInvocationFields, prepare = MacroInvocationPrepare, view = MacroInvocationNodeRecord)]
+#[node(kind = kind::MACRO_INVOCATION, layout = [kind::BANG | kind::BANG2], words = 12, fields = MacroInvocationFields, prepare = MacroInvocationPrepare, view = MacroInvocationNodeRecord, prepare_fn = prepare_macro_invocation)]
 pub struct MacroInvocationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22930,7 +22930,7 @@ fn prepare_macro_invocation<N: MacroInvocationPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedIdentifierFields, prepare = ScopedIdentifierPrepare, view = ScopedIdentifierNodeRecord)]
+#[node(kind = kind::SCOPED_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedIdentifierFields, prepare = ScopedIdentifierPrepare, view = ScopedIdentifierNodeRecord, prepare_fn = prepare_scoped_identifier)]
 pub struct ScopedIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23004,7 +23004,7 @@ fn prepare_scoped_identifier<N: ScopedIdentifierPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierInExpressionPositionFields, prepare = ScopedTypeIdentifierInExpressionPositionPrepare, view = ScopedTypeIdentifierInExpressionPositionNodeRecord)]
+#[node(kind = kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierInExpressionPositionFields, prepare = ScopedTypeIdentifierInExpressionPositionPrepare, view = ScopedTypeIdentifierInExpressionPositionNodeRecord, prepare_fn = prepare_scoped_type_identifier_in_expression_position)]
 pub struct ScopedTypeIdentifierInExpressionPositionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23078,7 +23078,7 @@ fn prepare_scoped_type_identifier_in_expression_position<N: ScopedTypeIdentifier
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_TYPE_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierFields, prepare = ScopedTypeIdentifierPrepare, view = ScopedTypeIdentifierNodeRecord)]
+#[node(kind = kind::SCOPED_TYPE_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierFields, prepare = ScopedTypeIdentifierPrepare, view = ScopedTypeIdentifierNodeRecord, prepare_fn = prepare_scoped_type_identifier)]
 pub struct ScopedTypeIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23152,7 +23152,7 @@ fn prepare_scoped_type_identifier<N: ScopedTypeIdentifierPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNARY_EXPRESSION, words = 12, fields = UnaryExpressionFields, prepare = UnaryExpressionPrepare, view = UnaryExpressionNodeRecord)]
+#[node(kind = kind::UNARY_EXPRESSION, words = 12, fields = UnaryExpressionFields, prepare = UnaryExpressionPrepare, view = UnaryExpressionNodeRecord, prepare_fn = prepare_unary_expression)]
 pub struct UnaryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23226,7 +23226,7 @@ fn prepare_unary_expression<N: UnaryExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRY_EXPRESSION, layout = [kind::QMARK], words = 7, fields = TryExpressionFields, prepare = TryExpressionPrepare, view = TryExpressionNodeRecord)]
+#[node(kind = kind::TRY_EXPRESSION, layout = [kind::QMARK], words = 7, fields = TryExpressionFields, prepare = TryExpressionPrepare, view = TryExpressionNodeRecord, prepare_fn = prepare_try_expression)]
 pub struct TryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23296,7 +23296,7 @@ fn prepare_try_expression<N: TryExpressionPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BINARY_EXPRESSION, words = 17, fields = BinaryExpressionFields, prepare = BinaryExpressionPrepare, view = BinaryExpressionNodeRecord)]
+#[node(kind = kind::BINARY_EXPRESSION, words = 17, fields = BinaryExpressionFields, prepare = BinaryExpressionPrepare, view = BinaryExpressionNodeRecord, prepare_fn = prepare_binary_expression)]
 pub struct BinaryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23374,7 +23374,7 @@ fn prepare_binary_expression<N: BinaryExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ], words = 12, fields = AssignmentExpressionFields, prepare = AssignmentExpressionPrepare, view = AssignmentExpressionNodeRecord)]
+#[node(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ], words = 12, fields = AssignmentExpressionFields, prepare = AssignmentExpressionPrepare, view = AssignmentExpressionNodeRecord, prepare_fn = prepare_assignment_expression)]
 pub struct AssignmentExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23448,7 +23448,7 @@ fn prepare_assignment_expression<N: AssignmentExpressionPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMPOUND_ASSIGNMENT_EXPR, words = 17, fields = CompoundAssignmentExprFields, prepare = CompoundAssignmentExprPrepare, view = CompoundAssignmentExprNodeRecord)]
+#[node(kind = kind::COMPOUND_ASSIGNMENT_EXPR, words = 17, fields = CompoundAssignmentExprFields, prepare = CompoundAssignmentExprPrepare, view = CompoundAssignmentExprNodeRecord, prepare_fn = prepare_compound_assignment_expr)]
 pub struct CompoundAssignmentExprNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23526,7 +23526,7 @@ fn prepare_compound_assignment_expr<N: CompoundAssignmentExprPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_CAST_EXPRESSION, layout = [kind::AS_KEYWORD], words = 12, fields = TypeCastExpressionFields, prepare = TypeCastExpressionPrepare, view = TypeCastExpressionNodeRecord)]
+#[node(kind = kind::TYPE_CAST_EXPRESSION, layout = [kind::AS_KEYWORD], words = 12, fields = TypeCastExpressionFields, prepare = TypeCastExpressionPrepare, view = TypeCastExpressionNodeRecord, prepare_fn = prepare_type_cast_expression)]
 pub struct TypeCastExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23600,7 +23600,7 @@ fn prepare_type_cast_expression<N: TypeCastExpressionPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RETURN_EXPRESSION, layout = [kind::RETURN_KEYWORD], words = 7, fields = ReturnExpressionFields, prepare = ReturnExpressionPrepare, view = ReturnExpressionNodeRecord)]
+#[node(kind = kind::RETURN_EXPRESSION, layout = [kind::RETURN_KEYWORD], words = 7, fields = ReturnExpressionFields, prepare = ReturnExpressionPrepare, view = ReturnExpressionNodeRecord, prepare_fn = prepare_return_expression)]
 pub struct ReturnExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23670,7 +23670,7 @@ fn prepare_return_expression<N: ReturnExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD], words = 7, fields = YieldExpressionFields, prepare = YieldExpressionPrepare, view = YieldExpressionNodeRecord)]
+#[node(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD], words = 7, fields = YieldExpressionFields, prepare = YieldExpressionPrepare, view = YieldExpressionNodeRecord, prepare_fn = prepare_yield_expression)]
 pub struct YieldExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23740,7 +23740,7 @@ fn prepare_yield_expression<N: YieldExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL_EXPRESSION, words = 12, fields = CallExpressionFields, prepare = CallExpressionPrepare, view = CallExpressionNodeRecord)]
+#[node(kind = kind::CALL_EXPRESSION, words = 12, fields = CallExpressionFields, prepare = CallExpressionPrepare, view = CallExpressionNodeRecord, prepare_fn = prepare_call_expression)]
 pub struct CallExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23814,7 +23814,7 @@ fn prepare_call_expression<N: CallExpressionPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENTS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ArgumentsFields, prepare = ArgumentsPrepare, view = ArgumentsNodeRecord)]
+#[node(kind = kind::ARGUMENTS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ArgumentsFields, prepare = ArgumentsPrepare, view = ArgumentsNodeRecord, prepare_fn = prepare_arguments)]
 pub struct ArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23884,7 +23884,7 @@ fn prepare_arguments<N: ArgumentsPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParenthesizedExpressionFields, prepare = ParenthesizedExpressionPrepare, view = ParenthesizedExpressionNodeRecord)]
+#[node(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParenthesizedExpressionFields, prepare = ParenthesizedExpressionPrepare, view = ParenthesizedExpressionNodeRecord, prepare_fn = prepare_parenthesized_expression)]
 pub struct ParenthesizedExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23954,7 +23954,7 @@ fn prepare_parenthesized_expression<N: ParenthesizedExpressionPrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 9, fields = TupleExpressionFields, prepare = TupleExpressionPrepare, view = TupleExpressionNodeRecord)]
+#[node(kind = kind::TUPLE_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 9, fields = TupleExpressionFields, prepare = TupleExpressionPrepare, view = TupleExpressionNodeRecord, prepare_fn = prepare_tuple_expression)]
 pub struct TupleExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24082,7 +24082,7 @@ impl ::sittir_core::render::Render for UnitExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_EXPRESSION, words = 12, fields = StructExpressionFields, prepare = StructExpressionPrepare, view = StructExpressionNodeRecord)]
+#[node(kind = kind::STRUCT_EXPRESSION, words = 12, fields = StructExpressionFields, prepare = StructExpressionPrepare, view = StructExpressionNodeRecord, prepare_fn = prepare_struct_expression)]
 pub struct StructExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24156,7 +24156,7 @@ fn prepare_struct_expression<N: StructExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_INITIALIZER_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldInitializerListFields, prepare = FieldInitializerListPrepare, view = FieldInitializerListNodeRecord)]
+#[node(kind = kind::FIELD_INITIALIZER_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldInitializerListFields, prepare = FieldInitializerListPrepare, view = FieldInitializerListNodeRecord, prepare_fn = prepare_field_initializer_list)]
 pub struct FieldInitializerListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24226,7 +24226,7 @@ fn prepare_field_initializer_list<N: FieldInitializerListPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SHORTHAND_FIELD_INITIALIZER, words = 9, fields = ShorthandFieldInitializerFields, prepare = ShorthandFieldInitializerPrepare, view = ShorthandFieldInitializerNodeRecord)]
+#[node(kind = kind::SHORTHAND_FIELD_INITIALIZER, words = 9, fields = ShorthandFieldInitializerFields, prepare = ShorthandFieldInitializerPrepare, view = ShorthandFieldInitializerNodeRecord, prepare_fn = prepare_shorthand_field_initializer)]
 pub struct ShorthandFieldInitializerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24306,7 +24306,7 @@ fn prepare_shorthand_field_initializer<N: ShorthandFieldInitializerPrepare + ?Si
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_INITIALIZER, layout = [kind::COLON], words = 14, fields = FieldInitializerFields, prepare = FieldInitializerPrepare, view = FieldInitializerNodeRecord)]
+#[node(kind = kind::FIELD_INITIALIZER, layout = [kind::COLON], words = 14, fields = FieldInitializerFields, prepare = FieldInitializerPrepare, view = FieldInitializerNodeRecord, prepare_fn = prepare_field_initializer)]
 pub struct FieldInitializerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24390,7 +24390,7 @@ fn prepare_field_initializer<N: FieldInitializerPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BASE_FIELD_INITIALIZER, layout = [kind::DOT_DOT], words = 7, fields = BaseFieldInitializerFields, prepare = BaseFieldInitializerPrepare, view = BaseFieldInitializerNodeRecord)]
+#[node(kind = kind::BASE_FIELD_INITIALIZER, layout = [kind::DOT_DOT], words = 7, fields = BaseFieldInitializerFields, prepare = BaseFieldInitializerPrepare, view = BaseFieldInitializerNodeRecord, prepare_fn = prepare_base_field_initializer)]
 pub struct BaseFieldInitializerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24460,7 +24460,7 @@ fn prepare_base_field_initializer<N: BaseFieldInitializerPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IF_EXPRESSION, layout = [kind::IF_KEYWORD], words = 17, fields = IfExpressionFields, prepare = IfExpressionPrepare, view = IfExpressionNodeRecord)]
+#[node(kind = kind::IF_EXPRESSION, layout = [kind::IF_KEYWORD], words = 17, fields = IfExpressionFields, prepare = IfExpressionPrepare, view = IfExpressionNodeRecord, prepare_fn = prepare_if_expression)]
 pub struct IfExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24538,7 +24538,7 @@ fn prepare_if_expression<N: IfExpressionPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LET_CONDITION, layout = [kind::LET_KEYWORD, kind::EQ], words = 12, fields = LetConditionFields, prepare = LetConditionPrepare, view = LetConditionNodeRecord)]
+#[node(kind = kind::LET_CONDITION, layout = [kind::LET_KEYWORD, kind::EQ], words = 12, fields = LetConditionFields, prepare = LetConditionPrepare, view = LetConditionNodeRecord, prepare_fn = prepare_let_condition)]
 pub struct LetConditionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24612,7 +24612,7 @@ fn prepare_let_condition<N: LetConditionPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LET_CHAIN, layout = [kind::AMP_AMP], words = 9, fields = LetChainFields, prepare = LetChainPrepare, view = LetChainNodeRecord)]
+#[node(kind = kind::_LET_CHAIN, layout = [kind::AMP_AMP], words = 9, fields = LetChainFields, prepare = LetChainPrepare, view = LetChainNodeRecord, prepare_fn = prepare_let_chain)]
 pub struct LetChainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24695,7 +24695,7 @@ fn prepare_let_chain<N: LetChainPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD], words = 7, fields = ElseClauseFields, prepare = ElseClausePrepare, view = ElseClauseNodeRecord)]
+#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD], words = 7, fields = ElseClauseFields, prepare = ElseClausePrepare, view = ElseClauseNodeRecord, prepare_fn = prepare_else_clause)]
 pub struct ElseClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24765,7 +24765,7 @@ fn prepare_else_clause<N: ElseClausePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_EXPRESSION, layout = [kind::MATCH_KEYWORD], words = 12, fields = MatchExpressionFields, prepare = MatchExpressionPrepare, view = MatchExpressionNodeRecord)]
+#[node(kind = kind::MATCH_EXPRESSION, layout = [kind::MATCH_KEYWORD], words = 12, fields = MatchExpressionFields, prepare = MatchExpressionPrepare, view = MatchExpressionNodeRecord, prepare_fn = prepare_match_expression)]
 pub struct MatchExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24839,7 +24839,7 @@ fn prepare_match_expression<N: MatchExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = MatchBlockFields, prepare = MatchBlockPrepare, view = MatchBlockNodeRecord)]
+#[node(kind = kind::MATCH_BLOCK, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = MatchBlockFields, prepare = MatchBlockPrepare, view = MatchBlockNodeRecord, prepare_fn = prepare_match_block)]
 pub struct MatchBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24909,7 +24909,7 @@ fn prepare_match_block<N: MatchBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 15, fields = LastMatchArmFields, prepare = LastMatchArmPrepare, view = LastMatchArmNodeRecord)]
+#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 15, fields = LastMatchArmFields, prepare = LastMatchArmPrepare, view = LastMatchArmNodeRecord, prepare_fn = prepare_last_match_arm)]
 pub struct LastMatchArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24996,7 +24996,7 @@ fn prepare_last_match_arm<N: LastMatchArmPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_PATTERN, layout = [kind::IF_KEYWORD], words = 12, fields = MatchPatternFields, prepare = MatchPatternPrepare, view = MatchPatternNodeRecord)]
+#[node(kind = kind::MATCH_PATTERN, layout = [kind::IF_KEYWORD], words = 12, fields = MatchPatternFields, prepare = MatchPatternPrepare, view = MatchPatternNodeRecord, prepare_fn = prepare_match_pattern)]
 pub struct MatchPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25070,7 +25070,7 @@ fn prepare_match_pattern<N: MatchPatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHILE_EXPRESSION, layout = [kind::COLON, kind::WHILE_KEYWORD], words = 17, fields = WhileExpressionFields, prepare = WhileExpressionPrepare, view = WhileExpressionNodeRecord)]
+#[node(kind = kind::WHILE_EXPRESSION, layout = [kind::COLON, kind::WHILE_KEYWORD], words = 17, fields = WhileExpressionFields, prepare = WhileExpressionPrepare, view = WhileExpressionNodeRecord, prepare_fn = prepare_while_expression)]
 pub struct WhileExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25148,7 +25148,7 @@ fn prepare_while_expression<N: WhileExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LOOP_EXPRESSION, layout = [kind::COLON, kind::LOOP_KEYWORD], words = 12, fields = LoopExpressionFields, prepare = LoopExpressionPrepare, view = LoopExpressionNodeRecord)]
+#[node(kind = kind::LOOP_EXPRESSION, layout = [kind::COLON, kind::LOOP_KEYWORD], words = 12, fields = LoopExpressionFields, prepare = LoopExpressionPrepare, view = LoopExpressionNodeRecord, prepare_fn = prepare_loop_expression)]
 pub struct LoopExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25222,7 +25222,7 @@ fn prepare_loop_expression<N: LoopExpressionPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_EXPRESSION, layout = [kind::COLON, kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 22, fields = ForExpressionFields, prepare = ForExpressionPrepare, view = ForExpressionNodeRecord)]
+#[node(kind = kind::FOR_EXPRESSION, layout = [kind::COLON, kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 22, fields = ForExpressionFields, prepare = ForExpressionPrepare, view = ForExpressionNodeRecord, prepare_fn = prepare_for_expression)]
 pub struct ForExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25304,7 +25304,7 @@ fn prepare_for_expression<N: ForExpressionPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONST_BLOCK, layout = [kind::CONST_KEYWORD], words = 7, fields = ConstBlockFields, prepare = ConstBlockPrepare, view = ConstBlockNodeRecord)]
+#[node(kind = kind::CONST_BLOCK, layout = [kind::CONST_KEYWORD], words = 7, fields = ConstBlockFields, prepare = ConstBlockPrepare, view = ConstBlockNodeRecord, prepare_fn = prepare_const_block)]
 pub struct ConstBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25374,7 +25374,7 @@ fn prepare_const_block<N: ConstBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLOSURE_PARAMETERS, layout = [kind::PIPE], words = 4, fields = ClosureParametersFields, prepare = ClosureParametersPrepare, view = ClosureParametersNodeRecord)]
+#[node(kind = kind::CLOSURE_PARAMETERS, layout = [kind::PIPE], words = 4, fields = ClosureParametersFields, prepare = ClosureParametersPrepare, view = ClosureParametersNodeRecord, prepare_fn = prepare_closure_parameters)]
 pub struct ClosureParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25454,7 +25454,7 @@ fn prepare_closure_parameters<N: ClosureParametersPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LABEL, layout = [kind::SQUOTE], words = 7, fields = LabelFields, prepare = LabelPrepare, view = LabelNodeRecord)]
+#[node(kind = kind::LABEL, layout = [kind::SQUOTE], words = 7, fields = LabelFields, prepare = LabelPrepare, view = LabelNodeRecord, prepare_fn = prepare_label)]
 pub struct LabelNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25524,7 +25524,7 @@ fn prepare_label<N: LabelPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BREAK_EXPRESSION, layout = [kind::BREAK_KEYWORD], words = 12, fields = BreakExpressionFields, prepare = BreakExpressionPrepare, view = BreakExpressionNodeRecord)]
+#[node(kind = kind::BREAK_EXPRESSION, layout = [kind::BREAK_KEYWORD], words = 12, fields = BreakExpressionFields, prepare = BreakExpressionPrepare, view = BreakExpressionNodeRecord, prepare_fn = prepare_break_expression)]
 pub struct BreakExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25598,7 +25598,7 @@ fn prepare_break_expression<N: BreakExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONTINUE_EXPRESSION, layout = [kind::CONTINUE_KEYWORD], words = 7, fields = ContinueExpressionFields, prepare = ContinueExpressionPrepare, view = ContinueExpressionNodeRecord)]
+#[node(kind = kind::CONTINUE_EXPRESSION, layout = [kind::CONTINUE_KEYWORD], words = 7, fields = ContinueExpressionFields, prepare = ContinueExpressionPrepare, view = ContinueExpressionNodeRecord, prepare_fn = prepare_continue_expression)]
 pub struct ContinueExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25668,7 +25668,7 @@ fn prepare_continue_expression<N: ContinueExpressionPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INDEX_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 12, fields = IndexExpressionFields, prepare = IndexExpressionPrepare, view = IndexExpressionNodeRecord)]
+#[node(kind = kind::INDEX_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 12, fields = IndexExpressionFields, prepare = IndexExpressionPrepare, view = IndexExpressionNodeRecord, prepare_fn = prepare_index_expression)]
 pub struct IndexExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25742,7 +25742,7 @@ fn prepare_index_expression<N: IndexExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AWAIT_EXPRESSION, layout = [kind::DOT, kind::AWAIT_KEYWORD], words = 7, fields = AwaitExpressionFields, prepare = AwaitExpressionPrepare, view = AwaitExpressionNodeRecord)]
+#[node(kind = kind::AWAIT_EXPRESSION, layout = [kind::DOT, kind::AWAIT_KEYWORD], words = 7, fields = AwaitExpressionFields, prepare = AwaitExpressionPrepare, view = AwaitExpressionNodeRecord, prepare_fn = prepare_await_expression)]
 pub struct AwaitExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25812,7 +25812,7 @@ fn prepare_await_expression<N: AwaitExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_EXPRESSION, layout = [kind::DOT], words = 12, fields = FieldExpressionFields, prepare = FieldExpressionPrepare, view = FieldExpressionNodeRecord)]
+#[node(kind = kind::FIELD_EXPRESSION, layout = [kind::DOT], words = 12, fields = FieldExpressionFields, prepare = FieldExpressionPrepare, view = FieldExpressionNodeRecord, prepare_fn = prepare_field_expression)]
 pub struct FieldExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25886,7 +25886,7 @@ fn prepare_field_expression<N: FieldExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNSAFE_BLOCK, layout = [kind::UNSAFE_KEYWORD], words = 7, fields = UnsafeBlockFields, prepare = UnsafeBlockPrepare, view = UnsafeBlockNodeRecord)]
+#[node(kind = kind::UNSAFE_BLOCK, layout = [kind::UNSAFE_KEYWORD], words = 7, fields = UnsafeBlockFields, prepare = UnsafeBlockPrepare, view = UnsafeBlockNodeRecord, prepare_fn = prepare_unsafe_block)]
 pub struct UnsafeBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25956,7 +25956,7 @@ fn prepare_unsafe_block<N: UnsafeBlockPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASYNC_BLOCK, layout = [kind::ASYNC_KEYWORD], words = 8, fields = AsyncBlockFields, prepare = AsyncBlockPrepare, view = AsyncBlockNodeRecord)]
+#[node(kind = kind::ASYNC_BLOCK, layout = [kind::ASYNC_KEYWORD], words = 8, fields = AsyncBlockFields, prepare = AsyncBlockPrepare, view = AsyncBlockNodeRecord, prepare_fn = prepare_async_block)]
 pub struct AsyncBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26029,7 +26029,7 @@ fn prepare_async_block<N: AsyncBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GEN_BLOCK, layout = [kind::GEN_KEYWORD], words = 8, fields = GenBlockFields, prepare = GenBlockPrepare, view = GenBlockNodeRecord)]
+#[node(kind = kind::GEN_BLOCK, layout = [kind::GEN_KEYWORD], words = 8, fields = GenBlockFields, prepare = GenBlockPrepare, view = GenBlockNodeRecord, prepare_fn = prepare_gen_block)]
 pub struct GenBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26102,7 +26102,7 @@ fn prepare_gen_block<N: GenBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRY_BLOCK, layout = [kind::TRY_KEYWORD], words = 7, fields = TryBlockFields, prepare = TryBlockPrepare, view = TryBlockNodeRecord)]
+#[node(kind = kind::TRY_BLOCK, layout = [kind::TRY_KEYWORD], words = 7, fields = TryBlockFields, prepare = TryBlockPrepare, view = TryBlockNodeRecord, prepare_fn = prepare_try_block)]
 pub struct TryBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26172,7 +26172,7 @@ fn prepare_try_block<N: TryBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK, layout = [kind::COLON, kind::LBRACE, kind::RBRACE], words = 14, fields = BlockFields, prepare = BlockPrepare, view = BlockNodeRecord)]
+#[node(kind = kind::BLOCK, layout = [kind::COLON, kind::LBRACE, kind::RBRACE], words = 14, fields = BlockFields, prepare = BlockPrepare, view = BlockNodeRecord, prepare_fn = prepare_block)]
 pub struct BlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26256,7 +26256,7 @@ fn prepare_block<N: BlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_PATTERN, layout = [kind::COLON_COLON], words = 12, fields = GenericPatternFields, prepare = GenericPatternPrepare, view = GenericPatternNodeRecord)]
+#[node(kind = kind::GENERIC_PATTERN, layout = [kind::COLON_COLON], words = 12, fields = GenericPatternFields, prepare = GenericPatternPrepare, view = GenericPatternNodeRecord, prepare_fn = prepare_generic_pattern)]
 pub struct GenericPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26330,7 +26330,7 @@ fn prepare_generic_pattern<N: GenericPatternPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TuplePatternFields, prepare = TuplePatternPrepare, view = TuplePatternNodeRecord)]
+#[node(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TuplePatternFields, prepare = TuplePatternPrepare, view = TuplePatternNodeRecord, prepare_fn = prepare_tuple_pattern)]
 pub struct TuplePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26400,7 +26400,7 @@ fn prepare_tuple_pattern<N: TuplePatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SLICE_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = SlicePatternFields, prepare = SlicePatternPrepare, view = SlicePatternNodeRecord)]
+#[node(kind = kind::SLICE_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = SlicePatternFields, prepare = SlicePatternPrepare, view = SlicePatternNodeRecord, prepare_fn = prepare_slice_pattern)]
 pub struct SlicePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26470,7 +26470,7 @@ fn prepare_slice_pattern<N: SlicePatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_STRUCT_PATTERN, layout = [kind::LPAREN, kind::RPAREN], words = 12, fields = TupleStructPatternFields, prepare = TupleStructPatternPrepare, view = TupleStructPatternNodeRecord)]
+#[node(kind = kind::TUPLE_STRUCT_PATTERN, layout = [kind::LPAREN, kind::RPAREN], words = 12, fields = TupleStructPatternFields, prepare = TupleStructPatternPrepare, view = TupleStructPatternNodeRecord, prepare_fn = prepare_tuple_struct_pattern)]
 pub struct TupleStructPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26544,7 +26544,7 @@ fn prepare_tuple_struct_pattern<N: TupleStructPatternPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], words = 12, fields = StructPatternFields, prepare = StructPatternPrepare, view = StructPatternNodeRecord)]
+#[node(kind = kind::STRUCT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], words = 12, fields = StructPatternFields, prepare = StructPatternPrepare, view = StructPatternNodeRecord, prepare_fn = prepare_struct_pattern)]
 pub struct StructPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26666,7 +26666,7 @@ impl ::sittir_core::render::Render for RemainingFieldPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MUT_PATTERN, layout = [kind::MUTABLE_SPECIFIER], words = 7, fields = MutPatternFields, prepare = MutPatternPrepare, view = MutPatternNodeRecord)]
+#[node(kind = kind::MUT_PATTERN, layout = [kind::MUTABLE_SPECIFIER], words = 7, fields = MutPatternFields, prepare = MutPatternPrepare, view = MutPatternNodeRecord, prepare_fn = prepare_mut_pattern)]
 pub struct MutPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26736,7 +26736,7 @@ fn prepare_mut_pattern<N: MutPatternPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REF_PATTERN, layout = [kind::REF_KEYWORD], words = 7, fields = RefPatternFields, prepare = RefPatternPrepare, view = RefPatternNodeRecord)]
+#[node(kind = kind::REF_PATTERN, layout = [kind::REF_KEYWORD], words = 7, fields = RefPatternFields, prepare = RefPatternPrepare, view = RefPatternNodeRecord, prepare_fn = prepare_ref_pattern)]
 pub struct RefPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26806,7 +26806,7 @@ fn prepare_ref_pattern<N: RefPatternPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CAPTURED_PATTERN, layout = [kind::AT], words = 12, fields = CapturedPatternFields, prepare = CapturedPatternPrepare, view = CapturedPatternNodeRecord)]
+#[node(kind = kind::CAPTURED_PATTERN, layout = [kind::AT], words = 12, fields = CapturedPatternFields, prepare = CapturedPatternPrepare, view = CapturedPatternNodeRecord, prepare_fn = prepare_captured_pattern)]
 pub struct CapturedPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26880,7 +26880,7 @@ fn prepare_captured_pattern<N: CapturedPatternPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_PATTERN, layout = [kind::AMP], words = 8, fields = ReferencePatternFields, prepare = ReferencePatternPrepare, view = ReferencePatternNodeRecord)]
+#[node(kind = kind::REFERENCE_PATTERN, layout = [kind::AMP], words = 8, fields = ReferencePatternFields, prepare = ReferencePatternPrepare, view = ReferencePatternNodeRecord, prepare_fn = prepare_reference_pattern)]
 pub struct ReferencePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26953,7 +26953,7 @@ fn prepare_reference_pattern<N: ReferencePatternPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NEGATIVE_LITERAL, layout = [kind::DASH], words = 7, fields = NegativeLiteralFields, prepare = NegativeLiteralPrepare, view = NegativeLiteralNodeRecord)]
+#[node(kind = kind::NEGATIVE_LITERAL, layout = [kind::DASH], words = 7, fields = NegativeLiteralFields, prepare = NegativeLiteralPrepare, view = NegativeLiteralNodeRecord, prepare_fn = prepare_negative_literal)]
 pub struct NegativeLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27023,7 +27023,7 @@ fn prepare_negative_literal<N: NegativeLiteralPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_LITERAL, layout = [kind::STRING_CLOSE], words = 9, fields = StringLiteralFields, prepare = StringLiteralPrepare, view = StringLiteralNodeRecord)]
+#[node(kind = kind::STRING_LITERAL, layout = [kind::STRING_CLOSE], words = 9, fields = StringLiteralFields, prepare = StringLiteralPrepare, view = StringLiteralNodeRecord, prepare_fn = prepare_string_literal)]
 pub struct StringLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27098,7 +27098,7 @@ fn prepare_string_literal<N: StringLiteralPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RAW_STRING_LITERAL, words = 17, fields = RawStringLiteralFields, prepare = RawStringLiteralPrepare, view = RawStringLiteralNodeRecord)]
+#[node(kind = kind::RAW_STRING_LITERAL, words = 17, fields = RawStringLiteralFields, prepare = RawStringLiteralPrepare, view = RawStringLiteralNodeRecord, prepare_fn = prepare_raw_string_literal)]
 pub struct RawStringLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27212,7 +27212,7 @@ impl ::sittir_core::render::Render for BooleanLiteralEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 7, fields = LineCommentFields, prepare = LineCommentPrepare, view = LineCommentNodeRecord)]
+#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 7, fields = LineCommentFields, prepare = LineCommentPrepare, view = LineCommentNodeRecord, prepare_fn = prepare_line_comment)]
 pub struct LineCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27338,7 +27338,7 @@ impl ::sittir_core::render::Render for OuterLineDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT, layout = [kind::SLASH_STAR, kind::STAR_SLASH], words = 7, fields = BlockCommentFields, prepare = BlockCommentPrepare, view = BlockCommentNodeRecord)]
+#[node(kind = kind::BLOCK_COMMENT, layout = [kind::SLASH_STAR, kind::STAR_SLASH], words = 7, fields = BlockCommentFields, prepare = BlockCommentPrepare, view = BlockCommentNodeRecord, prepare_fn = prepare_block_comment)]
 pub struct BlockCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27408,7 +27408,7 @@ fn prepare_block_comment<N: BlockCommentPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IDENTIFIER, folded = [kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD, kind::RAW_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD], text, words = 2, fields = IdentifierFields, prepare = IdentifierPrepare, view = IdentifierNodeRecord)]
+#[node(kind = kind::IDENTIFIER, folded = [kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD, kind::RAW_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD], text, words = 2, fields = IdentifierFields, prepare = IdentifierPrepare, view = IdentifierNodeRecord, prepare_fn = prepare_identifier)]
 pub struct IdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27476,7 +27476,7 @@ fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SHEBANG, interior = "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$", words = 6, fields = ShebangFields, prepare = ShebangPrepare, view = ShebangNodeRecord)]
+#[node(kind = kind::SHEBANG, interior = "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$", words = 6, fields = ShebangFields, prepare = ShebangPrepare, view = ShebangNodeRecord, prepare_fn = prepare_shebang)]
 pub struct ShebangNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27688,7 +27688,7 @@ impl ::sittir_core::render::Render for CrateNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METAVARIABLE, interior = "^\\$(?<name>[a-zA-Z_]\\w*)$", words = 6, fields = MetavariableFields, prepare = MetavariablePrepare, view = MetavariableNodeRecord)]
+#[node(kind = kind::METAVARIABLE, interior = "^\\$(?<name>[a-zA-Z_]\\w*)$", words = 6, fields = MetavariableFields, prepare = MetavariablePrepare, view = MetavariableNodeRecord, prepare_fn = prepare_metavariable)]
 pub struct MetavariableNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27852,7 +27852,7 @@ impl ::sittir_core::render::Render for PrimitiveTypeEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_RULES, item = item, words = 4, fields = MacroRulesFields, prepare = MacroRulesPrepare, view = MacroRulesNodeRecord)]
+#[node(kind = kind::MACRO_RULES, item = item, words = 4, fields = MacroRulesFields, prepare = MacroRulesPrepare, view = MacroRulesNodeRecord, prepare_fn = prepare_macro_rules)]
 pub struct MacroRulesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27937,7 +27937,7 @@ fn prepare_macro_rules<N: MacroRulesPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, item = item, words = 4, fields = EnumVariantListElementsFields, prepare = EnumVariantListElementsPrepare, view = EnumVariantListElementsNodeRecord)]
+#[node(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, item = item, words = 4, fields = EnumVariantListElementsFields, prepare = EnumVariantListElementsPrepare, view = EnumVariantListElementsNodeRecord, prepare_fn = prepare_enum_variant_list_elements)]
 pub struct EnumVariantListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28022,7 +28022,7 @@ fn prepare_enum_variant_list_elements<N: EnumVariantListElementsPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = FieldDeclarationListElementsFields, prepare = FieldDeclarationListElementsPrepare, view = FieldDeclarationListElementsNodeRecord)]
+#[node(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = FieldDeclarationListElementsFields, prepare = FieldDeclarationListElementsPrepare, view = FieldDeclarationListElementsNodeRecord, prepare_fn = prepare_field_declaration_list_elements)]
 pub struct FieldDeclarationListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28107,7 +28107,7 @@ fn prepare_field_declaration_list_elements<N: FieldDeclarationListElementsPrepar
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = OrderedFieldDeclarationListElementsFields, prepare = OrderedFieldDeclarationListElementsPrepare, view = OrderedFieldDeclarationListElementsNodeRecord)]
+#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = OrderedFieldDeclarationListElementsFields, prepare = OrderedFieldDeclarationListElementsPrepare, view = OrderedFieldDeclarationListElementsNodeRecord, prepare_fn = prepare_ordered_field_declaration_list_elements)]
 pub struct OrderedFieldDeclarationListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28192,7 +28192,7 @@ fn prepare_ordered_field_declaration_list_elements<N: OrderedFieldDeclarationLis
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHERE_PREDICATES, item = item, words = 4, fields = WherePredicatesFields, prepare = WherePredicatesPrepare, view = WherePredicatesNodeRecord)]
+#[node(kind = kind::WHERE_PREDICATES, item = item, words = 4, fields = WherePredicatesFields, prepare = WherePredicatesPrepare, view = WherePredicatesNodeRecord, prepare_fn = prepare_where_predicates)]
 pub struct WherePredicatesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28277,7 +28277,7 @@ fn prepare_where_predicates<N: WherePredicatesPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, words = 4, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord)]
+#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, words = 4, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord, prepare_fn = prepare_type_parameters_elements)]
 pub struct TypeParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28362,7 +28362,7 @@ fn prepare_type_parameters_elements<N: TypeParametersElementsPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_CLAUSES, item = item, words = 4, fields = UseClausesFields, prepare = UseClausesPrepare, view = UseClausesNodeRecord)]
+#[node(kind = kind::USE_CLAUSES, item = item, words = 4, fields = UseClausesFields, prepare = UseClausesPrepare, view = UseClausesNodeRecord, prepare_fn = prepare_use_clauses)]
 pub struct UseClausesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28447,7 +28447,7 @@ fn prepare_use_clauses<N: UseClausesPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 4, fields = ParametersElementsFields, prepare = ParametersElementsPrepare, view = ParametersElementsNodeRecord)]
+#[node(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 4, fields = ParametersElementsFields, prepare = ParametersElementsPrepare, view = ParametersElementsNodeRecord, prepare_fn = prepare_parameters_elements)]
 pub struct ParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28532,7 +28532,7 @@ fn prepare_parameters_elements<N: ParametersElementsPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIFETIMES, item = item, words = 4, fields = LifetimesFields, prepare = LifetimesPrepare, view = LifetimesNodeRecord)]
+#[node(kind = kind::LIFETIMES, item = item, words = 4, fields = LifetimesFields, prepare = LifetimesPrepare, view = LifetimesNodeRecord, prepare_fn = prepare_lifetimes)]
 pub struct LifetimesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28617,7 +28617,7 @@ fn prepare_lifetimes<N: LifetimesPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPES, item = item, words = 4, fields = TypesFields, prepare = TypesPrepare, view = TypesNodeRecord)]
+#[node(kind = kind::TYPES, item = item, words = 4, fields = TypesFields, prepare = TypesPrepare, view = TypesNodeRecord, prepare_fn = prepare_types)]
 pub struct TypesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28702,7 +28702,7 @@ fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_BOUNDS_ELEMENTS, item = item, words = 4, fields = UseBoundsElementsFields, prepare = UseBoundsElementsPrepare, view = UseBoundsElementsNodeRecord)]
+#[node(kind = kind::USE_BOUNDS_ELEMENTS, item = item, words = 4, fields = UseBoundsElementsFields, prepare = UseBoundsElementsPrepare, view = UseBoundsElementsNodeRecord, prepare_fn = prepare_use_bounds_elements)]
 pub struct UseBoundsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28787,7 +28787,7 @@ fn prepare_use_bounds_elements<N: UseBoundsElementsPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ARGUMENTS_ELEMENTS, item = item, words = 4, fields = TypeArgumentsElementsFields, prepare = TypeArgumentsElementsPrepare, view = TypeArgumentsElementsNodeRecord)]
+#[node(kind = kind::TYPE_ARGUMENTS_ELEMENTS, item = item, words = 4, fields = TypeArgumentsElementsFields, prepare = TypeArgumentsElementsPrepare, view = TypeArgumentsElementsNodeRecord, prepare_fn = prepare_type_arguments_elements)]
 pub struct TypeArgumentsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28872,7 +28872,7 @@ fn prepare_type_arguments_elements<N: TypeArgumentsElementsPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENTS_ELEMENTS, item = item, words = 4, fields = ArgumentsElementsFields, prepare = ArgumentsElementsPrepare, view = ArgumentsElementsNodeRecord)]
+#[node(kind = kind::ARGUMENTS_ELEMENTS, item = item, words = 4, fields = ArgumentsElementsFields, prepare = ArgumentsElementsPrepare, view = ArgumentsElementsNodeRecord, prepare_fn = prepare_arguments_elements)]
 pub struct ArgumentsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28957,7 +28957,7 @@ fn prepare_arguments_elements<N: ArgumentsElementsPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSIONS, item = item, words = 4, fields = ExpressionsFields, prepare = ExpressionsPrepare, view = ExpressionsNodeRecord)]
+#[node(kind = kind::EXPRESSIONS, item = item, words = 4, fields = ExpressionsFields, prepare = ExpressionsPrepare, view = ExpressionsNodeRecord, prepare_fn = prepare_expressions)]
 pub struct ExpressionsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29042,7 +29042,7 @@ fn prepare_expressions<N: ExpressionsPrepare + ?Sized>(node: &mut N, overlay: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, item = item, words = 4, fields = FieldInitializerListElementsFields, prepare = FieldInitializerListElementsPrepare, view = FieldInitializerListElementsNodeRecord)]
+#[node(kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, item = item, words = 4, fields = FieldInitializerListElementsFields, prepare = FieldInitializerListElementsPrepare, view = FieldInitializerListElementsNodeRecord, prepare_fn = prepare_field_initializer_list_elements)]
 pub struct FieldInitializerListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29127,7 +29127,7 @@ fn prepare_field_initializer_list_elements<N: FieldInitializerListElementsPrepar
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_PATTERN_ELEMENTS, item = item, words = 4, fields = TuplePatternElementsFields, prepare = TuplePatternElementsPrepare, view = TuplePatternElementsNodeRecord)]
+#[node(kind = kind::TUPLE_PATTERN_ELEMENTS, item = item, words = 4, fields = TuplePatternElementsFields, prepare = TuplePatternElementsPrepare, view = TuplePatternElementsNodeRecord, prepare_fn = prepare_tuple_pattern_elements)]
 pub struct TuplePatternElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29212,7 +29212,7 @@ fn prepare_tuple_pattern_elements<N: TuplePatternElementsPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PATTERNS, item = item, words = 4, fields = PatternsFields, prepare = PatternsPrepare, view = PatternsNodeRecord)]
+#[node(kind = kind::PATTERNS, item = item, words = 4, fields = PatternsFields, prepare = PatternsPrepare, view = PatternsNodeRecord, prepare_fn = prepare_patterns)]
 pub struct PatternsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29297,7 +29297,7 @@ fn prepare_patterns<N: PatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_PATTERN_ELEMENTS, item = item, words = 4, fields = StructPatternElementsFields, prepare = StructPatternElementsPrepare, view = StructPatternElementsNodeRecord)]
+#[node(kind = kind::STRUCT_PATTERN_ELEMENTS, item = item, words = 4, fields = StructPatternElementsFields, prepare = StructPatternElementsPrepare, view = StructPatternElementsNodeRecord, prepare_fn = prepare_struct_pattern_elements)]
 pub struct StructPatternElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29382,7 +29382,7 @@ fn prepare_struct_pattern_elements<N: StructPatternElementsPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_WILDCARD_GROUP, layout = [kind::COLON_COLON], words = 7, fields = UseWildcardGroupFields, prepare = UseWildcardGroupPrepare, view = UseWildcardGroupNodeRecord)]
+#[node(kind = kind::USE_WILDCARD_GROUP, layout = [kind::COLON_COLON], words = 7, fields = UseWildcardGroupFields, prepare = UseWildcardGroupPrepare, view = UseWildcardGroupNodeRecord, prepare_fn = prepare_use_wildcard_group)]
 pub struct UseWildcardGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29452,7 +29452,7 @@ fn prepare_use_wildcard_group<N: UseWildcardGroupPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_REPETITION_PATTERN_TEXT, text, words = 2, fields = TokenRepetitionPatternTextFields, prepare = TokenRepetitionPatternTextPrepare, view = TokenRepetitionPatternTextNodeRecord)]
+#[node(kind = kind::TOKEN_REPETITION_PATTERN_TEXT, text, words = 2, fields = TokenRepetitionPatternTextFields, prepare = TokenRepetitionPatternTextPrepare, view = TokenRepetitionPatternTextNodeRecord, prepare_fn = prepare_token_repetition_pattern_text)]
 pub struct TokenRepetitionPatternTextNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29520,7 +29520,7 @@ fn prepare_token_repetition_pattern_text<N: TokenRepetitionPatternTextPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_OPEN, text, words = 2, fields = StringOpenFields, prepare = StringOpenPrepare, view = StringOpenNodeRecord)]
+#[node(kind = kind::STRING_OPEN, text, words = 2, fields = StringOpenFields, prepare = StringOpenPrepare, view = StringOpenNodeRecord, prepare_fn = prepare_string_open)]
 pub struct StringOpenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29992,7 +29992,7 @@ impl ::sittir_core::render::Render for ImplItemUnsafeMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralDecimalFields, prepare = IntegerLiteralDecimalPrepare, view = IntegerLiteralDecimalNodeRecord)]
+#[node(kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralDecimalFields, prepare = IntegerLiteralDecimalPrepare, view = IntegerLiteralDecimalNodeRecord, prepare_fn = prepare_integer_literal_decimal)]
 pub struct IntegerLiteralDecimalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30063,7 +30063,7 @@ fn prepare_integer_literal_decimal<N: IntegerLiteralDecimalPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_HEX, interior = "^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralHexFields, prepare = IntegerLiteralHexPrepare, view = IntegerLiteralHexNodeRecord)]
+#[node(kind = kind::INTEGER_LITERAL_HEX, interior = "^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralHexFields, prepare = IntegerLiteralHexPrepare, view = IntegerLiteralHexNodeRecord, prepare_fn = prepare_integer_literal_hex)]
 pub struct IntegerLiteralHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30134,7 +30134,7 @@ fn prepare_integer_literal_hex<N: IntegerLiteralHexPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_BINARY, interior = "^(?<content>(?:0b[01_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralBinaryFields, prepare = IntegerLiteralBinaryPrepare, view = IntegerLiteralBinaryNodeRecord)]
+#[node(kind = kind::INTEGER_LITERAL_BINARY, interior = "^(?<content>(?:0b[01_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralBinaryFields, prepare = IntegerLiteralBinaryPrepare, view = IntegerLiteralBinaryNodeRecord, prepare_fn = prepare_integer_literal_binary)]
 pub struct IntegerLiteralBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30205,7 +30205,7 @@ fn prepare_integer_literal_binary<N: IntegerLiteralBinaryPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_OCTAL, interior = "^(?<content>(?:0o[0-7_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralOctalFields, prepare = IntegerLiteralOctalPrepare, view = IntegerLiteralOctalNodeRecord)]
+#[node(kind = kind::INTEGER_LITERAL_OCTAL, interior = "^(?<content>(?:0o[0-7_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralOctalFields, prepare = IntegerLiteralOctalPrepare, view = IntegerLiteralOctalNodeRecord, prepare_fn = prepare_integer_literal_octal)]
 pub struct IntegerLiteralOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30276,7 +30276,7 @@ fn prepare_integer_literal_octal<N: IntegerLiteralOctalPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_PLAIN, interior = "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$", words = 7, fields = CharLiteralPlainFields, prepare = CharLiteralPlainPrepare, view = CharLiteralPlainNodeRecord)]
+#[node(kind = kind::CHAR_LITERAL_PLAIN, interior = "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$", words = 7, fields = CharLiteralPlainFields, prepare = CharLiteralPlainPrepare, view = CharLiteralPlainNodeRecord, prepare_fn = prepare_char_literal_plain)]
 pub struct CharLiteralPlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30347,7 +30347,7 @@ fn prepare_char_literal_plain<N: CharLiteralPlainPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_EMPTY, text, words = 2, fields = CharLiteralEmptyFields, prepare = CharLiteralEmptyPrepare, view = CharLiteralEmptyNodeRecord)]
+#[node(kind = kind::CHAR_LITERAL_EMPTY, text, words = 2, fields = CharLiteralEmptyFields, prepare = CharLiteralEmptyPrepare, view = CharLiteralEmptyNodeRecord, prepare_fn = prepare_char_literal_empty)]
 pub struct CharLiteralEmptyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30415,7 +30415,7 @@ fn prepare_char_literal_empty<N: CharLiteralEmptyPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_SIMPLE, interior = "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$", words = 7, fields = CharLiteralEscapedSimpleFields, prepare = CharLiteralEscapedSimplePrepare, view = CharLiteralEscapedSimpleNodeRecord)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_SIMPLE, interior = "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$", words = 7, fields = CharLiteralEscapedSimpleFields, prepare = CharLiteralEscapedSimplePrepare, view = CharLiteralEscapedSimpleNodeRecord, prepare_fn = prepare_char_literal_escaped_simple)]
 pub struct CharLiteralEscapedSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30486,7 +30486,7 @@ fn prepare_char_literal_escaped_simple<N: CharLiteralEscapedSimplePrepare + ?Siz
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$", words = 7, fields = CharLiteralEscapedUnicodeFixedFields, prepare = CharLiteralEscapedUnicodeFixedPrepare, view = CharLiteralEscapedUnicodeFixedNodeRecord)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$", words = 7, fields = CharLiteralEscapedUnicodeFixedFields, prepare = CharLiteralEscapedUnicodeFixedPrepare, view = CharLiteralEscapedUnicodeFixedNodeRecord, prepare_fn = prepare_char_literal_escaped_unicode_fixed)]
 pub struct CharLiteralEscapedUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30557,7 +30557,7 @@ fn prepare_char_literal_escaped_unicode_fixed<N: CharLiteralEscapedUnicodeFixedP
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$", words = 7, fields = CharLiteralEscapedUnicodeBracedFields, prepare = CharLiteralEscapedUnicodeBracedPrepare, view = CharLiteralEscapedUnicodeBracedNodeRecord)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$", words = 7, fields = CharLiteralEscapedUnicodeBracedFields, prepare = CharLiteralEscapedUnicodeBracedPrepare, view = CharLiteralEscapedUnicodeBracedNodeRecord, prepare_fn = prepare_char_literal_escaped_unicode_braced)]
 pub struct CharLiteralEscapedUnicodeBracedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30628,7 +30628,7 @@ fn prepare_char_literal_escaped_unicode_braced<N: CharLiteralEscapedUnicodeBrace
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_HEX, interior = "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$", words = 7, fields = CharLiteralEscapedHexFields, prepare = CharLiteralEscapedHexPrepare, view = CharLiteralEscapedHexNodeRecord)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_HEX, interior = "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$", words = 7, fields = CharLiteralEscapedHexFields, prepare = CharLiteralEscapedHexPrepare, view = CharLiteralEscapedHexNodeRecord, prepare_fn = prepare_char_literal_escaped_hex)]
 pub struct CharLiteralEscapedHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30699,7 +30699,7 @@ fn prepare_char_literal_escaped_hex<N: CharLiteralEscapedHexPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:[^xu]))$", words = 6, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord)]
+#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:[^xu]))$", words = 6, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord, prepare_fn = prepare_escape_sequence_simple)]
 pub struct EscapeSequenceSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30767,7 +30767,7 @@ fn prepare_escape_sequence_simple<N: EscapeSequenceSimplePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$", words = 6, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$", words = 6, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_fixed)]
 pub struct EscapeSequenceUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30835,7 +30835,7 @@ fn prepare_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_BRACED, interior = "^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$", words = 6, fields = EscapeSequenceUnicodeBracedFields, prepare = EscapeSequenceUnicodeBracedPrepare, view = EscapeSequenceUnicodeBracedNodeRecord)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_BRACED, interior = "^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$", words = 6, fields = EscapeSequenceUnicodeBracedFields, prepare = EscapeSequenceUnicodeBracedPrepare, view = EscapeSequenceUnicodeBracedNodeRecord, prepare_fn = prepare_escape_sequence_unicode_braced)]
 pub struct EscapeSequenceUnicodeBracedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30903,7 +30903,7 @@ fn prepare_escape_sequence_unicode_braced<N: EscapeSequenceUnicodeBracedPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$", words = 6, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord)]
+#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$", words = 6, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord, prepare_fn = prepare_escape_sequence_hex)]
 pub struct EscapeSequenceHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30971,7 +30971,7 @@ fn prepare_escape_sequence_hex<N: EscapeSequenceHexPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_EXPRESSION_SEMI, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 14, fields = ArrayExpressionSemiFields, prepare = ArrayExpressionSemiPrepare, view = ArrayExpressionSemiNodeRecord)]
+#[node(kind = kind::ARRAY_EXPRESSION_SEMI, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 14, fields = ArrayExpressionSemiFields, prepare = ArrayExpressionSemiPrepare, view = ArrayExpressionSemiNodeRecord, prepare_fn = prepare_array_expression_semi)]
 pub struct ArrayExpressionSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31055,7 +31055,7 @@ fn prepare_array_expression_semi<N: ArrayExpressionSemiPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_EXPRESSION_LIST, layout = [kind::LBRACK, kind::RBRACK], words = 9, fields = ArrayExpressionListFields, prepare = ArrayExpressionListPrepare, view = ArrayExpressionListNodeRecord)]
+#[node(kind = kind::ARRAY_EXPRESSION_LIST, layout = [kind::LBRACK, kind::RBRACK], words = 9, fields = ArrayExpressionListFields, prepare = ArrayExpressionListPrepare, view = ArrayExpressionListNodeRecord, prepare_fn = prepare_array_expression_list)]
 pub struct ArrayExpressionListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31135,7 +31135,7 @@ fn prepare_array_expression_list<N: ArrayExpressionListPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ATTRIBUTE_INPUT, layout = [kind::EQ], words = 12, fields = AttributeInputFields, prepare = AttributeInputPrepare, view = AttributeInputNodeRecord)]
+#[node(kind = kind::ATTRIBUTE_INPUT, layout = [kind::EQ], words = 12, fields = AttributeInputFields, prepare = AttributeInputPrepare, view = AttributeInputNodeRecord, prepare_fn = prepare_attribute_input, seat_through = value)]
 pub struct AttributeInputNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31208,7 +31208,7 @@ fn prepare_attribute_input<N: AttributeInputPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLOSURE_EXPRESSION_BLOCK, layout = [kind::DASH_GT], words = 18, fields = ClosureExpressionBlockFields, prepare = ClosureExpressionBlockPrepare, view = ClosureExpressionBlockNodeRecord)]
+#[node(kind = kind::CLOSURE_EXPRESSION_BLOCK, layout = [kind::DASH_GT], words = 18, fields = ClosureExpressionBlockFields, prepare = ClosureExpressionBlockPrepare, view = ClosureExpressionBlockNodeRecord, prepare_fn = prepare_closure_expression_block)]
 pub struct ClosureExpressionBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31295,7 +31295,7 @@ fn prepare_closure_expression_block<N: ClosureExpressionBlockPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLOSURE_EXPRESSION_EXPR, words = 13, fields = ClosureExpressionExprFields, prepare = ClosureExpressionExprPrepare, view = ClosureExpressionExprNodeRecord)]
+#[node(kind = kind::CLOSURE_EXPRESSION_EXPR, words = 13, fields = ClosureExpressionExprFields, prepare = ClosureExpressionExprPrepare, view = ClosureExpressionExprNodeRecord, prepare_fn = prepare_closure_expression_expr)]
 pub struct ClosureExpressionExprNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31378,7 +31378,7 @@ fn prepare_closure_expression_expr<N: ClosureExpressionExprPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_RAW_CONST, layout = [kind::AMP, kind::RAW_KEYWORD, kind::CONST_KEYWORD], words = 7, fields = ReferenceExpressionRawConstFields, prepare = ReferenceExpressionRawConstPrepare, view = ReferenceExpressionRawConstNodeRecord)]
+#[node(kind = kind::REFERENCE_EXPRESSION_RAW_CONST, layout = [kind::AMP, kind::RAW_KEYWORD, kind::CONST_KEYWORD], words = 7, fields = ReferenceExpressionRawConstFields, prepare = ReferenceExpressionRawConstPrepare, view = ReferenceExpressionRawConstNodeRecord, prepare_fn = prepare_reference_expression_raw_const)]
 pub struct ReferenceExpressionRawConstNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31448,7 +31448,7 @@ fn prepare_reference_expression_raw_const<N: ReferenceExpressionRawConstPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_RAW_MUT, layout = [kind::AMP, kind::RAW_KEYWORD, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionRawMutFields, prepare = ReferenceExpressionRawMutPrepare, view = ReferenceExpressionRawMutNodeRecord)]
+#[node(kind = kind::REFERENCE_EXPRESSION_RAW_MUT, layout = [kind::AMP, kind::RAW_KEYWORD, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionRawMutFields, prepare = ReferenceExpressionRawMutPrepare, view = ReferenceExpressionRawMutNodeRecord, prepare_fn = prepare_reference_expression_raw_mut)]
 pub struct ReferenceExpressionRawMutNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31518,7 +31518,7 @@ fn prepare_reference_expression_raw_mut<N: ReferenceExpressionRawMutPrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_MUT, layout = [kind::AMP, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionMutFields, prepare = ReferenceExpressionMutPrepare, view = ReferenceExpressionMutNodeRecord)]
+#[node(kind = kind::REFERENCE_EXPRESSION_MUT, layout = [kind::AMP, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionMutFields, prepare = ReferenceExpressionMutPrepare, view = ReferenceExpressionMutNodeRecord, prepare_fn = prepare_reference_expression_mut)]
 pub struct ReferenceExpressionMutNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31588,7 +31588,7 @@ fn prepare_reference_expression_mut<N: ReferenceExpressionMutPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_BARE, layout = [kind::AMP], words = 7, fields = ReferenceExpressionBareFields, prepare = ReferenceExpressionBarePrepare, view = ReferenceExpressionBareNodeRecord)]
+#[node(kind = kind::REFERENCE_EXPRESSION_BARE, layout = [kind::AMP], words = 7, fields = ReferenceExpressionBareFields, prepare = ReferenceExpressionBarePrepare, view = ReferenceExpressionBareNodeRecord, prepare_fn = prepare_reference_expression_bare)]
 pub struct ReferenceExpressionBareNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31658,7 +31658,7 @@ fn prepare_reference_expression_bare<N: ReferenceExpressionBarePrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_POSITIVE_CLAUSE, layout = [kind::FOR_KEYWORD], words = 7, fields = ImplItemPositiveClauseFields, prepare = ImplItemPositiveClausePrepare, view = ImplItemPositiveClauseNodeRecord)]
+#[node(kind = kind::IMPL_ITEM_POSITIVE_CLAUSE, layout = [kind::FOR_KEYWORD], words = 7, fields = ImplItemPositiveClauseFields, prepare = ImplItemPositiveClausePrepare, view = ImplItemPositiveClauseNodeRecord, prepare_fn = prepare_impl_item_positive_clause)]
 pub struct ImplItemPositiveClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31728,7 +31728,7 @@ fn prepare_impl_item_positive_clause<N: ImplItemPositiveClausePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_NEGATIVE_CLAUSE, layout = [kind::BANG | kind::BANG2, kind::FOR_KEYWORD], words = 7, fields = ImplItemNegativeClauseFields, prepare = ImplItemNegativeClausePrepare, view = ImplItemNegativeClauseNodeRecord)]
+#[node(kind = kind::IMPL_ITEM_NEGATIVE_CLAUSE, layout = [kind::BANG | kind::BANG2, kind::FOR_KEYWORD], words = 7, fields = ImplItemNegativeClauseFields, prepare = ImplItemNegativeClausePrepare, view = ImplItemNegativeClauseNodeRecord, prepare_fn = prepare_impl_item_negative_clause)]
 pub struct ImplItemNegativeClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31798,7 +31798,7 @@ fn prepare_impl_item_negative_clause<N: ImplItemNegativeClausePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_BODY, layout = [kind::IMPL_KEYWORD], words = 28, fields = ImplItemBodyFields, prepare = ImplItemBodyPrepare, view = ImplItemBodyNodeRecord)]
+#[node(kind = kind::IMPL_ITEM_BODY, layout = [kind::IMPL_KEYWORD], words = 28, fields = ImplItemBodyFields, prepare = ImplItemBodyPrepare, view = ImplItemBodyNodeRecord, prepare_fn = prepare_impl_item_body)]
 pub struct ImplItemBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31887,7 +31887,7 @@ fn prepare_impl_item_body<N: ImplItemBodyPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_SEMI, layout = [kind::IMPL_KEYWORD, kind::SEMI], words = 23, fields = ImplItemSemiFields, prepare = ImplItemSemiPrepare, view = ImplItemSemiNodeRecord)]
+#[node(kind = kind::IMPL_ITEM_SEMI, layout = [kind::IMPL_KEYWORD, kind::SEMI], words = 23, fields = ImplItemSemiFields, prepare = ImplItemSemiPrepare, view = ImplItemSemiNodeRecord, prepare_fn = prepare_impl_item_semi)]
 pub struct ImplItemSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31972,7 +31972,7 @@ fn prepare_impl_item_semi<N: ImplItemSemiPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD], words = 7, fields = VisibilityModifierPubScopeInPathFields, prepare = VisibilityModifierPubScopeInPathPrepare, view = VisibilityModifierPubScopeInPathNodeRecord)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD], words = 7, fields = VisibilityModifierPubScopeInPathFields, prepare = VisibilityModifierPubScopeInPathPrepare, view = VisibilityModifierPubScopeInPathNodeRecord, prepare_fn = prepare_visibility_modifier_pub_scope_in_path, seat_through = path)]
 pub struct VisibilityModifierPubScopeInPathNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32042,7 +32042,7 @@ fn prepare_visibility_modifier_pub_scope_in_path<N: VisibilityModifierPubScopeIn
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = VisibilityModifierPubScopeFields, prepare = VisibilityModifierPubScopePrepare, view = VisibilityModifierPubScopeNodeRecord)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = VisibilityModifierPubScopeFields, prepare = VisibilityModifierPubScopePrepare, view = VisibilityModifierPubScopeNodeRecord, prepare_fn = prepare_visibility_modifier_pub_scope, seat_through = content)]
 pub struct VisibilityModifierPubScopeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32112,7 +32112,7 @@ fn prepare_visibility_modifier_pub_scope<N: VisibilityModifierPubScopePrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB, layout = [kind::PUB_KEYWORD], words = 7, fields = VisibilityModifierPubFields, prepare = VisibilityModifierPubPrepare, view = VisibilityModifierPubNodeRecord)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB, layout = [kind::PUB_KEYWORD], words = 7, fields = VisibilityModifierPubFields, prepare = VisibilityModifierPubPrepare, view = VisibilityModifierPubNodeRecord, prepare_fn = prepare_visibility_modifier_pub)]
 pub struct VisibilityModifierPubNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32182,7 +32182,7 @@ fn prepare_visibility_modifier_pub<N: VisibilityModifierPubPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE_TRAIT_FORM, words = 7, fields = FunctionTypeTraitFormFields, prepare = FunctionTypeTraitFormPrepare, view = FunctionTypeTraitFormNodeRecord)]
+#[node(kind = kind::FUNCTION_TYPE_TRAIT_FORM, words = 7, fields = FunctionTypeTraitFormFields, prepare = FunctionTypeTraitFormPrepare, view = FunctionTypeTraitFormNodeRecord, prepare_fn = prepare_function_type_trait_form)]
 pub struct FunctionTypeTraitFormNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32251,7 +32251,7 @@ fn prepare_function_type_trait_form<N: FunctionTypeTraitFormPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE_FN_FORM, layout = [kind::FN_KEYWORD], words = 7, fields = FunctionTypeFnFormFields, prepare = FunctionTypeFnFormPrepare, view = FunctionTypeFnFormNodeRecord)]
+#[node(kind = kind::FUNCTION_TYPE_FN_FORM, layout = [kind::FN_KEYWORD], words = 7, fields = FunctionTypeFnFormFields, prepare = FunctionTypeFnFormPrepare, view = FunctionTypeFnFormNodeRecord, prepare_fn = prepare_function_type_fn_form)]
 pub struct FunctionTypeFnFormNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32321,7 +32321,7 @@ fn prepare_function_type_fn_form<N: FunctionTypeFnFormPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MOD_ITEM_EXTERNAL, layout = [kind::MOD_KEYWORD, kind::SEMI], words = 12, fields = ModItemExternalFields, prepare = ModItemExternalPrepare, view = ModItemExternalNodeRecord)]
+#[node(kind = kind::MOD_ITEM_EXTERNAL, layout = [kind::MOD_KEYWORD, kind::SEMI], words = 12, fields = ModItemExternalFields, prepare = ModItemExternalPrepare, view = ModItemExternalNodeRecord, prepare_fn = prepare_mod_item_external)]
 pub struct ModItemExternalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32395,7 +32395,7 @@ fn prepare_mod_item_external<N: ModItemExternalPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MOD_ITEM_INLINE, layout = [kind::MOD_KEYWORD], words = 17, fields = ModItemInlineFields, prepare = ModItemInlinePrepare, view = ModItemInlineNodeRecord)]
+#[node(kind = kind::MOD_ITEM_INLINE, layout = [kind::MOD_KEYWORD], words = 17, fields = ModItemInlineFields, prepare = ModItemInlinePrepare, view = ModItemInlineNodeRecord, prepare_fn = prepare_mod_item_inline)]
 pub struct ModItemInlineNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32473,7 +32473,7 @@ fn prepare_mod_item_inline<N: ModItemInlinePrepare + ?Sized>(node: &mut N, overl
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OR_PATTERN_BINARY, layout = [kind::PIPE], words = 12, fields = OrPatternBinaryFields, prepare = OrPatternBinaryPrepare, view = OrPatternBinaryNodeRecord)]
+#[node(kind = kind::OR_PATTERN_BINARY, layout = [kind::PIPE], words = 12, fields = OrPatternBinaryFields, prepare = OrPatternBinaryPrepare, view = OrPatternBinaryNodeRecord, prepare_fn = prepare_or_pattern_binary)]
 pub struct OrPatternBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32547,7 +32547,7 @@ fn prepare_or_pattern_binary<N: OrPatternBinaryPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OR_PATTERN_PREFIX, layout = [kind::PIPE], words = 7, fields = OrPatternPrefixFields, prepare = OrPatternPrefixPrepare, view = OrPatternPrefixNodeRecord)]
+#[node(kind = kind::OR_PATTERN_PREFIX, layout = [kind::PIPE], words = 7, fields = OrPatternPrefixFields, prepare = OrPatternPrefixPrepare, view = OrPatternPrefixNodeRecord, prepare_fn = prepare_or_pattern_prefix)]
 pub struct OrPatternPrefixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32617,7 +32617,7 @@ fn prepare_or_pattern_prefix<N: OrPatternPrefixPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POINTER_TYPE_CONST, layout = [kind::STAR, kind::CONST_KEYWORD], words = 7, fields = PointerTypeConstFields, prepare = PointerTypeConstPrepare, view = PointerTypeConstNodeRecord)]
+#[node(kind = kind::POINTER_TYPE_CONST, layout = [kind::STAR, kind::CONST_KEYWORD], words = 7, fields = PointerTypeConstFields, prepare = PointerTypeConstPrepare, view = PointerTypeConstNodeRecord, prepare_fn = prepare_pointer_type_const)]
 pub struct PointerTypeConstNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32687,7 +32687,7 @@ fn prepare_pointer_type_const<N: PointerTypeConstPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POINTER_TYPE_MUT, layout = [kind::STAR, kind::MUTABLE_SPECIFIER], words = 7, fields = PointerTypeMutFields, prepare = PointerTypeMutPrepare, view = PointerTypeMutNodeRecord)]
+#[node(kind = kind::POINTER_TYPE_MUT, layout = [kind::STAR, kind::MUTABLE_SPECIFIER], words = 7, fields = PointerTypeMutFields, prepare = PointerTypeMutPrepare, view = PointerTypeMutNodeRecord, prepare_fn = prepare_pointer_type_mut)]
 pub struct PointerTypeMutNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32757,7 +32757,7 @@ fn prepare_pointer_type_mut<N: PointerTypeMutPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_BINARY, words = 17, fields = RangeExpressionBinaryFields, prepare = RangeExpressionBinaryPrepare, view = RangeExpressionBinaryNodeRecord)]
+#[node(kind = kind::RANGE_EXPRESSION_BINARY, words = 17, fields = RangeExpressionBinaryFields, prepare = RangeExpressionBinaryPrepare, view = RangeExpressionBinaryNodeRecord, prepare_fn = prepare_range_expression_binary)]
 pub struct RangeExpressionBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32835,7 +32835,7 @@ fn prepare_range_expression_binary<N: RangeExpressionBinaryPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_POSTFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPostfixFields, prepare = RangeExpressionPostfixPrepare, view = RangeExpressionPostfixNodeRecord)]
+#[node(kind = kind::RANGE_EXPRESSION_POSTFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPostfixFields, prepare = RangeExpressionPostfixPrepare, view = RangeExpressionPostfixNodeRecord, prepare_fn = prepare_range_expression_postfix)]
 pub struct RangeExpressionPostfixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32905,7 +32905,7 @@ fn prepare_range_expression_postfix<N: RangeExpressionPostfixPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_PREFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPrefixFields, prepare = RangeExpressionPrefixPrepare, view = RangeExpressionPrefixNodeRecord)]
+#[node(kind = kind::RANGE_EXPRESSION_PREFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPrefixFields, prepare = RangeExpressionPrefixPrepare, view = RangeExpressionPrefixNodeRecord, prepare_fn = prepare_range_expression_prefix)]
 pub struct RangeExpressionPrefixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32975,7 +32975,7 @@ fn prepare_range_expression_prefix<N: RangeExpressionPrefixPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_BARE, words = 7, fields = RangeExpressionBareFields, prepare = RangeExpressionBarePrepare, view = RangeExpressionBareNodeRecord)]
+#[node(kind = kind::RANGE_EXPRESSION_BARE, words = 7, fields = RangeExpressionBareFields, prepare = RangeExpressionBarePrepare, view = RangeExpressionBareNodeRecord, prepare_fn = prepare_range_expression_bare)]
 pub struct RangeExpressionBareNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33044,7 +33044,7 @@ fn prepare_range_expression_bare<N: RangeExpressionBarePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT_WITH_SEMI, layout = [kind::SEMI], words = 7, fields = ExpressionStatementWithSemiFields, prepare = ExpressionStatementWithSemiPrepare, view = ExpressionStatementWithSemiNodeRecord)]
+#[node(kind = kind::EXPRESSION_STATEMENT_WITH_SEMI, layout = [kind::SEMI], words = 7, fields = ExpressionStatementWithSemiFields, prepare = ExpressionStatementWithSemiPrepare, view = ExpressionStatementWithSemiNodeRecord, prepare_fn = prepare_expression_statement_with_semi)]
 pub struct ExpressionStatementWithSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33114,7 +33114,7 @@ fn prepare_expression_statement_with_semi<N: ExpressionStatementWithSemiPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 8, fields = ForeignModItemSemiFields, prepare = ForeignModItemSemiPrepare, view = ForeignModItemSemiNodeRecord)]
+#[node(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 8, fields = ForeignModItemSemiFields, prepare = ForeignModItemSemiPrepare, view = ForeignModItemSemiNodeRecord, prepare_fn = prepare_foreign_mod_item_semi)]
 pub struct ForeignModItemSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33187,7 +33187,7 @@ fn prepare_foreign_mod_item_semi<N: ForeignModItemSemiPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 13, fields = ForeignModItemBodyFields, prepare = ForeignModItemBodyPrepare, view = ForeignModItemBodyNodeRecord)]
+#[node(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 13, fields = ForeignModItemBodyFields, prepare = ForeignModItemBodyPrepare, view = ForeignModItemBodyNodeRecord, prepare_fn = prepare_foreign_mod_item_body)]
 pub struct ForeignModItemBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33264,7 +33264,7 @@ fn prepare_foreign_mod_item_body<N: ForeignModItemBodyPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_ARM_WITH_COMMA, layout = [kind::EQ_GT, kind::COMMA], words = 14, fields = MatchArmWithCommaFields, prepare = MatchArmWithCommaPrepare, view = MatchArmWithCommaNodeRecord)]
+#[node(kind = kind::MATCH_ARM_WITH_COMMA, layout = [kind::EQ_GT, kind::COMMA], words = 14, fields = MatchArmWithCommaFields, prepare = MatchArmWithCommaPrepare, view = MatchArmWithCommaNodeRecord, prepare_fn = prepare_match_arm_with_comma)]
 pub struct MatchArmWithCommaNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33348,7 +33348,7 @@ fn prepare_match_arm_with_comma<N: MatchArmWithCommaPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_ARM_BLOCK_ENDING, layout = [kind::EQ_GT], words = 14, fields = MatchArmBlockEndingFields, prepare = MatchArmBlockEndingPrepare, view = MatchArmBlockEndingNodeRecord)]
+#[node(kind = kind::MATCH_ARM_BLOCK_ENDING, layout = [kind::EQ_GT], words = 14, fields = MatchArmBlockEndingFields, prepare = MatchArmBlockEndingPrepare, view = MatchArmBlockEndingNodeRecord, prepare_fn = prepare_match_arm_block_ending)]
 pub struct MatchArmBlockEndingNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33432,7 +33432,7 @@ fn prepare_match_arm_block_ending<N: MatchArmBlockEndingPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_EXTRA_SLASHES, text, words = 2, fields = LineCommentExtraSlashesFields, prepare = LineCommentExtraSlashesPrepare, view = LineCommentExtraSlashesNodeRecord)]
+#[node(kind = kind::LINE_COMMENT_EXTRA_SLASHES, text, words = 2, fields = LineCommentExtraSlashesFields, prepare = LineCommentExtraSlashesPrepare, view = LineCommentExtraSlashesNodeRecord, prepare_fn = prepare_line_comment_extra_slashes)]
 pub struct LineCommentExtraSlashesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33500,7 +33500,7 @@ fn prepare_line_comment_extra_slashes<N: LineCommentExtraSlashesPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::_OUTER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocOuterFields, prepare = LineCommentDocOuterPrepare, view = LineCommentDocOuterNodeRecord)]
+#[node(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::_OUTER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocOuterFields, prepare = LineCommentDocOuterPrepare, view = LineCommentDocOuterNodeRecord, prepare_fn = prepare_line_comment_doc_outer)]
 pub struct LineCommentDocOuterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33569,7 +33569,7 @@ fn prepare_line_comment_doc_outer<N: LineCommentDocOuterPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::_INNER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocInnerFields, prepare = LineCommentDocInnerPrepare, view = LineCommentDocInnerNodeRecord)]
+#[node(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::_INNER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocInnerFields, prepare = LineCommentDocInnerPrepare, view = LineCommentDocInnerNodeRecord, prepare_fn = prepare_line_comment_doc_inner)]
 pub struct LineCommentDocInnerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33638,7 +33638,7 @@ fn prepare_line_comment_doc_inner<N: LineCommentDocInnerPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_REGULAR, text, words = 2, fields = LineCommentRegularFields, prepare = LineCommentRegularPrepare, view = LineCommentRegularNodeRecord)]
+#[node(kind = kind::LINE_COMMENT_REGULAR, text, words = 2, fields = LineCommentRegularFields, prepare = LineCommentRegularPrepare, view = LineCommentRegularNodeRecord, prepare_fn = prepare_line_comment_regular)]
 pub struct LineCommentRegularNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33706,7 +33706,7 @@ fn prepare_line_comment_regular<N: LineCommentRegularPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT_DOC_OUTER, layout = [kind::_OUTER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocOuterFields, prepare = BlockCommentDocOuterPrepare, view = BlockCommentDocOuterNodeRecord)]
+#[node(kind = kind::BLOCK_COMMENT_DOC_OUTER, layout = [kind::_OUTER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocOuterFields, prepare = BlockCommentDocOuterPrepare, view = BlockCommentDocOuterNodeRecord, prepare_fn = prepare_block_comment_doc_outer)]
 pub struct BlockCommentDocOuterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33775,7 +33775,7 @@ fn prepare_block_comment_doc_outer<N: BlockCommentDocOuterPrepare + ?Sized>(node
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT_DOC_INNER, layout = [kind::_INNER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocInnerFields, prepare = BlockCommentDocInnerPrepare, view = BlockCommentDocInnerNodeRecord)]
+#[node(kind = kind::BLOCK_COMMENT_DOC_INNER, layout = [kind::_INNER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocInnerFields, prepare = BlockCommentDocInnerPrepare, view = BlockCommentDocInnerNodeRecord, prepare_fn = prepare_block_comment_doc_inner)]
 pub struct BlockCommentDocInnerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33844,7 +33844,7 @@ fn prepare_block_comment_doc_inner<N: BlockCommentDocInnerPrepare + ?Sized>(node
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT_REGULAR, text, words = 2, fields = BlockCommentRegularFields, prepare = BlockCommentRegularPrepare, view = BlockCommentRegularNodeRecord)]
+#[node(kind = kind::BLOCK_COMMENT_REGULAR, text, words = 2, fields = BlockCommentRegularFields, prepare = BlockCommentRegularPrepare, view = BlockCommentRegularNodeRecord, prepare_fn = prepare_block_comment_regular)]
 pub struct BlockCommentRegularNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33912,7 +33912,7 @@ fn prepare_block_comment_regular<N: BlockCommentRegularPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PATTERN_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreePatternParenFields, prepare = TokenTreePatternParenPrepare, view = TokenTreePatternParenNodeRecord)]
+#[node(kind = kind::TOKEN_TREE_PATTERN_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreePatternParenFields, prepare = TokenTreePatternParenPrepare, view = TokenTreePatternParenNodeRecord, prepare_fn = prepare_token_tree_pattern_paren)]
 pub struct TokenTreePatternParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33988,7 +33988,7 @@ fn prepare_token_tree_pattern_paren<N: TokenTreePatternParenPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PATTERN_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreePatternBracketFields, prepare = TokenTreePatternBracketPrepare, view = TokenTreePatternBracketNodeRecord)]
+#[node(kind = kind::TOKEN_TREE_PATTERN_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreePatternBracketFields, prepare = TokenTreePatternBracketPrepare, view = TokenTreePatternBracketNodeRecord, prepare_fn = prepare_token_tree_pattern_bracket)]
 pub struct TokenTreePatternBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34064,7 +34064,7 @@ fn prepare_token_tree_pattern_bracket<N: TokenTreePatternBracketPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PATTERN_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreePatternBraceFields, prepare = TokenTreePatternBracePrepare, view = TokenTreePatternBraceNodeRecord)]
+#[node(kind = kind::TOKEN_TREE_PATTERN_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreePatternBraceFields, prepare = TokenTreePatternBracePrepare, view = TokenTreePatternBraceNodeRecord, prepare_fn = prepare_token_tree_pattern_brace)]
 pub struct TokenTreePatternBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34140,7 +34140,7 @@ fn prepare_token_tree_pattern_brace<N: TokenTreePatternBracePrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreeParenFields, prepare = TokenTreeParenPrepare, view = TokenTreeParenNodeRecord)]
+#[node(kind = kind::TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreeParenFields, prepare = TokenTreeParenPrepare, view = TokenTreeParenNodeRecord, prepare_fn = prepare_token_tree_paren)]
 pub struct TokenTreeParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34216,7 +34216,7 @@ fn prepare_token_tree_paren<N: TokenTreeParenPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreeBracketFields, prepare = TokenTreeBracketPrepare, view = TokenTreeBracketNodeRecord)]
+#[node(kind = kind::TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreeBracketFields, prepare = TokenTreeBracketPrepare, view = TokenTreeBracketNodeRecord, prepare_fn = prepare_token_tree_bracket)]
 pub struct TokenTreeBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34292,7 +34292,7 @@ fn prepare_token_tree_bracket<N: TokenTreeBracketPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreeBraceFields, prepare = TokenTreeBracePrepare, view = TokenTreeBraceNodeRecord)]
+#[node(kind = kind::TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreeBraceFields, prepare = TokenTreeBracePrepare, view = TokenTreeBraceNodeRecord, prepare_fn = prepare_token_tree_brace)]
 pub struct TokenTreeBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34368,7 +34368,7 @@ fn prepare_token_tree_brace<N: TokenTreeBracePrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DELIM_TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = DelimTokenTreeParenFields, prepare = DelimTokenTreeParenPrepare, view = DelimTokenTreeParenNodeRecord)]
+#[node(kind = kind::DELIM_TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = DelimTokenTreeParenFields, prepare = DelimTokenTreeParenPrepare, view = DelimTokenTreeParenNodeRecord, prepare_fn = prepare_delim_token_tree_paren)]
 pub struct DelimTokenTreeParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34444,7 +34444,7 @@ fn prepare_delim_token_tree_paren<N: DelimTokenTreeParenPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DELIM_TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = DelimTokenTreeBracketFields, prepare = DelimTokenTreeBracketPrepare, view = DelimTokenTreeBracketNodeRecord)]
+#[node(kind = kind::DELIM_TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = DelimTokenTreeBracketFields, prepare = DelimTokenTreeBracketPrepare, view = DelimTokenTreeBracketNodeRecord, prepare_fn = prepare_delim_token_tree_bracket)]
 pub struct DelimTokenTreeBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34520,7 +34520,7 @@ fn prepare_delim_token_tree_bracket<N: DelimTokenTreeBracketPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DELIM_TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DelimTokenTreeBraceFields, prepare = DelimTokenTreeBracePrepare, view = DelimTokenTreeBraceNodeRecord)]
+#[node(kind = kind::DELIM_TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DelimTokenTreeBraceFields, prepare = DelimTokenTreeBracePrepare, view = DelimTokenTreeBraceNodeRecord, prepare_fn = prepare_delim_token_tree_brace)]
 pub struct DelimTokenTreeBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34596,7 +34596,7 @@ fn prepare_delim_token_tree_brace<N: DelimTokenTreeBracePrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_PATTERN_SHORTHAND, words = 8, fields = FieldPatternShorthandFields, prepare = FieldPatternShorthandPrepare, view = FieldPatternShorthandNodeRecord)]
+#[node(kind = kind::FIELD_PATTERN_SHORTHAND, words = 8, fields = FieldPatternShorthandFields, prepare = FieldPatternShorthandPrepare, view = FieldPatternShorthandNodeRecord, prepare_fn = prepare_field_pattern_shorthand)]
 pub struct FieldPatternShorthandNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34672,7 +34672,7 @@ fn prepare_field_pattern_shorthand<N: FieldPatternShorthandPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_PATTERN_NAMED, layout = [kind::COLON], words = 13, fields = FieldPatternNamedFields, prepare = FieldPatternNamedPrepare, view = FieldPatternNamedNodeRecord)]
+#[node(kind = kind::FIELD_PATTERN_NAMED, layout = [kind::COLON], words = 13, fields = FieldPatternNamedFields, prepare = FieldPatternNamedPrepare, view = FieldPatternNamedNodeRecord, prepare_fn = prepare_field_pattern_named)]
 pub struct FieldPatternNamedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34752,7 +34752,7 @@ fn prepare_field_pattern_named<N: FieldPatternNamedPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_DEFINITION_PAREN, layout = [kind::MACRO_RULES_BANG, kind::LPAREN, kind::RPAREN, kind::SEMI], words = 12, fields = MacroDefinitionParenFields, prepare = MacroDefinitionParenPrepare, view = MacroDefinitionParenNodeRecord)]
+#[node(kind = kind::MACRO_DEFINITION_PAREN, layout = [kind::MACRO_RULES_BANG, kind::LPAREN, kind::RPAREN, kind::SEMI], words = 12, fields = MacroDefinitionParenFields, prepare = MacroDefinitionParenPrepare, view = MacroDefinitionParenNodeRecord, prepare_fn = prepare_macro_definition_paren)]
 pub struct MacroDefinitionParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34826,7 +34826,7 @@ fn prepare_macro_definition_paren<N: MacroDefinitionParenPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_DEFINITION_BRACKET, layout = [kind::MACRO_RULES_BANG, kind::LBRACK, kind::RBRACK, kind::SEMI], words = 12, fields = MacroDefinitionBracketFields, prepare = MacroDefinitionBracketPrepare, view = MacroDefinitionBracketNodeRecord)]
+#[node(kind = kind::MACRO_DEFINITION_BRACKET, layout = [kind::MACRO_RULES_BANG, kind::LBRACK, kind::RBRACK, kind::SEMI], words = 12, fields = MacroDefinitionBracketFields, prepare = MacroDefinitionBracketPrepare, view = MacroDefinitionBracketNodeRecord, prepare_fn = prepare_macro_definition_bracket)]
 pub struct MacroDefinitionBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34900,7 +34900,7 @@ fn prepare_macro_definition_bracket<N: MacroDefinitionBracketPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_DEFINITION_BRACE, layout = [kind::MACRO_RULES_BANG, kind::LBRACE, kind::RBRACE], words = 12, fields = MacroDefinitionBraceFields, prepare = MacroDefinitionBracePrepare, view = MacroDefinitionBraceNodeRecord)]
+#[node(kind = kind::MACRO_DEFINITION_BRACE, layout = [kind::MACRO_RULES_BANG, kind::LBRACE, kind::RBRACE], words = 12, fields = MacroDefinitionBraceFields, prepare = MacroDefinitionBracePrepare, view = MacroDefinitionBraceNodeRecord, prepare_fn = prepare_macro_definition_brace)]
 pub struct MacroDefinitionBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34974,7 +34974,7 @@ fn prepare_macro_definition_brace<N: MacroDefinitionBracePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_PATTERN_PREFIX, layout = [kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternPrefixFields, prepare = RangePatternPrefixPrepare, view = RangePatternPrefixNodeRecord)]
+#[node(kind = kind::RANGE_PATTERN_PREFIX, layout = [kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternPrefixFields, prepare = RangePatternPrefixPrepare, view = RangePatternPrefixNodeRecord, prepare_fn = prepare_range_pattern_prefix)]
 pub struct RangePatternPrefixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35048,7 +35048,7 @@ fn prepare_range_pattern_prefix<N: RangePatternPrefixPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT, layout = [kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternWithLeftWithRightFields, prepare = RangePatternWithLeftWithRightPrepare, view = RangePatternWithLeftWithRightNodeRecord)]
+#[node(kind = kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT, layout = [kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternWithLeftWithRightFields, prepare = RangePatternWithLeftWithRightPrepare, view = RangePatternWithLeftWithRightNodeRecord, prepare_fn = prepare_range_pattern_with_left_with_right)]
 pub struct RangePatternWithLeftWithRightNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35150,7 +35150,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftBareNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_PATTERN_WITH_LEFT, words = 12, fields = RangePatternWithLeftFields, prepare = RangePatternWithLeftPrepare, view = RangePatternWithLeftNodeRecord)]
+#[node(kind = kind::RANGE_PATTERN_WITH_LEFT, words = 12, fields = RangePatternWithLeftFields, prepare = RangePatternWithLeftPrepare, view = RangePatternWithLeftNodeRecord, prepare_fn = prepare_range_pattern_with_left)]
 pub struct RangePatternWithLeftNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35224,7 +35224,7 @@ fn prepare_range_pattern_with_left<N: RangePatternWithLeftPrepare + ?Sized>(node
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_BRACE, layout = [kind::STRUCT_KEYWORD], words = 27, fields = StructItemBraceFields, prepare = StructItemBracePrepare, view = StructItemBraceNodeRecord)]
+#[node(kind = kind::STRUCT_ITEM_BRACE, layout = [kind::STRUCT_KEYWORD], words = 27, fields = StructItemBraceFields, prepare = StructItemBracePrepare, view = StructItemBraceNodeRecord, prepare_fn = prepare_struct_item_brace)]
 pub struct StructItemBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35310,7 +35310,7 @@ fn prepare_struct_item_brace<N: StructItemBracePrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_TUPLE, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 27, fields = StructItemTupleFields, prepare = StructItemTuplePrepare, view = StructItemTupleNodeRecord)]
+#[node(kind = kind::STRUCT_ITEM_TUPLE, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 27, fields = StructItemTupleFields, prepare = StructItemTuplePrepare, view = StructItemTupleNodeRecord, prepare_fn = prepare_struct_item_tuple)]
 pub struct StructItemTupleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35396,7 +35396,7 @@ fn prepare_struct_item_tuple<N: StructItemTuplePrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_UNIT, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 17, fields = StructItemUnitFields, prepare = StructItemUnitPrepare, view = StructItemUnitNodeRecord)]
+#[node(kind = kind::STRUCT_ITEM_UNIT, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 17, fields = StructItemUnitFields, prepare = StructItemUnitPrepare, view = StructItemUnitNodeRecord, prepare_fn = prepare_struct_item_unit)]
 pub struct StructItemUnitNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35522,7 +35522,7 @@ impl ::sittir_core::render::Render for WildcardPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_FIELD_DECLARATION, words = 9, fields = AttributedFieldDeclarationFields, prepare = AttributedFieldDeclarationPrepare, view = AttributedFieldDeclarationNodeRecord)]
+#[node(kind = kind::_ATTRIBUTED_FIELD_DECLARATION, words = 9, fields = AttributedFieldDeclarationFields, prepare = AttributedFieldDeclarationPrepare, view = AttributedFieldDeclarationNodeRecord, prepare_fn = prepare_attributed_field_declaration)]
 pub struct AttributedFieldDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35602,7 +35602,7 @@ fn prepare_attributed_field_declaration<N: AttributedFieldDeclarationPrepare + ?
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ENUM_VARIANT, words = 9, fields = AttributedEnumVariantFields, prepare = AttributedEnumVariantPrepare, view = AttributedEnumVariantNodeRecord)]
+#[node(kind = kind::_ATTRIBUTED_ENUM_VARIANT, words = 9, fields = AttributedEnumVariantFields, prepare = AttributedEnumVariantPrepare, view = AttributedEnumVariantNodeRecord, prepare_fn = prepare_attributed_enum_variant)]
 pub struct AttributedEnumVariantNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35682,7 +35682,7 @@ fn prepare_attributed_enum_variant<N: AttributedEnumVariantPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_PARAMETER, layout = [kind::UNDERSCORE], words = 12, fields = AttributedParameterFields, prepare = AttributedParameterPrepare, view = AttributedParameterNodeRecord)]
+#[node(kind = kind::_ATTRIBUTED_PARAMETER, layout = [kind::UNDERSCORE], words = 12, fields = AttributedParameterFields, prepare = AttributedParameterPrepare, view = AttributedParameterNodeRecord, prepare_fn = prepare_attributed_parameter)]
 pub struct AttributedParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35756,7 +35756,7 @@ fn prepare_attributed_parameter<N: AttributedParameterPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_TYPE_PARAMETER, words = 9, fields = AttributedTypeParameterFields, prepare = AttributedTypeParameterPrepare, view = AttributedTypeParameterNodeRecord)]
+#[node(kind = kind::_ATTRIBUTED_TYPE_PARAMETER, words = 9, fields = AttributedTypeParameterFields, prepare = AttributedTypeParameterPrepare, view = AttributedTypeParameterNodeRecord, prepare_fn = prepare_attributed_type_parameter)]
 pub struct AttributedTypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35836,7 +35836,7 @@ fn prepare_attributed_type_parameter<N: AttributedTypeParameterPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ARGUMENT, words = 9, fields = AttributedArgumentFields, prepare = AttributedArgumentPrepare, view = AttributedArgumentNodeRecord)]
+#[node(kind = kind::_ATTRIBUTED_ARGUMENT, words = 9, fields = AttributedArgumentFields, prepare = AttributedArgumentPrepare, view = AttributedArgumentNodeRecord, prepare_fn = prepare_attributed_argument)]
 pub struct AttributedArgumentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35916,7 +35916,7 @@ fn prepare_attributed_argument<N: AttributedArgumentPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ORDERED_FIELD, words = 14, fields = AttributedOrderedFieldFields, prepare = AttributedOrderedFieldPrepare, view = AttributedOrderedFieldNodeRecord)]
+#[node(kind = kind::_ATTRIBUTED_ORDERED_FIELD, words = 14, fields = AttributedOrderedFieldFields, prepare = AttributedOrderedFieldPrepare, view = AttributedOrderedFieldNodeRecord, prepare_fn = prepare_attributed_ordered_field)]
 pub struct AttributedOrderedFieldNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36000,7 +36000,7 @@ fn prepare_attributed_ordered_field<N: AttributedOrderedFieldPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_ARGUMENT, words = 12, fields = TypeArgumentFields, prepare = TypeArgumentPrepare, view = TypeArgumentNodeRecord)]
+#[node(kind = kind::_TYPE_ARGUMENT, words = 12, fields = TypeArgumentFields, prepare = TypeArgumentPrepare, view = TypeArgumentNodeRecord, prepare_fn = prepare_type_argument)]
 pub struct TypeArgumentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36074,7 +36074,7 @@ fn prepare_type_argument<N: TypeArgumentPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_MATCH_BLOCK_ARMS, words = 9, fields = MatchBlockArmsFields, prepare = MatchBlockArmsPrepare, view = MatchBlockArmsNodeRecord)]
+#[node(kind = kind::_MATCH_BLOCK_ARMS, words = 9, fields = MatchBlockArmsFields, prepare = MatchBlockArmsPrepare, view = MatchBlockArmsNodeRecord, prepare_fn = prepare_match_block_arms)]
 pub struct MatchBlockArmsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36154,7 +36154,7 @@ fn prepare_match_block_arms<N: MatchBlockArmsPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_LITERAL, text, words = 2, fields = FloatLiteralFields, prepare = FloatLiteralPrepare, view = FloatLiteralNodeRecord)]
+#[node(kind = kind::FLOAT_LITERAL, text, words = 2, fields = FloatLiteralFields, prepare = FloatLiteralPrepare, view = FloatLiteralNodeRecord, prepare_fn = prepare_float_literal)]
 pub struct FloatLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36222,7 +36222,7 @@ fn prepare_float_literal<N: FloatLiteralPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CONTENT, text, words = 2, fields = StringContentFields, prepare = StringContentPrepare, view = StringContentNodeRecord)]
+#[node(kind = kind::STRING_CONTENT, text, words = 2, fields = StringContentFields, prepare = StringContentPrepare, view = StringContentNodeRecord, prepare_fn = prepare_string_content)]
 pub struct StringContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36290,7 +36290,7 @@ fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RAW_STRING_LITERAL_CONTENT, text, words = 2, fields = RawStringLiteralContentFields, prepare = RawStringLiteralContentPrepare, view = RawStringLiteralContentNodeRecord)]
+#[node(kind = kind::RAW_STRING_LITERAL_CONTENT, text, words = 2, fields = RawStringLiteralContentFields, prepare = RawStringLiteralContentPrepare, view = RawStringLiteralContentNodeRecord, prepare_fn = prepare_raw_string_literal_content)]
 pub struct RawStringLiteralContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36414,7 +36414,7 @@ impl ::sittir_core::render::Render for InnerDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RAW_STRING_LITERAL_START, text, words = 2, fields = RawStringLiteralStartFields, prepare = RawStringLiteralStartPrepare, view = RawStringLiteralStartNodeRecord)]
+#[node(kind = kind::_RAW_STRING_LITERAL_START, text, words = 2, fields = RawStringLiteralStartFields, prepare = RawStringLiteralStartPrepare, view = RawStringLiteralStartNodeRecord, prepare_fn = prepare_raw_string_literal_start)]
 pub struct RawStringLiteralStartNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36482,7 +36482,7 @@ fn prepare_raw_string_literal_start<N: RawStringLiteralStartPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RAW_STRING_LITERAL_END, text, words = 2, fields = RawStringLiteralEndFields, prepare = RawStringLiteralEndPrepare, view = RawStringLiteralEndNodeRecord)]
+#[node(kind = kind::_RAW_STRING_LITERAL_END, text, words = 2, fields = RawStringLiteralEndFields, prepare = RawStringLiteralEndPrepare, view = RawStringLiteralEndNodeRecord, prepare_fn = prepare_raw_string_literal_end)]
 pub struct RawStringLiteralEndNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36550,7 +36550,7 @@ fn prepare_raw_string_literal_end<N: RawStringLiteralEndPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_DOC_COMMENT, text, words = 2, fields = DocCommentFields, prepare = DocCommentPrepare, view = DocCommentNodeRecord)]
+#[node(kind = kind::_DOC_COMMENT, text, words = 2, fields = DocCommentFields, prepare = DocCommentPrepare, view = DocCommentNodeRecord, prepare_fn = prepare_doc_comment)]
 pub struct DocCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36618,7 +36618,7 @@ fn prepare_doc_comment<N: DocCommentPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_BLOCK_COMMENT_CONTENT, text, words = 2, fields = BlockCommentContentFields, prepare = BlockCommentContentPrepare, view = BlockCommentContentNodeRecord)]
+#[node(kind = kind::_BLOCK_COMMENT_CONTENT, text, words = 2, fields = BlockCommentContentFields, prepare = BlockCommentContentPrepare, view = BlockCommentContentNodeRecord, prepare_fn = prepare_block_comment_content)]
 pub struct BlockCommentContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36910,7 +36910,7 @@ impl ::sittir_core::render::Render for DedentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CLOSE, text, words = 2, fields = StringCloseFields, prepare = StringClosePrepare, view = StringCloseNodeRecord)]
+#[node(kind = kind::STRING_CLOSE, text, words = 2, fields = StringCloseFields, prepare = StringClosePrepare, view = StringCloseNodeRecord, prepare_fn = prepare_string_close)]
 pub struct StringCloseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36978,7 +36978,7 @@ fn prepare_string_close<N: StringClosePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ERROR_SENTINEL, text, words = 2, fields = ErrorSentinelFields, prepare = ErrorSentinelPrepare, view = ErrorSentinelNodeRecord)]
+#[node(kind = kind::_ERROR_SENTINEL, text, words = 2, fields = ErrorSentinelFields, prepare = ErrorSentinelPrepare, view = ErrorSentinelNodeRecord, prepare_fn = prepare_error_sentinel)]
 pub struct ErrorSentinelNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37046,7 +37046,7 @@ fn prepare_error_sentinel<N: ErrorSentinelPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 7, fields = TypeIdentifierFields, prepare = TypeIdentifierPrepare, view = TypeIdentifierNodeRecord)]
+#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 7, fields = TypeIdentifierFields, prepare = TypeIdentifierPrepare, view = TypeIdentifierNodeRecord, prepare_fn = prepare_type_identifier)]
 pub struct TypeIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37115,7 +37115,7 @@ fn prepare_type_identifier<N: TypeIdentifierPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FIELD_IDENTIFIER, display, content = content, words = 7, fields = FieldIdentifierFields, prepare = FieldIdentifierPrepare, view = FieldIdentifierNodeRecord)]
+#[node(kind = kind::_FIELD_IDENTIFIER, display, content = content, words = 7, fields = FieldIdentifierFields, prepare = FieldIdentifierPrepare, view = FieldIdentifierNodeRecord, prepare_fn = prepare_field_identifier)]
 pub struct FieldIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37184,7 +37184,7 @@ fn prepare_field_identifier<N: FieldIdentifierPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, content = content, words = 7, fields = ShorthandFieldIdentifierFields, prepare = ShorthandFieldIdentifierPrepare, view = ShorthandFieldIdentifierNodeRecord)]
+#[node(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, content = content, words = 7, fields = ShorthandFieldIdentifierFields, prepare = ShorthandFieldIdentifierPrepare, view = ShorthandFieldIdentifierNodeRecord, prepare_fn = prepare_shorthand_field_identifier)]
 pub struct ShorthandFieldIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -48563,13 +48563,41 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
 pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {
+    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
+}
+
+/// The one writer a root renders through, a node's or a record's: built
+/// from the render context, and a document when `document` says so of it.
+fn render_root(
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+    recording: Option<&mut ::sittir_core::baseline::Baseline>,
+    document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,
+    root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,
+) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
     let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording);
-    let document = ::sittir_core::view::KindTest::kind_in(node, &w, kind::ROOT_KINDS);
+    let document = document(&w);
     let mut w = w.with_document(document);
-    node.render(&mut w)?;
+    root(&mut w)?;
     w.finish()?;
     Ok(s)
+}
+
+::sittir_core::records_codec! {
+/// Render the record `root` names: prepared into a fresh overlay, then
+/// written through its view by the writer a node renders through.
+pub fn render_record(
+    root: ::sittir_core::arena::CellAt,
+    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    built: &::sittir_core::arena::Arena,
+    store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+) -> Result<String, ::sittir_core::render::RenderError> {
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx)?;
+    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;
+    let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
+    render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))
+}
 }
 
 impl ::sittir_core::view::KindOf for AnyNode {

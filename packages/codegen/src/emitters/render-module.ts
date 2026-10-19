@@ -641,17 +641,11 @@ function renderTypedDispatch(
 	lines.push(
 		`pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {`
 	);
-	lines.push(`    let mut s = String::new();`);
-	lines.push(
-		`    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording);`
-	);
-	lines.push(`    let document = ::sittir_core::view::KindTest::kind_in(node, &w, kind::ROOT_KINDS);`);
-	lines.push(`    let mut w = w.with_document(document);`);
-	lines.push(`    node.render(&mut w)?;`);
-	lines.push(`    w.finish()?;`);
-	lines.push(`    Ok(s)`);
+	lines.push(`    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))`);
 	lines.push(`}`);
 	lines.push('');
+	lines.push(...renderRootFn());
+	lines.push(...renderRecordFn());
 
 	const anyNode = (subject: RenderSubject): string[] => [
 		...kindOfImplLines(
@@ -2361,6 +2355,51 @@ function renderAnyNode(
 	return lines;
 }
 
+function renderRootFn(): string[] {
+	return [
+		'/// The one writer a root renders through, a node\'s or a record\'s: built',
+		'/// from the render context, and a document when `document` says so of it.',
+		'fn render_root(',
+		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
+		'    recording: Option<&mut ::sittir_core::baseline::Baseline>,',
+		'    document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,',
+		'    root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,',
+		') -> Result<String, ::sittir_core::render::RenderError> {',
+		'    let mut s = String::new();',
+		'    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording);',
+		'    let document = document(&w);',
+		'    let mut w = w.with_document(document);',
+		'    root(&mut w)?;',
+		'    w.finish()?;',
+		'    Ok(s)',
+		'}',
+		''
+	];
+}
+
+function renderRecordFn(): string[] {
+	const view = rustRecordViewName('AnyNode');
+	return [
+		'::sittir_core::records_codec! {',
+		'/// Render the record `root` names: prepared into a fresh overlay, then',
+		'/// written through its view by the writer a node renders through.',
+		'pub fn render_record(',
+		'    root: ::sittir_core::arena::CellAt,',
+		'    trees: &mut dyn ::sittir_core::arena::RecordTrees,',
+		'    built: &::sittir_core::arena::Arena,',
+		`    store: &::sittir_core::trivia_store::TriviaStore<${TRIVIA_NODE}>,`,
+		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
+		') -> Result<String, ::sittir_core::render::RenderError> {',
+		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(trees, built, store, root, ctx)?;`,
+		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;',
+		`    let node = <${view}<'_> as ::sittir_core::arena::RecordView<'_, ${TRIVIA_NODE}>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;`,
+		'    render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))',
+		'}',
+		'}',
+		''
+	];
+}
+
 function renderNodeEntry(): string[] {
 	return [
 		'use ::sittir_core::types::Source as NodeSource;',
@@ -2424,7 +2463,7 @@ function renderTriviaNodeSupport(
 		continuationKinds.has(node.kind) ? TRIVIA_TEXT : rustNodeStructName(node);
 
 	const lines: string[] = [];
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice, codec_only', 'enum', 'TriviaNode'));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice, codec_only', 'enum', TRIVIA_NODE));
 	for (const node of extrasNodes) {
 		const variant = rustNodeVariantName(node);
 		const id = kindIdByKind.get(node.kind);
@@ -2439,7 +2478,7 @@ function renderTriviaNodeSupport(
 	lines.push('}');
 	lines.push('');
 	lines.push(
-		...prepareEnumImpl('TriviaNode', [
+		...prepareEnumImpl(TRIVIA_NODE, [
 			...extrasNodes.map((node) => ({ variant: rustNodeVariantName(node), payload: unitOf(node) === undefined })),
 			...depthVariants.map(({ variant }) => ({ variant, payload: false })),
 			{ variant: 'Verbatim', payload: true },
@@ -2850,6 +2889,17 @@ function seatArm(variant: string, kind: string, node: AssembledNode, fixed: Fixe
 	return { variant, line: isFixedTextLeaf(node) ? fixedSeatArm(`Self::${variant}`, fixedLiteralOf(fixed, kind)) : `Self::${variant}(t) => t.seat_target(table, ctx),` };
 }
 
+function seatThroughSlotOf(node: AssembledNode, nodeMap: NodeMap, plan: RenderPlan): AssembledNonterminal | undefined {
+	const reaches = seatReachOf(plan, nodeMap);
+	const wrapper = wrapperSlotOf(node);
+	return reaches(node.kind) && wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches) ? wrapper : undefined;
+}
+
+function seatThroughArg(node: AssembledNode, nodeMap: NodeMap, plan: RenderPlan): string {
+	const wrapper = seatThroughSlotOf(node, nodeMap, plan);
+	return wrapper === undefined ? '' : `, seat_through = ${rustFieldIdent(wrapper.name!)}`;
+}
+
 function seatTargetStructImpl(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -2871,8 +2921,8 @@ function seatTargetStructImpl(
 			'        }'
 		);
 	}
-	const wrapper = wrapperSlotOf(node);
-	const wraps = wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches);
+	const wrapper = seatThroughSlotOf(node, nodeMap, plan);
+	const wraps = wrapper !== undefined;
 	if (wraps) {
 		const field = `self.${rustFieldIdent(wrapper.name!)}`;
 		const held = isNodeRequired(wrapper) ? `&mut ${field}` : `${field}.as_mut()`;
@@ -3229,7 +3279,7 @@ function renderNodeDataStruct(
 		seated: seated.some(({ ident }) => ident === field),
 		defaulted: defaulted.some(({ ident }) => ident === field)
 	});
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}`, 'struct', structName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}, prepare_fn = ${rustTypedPrepareFnName(node.typeName)}${seatThroughArg(node, nodeMap, plan)}`, 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3413,6 +3463,8 @@ interface RenderSubject {
 	readonly path: string;
 	readonly view: boolean;
 }
+
+export const TRIVIA_NODE = 'TriviaNode';
 
 function rustRecordViewName(typeName: string): string {
 	return `${typeName}Record`;

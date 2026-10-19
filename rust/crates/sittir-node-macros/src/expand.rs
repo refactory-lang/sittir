@@ -222,6 +222,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let codec = codec::choice(ident, &wire)?;
     let writer = crate::write::choice(ident, &wire)?;
     let view = crate::views::choice(ident, attrs, &wire)?;
+    let prepare_record = crate::prepare_record::choice(ident, attrs, &wire);
     let from_kind_id = all_units.then(|| {
         quote! {
             impl ::sittir_core::prepare::FromKindId for #ident {
@@ -247,6 +248,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #writer
             };
             #view
+            #prepare_record
             #from_kind_id
         });
     }
@@ -343,6 +345,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             #writer
         };
         #view
+        #prepare_record
         #from_kind_id
     })
 }
@@ -370,6 +373,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     let codec = codec::members(ident);
     let writer = crate::write::members(ident);
     let view = crate::views::members(ident);
+    let prepare_record = crate::prepare_record::members(ident);
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -416,6 +420,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
             #codec
             #writer
             #view
+            #prepare_record
         };
     })
 }
@@ -535,8 +540,9 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         Some(name) => crate::fields::fields_trait(ident, name, &fields)?,
         None => TokenStream::new(),
     };
+    let trivia = attrs.view.as_ref().map(|_| crate::views::record_trivia(ident, &fields)).transpose()?;
     let prepare_trait = match &attrs.prepare {
-        Some(name) => crate::prepare::prepare_trait(ident, name, &fields)?,
+        Some(name) => crate::prepare::prepare_trait(ident, name, &fields, trivia.as_ref())?,
         None => TokenStream::new(),
     };
     let folded = &attrs.folded;
@@ -591,6 +597,10 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
     };
     let writer = crate::write::structure(ident, attrs, &fields)?;
     let view = crate::views::structure(ident, attrs, &fields)?;
+    let prepare_record = match &trivia {
+        Some(trivia) => crate::prepare_record::structure(ident, attrs, &fields, trivia)?,
+        None => TokenStream::new(),
+    };
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -630,6 +640,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         #fields_trait
         #view
         #prepare_trait
+        #prepare_record
     })
 }
 

@@ -44,6 +44,10 @@ impl From<fmt::Error> for RenderError {
 
 impl From<CoordinateError> for RenderError {
     fn from(e: CoordinateError) -> Self {
+        #[cfg(feature = "arena")]
+        if let CoordinateError::Record(e) = e {
+            return Self::Record(e);
+        }
         Self::Coordinate(e)
     }
 }
@@ -209,6 +213,17 @@ pub enum CoordinateError {
         handle: crate::types::TreeHandle,
         detail: String,
     },
+    /// A record's cell or word that no record writer writes, met by a
+    /// record's prepare.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
+}
+
+#[cfg(feature = "arena")]
+impl From<crate::arena::ArenaError> for CoordinateError {
+    fn from(e: crate::arena::ArenaError) -> Self {
+        Self::Record(e)
+    }
 }
 
 impl fmt::Display for CoordinateError {
@@ -220,6 +235,8 @@ impl fmt::Display for CoordinateError {
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
             Self::Unread { handle, detail } => write!(f, "handle {handle}: the node holds a write, and its read failed: {detail}"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
         }
     }
 }

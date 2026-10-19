@@ -48,7 +48,7 @@ fn slot_parts(ty: &Type) -> Option<(&Type, TokenStream)> {
 }
 
 /// The slot value a field holds, through `Option` and a list's item.
-fn held(ty: &Type) -> Option<(&Type, TokenStream)> {
+pub(crate) fn held(ty: &Type) -> Option<(&Type, TokenStream)> {
     let item = inner_of(ty, "Vec").or_else(|| inner_of(ty, "NonEmptyVec")).unwrap_or(ty);
     slot_parts(inner_of(item, "Option").unwrap_or(item))
 }
@@ -170,6 +170,16 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
     })
 }
 
+/// The trivia type of a struct's record: its layout field's.
+pub(crate) fn record_trivia(ident: &Ident, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
+    let layout_ty = fields
+        .iter()
+        .find(|field| matches!(field.role, Role::Layout))
+        .ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}` has a record, so it has a `#[layout]` field")))?
+        .ty;
+    Ok(quote!(<#layout_ty as ::sittir_core::arena::LayoutField>::Trivia))
+}
+
 /// A struct's view, its `HasRecord` and `RecordView`, and its fields trait
 /// over it; none for a struct with no stamped record or no fields trait.
 pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
@@ -177,12 +187,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let (Some(words), Some(fields_trait), Some(kind)) = (attrs.words, &attrs.fields, &attrs.kind) else {
         return Err(syn::Error::new_spanned(view, format!("`{ident}` names a record view, so it has a record, a kind and a fields trait")));
     };
-    let layout_ty = fields
-        .iter()
-        .find(|field| matches!(field.role, Role::Layout))
-        .ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}` has a record, so it has a `#[layout]` field")))?
-        .ty;
-    let trivia = quote!(<#layout_ty as ::sittir_core::arena::LayoutField>::Trivia);
+    let trivia = record_trivia(ident, fields)?;
     let text_leaf = attrs.text.is_some();
     let mut parts = Vec::new();
     for field in fields {
@@ -439,7 +444,7 @@ mod tests {
     #[test]
     fn a_struct_s_view_reads_its_record_its_presences_lists_and_settings_when_built_and_a_child_when_read() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::BLOCK, item = statements, words = 12, fields = BlockFields, view = BlockNodeRecord)]
+            #[node(kind = kind::BLOCK, item = statements, words = 12, fields = BlockFields, view = BlockNodeRecord, prepare_fn = prepare_block)]
             pub struct BlockNode {
                 #[wire(key = "$_layout")]
                 #[layout]
@@ -482,7 +487,7 @@ mod tests {
     #[test]
     fn a_view_with_no_child_keeps_no_words() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 10, fields = DecimalFields, view = DecimalNodeRecord)]
+            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 10, fields = DecimalFields, view = DecimalNodeRecord, prepare_fn = prepare_decimal)]
             pub struct DecimalNode {
                 #[wire(key = "$_layout")]
                 #[layout]
@@ -504,7 +509,7 @@ mod tests {
     #[test]
     fn a_text_leaf_s_view_reads_a_parsed_leaf_from_its_source_and_a_built_one_from_its_string() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::IDENTIFIER, text, words = 2, fields = IdentifierFields, view = IdentifierNodeRecord)]
+            #[node(kind = kind::IDENTIFIER, text, words = 2, fields = IdentifierFields, view = IdentifierNodeRecord, prepare_fn = prepare_identifier)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
                 #[layout]

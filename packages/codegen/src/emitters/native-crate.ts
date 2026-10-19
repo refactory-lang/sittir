@@ -1,4 +1,5 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
+import { TRIVIA_NODE } from './render-module.ts';
 
 export const NATIVE_RENDER_NODE_ABI = 25;
 
@@ -178,11 +179,12 @@ pub fn language() -> tree_sitter::Language {
     LANGUAGE.into()
 }
 
-#[cfg(feature = "napi-bindings")]
 use sittir_core::engine::EngineGrammar;
 
+use render::{render_node_parts, AnyNode, RENDER_MODULE_HASH};
+
 #[cfg(feature = "napi-bindings")]
-use render::{render_node_parts, AnyNode, RenderRoot, RENDER_MODULE_HASH};
+use render::RenderRoot;
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_NODE_ABI: u32 = ${NATIVE_RENDER_NODE_ABI};
@@ -190,7 +192,6 @@ const NATIVE_RENDER_NODE_ABI: u32 = ${NATIVE_RENDER_NODE_ABI};
 #[derive(Clone, Copy, Default)]
 pub struct ${v.Name}Grammar;
 
-#[cfg(feature = "napi-bindings")]
 impl EngineGrammar for ${v.Name}Grammar {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
         let language = crate::language();
@@ -215,7 +216,7 @@ impl EngineGrammar for ${v.Name}Grammar {
         render::kind_ids::relaxes
     }
 
-    type Trivia = render::node::TriviaNode;
+    type Trivia = render::node::${TRIVIA_NODE};
 
     fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [sittir_core::types::KindId]) {
         (&render::options::WHITESPACE, render::options::LAYOUT_KINDS)

@@ -50,7 +50,39 @@ fn setting_bound(field: &Field<'_>) -> syn::Result<TokenStream> {
     Ok(quote!(::sittir_core::prepare::Setting<#value, Self::Overlay>))
 }
 
-pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
+/// The type of a place's handle on a record, and the expression that hands
+/// it out from the record (`RecordAt`).
+fn record_handle(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<(TokenStream, TokenStream)> {
+    let arena = quote!(::sittir_core::arena);
+    let setting = |of: TokenStream| -> syn::Result<(TokenStream, TokenStream)> {
+        let value = inner_of(field.ty, "Option").ok_or_else(|| syn::Error::new_spanned(field.ty, "a print setting is an `Option<…>`"))?;
+        Ok((quote!(#arena::SettingAt<'r, #trivia, #value>), quote!(self.setting(#arena::SettingOf::#of))))
+    };
+    match &field.role {
+        Role::Layout => Ok((quote!(#arena::LayoutAt<'r, #trivia>), quote!(self.layout()))),
+        Role::Slot(slot) => {
+            let node = crate::views::held(field.ty).map(|(node, _)| node).ok_or_else(|| syn::Error::new_spanned(field.ty, "a prepared slot holds a `SlotValue<…>`"))?;
+            let (Some(word), Some(width)) = (slot.cell.word, slot.cell.width) else {
+                let ident = field.ident;
+                return Err(syn::Error::new_spanned(ident, format!("`{ident}` is a prepared slot of a record, so it has its cell's word and width")));
+            };
+            let run = slot.cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
+            Ok((quote!(#arena::SlotAt<'r, #trivia, #node>), quote!(self.slot::<#node>(#word, #width, #run))))
+        }
+        Role::Flank(_) => setting(quote!(Delimiter)),
+        Role::SeparatorKind(_) => setting(quote!(SeparatorKind)),
+        Role::Space(space) => {
+            let (word, before) = (space.slot, space.before);
+            setting(quote!(Space { word: #word, before: #before }))
+        }
+        Role::Text => Err(syn::Error::new_spanned(field.ident, "text is no place a prepare writes")),
+    }
+}
+
+/// A struct's prepare trait and its impl for the struct, and, for a struct
+/// with a record (`record`, of that trivia type), its impl for the record's
+/// handles.
+pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>], record: Option<&TokenStream>) -> syn::Result<TokenStream> {
     let parts = format_ident!("{}Parts", name);
     let list_words: Vec<u32> = fields
         .iter()
@@ -63,6 +95,8 @@ pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::
     let mut implemented = Vec::new();
     let mut members = Vec::new();
     let mut handles = Vec::new();
+    let mut record_types = Vec::new();
+    let mut record_handles = Vec::new();
     let mut sites = Vec::new();
     for field in fields {
         let bound = match &field.role {
@@ -87,12 +121,30 @@ pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::
         implemented.push(quote! { type #assoc<'a> = &'a mut #ty where Self: 'a; });
         members.push(quote! { pub #ident: N::#assoc<'a>, });
         handles.push(quote! { #ident: &mut self.#ident, });
+        if let Some(trivia) = record {
+            let (handle, built) = record_handle(field, trivia)?;
+            record_types.push(quote! { type #assoc<'a> = #handle where Self: 'a; });
+            record_handles.push(quote! { #ident: #built, });
+        }
     }
     if members.is_empty() {
         return Err(syn::Error::new_spanned(owner, "a prepare trait is over at least one place"));
     }
     let trait_doc = format!("The places of `{owner}` a prepare body writes, for the struct and a record alike.");
     let parts_doc = format!("Every place of a `{name}`, each borrowed apart from the others.");
+    let on_record = record.map(|trivia| {
+        quote! {
+            ::sittir_core::records_codec! {
+                impl<'r> #name for ::sittir_core::arena::RecordAt<'r, #trivia> {
+                    type Overlay = ::sittir_core::arena::RecordPrep<'r, #trivia>;
+                    #(#record_types)*
+                    fn prepare_parts(&mut self) -> #parts<'_, Self> {
+                        #parts { #(#record_handles)* }
+                    }
+                }
+            }
+        }
+    });
     Ok(quote! {
         #(#sites)*
         #[doc = #parts_doc]
@@ -115,6 +167,7 @@ pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::
                 #parts { #(#handles)* }
             }
         }
+        #on_record
     })
 }
 

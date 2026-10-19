@@ -45,6 +45,13 @@ pub struct KindAttrs {
     /// On a struct or a choice: the name of its record view, which codegen
     /// stamps on each type it writes the view's render for.
     pub view: Option<Ident>,
+    /// On a struct: its prepare body (`prepare_<kind>`), which codegen
+    /// stamps beside its view, so its record prepares through the same body.
+    pub prepare_fn: Option<Ident>,
+    /// On a wrapper struct: the slot whose content seats it
+    /// (`SeatTarget`), which codegen stamps where the wrapper's seat follows
+    /// its content.
+    pub seat_through: Option<Ident>,
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -193,6 +200,8 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "fields" => out.fields = Some(meta.value()?.parse()?),
                 "prepare" => out.prepare = Some(meta.value()?.parse()?),
                 "view" => out.view = Some(meta.value()?.parse()?),
+                "prepare_fn" => out.prepare_fn = Some(meta.value()?.parse()?),
+                "seat_through" => out.seat_through = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())

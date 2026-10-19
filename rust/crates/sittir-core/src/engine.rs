@@ -1275,6 +1275,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
         node_at_index(&self.tree, index).is_some_and(|node| crate::trivia_table::is_empty(&node))
     }
 
+    /// The store of the sides a write set, the engine's that parsed the tree.
+    pub fn written(&self) -> &TriviaStore<G::Trivia> {
+        &self.written
+    }
+
     /// Replace `side` of the node at `index` with `entries`.
     pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) {
         self.written.write_side(Place::Row { tree: self.tree_id, row: index }, side, entries);

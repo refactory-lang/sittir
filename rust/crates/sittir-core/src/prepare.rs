@@ -90,6 +90,19 @@ pub enum EdgeItem<'a> {
     Rebuilt,
 }
 
+impl EdgeItem<'_> {
+    /// The item, holding its coordinate itself.
+    #[must_use]
+    pub fn into_owned(self) -> EdgeItem<'static> {
+        match self {
+            EdgeItem::Coord(coord) => EdgeItem::Coord(std::borrow::Cow::Owned(coord.into_owned())),
+            EdgeItem::Bytes { tree, span } => EdgeItem::Bytes { tree, span },
+            EdgeItem::Snapshot(edge) => EdgeItem::Snapshot(edge),
+            EdgeItem::Rebuilt => EdgeItem::Rebuilt,
+        }
+    }
+}
+
 /// A child position of a root node, read for the item at either end of
 /// the render: `None` when the position holds nothing, otherwise the item
 /// (`EdgeItem`). It reads through the overlay `O` its prepare trait names; the
@@ -329,7 +342,14 @@ pub fn slot_separators<'i, T: Prepare + 'i, const ADJACENT: bool>(
     kind_of: fn(KindId) -> Option<KindId>,
     ctx: &RenderContext<'_>,
 ) -> Option<Vec<Option<KindId>>> {
-    let tokens: Vec<Option<KindId>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0)?.source_separator(ctx).and_then(kind_of)).collect();
+    separators(items.map(|item| item.map(|item| item.source_separator(ctx))), kind_of)
+}
+
+/// `slot_separators` over any slot's items: each present item's own
+/// separator (`Prepare::source_separator`), an absent one `None`.
+#[must_use]
+pub fn separators(items: impl Iterator<Item = Option<Option<KindId>>>, kind_of: fn(KindId) -> Option<KindId>) -> Option<Vec<Option<KindId>>> {
+    let tokens: Vec<Option<KindId>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0).flatten().and_then(kind_of)).collect();
     tokens.iter().any(Option::is_some).then_some(tokens)
 }
 
@@ -573,8 +593,14 @@ pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContex
     match T::read_coordinate(tree, &mut read, coord.index) {
         None => Ok(None),
         Some(Ok(node)) => Ok(Some(node)),
-        Some(Err(error)) => Err(CoordinateError::Unread { handle: coord.handle(), detail: format!("{error:?}") }),
+        Some(Err(error)) => Err(unread(coord, &error)),
     }
+}
+
+/// The refusal of a render whose edited coordinate `coord` its read refused.
+#[must_use]
+pub fn unread(coord: &NodeCoordinate, error: &crate::read::ReadError) -> CoordinateError {
+    CoordinateError::Unread { handle: coord.handle(), detail: format!("{error:?}") }
 }
 
 /// Prepare every item of a list.

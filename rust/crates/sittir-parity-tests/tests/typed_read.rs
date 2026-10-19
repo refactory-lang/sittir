@@ -426,6 +426,15 @@ enum Primitive {
     Bool,
 }
 
+impl sittir_core::view::KindOf for Primitive {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        match self {
+            Primitive::U8 => kinds.contains(&kind::U8_KEYWORD),
+            Primitive::Bool => kinds.contains(&kind::BOOL_KEYWORD),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Node)]
 #[node(choice)]
 enum Type {
@@ -481,6 +490,15 @@ enum Predefined {
     UniqueSymbol,
 }
 
+impl sittir_core::view::KindOf for Predefined {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        match self {
+            Predefined::Symbol => kinds.contains(&ts::SYMBOL_KEYWORD),
+            Predefined::UniqueSymbol => kinds.contains(&ts::UNIQUE),
+        }
+    }
+}
+
 #[test]
 fn a_member_spelled_by_two_tokens_reads_as_the_id_both_display() {
     for (source, member) in [("declare const x: unique symbol;", Predefined::UniqueSymbol), ("declare const x: symbol;", Predefined::Symbol)] {
@@ -508,6 +526,15 @@ enum IsOrNot {
     Is,
     #[kind(py::NOT_KEYWORD)]
     Not,
+}
+
+impl sittir_core::view::KindOf for IsOrNot {
+    fn kind_in(&self, kinds: &[KindId]) -> bool {
+        match self {
+            IsOrNot::Is => kinds.contains(&py::IS_KEYWORD),
+            IsOrNot::Not => kinds.contains(&py::NOT_KEYWORD),
+        }
+    }
 }
 
 #[test]

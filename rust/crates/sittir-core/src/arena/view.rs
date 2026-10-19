@@ -61,6 +61,18 @@ impl<'a, T> RecordCtx<'a, T> {
         Ok(Self { arena, tree: Some(tree), arenas, sources, store, prepared })
     }
 
+    /// The context of `tree`'s arena, the built arena `built` for none.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
+    pub fn of(tree: Option<TreeId>, built: &'a Arena, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Result<Self, ArenaError> {
+        match tree {
+            None => Ok(Self::built(built, arenas, sources, store, prepared)),
+            Some(tree) => Self::parsed(tree, arenas, sources, store, prepared),
+        }
+    }
+
     /// The context of `tree`'s arena, which a link from this one names.
     ///
     /// # Errors
@@ -159,6 +171,62 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn row_record(self, row: NodeIndex) -> Option<Address> {
         self.arenas.tree(self.tree?)?.record(row)
     }
+
+    /// The parsed node `cell` names, whatever cell names it: the row of a
+    /// coordinate, a parsed leaf or a parsed unit of this arena's tree, or
+    /// the row of a parsed record, in this arena or in the tree a link names,
+    /// with the edges a child cell marks changed; `None` for a built value.
+    ///
+    /// # Errors
+    ///
+    /// What reading a child's record or reaching a linked arena refuses.
+    pub fn parsed_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
+        let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind, changed: ChangedEdges::default() });
+        Ok(match cell {
+            Cell::Coordinate { kind, index, .. } => here(index, kind),
+            Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
+            Cell::Child { kind, at, link, changed } => {
+                let ctx = match link {
+                    Some(tree) => self.linked(tree)?,
+                    None => self,
+                };
+                if ctx.tree.is_none() {
+                    return Ok(None);
+                }
+                let (_, side) = record_of(ctx, at, crate::record::HEADER_WORDS, kind)?;
+                match place_of(ctx, at, &side)? {
+                    Place::Row { tree, row } => Some(ParsedRow { tree, row, kind, changed }),
+                    _ => None,
+                }
+            }
+            _ => None,
+        })
+    }
+
+    /// The coordinate of the parsed node `row` names, as a read of its tree
+    /// names it, of the kind its cell names it as and with the edges it marks
+    /// changed.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` when the render holds no tree of `row`, or
+    /// the tree has no node there.
+    pub fn row_coordinate(self, row: ParsedRow) -> Result<NodeCoordinate, ArenaError> {
+        let (live, read) = self.sources.read_ctx(row.tree).ok_or(malformed("record tree", row.tree.0))?;
+        let node = crate::engine::node_at_index(live, row.row).ok_or(malformed("record row", row.row.0))?;
+        let writes = (row.changed != ChangedEdges::default()).then(|| Box::new(crate::slot::CoordinateWrites { changed: row.changed }));
+        Ok(NodeCoordinate { kind: Some(row.kind), writes, ..read.coordinate(&node, row.row) })
+    }
+}
+
+/// A parsed node as a cell names it: its tree, its row there, the kind the
+/// cell names it as, and the edges whose neighbour its holder changed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ParsedRow {
+    pub tree: TreeId,
+    pub row: NodeIndex,
+    pub kind: KindId,
+    pub changed: ChangedEdges,
 }
 
 /// A record's layout as its render body reads it (`BodyLayout`): the layout
@@ -184,7 +252,7 @@ impl<'a, T> RecordLayout<'a, T> {
     /// edges its record stores, and `changed` the edges its site marks.
     #[must_use]
     pub fn new(prepared: &'a Prepared<T>, place: Place, site: Option<Site<Place>>, stored: Edges, changed: ChangedEdges) -> Self {
-        let layout = prepared.node(place).and_then(|node| node.layout.as_ref());
+        let layout = prepared.node(place).and_then(|node| node.layout.as_deref());
         Self { layout, edges: prepared.edges(stored, site, place), changed }
     }
 }
@@ -312,8 +380,9 @@ impl Render for VerbatimRecord<'_> {
 /// What one slot's cell holds, as its view reads it.
 enum SlotCell<V> {
     Absent,
-    /// An untouched node of the arena's tree.
-    Coordinate { kind: KindId, index: NodeIndex, span: Span },
+    /// A parsed node, whatever cell names it: its row, and the cell.
+    Parsed(ParsedRow, Cell),
+    /// A built value's view.
     View(V),
     Refused(ArenaError),
 }
@@ -327,40 +396,61 @@ pub struct RecordSlot<'a, T, V, const ADJACENT: bool = false> {
 }
 
 impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJACENT> {
-    /// The slot at `site` whose cell is `words`.
+    /// The slot at `site` whose cell is `words`. An unset single slot holds
+    /// the unit its prepare defaulted it to, when it took one.
+    #[must_use]
     pub fn of(ctx: RecordCtx<'a, T>, site: Site<Place>, words: &[u32]) -> Self {
         let cell = match Cell::decode(words) {
-            Ok(Cell::Absent) => SlotCell::Absent,
-            Ok(Cell::Coordinate { kind, index, span }) => SlotCell::Coordinate { kind, index, span },
-            Ok(cell) => V::from_cell(ctx, cell, Some(site)).map_or_else(SlotCell::Refused, SlotCell::View),
+            Ok(Cell::Absent) => match ctx.prepared.node(site.holder).and_then(|node| node.slot(site.word)).and_then(|slot| slot.unit) {
+                Some(kind) => Self::cell(ctx, site, Cell::Unit { kind, row: None }),
+                None => SlotCell::Absent,
+            },
+            Ok(Cell::Coordinate { index, .. }) if ctx.tree.is_none() => SlotCell::Refused(malformed("coordinate in a built record", index.0)),
+            Ok(cell) => Self::cell(ctx, site, cell),
             Err(refused) => SlotCell::Refused(refused),
         };
         Self { ctx, site, cell }
     }
 
-    /// The coordinate a tag-1 cell names, its end row taken from the tree.
-    fn coordinate(&self, kind: KindId, index: NodeIndex, span: Span) -> Result<NodeCoordinate, ArenaError> {
-        let tree = self.ctx.tree.ok_or(malformed("coordinate in a built record", index.0))?;
-        let coord = NodeCoordinate { kind: Some(kind), ..NodeCoordinate::new(tree, index, self.ctx.row_end(index)?, span) };
-        Ok(NodeCoordinate { edges: self.ctx.prepared.coordinate_edges(self.site), ..coord })
+    fn cell(ctx: RecordCtx<'a, T>, site: Site<Place>, cell: Cell) -> SlotCell<V> {
+        match ctx.parsed_row(cell) {
+            Ok(Some(row)) => SlotCell::Parsed(row, cell),
+            Ok(None) => V::from_cell(ctx, cell, Some(site)).map_or_else(SlotCell::Refused, SlotCell::View),
+            Err(refused) => SlotCell::Refused(refused),
+        }
+    }
+
+    /// The parsed node's coordinate, between the seams its prepare gave it.
+    fn coordinate(&self, row: ParsedRow) -> Result<NodeCoordinate, ArenaError> {
+        Ok(NodeCoordinate { edges: self.ctx.prepared.coordinate_edges(self.site), ..self.ctx.row_coordinate(row)? })
+    }
+
+    /// The view a parsed node renders through when a write lies in its rows:
+    /// its cell's, or, for a coordinate, its row's record's.
+    fn edited(&self, row: ParsedRow, cell: Cell) -> Result<V, ArenaError> {
+        let cell = match cell {
+            Cell::Coordinate { kind, index, .. } => Cell::Child { kind, at: self.ctx.row_record(index).ok_or(malformed("edited coordinate record", index.0))?, link: None, changed: row.changed },
+            cell => cell,
+        };
+        V::from_cell(self.ctx, cell, Some(self.site))
     }
 }
 
 impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for RecordSlot<'a, T, V, ADJACENT> {
-    /// An untouched node renders as its source, unless a write set a side in
-    /// its rows: then it renders through the record its prepare wrote.
+    /// A parsed node renders as its source, unless a write set a side in its
+    /// rows: then it renders through its record, which its prepare wrote
+    /// when no read had.
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match &self.cell {
             SlotCell::Absent => Err(RenderError::Record(malformed("required slot cell", 0))),
             SlotCell::View(view) => view.render(w),
             SlotCell::Refused(refused) => Err(RenderError::Record(refused.clone())),
-            &SlotCell::Coordinate { kind, index, span } => {
-                let coord = self.coordinate(kind, index, span).map_err(RenderError::Record)?;
+            &SlotCell::Parsed(row, cell) => {
+                let coord = self.coordinate(row).map_err(RenderError::Record)?;
                 if !self.ctx.sources.edited_within(&coord) {
                     return crate::slot::write_coordinate(&coord, ADJACENT, w);
                 }
-                let at = self.ctx.row_record(index).ok_or(RenderError::Record(malformed("edited coordinate record", index.0)))?;
-                V::from_cell(self.ctx, Cell::Child { kind, at, link: None, changed: ChangedEdges::default() }, Some(self.site)).map_err(RenderError::Record)?.render(w)
+                self.edited(row, cell).map_err(RenderError::Record)?.render(w)
             }
         }
     }
@@ -384,7 +474,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Slot for Record
 impl<T, V: KindOf, const ADJACENT: bool> KindTest for RecordSlot<'_, T, V, ADJACENT> {
     fn kind_in(&self, _: &dyn RenderSink, kinds: &[KindId]) -> bool {
         match &self.cell {
-            SlotCell::Coordinate { kind, .. } => kinds.contains(kind),
+            SlotCell::Parsed(row, _) => kinds.contains(&row.kind),
             SlotCell::View(view) => view.kind_in(kinds),
             SlotCell::Absent | SlotCell::Refused(_) => false,
         }

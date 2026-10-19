@@ -11,6 +11,7 @@ mod codec;
 mod expand;
 mod fields;
 mod prepare;
+mod prepare_record;
 mod record;
 mod views;
 mod write;

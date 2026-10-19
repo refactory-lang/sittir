@@ -366,7 +366,24 @@ it does read whole. A wrapper keeps its own edges: the
 descent is a separate trait, not an `Edged` delegation, so filling a seat
 never overwrites the wrapper's own kind edges. A seated kind with no kind id
 fails at codegen. A seated fixed-literal kind answers through its own type's
-one arm (`fixedSeatArm`).
+one arm (`fixedSeatArm`). Whether a wrapper descends, and into which slot,
+is `seatThroughSlotOf`'s answer, which the struct's `seat_through` stamp
+carries to its record's seat too.
+
+### `packages/codegen/src/emitters/render-module.ts::seatThroughSlotOf`
+
+The content slot a wrapper's seat descends into (`seatTargetStructImpl`):
+the wrapper's one slot (`wrapperSlotOf`) when the wrapper reaches a seat and
+the slot's elements do (`slotElementsReach`); `undefined` for every other
+node. The native seat and the record seat both read it, so the two descend
+alike.
+
+### `packages/codegen/src/emitters/render-module.ts::seatThroughArg`
+
+The struct's `seat_through = <field>` stamp, naming the slot
+`seatThroughSlotOf` answers; empty for a node whose seat descends into
+none. The derive's record seat (`PrepareRecord::seat_record`) tries the
+record's own kind, then descends into that slot as the native seat does.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderSeatTargets`
 
@@ -2842,11 +2859,12 @@ helpers, the grammar's word-class table, `render_node_dispatch`, and
 per-kind function so each concrete subtype's function is declared before a
 match arm names it.
 
-`render_node_dispatch` takes `&dyn Render` rather than
-`&AnyNode` so the root's own `SlotValue` carrier renders through the
-same single `SpacingWriter` wrap; a second entry point would be a second
-place the root seam policy could drift. It takes the render context and
-builds the writer from it: `.with_table(&options::WHITESPACE)` so
+`render_node_dispatch` takes the root's own `SlotValue` carrier, so the
+root renders through the same single `SpacingWriter` wrap, and writes it
+through `render_root` (`renderRootFn`), the one writer a record's render
+(`renderRecordFn`) writes through too; a second writer would be a second
+place the root seam policy could drift. `render_root` takes the render
+context and builds the writer from it: `.with_table(&options::WHITESPACE)` so
 `w.site(...)` resolves against this grammar's whitespace vocabulary,
 `.with_indent(&ctx.options.indent)`, `.with_recording(recording)` with the
 `Option<&mut Baseline>` it takes beside the context, so a recording render (a
@@ -2874,6 +2892,32 @@ held at the end of the tree is dropped, so a root node gains no edge
 whitespace.
 
 Takes the generated kind entries so the emitted `with_literal_merge_pairs` table is derived from the tokens the parser actually lexes (`literalMergePairs`), not from every literal the node projection carries.
+
+### `packages/codegen/src/emitters/render-module.ts::renderRootFn`
+
+The generated `render_root`: the grammar's one root writer, a
+`SpacingWriter` built from the render context as `renderTypedDispatch`
+describes, a document when the `document` test it is handed answers so of
+it, writing the root through the `root` closure and finishing the writer.
+A native root's dispatch and a record's render both call it, each with its
+own document test: a native root's `KindTest` of its carrier, a record's
+view's `KindOf`.
+
+### `packages/codegen/src/emitters/render-module.ts::renderRecordFn`
+
+The generated `render_record`, under `records_codec!`: renders the record
+a root cell names (`CellAt`) by preparing it into a fresh overlay
+(`sittir_core::arena::prepare_root`, as the grammar's `AnyNode`), reading
+it through `AnyNode`'s record view over that overlay, and writing the view
+through `render_root`. A parsed node it holds renders as its row's source
+unless a write lies in its rows, so a record renders as its node read one
+level down does, however deep the read that wrote it.
+
+### `packages/codegen/src/emitters/render-module.ts::TRIVIA_NODE`
+
+The name of the grammar's trivia choice, `TriviaNode`: the type its node
+declaration, its prepare impl, its record render's store and the native
+crate's `EngineGrammar::Trivia` all name.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderNodeEntry`
 
@@ -13014,7 +13058,11 @@ shares. It names the view too (`viewArg`), whose `KindOf` and `Render` are
 the struct's, written for the view (`recordViewImpls`): the view renders
 through its `RecordLayout`, which its fields trait hands out. It names the prepare trait the same way (`prepare = <Kind>Prepare`,
 `rustNodePrepareTraitName`), over which the kind's prepare function is
-generic (`prepareStructImpl`).
+generic (`prepareStructImpl`), and that function (`prepare_fn = prepare_<kind>`,
+`rustTypedPrepareFnName`), which the derive's `PrepareRecord` runs over the
+record's handles, so a record prepares through the struct's one body. A
+wrapper whose seat descends into its content names that slot
+(`seatThroughArg`).
 
 Every field carries the one stamp the derive knows its role by: the layout
 `#[layout]`, a leaf's text `#[text]`, a slot `#[slot(…)]`, a list's
@@ -14894,7 +14942,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyNode` and renders it through `render_node_parts` into the baseline it is handed, answering the text (the records a parsed tree's layout baseline is read from), whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, built with or without napi bindings so a Rust test parses through the shared engine, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyNode` and renders it through `render_node_parts` into the baseline it is handed, answering the text (the records a parsed tree's layout baseline is read from), whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 

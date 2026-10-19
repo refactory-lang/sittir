@@ -25,11 +25,12 @@ pub fn language() -> tree_sitter::Language {
     LANGUAGE.into()
 }
 
-#[cfg(feature = "napi-bindings")]
 use sittir_core::engine::EngineGrammar;
 
+use render::{render_node_parts, AnyNode, RENDER_MODULE_HASH};
+
 #[cfg(feature = "napi-bindings")]
-use render::{render_node_parts, AnyNode, RenderRoot, RENDER_MODULE_HASH};
+use render::RenderRoot;
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_NODE_ABI: u32 = 25;
@@ -37,7 +38,6 @@ const NATIVE_RENDER_NODE_ABI: u32 = 25;
 #[derive(Clone, Copy, Default)]
 pub struct RegexGrammar;
 
-#[cfg(feature = "napi-bindings")]
 impl EngineGrammar for RegexGrammar {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
         let language = crate::language();

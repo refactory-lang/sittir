@@ -475,7 +475,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 
 	it("renders each struct through a body generic over the node's fields trait", async () => {
 		const nodeRs = await getRustTemplatesRs();
-		expect(nodeRs).toMatch(/#\[node\(kind = kind::FUNCTION_ITEM[^\n]*, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord\)\]\npub struct FunctionItemNode \{/);
+		expect(nodeRs).toMatch(/#\[node\(kind = kind::FUNCTION_ITEM[^\n]*, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{/);
 		const from = nodeRs.indexOf('fn render_function_item<N: FunctionItemFields + ?Sized>(node: &N,');
 		expect(from).toBeGreaterThan(-1);
 		const body = nodeRs.slice(from, nodeRs.indexOf('\n}\n', from));
@@ -542,7 +542,8 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'
 		);
-		expect(nodeRs).toContain('let document = ::sittir_core::view::KindTest::kind_in(node, &w, kind::ROOT_KINDS);');
+		expect(nodeRs).toContain('render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))');
+		expect(nodeRs).toContain('render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))');
 	});
 
 	it('admits verbatim text only where a slot admits a pattern kind', async () => {
@@ -743,7 +744,7 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord\)\]\npub struct FunctionItemNode \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{/
 		);
 		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);

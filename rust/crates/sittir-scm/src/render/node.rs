@@ -1756,7 +1756,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameNodeSlotRecord<'_>
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PROGRAM, words = 4, fields = ProgramFields, prepare = ProgramPrepare, view = ProgramNodeRecord)]
+#[node(kind = kind::PROGRAM, words = 4, fields = ProgramFields, prepare = ProgramPrepare, view = ProgramNodeRecord, prepare_fn = prepare_program)]
 pub struct ProgramNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -1838,7 +1838,7 @@ fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:.))$", words = 6, fields = EscapeSequenceFields, prepare = EscapeSequencePrepare, view = EscapeSequenceNodeRecord)]
+#[node(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:.))$", words = 6, fields = EscapeSequenceFields, prepare = EscapeSequencePrepare, view = EscapeSequenceNodeRecord, prepare_fn = prepare_escape_sequence)]
 pub struct EscapeSequenceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -1946,7 +1946,7 @@ impl ::sittir_core::render::Render for QuantifierEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IDENTIFIER, text, words = 2, fields = IdentifierFields, prepare = IdentifierPrepare, view = IdentifierNodeRecord)]
+#[node(kind = kind::IDENTIFIER, text, words = 2, fields = IdentifierFields, prepare = IdentifierPrepare, view = IdentifierNodeRecord, prepare_fn = prepare_identifier)]
 pub struct IdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2014,7 +2014,7 @@ fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_IMMEDIATE_IDENTIFIER, text, words = 2, fields = ImmediateIdentifierFields, prepare = ImmediateIdentifierPrepare, view = ImmediateIdentifierNodeRecord)]
+#[node(kind = kind::_IMMEDIATE_IDENTIFIER, text, words = 2, fields = ImmediateIdentifierFields, prepare = ImmediateIdentifierPrepare, view = ImmediateIdentifierNodeRecord, prepare_fn = prepare_immediate_identifier)]
 pub struct ImmediateIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2082,7 +2082,7 @@ fn prepare_immediate_identifier<N: ImmediateIdentifierPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CAPTURE, layout = [kind::AT], words = 7, fields = CaptureFields, prepare = CapturePrepare, view = CaptureNodeRecord)]
+#[node(kind = kind::CAPTURE, layout = [kind::AT], words = 7, fields = CaptureFields, prepare = CapturePrepare, view = CaptureNodeRecord, prepare_fn = prepare_capture)]
 pub struct CaptureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2152,7 +2152,7 @@ fn prepare_capture<N: CapturePrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 7, fields = StringFields, prepare = StringPrepare, view = StringNodeRecord)]
+#[node(kind = kind::STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 7, fields = StringFields, prepare = StringPrepare, view = StringNodeRecord, prepare_fn = prepare_string)]
 pub struct StringNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2222,7 +2222,7 @@ fn prepare_string<N: StringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_IMMEDIATE_STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 7, fields = ImmediateStringFields, prepare = ImmediateStringPrepare, view = ImmediateStringNodeRecord)]
+#[node(kind = kind::_IMMEDIATE_STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 7, fields = ImmediateStringFields, prepare = ImmediateStringPrepare, view = ImmediateStringNodeRecord, prepare_fn = prepare_immediate_string)]
 pub struct ImmediateStringNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2292,7 +2292,7 @@ fn prepare_immediate_string<N: ImmediateStringPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CONTENT, words = 4, fields = StringContentFields, prepare = StringContentPrepare, view = StringContentNodeRecord)]
+#[node(kind = kind::STRING_CONTENT, words = 4, fields = StringContentFields, prepare = StringContentPrepare, view = StringContentNodeRecord, prepare_fn = prepare_string_content)]
 pub struct StringContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2362,7 +2362,7 @@ fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETERS, words = 4, fields = ParametersFields, prepare = ParametersPrepare, view = ParametersNodeRecord)]
+#[node(kind = kind::PARAMETERS, words = 4, fields = ParametersFields, prepare = ParametersPrepare, view = ParametersNodeRecord, prepare_fn = prepare_parameters)]
 pub struct ParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2438,7 +2438,7 @@ fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMMENT, interior = "^;(?<content>(?:.*))$", words = 6, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord)]
+#[node(kind = kind::COMMENT, interior = "^;(?<content>(?:.*))$", words = 6, fields = CommentFields, prepare = CommentPrepare, view = CommentNodeRecord, prepare_fn = prepare_comment)]
 pub struct CommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2506,7 +2506,7 @@ fn prepare_comment<N: CommentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST, layout = [kind::LBRACK, kind::RBRACK], words = 6, fields = ListFields, prepare = ListPrepare, view = ListNodeRecord)]
+#[node(kind = kind::LIST, layout = [kind::LBRACK, kind::RBRACK], words = 6, fields = ListFields, prepare = ListPrepare, view = ListNodeRecord, prepare_fn = prepare_list)]
 pub struct ListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2592,7 +2592,7 @@ fn prepare_list<N: ListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GROUPING, layout = [kind::LPAREN, kind::RPAREN], words = 6, fields = GroupingFields, prepare = GroupingPrepare, view = GroupingNodeRecord)]
+#[node(kind = kind::GROUPING, layout = [kind::LPAREN, kind::RPAREN], words = 6, fields = GroupingFields, prepare = GroupingPrepare, view = GroupingNodeRecord, prepare_fn = prepare_grouping)]
 pub struct GroupingNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2678,7 +2678,7 @@ fn prepare_grouping<N: GroupingPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], words = 9, fields = MissingNodeFields, prepare = MissingNodePrepare, view = MissingNodeNodeRecord)]
+#[node(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], words = 9, fields = MissingNodeFields, prepare = MissingNodePrepare, view = MissingNodeNodeRecord, prepare_fn = prepare_missing_node)]
 pub struct MissingNodeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2758,7 +2758,7 @@ fn prepare_missing_node<N: MissingNodePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ANONYMOUS_NODE, words = 9, fields = AnonymousNodeFields, prepare = AnonymousNodePrepare, view = AnonymousNodeNodeRecord)]
+#[node(kind = kind::ANONYMOUS_NODE, words = 9, fields = AnonymousNodeFields, prepare = AnonymousNodePrepare, view = AnonymousNodeNodeRecord, prepare_fn = prepare_anonymous_node)]
 pub struct AnonymousNodeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2838,7 +2838,7 @@ fn prepare_anonymous_node<N: AnonymousNodePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DEFINITION, words = 12, fields = FieldDefinitionFields, prepare = FieldDefinitionPrepare, view = FieldDefinitionNodeRecord)]
+#[node(kind = kind::FIELD_DEFINITION, words = 12, fields = FieldDefinitionFields, prepare = FieldDefinitionPrepare, view = FieldDefinitionNodeRecord, prepare_fn = prepare_field_definition)]
 pub struct FieldDefinitionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2912,7 +2912,7 @@ fn prepare_field_definition<N: FieldDefinitionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NEGATED_FIELD, layout = [kind::BANG | kind::BANG2], words = 7, fields = NegatedFieldFields, prepare = NegatedFieldPrepare, view = NegatedFieldNodeRecord)]
+#[node(kind = kind::NEGATED_FIELD, layout = [kind::BANG | kind::BANG2], words = 7, fields = NegatedFieldFields, prepare = NegatedFieldPrepare, view = NegatedFieldNodeRecord, prepare_fn = prepare_negated_field)]
 pub struct NegatedFieldNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2982,7 +2982,7 @@ fn prepare_negated_field<N: NegatedFieldPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PREDICATE, layout = [kind::LPAREN, kind::RPAREN], words = 22, fields = PredicateFields, prepare = PredicatePrepare, view = PredicateNodeRecord)]
+#[node(kind = kind::PREDICATE, layout = [kind::LPAREN, kind::RPAREN], words = 22, fields = PredicateFields, prepare = PredicatePrepare, view = PredicateNodeRecord, prepare_fn = prepare_predicate)]
 pub struct PredicateNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3100,7 +3100,7 @@ impl ::sittir_core::render::Render for PredicateTypeEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIST_ELEMENT_QUANTIFIER, words = 7, fields = ListElementQuantifierFields, prepare = ListElementQuantifierPrepare, view = ListElementQuantifierNodeRecord)]
+#[node(kind = kind::LIST_ELEMENT_QUANTIFIER, words = 7, fields = ListElementQuantifierFields, prepare = ListElementQuantifierPrepare, view = ListElementQuantifierNodeRecord, prepare_fn = prepare_list_element_quantifier)]
 pub struct ListElementQuantifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3169,7 +3169,7 @@ fn prepare_list_element_quantifier<N: ListElementQuantifierPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GROUP_EXPRESSION_ARM, layout = [kind::DOT], words = 12, fields = GroupExpressionArmFields, prepare = GroupExpressionArmPrepare, view = GroupExpressionArmNodeRecord)]
+#[node(kind = kind::GROUP_EXPRESSION_ARM, layout = [kind::DOT], words = 12, fields = GroupExpressionArmFields, prepare = GroupExpressionArmPrepare, view = GroupExpressionArmNodeRecord, prepare_fn = prepare_group_expression_arm)]
 pub struct GroupExpressionArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3243,7 +3243,7 @@ fn prepare_group_expression_arm<N: GroupExpressionArmPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_NODE_EXPRESSION_ARM, layout = [kind::DOT], words = 12, fields = NamedNodeExpressionArmFields, prepare = NamedNodeExpressionArmPrepare, view = NamedNodeExpressionArmNodeRecord)]
+#[node(kind = kind::NAMED_NODE_EXPRESSION_ARM, layout = [kind::DOT], words = 12, fields = NamedNodeExpressionArmFields, prepare = NamedNodeExpressionArmPrepare, view = NamedNodeExpressionArmNodeRecord, prepare_fn = prepare_named_node_expression_arm)]
 pub struct NamedNodeExpressionArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3317,7 +3317,7 @@ fn prepare_named_node_expression_arm<N: NamedNodeExpressionArmPrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GROUPING_GROUP, words = 8, fields = GroupingGroupFields, prepare = GroupingGroupPrepare, view = GroupingGroupNodeRecord)]
+#[node(kind = kind::GROUPING_GROUP, words = 8, fields = GroupingGroupFields, prepare = GroupingGroupPrepare, view = GroupingGroupNodeRecord, prepare_fn = prepare_grouping_group)]
 pub struct GroupingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3390,7 +3390,7 @@ fn prepare_grouping_group<N: GroupingGroupPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CONTENT_TEXT, text, words = 2, fields = StringContentTextFields, prepare = StringContentTextPrepare, view = StringContentTextNodeRecord)]
+#[node(kind = kind::STRING_CONTENT_TEXT, text, words = 2, fields = StringContentTextFields, prepare = StringContentTextPrepare, view = StringContentTextNodeRecord, prepare_fn = prepare_string_content_text)]
 pub struct StringContentTextNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3486,7 +3486,7 @@ impl ::sittir_core::render::Render for AnchorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_NODE_PLAIN, layout = [kind::LPAREN, kind::RPAREN], words = 14, fields = NamedNodePlainFields, prepare = NamedNodePlainPrepare, view = NamedNodePlainNodeRecord)]
+#[node(kind = kind::NAMED_NODE_PLAIN, layout = [kind::LPAREN, kind::RPAREN], words = 14, fields = NamedNodePlainFields, prepare = NamedNodePlainPrepare, view = NamedNodePlainNodeRecord, prepare_fn = prepare_named_node_plain)]
 pub struct NamedNodePlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3570,7 +3570,7 @@ fn prepare_named_node_plain<N: NamedNodePlainPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN], words = 19, fields = NamedNodeSupertypedFields, prepare = NamedNodeSupertypedPrepare, view = NamedNodeSupertypedNodeRecord)]
+#[node(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN], words = 19, fields = NamedNodeSupertypedFields, prepare = NamedNodeSupertypedPrepare, view = NamedNodeSupertypedNodeRecord, prepare_fn = prepare_named_node_supertyped)]
 pub struct NamedNodeSupertypedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3658,7 +3658,7 @@ fn prepare_named_node_supertyped<N: NamedNodeSupertypedPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_NODE_GROUP_CHILDREN, words = 5, fields = NamedNodeGroupChildrenFields, prepare = NamedNodeGroupChildrenPrepare, view = NamedNodeGroupChildrenNodeRecord)]
+#[node(kind = kind::NAMED_NODE_GROUP_CHILDREN, words = 5, fields = NamedNodeGroupChildrenFields, prepare = NamedNodeGroupChildrenPrepare, view = NamedNodeGroupChildrenNodeRecord, prepare_fn = prepare_named_node_group_children)]
 pub struct NamedNodeGroupChildrenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3737,7 +3737,7 @@ fn prepare_named_node_group_children<N: NamedNodeGroupChildrenPrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_NODE_GROUP_ANCHORED_LAST, layout = [kind::DOT], words = 10, fields = NamedNodeGroupAnchoredLastFields, prepare = NamedNodeGroupAnchoredLastPrepare, view = NamedNodeGroupAnchoredLastNodeRecord)]
+#[node(kind = kind::NAMED_NODE_GROUP_ANCHORED_LAST, layout = [kind::DOT], words = 10, fields = NamedNodeGroupAnchoredLastFields, prepare = NamedNodeGroupAnchoredLastPrepare, view = NamedNodeGroupAnchoredLastNodeRecord, prepare_fn = prepare_named_node_group_anchored_last)]
 pub struct NamedNodeGroupAnchoredLastNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -5377,13 +5377,41 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
 pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {
+    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
+}
+
+/// The one writer a root renders through, a node's or a record's: built
+/// from the render context, and a document when `document` says so of it.
+fn render_root(
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+    recording: Option<&mut ::sittir_core::baseline::Baseline>,
+    document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,
+    root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,
+) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
     let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording);
-    let document = ::sittir_core::view::KindTest::kind_in(node, &w, kind::ROOT_KINDS);
+    let document = document(&w);
     let mut w = w.with_document(document);
-    node.render(&mut w)?;
+    root(&mut w)?;
     w.finish()?;
     Ok(s)
+}
+
+::sittir_core::records_codec! {
+/// Render the record `root` names: prepared into a fresh overlay, then
+/// written through its view by the writer a node renders through.
+pub fn render_record(
+    root: ::sittir_core::arena::CellAt,
+    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    built: &::sittir_core::arena::Arena,
+    store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+) -> Result<String, ::sittir_core::render::RenderError> {
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx)?;
+    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;
+    let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
+    render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))
+}
 }
 
 impl ::sittir_core::view::KindOf for AnyNode {
