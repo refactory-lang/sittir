@@ -1,7 +1,14 @@
 import { join } from 'node:path';
 import { conflictStaleRecord, conflictUnresolvableRecord } from '../compiler/diagnostics/conflicts.ts';
 import { GrammarDiagnosticError, writeGrammarDiagnosticsJson } from '../compiler/diagnostics/grammar-diagnostics.ts';
-import { UNVERIFIED_GRAMMAR_HASH, type ConflictResolutionsFile, type DerivedResolution, type ResolutionSection } from '../dsl/conflict-resolutions.ts';
+import {
+	UNVERIFIED_GRAMMAR_HASH,
+	draftOf,
+	resolutionSection,
+	type ConflictResolutionsFile,
+	type ResolutionSection,
+	type SectionDraft
+} from '../dsl/conflict-resolutions.ts';
 import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { parseGenerateOutcome, type GenerateOutcome } from './conflict-summary.ts';
@@ -33,9 +40,9 @@ export async function settleConflictResolutions(input: {
 }): Promise<SettledConflicts> {
 	const { store, inputs } = input;
 	const writeSection = (grammar: GeneratedGrammar, section: ResolutionSection): void =>
-		store.write(grammar === 'base' ? { ...store.read(), ...section } : { ...store.read(), bound: section });
-	const probe = (grammar: GeneratedGrammar) => async (resolutions: readonly DerivedResolution[]): Promise<GenerateOutcome> => {
-		writeSection(grammar, { grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions });
+		store.write(grammar === 'base' ? { ...section, bound: store.read().bound } : { ...store.read(), bound: section });
+	const probe = (grammar: GeneratedGrammar) => async (draft: SectionDraft): Promise<GenerateOutcome> => {
+		writeSection(grammar, resolutionSection(UNVERIFIED_GRAMMAR_HASH, draft));
 		return input.runGenerate(grammar);
 	};
 	const saved = store.read();
@@ -47,24 +54,27 @@ export async function settleConflictResolutions(input: {
 				grammarHash: inputs.base.grammarHash,
 				ruleCount: inputs.base.ruleCount,
 				upstream: inputs.base,
+				inherited: [],
 				generate: probe('base'),
 				generateSaved: () => input.runGenerate('base')
 			});
 	if (base !== undefined) {
 		if (!settled(base)) return { kind: 'failed', grammar: 'base', result: base };
-		if (base.kind === 'converged') writeSection('base', { grammarHash: inputs.base.grammarHash, resolutions: base.resolutions });
+		if (base.kind === 'converged') writeSection('base', resolutionSection(inputs.base.grammarHash, base));
 	}
+	const settledBase: SettledResult = base ?? { kind: 'reused', ...draftOf(saved), iterations: 1 };
 	const bound = await reuseOrDeriveConflictResolutions({
 		saved: store.read().bound,
 		grammarHash: inputs.bound.grammarHash,
 		ruleCount: inputs.bound.ruleCount,
 		upstream: inputs.bound,
+		inherited: settledBase.resolutions.map((entry) => entry.resolution.symbols),
 		generate: probe('bound'),
 		generateSaved: () => input.runGenerate('bound')
 	});
 	if (!settled(bound)) return { kind: 'failed', grammar: 'bound', result: bound };
-	if (bound.kind === 'converged') writeSection('bound', { grammarHash: inputs.bound.grammarHash, resolutions: bound.resolutions });
-	return { kind: 'settled', base: base ?? { kind: 'reused', resolutions: saved.resolutions, iterations: 1 }, bound };
+	if (bound.kind === 'converged') writeSection('bound', resolutionSection(inputs.bound.grammarHash, bound));
+	return { kind: 'settled', base: settledBase, bound };
 }
 
 function stopRegen(sittirDir: string, blocking: GrammarDiagnostic): never {
@@ -73,9 +83,10 @@ function stopRegen(sittirDir: string, blocking: GrammarDiagnostic): never {
 }
 
 const settledLine = (grammar: GeneratedGrammar, result: SettledResult): string =>
-	result.kind === 'reused'
+	(result.kind === 'reused'
 		? `${grammar} ${result.resolutions.length} resolutions reused`
-		: `${grammar} ${result.resolutions.length} resolutions re-derived (${result.iterations} iterations)`;
+		: `${grammar} ${result.resolutions.length} resolutions re-derived (${result.iterations} iterations)`) +
+	(result.withdrawn.length === 0 ? '' : `, ${result.withdrawn.length} inherited withdrawn`);
 
 export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise<SettledConflicts> {
 	const sittirDir = sittirDirOf(pkg);

@@ -7440,11 +7440,11 @@ Calls wire's list callbacks once, with the layer's `$` and the completed base's 
 
 ### `packages/codegen/src/dsl/layer.ts::resolutionSections`
 
-The conflict resolutions file's sections by depth: the base section for the first layer and the bound section for the second.
+The conflict resolutions file's sections by depth, each with its resolutions and the inherited sets it withdrew: the base section for the first layer and the bound section for the second.
 
 ### `packages/codegen/src/dsl/layer.ts::layerConflicts`
 
-The conflict sets the `conflicts` callback returns. The first layer's are its section of the resolutions file, and replace any the base carries; a layer above keeps its base's sets and appends its own section's.
+The conflict sets the `conflicts` callback returns. The first layer's are its section of the resolutions file, and replace any the base carries. A layer above keeps its base's sets, less those its own section withdrew (compared as sets), and appends its own section's. It is the one place a withdrawal applies.
 
 ### `packages/codegen/src/dsl/layer.ts::completeLayer`
 
@@ -7488,13 +7488,15 @@ The shape of `.sittir/resolutions.json`: two `ResolutionSection`s. The top-level
 
 One derived resolution list and its stamp. `grammarHash` is the hash of the evaluated grammar the list was derived for, as tree-sitter sees it and without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`): the base grammar's for the base section, the bound grammar's for `bound`. It is the verified stamp: written only once the list has generated cleanly, so a section with a matching hash always held a list that built.
 
+`withdrawn`, in a section above the first, lists the inherited sets that the section's own clean run reported unnecessary, in the order the section inherits them. The key is absent when there are none (`resolutionSection`).
+
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::UNVERIFIED_GRAMMAR_HASH`
 
 The hash of a resolution set no clean `generate` has confirmed: the seed, and every candidate the derivation probes. No grammar hashes to it, so such a set is always derived again rather than reused.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsInput`
 
-The resolutions a grammar's layer 1 passes to `wire`, the base list and the `bound` section's list: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
+The resolutions a grammar's layer 1 passes to `wire`: the base section and the `bound` section, each a `ResolutionSectionInput`, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::CONFLICT_RESOLUTIONS_FILE`
 
@@ -7503,6 +7505,22 @@ The file name under a package's `.sittir/` that holds the derived resolutions, a
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::EMPTY_CONFLICT_RESOLUTIONS`
 
 The resolutions of a grammar nothing has been derived for, both sections empty and carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::ResolutionSectionInput`
+
+One section as a grammar's imported JSON types it: its `ConflictResolutionRecord`s, and, above the first layer, the inherited sets it withdrew.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::SectionDraft`
+
+A section's content without its stamp: its resolutions and the inherited sets it withdraws. The derivation loop probes and settles drafts; `resolutionSection` stamps one for the file and `draftOf` reads one back.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::draftOf`
+
+A section's draft, a missing `withdrawn` read as none.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::resolutionSection`
+
+A draft stamped with its grammar hash, as the file holds it. `withdrawn` is written only when it holds a set, so a section that withdraws nothing keeps the shape it always had.
 
 ### `packages/codegen/src/dsl/enrich.ts::applyElidedListField`
 

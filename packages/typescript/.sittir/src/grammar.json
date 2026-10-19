@@ -18108,10 +18108,6 @@
       "_lhs_expression"
     ],
     [
-      "primary_expression",
-      "_parameter_name"
-    ],
-    [
       "assignment_expression",
       "pattern"
     ],
@@ -18193,10 +18189,6 @@
       "literal_type"
     ],
     [
-      "_parameter_name",
-      "primary_type"
-    ],
-    [
       "_call_signature",
       "function_type"
     ],
@@ -18260,11 +18252,6 @@
       "primary_expression",
       "_lhs_expression",
       "literal_type"
-    ],
-    [
-      "primary_expression",
-      "_parameter_name",
-      "primary_type"
     ],
     [
       "_call_signature",

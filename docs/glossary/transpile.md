@@ -310,13 +310,7 @@ conflict to resolve, so it throws: the grammar is broken.
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::DerivationResult`
 
-```text
-How a derivation ended: `reused` when the saved resolutions generated cleanly
-in one run, `stale` with the failed outcome when saved resolutions carrying the
-current hash did not generate cleanly, `converged` with the resolutions and the number of `generate`
-runs, or `unresolvable` with the reason (`repeated`, `no-usable-offer`, `cap`, or `dropped-set-returned` when the prune dropped a set and the grammar conflicts again), the report that stopped it,
-and the resolutions gathered so far.
-```
+How a derivation ended: `reused` when the saved section generated cleanly in one run with nothing reported unnecessary; `stale` with the failed outcome when a saved section carrying the current hash did not generate cleanly; `converged` with the draft (the resolutions and the withdrawn inherited sets) and the number of `generate` runs; or `unresolvable` with the reason (`repeated`, `no-usable-offer`, `cap`, or `dropped-set-returned` when the prune dropped or withdrew a set and the grammar conflicts again), the report that stopped it, and the resolutions gathered so far.
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::declaredUpstream`
 
@@ -349,28 +343,28 @@ that fails to build for any other reason is broken, not conflicted.
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::DerivationInput`
 
-```text
-What the derivation loop is driven by: the rule-count cap, the upstream
-context, and the `generate` callback that runs tree-sitter with a candidate
-resolution list.
-```
+What the derivation loop is driven by: the rule-count cap, the upstream context, the sets the layer inherits from the layer below (which a clean run may withdraw; none for the first layer), and the `generate` callback that runs tree-sitter with a candidate draft.
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::reuseOrDeriveConflictResolutions`
 
 ```text
 Skips the derivation of one section when nothing it depends on changed. When the saved
 section carries the evaluated grammar's hash, they are tried in a single
-`generate` (`generateSaved`, which runs them without writing them); a clean run is `reused`. Any failure of that run, a conflict or a
+`generate` (`generateSaved`, which runs them without writing them); a clean run is `reused`, unless it reports sets unnecessary, which `pruneUnnecessary` then drops or withdraws from the saved draft. Every clean run recomputes the withdrawals, so none outlives the grammar that made it unneeded. Any failure of that run, a conflict or a
 build error such as a rule the set names that does not exist, is `stale`
 with the failed outcome, not a cue to derive again: the hash covers every input of the derivation, so the
 saved file was edited by hand or the hash misses an input, and either has to
-be seen. A changed hash derives again from an empty list, so no stale entry
-survives.
+be seen. A changed hash derives again from an empty list and no withdrawals, so no
+stale entry survives.
 ```
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::pruneUnnecessary`
 
-After the derivation loop converges, drops every derived resolution whose symbols tree-sitter's clean run called unnecessary (`sameConflictSet`), regenerates, and repeats on the new run's report until none is left. Each pass can free another: a later, wider set can make an earlier, narrower one unnecessary, and a set only becomes unnecessary once the one it duplicated is gone. A set the grammar declares itself (upstream, not in `resolutions`) is never dropped, and is not regenerated for. If the run after a drop reports a conflict, the dropped set was needed after all: it stops `unresolvable` with `dropped-set-returned`, carrying the report and the resolutions without the dropped sets. Each regeneration counts in `iterations`. A synthetic grammar over one state pins it against the real CLI. The case where a later, wider set makes an earlier derived set unnecessary is pinned only by a fake generator: no grammar we have produces it, and none of the real-CLI cases reaches it.
+Runs after a clean run, from a reused or converged start. It drops every own resolution whose symbols the run called unnecessary (`sameConflictSet`) and withdraws every inherited set the run called unnecessary, regenerates, and repeats on the new run's report until a run reports nothing it can act on. Each pass can free another: a later, wider set can make an earlier, narrower one unnecessary, and a set only becomes unnecessary once the one it duplicated is gone. A start the first pass leaves alone is returned as it is, so a reuse with nothing to prune stays `reused`. Withdrawn sets keep the order the layer inherits them in. A set the grammar declares itself (upstream, neither in `resolutions` nor inherited) is never dropped, and is not regenerated for. If the run after a drop or a withdrawal reports a conflict, the set was needed after all: it stops `unresolvable` with `dropped-set-returned`, carrying the report and the resolutions without the dropped sets. Each regeneration counts in `iterations`. A synthetic grammar over one state pins it against the real CLI. The case where a later, wider set makes an earlier derived set unnecessary is pinned only by a fake generator: no grammar we have produces it, and none of the real-CLI cases reaches it.
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::Settled`
+
+A derivation that ended with a section to keep or to write: `reused` or `converged`.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DerivationInputs`
 
@@ -502,7 +496,8 @@ its `generate`.
 
 ```text
 Reuses the saved resolutions or derives new ones against a store, one section
-at a time. The reuse probe leaves the saved file untouched: it only generates,
+at a time. The reuse probe leaves the saved file untouched unless its clean run reports
+sets unnecessary (then the prune rewrites the section, as a derivation does): it only generates,
 so a stale section stays stamped and keeps failing on every run until someone
 intervenes, rather than a rerun re-deriving and hiding an input the hash
 misses. Every derivation probe writes its candidate list into its section with
@@ -526,7 +521,10 @@ origin's. Every finished run ends in a clean `bound` generate, which builds the
 parser that ships and is what verifies the bound section, and a base section
 it reused: the run is `settled`, or `failed` with the grammar whose section
 did not settle. Only the bound hash changing (the bindings changed) keeps the
-base section and derives the bound one from an empty list.
+base section and derives the bound one from an empty list. The bound section
+inherits the base section's sets, as `layerConflicts` gives them to the
+second layer, so its clean run can withdraw the ones the bound grammar no
+longer needs.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::SettledConflicts`
 

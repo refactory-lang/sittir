@@ -2253,6 +2253,21 @@
 					]
 				}
 			}
+		],
+		"withdrawn": [
+			[
+				"primary_expression",
+				"_parameter_name"
+			],
+			[
+				"_parameter_name",
+				"primary_type"
+			],
+			[
+				"primary_expression",
+				"_parameter_name",
+				"primary_type"
+			]
 		]
 	}
 }

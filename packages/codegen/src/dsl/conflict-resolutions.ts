@@ -16,18 +16,36 @@ export interface DerivedResolution extends ConflictResolutionRecord {
 	readonly step: PolicyStep;
 }
 
+export interface SectionDraft {
+	readonly resolutions: readonly DerivedResolution[];
+	readonly withdrawn: readonly (readonly string[])[];
+}
+
 export interface ResolutionSection {
 	readonly grammarHash: string;
 	readonly resolutions: readonly DerivedResolution[];
+	readonly withdrawn?: readonly (readonly string[])[];
 }
 
 export interface ConflictResolutionsFile extends ResolutionSection {
 	readonly bound: ResolutionSection;
 }
 
-export interface ConflictResolutionsInput {
+export interface ResolutionSectionInput {
 	readonly resolutions: readonly ConflictResolutionRecord[];
-	readonly bound: { readonly resolutions: readonly ConflictResolutionRecord[] };
+	readonly withdrawn?: readonly (readonly string[])[];
+}
+
+export interface ConflictResolutionsInput extends ResolutionSectionInput {
+	readonly bound: ResolutionSectionInput;
+}
+
+export function draftOf(section: ResolutionSection): SectionDraft {
+	return { resolutions: section.resolutions, withdrawn: section.withdrawn ?? [] };
+}
+
+export function resolutionSection(grammarHash: string, draft: SectionDraft): ResolutionSection {
+	return { grammarHash, resolutions: draft.resolutions, ...(draft.withdrawn.length === 0 ? {} : { withdrawn: draft.withdrawn }) };
 }
 
 export const CONFLICT_RESOLUTIONS_FILE = 'resolutions.json';

@@ -2,7 +2,7 @@ import { enrichShapeDiagnostics, enrichShapesOf } from './enrich-shapes.ts';
 import type { GrammarJson, SymbolRule } from '../grammar-shapes/grammar-json.ts';
 import type { Rule } from '../types/rule.ts';
 import { FIELD } from '../types/rule-types.ts'; // @rule-type-consts
-import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionRecord, type ConflictResolutionsInput } from './conflict-resolutions.ts';
+import { EMPTY_CONFLICT_RESOLUTIONS, sameConflictSet, type ConflictResolutionsInput, type ResolutionSectionInput } from './conflict-resolutions.ts';
 import {
 	enrich,
 	getEnrichMints,
@@ -441,14 +441,18 @@ function evaluatedLists(wired: WiredOpts, ctx: ListsCtx): Omit<LayerLists, 'conf
 	};
 }
 
-function resolutionSections(resolutions: ConflictResolutionsInput): readonly (readonly ConflictResolutionRecord[])[] {
-	return [resolutions.resolutions, resolutions.bound.resolutions];
+function resolutionSections(resolutions: ConflictResolutionsInput): readonly ResolutionSectionInput[] {
+	return [resolutions, resolutions.bound];
 }
 
 function layerConflicts(ctx: LayerCtx): readonly (readonly unknown[])[] {
-	const own = (resolutionSections(ctx.resolutions)[ctx.depth - 1] ?? []).map((record) => namedSymbols(record.resolution.symbols));
+	const section = resolutionSections(ctx.resolutions)[ctx.depth - 1];
+	const own = (section?.resolutions ?? []).map((record) => namedSymbols(record.resolution.symbols));
 	if (ctx.depth === 1) return own;
-	const given = ((ctx.base.grammar.conflicts as readonly (readonly unknown[])[] | undefined) ?? []).map((set) => namedSymbols(set));
+	const withdrawn = section?.withdrawn ?? [];
+	const given = ((ctx.base.grammar.conflicts as readonly (readonly unknown[])[] | undefined) ?? [])
+		.map((set) => namedSymbols(set))
+		.filter((set) => !withdrawn.some((held) => sameConflictSet(held, [...symbolNamesOf(set)])));
 	return [...given, ...own];
 }
 
@@ -501,7 +505,11 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 		derivationRecords: derivationRecordsOf(rules, {
 			upstream: ctx.upstream,
 			liftNames,
-			conflicts: { resolutions: sections[0]!, boundResolutions: sections.slice(1, depth).flat(), conflictsAuthored: ctx.conflictsAuthored }
+			conflicts: {
+				resolutions: sections[0]!.resolutions,
+				boundResolutions: sections.slice(1, depth).flatMap((section) => section.resolutions),
+				conflictsAuthored: ctx.conflictsAuthored
+			}
 		}),
 		diagnostics: ctx.diagnostics
 	};
