@@ -399,3 +399,67 @@ describe('the printed layer', () => {
 		expect(JSON.stringify(raw.rules.call)).toContain('"value":"callee"');
 	}, 60_000);
 });
+
+describe('a child that shares a union slot', () => {
+	const base = (call: string, extra: string): string => `export default grammar({
+	name: 'bindtest',
+	rules: {
+		source_file: $ => repeat($._item),
+		_item: $ => choice($.let_item, $.call),
+		let_item: $ => seq('let', field('left', $.identifier), ';'),
+		call: $ => ${call},
+		identifier: _ => /[a-z]+/${extra}
+	}
+});
+`;
+	let union: RawGrammar;
+	let lone: RawGrammar;
+
+	beforeAll(async () => {
+		const unionBase = join(dir, 'union.mjs');
+		const loneBase = join(dir, 'lone.mjs');
+		writeFileSync(unionBase, base("seq(choice($.identifier, $.number), '(', ')', ';')", ",\n\t\tnumber: _ => /[0-9]+/"));
+		writeFileSync(loneBase, base("seq(choice($.identifier, 'x'), '(', ')', ';')", ""));
+		union = await evaluateSittirGrammar(unionBase, "bindtest");
+		lone = await evaluateSittirGrammar(loneBase, "bindtest");
+	}, 120_000);
+
+	const modelWith = (kinds: readonly string[]): SlotModel =>
+		new Map([
+			[
+				"call",
+				{
+					kind: "call",
+					modelType: "branch",
+					slots: [{ name: "content", propertyName: "content", required: true, multiple: false, storage: "verbatim", kinds, terminals: [] }],
+					subtypes: [],
+					elementKinds: [],
+					enumMembers: [],
+					text: null,
+					pattern: null,
+					variantOf: null,
+					shownAs: []
+				} as ModelNode
+			]
+		]);
+	const vocab = new Map([["expression.call", new Set(["callee"])]]);
+	const facts: BindingFacts = {
+		...FACTS,
+		claims: [claim("expression.call", "call")],
+		members: [{ route: "rename", owner: "call", name: "callee", field: null, kind: "identifier", after: null, anchor: null }]
+	};
+
+	it("takes no field wrap and is realized as a member when its slot holds other kinds too", () => {
+		const { bindings, report } = deriveGrammarBindings({ file: FILE, facts, base: union, vocabMembers: vocab, routes: ROUTES, model: modelWith(["identifier", "number"]) });
+		expect(report.fieldWraps).toEqual([]);
+		expect(report.fieldRenames).toEqual([]);
+		expect(report.realizedMembers).toEqual(["call.callee"]);
+		expect(bindings.patches.get("call")).toBeUndefined();
+	});
+
+	it("still wraps a child that sits alone in its slot", () => {
+		const { bindings, report } = deriveGrammarBindings({ file: FILE, facts, base: lone, vocabMembers: vocab, routes: ROUTES, model: modelWith(["identifier"]) });
+		expect(report.fieldWraps).toEqual([{ owner: "call", field: "callee", target: { symbol: "identifier" } }]);
+		expect(bindings.patches.get("call")).toEqual([[{ path: "0/0", edit: { field: "callee" } }]]);
+	});
+});

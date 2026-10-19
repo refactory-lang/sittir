@@ -337,6 +337,41 @@ describe('resolveRoutes', () => {
 		});
 	});
 
+	it("keeps the kinds a slot's captures name and lists the others in except", async () => {
+		const routes = resolveRoutes(await grammar("(choice_holder (identifier) @part_name) @declaration.function"));
+		expect(routes.members.get("choice_holder")?.find((m) => m.name === "partName")).toEqual({
+			route: "slot",
+			name: "partName",
+			slot: slot("part", ["identifier"]),
+			except: ["modifiers"],
+			path: [{ owner: "choice_holder", slot: "part" }]
+		});
+	});
+
+	it("keeps every kind of a slot when its capture is by field", async () => {
+		const routes = resolveRoutes(await grammar("(choice_holder part: (identifier) @x) @declaration.function"));
+		expect(routes.members.get("choice_holder")).toEqual([
+			{ route: "slot", name: "x", slot: slot("part", ["modifiers", "identifier"]), path: [{ owner: "choice_holder", slot: "part" }] }
+		]);
+	});
+
+	it("keeps every kind of a slot when its capture is a wildcard", async () => {
+		const routes = resolveRoutes(await grammar("(choice_holder (_) @x) @declaration.function"));
+		expect(routes.members.get("choice_holder")).toEqual([
+			{ route: "slot", name: "x", slot: slot("part", ["modifiers", "identifier"]), path: [{ owner: "choice_holder", slot: "part" }] }
+		]);
+	});
+
+	it("leaves a single-kind slot unnarrowed", async () => {
+		const routes = resolveRoutes(await grammar("(function_definition (identifier) @x) @declaration.function"));
+		expect(routes.members.get("function_definition")?.find((m) => m.name === "x")).toEqual({
+			route: "slot",
+			name: "x",
+			slot: slot("name", ["identifier"]),
+			path: [{ owner: "function_definition", slot: "name" }]
+		});
+	});
+
 	it("routes a flag through the slot its first capture names, testing that slot's kind", async () => {
 		const routes = resolveRoutes(
 			await grammar(
