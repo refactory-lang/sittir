@@ -2117,7 +2117,7 @@ mod tests {
         let addresses: Vec<crate::query::Address> = found.iter().map(|coord| crate::query::Address::Own { handle: coord.handle }).collect();
         let private = plan(&format!(r#"{{ "op": "match", {}, "pattern": "^_" }}"#, slots(&[("function_item", 0)])));
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
-        let elsewhere = crate::query::Address::Own { handle: encode_handle(crate::types::TreeId(9), crate::types::NodeIndex(0)) };
+        let elsewhere = crate::query::Address::Own { handle: encode_handle(crate::types::TreeId(tree.tree_id().0 + 1), crate::types::NodeIndex(0)) };
         assert!(tree.plan_holds(&[elsewhere], &private).is_err());
         let past_end = crate::query::Address::Own { handle: encode_handle(decode_handle(root).0, NodeIndex(u32::MAX >> 1)) };
         assert!(tree.plan_holds(&[past_end], &private).is_err());
