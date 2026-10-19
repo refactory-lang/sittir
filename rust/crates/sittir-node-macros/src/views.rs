@@ -244,11 +244,15 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         (
             quote!(#common #words_member #(#members)*),
             quote! {
-                let (ctx, at, link) = match cell {
-                    ::sittir_core::arena::Cell::Child { kind, at, link } if kind == #kind => match link {
-                        ::core::option::Option::Some(link) => (ctx.linked(link.tree)?, at, ::core::option::Option::Some(link.changed)),
-                        ::core::option::Option::None => (ctx, at, ::core::option::Option::None),
-                    },
+                let (ctx, at, held) = match cell {
+                    ::sittir_core::arena::Cell::Child { kind, at, link, changed } if kind == #kind => (
+                        match link {
+                            ::core::option::Option::Some(tree) => ctx.linked(tree)?,
+                            ::core::option::Option::None => ctx,
+                        },
+                        at,
+                        changed,
+                    ),
                     _ => return ::core::result::Result::Err(#refused),
                 };
                 let (words, side) = ::sittir_core::arena::record_of(ctx, at, #words, #kind)?;
@@ -258,7 +262,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     __place: place,
                     __site: site,
                     __edges: side.edges.unwrap_or_default(),
-                    __changed: link.unwrap_or(side.changed),
+                    __changed: if site.is_some() { held } else { side.changed },
                     #words_init
                     #(#inits)*
                 })
@@ -462,8 +466,8 @@ mod tests {
         assert!(has(&out, "impl ::sittir_core::arena::HasRecord for BlockNode { type Record<'a> = BlockNodeRecord<'a>; }"));
         assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { kind == kind::BLOCK }"));
         assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, 12u32, kind::BLOCK)?;"));
-        assert!(has(&out, "::core::option::Option::Some(link) => (ctx.linked(link.tree)?, at, ::core::option::Option::Some(link.changed)),"));
-        assert!(has(&out, "__changed: link.unwrap_or(side.changed), __words: words,"));
+        assert!(has(&out, "match link { ::core::option::Option::Some(tree) => ctx.linked(tree)?, ::core::option::Option::None => ctx, }, at, changed,"));
+        assert!(has(&out, "__changed: if site.is_some() { held } else { side.changed }, __words: words,"));
         assert!(has(&out, "r#async: (words[2usize] >> 3u32) & 1 != 0,"));
         assert!(has(&out, "statements: ::sittir_core::arena::RecordItems::of(ctx, place, 8u32, 5u32, &words[8usize..10usize])?,"));
         assert!(has(&out, "delimiter: ctx.prepared().delimiter(place, side.delimiter),"));

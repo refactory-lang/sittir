@@ -360,7 +360,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for Reco
                     return crate::slot::write_coordinate(&coord, ADJACENT, w);
                 }
                 let at = self.ctx.row_record(index).ok_or(RenderError::Record(malformed("edited coordinate record", index.0)))?;
-                V::from_cell(self.ctx, Cell::Child { kind, at, link: None }, Some(self.site)).map_err(RenderError::Record)?.render(w)
+                V::from_cell(self.ctx, Cell::Child { kind, at, link: None, changed: ChangedEdges::default() }, Some(self.site)).map_err(RenderError::Record)?.render(w)
             }
         }
     }

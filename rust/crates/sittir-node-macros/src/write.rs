@@ -114,7 +114,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let side = bind(!settings.is_empty(), quote!(__side));
     Ok(writer(quote! {
             #spans
-            let __at = ::sittir_core::arena::write_record(
+            ::sittir_core::arena::write_record(
                 __sink,
                 __KIND,
                 #words,
@@ -128,8 +128,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     #(#settings)*
                     ::core::result::Result::Ok(())
                 },
-            )?;
-            ::core::result::Result::Ok(::sittir_core::arena::Cell::Child { kind: __KIND, at: __at, link: ::core::option::Option::None })
+            )
     }))
 }
 

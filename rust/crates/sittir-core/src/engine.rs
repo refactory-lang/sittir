@@ -1960,7 +1960,8 @@ mod tests {
         let (two, _) = parsed("fn g() {}");
         let row = NodeIndex::new(1);
         let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 })), ..NodeLayout::default() };
-        let at = write_record(&mut RecordSink::parsed(one.tree_id(), &mut one.tree_arena()), KindId(3), 2, Some(&layout), |_| None, |_, _, _| Ok(())).expect("written");
+        let cell = write_record(&mut RecordSink::parsed(one.tree_id(), &mut one.tree_arena()), KindId(3), 2, Some(&layout), |_| None, |_, _, _| Ok(())).expect("written");
+        let crate::arena::Cell::Child { at, .. } = cell else { panic!("a record, not {cell:?}") };
         assert_eq!(one.tree_arena().record(row), Some(at), "a later read reaches the record");
         assert_eq!(two.tree_arena().record(row), None, "another tree's row has a record of its own");
     }

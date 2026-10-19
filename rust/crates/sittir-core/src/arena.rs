@@ -21,7 +21,7 @@ mod write;
 use std::collections::HashMap;
 use std::fmt;
 
-pub use cell::{Cell, ListCell, ParsedLink};
+pub use cell::{Cell, ListCell};
 pub use prepared::{Prepared, PreparedNode, PreparedSlot};
 pub use view::{place_of, record_of, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record};
