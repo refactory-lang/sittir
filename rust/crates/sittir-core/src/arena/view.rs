@@ -204,18 +204,28 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 
     /// The coordinate of the parsed node `row` names, as a read of its tree
-    /// names it, of the kind its cell names it as and with the edges it marks
-    /// changed.
+    /// names it (`row_node`), of the kind its cell names it as and with the
+    /// edges it marks changed.
     ///
     /// # Errors
     ///
-    /// `ArenaError::Malformed` when the render holds no tree of `row`, or
-    /// the tree has no node there.
+    /// What `row_node` refuses.
     pub fn row_coordinate(self, row: ParsedRow) -> Result<NodeCoordinate, ArenaError> {
-        let (live, read) = self.sources.read_ctx(row.tree).ok_or(malformed("record tree", row.tree.0))?;
-        let node = crate::engine::node_at_index(live, row.row).ok_or(malformed("record row", row.row.0))?;
         let writes = (row.changed != ChangedEdges::default()).then(|| Box::new(crate::slot::CoordinateWrites { changed: row.changed }));
-        Ok(NodeCoordinate { kind: Some(row.kind), writes, ..read.coordinate(&node, row.row) })
+        Ok(NodeCoordinate { kind: Some(row.kind), writes, ..self.row_node(row.tree, row.row)? })
+    }
+
+    /// The coordinate of the node at `row` of `tree` a read of it names
+    /// (`ReadCtx::coordinate`): a read node's own `at`.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` when the render holds no tree `tree`, or the
+    /// tree has no node at `row`.
+    pub fn row_node(self, tree: TreeId, row: NodeIndex) -> Result<NodeCoordinate, ArenaError> {
+        let (live, read) = self.sources.read_ctx(tree).ok_or(malformed("record tree", tree.0))?;
+        let node = crate::engine::node_at_index(live, row).ok_or(malformed("record row", row.0))?;
+        Ok(read.coordinate(&node, row))
     }
 }
 
@@ -337,16 +347,17 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
 }
 
 /// The place of the record at `at` whose side record is `side`: a parsed
-/// record's row in its tree, a built record's address.
+/// record's row in its tree, or, for an envelope's content, which shares its
+/// envelope's row and is not the record the row's index names, its record
+/// there; a built record's address.
 ///
 /// # Errors
 ///
 /// `ArenaError::Malformed` for a parsed record whose side record names no row.
 pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Place, ArenaError> {
-    match ctx.tree {
-        Some(tree) => side.at.map(|(row, _)| Place::Row { tree, row }).ok_or(malformed("parsed record row", at.0)),
-        None => Ok(Place::Record(at)),
-    }
+    let Some(tree) = ctx.tree else { return Ok(Place::Record(at)) };
+    let (row, _) = side.at.ok_or(malformed("parsed record row", at.0))?;
+    Ok(if ctx.row_record(row) == Some(at) { Place::Row { tree, row } } else { Place::Content { tree, record: at } })
 }
 
 /// Text that is a slot's content with no kind of its own, or an `ERROR`

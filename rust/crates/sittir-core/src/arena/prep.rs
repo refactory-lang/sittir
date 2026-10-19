@@ -318,14 +318,20 @@ pub struct LayoutAt<'r, T> {
 
 /// The layout a native node of the record `key` names holds before its
 /// prepare. A parsed node's sides, slot layouts and separator are its row's,
-/// as a read of it seats them; a built node's are its side record's and the
-/// store's, `keys` naming each slot's wire key by its word. Its changed edges
+/// as a read of it seats them; an envelope's content keeps only its own
+/// coordinate, as a read content does, its row's layout being its
+/// envelope's; a built node's are its side record's and the store's, `keys`
+/// naming each slot's wire key by its word. Its changed edges
 /// are left out: the render trims its sides at the edges its site marks.
 fn rebuild<T: Clone + 'static>(prep: &RecordPrep<'_, T>, key: &RecordKey, keys: fn(u32) -> Option<&'static str>) -> Result<NodeLayout<T>, ArenaError> {
     let side = key.side(prep)?;
     let sides = side.sides.map(|from| NodeCoordinate::new(from.tree, from.index, from.end, from.span));
+    if let Place::Content { tree, .. } = key.place {
+        let (row, _) = side.at.ok_or(malformed("parsed record row", 0))?;
+        return Ok(NodeLayout { at: Some(prep.view(key.tree)?.row_node(tree, row)?), ..NodeLayout::default() });
+    }
     if let Some(row) = key.row {
-        let at = prep.row_coordinate(key.tree, ParsedRow { changed: ChangedEdges::default(), ..row })?;
+        let at = prep.view(key.tree)?.row_node(row.tree, row.row)?;
         return Ok(NodeLayout {
             trivia: prep.sources.sides(&at).and_then(|sides| sides.into_any().downcast::<NodeTrivia<T>>().ok()).map(|trivia| *trivia),
             slots: prep.sources.slot_layouts(&at),

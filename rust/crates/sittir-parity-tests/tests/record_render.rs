@@ -222,3 +222,69 @@ fn an_untouched_parsed_record_a_built_record_links_renders_as_its_source() {
     assert_eq!(record, native);
 }
 
+
+type TypeScriptRenders = Renders<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>;
+
+fn typescript() -> TypeScriptRenders {
+    Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts, record: sittir_typescript::render::node::render_record }
+}
+
+const ENVELOPED: &str = "interface I {\n  a: string;\n  b: number;\n}\n";
+
+#[test]
+fn an_envelope_and_its_content_a_write_lies_in_prepare_apart_and_render_from_their_records() {
+    use sittir_typescript::render::kind_ids as ts;
+    use sittir_typescript::render::node::TriviaNode;
+    let renders = typescript();
+    let mut engine = renders.engine();
+    let options = engine.options().clone();
+    for depth in [Depth::ONE, Depth::All] {
+        let tree = TypeScriptRenders::parse(&mut engine, ENVELOPED);
+        let property = index_of(&tree, ts::PROPERTY_SIGNATURE, 1);
+        let comment = sittir_core::trivia::TriviaText { kind: ts::COMMENT_LINE, text: "// written".to_owned(), span: None, before: None, after: None };
+        let entries = [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(entry))).collect();
+        tree.write_trivia_side(property, sittir_core::trivia_table::TriviaSide::Leading, entries);
+        let native = renders.native(&tree, &options).expect("a root").expect("a native render");
+        let record = renders.record(&tree, &Arena::new(), TypeScriptRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
+        assert_eq!(record, native, "read {depth:?}");
+        assert!(record.contains("// written"), "{record:?}");
+        assert_apart(&tree, &options);
+    }
+}
+
+/// The envelope `_interface_body` of `tree` and the object type it holds,
+/// which share one row, each prepare at a place of its own with its own
+/// kind's edges.
+fn assert_apart(tree: &ParsedTree<sittir_typescript::TypeScriptGrammar>, options: &ResolvedOptions) {
+    use sittir_core::arena::Prepared;
+    use sittir_core::trivia_store::Place;
+    use sittir_typescript::render::kind_ids as ts;
+    let row = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+        .map(NodeIndex::new)
+        .find(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| sittir_core::read::display_id(&node) == ts::_INTERFACE_BODY))
+        .expect("an interface body");
+    let (envelope, content) = {
+        let arena = tree.tree_arena();
+        let envelope = arena.record(row).expect("the edited envelope's record");
+        let words = arena.arena().words(envelope, 7).expect("its words");
+        let Ok(Cell::Child { at, .. }) = Cell::decode(&words[2..7]) else { panic!("its content is a record") };
+        (envelope, at)
+    };
+    let ctx = RenderContext { options, sources: tree };
+    let root = CellAt { cell: Cell::Child { kind: ts::PROGRAM, at: tree.tree_arena().record(NodeIndex::ROOT).expect("the root's record"), link: None, changed: sittir_core::slot::ChangedEdges::default() }, tree: Some(tree.tree_id()), site: None };
+    let prepared: Prepared<_> = {
+        let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
+        sittir_core::arena::prepare_root::<_, sittir_typescript::render::AnyNode>(&mut arenas, &Arena::new(), tree.written(), root, &ctx).expect("prepared")
+    };
+    let own = |kind| {
+        let mut edges = sittir_core::options::Edges::default();
+        sittir_core::prepare::prepare_edges(&mut edges, kind, (None, None), &ctx);
+        edges
+    };
+    let edges = |place| prepared.node(place).map(|node| node.edges);
+    let (envelope_place, content_place) = (Place::Row { tree: tree.tree_id(), row }, Place::Content { tree: tree.tree_id(), record: content });
+    assert_ne!(envelope, content);
+    assert_ne!(own(ts::_INTERFACE_BODY), own(ts::OBJECT_TYPE), "the two kinds' edges differ, so a shared place would lose one");
+    assert_eq!(edges(envelope_place), Some(own(ts::_INTERFACE_BODY)));
+    assert_eq!(edges(content_place), Some(own(ts::OBJECT_TYPE)));
+}

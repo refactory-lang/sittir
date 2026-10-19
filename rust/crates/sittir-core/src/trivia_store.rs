@@ -25,6 +25,12 @@ pub enum Place {
     /// A built unit, which has no record: its site in its holder's record.
     #[cfg(feature = "arena")]
     Unit(Site<crate::arena::Address>),
+    /// A parsed record its row's index does not name: an envelope's
+    /// content, which shares its envelope's row and is reached through the
+    /// envelope's cell, by its record in its tree's arena. No side is written
+    /// at it: the row's sides are its envelope's.
+    #[cfg(feature = "arena")]
+    Content { tree: TreeId, record: crate::arena::Address },
 }
 
 /// A position in a holder: the holder, the slot's stamped word and the
