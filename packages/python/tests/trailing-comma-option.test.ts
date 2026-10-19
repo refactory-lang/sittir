@@ -4,6 +4,8 @@ import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
 
+// Upstream's grammar admits several iterables and a trailing comma in a for clause, which CPython rejects;
+// these cases pin upstream's current acceptance, and issue 901 tracks authoring it as one disjunction.
 describe('the trailing comma after a comprehension for clause is an optional-field spelling', () => {
 	it('a parsed comprehension keeps the spelling it was written with', () => {
 		for (const source of ['[x for x in a, b]\n', '[x for x in a, b,]\n']) expect(py.parse(source).$render()).toBe(source);
