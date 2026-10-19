@@ -113,7 +113,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * Repo-relative roots holding the cross-platform generated content for a
- * grammar. Single source of truth: the manifest (`files` section) and the
+ * grammar, with the two files codegen writes beside the package's `src`
+ * (`tests/nodes.test.ts` and `vitest.config.ts`). Single source of truth: the manifest (`files` section) and the
  * post-regen emit-diff report (`emit-diff.ts`) both consume this, so they can
  * never disagree about what counts as "generated."
  *

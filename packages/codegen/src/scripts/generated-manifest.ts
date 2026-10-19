@@ -35,6 +35,8 @@ export function generatedRootsFor(grammar: GrammarName): string[] {
 	return [
 		`packages/${grammar}/src`,
 		`packages/${grammar}/.sittir`,
+		`packages/${grammar}/tests/nodes.test.ts`,
+		`packages/${grammar}/vitest.config.ts`,
 		`${nativeCrateRelDir(grammar)}/src`,
 		`${nativeCrateRelDir(grammar)}/test-fixtures.json`,
 		`${nativeBindingRelDir(grammar)}/index.d.ts`,
