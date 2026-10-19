@@ -11,7 +11,7 @@ use std::marker::PhantomData;
 
 use super::view::ParsedRow;
 use super::{place_of, record_of, Address, PrepPlace, Arena, ArenaError, Cell, ListCell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
-use crate::layout::{slot_entry, Layout, NodeLayout, SlotLayout, UnitSides};
+use crate::layout::{merge_source_sides, slots_or_source, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::prepare::{
     coord_seat, coordinate_edges, fill_coordinate_gap, fill_gaps, fill_node_gap, fill_seats, seat_coordinate, seat_node, seat_read_node, seat_site, separators, unread, ArmOf, EdgeItem, EdgeItems, FromKindId, GapItems,
@@ -215,15 +215,12 @@ struct RecordKey {
     /// The edges whose neighbour the record's holder changed: its site's, or
     /// a root's own.
     changed: ChangedEdges,
-    /// A parsed node's row.
-    row: Option<ParsedRow>,
 }
 
 impl RecordKey {
     /// The key of the `kind` record or leaf `at` names.
     fn of<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId) -> Result<Self, ArenaError> {
         let view = prep.view(at.tree)?;
-        let row = view.parsed_row(at.cell)?;
         match at.cell {
             Cell::Child { kind: named, at: record, link, changed } if named == kind => {
                 let view = match link {
@@ -232,15 +229,15 @@ impl RecordKey {
                 };
                 let (_, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 let place = place_of(view, record, &side, at.site)?;
-                Ok(Self { tree: view.tree(), at: Some(record), place, changed: if at.site.is_some() { changed } else { side.changed }, row })
+                Ok(Self { tree: view.tree(), at: Some(record), place, changed: if at.site.is_some() { changed } else { side.changed } })
             }
             Cell::BuiltLeaf { kind: named, record, .. } if named == kind => {
                 let (_, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                Ok(Self { tree: None, at: Some(record), place: Place::Record(record).into(), changed: side.changed, row: None })
+                Ok(Self { tree: None, at: Some(record), place: Place::Record(record).into(), changed: side.changed })
             }
             Cell::ParsedLeaf { kind: named, row: leaf, .. } if named == kind => {
                 let tree = view.tree().ok_or(malformed("parsed leaf in a built record", leaf.0))?;
-                Ok(Self { tree: Some(tree), at: None, place: Place::Row { tree, row: leaf }.into(), changed: ChangedEdges::default(), row })
+                Ok(Self { tree: Some(tree), at: None, place: Place::Row { tree, row: leaf }.into(), changed: ChangedEdges::default() })
             }
             _ => Err(malformed("prepared cell", u32::from(kind.0))),
         }
@@ -308,63 +305,112 @@ impl<'r, T> RecordAt<'r, T> {
     }
 }
 
-/// A record's layout, as its prepare body prepares and reads it: the layout
-/// a native node of the record would hold, rebuilt into the overlay.
+/// A node's own sides, and its unit children's by slot and item.
+type OwnSides<T> = (Option<NodeTrivia<T>>, Vec<UnitSides<T>>);
+
+/// A record's layout, as its prepare body prepares and reads it. Each fact
+/// is read where it is kept, as a native node of the record holds it after
+/// its prepare: where it came from, from its tree; its stored slot layouts
+/// and the node it was rebuilt from, from its side record or its tree. What
+/// prepare makes of it (its sides prepared, its slots' per-item separators)
+/// goes to the overlay. An envelope's content has none of these: its row's
+/// layout is its envelope's.
 pub struct LayoutAt<'r, T> {
     key: RecordKey,
     keys: fn(u32) -> Option<&'static str>,
     overlay: Marker<'r, T>,
 }
 
-/// The layout a native node of the record `key` names holds before its
-/// prepare. A parsed node's sides, slot layouts and separator are its row's,
-/// as a read of it seats them; an envelope's content keeps only its own
-/// coordinate, as a read content does, its row's layout being its
-/// envelope's; a built node's are its side record's and the store's, `keys`
-/// naming each slot's wire key by its word. Its changed edges
-/// are left out: the render trims its sides at the edges its site marks.
-fn rebuild<T: Clone + 'static>(prep: &RecordPrep<'_, T>, key: &RecordKey, keys: fn(u32) -> Option<&'static str>) -> Result<NodeLayout<T>, ArenaError> {
-    let side = key.side(prep)?;
-    let sides = side.sides.map(|from| NodeCoordinate::new(from.tree, from.index, from.end, from.span));
-    if let PrepPlace::Content(Site { holder: Place::Row { tree, row }, .. }) = key.place {
-        return Ok(NodeLayout { at: Some(prep.view(key.tree)?.row_node(tree, row)?), ..NodeLayout::default() });
+impl<T: Clone + 'static> LayoutAt<'_, T> {
+    fn enveloped(&self) -> bool {
+        matches!(self.key.place, PrepPlace::Content(_))
     }
-    if let Some(row) = key.row {
-        let at = prep.view(key.tree)?.row_node(row.tree, row.row)?;
-        return Ok(NodeLayout {
-            trivia: prep.sources.sides(&at).and_then(|sides| sides.into_any().downcast::<NodeTrivia<T>>().ok()).map(|trivia| *trivia),
-            slots: prep.sources.slot_layouts(&at),
-            separator: prep.sources.separator_before(&at),
-            at: Some(at),
-            span: side.span,
-            sides,
-            ..NodeLayout::default()
-        });
-    }
-    let (PrepPlace::Stored(Place::Record(record)), Some(_)) = (key.place, key.at) else { return Err(malformed("record place", 0)) };
-    let key_of = |word: u32| keys(word).ok_or(malformed("slot word", word));
-    let units = prep.store.units(record).into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
-    let slots = side
-        .slots
-        .iter()
-        .filter(|slot| slot.before.is_some() || slot.after.is_some() || slot.separator.is_some() || !slot.tokens.is_empty())
-        .map(|slot| Ok(SlotLayout { slot: key_of(slot.word)?.to_owned(), before: slot.before, after: slot.after, separator: slot.separator, tokens: slot.tokens.clone() }))
-        .collect::<Result<_, ArenaError>>()?;
-    Ok(NodeLayout { trivia: prep.store.sides(Place::Record(record)), span: side.span, sides, units, slots, separator: side.separator, ..NodeLayout::default() })
-}
 
-impl<T> LayoutAt<'_, T> {
-    /// What `read` answers of the layout prepare left for the record.
-    fn read<'p, R>(&self, prep: &'p RecordPrep<'_, T>, read: impl FnOnce(&'p Option<Box<NodeLayout<T>>>) -> Option<R>) -> Option<R> {
-        prep.prepared.node(self.key.place).and_then(|node| read(&node.layout))
+    /// Where a parsed node came from (`NodeLayout::at`): its row's coordinate.
+    fn at(&self, prep: &RecordPrep<'_, T>) -> Result<Option<NodeCoordinate>, ArenaError> {
+        let Some((tree, row)) = self.key.place.row() else { return Ok(None) };
+        prep.view(self.key.tree)?.row_node(tree, row).map(Some)
+    }
+
+    /// The node the record was rebuilt from (`NodeLayout::sides`).
+    fn rebuilt_from(&self, prep: &RecordPrep<'_, T>) -> Result<Option<NodeCoordinate>, ArenaError> {
+        if self.enveloped() {
+            return Ok(None);
+        }
+        Ok(self.key.side(prep)?.sides.map(super::Sides::coordinate))
+    }
+
+    /// The layouts its list slots store (`NodeLayout::slots`): a parsed
+    /// node's row's, a built node's side record's, `keys` naming each slot by
+    /// its word; else, when it stores none, the node it was rebuilt from's.
+    fn stored_slots(&self, prep: &RecordPrep<'_, T>) -> Result<Vec<SlotLayout>, ArenaError> {
+        if self.enveloped() {
+            return Ok(Vec::new());
+        }
+        let own = if let Some(at) = self.at(prep)? {
+            prep.sources.slot_layouts(&at)
+        } else {
+            let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
+            let side = self.key.side(prep)?;
+            side.slots
+                .iter()
+                .filter(|slot| slot.before.is_some() || slot.after.is_some() || slot.separator.is_some() || !slot.tokens.is_empty())
+                .map(|slot| Ok(SlotLayout { slot: key_of(slot.word)?.to_owned(), before: slot.before, after: slot.after, separator: slot.separator, tokens: slot.tokens.clone() }))
+                .collect::<Result<_, ArenaError>>()?
+        };
+        Ok(slots_or_source(own, self.rebuilt_from(prep)?.as_ref(), prep.sources))
+    }
+
+    /// Its own sides and its units' sides as a read or a write left them:
+    /// a parsed node's from its tree, a built node's from the store. Each
+    /// side it holds none of is the one of the node it was rebuilt from.
+    fn own_sides(&self, prep: &RecordPrep<'_, T>) -> Result<OwnSides<T>, ArenaError> {
+        if self.enveloped() {
+            return Ok((None, Vec::new()));
+        }
+        let (mut trivia, units) = match (self.at(prep)?, self.key.place) {
+            (Some(at), _) => (prep.sources.sides(&at).and_then(|sides| sides.into_any().downcast::<NodeTrivia<T>>().ok()).map(|trivia| *trivia), Vec::new()),
+            (None, PrepPlace::Stored(Place::Record(record))) => {
+                let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
+                let units = prep.store.units(record).into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
+                (prep.store.sides(Place::Record(record)), units)
+            }
+            _ => return Err(malformed("record place", 0)),
+        };
+        merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref(), prep.sources);
+        Ok((trivia, units))
+    }
+
+    /// The span a snapshot node lies at (`NodeLayout::span`).
+    fn span(&self, prep: &RecordPrep<'_, T>) -> Option<crate::points::PointSpan> {
+        if self.enveloped() {
+            return None;
+        }
+        self.key.side(prep).ok()?.span
+    }
+
+    /// The sides prepare left for the record.
+    fn prepared<'p>(&self, prep: &'p RecordPrep<'_, T>) -> Option<&'p NodeTrivia<T>> {
+        prep.prepared.node(self.key.place)?.trivia.as_ref()
     }
 }
 
 impl<'r, T: Prepare + TriviaSeam + Clone + 'static> LayoutTarget<RecordPrep<'r, T>> for LayoutAt<'r, T> {
+    /// Prepares its sides and its units' sides into the overlay, which takes
+    /// the per-item separators its slots store as its slots' first.
     fn prepare(&mut self, prep: &mut RecordPrep<'r, T>, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        let mut layout = Some(Box::new(rebuild(prep, &self.key, self.keys)?));
-        Prepare::prepare(&mut layout, ctx)?;
-        prep.prepared.node_mut(self.key.place).layout = layout;
+        let (mut trivia, mut units) = self.own_sides(prep)?;
+        let stored: Vec<_> = self.stored_slots(prep)?.into_iter().filter(|slot| !slot.tokens.is_empty()).collect();
+        for unit in &mut units {
+            unit.trivia.prepare(ctx)?;
+        }
+        trivia.prepare(ctx)?;
+        let node = prep.prepared.node_mut(self.key.place);
+        node.trivia = trivia;
+        node.units = units;
+        for slot in stored {
+            node.set_tokens(&slot.slot, slot.tokens);
+        }
         Ok(())
     }
 
@@ -373,25 +419,34 @@ impl<'r, T: Prepare + TriviaSeam + Clone + 'static> LayoutTarget<RecordPrep<'r, 
     }
 
     fn set_slot_tokens(&mut self, prep: &mut RecordPrep<'r, T>, slot: &str, tokens: Vec<Option<KindId>>) {
-        slot_entry(&mut prep.prepared.node_mut(self.key.place).layout, slot).tokens = tokens;
+        prep.prepared.node_mut(self.key.place).set_tokens(slot, tokens);
     }
 
+    /// Its stored layout, with the per-item separators prepare gave it.
     fn slot(&self, prep: &RecordPrep<'r, T>, slot: &str) -> Option<Cow<'_, SlotLayout>> {
-        self.read(prep, |layout| Layout::slot(layout, slot).cloned()).map(Cow::Owned)
+        let stored = self.stored_slots(prep).ok()?.into_iter().find(|entry| entry.slot == slot);
+        let tokens = prep.prepared.node(self.key.place).and_then(|node| node.tokens(slot));
+        let layout = match (stored, tokens) {
+            (Some(stored), None) => stored,
+            (stored, Some(tokens)) => SlotLayout { tokens: tokens.to_vec(), ..stored.unwrap_or_else(|| SlotLayout { slot: slot.to_owned(), ..SlotLayout::default() }) },
+            (None, None) => return None,
+        };
+        Some(Cow::Owned(layout))
     }
 
     fn sides(&self, prep: &RecordPrep<'r, T>) -> Option<Cow<'_, NodeCoordinate>> {
-        self.read(prep, |layout| Layout::sides(layout).cloned()).map(Cow::Owned)
+        self.rebuilt_from(prep).ok()?.map(Cow::Owned)
     }
 
     fn snapshot_edge(&self, prep: &RecordPrep<'r, T>) -> Option<SnapshotEdge> {
-        self.read(prep, Layout::snapshot_edge)
+        crate::layout::snapshot_edge(self.span(prep), self.prepared(prep))
     }
 
     fn inner_item(&self, prep: &RecordPrep<'r, T>) -> Option<EdgeItem<'_>> {
-        self.read(prep, |layout| Layout::inner_item(layout).map(EdgeItem::into_owned))
+        crate::layout::inner_item(self.prepared(prep))
     }
 }
+
 
 /// One slot of a record, as its prepare body prepares it: the record's key,
 /// the slot's stamped word and width, and its items' width for a list.
@@ -676,19 +731,18 @@ pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: Ki
         if key.changed.leading {
             return None;
         }
-        let from = side.sides?;
-        ctx.sources.separator_before(&NodeCoordinate::new(from.tree, from.index, from.end, from.span))
+        ctx.sources.separator_before(&side.sides?.coordinate())
     })
 }
 
 /// A built record's snapshot geometry (`Layout::snapshot_edge`), from its
-/// layout as a holder reads it before the record's own prepare.
+/// span and its stored sides, as a holder reads them before the record's own
+/// prepare.
 #[must_use]
-pub fn record_snapshot_edge<T: Prepare + TriviaSeam + Clone + 'static>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId) -> Option<SnapshotEdge> {
+pub fn record_snapshot_edge<T: Prepare + Clone>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId) -> Option<SnapshotEdge> {
     let key = RecordKey::of(prep, at, kind).ok()?;
     let side = key.side(prep).ok()?;
-    let layout = Some(Box::new(NodeLayout { span: side.span, trivia: key.place.stored().and_then(|place| prep.store.sides(place)), ..NodeLayout::default() }));
-    Layout::snapshot_edge(&layout)
+    crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| prep.store.sides(place)).as_ref())
 }
 
 /// `KindOf::kind_in` of the value `at` names, read through its view `V`.

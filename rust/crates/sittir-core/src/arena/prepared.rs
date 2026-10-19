@@ -3,16 +3,19 @@
 //! never rewritten. One overlay is built for one render and dropped after it.
 //!
 //! A fact of a node itself is keyed by the node's place: its own kind's
-//! edges, its print settings, its defaulted units and its prepared layout. A fact a holder writes about the child it
+//! edges, its print settings, its defaulted units, its prepared sides and its
+//! slots' per-item separators. Every other fact of its layout is read where
+//! it is kept: its side record, the store of written sides, or its tree. A fact a holder writes about the child it
 //! holds at one site (a gap fill, a seat) is keyed by that site, so a node
 //! placed at two sites gets each site's facts, as each native copy does.
 
 use std::collections::HashMap;
 
 use super::entry_by_word;
-use crate::layout::NodeLayout;
+use crate::layout::UnitSides;
 use crate::options::Edges;
 use crate::slot::CoordinateEdges;
+use crate::trivia::NodeTrivia;
 use crate::trivia_store::{Place, Site};
 
 /// Where the overlay keeps a node's facts: the place the store keeps its
@@ -35,6 +38,16 @@ impl PrepPlace {
             Self::Content(_) => None,
         }
     }
+
+    /// The tree row of a parsed node: its own row, or for an envelope's
+    /// content its envelope's; none for a built node.
+    #[must_use]
+    pub fn row(self) -> Option<(crate::types::TreeId, crate::types::NodeIndex)> {
+        match self {
+            Self::Stored(Place::Row { tree, row }) | Self::Content(Site { holder: Place::Row { tree, row }, .. }) => Some((tree, row)),
+            _ => None,
+        }
+    }
 }
 
 impl From<Place> for PrepPlace {
@@ -55,19 +68,30 @@ pub struct PreparedNode<T> {
     /// Its slots' print settings and defaulted units, by stamped word, for
     /// the slots that have any.
     pub slots: Vec<PreparedSlot>,
-    /// Its layout as a native node's reads after prepare: its sides merged
-    /// with the sides of the node it was rebuilt from, its units' sides, its
-    /// slots' stored layouts and per-item separators, and where it came
-    /// from. Its trivia is untrimmed: changed edges are a site's fact, so the
-    /// render drops the layout runs at the edges its site marks changed. Its
-    /// edges are the overlay's (`Prepared::edges`).
-    pub layout: Option<Box<NodeLayout<T>>>,
+    /// Its sides as prepare leaves them: each side it stores, else the side
+    /// of the node it was rebuilt from, each entry prepared. They are
+    /// untrimmed: changed edges are a site's fact, so the render drops the
+    /// layout runs at the edges its site marks changed.
+    pub trivia: Option<NodeTrivia<T>>,
+    /// Its unit children's sides, each entry prepared.
+    pub units: Vec<UnitSides<T>>,
+    /// Its list slots' per-item separators (`SlotLayout::tokens`), by the
+    /// slot's wire key.
+    pub tokens: Vec<SlotTokens>,
 }
 
 impl<T> Default for PreparedNode<T> {
     fn default() -> Self {
-        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), layout: None }
+        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), trivia: None, units: Vec::new(), tokens: Vec::new() }
     }
+}
+
+/// The separator before each item of one list slot, by the item's place
+/// (`SlotLayout::tokens`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SlotTokens {
+    pub slot: String,
+    pub tokens: Vec<Option<KindId>>,
 }
 
 /// What prepare fills for one slot of a node: a list's separator spacing,
@@ -91,6 +115,21 @@ impl<T> PreparedNode<T> {
     #[must_use]
     pub fn slot(&self, word: u32) -> Option<&PreparedSlot> {
         self.slots.iter().find(|slot| slot.word == word)
+    }
+
+    /// The per-item separators of the list slot `slot`; none where prepare
+    /// gave it none.
+    #[must_use]
+    pub fn tokens(&self, slot: &str) -> Option<&[Option<KindId>]> {
+        self.tokens.iter().find(|entry| entry.slot == slot).map(|entry| entry.tokens.as_slice())
+    }
+
+    /// `slot`'s per-item separators are `tokens`, in place of any it had.
+    pub fn set_tokens(&mut self, slot: &str, tokens: Vec<Option<KindId>>) {
+        match self.tokens.iter_mut().find(|entry| entry.slot == slot) {
+            Some(entry) => entry.tokens = tokens,
+            None => self.tokens.push(SlotTokens { slot: slot.to_owned(), tokens }),
+        }
     }
 }
 

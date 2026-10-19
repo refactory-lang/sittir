@@ -204,10 +204,20 @@ fn an_untouched_parsed_record_a_built_record_links_renders_as_its_source() {
     let layout = file.layout.as_mut().expect("a read node names itself");
     layout.sides = layout.at.take();
     let native = (renders.native)(SlotValue::Node(root.clone()), &RenderContext { options: &options, sources: &tree }, None).expect("a native render").1;
+    let (built, root, linked) = built_record(&tree, &root);
+    assert!(linked > 0, "the built root links its parsed children");
+    let record = renders.record(&tree, &built, root, &options).expect("a record render");
+    assert_eq!(record, native);
+}
+
+/// `node` written as a built record into a fresh arena, each untouched
+/// parsed child it holds linked to its record in `tree`'s arena, and how many
+/// it linked.
+fn built_record<G: EngineGrammar, N: ReadNode + WriteCell<G::Trivia>>(tree: &ParsedTree<G>, node: &N) -> (Arena, CellAt, usize) {
     let mut built = Arena::new();
     let mut linked = 0;
     let mut link = |coord: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> {
-        let child: sittir_rust::render::AnyNode = tree.read(coord.index, Depth::ONE).map_err(|_| sittir_core::arena::ArenaError::Unwritable("an unread child"))?;
+        let child: N = tree.read(coord.index, Depth::ONE).map_err(|_| sittir_core::arena::ArenaError::Unwritable("an unread child"))?;
         match child.write_cell(&mut RecordSink::parsed(tree.tree_id(), &mut tree.tree_arena()))? {
             Cell::Child { at, .. } => {
                 linked += 1;
@@ -216,10 +226,53 @@ fn an_untouched_parsed_record_a_built_record_links_renders_as_its_source() {
             _ => Ok(Linked::Leaf(tree.source()[coord.span.range()].to_owned())),
         }
     };
-    let cell = root.write_cell(&mut RecordSink::built(&mut built, tree.written(), &mut link)).expect("a built record");
-    assert!(linked > 0, "the built root links its parsed children");
-    let record = renders.record(&tree, &built, CellAt { cell, tree: None, site: None }, &options).expect("a record render");
-    assert_eq!(record, native);
+    let cell = node.write_cell(&mut RecordSink::built(&mut built, tree.written(), &mut link)).expect("a built record");
+    (built, CellAt { cell, tree: None, site: None }, linked)
+}
+
+const REBUILT: &str = "fn f() {\n    x = f(a) + g(b);\n    let c = |p: A ,q: B| p;\n}\n";
+
+/// A built node rebuilt from a parsed one renders from its record as it does
+/// natively: the sides written on it and on its unit child from the store,
+/// each side it holds none of from the node it was rebuilt from, and its list
+/// slot's layout from its side record or, when it stores none, from that
+/// node.
+#[test]
+fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_natively() {
+    use sittir_core::layout::{NodeLayout, UnitSides};
+    use sittir_rust::render::AnyNode;
+    type Edit = fn(&mut NodeLayout<sittir_rust::render::node::TriviaNode>, &ParsedTree<sittir_rust::RustGrammar>);
+    let written = |layout: &mut NodeLayout<_>| layout.trivia = Some(sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// node")), ..Default::default() });
+    let cases: [(sittir_core::types::KindId, Edit, &str); 3] = [
+        (rust_kinds::BINARY_EXPRESSION, |layout, _| layout.units.push(UnitSides { slot: "_operator".into(), item: sittir_core::types::ItemIndex(0), trivia: sittir_core::trivia::NodeTrivia { leading: Some(line_comment("// unit")), ..Default::default() } }), "// unit"),
+        (rust_kinds::CLOSURE_PARAMETERS, |layout, _| assert!(layout.slots.is_empty(), "a read stores no slot layout: prepare takes its tree's"), "|p: A ,q: B|"),
+        (
+            rust_kinds::CLOSURE_PARAMETERS,
+            |layout, tree| {
+                let source = sittir_core::render::SourceTable::slot_layouts(tree, layout.sides.as_ref().expect("rebuilt from its read"));
+                assert!(!source.is_empty(), "the source spaces the list apart from the options");
+                layout.slots = source.into_iter().map(|slot| sittir_core::layout::SlotLayout { before: slot.after, after: slot.before, ..slot }).collect();
+            },
+            "|p: A, q: B|",
+        ),
+    ];
+    let renders = rust();
+    let mut engine = renders.engine();
+    let options = engine.options().clone();
+    for (kind, edit, expected) in cases {
+        let tree = RustRenders::parse(&mut engine, REBUILT);
+        let mut node: AnyNode = tree.read(index_of(&tree, kind, 0), Depth::ONE).expect("a node");
+        let (AnyNode::BinaryExpression(sittir_rust::render::node::BinaryExpressionNode { layout, .. }) | AnyNode::ClosureParameters(sittir_rust::render::node::ClosureParametersNode { layout, .. })) = &mut node else { panic!("a node of {kind:?}") };
+        let layout = layout.as_mut().expect("a read node names itself");
+        layout.sides = layout.at.take();
+        written(layout);
+        edit(layout, &tree);
+        let native = (renders.native)(SlotValue::Node(node.clone()), &RenderContext { options: &options, sources: &tree }, None).expect("a native render").1;
+        let (built, root, _) = built_record(&tree, &node);
+        let record = renders.record(&tree, &built, root, &options).expect("a record render");
+        assert_eq!(record, native, "{kind:?}");
+        assert!(record.contains("// node") && record.contains(expected), "{kind:?}: {record:?}");
+    }
 }
 
 

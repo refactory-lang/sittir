@@ -80,7 +80,7 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
             accessor: quote! {
                 type #assoc<'b> = ::sittir_core::arena::RecordLayout<'b, #trivia> where Self: 'b;
                 fn #name(&self) -> Self::#assoc<'_> {
-                    ::sittir_core::arena::RecordLayout::new(self.__ctx.prepared(), self.__place, self.__site, self.__edges, self.__changed)
+                    ::sittir_core::arena::RecordLayout::new(self.__ctx, self.__place, self.__site, self.__edges, self.__changed, self.__rebuilt_from)
                 }
             },
             ..ViewField::default()
@@ -209,6 +209,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         __site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>>,
         __edges: ::sittir_core::options::Edges,
         __changed: ::sittir_core::slot::ChangedEdges,
+        __rebuilt_from: ::core::option::Option<::sittir_core::arena::Sides>,
     };
     let (members_decl, from_cell) = if text_leaf {
         let text = fields.iter().find(|field| matches!(field.role, Role::Text)).map(|field| field.ident).ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf has a `#[text]` field"))?;
@@ -225,6 +226,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             __site: site,
                             __edges: ::sittir_core::options::Edges::default(),
                             __changed: ::sittir_core::slot::ChangedEdges::default(),
+                            __rebuilt_from: ::core::option::Option::None,
                             #text: ctx.source_text(span)?,
                         })
                     }
@@ -236,6 +238,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             __site: site,
                             __edges: side.edges.unwrap_or_default(),
                             __changed: side.changed,
+                            __rebuilt_from: side.sides,
                             #text: ctx.string(text)?,
                         })
                     }
@@ -268,6 +271,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     __site: site,
                     __edges: side.edges.unwrap_or_default(),
                     __changed: if site.is_some() { held } else { side.changed },
+                    __rebuilt_from: side.sides,
                     #words_init
                     #(#inits)*
                 })
@@ -472,13 +476,13 @@ mod tests {
         assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { kind == kind::BLOCK }"));
         assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, 12u32, kind::BLOCK)?;"));
         assert!(has(&out, "match link { ::core::option::Option::Some(tree) => ctx.linked(tree)?, ::core::option::Option::None => ctx, }, at, changed,"));
-        assert!(has(&out, "__changed: if site.is_some() { held } else { side.changed }, __words: words,"));
+        assert!(has(&out, "__changed: if site.is_some() { held } else { side.changed }, __rebuilt_from: side.sides, __words: words,"));
         assert!(has(&out, "r#async: (words[2usize] >> 3u32) & 1 != 0,"));
         assert!(has(&out, "statements: ::sittir_core::arena::RecordItems::of(ctx, place, 8u32, 5u32, &words[8usize..10usize])?,"));
         assert!(has(&out, "delimiter: ctx.prepared().delimiter(place, side.delimiter),"));
         assert!(has(&out, "statements_separator_space: ctx.prepared().space(place, 8u32, false, side.slots.iter().find(|slot| slot.word == 8u32).and_then(|slot| slot.space_after)),"));
         assert!(has(&out, "impl<'a> BlockFields for BlockNodeRecord<'a> {"));
-        assert!(has(&out, "::sittir_core::arena::RecordLayout::new(self.__ctx.prepared(), self.__place, self.__site, self.__edges, self.__changed)"));
+        assert!(has(&out, "::sittir_core::arena::RecordLayout::new(self.__ctx, self.__place, self.__site, self.__edges, self.__changed, self.__rebuilt_from)"));
         assert!(has(&out, "type Label<'b> = ::sittir_core::arena::RecordSlot<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <LabelNode as ::sittir_core::arena::HasRecord>::Record<'a>, false> where Self: 'b;"));
         assert!(has(&out, "let site = ::sittir_core::trivia_store::Site { holder: self.__place, word: 3u32, item: ::sittir_core::types::ItemIndex(0) }; ::sittir_core::arena::RecordSlot::of(self.__ctx, site, &self.__words[3usize..8usize])"));
         assert!(has(&out, "::sittir_core::arena::RecordItems<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <StatementNode as ::sittir_core::arena::HasRecord>::Record<'a>, true>"));

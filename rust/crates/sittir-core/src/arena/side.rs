@@ -36,6 +36,14 @@ pub struct Sides {
     pub span: Span,
 }
 
+impl Sides {
+    /// The node's coordinate in its tree.
+    #[must_use]
+    pub fn coordinate(self) -> crate::slot::NodeCoordinate {
+        crate::slot::NodeCoordinate::new(self.tree, self.index, self.end, self.span)
+    }
+}
+
 /// A list slot's stored layout and its separator spacing settings, keyed by
 /// its cell's stamped word.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]

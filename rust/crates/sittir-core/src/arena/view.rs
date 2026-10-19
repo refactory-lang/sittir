@@ -4,12 +4,12 @@
 //! prepared overlay; every word it reads is bounds-checked, and a cell no
 //! writer writes renders as a record refusal (`RenderError::Record`).
 
-use super::{Address, Arena, ArenaError, Cell, ListCell, Prepared, StringRef, TreeArena};
-use crate::layout::{render_framed, BodyLayout, NodeLayout, TriviaRole};
+use super::{Address, Arena, ArenaError, Cell, ListCell, Prepared, PreparedNode, Sides, StringRef, TreeArena};
+use crate::layout::{list_units, render_framed, render_unit, BodyLayout, TriviaRole};
 use crate::options::Edges;
 use crate::render::{Render, RenderError, RenderResult, RenderSink, SourceTable};
 use crate::slot::{ChangedEdges, NodeCoordinate};
-use crate::trivia::TriviaSeam;
+use crate::trivia::{NodeTrivia, TriviaSeam};
 use super::PrepPlace;
 use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::types::{ItemIndex, KindId, NodeIndex, Span, TreeId};
@@ -240,12 +240,18 @@ pub struct ParsedRow {
     pub changed: ChangedEdges,
 }
 
-/// A record's layout as its render body reads it (`BodyLayout`): the layout
-/// its prepare left in the overlay, the edges the overlay gives it at its
-/// site (`Prepared::edges`), and the edges its site marks changed, where its
-/// sides render without their layout runs.
+/// A record's layout as its render body reads it (`BodyLayout`), each fact
+/// from where it is kept: what its prepare left in the overlay (its sides,
+/// its units' sides, its slots' per-item separators), the edges the overlay
+/// gives it at its site (`Prepared::edges`), the edges its site marks
+/// changed, where its sides render without their layout runs, and where it
+/// came from, which frames it: a parsed node's row, or the node a built node
+/// was rebuilt from.
 pub struct RecordLayout<'a, T> {
-    layout: Option<&'a NodeLayout<T>>,
+    ctx: RecordCtx<'a, T>,
+    place: PrepPlace,
+    node: Option<&'a PreparedNode<T>>,
+    rebuilt_from: Option<Sides>,
     edges: Edges,
     changed: ChangedEdges,
 }
@@ -260,11 +266,29 @@ impl<T> Copy for RecordLayout<'_, T> {}
 
 impl<'a, T> RecordLayout<'a, T> {
     /// The layout of the node at `place`, held at `site`: `stored` is the
-    /// edges its record stores, and `changed` the edges its site marks.
+    /// edges its record stores, `changed` the edges its site marks, and
+    /// `rebuilt_from` the node its side record names it rebuilt from.
     #[must_use]
-    pub fn new(prepared: &'a Prepared<T>, place: PrepPlace, site: Option<Site<PrepPlace>>, stored: Edges, changed: ChangedEdges) -> Self {
-        let layout = prepared.node(place).and_then(|node| node.layout.as_deref());
-        Self { layout, edges: prepared.edges(stored, site, place), changed }
+    pub fn new(ctx: RecordCtx<'a, T>, place: PrepPlace, site: Option<Site<PrepPlace>>, stored: Edges, changed: ChangedEdges, rebuilt_from: Option<Sides>) -> Self {
+        let prepared = ctx.prepared;
+        Self { ctx, place, node: prepared.node(place), rebuilt_from, edges: prepared.edges(stored, site, place), changed }
+    }
+
+    /// Where a prepared node came from (`NodeLayout::at`, else
+    /// `NodeLayout::sides`): a parsed node's row, an envelope's content's
+    /// envelope's, or the node a built node was rebuilt from.
+    fn origin(self) -> Result<Option<NodeCoordinate>, ArenaError> {
+        if self.node.is_none() {
+            return Ok(None);
+        }
+        match self.place.row() {
+            Some((tree, row)) => self.ctx.row_node(tree, row).map(Some),
+            None => Ok(self.rebuilt_from.map(Sides::coordinate)),
+        }
+    }
+
+    fn trivia(self) -> Option<&'a NodeTrivia<T>> {
+        self.node?.trivia.as_ref()
     }
 }
 
@@ -274,17 +298,17 @@ impl<T: Render + TriviaSeam + Clone> RecordLayout<'_, T> {
     ///
     /// # Errors
     ///
-    /// What `body`, or a trivia entry, refuses.
+    /// What `body`, or a trivia entry, refuses, or `RenderError::Record`
+    /// when its tree has no row the record names.
     pub fn render(self, kind: Option<KindId>, role: TriviaRole, w: &mut dyn RenderSink, body: impl FnOnce(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
-        let origin = self.layout.and_then(|layout| layout.at.as_ref().or(layout.sides.as_ref()));
-        let trivia = self.layout.and_then(|layout| layout.trivia.as_ref());
-        match trivia {
+        let origin = self.origin().map_err(RenderError::Record)?;
+        match self.trivia() {
             Some(trivia) if self.changed.leading || self.changed.trailing => {
                 let mut trimmed = trivia.clone();
                 trimmed.trim_changed(self.changed);
-                render_framed(Some(&trimmed), self.edges, kind, origin, role, w, body)
+                render_framed(Some(&trimmed), self.edges, kind, origin.as_ref(), role, w, body)
             }
-            _ => render_framed(trivia, self.edges, kind, origin, role, w, body),
+            trivia => render_framed(trivia, self.edges, kind, origin.as_ref(), role, w, body),
         }
     }
 }
@@ -295,23 +319,23 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Recor
     }
 
     fn render_unit(self, slot: &str, item: ItemIndex, w: &mut dyn RenderSink, body: impl FnOnce(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
-        self.layout.render_unit(slot, item, w, body)
+        render_unit(self.node.map_or(&[], |node| &node.units), slot, item, w, body)
     }
 
     fn slot_tokens(self, slot: &str) -> &'a [Option<KindId>] {
-        self.layout.slot_tokens(slot)
+        self.node.and_then(|node| node.tokens(slot)).unwrap_or(&[])
     }
 
     fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
-        self.layout.list_units(slot)
+        list_units(self.node.map(|node| &node.units), slot)
     }
 
     fn render_inner(self, w: &mut dyn RenderSink) -> RenderResult {
-        self.layout.render_inner(w)
+        crate::trivia::render_inner(self.trivia(), w)
     }
 
     fn has_inner(self) -> bool {
-        self.layout.has_inner()
+        crate::trivia::has_inner(self.trivia())
     }
 }
 

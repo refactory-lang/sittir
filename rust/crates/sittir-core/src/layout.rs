@@ -198,39 +198,39 @@ pub struct UnitSides<T> {
     pub trivia: NodeTrivia<T>,
 }
 
-/// The sides `layout` holds for the unit at item `item` of the slot `slot`.
+/// The sides `units` holds for the unit at item `item` of the slot `slot`.
 #[must_use]
-pub fn unit_sides<'a, T>(layout: Option<&'a NodeLayout<T>>, slot: &str, item: crate::types::ItemIndex) -> Option<&'a NodeTrivia<T>> {
-    layout?.units.iter().find(|unit| unit.slot == slot && unit.item == item).map(|unit| &unit.trivia)
+pub fn unit_sides<'a, T>(units: &'a [UnitSides<T>], slot: &str, item: crate::types::ItemIndex) -> Option<&'a NodeTrivia<T>> {
+    units.iter().find(|unit| unit.slot == slot && unit.item == item).map(|unit| &unit.trivia)
 }
 
 /// Writes the value at item `item` of the slot `slot` (`body`) framed by the
-/// sides `layout` holds for it when it is a unit (`unit_sides`), as a
+/// sides `units` holds for it when it is a unit (`unit_sides`), as a
 /// coordinate is framed by its node's (`render_framed`).
 pub fn render_unit<T: Render + TriviaSeam>(
-    layout: Option<&NodeLayout<T>>,
+    units: &[UnitSides<T>],
     slot: &str,
     item: crate::types::ItemIndex,
     w: &mut dyn RenderSink,
     body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
 ) -> RenderResult {
-    match unit_sides(layout, slot, item) {
+    match unit_sides(units, slot, item) {
         Some(trivia) => render_framed(Some(trivia), Edges::default(), None, None, TriviaRole::Owner, w, body),
         None => body(w),
     }
 }
 
-impl<T: Render + TriviaSeam + std::fmt::Debug> crate::view::UnitFrames for NodeLayout<T> {
+impl<T: Render + TriviaSeam + std::fmt::Debug> crate::view::UnitFrames for Vec<UnitSides<T>> {
     fn frame_unit(&self, slot: &str, item: crate::types::ItemIndex, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
-        render_unit(Some(self), slot, item, w, body)
+        render_unit(self, slot, item, w, body)
     }
 }
 
-/// A list slot's unit frames, for its `ListView`: the slot `slot` of
-/// `layout`, when the node has a layout.
+/// A list slot's unit frames, for its `ListView`: the slot `slot` of a
+/// node's `units`, when the node has a layout.
 #[must_use]
-pub fn list_units<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a>(layout: Option<&'a NodeLayout<T>>, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
-    layout.map(|layout| (slot, layout as &dyn crate::view::UnitFrames))
+pub fn list_units<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a>(units: Option<&'a Vec<UnitSides<T>>>, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
+    units.map(|units| (slot, units as &dyn crate::view::UnitFrames))
 }
 
 /// What a generated render body reads from its node's layout: its edges, a
@@ -274,7 +274,7 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Optio
         w: &mut dyn RenderSink,
         body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
     ) -> RenderResult {
-        render_unit(self, slot, item, w, body)
+        render_unit(self.map_or(&[], |layout| &layout.units), slot, item, w, body)
     }
 
     fn slot_tokens(self, slot: &str) -> &'a [Option<KindId>] {
@@ -282,7 +282,7 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Optio
     }
 
     fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
-        list_units(self, slot)
+        list_units(self.map(|layout| &layout.units), slot)
     }
 
     fn render_inner(self, w: &mut dyn RenderSink) -> RenderResult {
@@ -370,42 +370,53 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
     }
 
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
-        use crate::prepare::TriviaReach;
         let layout = self.as_ref()?;
-        let trivia = layout.trivia.as_ref();
-        let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
-            None => TriviaReach::Bare,
-            Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
-        };
-        Some(crate::prepare::SnapshotEdge {
-            span: layout.span?,
-            leading: reach(trivia.and_then(|trivia| trivia.leading.as_ref()?.first()), |span| span.start),
-            trailing: reach(trivia.and_then(|trivia| trivia.trailing.as_ref()?.last()), |span| span.end),
-        })
+        snapshot_edge(layout.span, layout.trivia.as_ref())
     }
 
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>> {
-        use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
-        let entries: Vec<_> = self.as_ref()?.trivia.as_ref()?.inner.as_ref()?.iter().filter(|entry| !entry.is_layout()).collect();
-        let first = entries.first()?;
-        if let Some(coord) = first.value.coord() {
-            let mut span = coord.span;
-            for entry in &entries {
-                let Some(next) = entry.value.coord().filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
-                span = crate::types::Span { start: span.start.min(next.span.start), end: span.end.max(next.span.end) };
-            }
-            return Some(EdgeItem::Bytes { tree: coord.tree, span });
-        }
-        let mut extent: Option<crate::points::PointSpan> = None;
-        for entry in entries {
-            let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
-            extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
-                start: span.start.min(edge.span.start),
-                end: span.end.max(edge.span.end),
-            }));
-        }
-        extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
+        inner_item(self.as_ref()?.trivia.as_ref())
     }
+}
+
+/// `Layout::snapshot_edge` of a node at `span` with sides `trivia`.
+#[must_use]
+pub fn snapshot_edge<T: Prepare>(span: Option<crate::points::PointSpan>, trivia: Option<&NodeTrivia<T>>) -> Option<crate::prepare::SnapshotEdge> {
+    use crate::prepare::TriviaReach;
+    let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
+        None => TriviaReach::Bare,
+        Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
+    };
+    Some(crate::prepare::SnapshotEdge {
+        span: span?,
+        leading: reach(trivia.and_then(|trivia| trivia.leading.as_ref()?.first()), |span| span.start),
+        trailing: reach(trivia.and_then(|trivia| trivia.trailing.as_ref()?.last()), |span| span.end),
+    })
+}
+
+/// `Layout::inner_item` of a node with sides `trivia`.
+#[must_use]
+pub fn inner_item<T: Prepare + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> Option<crate::prepare::EdgeItem<'static>> {
+    use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
+    let entries: Vec<_> = trivia?.inner.as_ref()?.iter().filter(|entry| !entry.is_layout()).collect();
+    let first = entries.first()?;
+    if let Some(coord) = first.value.coord() {
+        let mut span = coord.span;
+        for entry in &entries {
+            let Some(next) = entry.value.coord().filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
+            span = crate::types::Span { start: span.start.min(next.span.start), end: span.end.max(next.span.end) };
+        }
+        return Some(EdgeItem::Bytes { tree: coord.tree, span });
+    }
+    let mut extent: Option<crate::points::PointSpan> = None;
+    for entry in entries {
+        let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
+        extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
+            start: span.start.min(edge.span.start),
+            end: span.end.max(edge.span.end),
+        }));
+    }
+    extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
 }
 
 /// A prepare's handle on a layout (`prepare::LayoutTarget`) reads it as the
@@ -511,21 +522,32 @@ pub fn render_framed<F: Framing + ?Sized>(
     Ok(())
 }
 
+/// Gives `own` each side it holds none of from the sides `from`'s tree gives
+/// it, `from` being the node a built node was rebuilt from
+/// (`NodeLayout::sides`).
+pub fn merge_source_sides<T: 'static>(own: &mut Option<NodeTrivia<T>>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable) {
+    let Some(source) = from.and_then(|coord| sources.sides(coord)) else { return };
+    let Ok(source) = source.into_any().downcast::<NodeTrivia<T>>() else { return };
+    let own = own.get_or_insert_with(Default::default);
+    own.leading = own.leading.take().or(source.leading);
+    own.trailing = own.trailing.take().or(source.trailing);
+    own.inner = own.inner.take().or(source.inner);
+}
+
+/// A node's list slot layouts: the ones it stores, else, when it stores
+/// none, those of the node `from` it was rebuilt from.
+#[must_use]
+pub fn slots_or_source(own: Vec<SlotLayout>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable) -> Vec<SlotLayout> {
+    match from {
+        Some(coord) if own.is_empty() => sources.slot_layouts(coord),
+        _ => own,
+    }
+}
+
 impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        if let Some(source) = self.sides.as_ref().and_then(|coord| ctx.sources.sides(coord)) {
-            if let Ok(source) = source.into_any().downcast::<NodeTrivia<T>>() {
-                let own = self.trivia.get_or_insert_with(Default::default);
-                own.leading = own.leading.take().or(source.leading);
-                own.trailing = own.trailing.take().or(source.trailing);
-                own.inner = own.inner.take().or(source.inner);
-            }
-        }
-        if self.slots.is_empty() {
-            if let Some(coord) = self.sides.as_ref() {
-                self.slots = ctx.sources.slot_layouts(coord);
-            }
-        }
+        merge_source_sides(&mut self.trivia, self.sides.as_ref(), ctx.sources);
+        self.slots = slots_or_source(std::mem::take(&mut self.slots), self.sides.as_ref(), ctx.sources);
         let changed = std::mem::take(&mut self.changed);
         if let Some(trivia) = self.trivia.as_mut() {
             trivia.trim_changed(changed);
