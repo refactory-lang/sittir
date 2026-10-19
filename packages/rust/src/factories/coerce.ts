@@ -5987,19 +5987,20 @@ export function resolveLastMatchArm_value(value: T.LastMatchArm.LooseConfig['val
 	);
 }
 
-export function resolveLastMatchArm_comma(value: T.LastMatchArm.LooseConfig['comma']): Admit<T.LastMatchArm['_comma']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function coerceToLastMatchArm(input: T.LastMatchArm.Loose): ReturnType<typeof F.buildLastMatchArm> {
+export function coerceToLastMatchArm(
+	input: T.LastMatchArm.Loose,
+	options?: T.LastMatchArm.Options
+): ReturnType<typeof F.buildLastMatchArm> {
 	if (!_isLooseConfig<T.LastMatchArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLastMatchArm>;
-	return F.buildLastMatchArm({
-		attributes: resolveLastMatchArm_attributes(input.attributes),
-		pattern: resolveLastMatchArm_pattern(input.pattern),
-		value: resolveLastMatchArm_value(input.value),
-		comma: resolveLastMatchArm_comma(input.comma)
-	});
+	return F.buildLastMatchArm(
+		{
+			attributes: resolveLastMatchArm_attributes(input.attributes),
+			pattern: resolveLastMatchArm_pattern(input.pattern),
+			value: resolveLastMatchArm_value(input.value)
+		},
+		options
+	);
 }
 
 export function resolveMatchPattern_pattern(

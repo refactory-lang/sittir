@@ -30030,7 +30030,7 @@
                                               }
                                             }
                                           ],
-                                          "_comma": false
+                                          "_trailing_comma": 0
                                         }
                                       ]
                                     }
@@ -30233,7 +30233,7 @@
                                           }
                                         }
                                       ],
-                                      "_comma": false
+                                      "_trailing_comma": 0
                                     }
                                   ]
                                 }
@@ -30451,7 +30451,7 @@
                                         }
                                       }
                                     ],
-                                    "_comma": false
+                                    "_trailing_comma": 0
                                   }
                                 ]
                               }
@@ -30638,7 +30638,7 @@
                                       }
                                     }
                                   ],
-                                  "_comma": false
+                                  "_trailing_comma": 0
                                 }
                               ]
                             }
@@ -30921,7 +30921,7 @@
                                   }
                                 }
                               ],
-                              "_comma": false
+                              "_trailing_comma": 0
                             }
                           ]
                         }
@@ -31188,7 +31188,7 @@
                                 }
                               }
                             ],
-                            "_comma": false
+                            "_trailing_comma": 0
                           }
                         ]
                       }
@@ -31427,7 +31427,7 @@
                             }
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -31642,7 +31642,7 @@
                           }
                         }
                       ],
-                      "_comma": false
+                      "_trailing_comma": 0
                     }
                   ]
                 }
@@ -31723,7 +31723,7 @@
                     }
                   }
                 ],
-                "_comma": false
+                "_trailing_comma": 0
               }
             ]
           }
@@ -31876,7 +31876,7 @@
                         }
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -31954,7 +31954,7 @@
                   }
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -32033,7 +32033,7 @@
                       }
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -32108,7 +32108,7 @@
                 }
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -32174,7 +32174,7 @@
               }
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -32236,7 +32236,7 @@
           }
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for x in range(1, 10)",
     "options": {
@@ -37517,7 +37517,7 @@
                                             "$text": "g"
                                           }
                                         ],
-                                        "_comma": false
+                                        "_trailing_comma": 0
                                       }
                                     ]
                                   }
@@ -37636,7 +37636,7 @@
                                         "$text": "g"
                                       }
                                     ],
-                                    "_comma": false
+                                    "_trailing_comma": 0
                                   }
                                 ]
                               }
@@ -37875,7 +37875,7 @@
                                       "$text": "g"
                                     }
                                   ],
-                                  "_comma": false
+                                  "_trailing_comma": 0
                                 }
                               ]
                             }
@@ -37948,7 +37948,7 @@
                               "$text": "g"
                             }
                           ],
-                          "_comma": false
+                          "_trailing_comma": 0
                         }
                       ]
                     }
@@ -38031,7 +38031,7 @@
                                     "$text": "g"
                                   }
                                 ],
-                                "_comma": false
+                                "_trailing_comma": 0
                               }
                             ]
                           }
@@ -38101,7 +38101,7 @@
                             "$text": "g"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -38180,7 +38180,7 @@
                                 "$text": "g"
                               }
                             ],
-                            "_comma": false
+                            "_trailing_comma": 0
                           }
                         ]
                       }
@@ -38245,7 +38245,7 @@
                         "$text": "g"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -38304,7 +38304,7 @@
                       "$text": "g"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -38359,7 +38359,7 @@
                   "$text": "g"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -38409,7 +38409,7 @@
                 "$text": "g"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -38452,7 +38452,7 @@
               "$text": "g"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -38491,7 +38491,7 @@
           "$text": "g"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "async for f in g",
     "options": {
@@ -44594,7 +44594,8 @@
                 "_content": {
                   "$type": 98,
                   "_integer": "1",
-                  "_marker": "e+",
+                  "_marker": "e",
+                  "_sign": "+",
                   "_exponent": "3_4",
                   "_imaginary": "j"
                 }
@@ -44896,7 +44897,8 @@
             "_content": {
               "$type": 98,
               "_integer": "1",
-              "_marker": "e+",
+              "_marker": "e",
+              "_sign": "+",
               "_exponent": "3_4",
               "_imaginary": "j"
             }
@@ -45197,7 +45199,8 @@
           "_content": {
             "$type": 98,
             "_integer": "1",
-            "_marker": "e+",
+            "_marker": "e",
+            "_sign": "+",
             "_exponent": "3_4",
             "_imaginary": "j"
           }
@@ -45455,7 +45458,8 @@
       "_content": {
         "$type": 98,
         "_integer": "1",
-        "_marker": "e+",
+        "_marker": "e",
+        "_sign": "+",
         "_exponent": "3_4",
         "_imaginary": "j"
       }
@@ -45764,7 +45768,8 @@
     "input": {
       "$type": 98,
       "_integer": "1",
-      "_marker": "e+",
+      "_marker": "e",
+      "_sign": "+",
       "_exponent": "3_4",
       "_imaginary": "j"
     },
@@ -45821,7 +45826,8 @@
                 "_content": {
                   "$type": 98,
                   "_integer": "1",
-                  "_marker": "e-",
+                  "_marker": "e",
+                  "_sign": "-",
                   "_exponent": "3"
                 }
               }
@@ -45839,7 +45845,8 @@
                 "_content": {
                   "$type": 98,
                   "_integer": "1",
-                  "_marker": "e+",
+                  "_marker": "e",
+                  "_sign": "+",
                   "_exponent": "3"
                 }
               }
@@ -45981,7 +45988,8 @@
             "_content": {
               "$type": 98,
               "_integer": "1",
-              "_marker": "e-",
+              "_marker": "e",
+              "_sign": "-",
               "_exponent": "3"
             }
           }
@@ -46021,7 +46029,8 @@
             "_content": {
               "$type": 98,
               "_integer": "1",
-              "_marker": "e+",
+              "_marker": "e",
+              "_sign": "+",
               "_exponent": "3"
             }
           }
@@ -46221,7 +46230,8 @@
           "_content": {
             "$type": 98,
             "_integer": "1",
-            "_marker": "e-",
+            "_marker": "e",
+            "_sign": "-",
             "_exponent": "3"
           }
         }
@@ -46258,7 +46268,8 @@
           "_content": {
             "$type": 98,
             "_integer": "1",
-            "_marker": "e+",
+            "_marker": "e",
+            "_sign": "+",
             "_exponent": "3"
           }
         }
@@ -46439,7 +46450,8 @@
       "_content": {
         "$type": 98,
         "_integer": "1",
-        "_marker": "e-",
+        "_marker": "e",
+        "_sign": "-",
         "_exponent": "3"
       }
     },
@@ -46470,7 +46482,8 @@
       "_content": {
         "$type": 98,
         "_integer": "1",
-        "_marker": "e+",
+        "_marker": "e",
+        "_sign": "+",
         "_exponent": "3"
       }
     },
@@ -46625,7 +46638,8 @@
     "input": {
       "$type": 98,
       "_integer": "1",
-      "_marker": "e-",
+      "_marker": "e",
+      "_sign": "-",
       "_exponent": "3"
     },
     "expectedOutput": "1e-3",
@@ -46653,7 +46667,8 @@
     "input": {
       "$type": 98,
       "_integer": "1",
-      "_marker": "e+",
+      "_marker": "e",
+      "_sign": "+",
       "_exponent": "3"
     },
     "expectedOutput": "1e+3",
@@ -72102,7 +72117,7 @@
                             "$text": "items"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -72141,7 +72156,7 @@
                             "$text": "c"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       },
                       {
                         "$type": 243,
@@ -72156,7 +72171,7 @@
                             "$text": "b"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -72241,7 +72256,7 @@
                             }
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       },
                       {
                         "$type": 243,
@@ -72281,7 +72296,7 @@
                             }
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       },
                       {
                         "$type": 244,
@@ -72328,7 +72343,7 @@
                             "_body": 71
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       },
                       {
                         "$type": 244,
@@ -72426,7 +72441,7 @@
                         "$text": "items"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -72487,7 +72502,7 @@
                         "$text": "c"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   },
                   {
                     "$type": 243,
@@ -72502,7 +72517,7 @@
                         "$text": "b"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -72609,7 +72624,7 @@
                         }
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   },
                   {
                     "$type": 243,
@@ -72649,7 +72664,7 @@
                         }
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   },
                   {
                     "$type": 244,
@@ -72718,7 +72733,7 @@
                         "_body": 71
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   },
                   {
                     "$type": 244,
@@ -72811,7 +72826,7 @@
                       "$text": "items"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -72869,7 +72884,7 @@
                       "$text": "c"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 },
                 {
                   "$type": 243,
@@ -72884,7 +72899,7 @@
                       "$text": "b"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -72988,7 +73003,7 @@
                       }
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 },
                 {
                   "$type": 243,
@@ -73028,7 +73043,7 @@
                       }
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 },
                 {
                   "$type": 244,
@@ -73094,7 +73109,7 @@
                       "_body": 71
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 },
                 {
                   "$type": 244,
@@ -73183,7 +73198,7 @@
                   "$text": "items"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -73235,7 +73250,7 @@
                   "$text": "c"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             },
             {
               "$type": 243,
@@ -73250,7 +73265,7 @@
                   "$text": "b"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -73348,7 +73363,7 @@
                   }
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             },
             {
               "$type": 243,
@@ -73388,7 +73403,7 @@
                   }
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             },
             {
               "$type": 244,
@@ -73448,7 +73463,7 @@
                   "_body": 71
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             },
             {
               "$type": 244,
@@ -73532,7 +73547,7 @@
                 "$text": "items"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -73581,7 +73596,7 @@
                 "$text": "c"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           },
           {
             "$type": 243,
@@ -73596,7 +73611,7 @@
                 "$text": "b"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -73691,7 +73706,7 @@
                 }
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           },
           {
             "$type": 243,
@@ -73731,7 +73746,7 @@
                 }
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           },
           {
             "$type": 244,
@@ -73788,7 +73803,7 @@
                 "_body": 71
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           },
           {
             "$type": 244,
@@ -73891,7 +73906,7 @@
               "$text": "items"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -73933,7 +73948,7 @@
               "$text": "c"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         },
         {
           "$type": 243,
@@ -73948,7 +73963,7 @@
               "$text": "b"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -74015,7 +74030,7 @@
               }
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         },
         {
           "$type": 243,
@@ -74055,7 +74070,7 @@
               }
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         },
         {
           "$type": 244,
@@ -74105,7 +74120,7 @@
               "_body": 71
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         },
         {
           "$type": 244,
@@ -74170,7 +74185,7 @@
           "$text": "items"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for (a, b) in items",
     "options": {
@@ -74207,7 +74222,7 @@
           "$text": "c"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for b in c",
     "options": {
@@ -74244,7 +74259,7 @@
           "$text": "b"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for a in b",
     "options": {
@@ -74306,7 +74321,7 @@
           }
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for x in [1,2,3]",
     "options": {
@@ -74368,7 +74383,7 @@
           }
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for y in [1,2,3]",
     "options": {
@@ -74409,7 +74424,7 @@
           "_body": 71
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for a in lambda: True, lambda: False",
     "options": {
@@ -77374,7 +77389,7 @@
                             "$text": "items"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -77420,7 +77435,7 @@
                             "$text": "d"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       },
                       {
                         "$type": 243,
@@ -77435,7 +77450,7 @@
                             "$text": "items"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -77516,7 +77531,7 @@
                         "$text": "items"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -77584,7 +77599,7 @@
                         "$text": "d"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   },
                   {
                     "$type": 243,
@@ -77599,7 +77614,7 @@
                         "$text": "items"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -77675,7 +77690,7 @@
                       "$text": "items"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -77740,7 +77755,7 @@
                       "$text": "d"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 },
                 {
                   "$type": 243,
@@ -77755,7 +77770,7 @@
                       "$text": "items"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -77827,7 +77842,7 @@
                   "$text": "items"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -77886,7 +77901,7 @@
                   "$text": "d"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             },
             {
               "$type": 243,
@@ -77901,7 +77916,7 @@
                   "$text": "items"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -77968,7 +77983,7 @@
                 "$text": "items"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -78024,7 +78039,7 @@
                 "$text": "d"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           },
           {
             "$type": 243,
@@ -78039,7 +78054,7 @@
                 "$text": "items"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -78158,7 +78173,7 @@
               "$text": "items"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -78200,7 +78215,7 @@
               "$text": "d"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         },
         {
           "$type": 243,
@@ -78215,7 +78230,7 @@
               "$text": "items"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -78264,7 +78279,7 @@
           "$text": "items"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for a, b in items",
     "options": {
@@ -78301,7 +78316,7 @@
           "$text": "d"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for c in d",
     "options": {
@@ -78338,7 +78353,7 @@
           "$text": "items"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for e in items",
     "options": {
@@ -79053,7 +79068,7 @@
                             "$text": "items"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -79092,7 +79107,7 @@
                             "$text": "qs"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       },
                       {
                         "$type": 243,
@@ -79107,7 +79122,7 @@
                             "$text": "ms"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -79211,7 +79226,7 @@
                         "$text": "items"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -79272,7 +79287,7 @@
                         "$text": "qs"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   },
                   {
                     "$type": 243,
@@ -79287,7 +79302,7 @@
                         "$text": "ms"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -79386,7 +79401,7 @@
                       "$text": "items"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -79444,7 +79459,7 @@
                       "$text": "qs"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 },
                 {
                   "$type": 243,
@@ -79459,7 +79474,7 @@
                       "$text": "ms"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -79554,7 +79569,7 @@
                   "$text": "items"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -79606,7 +79621,7 @@
                   "$text": "qs"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             },
             {
               "$type": 243,
@@ -79621,7 +79636,7 @@
                   "$text": "ms"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -79711,7 +79726,7 @@
                 "$text": "items"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -79760,7 +79775,7 @@
                 "$text": "qs"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           },
           {
             "$type": 243,
@@ -79775,7 +79790,7 @@
                 "$text": "ms"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -79987,7 +80002,7 @@
               "$text": "items"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -80029,7 +80044,7 @@
               "$text": "qs"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         },
         {
           "$type": 243,
@@ -80044,7 +80059,7 @@
               "$text": "ms"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -80097,7 +80112,7 @@
           "$text": "items"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for a, b, c in items",
     "options": {
@@ -80134,7 +80149,7 @@
           "$text": "qs"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for s in qs",
     "options": {
@@ -80171,7 +80186,7 @@
           "$text": "ms"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for n in ms",
     "options": {
@@ -81233,7 +81248,7 @@
                             "$text": "items"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -81301,7 +81316,7 @@
                               "$text": "d"
                             }
                           ],
-                          "_comma": false
+                          "_trailing_comma": 0
                         }
                       ]
                     }
@@ -81341,7 +81356,7 @@
                             "$text": "c"
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       },
                       {
                         "$type": 243,
@@ -81356,7 +81371,7 @@
                             "$text": "e"
                           }
                         ],
-                        "_comma": true
+                        "_trailing_comma": 6
                       }
                     ]
                   }
@@ -81415,7 +81430,7 @@
                             }
                           }
                         ],
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     ]
                   }
@@ -81519,7 +81534,7 @@
                         "$text": "items"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -81609,7 +81624,7 @@
                           "$text": "d"
                         }
                       ],
-                      "_comma": false
+                      "_trailing_comma": 0
                     }
                   ]
                 }
@@ -81671,7 +81686,7 @@
                         "$text": "c"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   },
                   {
                     "$type": 243,
@@ -81686,7 +81701,7 @@
                         "$text": "e"
                       }
                     ],
-                    "_comma": true
+                    "_trailing_comma": 6
                   }
                 ]
               }
@@ -81767,7 +81782,7 @@
                         }
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -81866,7 +81881,7 @@
                       "$text": "items"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -81953,7 +81968,7 @@
                         "$text": "d"
                       }
                     ],
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 ]
               }
@@ -82012,7 +82027,7 @@
                       "$text": "c"
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 },
                 {
                   "$type": 243,
@@ -82027,7 +82042,7 @@
                       "$text": "e"
                     }
                   ],
-                  "_comma": true
+                  "_trailing_comma": 6
                 }
               ]
             }
@@ -82105,7 +82120,7 @@
                       }
                     }
                   ],
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               ]
             }
@@ -82200,7 +82215,7 @@
                   "$text": "items"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -82281,7 +82296,7 @@
                     "$text": "d"
                   }
                 ],
-                "_comma": false
+                "_trailing_comma": 0
               }
             ]
           }
@@ -82334,7 +82349,7 @@
                   "$text": "c"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             },
             {
               "$type": 243,
@@ -82349,7 +82364,7 @@
                   "$text": "e"
                 }
               ],
-              "_comma": true
+              "_trailing_comma": 6
             }
           ]
         }
@@ -82421,7 +82436,7 @@
                   }
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }
@@ -82511,7 +82526,7 @@
                 "$text": "items"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -82583,7 +82598,7 @@
                 "$text": "d"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -82632,7 +82647,7 @@
                 "$text": "c"
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           },
           {
             "$type": 243,
@@ -82647,7 +82662,7 @@
                 "$text": "e"
               }
             ],
-            "_comma": true
+            "_trailing_comma": 6
           }
         ]
       }
@@ -82716,7 +82731,7 @@
                 }
               }
             ],
-            "_comma": false
+            "_trailing_comma": 0
           }
         ]
       }
@@ -82928,7 +82943,7 @@
               "$text": "items"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -82980,7 +82995,7 @@
               "$text": "d"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -83022,7 +83037,7 @@
               "$text": "c"
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         },
         {
           "$type": 243,
@@ -83037,7 +83052,7 @@
               "$text": "e"
             }
           ],
-          "_comma": true
+          "_trailing_comma": 6
         }
       ]
     },
@@ -83099,7 +83114,7 @@
               }
             }
           ],
-          "_comma": false
+          "_trailing_comma": 0
         }
       ]
     },
@@ -83152,7 +83167,7 @@
           "$text": "items"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for a, b, c in items",
     "options": {
@@ -83199,7 +83214,7 @@
           "$text": "d"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for a, b in d",
     "options": {
@@ -83236,7 +83251,7 @@
           "$text": "c"
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for b in c",
     "options": {
@@ -83273,7 +83288,7 @@
           "$text": "e"
         }
       ],
-      "_comma": true
+      "_trailing_comma": 6
     },
     "expectedOutput": "for d in e,",
     "options": {
@@ -83330,7 +83345,7 @@
           }
         }
       ],
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "for x in range(1, 10)",
     "options": {
@@ -83481,7 +83496,7 @@
                   "$text": "d"
                 }
               ],
-              "_comma": false
+              "_trailing_comma": 0
             }
           ]
         }

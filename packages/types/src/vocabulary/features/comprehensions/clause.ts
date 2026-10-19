@@ -11,7 +11,7 @@ export namespace Clause {
 		export interface For<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Comprehension<G>> {
 			// claimed by p
 			readonly $kind: 'clause.comprehension.for';
-			readonly comma?: boolean;
+			readonly trailingComma?: boolean;
 			readonly left: G['slots']['clause.comprehension.for']['left'];
 			readonly rights: G['slots']['clause.comprehension.for']['rights'][];
 		}

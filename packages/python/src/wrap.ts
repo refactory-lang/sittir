@@ -3411,8 +3411,8 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 		rights() {
 			return hydrateSlots<T.Expression | T.LambdaWithinForInClause>(this, '_right', tree);
 		},
-		comma() {
-			return this._comma;
+		trailingComma() {
+			return this._trailing_comma;
 		},
 		$with: {
 			async: (v: NonNullable<T.ForInClause['_async']>) =>
@@ -3421,8 +3421,8 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _left: v }, tree)),
 			rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) =>
 				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _right: restItems('rights', v) }, tree)),
-			comma: (v: NonNullable<T.ForInClause['_comma']>) =>
-				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _comma: v }, tree))
+			trailingComma: (v: NonNullable<T.ForInClause['_trailing_comma']> | null) =>
+				rebuilt(node, handle, () => wrapForInClause({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4576,7 +4576,10 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 			return hydrateSlot<string | undefined>(this, '_fraction', tree);
 		},
 		marker() {
-			return hydrateSlot<string | undefined>(this, '_marker', tree);
+			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
+		},
+		sign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -4591,6 +4594,8 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 				rebuilt(node, handle, () => wrapFloatPoint({ ...$edited(data), _fraction: v }, tree)),
 			marker: (v: NonNullable<T.FloatPoint['_marker']>) =>
 				rebuilt(node, handle, () => wrapFloatPoint({ ...$edited(data), _marker: v }, tree)),
+			sign: (v: NonNullable<T.FloatPoint['_sign']>) =>
+				rebuilt(node, handle, () => wrapFloatPoint({ ...$edited(data), _sign: v }, tree)),
 			exponent: (v: NonNullable<T.FloatPoint['_exponent']>) =>
 				rebuilt(node, handle, () => wrapFloatPoint({ ...$edited(data), _exponent: v }, tree)),
 			imaginary: (v: NonNullable<T.FloatPoint['_imaginary']>) =>
@@ -4621,7 +4626,10 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 			return hydrateSlot<string>(this, '_fraction', tree);
 		},
 		marker() {
-			return hydrateSlot<string | undefined>(this, '_marker', tree);
+			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
+		},
+		sign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -4636,6 +4644,8 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 				rebuilt(node, handle, () => wrapFloatLeadingPoint({ ...$edited(data), _fraction: v }, tree)),
 			marker: (v: NonNullable<T.FloatLeadingPoint['_marker']>) =>
 				rebuilt(node, handle, () => wrapFloatLeadingPoint({ ...$edited(data), _marker: v }, tree)),
+			sign: (v: NonNullable<T.FloatLeadingPoint['_sign']>) =>
+				rebuilt(node, handle, () => wrapFloatLeadingPoint({ ...$edited(data), _sign: v }, tree)),
 			exponent: (v: NonNullable<T.FloatLeadingPoint['_exponent']>) =>
 				rebuilt(node, handle, () => wrapFloatLeadingPoint({ ...$edited(data), _exponent: v }, tree)),
 			imaginary: (v: NonNullable<T.FloatLeadingPoint['_imaginary']>) =>
@@ -4663,7 +4673,10 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 			return hydrateSlot<string>(this, '_integer', tree);
 		},
 		marker() {
-			return hydrateSlot<string>(this, '_marker', tree);
+			return hydrateSlot<'e' | 'E'>(this, '_marker', tree);
+		},
+		sign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string>(this, '_exponent', tree);
@@ -4676,6 +4689,8 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapFloatScientific({ ...$edited(data), _integer: v }, tree)),
 			marker: (v: NonNullable<T.FloatScientific['_marker']>) =>
 				rebuilt(node, handle, () => wrapFloatScientific({ ...$edited(data), _marker: v }, tree)),
+			sign: (v: NonNullable<T.FloatScientific['_sign']>) =>
+				rebuilt(node, handle, () => wrapFloatScientific({ ...$edited(data), _sign: v }, tree)),
 			exponent: (v: NonNullable<T.FloatScientific['_exponent']>) =>
 				rebuilt(node, handle, () => wrapFloatScientific({ ...$edited(data), _exponent: v }, tree)),
 			imaginary: (v: NonNullable<T.FloatScientific['_imaginary']>) =>

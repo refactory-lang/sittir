@@ -1662,12 +1662,14 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "comma": {
+      "trailing_comma": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       }
     },
     "if_clause": {
@@ -2086,6 +2088,15 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": "e"
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
         "nonEmpty": false
       },
       "exponent": {
@@ -2123,6 +2134,15 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": "e"
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
         "nonEmpty": false
       },
       "exponent": {
@@ -2152,6 +2172,15 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": "e"
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
@@ -9055,7 +9084,35 @@
           "values": [
             {
               "kind": "terminal",
-              "multiplicity": "optional"
+              "multiplicity": "optional",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+"
             }
           ]
         },
@@ -9108,8 +9165,19 @@
             "pattern": "(?:(?:[0-9]+_?))+"
           },
           {
-            "slot": "marker",
-            "pattern": "(?:[eE][\\+-]?)",
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": true
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
             "optional": true
           },
           {
@@ -9123,7 +9191,7 @@
             "optional": true
           }
         ],
-        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
         "slots": [
           {
             "name": "integer",
@@ -9136,6 +9204,10 @@
           {
             "name": "marker",
             "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
           },
           {
             "name": "exponent",
@@ -9151,7 +9223,7 @@
       "factoryFields": [
         "integer",
         "fraction",
-        "marker",
+        "sign",
         "exponent",
         "imaginary"
       ]
@@ -9234,7 +9306,35 @@
           "values": [
             {
               "kind": "terminal",
-              "multiplicity": "optional"
+              "multiplicity": "optional",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+"
             }
           ]
         },
@@ -9287,8 +9387,19 @@
             "optional": true
           },
           {
-            "slot": "marker",
-            "pattern": "(?:[eE][\\+-]?)",
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": true
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
             "optional": true
           },
           {
@@ -9302,7 +9413,7 @@
             "optional": true
           }
         ],
-        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
         "slots": [
           {
             "name": "integer",
@@ -9315,6 +9426,10 @@
           {
             "name": "marker",
             "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
           },
           {
             "name": "exponent",
@@ -9330,7 +9445,7 @@
       "factoryFields": [
         "integer",
         "fraction",
-        "marker",
+        "sign",
         "exponent",
         "imaginary"
       ]
@@ -9397,7 +9512,35 @@
           "values": [
             {
               "kind": "terminal",
-              "multiplicity": "single"
+              "multiplicity": "single",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+"
             }
           ]
         },
@@ -9442,8 +9585,20 @@
             "pattern": "(?:(?:[0-9]+_?))+"
           },
           {
-            "slot": "marker",
-            "pattern": "(?:[eE][\\+-]?)"
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": false
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
+            "optional": true
           },
           {
             "slot": "exponent",
@@ -9455,7 +9610,7 @@
             "optional": true
           }
         ],
-        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$",
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$",
         "slots": [
           {
             "name": "integer",
@@ -9464,6 +9619,10 @@
           {
             "name": "marker",
             "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
           },
           {
             "name": "exponent",
@@ -9478,7 +9637,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "integer",
-        "marker",
+        "sign",
         "exponent",
         "imaginary"
       ]
@@ -9567,13 +9726,13 @@
           ]
         },
         {
-          "name": "comma",
-          "propertyName": "comma",
-          "paramName": "comma",
+          "name": "trailing_comma",
+          "propertyName": "trailingComma",
+          "paramName": "trailingComma",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -9589,8 +9748,7 @@
       "factoryFields": [
         "async",
         "left",
-        "right",
-        "comma"
+        "right"
       ]
     },
     {

@@ -2003,12 +2003,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comma": {
+      "trailing_comma": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true,
+        "optionDefault": 0
       }
     },
     "match_pattern": {
@@ -15334,13 +15336,13 @@
           ]
         },
         {
-          "name": "comma",
-          "propertyName": "comma",
-          "paramName": "comma",
+          "name": "trailing_comma",
+          "propertyName": "trailingComma",
+          "paramName": "trailingComma",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "kindEnum",
           "kinds": [],
           "values": [
             {
@@ -15356,8 +15358,7 @@
       "factoryFields": [
         "attributes",
         "pattern",
-        "value",
-        "comma"
+        "value"
       ]
     },
     {

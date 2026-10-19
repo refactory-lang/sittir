@@ -4880,6 +4880,13 @@ site behind.
 
 A third argument names the padding seams: a token's face that a kind row declares `space`, which `spacingSitesOf` marks `padding` (a kind's own edge never is). One of those beside the gate is folded in too, so `{`, an optional list and `}` with the list absent leave no pad between the brackets, while the same pad around a present list is unchanged. A gate that took a padding seam is `padded`: the printer keeps it open when the slot's gap holds inner trivia (`has_inner`), and writes the pad, the trivia and the slot in source order inside it, so a comment alone in the braces keeps its pad. A token's tight face is not padding and stays outside the gate, which is what keeps `&mut` glued when the lifetime is absent.
 
+### `packages/codegen/src/emitters/render-body.ts::dropSlotSeams`
+
+Removes from a presence gate the seams that the slot's own arms write.
+`seamFieldsOf` names, per slot, the seam fields owned by its arms; a gate arm
+that tests that slot loses them from its body, recursively through nested
+gates and fallbacks. A gate with a kinds test is left whole.
+
 ### `packages/codegen/src/emitters/render-body.ts::WordSeamNode`
 
 A seam whose payload is one space, written as a plain (non-token) seam: it
@@ -9232,9 +9239,19 @@ literal-default and fallback counts.
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.slotSeamNames`
 
 The seam names a slot owns on a node: the slot's own name, plus the token of
-each value that is a visible punctuation kind, through
-`punctuationTokenOfNode`. It is the `seamNamesOf` argument the emitter passes
+each value that is a punctuation leaf, visible or a hidden keyword with punctuation
+text, through `slotPunctuationTokenOfNode`. It is the `seamNamesOf` argument the emitter passes
 to `gateOptionalSlotSeams`.
+
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.armWrittenSeams`
+
+The seam fields a registered choice slot's arms write themselves: `<token>_before`
+and `<token>_after` for each token among the slot's seam names, none for a slot
+that is not a registered choice. Its enum holds the token as a unit arm that
+writes those sites around the token and holds a blank arm that writes nothing,
+and prepare fills an unset slot with its default arm, so a seam left in the slot's
+presence gate would be written beside an absent token. The emitter hands the set
+to `dropSlotSeams` after the gates are built.
 
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.mixedSlotKeywordKinds`
 
@@ -10581,6 +10598,11 @@ A slot that can default to its empty form stores `orDefault(<config value>, () =
 A slot's value expression with its omission filled: `(<value> ?? [])` for a multiple slot (a slot the model marks non-empty is not defaulted: its type requires the value, and an omitted one fails where it is used instead of building an empty required list), `orDefault(<value>, () => <default>)` when `emptyDefaultOf` gives the slot a default, and the bare value otherwise. `slotStorageExpr` applies it to a config key; the direct-value surface applies it to `value` when that slot holds fixed text.
 
 ### `packages/codegen/src/emitters/factories.ts::fieldElementType`
+
+The element type of a slot's value. A slot holding only literals types as the
+union of their text, except a slot registered as a choice: it stores kind ids,
+so a literal-only registered slot types by kind id like any other registered
+choice, which is also the form the emitted factory source prints.
 
 #### body
 

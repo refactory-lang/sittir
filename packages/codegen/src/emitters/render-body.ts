@@ -190,6 +190,17 @@ export function gateOptionalSlotSeams(
 	return out;
 }
 
+export function dropSlotSeams(body: Body, seamFieldsOf: (slot: string) => ReadonlySet<string>): Body {
+	return body.map((node) => {
+		if (node.kind !== 'if') return node;
+		const arms = node.arms.map((arm) => {
+			const owned = arm.kinds === undefined ? seamFieldsOf(arm.test) : new Set<string>();
+			return { ...arm, body: dropSlotSeams(arm.body.filter((inner) => !(inner.kind === 'seam' && owned.has(inner.field))), seamFieldsOf) };
+		});
+		return { ...node, arms, ...(node.fallback === undefined ? {} : { fallback: dropSlotSeams(node.fallback, seamFieldsOf) }) };
+	});
+}
+
 export function concat(...bodies: readonly Body[]): Body {
 	const out: BodyNode[] = [];
 	for (const body of bodies) {

@@ -44163,7 +44163,7 @@
                       }
                     }
                   },
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -45510,7 +45510,7 @@
                   }
                 }
               },
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -45709,7 +45709,7 @@
                 }
               }
             },
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -45901,7 +45901,7 @@
               }
             }
           },
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -46090,7 +46090,7 @@
             }
           }
         },
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "#![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\nsyn::Type::Array(ty) => self.visit_type(&ty.elem),",
@@ -46275,7 +46275,7 @@
           }
         }
       },
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "#![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\nsyn::Type::Array(ty) => self.visit_type(&ty.elem),",
     "options": {
@@ -120189,7 +120189,7 @@
                       }
                     ]
                   },
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -120443,7 +120443,7 @@
                       }
                     ]
                   },
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -120715,7 +120715,7 @@
                   }
                 ]
               },
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -120975,7 +120975,7 @@
                 }
               ]
             },
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -121243,7 +121243,7 @@
                 }
               ]
             },
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -121496,7 +121496,7 @@
               }
             ]
           },
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -121757,7 +121757,7 @@
               }
             ]
           },
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -122007,7 +122007,7 @@
             }
           ]
         },
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "1 => { \"one\" }\n2 => \"two\",\n-1 => 1,\n-3.14 => 3,\n\n#[attr1]\n3 => \"three\",\nmacro!(4) => \"four\",\n_ => \"something else\",",
@@ -122265,7 +122265,7 @@
             }
           ]
         },
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "0 | 1 | 10 => \"one of zero, one, or ten\",\ny if y < 20 => \"less than 20, but not zero, one, or ten\",\ny if y == 200 =>\nif a {\n    \"200 (but this is not very stylish)\"\n}\ny if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n_ => \"something else\",",
@@ -124391,7 +124391,7 @@
           }
         ]
       },
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "_ => \"something else\",",
     "options": {
@@ -124435,7 +124435,7 @@
           }
         ]
       },
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "_ => \"something else\",",
     "options": {
@@ -124707,7 +124707,7 @@
                   }
                 ]
               },
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -161380,7 +161380,7 @@
                       }
                     ]
                   },
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               }
             }
@@ -161498,7 +161498,7 @@
                   }
                 ]
               },
-              "_comma": false
+              "_trailing_comma": 0
             }
           }
         }
@@ -161611,7 +161611,7 @@
                 }
               ]
             },
-            "_comma": false
+            "_trailing_comma": 0
           }
         }
       }
@@ -161717,7 +161717,7 @@
               }
             ]
           },
-          "_comma": false
+          "_trailing_comma": 0
         }
       }
     },
@@ -161820,7 +161820,7 @@
             }
           ]
         },
-        "_comma": false
+        "_trailing_comma": 0
       }
     },
     "expectedOutput": "Some(x) => \"some\",\nstd::None() => \"none\"",
@@ -162222,7 +162222,7 @@
           }
         ]
       },
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "std::None() => \"none\"",
     "options": {
@@ -162379,7 +162379,7 @@
                     "$type": 1,
                     "$text": "z"
                   },
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -162504,7 +162504,7 @@
                 "$type": 1,
                 "$text": "z"
               },
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -162624,7 +162624,7 @@
               "$type": 1,
               "$text": "z"
             },
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -162737,7 +162737,7 @@
             "$type": 1,
             "$text": "z"
           },
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -162847,7 +162847,7 @@
           "$type": 1,
           "$text": "z"
         },
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "A(ref x) => x.0,\nref mut y => y,\n&mut z => z,",
@@ -163371,7 +163371,7 @@
         "$type": 1,
         "$text": "z"
       },
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "&mut z => z,",
     "options": {
@@ -163646,7 +163646,7 @@
                       "_delimiter": 0
                     }
                   },
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -163764,7 +163764,7 @@
                       ]
                     }
                   },
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -164017,7 +164017,7 @@
                   "_delimiter": 0
                 }
               },
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -164160,7 +164160,7 @@
                   ]
                 }
               },
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -164401,7 +164401,7 @@
                 "_delimiter": 0
               }
             },
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -164541,7 +164541,7 @@
                 ]
               }
             },
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -164775,7 +164775,7 @@
               "_delimiter": 0
             }
           },
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -164908,7 +164908,7 @@
               ]
             }
           },
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -165139,7 +165139,7 @@
             "_delimiter": 0
           }
         },
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "Person{name, age} if age < 5 => (\"toddler\", name),\nPerson{name: adult_name, age: _} => (\"adult\", adult_name),",
@@ -165269,7 +165269,7 @@
             ]
           }
         },
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),",
@@ -166720,7 +166720,7 @@
           "_delimiter": 0
         }
       },
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "Person{name: adult_name, age: _} => (\"adult\", adult_name),",
     "options": {
@@ -166846,7 +166846,7 @@
           ]
         }
       },
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),",
     "options": {
@@ -167752,7 +167752,7 @@
                     "$type": 1,
                     "$text": "g"
                   },
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               }
             }
@@ -167931,7 +167931,7 @@
                 "$type": 1,
                 "$text": "g"
               },
-              "_comma": false
+              "_trailing_comma": 0
             }
           }
         }
@@ -168105,7 +168105,7 @@
               "$type": 1,
               "$text": "g"
             },
-            "_comma": false
+            "_trailing_comma": 0
           }
         }
       }
@@ -168272,7 +168272,7 @@
             "$type": 1,
             "$text": "g"
           },
-          "_comma": false
+          "_trailing_comma": 0
         }
       }
     },
@@ -168436,7 +168436,7 @@
           "$type": 1,
           "$text": "g"
         },
-        "_comma": false
+        "_trailing_comma": 0
       }
     },
     "expectedOutput": "(a, ..) => a,\nB(..) => c,\nD::E{f: g, ..} => g",
@@ -168990,7 +168990,7 @@
         "$type": 1,
         "$text": "g"
       },
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "D::E{f: g, ..} => g",
     "options": {
@@ -169614,7 +169614,7 @@
                     "$type": 1,
                     "$text": "a"
                   },
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               }
             }
@@ -169712,7 +169712,7 @@
                     "_pattern": 426
                   },
                   "_value": 118,
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -170059,7 +170059,7 @@
                 "$type": 1,
                 "$text": "a"
               },
-              "_comma": false
+              "_trailing_comma": 0
             }
           }
         }
@@ -170182,7 +170182,7 @@
                 "_pattern": 426
               },
               "_value": 118,
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -170517,7 +170517,7 @@
               "$type": 1,
               "$text": "a"
             },
-            "_comma": false
+            "_trailing_comma": 0
           }
         }
       }
@@ -170637,7 +170637,7 @@
               "_pattern": 426
             },
             "_value": 118,
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -170965,7 +170965,7 @@
             "$type": 1,
             "$text": "a"
           },
-          "_comma": false
+          "_trailing_comma": 0
         }
       }
     },
@@ -171078,7 +171078,7 @@
             "_pattern": 426
           },
           "_value": 118,
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -171403,7 +171403,7 @@
           "$type": 1,
           "$text": "a"
         },
-        "_comma": false
+        "_trailing_comma": 0
       }
     },
     "expectedOutput": "a @ A(_) | b @ B(..) => a,\na @ 1 ... 5 => a,\nSome(1 ... 5) => a,\na @ b...c => a,\na @ b..=c => a,\nd.. => a,\n..d => d,\na @ ..=5 => a",
@@ -171513,7 +171513,7 @@
           "_pattern": 426
         },
         "_value": 118,
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "| \"IPV6_FLOWINFO\"\n| \"IPV6_FLOWLABEL_MGR\"\n| \"IPV6_FLOWINFO_SEND\" => true,\n_ => false,",
@@ -174013,7 +174013,7 @@
         "$type": 1,
         "$text": "a"
       },
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "a @ ..=5 => a",
     "options": {
@@ -174048,7 +174048,7 @@
         "_pattern": 426
       },
       "_value": 118,
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "_ => false,",
     "options": {
@@ -180146,7 +180146,7 @@
                           "$type": 313,
                           "_statements": []
                         },
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     }
                   }
@@ -180296,7 +180296,7 @@
                           "$type": 313,
                           "_statements": []
                         },
-                        "_comma": false
+                        "_trailing_comma": 0
                       }
                     }
                   }
@@ -180466,7 +180466,7 @@
                       "$type": 313,
                       "_statements": []
                     },
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 }
               }
@@ -180638,7 +180638,7 @@
                       "$type": 313,
                       "_statements": []
                     },
-                    "_comma": false
+                    "_trailing_comma": 0
                   }
                 }
               }
@@ -181074,7 +181074,7 @@
                     "$type": 313,
                     "_statements": []
                   },
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               }
             }
@@ -181244,7 +181244,7 @@
                     "$type": 313,
                     "_statements": []
                   },
-                  "_comma": false
+                  "_trailing_comma": 0
                 }
               }
             }
@@ -182054,7 +182054,7 @@
                 "$type": 313,
                 "_statements": []
               },
-              "_comma": false
+              "_trailing_comma": 0
             }
           }
         }
@@ -182193,7 +182193,7 @@
                 "$type": 313,
                 "_statements": []
               },
-              "_comma": false
+              "_trailing_comma": 0
             }
           }
         }
@@ -182283,7 +182283,7 @@
               "$type": 313,
               "_statements": []
             },
-            "_comma": false
+            "_trailing_comma": 0
           }
         }
       }
@@ -182419,7 +182419,7 @@
               "$type": 313,
               "_statements": []
             },
-            "_comma": false
+            "_trailing_comma": 0
           }
         }
       }
@@ -182502,7 +182502,7 @@
             "$type": 313,
             "_statements": []
           },
-          "_comma": false
+          "_trailing_comma": 0
         }
       }
     },
@@ -182631,7 +182631,7 @@
             "$type": 313,
             "_statements": []
           },
-          "_comma": false
+          "_trailing_comma": 0
         }
       }
     },
@@ -182711,7 +182711,7 @@
           "$type": 313,
           "_statements": []
         },
-        "_comma": false
+        "_trailing_comma": 0
       }
     },
     "expectedOutput": "CUBE => println!(\"three cubed\"),\n_ => {}",
@@ -182837,7 +182837,7 @@
           "$type": 313,
           "_statements": []
         },
-        "_comma": false
+        "_trailing_comma": 0
       }
     },
     "expectedOutput": "const { 3.pow(3) } => println!(\"three cubed\"),\n_ => {}",
@@ -183531,7 +183531,7 @@
         "$type": 313,
         "_statements": []
       },
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "_ => {}",
     "options": {
@@ -183566,7 +183566,7 @@
         "$type": 313,
         "_statements": []
       },
-      "_comma": false
+      "_trailing_comma": 0
     },
     "expectedOutput": "_ => {}",
     "options": {
@@ -183728,7 +183728,7 @@
                     "$type": 141,
                     "_content": "42"
                   },
-                  "_comma": true
+                  "_trailing_comma": 130
                 }
               }
             }
@@ -183821,7 +183821,7 @@
                 "$type": 141,
                 "_content": "42"
               },
-              "_comma": true
+              "_trailing_comma": 130
             }
           }
         }
@@ -183909,7 +183909,7 @@
               "$type": 141,
               "_content": "42"
             },
-            "_comma": true
+            "_trailing_comma": 130
           }
         }
       }
@@ -183990,7 +183990,7 @@
             "$type": 141,
             "_content": "42"
           },
-          "_comma": true
+          "_trailing_comma": 130
         }
       }
     },
@@ -184068,7 +184068,7 @@
           "$type": 141,
           "_content": "42"
         },
-        "_comma": true
+        "_trailing_comma": 130
       }
     },
     "expectedOutput": "None::<T> => 17,\n_ => 42,",
@@ -184480,7 +184480,7 @@
         "$type": 141,
         "_content": "42"
       },
-      "_comma": true
+      "_trailing_comma": 130
     },
     "expectedOutput": "_ => 42,",
     "options": {

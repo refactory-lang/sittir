@@ -3866,6 +3866,15 @@ name no token. The one place that turns a punctuation kind into a token
 identity, read by the rule-side reader below and by the template emitter's
 slot lookup.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::slotPunctuationTokenOfNode`
+
+The token name a slot's value answers to when seams are gated into its presence
+branch: `punctuationTokenOfNode`, else the name of the text of any fixed-text
+leaf that is not word-shaped. The fallback covers a hidden keyword leaf whose
+text is punctuation (an optional comma held as a keyword-presence slot), which
+no visible-punctuation test accepts, so its `<token>_before` seam still finds
+the slot that owns it.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::punctuationReferenceTokenOf`
 
 The token name of a rule that is a reference to a visible punctuation kind,
@@ -3908,6 +3917,12 @@ emitter's collapse of modifier-ordering arms into one gate per marker.
 Such a member joins a seam like a punctuation literal, named by the slot
 instead of the token. A fielded string that renders as plain text is a
 token, not a slot, and keeps its token seam.
+
+A slot registered as a choice (`registeredOption === 'choice'`) is named by its
+one literal's token kind, not by its field: the arms it chooses between write
+the token's own `<token>_before` sites, so the member joins the token seam and
+the field name stays free of any collision with a token's. A registered slot
+that holds more than one literal spelling is not a literal slot.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalLeafText`
 
