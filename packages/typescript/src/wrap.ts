@@ -7335,7 +7335,7 @@ export function wrapExportStatementDefaultDeclaration(
 			return hydrateSlots<T.Decorator>(this, '_decorator', tree);
 		},
 		content() {
-			return hydrateSlot<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(this, '_content', tree);
+			return hydrateSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(this, '_content', tree);
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>[number][]) =>

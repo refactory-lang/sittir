@@ -2520,7 +2520,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_content',
 				'ExportStatementDefaultDeclaration.content',
-				'a built ExportStatementDefaultDeclarationDefaultKw / Declaration'
+				'a built Declaration / ExportStatementDefaultDeclarationDefaultKw'
 			]
 		]
 	},

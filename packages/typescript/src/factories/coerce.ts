@@ -2351,7 +2351,6 @@ const _K77: readonly string[] = [
 	'export_statement_default_from_clause_from'
 ];
 const _K78: readonly string[] = [
-	'export_statement_default_declaration_default_kw',
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -2366,7 +2365,8 @@ const _K78: readonly string[] = [
 	'enum_declaration',
 	'interface_declaration',
 	'import_alias',
-	'ambient_declaration'
+	'ambient_declaration',
+	'export_statement_default_declaration_default_kw'
 ];
 const _K79: readonly string[] = [
 	'function_declaration',
@@ -9224,7 +9224,7 @@ export function resolveExportStatementDefaultDeclaration_decorators(
 export function resolveExportStatementDefaultDeclaration_content(
 	value: T.ExportStatementDefaultDeclaration.LooseConfig['content']
 ): Admit<T.ExportStatementDefaultDeclaration['_content']> {
-	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(value, _K2, _K78);
+	return _resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(value, _K2, _K78);
 }
 
 export function coerceToExportStatementDefaultDeclaration(

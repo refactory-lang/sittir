@@ -2376,23 +2376,6 @@ const exportStatementDefaultDeclarationDefaultKw: {
 	}
 });
 
-const exportStatementDefaultDeclaration$defaultKw =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$defaultKw$strict = exportStatementDefaultDeclaration$defaultKw(
-	F.buildExportStatementDefaultDeclaration,
-	F.buildExportStatementDefaultDeclarationDefaultKw
-);
-const exportStatementDefaultDeclaration$defaultKw$coerce = exportStatementDefaultDeclaration$defaultKw(
-	C.coerceToExportStatementDefaultDeclaration,
-	C.coerceToExportStatementDefaultDeclarationDefaultKw
-);
 const exportStatementDefaultDeclaration$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2694,6 +2677,305 @@ const exportStatementDefaultDeclaration$ambient$coerce = exportStatementDefaultD
 	C.coerceToExportStatementDefaultDeclaration,
 	C.coerceToAmbientDeclaration
 );
+const exportStatementDefaultDeclaration$defaultKw =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$defaultKw$strict = exportStatementDefaultDeclaration$defaultKw(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildExportStatementDefaultDeclarationDefaultKw
+);
+const exportStatementDefaultDeclaration$defaultKw$coerce = exportStatementDefaultDeclaration$defaultKw(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToExportStatementDefaultDeclarationDefaultKw
+);
+const exportStatementDefaultDeclaration$using$automaticSemicolon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclaration$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclaration,
+		usingDeclaration.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclaration$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclaration$using$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclaration,
+		usingDeclaration.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclaration$using$semi =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$using$semi$strict = exportStatementDefaultDeclaration$using$semi(
+	F.buildExportStatementDefaultDeclaration,
+	usingDeclaration.semi.strict
+);
+const exportStatementDefaultDeclaration$using$semi$coerce = exportStatementDefaultDeclaration$using$semi(
+	C.coerceToExportStatementDefaultDeclaration,
+	usingDeclaration.semi.coerce
+);
+const exportStatementDefaultDeclaration$ambient$function =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$function$strict = exportStatementDefaultDeclaration$ambient$function(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.function.strict
+);
+const exportStatementDefaultDeclaration$ambient$function$coerce = exportStatementDefaultDeclaration$ambient$function(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.function.coerce
+);
+const exportStatementDefaultDeclaration$ambient$generatorFunction =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$generatorFunction$strict =
+	exportStatementDefaultDeclaration$ambient$generatorFunction(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.generatorFunction.strict
+	);
+const exportStatementDefaultDeclaration$ambient$generatorFunction$coerce =
+	exportStatementDefaultDeclaration$ambient$generatorFunction(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.generatorFunction.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$class =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$class$strict = exportStatementDefaultDeclaration$ambient$class(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.class.strict
+);
+const exportStatementDefaultDeclaration$ambient$class$coerce = exportStatementDefaultDeclaration$ambient$class(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.class.coerce
+);
+const exportStatementDefaultDeclaration$ambient$lexical =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$lexical$strict = exportStatementDefaultDeclaration$ambient$lexical(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.lexical.strict
+);
+const exportStatementDefaultDeclaration$ambient$lexical$coerce = exportStatementDefaultDeclaration$ambient$lexical(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.lexical.coerce
+);
+const exportStatementDefaultDeclaration$ambient$variable =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$variable$strict = exportStatementDefaultDeclaration$ambient$variable(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.variable.strict
+);
+const exportStatementDefaultDeclaration$ambient$variable$coerce = exportStatementDefaultDeclaration$ambient$variable(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.variable.coerce
+);
+const exportStatementDefaultDeclaration$ambient$using =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$using$strict = exportStatementDefaultDeclaration$ambient$using(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.using.strict
+);
+const exportStatementDefaultDeclaration$ambient$using$coerce = exportStatementDefaultDeclaration$ambient$using(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.using.coerce
+);
+const exportStatementDefaultDeclaration$ambient$functionSignature =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$functionSignature$strict =
+	exportStatementDefaultDeclaration$ambient$functionSignature(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.functionSignature.strict
+	);
+const exportStatementDefaultDeclaration$ambient$functionSignature$coerce =
+	exportStatementDefaultDeclaration$ambient$functionSignature(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.functionSignature.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$abstractClass =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$abstractClass$strict =
+	exportStatementDefaultDeclaration$ambient$abstractClass(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.abstractClass.strict
+	);
+const exportStatementDefaultDeclaration$ambient$abstractClass$coerce =
+	exportStatementDefaultDeclaration$ambient$abstractClass(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.abstractClass.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$internalModule =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$internalModule$strict =
+	exportStatementDefaultDeclaration$ambient$internalModule(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.internalModule.strict
+	);
+const exportStatementDefaultDeclaration$ambient$internalModule$coerce =
+	exportStatementDefaultDeclaration$ambient$internalModule(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.internalModule.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$typeAlias =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$typeAlias$strict = exportStatementDefaultDeclaration$ambient$typeAlias(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.typeAlias.strict
+);
+const exportStatementDefaultDeclaration$ambient$typeAlias$coerce = exportStatementDefaultDeclaration$ambient$typeAlias(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.typeAlias.coerce
+);
+const exportStatementDefaultDeclaration$ambient$enum =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$enum$strict = exportStatementDefaultDeclaration$ambient$enum(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.enum.strict
+);
+const exportStatementDefaultDeclaration$ambient$enum$coerce = exportStatementDefaultDeclaration$ambient$enum(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.enum.coerce
+);
+const exportStatementDefaultDeclaration$ambient$interface =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$interface$strict = exportStatementDefaultDeclaration$ambient$interface(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.interface.strict
+);
+const exportStatementDefaultDeclaration$ambient$interface$coerce = exportStatementDefaultDeclaration$ambient$interface(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.interface.coerce
+);
+const exportStatementDefaultDeclaration$ambient$importAlias =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$importAlias$strict =
+	exportStatementDefaultDeclaration$ambient$importAlias(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.importAlias.strict
+	);
+const exportStatementDefaultDeclaration$ambient$importAlias$coerce =
+	exportStatementDefaultDeclaration$ambient$importAlias(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.importAlias.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$ambient =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$ambient$strict = exportStatementDefaultDeclaration$ambient$ambient(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.ambient.strict
+);
+const exportStatementDefaultDeclaration$ambient$ambient$coerce = exportStatementDefaultDeclaration$ambient$ambient(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.ambient.coerce
+);
+const exportStatementDefaultDeclaration$ambient$global =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$global$strict = exportStatementDefaultDeclaration$ambient$global(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.global.strict
+);
+const exportStatementDefaultDeclaration$ambient$global$coerce = exportStatementDefaultDeclaration$ambient$global(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.global.coerce
+);
+const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$strict =
+	exportStatementDefaultDeclaration$ambient$using$automaticSemicolon(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.using.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$coerce =
+	exportStatementDefaultDeclaration$ambient$using$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.using.automaticSemicolon.coerce
+	);
+const exportStatementDefaultDeclaration$ambient$using$semi =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const exportStatementDefaultDeclaration$ambient$using$semi$strict =
+	exportStatementDefaultDeclaration$ambient$using$semi(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.using.semi.strict
+	);
+const exportStatementDefaultDeclaration$ambient$using$semi$coerce =
+	exportStatementDefaultDeclaration$ambient$using$semi(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.using.semi.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -3272,290 +3554,178 @@ const exportStatementDefaultDeclaration$defaultKw$value$semi$coerce =
 		C.coerceToExportStatementDefaultDeclaration,
 		exportStatementDefaultDeclarationDefaultKw.value.semi.coerce
 	);
-const exportStatementDefaultDeclaration$using$automaticSemicolon =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$using$automaticSemicolon$strict =
-	exportStatementDefaultDeclaration$using$automaticSemicolon(
-		F.buildExportStatementDefaultDeclaration,
-		usingDeclaration.automaticSemicolon.strict
-	);
-const exportStatementDefaultDeclaration$using$automaticSemicolon$coerce =
-	exportStatementDefaultDeclaration$using$automaticSemicolon(
-		C.coerceToExportStatementDefaultDeclaration,
-		usingDeclaration.automaticSemicolon.coerce
-	);
-const exportStatementDefaultDeclaration$using$semi =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$using$semi$strict = exportStatementDefaultDeclaration$using$semi(
-	F.buildExportStatementDefaultDeclaration,
-	usingDeclaration.semi.strict
-);
-const exportStatementDefaultDeclaration$using$semi$coerce = exportStatementDefaultDeclaration$using$semi(
-	C.coerceToExportStatementDefaultDeclaration,
-	usingDeclaration.semi.coerce
-);
-const exportStatementDefaultDeclaration$ambient$function =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$function$strict = exportStatementDefaultDeclaration$ambient$function(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.function.strict
-);
-const exportStatementDefaultDeclaration$ambient$function$coerce = exportStatementDefaultDeclaration$ambient$function(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.function.coerce
-);
-const exportStatementDefaultDeclaration$ambient$generatorFunction =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$generatorFunction$strict =
-	exportStatementDefaultDeclaration$ambient$generatorFunction(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.generatorFunction.strict
-	);
-const exportStatementDefaultDeclaration$ambient$generatorFunction$coerce =
-	exportStatementDefaultDeclaration$ambient$generatorFunction(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.generatorFunction.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$class =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$class$strict = exportStatementDefaultDeclaration$ambient$class(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.class.strict
-);
-const exportStatementDefaultDeclaration$ambient$class$coerce = exportStatementDefaultDeclaration$ambient$class(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.class.coerce
-);
-const exportStatementDefaultDeclaration$ambient$lexical =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$lexical$strict = exportStatementDefaultDeclaration$ambient$lexical(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.lexical.strict
-);
-const exportStatementDefaultDeclaration$ambient$lexical$coerce = exportStatementDefaultDeclaration$ambient$lexical(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.lexical.coerce
-);
-const exportStatementDefaultDeclaration$ambient$variable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$variable$strict = exportStatementDefaultDeclaration$ambient$variable(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.variable.strict
-);
-const exportStatementDefaultDeclaration$ambient$variable$coerce = exportStatementDefaultDeclaration$ambient$variable(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.variable.coerce
-);
-const exportStatementDefaultDeclaration$ambient$using =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$using$strict = exportStatementDefaultDeclaration$ambient$using(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.using.strict
-);
-const exportStatementDefaultDeclaration$ambient$using$coerce = exportStatementDefaultDeclaration$ambient$using(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.using.coerce
-);
-const exportStatementDefaultDeclaration$ambient$functionSignature =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$functionSignature$strict =
-	exportStatementDefaultDeclaration$ambient$functionSignature(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.functionSignature.strict
-	);
-const exportStatementDefaultDeclaration$ambient$functionSignature$coerce =
-	exportStatementDefaultDeclaration$ambient$functionSignature(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.functionSignature.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$abstractClass =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$abstractClass$strict =
-	exportStatementDefaultDeclaration$ambient$abstractClass(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.abstractClass.strict
-	);
-const exportStatementDefaultDeclaration$ambient$abstractClass$coerce =
-	exportStatementDefaultDeclaration$ambient$abstractClass(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.abstractClass.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$internalModule =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$internalModule$strict =
-	exportStatementDefaultDeclaration$ambient$internalModule(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.internalModule.strict
-	);
-const exportStatementDefaultDeclaration$ambient$internalModule$coerce =
-	exportStatementDefaultDeclaration$ambient$internalModule(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.internalModule.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$typeAlias =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$typeAlias$strict = exportStatementDefaultDeclaration$ambient$typeAlias(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.typeAlias.strict
-);
-const exportStatementDefaultDeclaration$ambient$typeAlias$coerce = exportStatementDefaultDeclaration$ambient$typeAlias(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.typeAlias.coerce
-);
-const exportStatementDefaultDeclaration$ambient$enum =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$enum$strict = exportStatementDefaultDeclaration$ambient$enum(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.enum.strict
-);
-const exportStatementDefaultDeclaration$ambient$enum$coerce = exportStatementDefaultDeclaration$ambient$enum(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.enum.coerce
-);
-const exportStatementDefaultDeclaration$ambient$interface =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$interface$strict = exportStatementDefaultDeclaration$ambient$interface(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.interface.strict
-);
-const exportStatementDefaultDeclaration$ambient$interface$coerce = exportStatementDefaultDeclaration$ambient$interface(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.interface.coerce
-);
-const exportStatementDefaultDeclaration$ambient$importAlias =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$importAlias$strict =
-	exportStatementDefaultDeclaration$ambient$importAlias(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.importAlias.strict
-	);
-const exportStatementDefaultDeclaration$ambient$importAlias$coerce =
-	exportStatementDefaultDeclaration$ambient$importAlias(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.importAlias.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$ambient =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$ambient$strict = exportStatementDefaultDeclaration$ambient$ambient(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.ambient.strict
-);
-const exportStatementDefaultDeclaration$ambient$ambient$coerce = exportStatementDefaultDeclaration$ambient$ambient(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.ambient.coerce
-);
-const exportStatementDefaultDeclaration$ambient$global =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$global$strict = exportStatementDefaultDeclaration$ambient$global(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.global.strict
-);
-const exportStatementDefaultDeclaration$ambient$global$coerce = exportStatementDefaultDeclaration$ambient$global(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.global.coerce
-);
-const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$strict =
-	exportStatementDefaultDeclaration$ambient$using$automaticSemicolon(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.using.automaticSemicolon.strict
-	);
-const exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$coerce =
-	exportStatementDefaultDeclaration$ambient$using$automaticSemicolon(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.using.automaticSemicolon.coerce
-	);
-const exportStatementDefaultDeclaration$ambient$using$semi =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$using$semi$strict =
-	exportStatementDefaultDeclaration$ambient$using$semi(
-		F.buildExportStatementDefaultDeclaration,
-		ambientDeclaration.using.semi.strict
-	);
-const exportStatementDefaultDeclaration$ambient$using$semi$coerce =
-	exportStatementDefaultDeclaration$ambient$using$semi(
-		C.coerceToExportStatementDefaultDeclaration,
-		ambientDeclaration.using.semi.coerce
-	);
 export const exportStatementDefaultDeclaration = Object.freeze({
 	...B.exportStatementDefaultDeclaration,
+	function: bundle(
+		exportStatementDefaultDeclaration$function$strict,
+		exportStatementDefaultDeclaration$function$coerce,
+		{ key: 'exportStatementDefaultDeclaration.function', max: 2 }
+	),
+	generatorFunction: bundle(
+		exportStatementDefaultDeclaration$generatorFunction$strict,
+		exportStatementDefaultDeclaration$generatorFunction$coerce,
+		{ key: 'exportStatementDefaultDeclaration.generatorFunction', max: 2 }
+	),
+	class: bundle(exportStatementDefaultDeclaration$class$strict, exportStatementDefaultDeclaration$class$coerce, {
+		key: 'exportStatementDefaultDeclaration.class',
+		max: 2
+	}),
+	lexical: bundle(exportStatementDefaultDeclaration$lexical$strict, exportStatementDefaultDeclaration$lexical$coerce, {
+		key: 'exportStatementDefaultDeclaration.lexical',
+		max: 2
+	}),
+	variable: bundle(
+		exportStatementDefaultDeclaration$variable$strict,
+		exportStatementDefaultDeclaration$variable$coerce,
+		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
+	),
+	using: {
+		...bundle(exportStatementDefaultDeclaration$using$strict, exportStatementDefaultDeclaration$using$coerce, {
+			key: 'exportStatementDefaultDeclaration.using',
+			max: 2
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultDeclaration$using$automaticSemicolon$strict,
+			exportStatementDefaultDeclaration$using$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultDeclaration.using.automaticSemicolon', max: 2 }
+		),
+		semi: bundle(
+			exportStatementDefaultDeclaration$using$semi$strict,
+			exportStatementDefaultDeclaration$using$semi$coerce,
+			{ key: 'exportStatementDefaultDeclaration.using.semi', max: 2 }
+		)
+	},
+	functionSignature: bundle(
+		exportStatementDefaultDeclaration$functionSignature$strict,
+		exportStatementDefaultDeclaration$functionSignature$coerce,
+		{ key: 'exportStatementDefaultDeclaration.functionSignature', max: 2 }
+	),
+	abstractClass: bundle(
+		exportStatementDefaultDeclaration$abstractClass$strict,
+		exportStatementDefaultDeclaration$abstractClass$coerce,
+		{ key: 'exportStatementDefaultDeclaration.abstractClass', max: 2 }
+	),
+	module: bundle(exportStatementDefaultDeclaration$module$strict, exportStatementDefaultDeclaration$module$coerce, {
+		key: 'exportStatementDefaultDeclaration.module',
+		max: 2
+	}),
+	internalModule: bundle(
+		exportStatementDefaultDeclaration$internalModule$strict,
+		exportStatementDefaultDeclaration$internalModule$coerce,
+		{ key: 'exportStatementDefaultDeclaration.internalModule', max: 2 }
+	),
+	typeAlias: bundle(
+		exportStatementDefaultDeclaration$typeAlias$strict,
+		exportStatementDefaultDeclaration$typeAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.typeAlias', max: 2 }
+	),
+	enum: bundle(exportStatementDefaultDeclaration$enum$strict, exportStatementDefaultDeclaration$enum$coerce, {
+		key: 'exportStatementDefaultDeclaration.enum',
+		max: 2
+	}),
+	interface: bundle(
+		exportStatementDefaultDeclaration$interface$strict,
+		exportStatementDefaultDeclaration$interface$coerce,
+		{ key: 'exportStatementDefaultDeclaration.interface', max: 2 }
+	),
+	importAlias: bundle(
+		exportStatementDefaultDeclaration$importAlias$strict,
+		exportStatementDefaultDeclaration$importAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.importAlias', max: 2 }
+	),
+	ambient: {
+		...bundle(exportStatementDefaultDeclaration$ambient$strict, exportStatementDefaultDeclaration$ambient$coerce, {
+			key: 'exportStatementDefaultDeclaration.ambient',
+			max: 2
+		}),
+		function: bundle(
+			exportStatementDefaultDeclaration$ambient$function$strict,
+			exportStatementDefaultDeclaration$ambient$function$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.function', max: 2 }
+		),
+		generatorFunction: bundle(
+			exportStatementDefaultDeclaration$ambient$generatorFunction$strict,
+			exportStatementDefaultDeclaration$ambient$generatorFunction$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.generatorFunction', max: 2 }
+		),
+		class: bundle(
+			exportStatementDefaultDeclaration$ambient$class$strict,
+			exportStatementDefaultDeclaration$ambient$class$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.class', max: 2 }
+		),
+		lexical: bundle(
+			exportStatementDefaultDeclaration$ambient$lexical$strict,
+			exportStatementDefaultDeclaration$ambient$lexical$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.lexical', max: 2 }
+		),
+		variable: bundle(
+			exportStatementDefaultDeclaration$ambient$variable$strict,
+			exportStatementDefaultDeclaration$ambient$variable$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
+		),
+		using: {
+			...bundle(
+				exportStatementDefaultDeclaration$ambient$using$strict,
+				exportStatementDefaultDeclaration$ambient$using$coerce,
+				{ key: 'exportStatementDefaultDeclaration.ambient.using', max: 2 }
+			),
+			automaticSemicolon: bundle(
+				exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$strict,
+				exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$coerce,
+				{ key: 'exportStatementDefaultDeclaration.ambient.using.automaticSemicolon', max: 2 }
+			),
+			semi: bundle(
+				exportStatementDefaultDeclaration$ambient$using$semi$strict,
+				exportStatementDefaultDeclaration$ambient$using$semi$coerce,
+				{ key: 'exportStatementDefaultDeclaration.ambient.using.semi', max: 2 }
+			)
+		},
+		functionSignature: bundle(
+			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
+			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.functionSignature', max: 2 }
+		),
+		abstractClass: bundle(
+			exportStatementDefaultDeclaration$ambient$abstractClass$strict,
+			exportStatementDefaultDeclaration$ambient$abstractClass$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.abstractClass', max: 2 }
+		),
+		internalModule: bundle(
+			exportStatementDefaultDeclaration$ambient$internalModule$strict,
+			exportStatementDefaultDeclaration$ambient$internalModule$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.internalModule', max: 2 }
+		),
+		typeAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$typeAlias$strict,
+			exportStatementDefaultDeclaration$ambient$typeAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.typeAlias', max: 2 }
+		),
+		enum: bundle(
+			exportStatementDefaultDeclaration$ambient$enum$strict,
+			exportStatementDefaultDeclaration$ambient$enum$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.enum', max: 2 }
+		),
+		interface: bundle(
+			exportStatementDefaultDeclaration$ambient$interface$strict,
+			exportStatementDefaultDeclaration$ambient$interface$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.interface', max: 2 }
+		),
+		importAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$importAlias$strict,
+			exportStatementDefaultDeclaration$ambient$importAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.importAlias', max: 2 }
+		),
+		ambient: bundle(
+			exportStatementDefaultDeclaration$ambient$ambient$strict,
+			exportStatementDefaultDeclaration$ambient$ambient$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.ambient', max: 2 }
+		),
+		global: bundle(
+			exportStatementDefaultDeclaration$ambient$global$strict,
+			exportStatementDefaultDeclaration$ambient$global$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
+		)
+	},
 	defaultKw: {
 		...bundle(exportStatementDefaultDeclaration$defaultKw$strict, exportStatementDefaultDeclaration$defaultKw$coerce, {
 			key: 'exportStatementDefaultDeclaration.defaultKw',
@@ -3754,178 +3924,462 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.semi', max: 2 }
 			)
 		}
-	},
-	function: bundle(
-		exportStatementDefaultDeclaration$function$strict,
-		exportStatementDefaultDeclaration$function$coerce,
-		{ key: 'exportStatementDefaultDeclaration.function', max: 2 }
-	),
-	generatorFunction: bundle(
-		exportStatementDefaultDeclaration$generatorFunction$strict,
-		exportStatementDefaultDeclaration$generatorFunction$coerce,
-		{ key: 'exportStatementDefaultDeclaration.generatorFunction', max: 2 }
-	),
-	class: bundle(exportStatementDefaultDeclaration$class$strict, exportStatementDefaultDeclaration$class$coerce, {
-		key: 'exportStatementDefaultDeclaration.class',
-		max: 2
-	}),
-	lexical: bundle(exportStatementDefaultDeclaration$lexical$strict, exportStatementDefaultDeclaration$lexical$coerce, {
-		key: 'exportStatementDefaultDeclaration.lexical',
-		max: 2
-	}),
-	variable: bundle(
-		exportStatementDefaultDeclaration$variable$strict,
-		exportStatementDefaultDeclaration$variable$coerce,
-		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
-	),
-	using: {
-		...bundle(exportStatementDefaultDeclaration$using$strict, exportStatementDefaultDeclaration$using$coerce, {
-			key: 'exportStatementDefaultDeclaration.using',
-			max: 2
-		}),
-		automaticSemicolon: bundle(
-			exportStatementDefaultDeclaration$using$automaticSemicolon$strict,
-			exportStatementDefaultDeclaration$using$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultDeclaration.using.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(
-			exportStatementDefaultDeclaration$using$semi$strict,
-			exportStatementDefaultDeclaration$using$semi$coerce,
-			{ key: 'exportStatementDefaultDeclaration.using.semi', max: 2 }
-		)
-	},
-	functionSignature: bundle(
-		exportStatementDefaultDeclaration$functionSignature$strict,
-		exportStatementDefaultDeclaration$functionSignature$coerce,
-		{ key: 'exportStatementDefaultDeclaration.functionSignature', max: 2 }
-	),
-	abstractClass: bundle(
-		exportStatementDefaultDeclaration$abstractClass$strict,
-		exportStatementDefaultDeclaration$abstractClass$coerce,
-		{ key: 'exportStatementDefaultDeclaration.abstractClass', max: 2 }
-	),
-	module: bundle(exportStatementDefaultDeclaration$module$strict, exportStatementDefaultDeclaration$module$coerce, {
-		key: 'exportStatementDefaultDeclaration.module',
-		max: 2
-	}),
-	internalModule: bundle(
-		exportStatementDefaultDeclaration$internalModule$strict,
-		exportStatementDefaultDeclaration$internalModule$coerce,
-		{ key: 'exportStatementDefaultDeclaration.internalModule', max: 2 }
-	),
-	typeAlias: bundle(
-		exportStatementDefaultDeclaration$typeAlias$strict,
-		exportStatementDefaultDeclaration$typeAlias$coerce,
-		{ key: 'exportStatementDefaultDeclaration.typeAlias', max: 2 }
-	),
-	enum: bundle(exportStatementDefaultDeclaration$enum$strict, exportStatementDefaultDeclaration$enum$coerce, {
-		key: 'exportStatementDefaultDeclaration.enum',
-		max: 2
-	}),
-	interface: bundle(
-		exportStatementDefaultDeclaration$interface$strict,
-		exportStatementDefaultDeclaration$interface$coerce,
-		{ key: 'exportStatementDefaultDeclaration.interface', max: 2 }
-	),
-	importAlias: bundle(
-		exportStatementDefaultDeclaration$importAlias$strict,
-		exportStatementDefaultDeclaration$importAlias$coerce,
-		{ key: 'exportStatementDefaultDeclaration.importAlias', max: 2 }
-	),
-	ambient: {
-		...bundle(exportStatementDefaultDeclaration$ambient$strict, exportStatementDefaultDeclaration$ambient$coerce, {
-			key: 'exportStatementDefaultDeclaration.ambient',
-			max: 2
-		}),
-		function: bundle(
-			exportStatementDefaultDeclaration$ambient$function$strict,
-			exportStatementDefaultDeclaration$ambient$function$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.function', max: 2 }
-		),
-		generatorFunction: bundle(
-			exportStatementDefaultDeclaration$ambient$generatorFunction$strict,
-			exportStatementDefaultDeclaration$ambient$generatorFunction$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.generatorFunction', max: 2 }
-		),
-		class: bundle(
-			exportStatementDefaultDeclaration$ambient$class$strict,
-			exportStatementDefaultDeclaration$ambient$class$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.class', max: 2 }
-		),
-		lexical: bundle(
-			exportStatementDefaultDeclaration$ambient$lexical$strict,
-			exportStatementDefaultDeclaration$ambient$lexical$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.lexical', max: 2 }
-		),
-		variable: bundle(
-			exportStatementDefaultDeclaration$ambient$variable$strict,
-			exportStatementDefaultDeclaration$ambient$variable$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
-		),
-		using: {
-			...bundle(
-				exportStatementDefaultDeclaration$ambient$using$strict,
-				exportStatementDefaultDeclaration$ambient$using$coerce,
-				{ key: 'exportStatementDefaultDeclaration.ambient.using', max: 2 }
-			),
-			automaticSemicolon: bundle(
-				exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$strict,
-				exportStatementDefaultDeclaration$ambient$using$automaticSemicolon$coerce,
-				{ key: 'exportStatementDefaultDeclaration.ambient.using.automaticSemicolon', max: 2 }
-			),
-			semi: bundle(
-				exportStatementDefaultDeclaration$ambient$using$semi$strict,
-				exportStatementDefaultDeclaration$ambient$using$semi$coerce,
-				{ key: 'exportStatementDefaultDeclaration.ambient.using.semi', max: 2 }
-			)
-		},
-		functionSignature: bundle(
-			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
-			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.functionSignature', max: 2 }
-		),
-		abstractClass: bundle(
-			exportStatementDefaultDeclaration$ambient$abstractClass$strict,
-			exportStatementDefaultDeclaration$ambient$abstractClass$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.abstractClass', max: 2 }
-		),
-		internalModule: bundle(
-			exportStatementDefaultDeclaration$ambient$internalModule$strict,
-			exportStatementDefaultDeclaration$ambient$internalModule$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.internalModule', max: 2 }
-		),
-		typeAlias: bundle(
-			exportStatementDefaultDeclaration$ambient$typeAlias$strict,
-			exportStatementDefaultDeclaration$ambient$typeAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.typeAlias', max: 2 }
-		),
-		enum: bundle(
-			exportStatementDefaultDeclaration$ambient$enum$strict,
-			exportStatementDefaultDeclaration$ambient$enum$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.enum', max: 2 }
-		),
-		interface: bundle(
-			exportStatementDefaultDeclaration$ambient$interface$strict,
-			exportStatementDefaultDeclaration$ambient$interface$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.interface', max: 2 }
-		),
-		importAlias: bundle(
-			exportStatementDefaultDeclaration$ambient$importAlias$strict,
-			exportStatementDefaultDeclaration$ambient$importAlias$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.importAlias', max: 2 }
-		),
-		ambient: bundle(
-			exportStatementDefaultDeclaration$ambient$ambient$strict,
-			exportStatementDefaultDeclaration$ambient$ambient$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.ambient', max: 2 }
-		),
-		global: bundle(
-			exportStatementDefaultDeclaration$ambient$global$strict,
-			exportStatementDefaultDeclaration$ambient$global$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
-		)
 	}
 }) as unknown as typeof B.exportStatementDefaultDeclaration & {
+	function: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildFunctionDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFunctionDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	generatorFunction: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	class: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	lexical: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildLexicalDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToLexicalDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	variable: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildVariableDeclaration>;
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToVariableDeclaration>;
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	using: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildUsingDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToUsingDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		automaticSemicolon: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		semi: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.semi.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof usingDeclaration.semi.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+	};
+	functionSignature: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildFunctionSignature>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFunctionSignature>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	abstractClass: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildAbstractClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToAbstractClassDeclaration>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	module: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildModule>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToModule>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	internalModule: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildInternalModule>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInternalModule>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	typeAlias: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildTypeAliasDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	enum: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildEnumDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToEnumDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	interface: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildInterfaceDeclaration>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInterfaceDeclaration>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	importAlias: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildImportAlias>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToImportAlias>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+	};
+	ambient: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildAmbientDeclaration>[0];
+			},
+			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToAmbientDeclaration>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		function: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.function.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.function.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		generatorFunction: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.generatorFunction.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		class: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.class.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.class.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		lexical: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.lexical.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.lexical.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		variable: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.variable.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.variable.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		using: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.using.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.using.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			automaticSemicolon: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>;
+					},
+					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			};
+			semi: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.semi.strict>;
+					},
+					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof ambientDeclaration.using.semi.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+			};
+		};
+		functionSignature: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.functionSignature.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.functionSignature.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		abstractClass: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.abstractClass.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.abstractClass.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		internalModule: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.internalModule.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.internalModule.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		typeAlias: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.typeAlias.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.typeAlias.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		enum: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.enum.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.enum.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		interface: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.interface.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.interface.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		importAlias: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.importAlias.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.importAlias.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		ambient: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.ambient.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.ambient.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+		global: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.global.strict>;
+				},
+				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					content: ArgsOf<typeof ambientDeclaration.global.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
+			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
+		};
+	};
 	defaultKw: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
@@ -4460,460 +4914,6 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
-		};
-	};
-	function: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildFunctionDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToFunctionDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	generatorFunction: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	class: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	lexical: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildLexicalDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToLexicalDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	variable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildVariableDeclaration>;
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToVariableDeclaration>;
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	using: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildUsingDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToUsingDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		automaticSemicolon: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		semi: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof usingDeclaration.semi.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof usingDeclaration.semi.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-	};
-	functionSignature: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildFunctionSignature>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToFunctionSignature>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	abstractClass: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildAbstractClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToAbstractClassDeclaration>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	module: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildModule>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToModule>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	internalModule: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildInternalModule>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInternalModule>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	typeAlias: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildTypeAliasDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	enum: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildEnumDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToEnumDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	interface: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildInterfaceDeclaration>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInterfaceDeclaration>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	importAlias: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildImportAlias>[0],
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToImportAlias>[0],
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-	};
-	ambient: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildAmbientDeclaration>[0];
-			},
-			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToAmbientDeclaration>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		function: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.function.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.function.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		generatorFunction: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.generatorFunction.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		class: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.class.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.class.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		lexical: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.lexical.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.lexical.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		variable: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.variable.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.variable.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		using: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.using.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.using.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-			automaticSemicolon: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>;
-					},
-					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-			};
-			semi: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-						content: ArgsOf<typeof ambientDeclaration.using.semi.strict>;
-					},
-					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-						content: ArgsOf<typeof ambientDeclaration.using.semi.coerce>;
-					},
-					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-			};
-		};
-		functionSignature: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.functionSignature.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.functionSignature.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		abstractClass: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.abstractClass.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.abstractClass.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		internalModule: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.internalModule.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.internalModule.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		typeAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.typeAlias.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.typeAlias.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		enum: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.enum.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.enum.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		interface: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.interface.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.interface.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		importAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.importAlias.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.importAlias.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		ambient: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.ambient.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.ambient.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		global: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.global.strict>;
-				},
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.global.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 	};
 };

@@ -17030,20 +17030,10 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
+              "type": "SYMBOL",
               "name": "declaration",
-              "content": {
-                "type": "SYMBOL",
-                "name": "declaration",
-                "annotations": {
-                  "variant": "declaration",
-                  "variantOf": "export_statement_default_declaration"
-                }
-              },
-              "metadata": {
-                "fieldSource": "override"
-              },
               "annotations": {
+                "variant": "declaration",
                 "variantOf": "export_statement_default_declaration"
               }
             },

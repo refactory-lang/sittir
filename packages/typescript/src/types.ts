@@ -8328,13 +8328,13 @@ export interface ExportStatementDefaultFrom {
 export interface ExportStatementDefaultDeclaration {
 	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
 	readonly _decorator: readonly Decorator[];
-	readonly _content: ExportStatementDefaultDeclarationDefaultKw | Declaration;
+	readonly _content: Declaration | ExportStatementDefaultDeclarationDefaultKw;
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
-		readonly content: SlotHint<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>;
+		readonly content: SlotHint<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>;
 	};
 	readonly decorators: () => readonly Decorator[];
-	readonly content: () => ExportStatementDefaultDeclarationDefaultKw | Declaration;
+	readonly content: () => Declaration | ExportStatementDefaultDeclarationDefaultKw;
 }
 
 export interface ExportStatementDefaultFromStarFrom {

@@ -8714,7 +8714,7 @@ export function buildExportStatementDefaultDeclaration(
 				rebuilt(node, handle, () =>
 					buildExportStatementDefaultDeclaration({ ...config, decorator: restItems('decorators', values) })
 				),
-			content: (value: Admit<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>) =>
+			content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value }))
 		},
 		decorators: () => hydrateStoredSlots(node, '_decorator'),

@@ -86,6 +86,10 @@ function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: strin
 	return found;
 }
 
+function isUnionSlotMember(model: SlotModel, owner: string, kind: string): boolean {
+	return (model.get(owner)?.slots ?? []).some((slot) => slot.kinds.length > 1 && slot.kinds.includes(kind));
+}
+
 const targetKey = (r: FieldRequest): string =>
 	'from' in r ? `${r.owner}\u0000field:${r.from}` : `${r.owner}\u0000${'token' in r.target ? `token:${r.target.token}` : `symbol:${r.target.symbol}`}`;
 const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r.to : r.field}`;
@@ -117,7 +121,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	report: GrammarBindingsReport;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const { facts, base, vocabMembers, routes } = input;
+	const { facts, base, vocabMembers, routes, model } = input;
 	const symbols = renameAwareSymbolSource({
 		...symbolFactsOf(base),
 		kindEntries: predictedEntriesOf(base.predictedKinds)
@@ -309,6 +313,11 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			continue;
 		}
 		const where = childFields(checks, m.owner, target);
+		const child = target !== null && 'symbol' in target ? target.symbol : undefined;
+		if (child !== undefined && where.fields.length === 0 && where.unfielded && isUnionSlotMember(model, m.owner, child)) {
+			realizedMembers.push(row);
+			continue;
+		}
 		if (where.arm) {
 			left('the child is an arm of the owner, not a slot', row);
 			continue;

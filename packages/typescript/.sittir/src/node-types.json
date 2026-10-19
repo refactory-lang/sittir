@@ -2830,16 +2830,6 @@
     "type": "export_statement_default_declaration",
     "named": true,
     "fields": {
-      "declaration": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "declaration",
-            "named": true
-          }
-        ]
-      },
       "decorator": {
         "multiple": true,
         "required": false,
@@ -2853,8 +2843,12 @@
     },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "declaration",
+          "named": true
+        },
         {
           "type": "export_statement_default_declaration_default_kw",
           "named": true

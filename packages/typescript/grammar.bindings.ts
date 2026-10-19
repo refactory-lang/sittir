@@ -128,7 +128,6 @@ export default grammar(
 			decorator: { "1": field("content") },
 			export_clause: { "1/0": field("export_specifiers") },
 			export_specifier: { "0/0": field("type_only") },
-			export_statement_default_declaration: { "2/0": field("declaration") },
 			export_statement_default_from: { "1": field("type_only") },
 			export_statement_equals_export: { "2": field("value") },
 			for_in_statement: { "1/0": field("async") },

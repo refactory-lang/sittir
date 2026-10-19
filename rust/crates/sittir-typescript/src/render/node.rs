@@ -16723,8 +16723,6 @@ impl ::sittir_core::render::Render for ExportStatementDefaultFromContentNodeSlot
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum ExportStatementDefaultDeclarationContentNodeSlot {
-    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
-    ExportStatementDefaultDeclarationDefaultKw(Box<ExportStatementDefaultDeclarationDefaultKwNode>),
     #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(Box<FunctionDeclarationNode>),
     #[kind(kind::GENERATOR_FUNCTION_DECLARATION)]
@@ -16755,12 +16753,13 @@ pub enum ExportStatementDefaultDeclarationContentNodeSlot {
     ImportAlias(ImportAliasNode),
     #[kind(kind::AMBIENT_DECLARATION)]
     AmbientDeclaration(AmbientDeclarationNode),
+    #[kind(kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW)]
+    ExportStatementDefaultDeclarationDefaultKw(Box<ExportStatementDefaultDeclarationDefaultKwNode>),
 }
 
 impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::FunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::GeneratorFunctionDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::ClassDeclaration(t) => t.prepare(ctx),
@@ -16776,11 +16775,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentNodeSlot::InterfaceDeclaration(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::ImportAlias(t) => t.prepare(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::AmbientDeclaration(t) => t.prepare(ctx),
+            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentNodeSlot::FunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentNodeSlot::GeneratorFunctionDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentNodeSlot::ClassDeclaration(t) => t.gap_edges(),
@@ -16796,11 +16795,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentNodeSlot::InterfaceDeclaration(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentNodeSlot::ImportAlias(t) => t.gap_edges(),
             ExportStatementDefaultDeclarationContentNodeSlot::AmbientDeclaration(t) => t.gap_edges(),
+            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentNodeSlot::FunctionDeclaration(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentNodeSlot::GeneratorFunctionDeclaration(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentNodeSlot::ClassDeclaration(t) => t.snapshot_edge(),
@@ -16816,11 +16815,11 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentNodeSlot::InterfaceDeclaration(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentNodeSlot::ImportAlias(t) => t.snapshot_edge(),
             ExportStatementDefaultDeclarationContentNodeSlot::AmbientDeclaration(t) => t.snapshot_edge(),
+            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::FunctionDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::GeneratorFunctionDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::ClassDeclaration(t) => t.source_separator(ctx),
@@ -16836,6 +16835,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentNodeSlot::InterfaceDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::ImportAlias(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentNodeSlot::AmbientDeclaration(t) => t.source_separator(ctx),
+            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -16846,7 +16846,6 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
 impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.kind_in(kinds),
             Self::FunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::GeneratorFunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::ClassDeclaration(inner) => inner.kind_in(kinds),
@@ -16862,6 +16861,7 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentNod
             Self::InterfaceDeclaration(inner) => inner.kind_in(kinds),
             Self::ImportAlias(inner) => inner.kind_in(kinds),
             Self::AmbientDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -16869,7 +16869,6 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationContentNod
 impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentNodeSlot::FunctionDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentNodeSlot::GeneratorFunctionDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentNodeSlot::ClassDeclaration(inner) => inner.as_ref().render(w),
@@ -16885,6 +16884,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentN
             ExportStatementDefaultDeclarationContentNodeSlot::InterfaceDeclaration(inner) => inner.as_ref().render(w),
             ExportStatementDefaultDeclarationContentNodeSlot::ImportAlias(inner) => inner.render(w),
             ExportStatementDefaultDeclarationContentNodeSlot::AmbientDeclaration(inner) => inner.render(w),
+            ExportStatementDefaultDeclarationContentNodeSlot::ExportStatementDefaultDeclarationDefaultKw(inner) => inner.as_ref().render(w),
         }
     }
 }
@@ -29658,7 +29658,7 @@ pub struct ExportStatementDefaultDeclarationNode {
     #[slot(field = field::DECORATOR, word = 2, width = 2, run = 5)]
     pub decorator: Vec<::sittir_core::SlotValue<DecoratorNode>>,
     #[wire(key = "_content")]
-    #[slot(field = field::DECLARATION, untagged, word = 4, width = 5)]
+    #[slot(word = 4, width = 5)]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationContentNodeSlot>,
     #[wire(key = "_decorator_separator_space")]
     pub decorator_separator_space: Option<KindId>,
@@ -37922,7 +37922,6 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTemplateCallFunctionNo
 impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationContentNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
-            Self::ExportStatementDefaultDeclarationDefaultKw(t) => t.seat_target(table, ctx),
             Self::FunctionDeclaration(t) => t.seat_target(table, ctx),
             Self::GeneratorFunctionDeclaration(t) => t.seat_target(table, ctx),
             Self::ClassDeclaration(t) => t.seat_target(table, ctx),
@@ -37938,6 +37937,7 @@ impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationCon
             Self::InterfaceDeclaration(t) => t.seat_target(table, ctx),
             Self::ImportAlias(t) => t.seat_target(table, ctx),
             Self::AmbientDeclaration(t) => t.seat_target(table, ctx),
+            Self::ExportStatementDefaultDeclarationDefaultKw(t) => t.seat_target(table, ctx),
         }
     }
 }

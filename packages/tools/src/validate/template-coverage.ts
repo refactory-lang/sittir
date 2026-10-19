@@ -35,7 +35,7 @@ import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
 import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
-import type { ValidatorSkip } from './common.ts';
+import { parseNodeModel, type ValidatorSkip } from './common.ts';
 
 /**
  * Every emitted kind's body in the checker's placeholder shape
@@ -867,33 +867,25 @@ const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
 };
 
 /**
- * Load the `factorySlots` / `polymorphVariants` / `fieldAliasMap` sections
- * of a grammar's `node-model.json5` (`packages/<grammar>/src/`) — the same
- * stamped facts `validate/common.ts`'s `loadNodeModel` reads for the live
- * NodeMap-backed validators. This validator is a lightweight file reader
- * (no live `NodeMap`, see the module doc), so it reads the sections it
- * needs directly and synchronously rather than pulling in that async
- * loader. Returns empty maps when the file is unavailable — mirrors
- * `loadGrammarJson`'s fail-soft behavior for fresh checkouts.
+ * The node-model facts this validator reads from a grammar's
+ * `node-model.json5` (`packages/<grammar>/src/`): the maps
+ * `validate/common.ts`'s `parseNodeModel` reads or derives (the file does not
+ * store `factorySlots`; it is derived from the nodes' slots), and each
+ * visible kind's slot names. Returns empty maps when the file is unavailable
+ * — mirrors `loadGrammarJson`'s fail-soft behavior for fresh checkouts.
  */
 function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
-	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<NodeModelFacts> & {
-		nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }>;
-	};
+	const text = readFileSync(path, 'utf8');
+	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap } = parseNodeModel(text);
+	const { nodes } = JSON.parse(text) as { nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }> };
 	const modelFieldsByKind = new Map<string, Set<string>>();
-	for (const node of parsed.nodes ?? []) {
+	for (const node of nodes ?? []) {
 		if (node.slots === undefined) continue;
 		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.slots.map((f) => f.name)));
 	}
-	return {
-		factorySlots: parsed.factorySlots ?? {},
-		displayUnions: parsed.displayUnions ?? {},
-		polymorphVariants: parsed.polymorphVariants ?? {},
-		fieldAliasMap: parsed.fieldAliasMap ?? {},
-		modelFieldsByKind
-	};
+	return { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelFieldsByKind };
 }
 
 interface UnionSlotRoutedDiagnostic {
