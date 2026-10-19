@@ -106,6 +106,23 @@ fn record(word: u32) -> Result<Address, ArenaError> {
 }
 
 impl Cell {
+    /// The cell, as one the record at `holder` holds: a writer writes a
+    /// record's children before it, so a record a cell names in the
+    /// holder's own arena lies below the holder. A cell that names one at
+    /// or past it is refused, so no chain of cells returns to a record it
+    /// left. A linked child is in another arena, which this leaves alone.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a cell naming a record of the arena that
+    /// is not below `holder`.
+    pub fn below(self, holder: Address) -> Result<Cell, ArenaError> {
+        match self {
+            Cell::Child { at, link: None, .. } | Cell::BuiltLeaf { record: at, .. } if at >= holder => Err(malformed("child record address", at.0)),
+            cell => Ok(cell),
+        }
+    }
+
     /// The kind a cell names: blank for captured text, none when absent.
     #[must_use]
     pub const fn kind(self) -> Option<KindId> {
@@ -408,5 +425,20 @@ mod tests {
         assert!(past.items(&arena, 5).is_err());
         assert!(ListCell { run: Address(1), len: u32::MAX }.items(&arena, 5).is_err());
         assert!(ListCell { run: Address(1), len: 1 }.items(&arena, 0).is_err());
+    }
+
+    #[test]
+    fn a_cell_names_only_records_below_its_holder_in_its_own_arena() {
+        let child = |at: u32, link| Cell::Child { kind: KindId(9), at: Address(at), link, changed: ChangedEdges::default() };
+        let holder = Address(10);
+        assert_eq!(child(4, None).below(holder), Ok(child(4, None)));
+        for at in [10, 11] {
+            assert_eq!(child(at, None).below(holder), Err(ArenaError::Malformed { what: "child record address", word: at }), "a record at or past its holder was not written before it");
+        }
+        assert_eq!(child(40, Some(TreeId(2))).below(holder), Ok(child(40, Some(TreeId(2)))), "a linked child is in another arena");
+        let leaf = |record: u32| Cell::BuiltLeaf { kind: KindId(9), text: StringRef { chunk: 0, byte: 0, len: 1 }, record: Address(record) };
+        assert!(leaf(3).below(holder).is_ok());
+        assert!(leaf(12).below(holder).is_err());
+        assert_eq!(Cell::Absent.below(holder), Ok(Cell::Absent));
     }
 }

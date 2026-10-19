@@ -11,6 +11,7 @@
 //! An arena only appends: no record is freed or moved, so an address names
 //! one record for as long as the arena lives.
 
+mod admit;
 pub mod cell;
 mod parsed;
 mod prep;
@@ -23,6 +24,7 @@ mod write;
 use std::collections::HashMap;
 use std::fmt;
 
+pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use cell::{Cell, ListCell};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};

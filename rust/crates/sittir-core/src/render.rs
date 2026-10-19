@@ -153,6 +153,14 @@ pub trait SourceTable {
         None
     }
 
+    /// The sides a coordinate's bytes render between, outermost first: its
+    /// node's own (`sides`), then those of each node inside its bytes that
+    /// holds trivia at its edges for it (`ParsedTree::frame_levels`). A table
+    /// of bare sources knows no sides.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
+        self.sides(coord).into_iter().collect()
+    }
+
     /// The stored layout of each list slot of the node a coordinate names
     /// (`layout::SlotLayout`), as its tree measures it; none for a table of
     /// bare sources.
@@ -368,12 +376,12 @@ pub trait RenderSink {
         let _ = coord;
         None
     }
-    /// The leading and trailing sides of the node a coordinate names, from
-    /// the tree table this writer holds (`SourceTable::sides`), prepared as a
-    /// slot's trivia is; a sink with no table answers none.
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Result<Option<Box<dyn crate::trivia::FramedTrivia>>, CoordinateError> {
+    /// The frames a coordinate's bytes render between, outermost first, from
+    /// the tree table this writer holds (`SourceTable::frames`), each
+    /// prepared as a slot's trivia is; a sink with no table answers none.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<Vec<Box<dyn crate::trivia::FramedTrivia>>, CoordinateError> {
         let _ = coord;
-        Ok(None)
+        Ok(Vec::new())
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.

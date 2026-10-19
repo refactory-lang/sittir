@@ -787,6 +787,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         .ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
     let inner = inner_of(field.ty, "SlotValue")
         .ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
+    let key = field.key.as_ref().ok_or_else(|| syn::Error::new_spanned(content, "an envelope's content has its wire key"))?;
     let layout_ty = fields
         .iter()
         .find(|f| matches!(f.role, Role::Layout))
@@ -826,10 +827,11 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             let __at = ctx.at_of(cursor);
             let __index = __rt::index_of(cursor);
             #hidden
+            let __unit = <#inner as __rt::ReadNode>::unit_id(cursor).map(|_| ::sittir_core::layout::UnitRow { slot: #key, item: ::sittir_core::types::ItemIndex(0), row: __rt::index_of(cursor) });
             let mut content = <#inner as __rt::ReadNode>::read(cursor, ctx, depth);
             #restore
             let mut content = content?;
-            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), __index, __at, ctx));
+            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), __index, __at, __unit, ctx));
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
     })

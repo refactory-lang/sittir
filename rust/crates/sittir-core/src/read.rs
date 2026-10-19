@@ -853,15 +853,18 @@ impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
 /// way (`at`, or `span` in a snapshot, taken where the envelope stands, since
 /// a content read through a hidden child names that child). An envelope reads
 /// its content under the context it was read under, so its content's trivia
-/// is measured from the envelope's holder.
+/// is measured from the envelope's holder. A unit content, `unit`, has no
+/// layout to name its row, so the envelope's names it, as a holder names
+/// each unit child's (`NodeLayout::unit_rows`).
 #[must_use]
 pub fn envelope_layout<T: crate::trivia::FromTriviaText + 'static>(
     taken: Option<Box<NodeLayout<T>>>,
     index: NodeIndex,
     at: Origin,
+    unit: Option<crate::layout::UnitRow>,
     ctx: &mut ReadCtx<'_>,
 ) -> Box<NodeLayout<T>> {
-    match taken {
+    let mut layout = match taken {
         Some(mut layout) if layout.trivia.is_some() => {
             let placed = placed_at::<T>(at);
             layout.at = placed.at;
@@ -869,7 +872,9 @@ pub fn envelope_layout<T: crate::trivia::FromTriviaText + 'static>(
             layout
         }
         _ => ctx.layout(index, at, false),
-    }
+    };
+    layout.unit_rows.extend(unit);
+    layout
 }
 
 /// The value of the child at the cursor in a slot: read into its node

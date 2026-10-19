@@ -213,10 +213,11 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
     }
 }
 
-/// Write a coordinate's bytes, framed by its node's leading and trailing
-/// sides as a rendered owner is (`render_framed`), unless its node's frame
-/// is already open (`RenderSink::in_frame_of`); its kind's edges are the
-/// coordinate's own (`write_between_edges`).
+/// Write a coordinate's bytes, framed by its frames as nested rendered
+/// owners are (`RenderSink::frames`, `render_framed`), the outermost naming
+/// the coordinate's node, unless that node's frame is already open
+/// (`RenderSink::in_frame_of`); its kind's edges are the coordinate's own
+/// (`write_between_edges`).
 pub(crate) fn write_coordinate(
     coord: &NodeCoordinate,
     adjacent: bool,
@@ -225,16 +226,27 @@ pub(crate) fn write_coordinate(
     if w.in_frame_of(coord) {
         return coord.write_between_edges(w, adjacent);
     }
-    match w.sides(coord)? {
+    let frames = w.frames(coord)?;
+    write_framed(&frames, Some(coord), coord, adjacent, w)
+}
+
+fn write_framed(
+    frames: &[Box<dyn crate::trivia::FramedTrivia>],
+    origin: Option<&NodeCoordinate>,
+    coord: &NodeCoordinate,
+    adjacent: bool,
+    w: &mut dyn crate::render::RenderSink,
+) -> crate::render::RenderResult {
+    match frames.split_first() {
         None => coord.write_between_edges(w, adjacent),
-        Some(trivia) => crate::layout::render_framed(
-            Some(&*trivia),
+        Some((frame, inner)) => crate::layout::render_framed(
+            Some(&**frame),
             crate::options::Edges::default(),
             None,
-            Some(coord),
+            origin,
             crate::layout::TriviaRole::Owner,
             w,
-            |w| coord.write_between_edges(w, adjacent),
+            |w| write_framed(inner, None, coord, adjacent, w),
         ),
     }
 }

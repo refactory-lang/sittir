@@ -215,27 +215,26 @@ pub fn root_flanks(
     let flank = |item: Option<EdgeItem<'_>>, side: Side, allowed: &[KindId]| {
         let source_bytes = |tree: crate::types::TreeId, span: crate::types::Span| {
             let source = ctx.sources.source_of(tree)?;
-            let bytes = match side {
-                Side::Before => source.get(..span.start as usize)?,
-                Side::After => source.get(span.end as usize..)?,
-            };
-            Some(std::borrow::Cow::Borrowed(bytes))
+            match side {
+                Side::Before => source.get(..span.start as usize),
+                Side::After => source.get(span.end as usize..),
+            }
         };
-        let text = match item? {
-            EdgeItem::Coord(coord) => source_bytes(coord.tree, ctx.sources.framed_span(&coord))?,
-            EdgeItem::Bytes { tree, span } => source_bytes(tree, span)?,
+        let arm = match item? {
+            EdgeItem::Coord(coord) => crate::classify::classify_whitespace(source_bytes(coord.tree, ctx.sources.framed_span(&coord))?, allowed, table),
+            EdgeItem::Bytes { tree, span } => crate::classify::classify_whitespace(source_bytes(tree, span)?, allowed, table),
             EdgeItem::Snapshot(edge) => {
                 let root = root?;
                 let outer = edge.outer(side)?;
                 let gap = match side {
-                    Side::Before => crate::classify::geometry_gap_text(&crate::points::PointSpan::at(root.start), &outer),
-                    Side::After => crate::classify::geometry_gap_text(&outer, &crate::points::PointSpan::at(root.end)),
+                    Side::Before => crate::classify::geometry_gap(&crate::points::PointSpan::at(root.start), &outer),
+                    Side::After => crate::classify::geometry_gap(&outer, &crate::points::PointSpan::at(root.end)),
                 };
-                std::borrow::Cow::Owned(gap)
+                crate::classify::classify_gap(gap, allowed, table)
             }
             EdgeItem::Rebuilt => return None,
         };
-        crate::classify::classify_whitespace(&text, allowed, table).map(|arm| EdgeArm { arm, strength: None })
+        arm.map(|arm| EdgeArm { arm, strength: None })
     };
     Edges {
         before: flank(first, Side::Before, allowed_before),

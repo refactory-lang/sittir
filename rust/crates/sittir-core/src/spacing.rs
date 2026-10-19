@@ -1026,7 +1026,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if replaced {
             self.seam_template = true;
         }
-        if kinds.is_single() && kinds != LayoutKinds::TIGHT {
+        if kinds.is_single() && kinds != LayoutKinds::TIGHT && self.seam.is_some() {
             self.seam_is_token = true;
         }
     }
@@ -1043,20 +1043,22 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             let payload = Payload { set: gap, pick: gap, cont: text.unwrap_or_default().to_string() };
             self.merge_payload(payload, SeamStrength::Trivia, false);
         }
-        self.seam_is_token = true;
+        self.seam_is_token = self.seam.is_some();
     }
 
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Result<Option<Box<dyn crate::trivia::FramedTrivia>>, crate::render::CoordinateError> {
-        let Some(sources) = self.sources else { return Ok(None) };
-        let Some(mut frame) = sources.sides(coord) else { return Ok(None) };
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<Vec<Box<dyn crate::trivia::FramedTrivia>>, crate::render::CoordinateError> {
+        let Some(sources) = self.sources else { return Ok(Vec::new()) };
+        let mut frames = sources.frames(coord);
         if let Some(options) = self.options {
-            frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+            for frame in &mut frames {
+                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+            }
         }
-        Ok(Some(frame))
+        Ok(frames)
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {

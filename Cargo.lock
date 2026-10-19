@@ -478,7 +478,9 @@ dependencies = [
  "serde_json",
  "sittir-core",
  "sittir-python",
+ "sittir-regex",
  "sittir-rust",
+ "sittir-scm",
  "sittir-typescript",
  "tree-sitter",
 ]

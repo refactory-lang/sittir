@@ -53,12 +53,12 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
         engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse")
     }
 
-    /// The root of `tree`, read one level down seating its sides, rendered
-    /// natively; `None` when the model reads no root there.
-    fn native(&self, tree: &ParsedTree<G>, options: &ResolvedOptions) -> Option<Result<String, String>> {
-        let root: N = read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), NodeIndex::ROOT, Depth::ONE).ok()?;
+    /// The node at `index` of `tree`, read one level down seating its sides,
+    /// rendered natively; `None` when the model reads no node there.
+    fn native(&self, tree: &ParsedTree<G>, index: NodeIndex, options: &ResolvedOptions) -> Option<Result<String, String>> {
+        let node: N = read_at(&mut tree.tree().walk(), &mut tree.seating_ctx(), index, Depth::ONE).ok()?;
         let ctx = RenderContext { options, sources: tree };
-        Some((self.native)(SlotValue::Node(root), &ctx, None).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
+        Some((self.native)(SlotValue::Node(node), &ctx, None).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
     }
 
     /// The built record `root` of the arena `built`, its parsed children in
@@ -92,7 +92,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
         let mut panicked = false;
         for depth in [Depth::ONE, Depth::All] {
             let tree = Self::parse(&mut engine, source);
-            let native = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.native(&tree, &options)));
+            let native = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.native(&tree, NodeIndex::ROOT, &options)));
             let record = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| Self::first_read(&tree, depth).and_then(|root| Self::parsed(&tree, root, &options))));
             let (native, record) = match (native, record) {
                 (Ok(None), _) => return Ok(Alike::Unread),
@@ -164,7 +164,55 @@ fn every_typescript_source_renders_alike_from_its_records() {
 
 #[test]
 fn every_python_source_renders_alike_from_its_records() {
-    corpus("python", &Renders { grammar: sittir_python::PythonGrammar, options: sittir_python::render::options::defaults, native: sittir_python::render::render_node_parts, record: sittir_python::render::node::render_record });
+    corpus("python", &python());
+}
+
+#[test]
+fn every_regex_source_renders_alike_from_its_records() {
+    corpus("regex", &Renders { grammar: sittir_regex::RegexGrammar, options: sittir_regex::render::options::defaults, native: sittir_regex::render::render_node_parts, record: sittir_regex::render::node::render_record });
+}
+
+#[test]
+fn every_scm_source_renders_alike_from_its_records() {
+    corpus("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts, record: sittir_scm::render::node::render_record });
+}
+
+/// The node of kind `kind` spanning `text` in `source`, read one level
+/// down, renders as `text` natively and from its record.
+fn renders_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>>(renders: &Renders<G, N>, source: &str, kind: &str, text: &str) {
+    let mut engine = renders.engine();
+    let options = engine.options().clone();
+    let tree = Renders::<G, N>::parse(&mut engine, source);
+    let index = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+        .map(NodeIndex::new)
+        .find(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| node.kind() == kind && &source[sittir_core::types::Span::of(&node).range()] == text))
+        .unwrap_or_else(|| panic!("{source:?} has a {kind} node spanning {text:?}"));
+    let native = renders.native(&tree, index, &options).expect("a native read").expect("a native render");
+    let record = Renders::<G, N>::parsed(&tree, tree.read_record::<N>(index, Depth::ONE).expect("a record write").expect("a record"), &options).expect("a record render");
+    assert_eq!((native.as_str(), record.as_str()), (text, text), "{source:?}");
+}
+
+fn python() -> Renders<sittir_python::PythonGrammar, sittir_python::render::AnyNode> {
+    Renders { grammar: sittir_python::PythonGrammar, options: sittir_python::render::options::defaults, native: sittir_python::render::render_node_parts, record: sittir_python::render::node::render_record }
+}
+
+#[test]
+fn a_list_child_renders_with_the_extras_and_errors_its_edge_items_hold() {
+    for source in ["(e, f=g)", "(a:str=\"x\", b=c)"] {
+        renders_as_its_source(&python(), source, "tuple", source);
+    }
+    renders_as_its_source(&rust(), "error(\"was {:?}\", first_char(.0))", "arguments", "(.0)");
+}
+
+#[test]
+fn a_node_framed_by_errors_on_both_sides_leaves_no_seam_past_its_holder() {
+    renders_as_its_source(&python(), "(x, =b=)", "tuple", "(x, =b=)");
+}
+
+#[test]
+fn an_envelope_whose_content_is_a_unit_writes_its_record() {
+    let regex = Renders { grammar: sittir_regex::RegexGrammar, options: sittir_regex::render::options::defaults, native: sittir_regex::render::render_node_parts, record: sittir_regex::render::node::render_record };
+    renders_as_its_source(&regex, "h*?", "lazy", "?");
 }
 
 use sittir_rust::render::kind_ids as rust_kinds;
@@ -195,7 +243,7 @@ fn an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_com
         let tree = RustRenders::parse(&mut engine, EDITED);
         let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 1);
         tree.write_trivia_side(statement, sittir_core::trivia_table::TriviaSide::Leading, line_comment("// written"));
-        let native = renders.native(&tree, &options).expect("a root").expect("a native render");
+        let native = renders.native(&tree, NodeIndex::ROOT, &options).expect("a root").expect("a native render");
         let record = RustRenders::parsed(&tree, RustRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
         assert_eq!(record, native, "read {depth:?}");
         assert!(record.contains("g(/* inside */)") && record.contains("// written"), "{record:?}");
@@ -306,7 +354,7 @@ fn an_envelope_and_its_content_a_write_lies_in_prepare_apart_and_render_from_the
         let comment = sittir_core::trivia::TriviaText { kind: ts::COMMENT_LINE, text: "// written".to_owned(), span: None, before: None, after: None };
         let entries = [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(entry))).collect();
         tree.write_trivia_side(property, sittir_core::trivia_table::TriviaSide::Leading, entries);
-        let native = renders.native(&tree, &options).expect("a root").expect("a native render");
+        let native = renders.native(&tree, NodeIndex::ROOT, &options).expect("a root").expect("a native render");
         let record = TypeScriptRenders::parsed(&tree, TypeScriptRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
         assert_eq!(record, native, "read {depth:?}");
         assert!(record.contains("// written"), "{record:?}");

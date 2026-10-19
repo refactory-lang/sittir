@@ -278,6 +278,14 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             },
         )
     };
+    let cells = fields.iter().filter_map(|field| match (&field.role, shape(field)) {
+        (Role::Slot(slot), Ok(Shape::Child | Shape::OptionalChild | Shape::Items | Shape::Text | Shape::OptionalText)) => slot.cell.word.map(|word| {
+            let width = slot.cell.width.unwrap_or(1);
+            let run = slot.cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
+            quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run })
+        }),
+        _ => None,
+    });
     Ok(gated(&quote! {
         #[doc = #doc]
         #[derive(Clone, Copy)]
@@ -286,6 +294,11 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         }
         impl ::sittir_core::arena::HasRecord for #ident {
             type Record<'a> = #view<'a>;
+        }
+        impl ::sittir_core::arena::RecordCells for #ident {
+            fn shape(kind: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
+                (kind == #kind).then_some(::sittir_core::arena::RecordShape { words: #words, cells: &[#(#cells),*] })
+            }
         }
         impl<'a> ::sittir_core::arena::RecordView<'a, #trivia> for #view<'a> {
             fn claims(kind: ::sittir_core::types::KindId) -> bool {
@@ -375,10 +388,16 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
         quote!(#inner: ::sittir_core::arena::RecordView<'a, __T>,)
     });
     let refused = malformed("choice cell");
+    let payload_types = payloads.iter().map(|(_, ty)| ty);
     Ok(gated(&quote! {
         #declaration
         impl ::sittir_core::arena::HasRecord for #ident {
             type Record<'a> = #view;
+        }
+        impl ::sittir_core::arena::RecordCells for #ident {
+            fn shape(kind: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
+                ::core::option::Option::None #(.or_else(|| <#payload_types as ::sittir_core::arena::RecordCells>::shape(kind)))*
+            }
         }
         impl<'a, __T> ::sittir_core::arena::RecordView<'a, __T> for #view
         where
@@ -410,6 +429,11 @@ pub fn members(ident: &Ident) -> TokenStream {
     gated(&quote! {
         impl ::sittir_core::arena::HasRecord for #ident {
             type Record<'a> = #ident;
+        }
+        impl ::sittir_core::arena::RecordCells for #ident {
+            fn shape(_: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
+                ::core::option::Option::None
+            }
         }
         impl<'a, __T> ::sittir_core::arena::RecordView<'a, __T> for #ident {
             fn claims(kind: ::sittir_core::types::KindId) -> bool {
