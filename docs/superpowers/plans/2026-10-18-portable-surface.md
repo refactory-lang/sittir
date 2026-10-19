@@ -145,10 +145,10 @@ Ruled: **the 43 are re-stated in bindings before Task 4** (an alias or envelope 
   - Every node is frozen.
   - `portable.kinds.declaration.nope === undefined`.
   - The trees have the same keys at every level (walk both).
-  - `typeof portable.is.declaration.function === 'function'`.
+  - `typeof portableTrees(paths, guardOf).is.declaration.function === 'function'`, and `portable` has the key `kinds` only.
   - A path segment named `call` is a guard, not `Function.prototype.call`.
 - [ ] **Step 2:** Run the test. Expected: FAIL.
-- [ ] **Step 3:** Implement `portableTrees` with `Object.defineProperty` links (the existing `link` loop in `portable.ts`). `index.ts` passes a `guardOf` that Task 4 fills; until then it returns `() => false`.
+- [ ] **Step 3:** Implement `portableTrees` with `Object.defineProperty` links (the existing `link` loop in `portable.ts`). `index.ts` serves `portable.kinds` only; `portable.is` joins it in Task 4, with the classifier, so no exported guard answers false for want of one.
 - [ ] **Step 4:** Run the test. Expected: PASS. Then run the root type-check and lint.
 - [ ] **Step 5:** Pathspec commit.
 
@@ -190,7 +190,7 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 
 **Files:**
 - Create: `packages/common/src/portable/classify.ts` (moved logic: `placed`/`context` removed, `$subType` removed, numbers refused)
-- Modify: `packages/common/src/portable/index.ts` (`guardOf`), `packages/types/src/portable.ts` (`PortableGuard` loses `context`)
+- Modify: `packages/common/src/portable/index.ts` (`guardOf`, and `portable` gains `is`), `packages/types/src/portable.ts` (`PortableGuard` loses `context`)
 - Delete: `packages/common/src/portable.ts`; `portable-path.ts` moves to `portable/facts.ts`
 - Test: `packages/rust/tests/portable-guards.test.ts`
 

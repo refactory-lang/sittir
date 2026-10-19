@@ -70,10 +70,14 @@ describe('portableTrees', () => {
 });
 
 describe('portable', () => {
-	it('serves one kind node and one guard per vocabulary path', () => {
+	it('serves one kind node per vocabulary path', () => {
 		expect(at(portable.kinds, 'declaration.function').$path).toBe('declaration.function');
-		expect(typeof at(portable.is, 'declaration.function')).toBe('function');
-		expect(at(portable.is, 'expression.call')).not.toBe(Function.prototype.call);
+		expect(at(portable.kinds, 'expression.call').$path).toBe('expression.call');
 		expect(at(portable.kinds, 'declaration').nope).toBeUndefined();
+	});
+
+	it('serves no guards before node classification exists, so no guard can silently answer false', () => {
+		expect(Object.keys(portable)).toEqual(['kinds']);
+		expect(Object.isFrozen(portable)).toBe(true);
 	});
 });
