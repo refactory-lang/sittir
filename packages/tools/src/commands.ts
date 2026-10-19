@@ -7,27 +7,28 @@
 
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
 import { combineBuiltRender, type BuiltRenderResult } from './validate/built-render.ts';
 import { runLayoutRuns, type LayoutRunsResult } from './validate/layout-runs.ts';
-import { grammarPackage, isGrammar, sittirDirOf, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
+import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import { cachedNativeEngineProfile, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
-import { diffValidationReports, formatReportDiff, readComparableReport } from './validate/report-diff.ts';
+import { readGrammarDiagnostics } from './validate/grammar-diagnostics-file.ts';
+import { diffValidationReports, formatReportDiff, readComparableReport, reportMoved } from './validate/report-diff.ts';
 import {
-	buildValidationReportEntries,
-	checkSClassCeilings,
+	buildValidationReport,
+	checkCodeCeilings,
+	ceilingAdvice,
+	readCodeCeilings,
 	readValidationReport,
 	writeValidationReport,
-	type GrammarDiagnosticEntry,
-	type SClassCeilings,
 	type ValidatorDiagnostic,
-	type ValidationReportEntry
+	type ValidationReport
 } from './validate/validation-report.ts';
 
 /**
@@ -364,58 +365,6 @@ export async function spawnIsolatedGrammarWorker(grammar: GrammarName): Promise<
 }
 
 /**
- * Read `packages/<grammar>/.sittir/grammar-diagnostics.json` (written by
- * codegen's `writeGrammarDiagnosticsJson`, Task 13) and normalize each entry
- * into a `GrammarDiagnosticEntry` for the unified validation report.
- *
- * The on-disk shape is the real `GrammarDiagnostic | CompilerDiagnostic`
- * union (`packages/codegen/src/types/diagnostics.ts`) — it has NO `location`
- * field, but every other field it does have (`scope`, `phase`, `canProceed`,
- * `details`, `ruleId`, `subject`, `ownerKind`, `slotName`, …) is preserved
- * through unchanged. `location` is the one synthesized field, derived from
- * `ownerKind`/`slotName`: `ownerKind` alone when `slotName` is absent,
- * `${ownerKind}.${slotName}` when both are present, `undefined` when neither
- * is.
- *
- * Returns an empty array (rather than throwing) ONLY when the file doesn't
- * exist for a grammar — `gen` may not have been re-run for every grammar
- * since Task 13 landed, and that absence is expected/skippable. A file that
- * DOES exist but fails to read or parse (truncated write, permission error,
- * corrupt JSON, …) is a real error — silently folding that into "no
- * diagnostics" would recreate the exact silent-drop behavior this report is
- * meant to eliminate, and could make a successful validation run overwrite
- * the report without any grammar entries. Surface it loudly instead, as a
- * synthetic `GrammarDiagnosticEntry` carrying the file path — consistent
- * with how `runCountsCli` already surfaces whole-grammar collection
- * failures as synthetic entries rather than throwing out of the report loop.
- */
-export function readGrammarDiagnosticsEntries(grammar: GrammarName): GrammarDiagnosticEntry[] {
-	const path = join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json');
-	if (!existsSync(path)) return [];
-	try {
-		const raw = JSON.parse(readFileSync(path, 'utf8')) as ReadonlyArray<
-			GrammarDiagnosticEntry & { ownerKind?: string; slotName?: string }
-		>;
-		// Every other field (scope, phase, canProceed, details, ruleId, subject, …)
-		// is preserved via the spread — `location` is the only synthesized field,
-		// added alongside `ownerKind`/`slotName` rather than replacing them.
-		return raw.map((d) => {
-			const location = d.ownerKind ? (d.slotName ? `${d.ownerKind}.${d.slotName}` : d.ownerKind) : d.location;
-			return { ...d, location };
-		});
-	} catch (e) {
-		return [
-			{
-				code: 'grammar-diagnostics-read-error',
-				severity: 'error',
-				location: path,
-				message: `Failed to read/parse grammar diagnostics file at ${path}: ${(e as Error).message}`
-			}
-		];
-	}
-}
-
-/**
  * Collect every stage's FULL (unbounded) failure list from a `GrammarCounts`
  * result — i.e. before `formatFirstFailures` truncates to
  * `SITTIR_VALIDATOR_MAX_FAILURES` for the stdout printout — tagged per stage
@@ -597,93 +546,57 @@ export function extractIsolateReportJson(stdout: string): {
 }
 
 /**
- * Merge Task 13's per-grammar static grammar diagnostics with the full
- * (unbounded) validator failure lists collected for `grammars` into one
- * persisted, structured `validation-report.json`. Shared by both the
- * isolate and non-isolate `runCountsCli` paths so there is exactly one
- * merge+write call site (previously each isolation worker wrote its own
- * report, so only the last worker's single-grammar report survived).
- *
- * `packages/tools/validation-report.json` is a deliberately git-tracked
- * artifact (like `test-fixtures.json`) — it is committed after each
- * validation run so reviewers can diff diagnostic drift, not a stray
- * runtime file.
- *
- * Only replaces entries for `grammars` (the ones actually validated this
- * run) — entries already on disk for OTHER grammars are preserved.
- * `writeValidationReport` itself is a dumb full-overwrite primitive (see its
- * own doc comment/test); running `validate counts <one-grammar>` used to
- * blindly clobber every other grammar's entries because this was the only
- * caller and it never read the existing file first.
+ * Merge this run's results into `validation-report.json`: the records and rows
+ * of `grammars` (the ones validated this run) are replaced, and what is on
+ * disk for other grammars is kept, so `validate counts <one-grammar>` never
+ * clobbers another grammar's results. Returns this run's report.
  */
 export function writeMergedValidationReport(
 	grammars: readonly GrammarName[],
 	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>
-): ValidationReportEntry[] {
-	if (grammars.length === 0) return [];
-	const grammarDiagnosticsByGrammar: Record<string, GrammarDiagnosticEntry[]> = {};
-	for (const grammar of grammars) grammarDiagnosticsByGrammar[grammar] = readGrammarDiagnosticsEntries(grammar);
-	const freshEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);
+): ValidationReport {
+	const fresh = buildValidationReport(
+		Object.fromEntries(grammars.map((grammar) => [grammar, readGrammarDiagnostics(grammar)])),
+		validatorFailuresByGrammar
+	);
+	if (grammars.length === 0) return fresh;
 	const outPath = resolvePath(join('packages', 'tools', 'validation-report.json'));
-	const replacedGrammars = new Set<string>(grammars);
-	const preserved = readExistingValidationReportEntries(outPath).filter((e) => !replacedGrammars.has(e.grammar));
-	writeValidationReport([...preserved, ...freshEntries], outPath);
-	return freshEntries;
+	const replaced = new Set<string>(grammars);
+	const existing = existsSync(outPath) ? readValidationReport(outPath) : { grammars: {}, rows: [] };
+	writeValidationReport(
+		{
+			grammars: { ...Object.fromEntries(Object.entries(existing.grammars).filter(([grammar]) => !replaced.has(grammar))), ...fresh.grammars },
+			rows: [...existing.rows.filter((row) => !replaced.has(row.grammar)), ...fresh.rows]
+		},
+		outPath
+	);
+	return fresh;
 }
 
 /**
- * The S-class ratchet gate on a fresh validation run: compare the freshly
- * classified report entries for the grammars actually validated against the
- * committed per-grammar ceilings in `packages/tools/sclass-ceilings.json`.
- * A count above its ceiling means this run minted new debt in a tracked
- * source class — the run fails; fix the source, never raise the ceiling. A
- * count below a non-zero ceiling is a paid-down class — the ceiling should
- * be lowered (toward omission = 0) in the same commit, surfaced here as a
- * reminder rather than a failure.
- *
- * A missing or unparsable ceilings file is a hard error, not an empty
- * default — silently treating it as "all ceilings 0" would fail every run
- * on pre-existing documented debt, and treating it as "no gate" would
- * silently disable the ratchet.
+ * The diagnostic ratchet on a fresh validation run: the report entries of the
+ * grammars validated, counted per code at fail, error or warning severity, against
+ * the committed per-grammar ceilings in `packages/tools/diagnostic-ceilings.json`
+ * (a missing file means every ceiling is 0; see `readCodeCeilings`).
+ * A count above its ceiling fails the run; a count below a non-zero ceiling
+ * prints a reminder to lower it in the same commit, or to remove its entry
+ * once the count reaches 0.
  *
  * Returns true when the gate passes.
  */
-export function enforceSClassCeilings(
-	grammars: readonly GrammarName[],
-	entries: readonly ValidationReportEntry[]
-): boolean {
-	const ceilingsPath = resolvePath(join('packages', 'tools', 'sclass-ceilings.json'));
-	let ceilings: SClassCeilings;
-	try {
-		ceilings = JSON.parse(readFileSync(ceilingsPath, 'utf8')) as SClassCeilings;
-	} catch (e) {
-		throw new Error(`enforceSClassCeilings: failed to read/parse ceilings at ${ceilingsPath}: ${(e as Error).message}`);
-	}
-	const { violations, improvements } = checkSClassCeilings(entries, ceilings, grammars);
+export function enforceCodeCeilings(grammars: readonly GrammarName[], report: ValidationReport): boolean {
+	const ceilingsPath = resolvePath(join('packages', 'tools', 'diagnostic-ceilings.json'));
+	const ceilings = readCodeCeilings(ceilingsPath);
+	const { violations, improvements } = checkCodeCeilings(report, ceilings, grammars);
 	for (const v of violations) {
 		console.error(
-			`✗ S-class ratchet: ${v.grammar} ${v.sClass} has ${v.count} report entr${v.count === 1 ? 'y' : 'ies'} (ceiling ${v.ceiling}) — new ${v.sClass} debt; fix the source, never raise the ceiling (${ceilingsPath})`
+			`✗ diagnostic ratchet: ${v.grammar} ${v.code} has ${v.count} report entr${v.count === 1 ? 'y' : 'ies'} (ceiling ${v.ceiling}) — new debt; fix the source, never raise the ceiling (${ceilingsPath})`
 		);
 	}
 	for (const i of improvements) {
-		console.log(
-			`  S-class ratchet: ${i.grammar} ${i.sClass} is at ${i.count} (ceiling ${i.ceiling}) — lower the ceiling in ${ceilingsPath} in this commit`
-		);
+		console.log(`  diagnostic ratchet: ${i.grammar} ${i.code} is at ${i.count} (ceiling ${i.ceiling}) — ${ceilingAdvice(i)} in ${ceilingsPath} in this commit`);
 	}
 	return violations.length === 0;
-}
-
-/**
- * Read the current `validation-report.json`, if any — used by
- * `writeMergedValidationReport` to preserve other grammars' entries. A
- * missing file is a fresh/first run (empty, not an error); a file that
- * exists but fails to parse is surfaced loudly rather than silently treated
- * as empty, matching `readGrammarDiagnosticsEntries`'s convention — silently
- * discarding a corrupt report would compound the very data-loss this
- * function exists to prevent.
- */
-function readExistingValidationReportEntries(path: string): ValidationReportEntry[] {
-	return existsSync(path) ? readValidationReport(path) : [];
 }
 
 /** Exported entry: counts subcommand — prints raw pass/total for all four validators. */
@@ -761,8 +674,8 @@ export async function runCountsCli(
 		}
 		// One merged write covering every grammar attempted (ok, crashed, and
 		// error alike) — mirrors the non-isolate path's write-on-attempt policy.
-		const freshEntries = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
-		if (!enforceSClassCeilings(grammars, freshEntries)) {
+		const freshReport = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
+		if (!enforceCodeCeilings(grammars, freshReport)) {
 			process.exitCode = 1;
 		}
 		if (anyCrashed) {
@@ -833,8 +746,8 @@ export async function runCountsCli(
 			console.log(`${ISOLATE_REPORT_JSON_PREFIX}${JSON.stringify(validatorFailuresByGrammar[grammar] ?? [])}`);
 		}
 	} else {
-		const freshEntries = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
-		if (!enforceSClassCeilings(grammars, freshEntries)) {
+		const freshReport = writeMergedValidationReport(grammars, validatorFailuresByGrammar);
+		if (!enforceCodeCeilings(grammars, freshReport)) {
 			process.exitCode = 1;
 		}
 	}
@@ -897,8 +810,8 @@ export function runHistoryCli(args: string[]): void {
  * Returns 0 when the reports hold the same rows, 1 when rows moved, 2 when a side is missing, empty or has no rows.
  */
 export function runValidationReportDiffCli(basePath: string, headPath: string): number {
-	let base: ValidationReportEntry[];
-	let head: ValidationReportEntry[];
+	let base: ValidationReport;
+	let head: ValidationReport;
 	try {
 		base = readComparableReport(basePath);
 		head = readComparableReport(headPath);
@@ -907,9 +820,10 @@ export function runValidationReportDiffCli(basePath: string, headPath: string): 
 		return 2;
 	}
 	const diff = diffValidationReports(base, head);
-	console.log(`rows: base ${base.length}, head ${head.length}; +${diff.added.length} -${diff.removed.length}`);
+	const total = (pick: 'base' | 'head'): number => diff.grammars.reduce((sum, g) => sum + g[pick], 0);
+	console.log(`rows: base ${total('base')}, head ${total('head')}; +${diff.added.length} -${diff.removed.length}`);
 	for (const line of formatReportDiff(diff)) console.log(line);
-	return diff.added.length + diff.removed.length === 0 ? 0 : 1;
+	return reportMoved(diff) ? 1 : 0;
 }
 
 /** Exported entry: test-history subcommand — prints last N recorded `vitest run` summaries. */

@@ -1056,13 +1056,13 @@ export function classifyParserSymbolEmission(kind: string, context: ParserSymbol
 	return 'skip-missing-parser-symbol';
 }
 
-export function warnSkippedParserSymbol(
+export function reportSkippedParserSymbol(
 	kind: string,
 	emitter: 'factory' | 'wrap',
 	emission: Exclude<ParserSymbolEmission, 'emit'>
 ): void {
 	if (emission !== 'skip-inline-kind') return;
-	console.warn(
+	console.log(
 		`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
 			`Skipping ${emitter} emission. ` +
 			`Future: map to decomposition.`

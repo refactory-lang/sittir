@@ -101,7 +101,7 @@ describe('enrich()', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
-				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+				const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					foo: {
 						type: SEQ,
@@ -122,7 +122,7 @@ describe('enrich()', () => {
 					type: 'SYMBOL',
 					name: 'expression'
 				});
-				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
+				const calls = stdoutSpy.mock.calls.map((c) => String(c[0]));
 				// Pass was renamed kind-to-name → symbol-to-field in 80ee7ad9
 				// (passes 1+3 merged into one symbol-to-field pass + fixed-point loop).
 				expect(calls.some((c) => c.includes('skipped symbol-to-field on foo'))).toBe(true);
@@ -413,11 +413,11 @@ describe('enrich()', () => {
 			});
 		});
 
-		it('skips when a field with the same name already exists, reports to stderr', () => {
+		it('skips when a field with the same name already exists, and notes it on stdout', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
-				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+				const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					decorated_fn: {
 						type: SEQ,
@@ -442,7 +442,7 @@ describe('enrich()', () => {
 					type: 'OPTIONAL',
 					content: { type: 'STRING', value: 'async' }
 				});
-				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
+				const calls = stdoutSpy.mock.calls.map((c) => String(c[0]));
 				expect(calls.some((c) => c.includes('skipped optional-keyword-prefix on decorated_fn'))).toBe(true);
 			} finally {
 				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;
@@ -476,11 +476,11 @@ describe('enrich()', () => {
 			expect(out.grammar.rules._kw_async).toMatchObject({ type: 'STRING', value: 'async' });
 		});
 
-		it('declines the promotion when an existing `_kw_<x>` rule has different content, reports to stderr', () => {
+		it('declines the promotion when an existing `_kw_<x>` rule has different content, and notes it on stdout', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
-				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+				const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					_kw_async: { type: STRING, value: 'unrelated_content' },
 					function_definition: {
@@ -501,7 +501,7 @@ describe('enrich()', () => {
 				});
 				// The colliding base-grammar rule is untouched, not overwritten.
 				expect(out.grammar.rules._kw_async).toMatchObject({ type: 'STRING', value: 'unrelated_content' });
-				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
+				const calls = stdoutSpy.mock.calls.map((c) => String(c[0]));
 				expect(
 					calls.some(
 						(c) =>
@@ -753,7 +753,7 @@ describe('enrich()', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
-				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+				const stdoutSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					wrapped: {
 						type: 'PREC',
@@ -781,7 +781,7 @@ describe('enrich()', () => {
 					type: 'OPTIONAL',
 					content: { type: 'STRING', value: 'async' }
 				});
-				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
+				const calls = stdoutSpy.mock.calls.map((c) => String(c[0]));
 				expect(calls.some((c) => c.includes('skipped optional-keyword-prefix on wrapped'))).toBe(true);
 			} finally {
 				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;

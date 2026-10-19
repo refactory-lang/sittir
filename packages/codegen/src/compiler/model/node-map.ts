@@ -384,6 +384,14 @@ export function snakeToCamel(name: string): string {
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
+export function slotPropertyName(slot: {
+	readonly name: string;
+	readonly values?: readonly { readonly multiplicity?: string }[];
+}): string {
+	const key = snakeToCamel(slot.name);
+	return (slot.values ?? []).some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') ? pluralize(key) : key;
+}
+
 export function pluralize(name: string): string {
 	if (name.endsWith('s') || name.endsWith('List') || name.endsWith('children') || name.endsWith('Children'))
 		return name;
@@ -1435,8 +1443,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
 			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
 	const configKey = snakeToCamel(storageName);
-	const isMulti = slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-	const propertyName = isMulti ? pluralize(configKey) : configKey;
+	const propertyName = slotPropertyName({ name: storageName, values: slot.values });
 	return {
 		storageName,
 		name: storageName,
@@ -1835,10 +1842,6 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 					!immediateTokens[occurrence.precedingTokens]
 			)
 			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
-	}
-
-	get separator(): string | undefined {
-		return undefined;
 	}
 
 	#computing = false;
@@ -2400,7 +2403,7 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 		return this.terminatedSeparator && this.trailingDelimiter === 'optional';
 	}
 
-	override get separator(): string | undefined {
+	get separator(): string | undefined {
 		return extractSeparatorString(this.rule.separator);
 	}
 }

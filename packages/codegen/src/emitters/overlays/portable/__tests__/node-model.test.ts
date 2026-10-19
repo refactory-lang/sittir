@@ -7,15 +7,15 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 	bindings: await readBindings(scm),
 	model: slotModelOf({
 		nodes: [
-			{ kind: 'zeta', slots: [{ name: 'value', propertyName: 'value', required: true, kinds: ['alpha'] }] },
+			{ kind: 'zeta', slots: [{ name: 'value', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'alpha' }] }] },
 			{
 				kind: 'alpha',
 				slots: [
-					{ name: 'left', propertyName: 'left', required: true, kinds: ['zeta'] },
-					{ name: 'operator', propertyName: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
+					{ name: 'left', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'zeta' }] },
+					{ name: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
 				]
 			},
-			{ kind: 'wrapper', modelType: 'envelope', slots: [{ name: 'inner', propertyName: 'inner', required: true, kinds: ['alpha'] }] }
+			{ kind: 'wrapper', modelType: 'envelope', slots: [{ name: 'inner', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'alpha' }] }] }
 		]
 	}),
 	textTokens: new Set(),

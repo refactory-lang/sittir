@@ -2,13 +2,15 @@ import { spawn, spawnSync } from 'node:child_process';
 import { once } from 'node:events';
 import { availableParallelism } from 'node:os';
 import { createInterface } from 'node:readline';
-import type { Readable, Writable } from 'node:stream';
+import type { Readable } from 'node:stream';
 import { load, type CodegenSurface } from './codegen-surface.ts';
 import { fixtureOutputs, fixtureSources } from './fixture-inputs.ts';
 import { clearRegenRecord, readRegenRecord, writeRegenRecord, type RegenRecord } from './regen-record.ts';
+import { readGrammarDiagnostics, severitySummary } from './validate/grammar-diagnostics-file.ts';
 
 export interface RegenerateOptions {
 	readonly force?: boolean;
+	readonly verbose?: boolean;
 }
 
 type GrammarName = Parameters<CodegenSurface['generatedManifest']['verifyManifestForGrammar']>[0];
@@ -66,44 +68,65 @@ async function generationStaleness(grammar: string, cwd: string): Promise<string
 	return undefined;
 }
 
+const SKIPPED =
+	'its generated files match its sources, its native binary was built from the current native inputs (gate), and its fixtures were extracted from the current corpus';
+
 interface Work {
 	readonly regenerate: string[];
 	readonly reextract: string[];
+	readonly outcomes: Map<string, string>;
 }
 
-async function pendingWork(grammars: readonly string[], cwd: string): Promise<Work> {
-	const work: Work = { regenerate: [], reextract: [] };
+async function pendingWork(grammars: readonly string[], cwd: string, verbose: boolean): Promise<Work> {
+	const work: Work = { regenerate: [], reextract: [], outcomes: new Map() };
 	for (const grammar of grammars) {
 		const stale = await staleness(grammar, cwd);
 		if (stale === undefined) {
-			process.stdout.write(
-				`[${grammar}] skipped: its generated files match its sources, its native binary was built from the current native inputs (gate), and its fixtures were extracted from the current corpus\n`
-			);
+			if (verbose) process.stdout.write(`[${grammar}] skipped: ${SKIPPED}\n`);
+			work.outcomes.set(grammar, `skipped: ${SKIPPED}`);
 		} else if (stale.work === 're-extract') {
-			process.stdout.write(`[${grammar}] re-extracting fixtures: ${stale.reason}\n`);
+			if (verbose) process.stdout.write(`[${grammar}] re-extracting fixtures: ${stale.reason}\n`);
 			work.reextract.push(grammar);
+			work.outcomes.set(grammar, `re-extracted fixtures: ${stale.reason}`);
 		} else {
-			process.stdout.write(`[${grammar}] regenerating: ${stale.reason}\n`);
+			if (verbose) process.stdout.write(`[${grammar}] regenerating: ${stale.reason}\n`);
 			work.regenerate.push(grammar);
+			work.outcomes.set(grammar, `regenerated: ${stale.reason}`);
 		}
 	}
 	return work;
 }
 
-function prefixed(grammar: string, input: Readable, output: Writable): Promise<unknown> {
+function prefixed(grammar: string, input: Readable, output: (line: string) => void): Promise<unknown> {
 	const lines = createInterface({ input });
-	lines.on('line', (line) => output.write(`[${grammar}] ${line}\n`));
+	lines.on('line', (line) => output(`[${grammar}] ${line}\n`));
 	return once(lines, 'close');
 }
 
-async function runPrefixed(grammar: string, cwd: string, flags: readonly string[]): Promise<number> {
+const toStdout = (line: string): void => void process.stdout.write(line);
+
+async function runPrefixed(grammar: string, cwd: string, flags: readonly string[], verbose: boolean): Promise<number> {
 	const child = spawn('pnpm', [...genArgs(grammar), ...flags], { cwd, stdio: ['ignore', 'pipe', 'pipe'] });
 	const exit = new Promise<number>((resolve) => {
 		child.on('close', (code: number | null) => resolve(code ?? 1));
 		child.on('error', () => resolve(1));
 	});
-	await Promise.all([prefixed(grammar, child.stdout!, process.stdout), prefixed(grammar, child.stderr!, process.stderr)]);
-	return exit;
+	const kept: string[] = [];
+	await Promise.all([
+		prefixed(grammar, child.stdout!, verbose ? toStdout : (line) => kept.push(line)),
+		prefixed(grammar, child.stderr!, (line) => void process.stderr.write(line))
+	]);
+	const status = await exit;
+	if (status !== 0) kept.forEach(toStdout);
+	return status;
+}
+
+function buildNative(grammar: string, cwd: string, args: readonly string[], verbose: boolean): number {
+	if (verbose) return spawnSync('pnpm', args, { cwd, stdio: 'inherit' }).status ?? 1;
+	const child = spawnSync('pnpm', args, { cwd, stdio: ['ignore', 'pipe', 'inherit'], env: { ...process.env, CARGO_TERM_QUIET: 'true' } });
+	const status = child.status ?? 1;
+	if (status !== 0) for (const line of child.stdout.toString().split('\n')) if (line !== '') toStdout(`[${grammar}] ${line}\n`);
+	return status;
 }
 
 async function inPool<T, R>(items: readonly T[], limit: number, run: (item: T) => Promise<R>): Promise<R[]> {
@@ -121,20 +144,24 @@ async function inPool<T, R>(items: readonly T[], limit: number, run: (item: T) =
 
 export async function regenerateGrammars(grammars: readonly string[], cwd: string, opts: RegenerateOptions = {}): Promise<number> {
 	(await load('treeSitterCli')).ensureWasmToolchain();
-	const { regenerate: stale, reextract } = opts.force === true ? { regenerate: [...grammars], reextract: [] } : await pendingWork(grammars, cwd);
+	const verbose = opts.verbose === true;
+	const { regenerate: stale, reextract, outcomes } =
+		opts.force === true
+			? { regenerate: [...grammars], reextract: [], outcomes: new Map(grammars.map((grammar) => [grammar, 'regenerated: forced'])) }
+			: await pendingWork(grammars, cwd, verbose);
 	const before = new Map<string, RunInputs>();
 	for (const grammar of [...stale, ...reextract]) before.set(grammar, await runInputs(grammar, cwd));
 	for (const grammar of stale) clearRegenRecord(cwd, grammar);
-	const generated = await inPool(stale, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--no-build-native', '--no-workspace-check']));
+	const generated = await inPool(stale, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--no-build-native', '--no-workspace-check'], verbose));
 	const failed = generated.find((status) => status !== 0);
 	if (failed !== undefined) return failed;
 	for (const [i, grammar] of stale.entries()) {
 		const args = [...genArgs(grammar), '--native-only'];
 		if (i < stale.length - 1) args.push('--no-workspace-check');
-		const child = spawnSync('pnpm', args, { cwd, stdio: 'inherit' });
-		if (child.status !== 0) return child.status ?? 1;
+		const status = buildNative(grammar, cwd, args, verbose);
+		if (status !== 0) return status;
 	}
-	const extracted = await inPool(reextract, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--post-generate-only']));
+	const extracted = await inPool(reextract, availableParallelism(), (grammar) => runPrefixed(grammar, cwd, ['--post-generate-only'], verbose));
 	const extractionFailed = extracted.find((status) => status !== 0);
 	if (extractionFailed !== undefined) return extractionFailed;
 	if (stale.length === 0) {
@@ -144,6 +171,9 @@ export async function regenerateGrammars(grammars: readonly string[], cwd: strin
 	for (const grammar of [...stale, ...reextract]) {
 		const record = await recordAfter(grammar, cwd, before.get(grammar)!);
 		if (record !== undefined) writeRegenRecord(cwd, grammar, record);
+	}
+	for (const [grammar, outcome] of outcomes) {
+		process.stdout.write(`[${grammar}] ${outcome} · diagnostics: ${severitySummary(readGrammarDiagnostics(grammar as GrammarName).entries)}\n`);
 	}
 	return 0;
 }

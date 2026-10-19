@@ -1037,27 +1037,6 @@ can't be unified.
 // falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.separator`
-
-```text
-/**
-	 * Repeat-list separator fallback for `render-module.ts`'s `collectMetaData`.
-	 * Historically read `this.simplifiedRule.type === REPEAT/REPEAT1` (the
-	 * former `AssembledContainer.separator` getter), but `simplifiedRule` is
-	 * the post-`flattenRules` view (see `SimplifiedRule`) where
-	 * REPEAT/REPEAT1 wrapper nodes never survive — they're converted to a
-	 * `multiplicity`/`separator` leaf attribute before storage. Verified
-	 * empirically (phase-visibility-tightening investigation): 0 of 468
-	 * AssembledBranch nodes across rust/typescript/python ever had a
-	 * REPEAT-shaped `simplifiedRule`, confirming the branch was always dead.
-	 * Always returns `undefined` on the base class; kept as a documented
-	 * no-op rather than deleted outright so `render-module.ts`'s
-	 * fallback-chain comment (and its call site) don't need to change in
-	 * this pass. `AssembledList` overrides this getter to return the real
-	 * separator text.
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
 
 A compound with a factory whose every slot fills itself takes no arguments: python's `match_block_empty` holds only the `_newline` layout token, regex's `lazy` only the literal `?`. The getter is guarded against re-entrancy, so a reference cycle reads as `false`.
@@ -1242,23 +1221,7 @@ flatten and simplify joins use.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::separator`
 
-```text
-/**
-	 * Separator string from the repeat rule, if any — `undefined` for a
-	 * nonterminal separator (mirrors `separatorRule`'s same distinction) or
-	 * when the separator is otherwise not a fixed literal. Overrides the
-	 * base `AbstractAssembledCompound.separator` (permanently `undefined`
-	 * there: a branch/envelope/polymorph's post-wrapper-deletion
-	 * `simplifiedRule` never survives as REPEAT-shaped); `this.rule` here IS
-	 * always the raw REPEAT/REPEAT1 rule by construction (that's the
-	 * classification criterion), so this override is live.
-	 * `render-module.ts`'s `collectMetaData` reads this as the node-wide
-	 * separator fallback for list-container nodes whose separator doesn't
-	 * reach a per-slot-value stamp — see isSlotBearingCompound's doc comment
-	 * (emitters/shared.ts) for why `'list'` shares that fallback with
-	 * `'branch'`/`'envelope'`/`'polymorph'`.
-	 */
-```
+The separator string of the list's repeat rule, if any: `undefined` for a nonterminal separator (`separatorRule` makes the same distinction) or one that is not a fixed literal. A list's `rule` is always its raw REPEAT or REPEAT1 rule, since that is what classifies it as a list. `render-module.ts`'s `collectMetaData` reads it as a list's separator when no slot value carries a stamped one. Other compounds have no node-wide separator.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.slots`
 
@@ -5511,6 +5474,10 @@ Records `delimited-closer-unguarded` on a skipped delimited composite for each `
 ### `packages/codegen/src/compiler/model/node-map.ts::Delimited`
 
 The stamped delimited fact: `open` and `close` (a literal `text` or the `slot` holding the leaf), `excluded` code point ranges, `nodeKinds` and `varying`. Derived once at assembly from the render rules and the leaf patterns, and consumed by the factory emitter and the test emitter, never re-derived.
+
+### `packages/codegen/src/compiler/model/node-map.ts::slotPropertyName`
+
+A slot's property name: its camel-cased storage name, pluralized when any value is an array. `projectSlotNaming` names every slot by it, and `slotModelOf` derives a written slot's property name by it, so `node-model.json5` stores no property or parameter name.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isPatternLeaf`
 

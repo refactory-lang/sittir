@@ -32,15 +32,24 @@ interface GenerateSummary {
 	readonly error?: { readonly BuildTables?: { readonly Conflict?: ConflictReport } };
 }
 
-function lastSummary(stderr: string): unknown {
+function summaryStart(stderr: string): number {
 	const start = stderr.lastIndexOf('\n{\n');
-	const from = start >= 0 ? start + 1 : stderr.startsWith('{\n') ? 0 : -1;
+	return start >= 0 ? start + 1 : stderr.startsWith('{\n') ? 0 : -1;
+}
+
+function lastSummary(stderr: string): unknown {
+	const from = summaryStart(stderr);
 	if (from < 0) return undefined;
 	try {
 		return JSON.parse(stderr.slice(from));
 	} catch {
 		return undefined;
 	}
+}
+
+export function splitGenerateStderr(stderr: string): { readonly preamble: string; readonly summary: string } {
+	const from = summaryStart(stderr);
+	return from < 0 ? { preamble: stderr, summary: '' } : { preamble: stderr.slice(0, from), summary: stderr.slice(from) };
 }
 
 export function unnecessaryConflictsOf(stderr: string): readonly (readonly string[])[] {

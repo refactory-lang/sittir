@@ -57,13 +57,14 @@ regenerate.
 ```bash
 pnpm run regen:all            # regenerate every stale grammar, skipping the fresh ones
 pnpm run regen:all --force    # regenerate every grammar (also SITTIR_REGEN_FORCE=1)
+pnpm run regen:all --verbose  # stream every child's full output (also SITTIR_REGEN_VERBOSE=1)
 
 # One grammar via the unified sittir CLI
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 ```
 
 `regen:all` generates every stale grammar at once, then builds their native
-bindings one at a time. A grammar is skipped, with a line saying why, only
+bindings one at a time. A grammar is skipped only
 when its generated files verify against its sources (the check below), its
 binding was built from the current native inputs under the `gate` profile,
 the current rust toolchain and the current build flags (`RUSTFLAGS`,
@@ -77,6 +78,13 @@ parity fixtures are out of date (the corpus under
 `packages/codegen/fixtures/<grammar>/`, the extractor's code, or the fixture
 files themselves changed), the grammar is not regenerated; its
 fixtures are re-extracted, with a `re-extracting fixtures` line saying why.
+By default the run is quiet: each generation's stdout is kept and printed
+only if that child fails, its stderr (warnings and errors) passes through
+prefixed with the grammar, and cargo runs with `CARGO_TERM_QUIET`. The run
+ends with one line per grammar: what it did and why (regenerated, fixtures
+re-extracted, or skipped), and its diagnostic counts by severity from
+`.sittir/grammar-diagnostics.json`. `--verbose` streams everything, as each
+child prints it.
 Anything that gates a pull request runs with `--force`
 (`SITTIR_REGEN_FORCE=1 pnpm run validate:native`), so a skip never stands in
 for the gate's own regeneration.
@@ -160,22 +168,36 @@ Two committed ratchets back the run (both only ever tighten):
   `sittir tool check-baseline --collect --backend native`; CI diffs a fresh
   head collection against the base commit's copy via
   `sittir tool check-baseline --base <base.json> --head <head.json>`.
-- `packages/tools/sclass-ceilings.json` — per-grammar ceilings on
-  round-trip-fidelity S-class counts in `validation-report.json`. Every
-  `validate counts` run fails when a class exceeds its ceiling (new debt in
-  a tracked source class); a class absent from the file has ceiling 0, so
-  cleared classes stay cleared. When a run reports a class below its
-  ceiling, lower the ceiling in the same commit.
+- `packages/tools/diagnostic-ceilings.json` — per grammar, the most
+  fail-, error- and warning-severity rows each diagnostic code may have in
+  `validation-report.json`, counting validator rows and the grammar rows
+  that can proceed. Every `validate counts` run fails when a code exceeds
+  its ceiling (new debt); a code a grammar does not list has ceiling 0, so
+  every such code is guarded and a cleared code stays cleared, and a code
+  with any fatal (`fail`) row has ceiling 0 whatever the file says. A
+  missing file means every ceiling is 0, which is the state today. The
+  file stores only positive ceilings. When a run reports a code below its
+  ceiling, lower the ceiling in the same commit, or remove the entry once
+  the code reaches 0. A grammar row that cannot proceed (`canProceed:
+  false`) is never counted: regeneration stops on it unless the grammar's
+  `expectDiagnostics:` floor-lists its owner for that code, and that
+  per-owner list is its gate.
 - `packages/tools/validation-report.json` — the report the committed
-  ceilings are checked against (a unit test pins the committed pair).
-  Commit it, as `validate` wrote it, in the same commit as any change to
-  `sclass-ceilings.json` or to the validated rows; otherwise leave it out,
-  since every run rewrites it. Compare two reports, such as the committed
-  one and a fresh run's, with
+  ceilings are checked against (a unit test pins the committed pair). It
+  records, per grammar, its `grammar-diagnostics.json` as counts per code and
+  severity, with the rows that cannot proceed counted apart as `blocking`,
+  plus a digest of its rows, and every validator failure as a row,
+  one record per line. Commit it, as `validate` wrote it, in the same commit
+  as any change to `diagnostic-ceilings.json` or to the validated rows;
+  otherwise leave it out, since every run rewrites it. Compare two reports,
+  such as the committed one and a fresh run's, with
   `sittir validate history --diff <base.json> <head.json>`: it prints
-  per-grammar row and per-code count deltas, then every row only one side
-  has. It exits 1 when rows moved and 2 when a side is missing, empty or
-  has no rows, so an empty side never reads as "nothing moved".
+  per-grammar row and per-code count deltas, each grammar whose diagnostics
+  moved (read its `grammar-diagnostics.json` `git diff` for the rows), then
+  every row only one side has. It reads the older flat-array format too, and
+  digests its grammar rows the same way, so a moved row shows across formats. It exits 1 when
+  anything moved and 2 when a side is missing, empty or records nothing, so
+  an empty side never reads as "nothing moved".
 
 ## Native engine build
 
