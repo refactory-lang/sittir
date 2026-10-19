@@ -877,7 +877,8 @@ function buildTypedTemplateBody(
 		const shape = shapeByName.get(f.name);
 		if (shape?.tag === 'presence') {
 			if (shape.kind !== undefined) {
-				const unit = `${rustNodeStructName(shape.kind)}::${rustNodeVariantName(shape.kind)}`;
+				const variant = `${rustNodeStructName(shape.kind)}::${rustNodeVariantName(shape.kind)}`;
+				const unit = seatedKindsOf(plan).has(shape.kind.display.name) ? `${variant}(::sittir_core::options::Edges::default())` : variant;
 				bind(ident, `View::new(::sittir_core::view::Presence::new(node.${rIdent}, ${unit}), ${template})`);
 				continue;
 			}
@@ -2775,7 +2776,7 @@ function wrapperSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
 	if (!(node instanceof AssembledPolymorph) || node instanceof AssembledSupertype) return undefined;
 	const model = renderSlotModelOf(node);
 	const slot = model.named[0] ?? model.unnamed[0];
-	return slot?.name === undefined ? undefined : slot;
+	return slot?.name === undefined || isMultiple(slot) ? undefined : slot;
 }
 
 function seatWrappersOf(nodeMap: NodeMap, tables: GeneratedIdTables): SeatWrapper[] {
