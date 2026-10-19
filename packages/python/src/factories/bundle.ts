@@ -218,7 +218,7 @@ export const parenthesizedExpression = bundle(F.buildParenthesizedExpression, C.
 	max: 1
 });
 export const collectionElements = bundle(F.buildCollectionElements, C.coerceToCollectionElements);
-export const forInClause = bundle(F.buildForInClause, C.coerceToForInClause, { key: 'forInClause', max: 1 });
+export const forInClause = bundle(F.buildForInClause, C.coerceToForInClause, { key: 'forInClause', max: 2 });
 export const ifClause = bundle(F.buildIfClause, C.coerceToIfClause, { key: 'ifClause', max: 1 });
 export const conditionalExpression = bundle(F.buildConditionalExpression, C.coerceToConditionalExpression, {
 	key: 'conditionalExpression',
@@ -259,14 +259,14 @@ export const comprehensionClauses = bundle(F.buildComprehensionClauses, C.coerce
 export const integerHex = bundle(F.buildIntegerHex, C.coerceToIntegerHex, { key: 'integerHex', max: 2 });
 export const integerOctal = bundle(F.buildIntegerOctal, C.coerceToIntegerOctal, { key: 'integerOctal', max: 2 });
 export const integerBinary = bundle(F.buildIntegerBinary, C.coerceToIntegerBinary, { key: 'integerBinary', max: 2 });
-export const floatPoint = bundle(F.buildFloatPoint, C.coerceToFloatPoint, { key: 'floatPoint', max: 1 });
+export const floatPoint = bundle(F.buildFloatPoint, C.coerceToFloatPoint, { key: 'floatPoint', max: 2 });
 export const floatLeadingPoint = bundle(F.buildFloatLeadingPoint, C.coerceToFloatLeadingPoint, {
 	key: 'floatLeadingPoint',
-	max: 1
+	max: 2
 });
 export const floatScientific = bundle(F.buildFloatScientific, C.coerceToFloatScientific, {
 	key: 'floatScientific',
-	max: 1
+	max: 2
 });
 export const assignmentEq = bundle(F.buildAssignmentEq, C.coerceToAssignmentEq, { key: 'assignmentEq', max: 1 });
 export const assignmentType = bundle(F.buildAssignmentType, C.coerceToAssignmentType, {

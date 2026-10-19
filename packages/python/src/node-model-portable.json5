@@ -3576,6 +3576,17 @@
           ]
         },
         {
+          "name": "sign",
+          "route": "slot",
+          "slot": "sign",
+          "path": [
+            {
+              "owner": "float_leading_point",
+              "slot": "sign"
+            }
+          ]
+        },
+        {
           "name": "exponent",
           "route": "slot",
           "slot": "exponent",
@@ -3645,6 +3656,17 @@
           ]
         },
         {
+          "name": "sign",
+          "route": "slot",
+          "slot": "sign",
+          "path": [
+            {
+              "owner": "float_point",
+              "slot": "sign"
+            }
+          ]
+        },
+        {
           "name": "exponent",
           "route": "slot",
           "slot": "exponent",
@@ -3699,6 +3721,17 @@
             {
               "owner": "float_scientific",
               "slot": "marker"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "route": "slot",
+          "slot": "sign",
+          "path": [
+            {
+              "owner": "float_scientific",
+              "slot": "sign"
             }
           ]
         },
@@ -3773,13 +3806,13 @@
           ]
         },
         {
-          "name": "comma",
+          "name": "trailingComma",
           "route": "slot",
-          "slot": "comma",
+          "slot": "trailing_comma",
           "path": [
             {
               "owner": "for_in_clause",
-              "slot": "comma"
+              "slot": "trailing_comma"
             }
           ]
         }

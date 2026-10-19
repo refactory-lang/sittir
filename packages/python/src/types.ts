@@ -3820,7 +3820,7 @@ export interface ForInClause {
 	readonly _async: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: NonEmptyArray<Expression | LambdaWithinForInClause>;
-	readonly _comma: boolean;
+	readonly _trailing_comma?: number;
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly right: NonEmptyArray<
@@ -3828,7 +3828,7 @@ export interface ForInClause {
 			| Expression
 			| LambdaWithinForInClause
 		>;
-		readonly comma?: BaseBooleanKeyword<','>;
+		readonly trailing_comma?: KindEnum<',', TSKindId.Comma>;
 	};
 	readonly __slotHints__?: {
 		readonly async: SlotHint<NonNullable<T.ForInClause.Config>['async'], true>;
@@ -3838,12 +3838,12 @@ export interface ForInClause {
 			false,
 			true
 		>;
-		readonly comma: SlotHint<NonNullable<T.ForInClause.Config>['comma'], true>;
+		readonly trailingComma: SlotHint<NonNullable<T.ForInClause.Options>['trailingComma'], true>;
 	};
 	readonly async: () => boolean;
 	readonly left: () => Pattern | PatternList;
 	readonly rights: () => NonEmptyArray<Expression | LambdaWithinForInClause>;
-	readonly comma: () => boolean;
+	readonly trailingComma: () => number | undefined;
 }
 
 export interface IfClause {
@@ -4350,19 +4350,22 @@ export interface FloatPoint {
 	readonly $type: TSKindId.FloatPoint;
 	readonly _integer: string;
 	readonly _fraction?: string;
-	readonly _marker?: string;
+	readonly _marker?: 'e' | 'E';
+	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly _imaginary?: string;
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
 		readonly fraction: SlotHint<string | number | bigint, true>;
-		readonly marker: SlotHint<string, true>;
+		readonly sign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
+		readonly marker: SlotHint<'e' | 'E', true>;
 	};
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
-	readonly marker: () => string | undefined;
+	readonly marker: () => 'e' | 'E' | undefined;
+	readonly sign: () => '-' | '+' | undefined;
 	readonly exponent: () => string | undefined;
 	readonly imaginary: () => string | undefined;
 }
@@ -4371,19 +4374,22 @@ export interface FloatLeadingPoint {
 	readonly $type: TSKindId.FloatLeadingPoint;
 	readonly _integer?: string;
 	readonly _fraction: string;
-	readonly _marker?: string;
+	readonly _marker?: 'e' | 'E';
+	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly _imaginary?: string;
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint, true>;
 		readonly fraction: SlotHint<string | number | bigint>;
-		readonly marker: SlotHint<string, true>;
+		readonly sign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
+		readonly marker: SlotHint<'e' | 'E', true>;
 	};
 	readonly integer: () => string | undefined;
 	readonly fraction: () => string;
-	readonly marker: () => string | undefined;
+	readonly marker: () => 'e' | 'E' | undefined;
+	readonly sign: () => '-' | '+' | undefined;
 	readonly exponent: () => string | undefined;
 	readonly imaginary: () => string | undefined;
 }
@@ -4391,17 +4397,20 @@ export interface FloatLeadingPoint {
 export interface FloatScientific {
 	readonly $type: TSKindId.FloatScientific;
 	readonly _integer: string;
-	readonly _marker: string;
+	readonly _marker: 'e' | 'E';
+	readonly _sign?: '-' | '+';
 	readonly _exponent: string;
 	readonly _imaginary?: string;
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
-		readonly marker: SlotHint<string>;
+		readonly sign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint>;
 		readonly imaginary: SlotHint<string, true>;
+		readonly marker: SlotHint<'e' | 'E'>;
 	};
 	readonly integer: () => string;
-	readonly marker: () => string;
+	readonly marker: () => 'e' | 'E';
+	readonly sign: () => '-' | '+' | undefined;
 	readonly exponent: () => string;
 	readonly imaginary: () => string | undefined;
 }
@@ -6377,6 +6386,7 @@ export namespace ForInClause {
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
+			readonly trailingComma?: TSKindId.Comma | null;
 		};
 	}
 }
@@ -12744,7 +12754,8 @@ export namespace CollectionElements {
 	>;
 }
 export namespace ForInClause {
-	export type Config = ConfigFor<TSKindId.ForInClause>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ForInClause>, 'trailingComma'>;
+	export type Options = { readonly trailingComma?: TSKindId.Comma | null };
 	export interface Bound extends BoundOf<T.ForInClause, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.ForInClause['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -12755,10 +12766,10 @@ export namespace ForInClause {
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
 		readonly $snapshot: () => Snapshot<T.ForInClause['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ForInClause>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ForInClause>;
-	export type BuildArgs = [config: ConfigOf<T.ForInClause>];
-	export type LooseArgs = [config: T.ForInClause.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.ForInClause>, 'trailingComma'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ForInClause>, 'trailingComma'>;
+	export type BuildArgs = [config: OmitEach<ConfigOf<T.ForInClause>, 'trailingComma'>, options?: T.ForInClause.Options];
+	export type LooseArgs = [config: T.ForInClause.Loose, options?: T.ForInClause.Options];
 	export type Kind = TSKindId.ForInClause;
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'right'>, KeyRefusesEmpty<LooseConfig, 'right'>, SetterRefusesEmpty<Bound, 'rights'>]
@@ -13939,9 +13950,10 @@ export namespace IntegerBinary {
 }
 export namespace FloatPoint {
 	export type Config = WidenNumeric<
-		ConfigFor<TSKindId.FloatPoint>,
+		OmitEach<ConfigFor<TSKindId.FloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
+	export type Options = { readonly marker?: 'e' | 'E' };
 	export interface Bound extends BoundOf<T.FloatPoint, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.FloatPoint['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -13953,31 +13965,33 @@ export namespace FloatPoint {
 		readonly $snapshot: () => Snapshot<T.FloatPoint['$type']>;
 	}
 	export type Loose =
-		| LooseFor<TSKindId.FloatPoint>
+		| OmitEach<LooseFor<TSKindId.FloatPoint>, 'marker'>
 		| WidenNumeric<
-				LooseConfigFor<TSKindId.FloatPoint>,
+				OmitEach<LooseConfigFor<TSKindId.FloatPoint>, 'marker'>,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
-		LooseConfigFor<TSKindId.FloatPoint>,
+		OmitEach<LooseConfigFor<TSKindId.FloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
 		config: WidenNumeric<
-			ConfigOf<T.FloatPoint>,
+			OmitEach<ConfigOf<T.FloatPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>
+		>,
+		options?: T.FloatPoint.Options
 	];
-	export type LooseArgs = [config: T.FloatPoint.Loose];
+	export type LooseArgs = [config: T.FloatPoint.Loose, options?: T.FloatPoint.Options];
 	export type Kind = TSKindId.FloatPoint;
 }
 export namespace FloatLeadingPoint {
 	export type Config = WidenNumeric<
-		ConfigFor<TSKindId.FloatLeadingPoint>,
+		OmitEach<ConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
+	export type Options = { readonly marker?: 'e' | 'E' };
 	export interface Bound extends BoundOf<T.FloatLeadingPoint, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.FloatLeadingPoint['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -13989,31 +14003,33 @@ export namespace FloatLeadingPoint {
 		readonly $snapshot: () => Snapshot<T.FloatLeadingPoint['$type']>;
 	}
 	export type Loose =
-		| LooseFor<TSKindId.FloatLeadingPoint>
+		| OmitEach<LooseFor<TSKindId.FloatLeadingPoint>, 'marker'>
 		| WidenNumeric<
-				LooseConfigFor<TSKindId.FloatLeadingPoint>,
+				OmitEach<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
-		LooseConfigFor<TSKindId.FloatLeadingPoint>,
+		OmitEach<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
 		config: WidenNumeric<
-			ConfigOf<T.FloatLeadingPoint>,
+			OmitEach<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>
+		>,
+		options?: T.FloatLeadingPoint.Options
 	];
-	export type LooseArgs = [config: T.FloatLeadingPoint.Loose];
+	export type LooseArgs = [config: T.FloatLeadingPoint.Loose, options?: T.FloatLeadingPoint.Options];
 	export type Kind = TSKindId.FloatLeadingPoint;
 }
 export namespace FloatScientific {
 	export type Config = WidenNumeric<
-		ConfigFor<TSKindId.FloatScientific>,
+		OmitEach<ConfigFor<TSKindId.FloatScientific>, 'marker'>,
 		{ integer: number | bigint; exponent: number | bigint }
 	>;
+	export type Options = { readonly marker?: 'e' | 'E' };
 	export interface Bound extends BoundOf<T.FloatScientific, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.FloatScientific['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -14025,18 +14041,25 @@ export namespace FloatScientific {
 		readonly $snapshot: () => Snapshot<T.FloatScientific['$type']>;
 	}
 	export type Loose =
-		| LooseFor<TSKindId.FloatScientific>
-		| WidenNumeric<LooseConfigFor<TSKindId.FloatScientific>, { integer: number | bigint; exponent: number | bigint }>
+		| OmitEach<LooseFor<TSKindId.FloatScientific>, 'marker'>
+		| WidenNumeric<
+				OmitEach<LooseConfigFor<TSKindId.FloatScientific>, 'marker'>,
+				{ integer: number | bigint; exponent: number | bigint }
+		  >
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
-		LooseConfigFor<TSKindId.FloatScientific>,
+		OmitEach<LooseConfigFor<TSKindId.FloatScientific>, 'marker'>,
 		{ integer: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<ConfigOf<T.FloatScientific>, { integer: number | bigint; exponent: number | bigint }>
+		config: WidenNumeric<
+			OmitEach<ConfigOf<T.FloatScientific>, 'marker'>,
+			{ integer: number | bigint; exponent: number | bigint }
+		>,
+		options?: T.FloatScientific.Options
 	];
-	export type LooseArgs = [config: T.FloatScientific.Loose];
+	export type LooseArgs = [config: T.FloatScientific.Loose, options?: T.FloatScientific.Options];
 	export type Kind = TSKindId.FloatScientific;
 }
 export namespace EscapeSequenceUnicodeFixed {

@@ -35,32 +35,35 @@ export const TOKEN_INTERIORS = {
 	},
 	float_leading_point: {
 		regex:
-			'^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
+			'^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
 		slots: [
 			{ name: 'integer', configKey: 'integer' },
 			{ name: 'fraction', configKey: 'fraction' },
 			{ name: 'marker', configKey: 'marker' },
+			{ name: 'sign', configKey: 'sign' },
 			{ name: 'exponent', configKey: 'exponent' },
 			{ name: 'imaginary', configKey: 'imaginary' }
 		]
 	},
 	float_point: {
 		regex:
-			'^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
+			'^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
 		slots: [
 			{ name: 'integer', configKey: 'integer' },
 			{ name: 'fraction', configKey: 'fraction' },
 			{ name: 'marker', configKey: 'marker' },
+			{ name: 'sign', configKey: 'sign' },
 			{ name: 'exponent', configKey: 'exponent' },
 			{ name: 'imaginary', configKey: 'imaginary' }
 		]
 	},
 	float_scientific: {
 		regex:
-			'^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$',
+			'^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$',
 		slots: [
 			{ name: 'integer', configKey: 'integer' },
 			{ name: 'marker', configKey: 'marker' },
+			{ name: 'sign', configKey: 'sign' },
 			{ name: 'exponent', configKey: 'exponent' },
 			{ name: 'imaginary', configKey: 'imaginary' }
 		]
