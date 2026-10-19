@@ -286,7 +286,7 @@ Where the vocabulary path list is written: `packages/common/src/portable/vocabul
 
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::emitVocabularyPaths`
 
-The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array. The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
+The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array declared `as const`, so its element type is the union of the paths and types the shared portable trees (`portable/tree.ts::PortableKindTree`). The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
 
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::writeVocabularyPaths`
 

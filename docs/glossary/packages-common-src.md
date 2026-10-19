@@ -851,3 +851,11 @@ The composition over one table: each guard composed through `languageGuard`, the
 ### `packages/common/src/language.ts::languageGuard`
 
 One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn and defined on the composed function, so `rust.is.suite.block` checks the language as `rust.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.
+
+### `packages/common/src/portable/tree.ts::ChildrenOf`
+
+The child segments of a path among a union of vocabulary paths: each path one segment below it, by its last segment. `RootsOf` is the same for the top level (the paths with no dot). With `string` for the union, both read as `string`, so a tree typed over arbitrary paths is an index signature.
+
+### `packages/common/src/portable/tree.ts::KindAt`
+
+The type of one node of the shared kind tree: its `$path` as a literal, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards: each node is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.

@@ -11,7 +11,7 @@ const PATHS = [
 	'expression.call.member'
 ];
 
-const trees = () => portableTrees(PATHS, (path) => (node) => node === path);
+const trees = () => portableTrees(PATHS, (path) => (node): node is { readonly $type: number } => node === path);
 
 type Tree = Record<string, unknown>;
 const at = (root: unknown, path: string): Tree =>
@@ -65,7 +65,7 @@ describe('portableTrees', () => {
 	});
 
 	it('refuses a path whose parent is not listed', () => {
-		expect(() => portableTrees(['a.b'], () => () => false)).toThrow(/a\.b.*a/);
+		expect(() => portableTrees(['a.b'], () => (_node): _node is { readonly $type: number } => false)).toThrow(/a\.b.*a/);
 	});
 });
 

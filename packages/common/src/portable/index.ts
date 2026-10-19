@@ -17,7 +17,7 @@ export { vocabularyPaths } from './vocabulary-paths.ts';
 
 const guardOf =
 	(path: string): PortableGuard =>
-	(node) => {
+	(node): node is { readonly $type: number } => {
 		if (!hasKind(node)) return false;
 		const rows = engineOf(node)?.portable;
 		const admitted = rows?.table.paths[path];
