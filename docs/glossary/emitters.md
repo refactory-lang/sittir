@@ -14246,7 +14246,7 @@ enums, `VerbatimNode`): `Ok(())`. It reads a coordinate (`READ_COORDINATE`).
 
 ### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`
 
-The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, each framed by its sides (`SourceTable::framed_span`: a comment an end item holds is its own, not the root's flank), classified into the root's before and after sites by the whitespace classes they admit (for a snapshot root, the gaps from the root's own span, `Layout::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `Layout::inner_item`, in place of an end item it lies beyond or of a missing one, as the source bytes its entries span or their geometry); `fill_edges` sets only the sides the wire left unset, on the base edges the layout's handle gives (`Layout::edges_mut`). Every read and write goes through the prepare body's parts (`prepare_parts`). A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
+The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, each framed by its sides (`SourceTable::framed_span`: a comment an end item holds is its own, not the root's flank), classified into the root's before and after sites by the whitespace classes they admit (for a snapshot root, the gaps from the root's own span, `LayoutTarget::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `LayoutTarget::inner_item`, in place of an end item it lies beyond or of a missing one, as the source bytes its entries span or their geometry); `fill_edges` sets only the sides the wire left unset, on the base edges the layout's handle gives (`LayoutTarget::edges_mut`). Every read and write goes through the prepare body's parts (`prepare_parts`). A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
@@ -14258,7 +14258,11 @@ a record alike. It takes every place at once (`prepare_parts`) and writes
 each through its handle's core trait (`sittir_core::prepare`): the layout
 through `LayoutTarget`, a slot through `SlotTarget` (and `SeatSlot`,
 `UnitSlot`, `ArmOf` where its stamp gives it them), a print setting through
-`Setting`. The struct's own impl calls the function with itself.
+`Setting`. Every write passes the overlay the prepare trait names
+(`Overlay`), which the function takes beside the node: a record's facts go
+there, since a record is never rewritten. The struct's own impl calls the
+function with itself and `&mut ()`, its overlay, so a native node is written
+in place and its callers are unchanged.
 
 Every struct also answers `gap_edges` with its own base edges, made when the
 layout holds none, `source_separator` from its layout
@@ -14331,8 +14335,8 @@ caller set is never replaced.
 
 The call a generated `prepare` makes for every repeated slot, before the
 seats and the option fills: `SlotTarget::fill_gaps` on the slot's handle,
-with the layout the node's source stores for that slot (`Layout::slot`, by
-the slot's wire key). A list slot's layout holds the class most of its separator gaps
+with the layout the node's source stores for that slot (`LayoutTarget::slot`,
+by the slot's wire key). A list slot's layout holds the class most of its separator gaps
 have on each side of the separator, stored only where it differs from what
 the read-time options write. The fill gives every gap between two present
 items those classes at slot strength (`SeamStrength::Slot`): the side before the

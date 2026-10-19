@@ -31,15 +31,15 @@ fn slot_bound(field: &Field<'_>, slot: &SlotAttrs) -> syn::Result<Option<TokenSt
     if list && slot.defaulted {
         return Err(syn::Error::new_spanned(ident, format!("`{ident}` is a list, which no option site defaults")));
     }
-    let mut bound = quote!(::sittir_core::prepare::SlotTarget);
+    let mut bound = quote!(::sittir_core::prepare::SlotTarget<Self::Overlay>);
     if !list {
         bound.extend(quote!(+ ::sittir_core::prepare::ArmOf));
     }
     if slot.defaulted {
-        bound.extend(quote!(+ ::sittir_core::prepare::UnitSlot));
+        bound.extend(quote!(+ ::sittir_core::prepare::UnitSlot<Self::Overlay>));
     }
     if slot.seated {
-        bound.extend(quote!(+ ::sittir_core::prepare::SeatSlot));
+        bound.extend(quote!(+ ::sittir_core::prepare::SeatSlot<Self::Overlay>));
     }
     Ok(Some(bound))
 }
@@ -47,7 +47,7 @@ fn slot_bound(field: &Field<'_>, slot: &SlotAttrs) -> syn::Result<Option<TokenSt
 /// The bound of a print setting's handle: `Setting` of the value it holds.
 fn setting_bound(field: &Field<'_>) -> syn::Result<TokenStream> {
     let value = inner_of(field.ty, "Option").ok_or_else(|| syn::Error::new_spanned(field.ty, "a print setting is an `Option<…>`"))?;
-    Ok(quote!(::sittir_core::prepare::Setting<#value>))
+    Ok(quote!(::sittir_core::prepare::Setting<#value, Self::Overlay>))
 }
 
 pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
@@ -66,7 +66,7 @@ pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::
     let mut sites = Vec::new();
     for field in fields {
         let bound = match &field.role {
-            Role::Layout => Some(quote!(::sittir_core::prepare::LayoutTarget)),
+            Role::Layout => Some(quote!(::sittir_core::prepare::LayoutTarget<Self::Overlay>)),
             Role::Text => None,
             Role::Slot(slot) => slot_bound(field, slot)?,
             Role::Flank(_) | Role::SeparatorKind(_) => Some(setting_bound(field)?),
@@ -101,10 +101,15 @@ pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>]) -> syn::
         }
         #[doc = #trait_doc]
         pub trait #name {
+            /// What a prepare writes besides the node: `()` for the struct,
+            /// which it writes in place; the render's prepared overlay for a
+            /// record.
+            type Overlay;
             #(#declared)*
             fn prepare_parts(&mut self) -> #parts<'_, Self>;
         }
         impl #name for #owner {
+            type Overlay = ();
             #(#implemented)*
             fn prepare_parts(&mut self) -> #parts<'_, Self> {
                 #parts { #(#handles)* }
@@ -155,13 +160,14 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, "type Layout<'a>: ::sittir_core::prepare::LayoutTarget where Self: 'a;"));
-        assert!(has(&out, "type Items<'a>: ::sittir_core::prepare::SlotTarget + ::sittir_core::prepare::SeatSlot where Self: 'a;"));
-        assert!(has(&out, "type Terminator<'a>: ::sittir_core::prepare::SlotTarget + ::sittir_core::prepare::ArmOf + ::sittir_core::prepare::UnitSlot where Self: 'a;"));
-        assert!(has(&out, "type Delimiter<'a>: ::sittir_core::prepare::Setting<::sittir_core::types::Delimiter> where Self: 'a;"));
-        assert!(has(&out, "type ItemsSeparatorSpace<'a>: ::sittir_core::prepare::Setting<KindId> where Self: 'a;"));
+        assert!(has(&out, "type Overlay; type Layout<'a>: ::sittir_core::prepare::LayoutTarget<Self::Overlay> where Self: 'a;"));
+        assert!(has(&out, "type Items<'a>: ::sittir_core::prepare::SlotTarget<Self::Overlay> + ::sittir_core::prepare::SeatSlot<Self::Overlay> where Self: 'a;"));
+        assert!(has(&out, "type Terminator<'a>: ::sittir_core::prepare::SlotTarget<Self::Overlay> + ::sittir_core::prepare::ArmOf + ::sittir_core::prepare::UnitSlot<Self::Overlay> where Self: 'a;"));
+        assert!(has(&out, "type Delimiter<'a>: ::sittir_core::prepare::Setting<::sittir_core::types::Delimiter, Self::Overlay> where Self: 'a;"));
+        assert!(has(&out, "type ItemsSeparatorSpace<'a>: ::sittir_core::prepare::Setting<KindId, Self::Overlay> where Self: 'a;"));
         assert!(!has(&out, "type Open<'a>"), "a presence is no place");
         assert!(has(&out, "const _: ::sittir_core::types::SiteId = options::SITE_LIST_ITEMS_SEPARATOR_SPACE;"));
+        assert!(has(&out, "type Overlay = (); type Layout<'a> = &'a mut Option<Box<NodeLayout>> where Self: 'a;"));
         assert!(has(&out, "type Items<'a> = &'a mut Vec<SlotValue<ItemNode>> where Self: 'a;"));
         assert!(has(&out, "pub struct ListPrepareParts<'a, N: ListPrepare + ?Sized + 'a> { pub layout: N::Layout<'a>, pub items: N::Items<'a>,"));
         assert!(has(&out, "ListPrepareParts { layout: &mut self.layout, items: &mut self.items, terminator: &mut self.terminator, delimiter: &mut self.delimiter, items_separator_space: &mut self.items_separator_space, }"));

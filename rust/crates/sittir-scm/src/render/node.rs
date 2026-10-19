@@ -1499,7 +1499,7 @@ impl ::sittir_core::render::Render for ProgramNode {
 
 impl ::sittir_core::prepare::Prepare for ProgramNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_program(self, ctx)
+        prepare_program(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1515,20 +1515,20 @@ impl ::sittir_core::prepare::Prepare for ProgramNode {
     }
 }
 
-fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    let inner = ::sittir_core::layout::Layout::inner_item(&parts.layout);
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    let inner = ::sittir_core::prepare::LayoutTarget::inner_item(&parts.layout);
     let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&parts.definitions)].into_iter().flatten().next(), inner.clone(), ::sittir_core::options::Side::Before);
     let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&parts.definitions)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
-    let root = ::sittir_core::layout::Layout::snapshot_edge(&parts.layout).map(|edge| edge.span);
+    let root = ::sittir_core::prepare::LayoutTarget::snapshot_edge(&parts.layout).map(|edge| edge.span);
     let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_PROGRAM_PROGRAM_BEFORE), options::allowed(options::SITE_PROGRAM_PROGRAM_AFTER), &options::WHITESPACE, ctx);
-    ::sittir_core::prepare::fill_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), flanks);
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(33), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, ::sittir_core::layout::Layout::slot(&parts.layout, "_definitions"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.definitions_separator_space, ctx.options.site_arm(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.definitions, options::SEATS_PROGRAM_DEFINITIONS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.definitions, ctx)?;
+    ::sittir_core::prepare::fill_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), flanks);
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(33), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_definitions").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.definitions_separator_space, overlay, ctx.options.site_arm(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.definitions, overlay, options::SEATS_PROGRAM_DEFINITIONS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.definitions, overlay, ctx)?;
     Ok(())
 }
 
@@ -1563,7 +1563,7 @@ impl ::sittir_core::render::Render for EscapeSequenceNode {
 
 impl ::sittir_core::prepare::Prepare for EscapeSequenceNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_escape_sequence(self, ctx)
+        prepare_escape_sequence(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1579,9 +1579,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceNode {
     }
 }
 
-fn prepare_escape_sequence<N: EscapeSequencePrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_escape_sequence<N: EscapeSequencePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
@@ -1656,7 +1656,7 @@ impl ::sittir_core::render::Render for IdentifierNode {
 
 impl ::sittir_core::prepare::Prepare for IdentifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_identifier(self, ctx)
+        prepare_identifier(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1672,9 +1672,9 @@ impl ::sittir_core::prepare::Prepare for IdentifierNode {
     }
 }
 
-fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
@@ -1709,7 +1709,7 @@ impl ::sittir_core::render::Render for ImmediateIdentifierNode {
 
 impl ::sittir_core::prepare::Prepare for ImmediateIdentifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_immediate_identifier(self, ctx)
+        prepare_immediate_identifier(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1725,9 +1725,9 @@ impl ::sittir_core::prepare::Prepare for ImmediateIdentifierNode {
     }
 }
 
-fn prepare_immediate_identifier<N: ImmediateIdentifierPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_immediate_identifier<N: ImmediateIdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
@@ -1762,7 +1762,7 @@ impl ::sittir_core::render::Render for CaptureNode {
 
 impl ::sittir_core::prepare::Prepare for CaptureNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_capture(self, ctx)
+        prepare_capture(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1778,11 +1778,11 @@ impl ::sittir_core::prepare::Prepare for CaptureNode {
     }
 }
 
-fn prepare_capture<N: CapturePrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_capture<N: CapturePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(39), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(39), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     Ok(())
 }
 
@@ -1817,7 +1817,7 @@ impl ::sittir_core::render::Render for StringNode {
 
 impl ::sittir_core::prepare::Prepare for StringNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_string(self, ctx)
+        prepare_string(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1833,11 +1833,11 @@ impl ::sittir_core::prepare::Prepare for StringNode {
     }
 }
 
-fn prepare_string<N: StringPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string<N: StringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(40), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_content, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(40), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_content, overlay, ctx)?;
     Ok(())
 }
 
@@ -1872,7 +1872,7 @@ impl ::sittir_core::render::Render for ImmediateStringNode {
 
 impl ::sittir_core::prepare::Prepare for ImmediateStringNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_immediate_string(self, ctx)
+        prepare_immediate_string(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1888,11 +1888,11 @@ impl ::sittir_core::prepare::Prepare for ImmediateStringNode {
     }
 }
 
-fn prepare_immediate_string<N: ImmediateStringPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_immediate_string<N: ImmediateStringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(41), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_content, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(41), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_content, overlay, ctx)?;
     Ok(())
 }
 
@@ -1927,7 +1927,7 @@ impl ::sittir_core::render::Render for StringContentNode {
 
 impl ::sittir_core::prepare::Prepare for StringContentNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_string_content(self, ctx)
+        prepare_string_content(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -1943,11 +1943,11 @@ impl ::sittir_core::prepare::Prepare for StringContentNode {
     }
 }
 
-fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.content, ::sittir_core::layout::Layout::slot(&parts.layout, "_content"));
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.content, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_content").as_deref());
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     Ok(())
 }
 
@@ -1985,7 +1985,7 @@ impl ::sittir_core::render::Render for ParametersNode {
 
 impl ::sittir_core::prepare::Prepare for ParametersNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_parameters(self, ctx)
+        prepare_parameters(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2001,14 +2001,14 @@ impl ::sittir_core::prepare::Prepare for ParametersNode {
     }
 }
 
-fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(43), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, ::sittir_core::layout::Layout::slot(&parts.layout, "_elements"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, ctx.options.site_arm(options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, options::SEATS_PARAMETERS_ELEMENTS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(43), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_PARAMETERS_ELEMENTS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -2043,7 +2043,7 @@ impl ::sittir_core::render::Render for CommentNode {
 
 impl ::sittir_core::prepare::Prepare for CommentNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_comment(self, ctx)
+        prepare_comment(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2059,9 +2059,9 @@ impl ::sittir_core::prepare::Prepare for CommentNode {
     }
 }
 
-fn prepare_comment<N: CommentPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_comment<N: CommentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
@@ -2105,7 +2105,7 @@ impl ::sittir_core::render::Render for ListNode {
 
 impl ::sittir_core::prepare::Prepare for ListNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_list(self, ctx)
+        prepare_list(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2121,18 +2121,18 @@ impl ::sittir_core::prepare::Prepare for ListNode {
     }
 }
 
-fn prepare_list<N: ListPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list<N: ListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(44), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, ::sittir_core::layout::Layout::slot(&parts.layout, "_definitions"));
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, ::sittir_core::layout::Layout::slot(&parts.layout, "_elements"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.definitions_separator_space, ctx.options.site_arm(options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, ctx.options.site_arm(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.definitions, options::SEATS_LIST_DEFINITIONS, ctx);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, options::SEATS_LIST_ELEMENTS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.definitions, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(44), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_definitions").as_deref());
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.definitions_separator_space, overlay, ctx.options.site_arm(options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.definitions, overlay, options::SEATS_LIST_DEFINITIONS, ctx);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_LIST_ELEMENTS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.definitions, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -2176,7 +2176,7 @@ impl ::sittir_core::render::Render for GroupingNode {
 
 impl ::sittir_core::prepare::Prepare for GroupingNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_grouping(self, ctx)
+        prepare_grouping(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2192,18 +2192,18 @@ impl ::sittir_core::prepare::Prepare for GroupingNode {
     }
 }
 
-fn prepare_grouping<N: GroupingPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_grouping<N: GroupingPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(45), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, ::sittir_core::layout::Layout::slot(&parts.layout, "_elements"));
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.grouping_group, ::sittir_core::layout::Layout::slot(&parts.layout, "_grouping_group"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, ctx.options.site_arm(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.grouping_group_separator_space, ctx.options.site_arm(options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, options::SEATS_GROUPING_ELEMENTS, ctx);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.grouping_group, options::SEATS_GROUPING_GROUPING_GROUP, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.grouping_group, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(45), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.grouping_group, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_grouping_group").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::Setting::fill(&mut parts.grouping_group_separator_space, overlay, ctx.options.site_arm(options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_GROUPING_ELEMENTS, ctx);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.grouping_group, overlay, options::SEATS_GROUPING_GROUPING_GROUP, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.grouping_group, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -2244,7 +2244,7 @@ impl ::sittir_core::render::Render for MissingNodeNode {
 
 impl ::sittir_core::prepare::Prepare for MissingNodeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_missing_node(self, ctx)
+        prepare_missing_node(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2260,15 +2260,15 @@ impl ::sittir_core::prepare::Prepare for MissingNodeNode {
     }
 }
 
-fn prepare_missing_node<N: MissingNodePrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_missing_node<N: MissingNodePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(46), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, ::sittir_core::layout::Layout::slot(&parts.layout, "_elements"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, ctx.options.site_arm(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, options::SEATS_MISSING_NODE_ELEMENTS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(46), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_MISSING_NODE_ELEMENTS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -2309,7 +2309,7 @@ impl ::sittir_core::render::Render for AnonymousNodeNode {
 
 impl ::sittir_core::prepare::Prepare for AnonymousNodeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_anonymous_node(self, ctx)
+        prepare_anonymous_node(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2325,15 +2325,15 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeNode {
     }
 }
 
-fn prepare_anonymous_node<N: AnonymousNodePrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_anonymous_node<N: AnonymousNodePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(47), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, ::sittir_core::layout::Layout::slot(&parts.layout, "_elements"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, ctx.options.site_arm(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, options::SEATS_ANONYMOUS_NODE_ELEMENTS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(47), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_ANONYMOUS_NODE_ELEMENTS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -2371,7 +2371,7 @@ impl ::sittir_core::render::Render for FieldDefinitionNode {
 
 impl ::sittir_core::prepare::Prepare for FieldDefinitionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_field_definition(self, ctx)
+        prepare_field_definition(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2387,12 +2387,12 @@ impl ::sittir_core::prepare::Prepare for FieldDefinitionNode {
     }
 }
 
-fn prepare_field_definition<N: FieldDefinitionPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_field_definition<N: FieldDefinitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(50), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.definition, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(50), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.definition, overlay, ctx)?;
     Ok(())
 }
 
@@ -2427,7 +2427,7 @@ impl ::sittir_core::render::Render for NegatedFieldNode {
 
 impl ::sittir_core::prepare::Prepare for NegatedFieldNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_negated_field(self, ctx)
+        prepare_negated_field(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2443,11 +2443,11 @@ impl ::sittir_core::prepare::Prepare for NegatedFieldNode {
     }
 }
 
-fn prepare_negated_field<N: NegatedFieldPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_negated_field<N: NegatedFieldPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(51), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.identifier, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(51), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.identifier, overlay, ctx)?;
     Ok(())
 }
 
@@ -2491,7 +2491,7 @@ impl ::sittir_core::render::Render for PredicateNode {
 
 impl ::sittir_core::prepare::Prepare for PredicateNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_predicate(self, ctx)
+        prepare_predicate(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2507,14 +2507,14 @@ impl ::sittir_core::prepare::Prepare for PredicateNode {
     }
 }
 
-fn prepare_predicate<N: PredicatePrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_predicate<N: PredicatePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(52), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.prefix, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.parameters, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(52), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.prefix, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.parameters, overlay, ctx)?;
     Ok(())
 }
 
@@ -2585,7 +2585,7 @@ impl ::sittir_core::render::Render for ListElementQuantifierNode {
 
 impl ::sittir_core::prepare::Prepare for ListElementQuantifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_list_element_quantifier(self, ctx)
+        prepare_list_element_quantifier(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2601,10 +2601,10 @@ impl ::sittir_core::prepare::Prepare for ListElementQuantifierNode {
     }
 }
 
-fn prepare_list_element_quantifier<N: ListElementQuantifierPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_list_element_quantifier<N: ListElementQuantifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.quantifier, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.quantifier, overlay, ctx)?;
     Ok(())
 }
 
@@ -2642,7 +2642,7 @@ impl ::sittir_core::render::Render for GroupExpressionArmNode {
 
 impl ::sittir_core::prepare::Prepare for GroupExpressionArmNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_group_expression_arm(self, ctx)
+        prepare_group_expression_arm(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2658,12 +2658,12 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmNode {
     }
 }
 
-fn prepare_group_expression_arm<N: GroupExpressionArmPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_group_expression_arm<N: GroupExpressionArmPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(56), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.left, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(56), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.left, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, overlay, ctx)?;
     Ok(())
 }
 
@@ -2701,7 +2701,7 @@ impl ::sittir_core::render::Render for NamedNodeExpressionArmNode {
 
 impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_named_node_expression_arm(self, ctx)
+        prepare_named_node_expression_arm(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2717,12 +2717,12 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmNode {
     }
 }
 
-fn prepare_named_node_expression_arm<N: NamedNodeExpressionArmPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_named_node_expression_arm<N: NamedNodeExpressionArmPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(57), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.left, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(57), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.left, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, overlay, ctx)?;
     Ok(())
 }
 
@@ -2760,7 +2760,7 @@ impl ::sittir_core::render::Render for GroupingGroupNode {
 
 impl ::sittir_core::prepare::Prepare for GroupingGroupNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_grouping_group(self, ctx)
+        prepare_grouping_group(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2776,11 +2776,11 @@ impl ::sittir_core::prepare::Prepare for GroupingGroupNode {
     }
 }
 
-fn prepare_grouping_group<N: GroupingGroupPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_grouping_group<N: GroupingGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(58), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.group_expression, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(58), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.group_expression, overlay, ctx)?;
     Ok(())
 }
 
@@ -2815,7 +2815,7 @@ impl ::sittir_core::render::Render for StringContentTextNode {
 
 impl ::sittir_core::prepare::Prepare for StringContentTextNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_string_content_text(self, ctx)
+        prepare_string_content_text(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2831,9 +2831,9 @@ impl ::sittir_core::prepare::Prepare for StringContentTextNode {
     }
 }
 
-fn prepare_string_content_text<N: StringContentTextPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_string_content_text<N: StringContentTextPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
@@ -2905,7 +2905,7 @@ impl ::sittir_core::render::Render for NamedNodePlainNode {
 
 impl ::sittir_core::prepare::Prepare for NamedNodePlainNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_named_node_plain(self, ctx)
+        prepare_named_node_plain(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2921,16 +2921,16 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainNode {
     }
 }
 
-fn prepare_named_node_plain<N: NamedNodePlainPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_named_node_plain<N: NamedNodePlainPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(61), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, ::sittir_core::layout::Layout::slot(&parts.layout, "_elements"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, ctx.options.site_arm(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_group, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(61), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_group, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -2977,7 +2977,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNode {
 
 impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_named_node_supertyped(self, ctx)
+        prepare_named_node_supertyped(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -2993,17 +2993,17 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedNode {
     }
 }
 
-fn prepare_named_node_supertyped<N: NamedNodeSupertypedPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_named_node_supertyped<N: NamedNodeSupertypedPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(62), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, ::sittir_core::layout::Layout::slot(&parts.layout, "_elements"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, ctx.options.site_arm(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.supertype, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_group, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(62), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.supertype, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_group, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
 
@@ -3044,7 +3044,7 @@ impl ::sittir_core::render::Render for NamedNodeGroupChildrenNode {
 
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_named_node_group_children(self, ctx)
+        prepare_named_node_group_children(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -3060,14 +3060,14 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenNode {
     }
 }
 
-fn prepare_named_node_group_children<N: NamedNodeGroupChildrenPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_named_node_group_children<N: NamedNodeGroupChildrenPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(63), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, ::sittir_core::layout::Layout::slot(&parts.layout, "_named_node_expressions"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.named_node_expressions_separator_space, ctx.options.site_arm(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.named_node_expressions, options::SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_expressions, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(63), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_named_node_expressions").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.named_node_expressions_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.named_node_expressions, overlay, options::SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_expressions, overlay, ctx)?;
     Ok(())
 }
 
@@ -3111,7 +3111,7 @@ impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastNode {
 
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_named_node_group_anchored_last(self, ctx)
+        prepare_named_node_group_anchored_last(self, &mut (), ctx)
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
@@ -3127,15 +3127,15 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastNode {
     }
 }
 
-fn prepare_named_node_group_anchored_last<N: NamedNodeGroupAnchoredLastPrepare + ?Sized>(node: &mut N, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+fn prepare_named_node_group_anchored_last<N: NamedNodeGroupAnchoredLastPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::layout::Layout::edges_mut(&mut parts.layout), ::sittir_core::types::KindId(64), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, ::sittir_core::layout::Layout::slot(&parts.layout, "_named_node_expressions"));
-    ::sittir_core::prepare::Setting::fill(&mut parts.named_node_expressions_separator_space, ctx.options.site_arm(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.named_node_expressions, options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_expressions, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.last, ctx)?;
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(64), (None, None), ctx);
+    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_named_node_expressions").as_deref());
+    ::sittir_core::prepare::Setting::fill(&mut parts.named_node_expressions_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.named_node_expressions, overlay, options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_expressions, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.last, overlay, ctx)?;
     Ok(())
 }
 

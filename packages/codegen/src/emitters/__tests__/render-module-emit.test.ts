@@ -335,19 +335,19 @@ describe('render options on nodes', () => {
 		const src = await getTypescriptNodeRs();
 		const listFill = prepareBody(src, 'FormalParametersElements');
 		expect(listFill).toContain(
-			'::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);'
+			'::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);'
 		);
 		expect(listFill).toContain(
-			'::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);'
+			'::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);'
 		);
 		expect(listFill).toMatch(
-			/::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::layout::Layout::sides\(&parts\.layout\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\)\);/
+			/::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::prepare::LayoutTarget::sides\(&parts\.layout\)\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\)\);/
 		);
 		expect(extractStructBody(src, 'FormalParametersElementsNode')).toMatch(
 			/    #\[space\(slot = \d+, side = before, site = options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE\)\]\n    pub item_separator_space_before: Option<KindId>,/
 		);
 		const ownerFill = prepareBody(src, 'FormalParameters');
-		expect(ownerFill).toContain('::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, ctx)?;');
+		expect(ownerFill).toContain('::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;');
 		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
 		expect(ownerFill).not.toContain('lparen_after');
 	});
@@ -413,7 +413,7 @@ describe('render options on nodes', () => {
 			expect(body).toContain('pub layout: Option<Box<NodeLayout>>,');
 			expect(src).toContain(`impl ::sittir_core::options::Edged for ${name} {`);
 			expect(prepareBody(src, name.replace(/Node$/, ''))).toMatch(
-				/::sittir_core::prepare::prepare_edges\(::sittir_core::layout::Layout::edges_mut\(&mut parts\.layout\), ::sittir_core::types::KindId\(\d+\), \(None, None\), ctx\);/
+				/::sittir_core::prepare::prepare_edges\(::sittir_core::prepare::LayoutTarget::edges_mut\(&mut parts\.layout, overlay\), ::sittir_core::types::KindId\(\d+\), \(None, None\), ctx\);/
 			);
 		}
 		expect(src).not.toMatch(/pub (arguments|statement_block)_(before|after): Option<KindId>,/);
@@ -445,7 +445,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		const nodeRs = await getRustTemplatesRs();
 		const body = prepareBody(nodeRs, 'ArgumentsElements');
 		expect(body).toContain(
-			'::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, ::sittir_core::layout::Layout::slot(&parts.layout, "_item"));'
+			'::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());'
 		);
 		// The stored layout is set first: the list site and the seats fill only the gaps it left unset.
 		expect(body.indexOf('SlotTarget::fill_gaps')).toBeLessThan(body.indexOf('ctx.options.site_arm('));
@@ -534,8 +534,8 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(nodeRs).toContain(
 			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
 		);
-		expect(nodeRs).toMatch(/::sittir_core::prepare::Setting::fill\(&mut parts\.\w+, ctx\.options\.site_arm\(options::/);
-		expect(nodeRs).toContain('        prepare_function_item(self, ctx)\n');
+		expect(nodeRs).toMatch(/::sittir_core::prepare::Setting::fill\(&mut parts\.\w+, overlay, ctx\.options\.site_arm\(options::/);
+		expect(nodeRs).toContain('        prepare_function_item(self, &mut (), ctx)\n');
 		expect(nodeRs).toContain(
 			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
@@ -579,7 +579,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(cells.filter((c) => c !== 'None').length).toBeGreaterThan(0);
 		expect(cells.every((c) => c === 'None' || /^Some\(SiteId\(\d+\)\)$/.test(c))).toBe(true);
 		expect(prepareBody(nodeRs, 'SourceFile')).toContain(
-			'::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, options::SEATS_SOURCE_FILE_STATEMENTS, ctx);'
+			'::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, overlay, options::SEATS_SOURCE_FILE_STATEMENTS, ctx);'
 		);
 		expect(extractStructBody(nodeRs, 'SourceFileNode')).toMatch(/    #\[slot\([^\n]*, seated\)\]\n    pub statements: /);
 		expect(nodeRs).not.toContain('let seated_last');
