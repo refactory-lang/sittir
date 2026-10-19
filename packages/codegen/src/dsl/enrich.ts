@@ -1334,7 +1334,7 @@ function collectFieldNamesRuntime(rule: Rule): Set<string> {
 
 function reportSkip(pass: string, ruleName: string, reason: string): void {
 	if (process.env.SITTIR_QUIET) return;
-	process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})\n`);
+	process.stdout.write(`enrich: skipped ${pass} on ${ruleName} (${reason})\n`);
 }
 
 interface SymbolTarget {
@@ -2676,7 +2676,7 @@ function deriveCandidateName(
 	const existingName = existingRuleNameByMemberKey.get(first.memberKey);
 	if (existingName !== undefined) {
 		if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
-			process.stderr.write(
+			process.stdout.write(
 				`enrich: field '${first.fieldName}' on '${first.parentKind}' reuses existing rule '${existingName}' (identical member set) instead of minting a new one\n`
 			);
 		}

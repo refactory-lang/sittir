@@ -10,7 +10,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 			{
 				kind: 'binary',
 				slots: [
-					{ name: 'operator', propertyName: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
+					{ name: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
 				]
 			},
 			{ kind: 'call', slots: [] },
@@ -82,7 +82,7 @@ describe('emitPortableSurface', () => {
 					{
 						kind: 'holder',
 						slots: [
-							{ name: 'item', propertyName: 'item', values: [{ kind: 'node-ref', name: '_call', parseKind: 'call' }] }
+							{ name: 'item', values: [{ kind: 'node-ref', name: '_call', parseKind: 'call' }] }
 						]
 					}
 				]

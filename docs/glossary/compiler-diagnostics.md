@@ -851,3 +851,6 @@ The blocking `dropped-token` error for one kind: the tokens lost by its render, 
 
 The grammar's `expectDiagnostics` with each kind listed under both its base name and its bound name. A grammar declares its expectations in base names, and a diagnostic may name the kind either way, depending on whether it is raised before or after the grammar bindings rename it. A grammar with no renames keeps its expectations as written.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::writeDiagnostics`
+
+Prints diagnostics by severity: info goes to stdout, and warning, error and fail go to stderr, each side formatted once with the given formatter. A side with nothing to print writes nothing. A quiet regen keeps a successful child's stdout to itself, so this is the line between what it hides and what it shows.

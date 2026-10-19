@@ -235,7 +235,7 @@ describe('emitPolymorphsOverlay', () => {
 		expect(text).not.toContain('_c(child)');
 	});
 
-	it('prints an emit diagnostic for a skipped sub-factory on its own console.warn channel', () => {
+	it('warns of a skipped sub-factory on stderr: the generated API omits it', () => {
 		const nodeMap = ambiguousNodeMap();
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 

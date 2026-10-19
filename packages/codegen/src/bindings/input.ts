@@ -1,4 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { slotPropertyName } from '../compiler/model/node-map.ts';
+import { slotKindsOf } from '../emitters/node-model-read.ts';
 import { boundNameOf } from '../dsl/bind.ts';
 import { boundFieldNameOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
@@ -11,6 +13,7 @@ import { type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
 export interface NodeModelValue {
 	readonly kind?: string;
+	readonly multiplicity?: string;
 	readonly value?: string;
 	readonly name?: string;
 	readonly parseKind?: string;
@@ -18,11 +21,9 @@ export interface NodeModelValue {
 
 export interface NodeModelSlot {
 	readonly name: string;
-	readonly propertyName: string;
 	readonly required?: boolean;
 	readonly multiple?: boolean;
 	readonly storage?: string;
-	readonly kinds?: readonly string[];
 	readonly values?: readonly NodeModelValue[];
 }
 
@@ -65,11 +66,11 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			modelType: n.modelType ?? 'branch',
 			slots: (n.slots ?? []).map((s) => ({
 				name: s.name,
-				propertyName: s.propertyName,
+				propertyName: slotPropertyName(s),
 				required: s.required ?? false,
 				multiple: s.multiple ?? false,
 				storage: s.storage ?? 'verbatim',
-				kinds: s.kinds ?? [],
+				kinds: slotKindsOf(s),
 				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : []))
 			})),
 			subtypes: n.subtypes ?? [],

@@ -108,7 +108,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
 		}
 		if (nodeMap.namingEvents.length > 0) {
-			process.stderr.write(formatNamingEvents(nodeMap.namingEvents) + '\n');
+			process.stdout.write(formatNamingEvents(nodeMap.namingEvents) + '\n');
 		}
 
 		const rootKind = normalized.root!;

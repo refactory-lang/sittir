@@ -50,15 +50,15 @@ The repository's `SyncBaseTarget`: every registered grammar's generated roots (s
 
 ### `packages/tools/src/regen.ts::regenerateGrammars`
 
-Installs a missing wasm toolchain first (`ensureWasmToolchain`), so every fingerprint it and the generations take names the toolchain that builds the parsers. Regenerates the stale ones of `grammars` (all of them under `force`), each step in a fresh `gen` process, in two passes. The first generates every stale grammar at once (`gen --all --no-build-native --no-workspace-check`, at most `availableParallelism()` at a time, each line of output prefixed with its grammar), with no native build, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native binding in turn from the sources the first wrote (`gen --native-only`, which generates nothing), and only the last runs the workspace check (`runWorkspaceCheck`). When no grammar is regenerated, it runs the workspace check itself, once, after any re-extraction, so a run in which everything is fresh still proves the workspace compiles. The bindings build one at a time: they share a cargo target, and sittir-core must recompile under each grammar's napi typedef folder for its types to reach that grammar's `index.d.ts`. Before any work it clears the completion record (`clearRegenRecord`) of every grammar it regenerates, and it writes each one's record (`writeRegenRecord`) only after every native build and the workspace check have succeeded; a run that fails anywhere leaves those grammars to regenerate on the next run, however fresh their files look. A grammar whose generation and native binary are current but whose fixtures are not (`staleness`) instead has only its parity fixtures re-extracted (`gen --all --post-generate-only`, at most `availableParallelism()` at a time, output prefixed), after the native builds; its record is written once that succeeds. Each record carries the source hash and fixture sources taken before any work starts (`runInputs`), beside the binary and fixture files hashed after (`recordAfter`). Returns the exit status of the first generation that failed, in grammar order, before any native build starts; otherwise that of a failed native build (1 when it has none), then that of the first failed re-extraction, then that of its own workspace check; 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
+Installs a missing wasm toolchain first (`ensureWasmToolchain`), so every fingerprint it and the generations take names the toolchain that builds the parsers. Regenerates the stale ones of `grammars` (all of them under `force`), each step in a fresh `gen` process, in two passes. The first generates every stale grammar at once (`gen --all --no-build-native --no-workspace-check`, at most `availableParallelism()` at a time, through `runPrefixed`), with no native build, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native binding in turn from the sources the first wrote (`gen --native-only`, which generates nothing, through `buildNative`), and only the last runs the workspace check (`runWorkspaceCheck`). When no grammar is regenerated, it runs the workspace check itself, once, after any re-extraction, so a run in which everything is fresh still proves the workspace compiles. The bindings build one at a time: they share a cargo target, and sittir-core must recompile under each grammar's napi typedef folder for its types to reach that grammar's `index.d.ts`. Before any work it clears the completion record (`clearRegenRecord`) of every grammar it regenerates, and it writes each one's record (`writeRegenRecord`) only after every native build and the workspace check have succeeded; a run that fails anywhere leaves those grammars to regenerate on the next run, however fresh their files look. A grammar whose generation and native binary are current but whose fixtures are not (`staleness`) instead has only its parity fixtures re-extracted (`gen --all --post-generate-only`, at most `availableParallelism()` at a time, output prefixed), after the native builds; its record is written once that succeeds. A run that succeeds ends with one line per grammar: its outcome from `pendingWork` (or `regenerated: forced`) and its diagnostic counts by severity (`severitySummary` over `readGrammarDiagnostics`). Each record carries the source hash and fixture sources taken before any work starts (`runInputs`), beside the binary and fixture files hashed after (`recordAfter`). Returns the exit status of the first generation that failed, in grammar order, before any native build starts; otherwise that of a failed native build (1 when it has none), then that of the first failed re-extraction, then that of its own workspace check; 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
 
 ### `packages/tools/src/regen.ts::pendingWork`
 
-What each grammar needs (`staleness`), with a line printed for each: `skipped` with why it is fresh, `re-extracting fixtures` or `regenerating` with why not. A skip never stands in for a gate: anything that gates a pull request regenerates with `force`.
+What each grammar needs (`staleness`), with its outcome for the closing status line: `skipped` with why it is fresh, `re-extracted fixtures` or `regenerated` with why not. Under `verbose` it also prints each as the run starts (`skipped`, `re-extracting fixtures`, `regenerating`). A skip never stands in for a gate: anything that gates a pull request regenerates with `force`.
 
 ### `packages/tools/src/regen.ts::Work`
 
-The grammars a run regenerates in full and those whose fixtures alone it re-extracts.
+The grammars a run regenerates in full and those whose fixtures alone it re-extracts, and every grammar's outcome, in grammar order, for the closing status lines.
 
 ### `packages/tools/src/regen.ts::Staleness`
 
@@ -78,15 +78,15 @@ What a grammar needs, or undefined when it is current. A full regeneration when 
 
 ### `packages/tools/src/regen.ts::RegenerateOptions`
 
-`force` regenerates every grammar, fresh or not: `regen:all --force` or `SITTIR_REGEN_FORCE=1`.
+`force` regenerates every grammar, fresh or not: `regen:all --force` or `SITTIR_REGEN_FORCE=1`. `verbose` streams every child's output as it prints it, as `regen:all --verbose` or `SITTIR_REGEN_VERBOSE=1`; without it the run is quiet (`runPrefixed`, `buildNative`).
 
 ### `packages/tools/src/regen.ts::runPrefixed`
 
-Runs `gen` for one grammar with the given flags (the first pass, or a fixture re-extraction), its output prefixed with the grammar; resolves with the exit status once the process and both its streams have closed.
+Runs `gen` for one grammar with the given flags (the first pass, or a fixture re-extraction), each line prefixed with the grammar. Stderr always passes through. Stdout streams under `verbose`; otherwise it is kept and printed in full only when the child fails, so a quiet run never hides the cause. Resolves with the exit status once the process and both its streams have closed.
 
 ### `packages/tools/src/regen.ts::prefixed`
 
-Copies a stream to `output` line by line, each line prefixed with the grammar, so concurrent generations stay readable.
+Hands a stream to `output` line by line, each line prefixed with the grammar, so concurrent generations stay readable.
 
 ### `packages/tools/src/regen.ts::currentRecord`
 
@@ -151,6 +151,18 @@ The absolute path of every codegen module the surface can load (`MODULES`), so w
 ### `packages/tools/src/regen.ts::inPool`
 
 Runs `run` over `items` with at most `limit` running at once, keeping the results in item order.
+
+### `packages/tools/src/regen.ts::buildNative`
+
+Builds one native binding (`gen --native-only`). Under `verbose` the child inherits the console. Otherwise cargo runs with `CARGO_TERM_QUIET`, stderr passes through, and stdout is kept and printed, prefixed with the grammar, only when the build fails. Returns the exit status, 1 when there is none.
+
+### `packages/tools/src/regen.ts::SKIPPED`
+
+The reason a fresh grammar is skipped: its generated files, native binary and fixtures are all current. Shared by the up-front verbose line and the closing status line.
+
+### `packages/tools/src/regen.ts::toStdout`
+
+Writes one already-terminated line to stdout; the sink for streamed and kept child output.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::departedKindCount`
 

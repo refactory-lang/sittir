@@ -68,6 +68,7 @@ const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
 const { pluralize, snakeToCamel } = await load('modelNodeMap');
+const { factorySlotMetaOf, slotKindsOf, valueNameOf } = await load('nodeModelRead');
 
 type SlotArity = 'one' | 'many';
 type SlotOrigin = 'field' | 'kind';
@@ -525,12 +526,13 @@ interface ParsedNodeModel {
 		splitFrom?: string;
 		slots?: ReadonlyArray<{
 			name: string;
-			propertyName: string;
 			required?: boolean;
 			multiple?: boolean;
-			kinds?: readonly string[];
+			nonEmpty?: boolean;
 			storage?: string;
-			values?: ReadonlyArray<{ seat?: Seat; name?: string; default?: true }>;
+			registered?: boolean;
+			optionDefault?: number | string;
+			values?: ReadonlyArray<ParsedSlotValue>;
 		}>;
 		elementSeats?: readonly Seat[];
 		elementKinds?: readonly string[];
@@ -546,9 +548,16 @@ interface ParsedNodeModel {
 		leafPattern?: string;
 		fullForm?: ModelFullForm;
 	}>;
-	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
+}
+
+interface ParsedSlotValue {
+	kind?: string;
+	seat?: Seat;
+	name?: string;
+	parseKind?: string;
+	default?: true;
 }
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
@@ -641,6 +650,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const listElementKinds: Record<string, readonly string[]> = {};
 	const listSeparators: Record<string, readonly string[]> = {};
 	const fullForms: Record<string, ModelFullForm> = {};
+	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.builderPath !== undefined) builderPaths[node.kind] = node.builderPath;
@@ -657,12 +667,16 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 			for (const slot of node.slots) {
 				for (const value of slot.values ?? []) {
 					if (value.seat !== undefined) seatAt(node.kind, slot.name, value.seat);
-					if (value.default === true && value.name !== undefined) {
-						(slotDefaults[node.kind] ??= {})[snakeToCamel(slot.name)] = value.name;
+					const valueName = valueNameOf(value);
+					if (value.default === true && valueName !== undefined) {
+						(slotDefaults[node.kind] ??= {})[snakeToCamel(slot.name)] = valueName;
 					}
 				}
 			}
-			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [snakeToCamel(slot.name), slot.kinds ?? []]));
+			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [snakeToCamel(slot.name), slotKindsOf(slot)]));
+			if (node.factoryShape !== undefined) {
+				factorySlots[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.name, factorySlotMetaOf(slot)]));
+			}
 			slotRequired[node.kind] = Object.fromEntries(
 				node.slots.map((slot) => [snakeToCamel(slot.name), slot.required === true])
 			);
@@ -700,7 +714,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		slotStorage,
 		factoryShapes,
 		factoryFields,
-		factorySlots: model.factorySlots ?? {},
+		factorySlots,
 		fieldAliasMap: model.fieldAliasMap ?? {},
 		polymorphVariants: model.polymorphVariants ?? {},
 		builderPaths,
@@ -1518,7 +1532,6 @@ function lookupFactorySlotMeta(opts: NodeToConfigOpts, slot: SlotModel): Factory
 
 function slotModelArityFromMeta(slotMeta: FactorySlotMeta | undefined, unnamed: boolean): 'one' | 'many' {
 	if (!slotMeta) return unnamed ? 'many' : 'one';
-	if (unnamed && slotMeta.slotCount > 1) return 'many';
 	return slotMeta.multiple ? 'many' : 'one';
 }
 
@@ -1562,8 +1575,7 @@ function narrowSingularUnnamedChildrenValue(
 		slotOrigin(slot) !== 'kind' ||
 		slot.name !== 'children' ||
 		!slotMeta ||
-		slotMeta.multiple ||
-		slotMeta.slotCount !== 1
+		slotMeta.multiple
 	) {
 		return value;
 	}

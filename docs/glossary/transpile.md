@@ -242,7 +242,7 @@ the `diagnostics` list the loop ignores.
 ```text
 The summary is the last top-level JSON object on stderr: tree-sitter writes it
 after anything the grammar printed while it was evaluated, and pretty-prints
-it, so it starts at a line that is exactly `{`. Returns undefined when stderr
+it, so it starts at a line that is exactly `{` (`summaryStart`). Returns undefined when stderr
 carries no parseable summary.
 ```
 
@@ -266,6 +266,14 @@ in any order.
 ### `packages/codegen/src/transpile/conflict-summary.ts::unnecessaryConflictsOf`
 
 The conflict sets a clean run called unnecessary, read from the `UnnecessaryConflicts` diagnostics of the `--json-summary` the CLI prints (the same summary `lastSummary` finds for a failed run). A clean run with no such diagnostic gives `[]`; no summary at all (text only) also gives `[]`.
+
+### `packages/codegen/src/transpile/conflict-summary.ts::summaryStart`
+
+Where the JSON summary starts in `tree-sitter generate --json-summary` stderr: the last line that is exactly `{`, or -1 when there is none. Shared by `lastSummary` and `splitGenerateStderr`, so both read the same boundary.
+
+### `packages/codegen/src/transpile/conflict-summary.ts::splitGenerateStderr`
+
+Splits a clean `generate` run's stderr into what the grammar wrote while it was evaluated (`preamble`) and the closing JSON summary (`summary`), at `summaryStart`. Stderr with no summary is all preamble.
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::UpstreamContext`
 
@@ -456,11 +464,7 @@ Where a package's derived resolutions live: `.sittir/resolutions.json`.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::writeConflictResolutions`
 
-```text
-Writes the resolutions as tab-indented JSON, leaving the file untouched when
-its content is already the same, so an unchanged derivation leaves the
-committed file untouched.
-```
+Writes the resolutions one per line (`printRecordLines`), each section sorted (`sortedSection`), leaving the file untouched when its content is already the same, so an unchanged derivation leaves the committed file untouched.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::ensureConflictResolutions`
 
@@ -475,6 +479,18 @@ Seeds a package that has no resolutions yet with the empty set, so its
 The package's saved resolutions, seeding the empty set first when there are
 none.
 ```
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::rewriteConflictResolutions`
+
+Rewrites the saved resolutions through `writeConflictResolutions`, so the committed file is in the writer's format even when the derivation reused it unchanged. The content does not change, and a file already in that format is left untouched. `generateWithDerivedConflicts` calls it once the conflicts settle.
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::sortedSection`
+
+A section with its resolutions sorted by their symbol sets, then by the whole record, and its `withdrawn` sets, when it has any, sorted by their symbols (`sortedBy`). Neither order carries meaning: each record names the policy step that chose it, tree-sitter reads the `conflicts` it receives as a set, and a layer drops a withdrawn set by membership (`dsl/layer.ts::layerConflicts`). A re-derivation that reaches the same sets therefore writes the same file, and one that changes a set diffs only in that record.
+
+### `packages/codegen/src/transpile/conflict-resolutions-file.ts::sortedBy`
+
+A sorted copy of `items`, in the ordinal order (`emitters/shared.ts::compareOrdinal`) of the JSON text of each item's `keyOf` value.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::stopRegen`
 
@@ -539,7 +555,7 @@ Which grammar a `tree-sitter generate` run builds: `base`, layer 1, in a scratch
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
-The conflict loop for one grammar package: read the saved resolutions (seeding them if missing), evaluate both layers once in a fresh process for each section's hash, rule count and upstream context (`evaluate-for-derivation.ts::evaluateForDerivation`), then settle the resolutions (`settleConflictResolutions`). Each probe writes its candidate set and runs `tree-sitter generate --json-summary`, a base probe in a scratch entry and a bound one in the package's `.sittir/`; the last, clean bound run leaves the generate outputs in place. Saved resolutions that turn out stale, or a derivation that cannot converge, become the blocking `conflict-resolutions-stale` or `conflict-unresolvable` record (`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's `grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops the regen. A settled run logs both sections' counts.
+The conflict loop for one grammar package: read the saved resolutions (seeding them if missing), evaluate both layers once in a fresh process for each section's hash, rule count and upstream context (`evaluate-for-derivation.ts::evaluateForDerivation`), then settle the resolutions (`settleConflictResolutions`). Each probe writes its candidate set and runs `tree-sitter generate --json-summary`, a base probe in a scratch entry and a bound one in the package's `.sittir/`; the last, clean bound run leaves the generate outputs in place. Saved resolutions that turn out stale, or a derivation that cannot converge, become the blocking `conflict-resolutions-stale` or `conflict-unresolvable` record (`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's `grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops the regen. A settled run logs both sections' counts. A clean run's JSON summary goes to stdout and anything the grammar wrote to stderr before it stays on stderr (`splitGenerateStderr`), so a quiet regen shows only the latter.
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCliCapturing`
 

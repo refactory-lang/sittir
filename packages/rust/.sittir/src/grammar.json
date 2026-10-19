@@ -15267,11 +15267,6 @@
   ],
   "conflicts": [
     [
-      "function_modifiers",
-      "foreign_mod_item_semi",
-      "foreign_mod_item_body"
-    ],
-    [
       "_attributed_argument"
     ],
     [
@@ -15279,16 +15274,13 @@
       "_attributed_type_parameter"
     ],
     [
-      "visibility_modifier",
-      "scoped_identifier",
-      "scoped_type_identifier"
-    ],
-    [
-      "visibility_modifier_pub"
-    ],
-    [
       "_type",
       "_pattern"
+    ],
+    [
+      "function_modifiers",
+      "foreign_mod_item_semi",
+      "foreign_mod_item_body"
     ],
     [
       "scoped_identifier",
@@ -15297,6 +15289,14 @@
     [
       "unit_type",
       "tuple_pattern"
+    ],
+    [
+      "visibility_modifier",
+      "scoped_identifier",
+      "scoped_type_identifier"
+    ],
+    [
+      "visibility_modifier_pub"
     ]
   ],
   "precedences": [],

@@ -13,6 +13,7 @@ import {
 	GrammarDiagnosticError,
 	blockedRecords,
 	formatGrammarDiagnostics,
+	writeDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromDroppedTokens,
 	fromSlotGrouping,
@@ -122,10 +123,10 @@ export async function runGrammarDiagnosticsPreflight(input: {
 					};
 		const blockedSet = new Set(gated.blocked);
 		const nonBlocking = gated.records.filter((d) => !blockedSet.has(d));
-		if (nonBlocking.length > 0) process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+		writeDiagnostics(nonBlocking, formatGrammarDiagnostics);
 		if (gated.blocked.length === 0) return { allowDiagnostics, compilation: gated.compilation };
 
-		process.stderr.write(formatGrammarDiagnostics(gated.blocked) + '\n');
+		writeDiagnostics(gated.blocked, formatGrammarDiagnostics);
 		if (!input.isTTY || !(await (input.confirm ?? confirmProceed)(gated.blocked))) {
 			throw new GrammarDiagnosticError(gated.blocked, gated.records);
 		}
@@ -231,12 +232,12 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 
 	if (result.slotGroupingDiagnostics.length > 0) {
 		const mapped = result.slotGroupingDiagnostics.map((d) => fromSlotGrouping(grammar, d));
-		process.stderr.write(formatGrammarDiagnostics(mapped) + '\n');
+		writeDiagnostics(mapped, formatGrammarDiagnostics);
 	}
 
 	if (result.droppedTokens.length > 0) {
 		const dropped = result.droppedTokens.map((d) => fromDroppedTokens(grammar, d));
-		process.stderr.write(formatGrammarDiagnostics(dropped) + '\n');
+		writeDiagnostics(dropped, formatGrammarDiagnostics);
 		if (!allowDiagnostics.has('dropped-token')) throw new GrammarDiagnosticError(dropped, dropped);
 	}
 

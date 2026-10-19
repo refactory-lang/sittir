@@ -15,7 +15,6 @@ describe('exercise roundtrip helpers', () => {
 		// field, not an unnamed `children` slot — current codegen assigns
 		// semantic field names where the grammar makes one available.
 		expect(artifacts.factorySlots.await_expression?.expression).toMatchObject({
-			unnamed: false,
 			required: true,
 			multiple: false
 		});
@@ -33,8 +32,6 @@ describe('exercise roundtrip helpers', () => {
 			factorySlots: {
 				direct_child: {
 					children: {
-						unnamed: true,
-						slotCount: 1,
 						required: true,
 						multiple: false,
 						nonEmpty: false
@@ -68,8 +65,6 @@ describe('exercise roundtrip helpers', () => {
 			factorySlots: {
 				spread_child: {
 					children: {
-						unnamed: true,
-						slotCount: 1,
 						required: true,
 						multiple: true,
 						nonEmpty: true

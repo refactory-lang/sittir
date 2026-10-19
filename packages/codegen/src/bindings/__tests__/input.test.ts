@@ -8,16 +8,16 @@ const RECORD = {
 			kind: 'binary',
 			modelType: 'branch',
 			slots: [
-				{ name: 'left', propertyName: 'left', required: true, kinds: ['expr'] },
+				{ name: 'left', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'expr' }] },
 				{
 					name: 'operator',
-					propertyName: 'operator',
 					required: true,
 					values: [
-						{ kind: 'terminal', value: '+' },
-						{ kind: 'node-ref', name: 'minus' }
+						{ kind: 'terminal', multiplicity: 'single', value: '+' },
+						{ kind: 'node-ref', multiplicity: 'single', name: 'minus', parseKind: 'dash' }
 					]
-				}
+				},
+				{ name: 'argument', multiple: true, values: [{ kind: 'node-ref', multiplicity: 'array', parseKind: 'expr' }] }
 			]
 		},
 		{ kind: 'call_expression', renamedFrom: 'call', subtypes: [] },
@@ -26,11 +26,12 @@ const RECORD = {
 };
 
 describe('slotModelOf', () => {
-	it('reads each node\'s slots with their terminals, defaulting what the record leaves out', () => {
+	it('reads each node\'s slots with their terminals, deriving what the record leaves out', () => {
 		const model = slotModelOf(RECORD);
 		expect(model.get('binary')?.slots).toEqual([
 			{ name: 'left', propertyName: 'left', required: true, multiple: false, storage: 'verbatim', kinds: ['expr'], terminals: [] },
-			{ name: 'operator', propertyName: 'operator', required: true, multiple: false, storage: 'verbatim', kinds: [], terminals: ['+'] }
+			{ name: 'operator', propertyName: 'operator', required: true, multiple: false, storage: 'verbatim', kinds: ['minus'], terminals: ['+'] },
+			{ name: 'argument', propertyName: 'arguments', required: false, multiple: true, storage: 'verbatim', kinds: ['expr'], terminals: [] }
 		]);
 		expect(model.get('items')).toMatchObject({ modelType: 'list', elementKinds: ['item'], slots: [] });
 		expect(model.get('call_expression')?.modelType).toBe('branch');

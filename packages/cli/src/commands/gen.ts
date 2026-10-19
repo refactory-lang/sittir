@@ -33,9 +33,9 @@ async function runPostGenerate(opts: GenCliOptions & { grammar: string }): Promi
 		if (opts.buildNative !== false) {
 			await emitParityFixtures(opts.grammar);
 		} else {
-			process.stderr.write(
-				`[warning] [codegen] parity-fixtures[${opts.grammar}]: skipped — fixture extraction requires the ` +
-					`post-regen native rebuild (--no-build-native was passed). test-fixtures.json left unchanged.\n`
+			process.stdout.write(
+				`[codegen] parity-fixtures[${opts.grammar}]: skipped — fixture extraction needs the native build, ` +
+					`which --no-build-native defers. test-fixtures.json left unchanged.\n`
 			);
 		}
 	}

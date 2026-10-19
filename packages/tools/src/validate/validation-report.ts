@@ -11,7 +11,11 @@
  * before calling in.
  */
 
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { load } from '../codegen-surface.ts';
+
+const { printRecordLines } = await load('recordLines');
 
 /**
  * Minimal shared shape both diagnostic sources (`grammar` static diagnostics
@@ -44,6 +48,7 @@ export interface DiagnosticEntryBase {
  * original fields rather than replacing them.
  */
 export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
+	readonly canProceed?: boolean;
 	readonly location?: string;
 	readonly proposal?: string;
 	readonly [key: string]: unknown;
@@ -57,9 +62,9 @@ export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
  * bucket code.
  *
  * `stage`/`label` are the only fields every source is guaranteed to add —
- * each underlying validator result (read-render-parse errors and mismatches,
- * factory errors, coverage issues, …) has its OWN extra
- * fields (`input`, `rendered`, `key`, `type`, …); those are
+ * each underlying validator result (read-render-parse errors/mismatches/
+ * accessor-throws, factory errors, coverage issues, …) has its OWN extra
+ * fields (`input`, `rendered`, `key`, `accessor`, `type`, …); those are
  * preserved through via spread rather than being narrowed away.
  */
 export interface ValidatorDiagnostic extends DiagnosticEntryBase {
@@ -82,101 +87,114 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
 	readonly source: 'grammar' | 'validator';
 	readonly grammar: string;
 	readonly backend: string;
-	readonly sClass?: SClass;
 } & (
-		| Partial<Pick<GrammarDiagnosticEntry, 'location' | 'proposal'>>
+		| Partial<Pick<GrammarDiagnosticEntry, 'canProceed' | 'location' | 'proposal'>>
 		| Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>
 	);
 
-/**
- * Round-trip-fidelity source-class taxonomy: S1 alias-storage identity, S2
- * marker population/representation, S3 separator possession, S4 slot
- * arity, S5 template projection, S6 factory extras, S7 zero-width-token
- * divergence, S8 validator/report artifacts. `trivia` holds the losses of
- * extras the native read drops (kept out of the validator totals). `layout`
- * holds the layout runs no region's record reaches and the entries whose
- * region render was refused: each keeps its source class at render, and the
- * class's ceiling is zero.
- */
-export const S_CLASSES = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'trivia', 'layout'] as const;
-
-export type SClass = (typeof S_CLASSES)[number];
-
-/** Codes that determine their S-class unambiguously, independent of message text. */
-const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
-	'parsekind-noninjective': 'S1',
-	'union-slot-unaddressable': 'S4',
-	'union-slot-mixed-row': 'S4',
-	'union-slot-routed-repeated': 'S4',
-	'coverage-missing-field': 'S5',
-	'layout-unreached': 'layout',
-	'layout-refused': 'layout'
-};
+/** Per diagnostic code, how many rows it has at each severity. */
+export type DiagnosticCounts = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
 /**
- * Message-shape fallback for codes covering more than one S-class
- * (`from-error`, the `*-ast-mismatch`/`*-error` validator codes). A
- * message that matches none of these known signatures is left
- * unclassified rather than guessed — most `*-ast-mismatch` rows are
- * genuinely ambiguous across S1/S2/S3/S5/S7 without more structure than
- * the message string carries.
+ * What the report records of one grammar's `grammar-diagnostics.json`: its
+ * rows counted per code and severity, partitioned by each row's own
+ * `canProceed` (`blocking` holds the rows that cannot proceed, `counts` the
+ * rest, so each row is counted once), and a digest of the rows (`digestOf`),
+ * so a diff of two reports names a grammar whose diagnostics moved without
+ * the report copying the rows.
  */
-function classifyByMessage(message: string): SClass | undefined {
-	if (/kind not found at rendered offset/.test(message)) return 'S8';
-	if (/expected u16 kind_id/.test(message)) return 'S2';
-	if (/automatic_semicolon/.test(message)) return 'S7';
-	if (/_comment|_line_continuation|Missing field `_content`$/.test(message)) return 'S6';
-	if (/no kind-keyed child slot|unknown kind id \d+|native coords unresolved for alias target/.test(message))
-		return 'S1';
-	return undefined;
+export interface GrammarDiagnosticsRecord {
+	readonly digest: string;
+	readonly counts: DiagnosticCounts;
+	readonly blocking: DiagnosticCounts;
 }
 
-/**
- * Maps a validation report entry to its round-trip-fidelity-restoration
- * source class. Entries outside this initiative's scope (e.g. the
- * kindid-invariant-restoration `kindid-*` codes)
- * are deliberately left unclassified.
- */
-export function classifySClass(entry: { readonly code: string; readonly message: string }): SClass | undefined {
-	const direct = DIRECT_CODE_TO_S_CLASS[entry.code];
-	if (direct) return direct;
-	if (entry.code.endsWith('-trivia')) return 'trivia';
-	if (entry.code.endsWith('-error') || entry.code.endsWith('-ast-mismatch')) return classifyByMessage(entry.message);
-	return undefined;
+/** The validation report: each grammar's diagnostics record, and every validator failure as a row. */
+export interface ValidationReport {
+	readonly grammars: Readonly<Record<string, GrammarDiagnosticsRecord>>;
+	readonly rows: readonly ValidationReportEntry[];
 }
 
-/**
- * Merge per-grammar static grammar diagnostics and per-grammar validator
- * failures into one flat array of `ValidationReportEntry` — each entry is
- * the original diagnostic object, spread as-is, tagged with only the shared
- * `source`/`grammar`/`backend` fields. No hand-picked field list to keep in
- * sync as either diagnostic shape grows. `sClass` is stamped once here,
- * from the same `code`/`message` every entry already carries, rather than
- * re-derived by each downstream consumer (`validate history`, triage tools).
- */
-export function buildValidationReportEntries(
-	grammarDiagnosticsByGrammar: Readonly<Record<string, readonly GrammarDiagnosticEntry[]>>,
+/** One grammar's diagnostics as read from its file. */
+export interface GrammarDiagnosticsInput {
+	readonly entries: readonly GrammarDiagnosticEntry[];
+}
+
+/** A JSON value with every object's keys sorted, at every depth; array order is kept, an array never reads as an object, and a key holding `undefined` is absent, as in JSON. */
+function canonical(value: unknown): unknown {
+	if (Array.isArray(value)) return { array: value.map(canonical) };
+	if (value === null || typeof value !== 'object') return value;
+	const record = value as Record<string, unknown>;
+	return {
+		object: Object.keys(record)
+			.filter((k) => record[k] !== undefined)
+			.sort()
+			.map((k) => [k, canonical(record[k])])
+	};
+}
+
+/** A value's identity: every field, independent of key order at any depth. */
+export function canonicalKey(value: unknown): string {
+	return JSON.stringify(canonical(value));
+}
+
+/** A digest of one grammar's diagnostics as a multiset: independent of their order and of key order, so both report formats digest the same diagnostics alike. */
+function digestOf(entries: readonly object[]): string {
+	return createHash('sha256').update(entries.map(digestedFields).map(canonicalKey).sort().join('\n')).digest('hex');
+}
+
+/** A diagnostic without the fields its grammar record already states or a flat-format report added: `source`, `grammar`, `backend` and the retired `sClass`. */
+function digestedFields({ source: _source, grammar: _grammar, backend: _backend, sClass: _sClass, ...diagnostic }: { readonly source?: unknown; readonly grammar?: unknown; readonly backend?: unknown; readonly sClass?: unknown }): object {
+	return diagnostic;
+}
+
+/** One grammar's record of its diagnostics, from the diagnostics themselves or a flat report's grammar rows alike. */
+function recordOf(entries: readonly (DiagnosticEntryBase & { readonly canProceed?: boolean })[]): GrammarDiagnosticsRecord {
+	return {
+		digest: digestOf(entries),
+		counts: countDiagnostics(entries.filter((e) => e.canProceed !== false)),
+		blocking: countDiagnostics(entries.filter((e) => e.canProceed === false))
+	};
+}
+
+function countDiagnostics(entries: readonly DiagnosticEntryBase[]): DiagnosticCounts {
+	const counts: Record<string, Record<string, number>> = {};
+	for (const e of entries) {
+		const bySeverity = (counts[e.code] ??= {});
+		bySeverity[e.severity] = (bySeverity[e.severity] ?? 0) + 1;
+	}
+	return counts;
+}
+
+/** The report of one validation run: each grammar's diagnostics record, and each validator failure as a row tagged with its grammar and backend. */
+export function buildValidationReport(
+	grammarDiagnosticsByGrammar: Readonly<Record<string, GrammarDiagnosticsInput>>,
 	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>,
 	backend = 'native'
-): ValidationReportEntry[] {
-	const entries: ValidationReportEntry[] = [];
-	for (const [grammar, diagnostics] of Object.entries(grammarDiagnosticsByGrammar)) {
-		for (const d of diagnostics) {
-			const entry = { source: 'grammar' as const, grammar, backend, ...d };
-			entries.push({ ...entry, sClass: classifySClass(entry) });
-		}
+): ValidationReport {
+	const grammars: Record<string, GrammarDiagnosticsRecord> = {};
+	for (const [grammar, { entries }] of Object.entries(grammarDiagnosticsByGrammar)) {
+		grammars[grammar] = recordOf(entries);
 	}
+	const rows: ValidationReportEntry[] = [];
 	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
-		for (const f of failures) {
-			const entry = { source: 'validator' as const, grammar, backend, ...f };
-			entries.push({ ...entry, sClass: classifySClass(entry) });
-		}
+		for (const f of failures) rows.push({ source: 'validator' as const, grammar, backend, ...f });
 	}
-	return entries;
+	return { grammars, rows };
 }
 
-/** Read a report `writeValidationReport` wrote. A missing, empty or unparseable file, or one that is not an array, throws naming the path. */
-export function readValidationReport(path: string): ValidationReportEntry[] {
+/**
+ * Read a report `writeValidationReport` wrote, or one in the flat format (one
+ * array of rows, grammar diagnostics among them), whose grammar rows fold into
+ * counts and the digest the record format gives the same diagnostics. A missing, empty or unparseable file, a value in
+ * neither format, or an element that is not a row throws naming the path.
+ *
+ * The flat format is read only so `validate history` can compare against
+ * reports written before the record format. Once the committed report and
+ * every report kept to compare against are in the record format, the flat
+ * branch can be removed.
+ */
+export function readValidationReport(path: string): ValidationReport {
 	if (!existsSync(path)) throw new Error(`validation report not found: ${path}`);
 	const text = readFileSync(path, 'utf8');
 	if (text.trim() === '') throw new Error(`validation report is empty: ${path}`);
@@ -186,91 +204,131 @@ export function readValidationReport(path: string): ValidationReportEntry[] {
 	} catch (e) {
 		throw new Error(`validation report is not valid JSON: ${path}: ${(e as Error).message}`);
 	}
-	if (!Array.isArray(parsed)) throw new Error(`validation report is not an array: ${path}`);
-	parsed.forEach((row: unknown, index) => {
+	if (Array.isArray(parsed)) {
+		const rows = checkedRows(parsed, path);
+		const grammarRows = Map.groupBy(
+			rows.filter((row) => row.source === 'grammar'),
+			(row) => row.grammar
+		);
+		return {
+			grammars: Object.fromEntries([...grammarRows].map(([grammar, entries]) => [grammar, recordOf(entries)])),
+			rows: rows.filter((row) => row.source !== 'grammar')
+		};
+	}
+	const record = parsed as { grammars?: unknown; rows?: unknown } | null;
+	if (typeof record !== 'object' || record === null || typeof record.grammars !== 'object' || record.grammars === null || !Array.isArray(record.rows))
+		throw new Error(`validation report is not a validation report (neither a row array nor grammars and rows): ${path}`);
+	return { grammars: record.grammars as ValidationReport['grammars'], rows: checkedRows(record.rows, path) };
+}
+
+function checkedRows(rows: readonly unknown[], path: string): ValidationReportEntry[] {
+	rows.forEach((row, index) => {
 		if (typeof row !== 'object' || row === null || Array.isArray(row))
 			throw new Error(`validation report row ${index} is not an object: ${path}`);
 		const missing = REPORT_ROW_FIELDS.filter((f) => typeof (row as Record<string, unknown>)[f] !== 'string');
 		if (missing.length > 0)
 			throw new Error(`validation report row ${index} lacks the string field(s) ${missing.join(', ')}: ${path}`);
 	});
-	return parsed as ValidationReportEntry[];
+	return rows as ValidationReportEntry[];
 }
 
 /** The string fields every report row carries, whichever source wrote it. */
 const REPORT_ROW_FIELDS = ['source', 'grammar', 'backend', 'code', 'severity', 'message'] as const;
 
-/** Write the full (unbounded) entry list to `outPath` as pretty JSON, overwriting any previous report. */
-export function writeValidationReport(entries: readonly ValidationReportEntry[], outPath: string): void {
-	writeFileSync(outPath, JSON.stringify(entries, null, 2));
+/** Write the report to `outPath`, one grammar record and one row per line, overwriting any previous report. */
+export function writeValidationReport(report: ValidationReport, outPath: string): void {
+	writeFileSync(outPath, printRecordLines({ grammars: report.grammars, rows: [...report.rows].sort(compareReportRows) }));
+}
+
+/** Report rows in a stable order: by grammar, source, backend, code, severity and message, then by the whole row. */
+function compareReportRows(a: ValidationReportEntry, b: ValidationReportEntry): number {
+	const keyOf = (row: ValidationReportEntry): readonly string[] => [row.grammar, row.source, row.backend, row.code, row.severity, row.message, JSON.stringify(row)];
+	const left = keyOf(a);
+	const right = keyOf(b);
+	for (let i = 0; i < left.length; i++) if (left[i] !== right[i]) return left[i]! < right[i]! ? -1 : 1;
+	return 0;
 }
 
 /**
- * Per-grammar ceilings on how many report entries each S-class may carry —
- * the committed shape of `packages/tools/sclass-ceilings.json`. A class
- * absent from a grammar's row (or a grammar absent entirely) has ceiling 0:
- * cleared classes stay cleared by omission, so a brand-new failure in a
- * cleared class is a violation without anyone having to enumerate zeros.
+ * Per grammar, the most report rows each diagnostic code may carry at fail,
+ * error or warning severity: the committed shape of
+ * `packages/tools/diagnostic-ceilings.json`. A code a grammar does not list has
+ * ceiling 0, so every such code is guarded, and the file stores only positive
+ * ceilings. A grammar row that cannot proceed is not counted against a ceiling:
+ * the grammar's `expectDiagnostics` gates it by owner.
  */
-export type SClassCeilings = Readonly<Record<string, Readonly<Partial<Record<SClass, number>>>>>;
+export type CodeCeilings = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
-/** Count classified report entries per grammar per S-class. Unclassified entries are outside the taxonomy and not counted. */
-export function countSClassEntries(
-	entries: readonly ValidationReportEntry[]
-): Record<string, Partial<Record<SClass, number>>> {
-	const counts: Record<string, Partial<Record<SClass, number>>> = {};
-	for (const e of entries) {
-		if (!e.sClass) continue;
-		// Resolved audit records (severity 'info' — e.g. enrich's
-		// "automatically resolved" unalias trail) document fixes already
-		// applied to the compiled grammar. They are provenance kept for
-		// visibility, not open failures, and do not count against a
-		// class ceiling.
-		if ((e as { severity?: string }).severity === 'info') continue;
-		const row = (counts[e.grammar] ??= {});
-		row[e.sClass] = (row[e.sClass] ?? 0) + 1;
+/** Read the ceilings file at `path`. A missing file means every ceiling is 0; an unparseable one throws naming the path, since reading it as empty would silently pass. */
+export function readCodeCeilings(path: string): CodeCeilings {
+	if (!existsSync(path)) return {};
+	try {
+		return JSON.parse(readFileSync(path, 'utf8')) as CodeCeilings;
+	} catch (e) {
+		throw new Error(`diagnostic ceilings are not valid JSON: ${path}: ${(e as Error).message}`);
 	}
+}
+
+const isDebt = (severity: string): boolean => severity === 'fail' || severity === 'error' || severity === 'warning';
+
+/** Rows per grammar per code at fail, error or warning severity, validator rows and the recorded grammar rows that can proceed alike; an info row records a fact, not debt, and a blocking grammar row is gated by its grammar's `expectDiagnostics`. */
+export function countCodeEntries(report: ValidationReport): Record<string, Record<string, number>> {
+	return countCodeRows(report, isDebt);
+}
+
+function countCodeRows(report: ValidationReport, counted: (severity: string) => boolean): Record<string, Record<string, number>> {
+	const counts: Record<string, Record<string, number>> = {};
+	const add = (grammar: string, code: string, n: number): void => {
+		const row = (counts[grammar] ??= {});
+		row[code] = (row[code] ?? 0) + n;
+	};
+	for (const [grammar, { counts: byCode }] of Object.entries(report.grammars))
+		for (const [code, bySeverity] of Object.entries(byCode))
+			for (const [severity, n] of Object.entries(bySeverity)) if (counted(severity)) add(grammar, code, n);
+	for (const row of report.rows) if (counted(row.severity)) add(row.grammar, row.code, 1);
 	return counts;
 }
 
-export interface SClassCeilingViolation {
+/** One (grammar, code) pair's row count against its ceiling. */
+export interface CodeCeilingCount {
 	readonly grammar: string;
-	readonly sClass: SClass;
+	readonly code: string;
 	readonly count: number;
 	readonly ceiling: number;
 }
 
-export interface SClassCeilingVerdict {
-	/** (grammar, class) pairs whose entry count EXCEEDS the committed ceiling — new debt, fails the run. */
-	readonly violations: readonly SClassCeilingViolation[];
-	/** (grammar, class) pairs whose entry count is BELOW a non-zero ceiling — the ceiling should be ratcheted down in the same commit. */
-	readonly improvements: readonly SClassCeilingViolation[];
+export interface CodeCeilingVerdict {
+	/** Pairs whose count exceeds the ceiling: new debt, which fails the run. */
+	readonly violations: readonly CodeCeilingCount[];
+	/** Pairs whose count is below a non-zero ceiling: lower the ceiling in the same commit. */
+	readonly improvements: readonly CodeCeilingCount[];
+}
+
+/** How to tighten the ceilings file for a paid-down pair: lower its ceiling to the new count, or remove its entry once the count reaches 0, since an absent code already has ceiling 0. */
+export function ceilingAdvice({ grammar, code, count }: CodeCeilingCount): string {
+	return count === 0 ? `remove ${grammar} ${code}: an absent code has ceiling 0` : `lower ${grammar} ${code} to ${count}`;
 }
 
 /**
- * The S-class ratchet: compare classified report-entry counts against the
- * committed per-grammar ceilings. A count above its ceiling means the change
- * being validated minted new debt in that source class — the fix is at the
- * source, never a raised ceiling. A count below a non-zero ceiling means
- * debt was paid down; the ceiling only ever moves toward zero, so lower it
- * in the same commit. Only `grammars` actually validated this run are
- * compared — a single-grammar `validate counts <g>` run must not judge the
- * grammars it never measured.
+ * The diagnostic ratchet: each validated grammar's fail, error and warning rows
+ * per code against the committed ceilings. A code with any fatal (`fail`) row
+ * has ceiling 0, whatever the file says. A count above its ceiling is new debt;
+ * fix the source, never raise the ceiling. A count below a non-zero ceiling is
+ * paid-down debt, and the ceiling moves down with it. Only `grammars` are
+ * judged, so a single-grammar run never judges a grammar it did not measure.
  */
-export function checkSClassCeilings(
-	entries: readonly ValidationReportEntry[],
-	ceilings: SClassCeilings,
-	grammars: readonly string[]
-): SClassCeilingVerdict {
-	const counts = countSClassEntries(entries);
-	const violations: SClassCeilingViolation[] = [];
-	const improvements: SClassCeilingViolation[] = [];
-	for (const grammar of grammars) {
-		for (const sClass of S_CLASSES) {
-			const count = counts[grammar]?.[sClass] ?? 0;
-			const ceiling = ceilings[grammar]?.[sClass] ?? 0;
-			if (count > ceiling) violations.push({ grammar, sClass, count, ceiling });
-			else if (count < ceiling) improvements.push({ grammar, sClass, count, ceiling });
+export function checkCodeCeilings(report: ValidationReport, ceilings: CodeCeilings, grammars: readonly string[]): CodeCeilingVerdict {
+	const counts = countCodeEntries(report);
+	const fatal = countCodeRows(report, (severity) => severity === 'fail');
+	const violations: CodeCeilingCount[] = [];
+	const improvements: CodeCeilingCount[] = [];
+	for (const grammar of [...grammars].sort()) {
+		const codes = [...new Set([...Object.keys(counts[grammar] ?? {}), ...Object.keys(ceilings[grammar] ?? {})])].sort();
+		for (const code of codes) {
+			const count = counts[grammar]?.[code] ?? 0;
+			const ceiling = fatal[grammar]?.[code] === undefined ? (ceilings[grammar]?.[code] ?? 0) : 0;
+			if (count > ceiling) violations.push({ grammar, code, count, ceiling });
+			else if (count < ceiling) improvements.push({ grammar, code, count, ceiling });
 		}
 	}
 	return { violations, improvements };

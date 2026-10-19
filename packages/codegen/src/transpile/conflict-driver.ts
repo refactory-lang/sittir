@@ -11,8 +11,8 @@ import {
 } from '../dsl/conflict-resolutions.ts';
 import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
-import { parseGenerateOutcome, type GenerateOutcome } from './conflict-summary.ts';
-import { readConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
+import { parseGenerateOutcome, splitGenerateStderr, type GenerateOutcome } from './conflict-summary.ts';
+import { readConflictResolutions, rewriteConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
 import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation, type DerivationInputs } from './evaluate-for-derivation.ts';
 import { withScratchEntry } from './scratch-entry.ts';
@@ -99,7 +99,11 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 		runGenerate: async (grammar) => {
 			const args = ['generate', '--json-summary'];
 			const run = grammar === 'base' ? withScratchEntry(pkg, 'sittir', (dir) => runTreeSitterCliCapturing(args, dir)) : runTreeSitterCliCapturing(args, sittirDir);
-			if (run.status === 0) process.stderr.write(run.stderr);
+			if (run.status === 0) {
+				const { preamble, summary } = splitGenerateStderr(run.stderr);
+				process.stderr.write(preamble);
+				process.stdout.write(summary);
+			}
 			return parseGenerateOutcome(run.status, run.stderr);
 		}
 	});
@@ -110,6 +114,7 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 			failure.kind === 'stale' ? conflictStaleRecord(pkg.name, failure.outcome) : conflictUnresolvableRecord(pkg.name, failure.reason, failure.report)
 		);
 	}
+	rewriteConflictResolutions(pkg);
 	console.log(`  conflicts: ${settledLine('base', result.base)}; ${settledLine('bound', result.bound)}`);
 	return result;
 }

@@ -7496,7 +7496,7 @@ The shape of `.sittir/resolutions.json`: two `ResolutionSection`s. The top-level
 
 One derived resolution list and its stamp. `grammarHash` is the hash of the evaluated grammar the list was derived for, as tree-sitter sees it and without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`): the base grammar's for the base section, the bound grammar's for `bound`. It is the verified stamp: written only once the list has generated cleanly, so a section with a matching hash always held a list that built.
 
-`withdrawn`, in a section above the first, lists the inherited sets that the section's own clean run reported unnecessary, in the order the section inherits them. The key is absent when there are none (`resolutionSection`).
+`withdrawn`, in a section above the first, lists the inherited sets that the section's own clean run reported unnecessary; the file holds them sorted (`transpile/conflict-resolutions-file.ts::sortedSection`). The key is absent when there are none (`resolutionSection`).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::UNVERIFIED_GRAMMAR_HASH`
 
