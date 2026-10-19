@@ -1369,6 +1369,10 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
     fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
         self.0.for_each_kind_ending_with(coord, f);
     }
+
+    fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
+        self.0.depth_move(coord)
+    }
 }
 
 // ─── Engine ──────────────────────────────────────────────────────────────────
@@ -1653,6 +1657,32 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
                 .filter(|last| Span::of(last).end == Span::of(&current).end);
         }
     }
+
+    fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
+        let Some(tree) = self.own(coord.tree) else {
+            return 0;
+        };
+        let surface = tree.grammar.surface_kinds();
+        let Some(node) = node_at_index(&tree.tree, coord.index).filter(|node| Span::of(node) == coord.span) else {
+            return 0;
+        };
+        let mut cursor = node.walk();
+        let mut net = 0;
+        loop {
+            let kind = crate::read::grammar_id(&cursor.node());
+            if kind != KindId::BLANK {
+                net += i32::from(kind == surface.indent) - i32::from(kind == surface.dedent);
+            }
+            if cursor.goto_first_child() {
+                continue;
+            }
+            while !cursor.goto_next_sibling() {
+                if !cursor.goto_parent() {
+                    return net;
+                }
+            }
+        }
+    }
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {
@@ -1713,6 +1743,10 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
         if let Some(tree) = self.get(&coord.tree) {
             tree.for_each_kind_ending_with(coord, f);
         }
+    }
+
+    fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
+        self.get(&coord.tree).map_or(0, |tree| tree.depth_move(coord))
     }
 }
 

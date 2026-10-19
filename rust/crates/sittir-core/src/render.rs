@@ -135,6 +135,16 @@ pub trait SourceTable {
         }
     }
 
+    /// The levels the node a coordinate names opens net of those it closes:
+    /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
+    /// over its subtree. A slice moves the writer's depth by it, as the
+    /// node's template would. A coordinate whose handle names a node other
+    /// than its own span, and a table of bare sources, answer none.
+    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        let _ = coord;
+        0
+    }
+
     /// The sides of the node a coordinate names, as its tree's trivia table
     /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
     /// none. A table of bare sources knows no sides.
@@ -342,7 +352,8 @@ pub trait RenderSink {
         self.seam(gap);
     }
     /// Write the bytes a coordinate names, from the tree table this writer
-    /// holds. The default refuses: a sink with no source table cannot answer
+    /// holds, and move the depth as the node's template would
+    /// (`SourceTable::depth_move`). The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
         Err(CoordinateError::UnknownTree {

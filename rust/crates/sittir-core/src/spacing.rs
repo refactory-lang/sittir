@@ -1113,6 +1113,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             recorder.wrote_slice(coord.index);
         }
         self.end_leaf();
+        let moved = sources.depth_move(coord);
+        for _ in 0..moved.unsigned_abs() {
+            if moved > 0 {
+                crate::render::RenderSink::indent(self);
+            } else {
+                crate::render::RenderSink::dedent(self, LayoutKinds::NONE);
+            }
+        }
         Ok(())
     }
 
