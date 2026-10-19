@@ -28,7 +28,7 @@ import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
-import { portable } from './portable/index.ts';
+import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
@@ -52,10 +52,16 @@ const loaded = new WeakMap<LanguageIdentity<LanguageAPI>, Promise<LanguageHooks<
 function loadLanguage<API extends LanguageAPI>(language: LanguageIdentity<API>): Promise<LanguageHooks<API>> {
 	const cached = loaded.get(language);
 	if (cached !== undefined) return cached as Promise<LanguageHooks<API>>;
-	const loading = language.load().catch((cause: unknown) => {
-		loaded.delete(language);
-		throw new Error(`failed to load language "${language.name}"`, { cause });
-	});
+	const loading = language.load().then(
+		(hooks) => {
+			if (hooks.portable !== undefined) registerPortableRows(language.load, hooks.portable);
+			return hooks;
+		},
+		(cause: unknown) => {
+			loaded.delete(language);
+			throw new Error(`failed to load language "${language.name}"`, { cause });
+		}
+	);
 	loaded.set(language, loading);
 	return loading;
 }
@@ -291,7 +297,7 @@ function assemblePortableEngine<API extends PortableLanguageAPI>(language: Langu
 	const rows = hooks.portable;
 	if (rows === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
 	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia, portable: rows };
-	return Object.freeze({ ...identity, kinds: portable.kinds as API['portable']['kinds'], is: portable.is as API['portable']['is'] });
+	return Object.freeze({ ...identity, kinds: portable.kinds as API['portable']['kinds'], is: portableGuardsOf(language) as API['portable']['is'] });
 }
 
 function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {

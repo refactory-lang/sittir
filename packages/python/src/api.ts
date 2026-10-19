@@ -23,6 +23,7 @@ export interface PythonAPI extends LanguageAPI {
 	readonly root: ModuleTree;
 	readonly node: PythonNode;
 	readonly fixedTextKindId: FixedTextKindId;
+	readonly kindId: TSKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: PythonTypeMap['empty'];

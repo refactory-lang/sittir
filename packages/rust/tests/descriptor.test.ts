@@ -58,17 +58,8 @@ describe('the rust descriptor shares is and kinds with its engines', () => {
 		expect(engine.is).toBe((await createEngine(copy)).is);
 	});
 
-	it('serves the shared portable kinds and guards, unwrapped by the language check', async () => {
-		expect(rust.is.portable).toBe(portable.is);
+	it('serves the shared portable kinds on the descriptor and on the portable engine', async () => {
 		expect(rust.kinds.portable).toBe(portable.kinds);
-		const engine = await createEngine(rust, { api: 'portable' });
-		expect(engine.is).toBe(rust.is.portable);
-		expect(engine.kinds).toBe(rust.kinds.portable);
-	});
-
-	it('keeps the shared portable guards on a copied descriptor and its engines', async () => {
-		const copy = { ...rust };
-		expect(copy.is.portable).toBe(portable.is);
-		expect((await createEngine(copy)).is.portable).toBe(portable.is);
+		expect((await createEngine(rust, { api: 'portable' })).kinds).toBe(rust.kinds.portable);
 	});
 });

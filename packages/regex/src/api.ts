@@ -21,6 +21,7 @@ export interface RegexAPI extends LanguageAPI {
 	readonly root: PatternTree;
 	readonly node: RegexNode;
 	readonly fixedTextKindId: FixedTextKindId;
+	readonly kindId: TSKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: RegexTypeMap['empty'];

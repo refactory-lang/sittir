@@ -74,7 +74,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	}
 	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
 	if (inner.some((entry) => typeof entry !== 'number')) {
-		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
+		const kind = facts?.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
 	const trivia = triviaOf(node);

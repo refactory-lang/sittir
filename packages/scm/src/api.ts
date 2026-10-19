@@ -22,6 +22,7 @@ export interface ScmAPI extends LanguageAPI {
 	readonly root: ProgramTree;
 	readonly node: ScmNode;
 	readonly fixedTextKindId: FixedTextKindId;
+	readonly kindId: TSKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: ScmTypeMap['empty'];

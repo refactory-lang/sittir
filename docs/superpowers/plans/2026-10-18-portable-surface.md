@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans (inline; this repo does code work without subagents). Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** `createEngine(lang, { api: 'portable' })` gets the language-neutral vocabulary surface the maintainer ruled. `portable.is` and `portable.kinds` live in `@sittir/common/portable`, `rust.is.portable` and `rust.kinds.portable` are those same objects typed for Rust, guards take a node only, and `ofType` accepts a vocabulary kind.
+**Goal:** `createEngine(lang, { api: 'portable' })` gets the language-neutral vocabulary surface the maintainer ruled. `portable.is` and `portable.kinds` live in `@sittir/common/portable`, `rust.kinds.portable` is that same kinds object typed for Rust, `rust.is.portable` is Rust's view of the guard tree, which reads a node of Rust or a kind id of Rust, the shared guards take a node only, and `ofType` accepts a vocabulary kind.
 
 **Architecture:**
 - The vocabulary's path list is emitted once into `@sittir/common/portable`. `@sittir/types` stays type-only, and the vocabulary folder reads every top-level file as a vocabulary source.
@@ -13,10 +13,11 @@
 **Tech Stack:** TypeScript ESM, vitest, the sittir codegen emitters (`packages/codegen/src/emitters`), the native engine for parsed nodes.
 
 **Spec:** the maintainer rulings of 2026-10-05 to 2026-10-17, restated here. No spec document exists. The rulings this plan executes:
-- Guards take a node only.
+- The shared guards (`portable.is`) take a node only. A language's guards (`rust.is.portable`) also take a kind id of the language, read by that language's rows. Fixed literals stay kind ids and never become nodes.
 - `portable.kinds` is namespaced like the guards, with `$path`.
 - The emitted path list has no Proxy.
-- `rust.is.portable` is the same object as `portable.is`.
+- `rust.is.portable` is Rust's view of the shared tree: the same keys, its own guards, one object on every engine of the descriptor and on its portable engine. A kind id before any engine of the language throws, naming the language.
+- Kind ids stay the per-language `TSKindId` enums. Every public parameter typed by a language's kind id takes only that language's ids; a value typed as a plain `number` still compiles.
 - `ofType` resolves vocabulary names through the engine's rows.
 - `$subType` is gone.
 - There are no portable aliases.
@@ -35,9 +36,9 @@
 
 1. A node of language B passed to a guard typed for language A's vocabulary: it is refused at the type level, and at run time it is classified by B's rows, never A's.
 2. A parsed node whose language has no bindings (scm, regex) passed to a portable guard returns `false` and does not throw.
-3. A plain object `{ $type: n }` with no engine, and a bare number, are both refused by every portable guard, including paths whose kind set holds `n`.
+3. A plain object `{ $type: n }` with no engine is refused by every portable guard, including paths whose kind set holds `n`. A bare number is refused by the shared guards and read by a language's guards through that language's rows.
 4. A vocabulary path that no bound grammar reads (no rows anywhere) still exists in `portable.kinds` and `portable.is`; its guard returns `false`.
-5. A copied descriptor (`{ ...rust }`): `copy.is.portable === portable.is` still holds, because nothing language-bound sits in the shared tree.
+5. A copied descriptor (`{ ...rust }`): an engine of the copy exposes the copy's own view of the portable guards, which reads the copy's nodes and finds rust's rows through the shared `load`.
 
 ---
 
@@ -57,7 +58,7 @@ These supertype sets hold fixed-literal members:
 
 The supertype or member guard is the only narrowing for such an item. Making it node-only breaks that narrowing and the guard's declared type (`T extends {$type} | number`).
 
-On the portable surface, a fixed-literal leaf's identity is the vocabulary const string, by the 2026-10-05 ruling, so a number never stands for a portable node. The descriptor ruling already accepts that bare ids match no portable guard until arena 3b.
+Fixed literals stay kind-number values and never become nodes. A language's portable guards read such an id through that language's rows, by its kind and fixed text; the shared guards refuse it, since a number names no language.
 
 The cost of keeping bare ids on grammar guards: a bare id carries no language, so `inLanguage` passes every number. Task 5 adds one sentence saying so to the `Language.is` JSDoc. Kind guards (`_g`) keep refusing ids, since `x === kinds.X` is the documented test for a fixed-literal leaf.
 
@@ -78,9 +79,9 @@ The cost of keeping bare ids on grammar guards: a bare id carries no language, s
 Ruled: the residue is restated in its own PR (Task 3b), after the node-only guards and before `ofType`. Until it lands, node-only guards skip placed entries, as a guard given no context does today, so these classifications answer false; a ratchet pins the placed counts (rust 55; python 6 plus 1 `up`), shrink-only. Task 3b ends with the emitter refusing a `within` entry or an `up > 0` condition with a generator diagnostic, gated at 0. Coordinate builds it from the rulings above; its `bindings.scm` and `grammar.sittir.ts` lines go to sittir-design for review, and a probe that moves rows or trees beyond what the 2026-10-10 measurements expected goes back to brainstorm.
 
 **Q2 — typing `rust.is.portable`.** Ruled: one runtime object, typed per language through an interface the codegen emits:
-- `PortableIsAt<RustIds>`: each guard is `<T extends RustNode>(node: T) => node is T & { $type: Ids }`.
-- A python node passed to `rust.is.portable…` is a type error.
-- At run time it is classified by python's rows, which keeps `portable.is` language-neutral, as Review Focus 1 requires.
+- `PortableIsAt<RustIds>`: each guard is `PortableGuard<Ids, RustNode, TSKindId>`; a node narrows to `T & { $type: Ids }` and a kind id to `T & Ids`.
+- A python node or a python kind id passed to `rust.is.portable…` is a type error.
+- At run time `rust.is.portable` answers false for a python node, while the shared `portable.is` classifies it by python's rows, which keeps `portable.is` language-neutral, as Review Focus 1 requires.
 
 ---
 
@@ -92,10 +93,10 @@ Ruled: the residue is restated in its own PR (Task 3b), after the node-only guar
 | `packages/codegen/src/bindings/vocabulary-paths.ts` | `emitVocabularyPaths(vocabulary: Vocabulary): string`, the file body above, from `readVocabulary`; `writeVocabularyPaths()` writes it |
 | `packages/tools/src/regen.ts` | `regenerateGrammars` calls `writeVocabularyPaths` once per run, before the per-grammar generations (one writer, no race) |
 | `packages/common/src/portable/tree.ts` | `portableTrees(paths, guardOf): { kinds; is }`: the two frozen namespaced trees, one shape |
-| `packages/common/src/portable/classify.ts` | `classifierOf(rows): (node) => string \| undefined`, read entries tried in order, node-only (moved from `portable.ts`) |
-| `packages/common/src/portable/index.ts` | `export const portable: { kinds; is }`, served at the `@sittir/common/portable` export |
+| `packages/common/src/portable/classify.ts` | `classifierOf(rows): (value) => string \| undefined`, read entries tried in order, for a node or a kind id (moved from `portable.ts`) |
+| `packages/common/src/portable/index.ts` | `export const portable: { kinds; is }`, served at the `@sittir/common/portable` export; `portableGuardsOf(language)`, a language's view of the guards; `registerPortableRows(load, rows)` |
 | `packages/codegen/src/emitters/overlays/portable/namespaces.ts` | emits per-language rows (`PortableRows`) and the typed views `PortableIsAt<Ids>` and `PortableKindsAt` |
-| `packages/common/src/create-engine.ts` | every engine's identity carries `portable: hooks.portable`; the portable engine returns `portable.kinds` and `portable.is` |
+| `packages/common/src/create-engine.ts` | every engine's identity carries `portable: hooks.portable`; `loadLanguage` records a bound language's rows (`registerPortableRows`); the portable engine returns `portable.kinds` and `portableGuardsOf(language)` |
 | `packages/common/src/query.ts` | `ofType(kind: number \| PortableKind)` |
 
 `packages/common/src/portable.ts` (`portableSurface`) and `portable-path.ts` fold into `portable/`. `PortableGuard`'s `context` parameter and the `$subType` read are removed.
@@ -200,8 +201,8 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 - Test: `packages/rust/tests/portable-guards.test.ts`
 
 **Interfaces:**
-- Consumes: `EngineIdentity.portable` (Task 3), `engineOf` (`engine-scope.ts`). Placed entries are skipped (Q1); a ratchet test pins their counts per the tables (rust 55; python 6 plus 1 `up`), shrink-only, and `portable.is`'s JSDoc names the classifications that read by their next entry until Task 3b (an impl or class-body method reads as a function, not a method). Keyword leaves read as bare kind ids, which name no engine, so every claim on a fixed-text kind answers false too (ruled: guards stay node-only); the same ratchet test pins those claims per the tables' `fixedText` (rust 67, typescript 37, python 8), shrink-only, and the JSDoc names their classes. `packages/tools/tests/portable/is.test.ts` pins both gaps false.
-- Produces: `classifierOf(rows: PortableRows): (node: { $type: number }) => string | undefined`.
+- Consumes: `EngineIdentity.portable` (Task 3), `engineOf` (`engine-scope.ts`). Placed entries are skipped (Q1); a ratchet test pins their counts per the tables (rust 55; python 6 plus 1 `up`), shrink-only, and `portable.is`'s JSDoc names the classifications that read by their next entry until Task 3b (an impl or class-body method reads as a function, not a method). Keyword leaves are bare kind ids: the shared guards refuse them, and a language's guards read them through its rows (Task 5). `packages/tools/tests/portable/is.test.ts` pins the placement gap false and the keyword leaves true through the language's guards.
+- Produces: `classifierOf(rows: PortableRows): (value: { $type: number } | number) => string | undefined`.
 
 - [ ] **Step 1:** Write the failing tests.
   - A rust `function_item` read from a rust engine passes `portable.is.declaration.function`.
@@ -225,7 +226,7 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 ### Task 5: Descriptor and engine wiring
 
 **Files:**
-- Modify: the descriptor emitter (`packages/<lang>/src/descriptor.ts`; `is` gains `portable`, `kinds` gains `portable`), `packages/common/src/create-engine.ts` (`assemblePortableEngine` returns `portable.kinds` and `portable.is`), `packages/types/src/engine-api.ts` (`PortableEngine.kinds` becomes `PortableKindsAt`, plus the `Language.is` JSDoc sentence from Q0), `packages/rust/tests/descriptor.test.ts`
+- Modify: the descriptor emitter (`packages/<lang>/src/descriptor.ts`; `is` gains `portable`, `kinds` gains `portable`), `packages/common/src/create-engine.ts` (`assemblePortableEngine` returns `portable.kinds` and `portableGuardsOf(language)`; `loadLanguage` records the rows), `packages/types/src/engine-api.ts` (`PortableEngine.kinds` becomes `PortableKindsAt`, plus the `Language.is` JSDoc sentence from Q0), `packages/rust/tests/descriptor.test.ts`
 - Test: `packages/rust/tests/descriptor.test.ts`, and the import-graph test
 
 **Interfaces:**
@@ -233,12 +234,14 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 
 - [ ] **Step 1:** Write the failing tests. Replace `'keeps a portable engine own is'` with:
   - `(await createEngine(rust, { api: 'portable' })).is === rust.is.portable`.
-  - `rust.is.portable === portable.is`.
+  - `rust.is.portable` is not `portable.is` but has its keys; `portable.is.type.primitive.boolean(rust.kinds.BoolKeyword)` is false and `rust.is.portable.type.primitive.boolean(rust.kinds.BoolKeyword)` is true.
   - `rust.kinds.portable === portable.kinds`.
-  - `({ ...rust }).is.portable === portable.is`.
+  - An engine of `{ ...rust }` exposes its own view, which reads `rust.kinds.BoolKeyword` as a boolean type.
+  - Before any engine of rust, `rust.is.portable.type.primitive.boolean(rust.kinds.BoolKeyword)` throws, naming rust.
+  - A type test: `TriviaFacts.kindName` and `rust.is.portable` reject a python kind id, an unlisted literal and a kind name.
   - The import-graph test: importing `@sittir/rust`'s descriptor loads no `portable.ts`.
 - [ ] **Step 2:** Run the test. Expected: FAIL.
-- [ ] **Step 3:** The descriptor attaches `portable` after `languageGuards` composes, so the shared guards are not language-wrapped. `guardsOf` keeps `portable` when rebinding a copy.
+- [ ] **Step 3:** The descriptor passes `languageGuards` a builder, `(language) => ({ portable: portableGuardsOf(language) })`, whose members are added after the composition, so the view is not wrapped again by the language check. `guardsOf` calls the recorded builder when it rebinds a copy. `loadLanguage` records the rows against `language.load` (`registerPortableRows`), so a copy finds them. `LanguageAPI.kindId` carries the grammar's `TSKindId` to `TriviaFacts<Kind>` and to the guards' `Kind`.
 - [ ] **Step 4:** Exec regenerates the five grammars. Rerun the tests and the suite. Then run the type-check, lint and validation history. Expected: PASS, and 0 rows move.
 - [ ] **Step 5:** Pathspec commit with the regenerated files.
 
@@ -270,5 +273,5 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 
 These are the next generator pieces that were assigned to coordinate on 2026-10-10.
 
-- The grammar guards' bare-id acceptance gets revisited when parsed units become nodes (arena 3b).
-- Portable classification of keyword leaves. A fixed-text kind reads as a bare kind id until parsed units carry identity; that work drives the keyword-leaf ratchet to 0 (rust's primitive types, booleans, `self`/`super`/`crate`, `()`, `!`, `_`, `..` and macro fragment specifiers; typescript's predefined types, `unique symbol`, `this`, `super`, `null`/`undefined` and visibility keywords; python's `True`/`False`/`None`, `...`, `pass`/`break`/`continue`; `;` everywhere).
+- The grammar guards accept a bare id of any language at run time (`inLanguage` passes every number). Fixed literals stay kind ids, so that stays; the per-language `TSKindId` types are the check.
+- Removing the string `$type` arms (the fixtures, the tools readers, the string-keyed kind guard, the loose type projections, `AnyUntypedNode.$type` and `TriviaFacts`' default) is its own PR, after the kind-id one and before Task 3b.
