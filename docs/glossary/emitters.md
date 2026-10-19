@@ -2826,16 +2826,6 @@ Surface`
 // `heterogeneous`: pass through unchanged.
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::buildSlotWriteCall`
-
-Writes one slot value directly, with no template, for the fallback render
-of a kind that has no body. `expr` names the slot's `SlotValue` carrier:
-the concrete and supertype classes call their own `render_<kind>` function,
-so they unwrap through `node_or_write`, which slices the coordinate
-arm itself and yields the node only when there is one. The
-heterogeneous classes call `.render(w)` directly, which the carrier
-implements, so they need no unwrap.
-
 ### `packages/codegen/src/emitters/render-module.ts::mergeTemplateSurfaceFromBody`
 
 The slots a body needs, merged over the slot model: every gate test is a
@@ -2925,14 +2915,11 @@ writer exists.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFallbackFn`
 
-The render function for a compound kind that has no body: each slot is
-written in declaration order through `buildSlotWriteCall`, with the class
-`slotClassOfShape` gives the slot's shape, or, when there are no slots, the
-node's captured text. A list slot is a `Vec` or a `NonEmptyVec`, never
-optional, so its items are iterated directly; a single slot that may be
-absent is an `Option`. It reads the struct's fields directly rather than its
-fields trait, so a kind rendered this way has no body a record's view can
-share; no grammar emits one.
+The render function for a compound kind that has no body, generic over the
+kind's fields trait like every other body, so a record's view renders through
+it too: each slot is written in declaration order through its own `Render`
+(`Slot::write_slot`, with no affixes), a list slot item by item
+(`SlotItems`). A slot that may be absent writes nothing.
 
 ### `packages/codegen/src/emitters/render-module.ts::literalWrite`
 
@@ -3236,7 +3223,9 @@ literal, a unit arm per fixed-literal kind, and `Verbatim`.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitSupertypeRenderHelper`
 
-Emits `render_<supertype>(t: &<Supertype>Node, w: &mut dyn RenderSink) -> RenderResult`
+Emits `render_<supertype>(t: &<Supertype>Node, w: &mut dyn RenderSink) -> RenderResult`,
+and, for an enum with a record view (`supertypeViewed`), the view's
+`render_<supertype>_record` from the same lines (`recordViewImpls`),
 as a bounded match over the enum variants, each arm delegating to the
 subtype payload's `.render(w)` so its own trivia-wrapped impl fires; a
 fixed-literal subtype's unit arm calls its kind's render function. A boxed
@@ -3370,7 +3359,8 @@ name.
 
 Emits each distinct choice once. Every slot's choice is generated under its
 own name; two slots whose generated choices are identical once their own
-names are set aside — the same variants, ids, aliases, seams and prepare
+names and their record views' names (`rustRecordViewName`) are set aside —
+the same variants, ids, aliases, seams and prepare
 fill — share the first one's declaration and name, in node order. A choice
 whose arms write its owner's seam sites differs from another owner's and
 stays its own.
@@ -3529,6 +3519,10 @@ An id no variant claims, such as the wire id of an alias that wraps a
 flattened supertype, is refused by the codec.
 
 A slot with a blank arm (`hasBlankArm`) gets a `Blank` variant: it decodes from the blank id, renders nothing, and is no kind.
+
+An enum with a payload variant, or the verbatim arm, names its record view
+(`viewArg`) and writes the view's `KindOf` and `Render` from the functions
+that write its own (`recordViewImpls`).
 
 ### `packages/codegen/src/emitters/render-module.ts::unitKindIdsOf`
 
@@ -3689,7 +3683,58 @@ seam). Every arm that holds the kind calls this function.
 The render call every node goes through:
 `NodeLayout::render(layout, kind, role, w, |w| body)`, one protocol
 for a struct node, which passes its own layout, and a fixed literal's
-unit, which has none. `owner` picks the trivia role.
+unit, which has none. `owner` picks the trivia role. A record view passes
+its `RecordLayout` as `layoutType`, which takes the same arguments.
+
+### `packages/codegen/src/emitters/render-module.ts::RenderSubject`
+
+What a choice's or a struct's `KindOf` and `Render` impls are written for:
+the native type, or its record view. `type` is the type an impl names (a
+view's with its lifetime elided), `path` the path its variants are matched
+by, and `view` whether it is the view, whose payloads are their own views,
+never boxes (`payloadExpr`).
+
+### `packages/codegen/src/emitters/render-module.ts::rustRecordViewName`
+
+The name of a type's record view, `<Type>Record`: the one spelling codegen
+stamps (`viewArg`) and writes the view's impls for (`recordViewImpls`).
+
+### `packages/codegen/src/emitters/render-module.ts::nativeSubject`
+
+The `RenderSubject` of a native type: its impls name it and match it by its
+own name.
+
+### `packages/codegen/src/emitters/render-module.ts::recordViewImpls`
+
+The impls `emit` writes for a type's record view, inside
+`::sittir_core::records_codec!`, so they exist only where the derive emits
+the view: in a build with the arena. Each emitter writes its native impls
+and its view's from one function of the `RenderSubject`, so the two cannot
+drift.
+
+### `packages/codegen/src/emitters/render-module.ts::viewArg`
+
+The `view = <Type>Record` argument of `#[node(…)]`, which names the type's
+record view for the derive. Codegen stamps it on every struct and on every
+choice with a payload variant, the types it writes view impls for. A choice
+of units is its own view and takes none, as an enum kind does, and
+`TriviaNode`, which no record holds, takes none either.
+
+### `packages/codegen/src/emitters/render-module.ts::payloadExpr`
+
+How a choice's render arm reaches its payload: a boxed native payload through
+`.as_ref()`, anything else, a view's payload included, as it is.
+
+### `packages/codegen/src/emitters/render-module.ts::supertypeViewed`
+
+Whether a supertype's enum has a payload variant, and so a record view:
+a member that is not a fixed literal, or the verbatim arm. The enum's
+declaration and its render helper both ask it.
+
+### `packages/codegen/src/emitters/render-module.ts::supertypeRenderFnName`
+
+The name of a supertype's render helper: `render_<supertype>` for the native
+enum, `render_<supertype>_record` for its view.
 
 ### `packages/codegen/src/emitters/render-module.ts::ownsTrivia`
 
@@ -3746,9 +3791,8 @@ asks what a slot holds reads it: the field's Rust type
 (`rustNodeSlotType`), the choices emitted (`collectPerSlotChildEnums`
 registers a slot's choice exactly when its shape is `union`, so every
 emitted choice is some field's type), the supertype enums emitted
-(`collectUsedSupertypeNames`), the template locals
-(`buildTypedTemplateBody`) and the fallback render's write calls
-(`renderTypedBranchFallbackFn`, through `slotClassOfShape`).
+(`collectUsedSupertypeNames`), and the template locals
+(`buildTypedTemplateBody`).
 
 A slot `classifyPrimitiveField` types as a primitive is `presence` or
 `text`; a presence slot that references a fixed-literal kind names it
@@ -3765,13 +3809,6 @@ slot that holds neither.
 The fixed-literal kind a presence slot references, when its one value is a
 reference to a fixed-text kind (`isFixedTextLeaf`); nothing for a keyword
 written inline in the rule, which stays the owner's template text.
-
-### `packages/codegen/src/emitters/render-module.ts::slotClassOfShape`
-
-The write-call class (`buildSlotWriteCall`) of a slot's shape: a kind is
-`concrete`, a supertype `supertype`, and every other shape `heterogeneous`,
-written through its own `Render`. A fixed-literal kind is `heterogeneous`
-too: its render function takes no node, and its type's `Render` calls it.
 
 ### `packages/codegen/src/emitters/render-module.ts::rustNodeSlotType`
 
@@ -12693,6 +12730,10 @@ pattern-modeled kind admits `Verbatim(VerbatimNode)`, marked
 `#[node(verbatim)]`, beside its members: a prepare arm, a bridge arm to
 `AnyNode::Verbatim`, and a render arm in the supertype's render helper.
 
+An enum with a payload variant (`supertypeViewed`) names its record view
+(`viewArg`) and writes the view's `KindOf` and `Render` from the functions
+that write its own.
+
 Each payload is written by `choicePayloadType`, boxed when it is pinned over the payload ceiling. The bridge to `AnyNode` passes a payload as it is, a box included, since both choices box the same types; a boxed supertype payload is unboxed to call its own bridge.
 
 Each member's claims (`claimSupertypeIds`) print as its `#[kind]` line
@@ -12969,7 +13010,9 @@ cell.
 `rustNodeFieldsTraitName`), which the derive emits and the kind's render
 function is generic over. The struct's `Render` calls that function, for a
 leaf as for a compound, so the node renders through the body a record's view
-shares. It names the prepare trait the same way (`prepare = <Kind>Prepare`,
+shares. It names the view too (`viewArg`), whose `KindOf` and `Render` are
+the struct's, written for the view (`recordViewImpls`): the view renders
+through its `RecordLayout`, which its fields trait hands out. It names the prepare trait the same way (`prepare = <Kind>Prepare`,
 `rustNodePrepareTraitName`), over which the kind's prepare function is
 generic (`prepareStructImpl`).
 
@@ -13378,7 +13421,8 @@ stands for whichever pattern kinds the position admits. `AnyNode`'s
 `Verbatim` admits no kind, so its arm answers `false`; every match names
 all its variants. Every node
 struct, supertype enum, per-slot enum, literal enum and `AnyNode` gets
-one, so a `SlotValue` of any generated type satisfies `KindTest`.
+one, so a `SlotValue` of any generated type satisfies `KindTest`, and
+each record view gets the same lines, written for the view.
 
 ### `packages/codegen/src/emitters/render-module.ts::rustKindIdSlice`
 

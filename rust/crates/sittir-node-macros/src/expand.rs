@@ -221,6 +221,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     };
     let codec = codec::choice(ident, &wire)?;
     let writer = crate::write::choice(ident, &wire)?;
+    let view = crate::views::choice(ident, attrs, &wire)?;
     let from_kind_id = all_units.then(|| {
         quote! {
             impl ::sittir_core::prepare::FromKindId for #ident {
@@ -245,6 +246,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #codec
                 #writer
             };
+            #view
             #from_kind_id
         });
     }
@@ -340,6 +342,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             #codec
             #writer
         };
+        #view
         #from_kind_id
     })
 }
@@ -366,6 +369,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     let ids = firsts.iter().map(|(name, first)| quote!(#ident::#name => #first,));
     let codec = codec::members(ident);
     let writer = crate::write::members(ident);
+    let view = crate::views::members(ident);
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -411,6 +415,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
             }
             #codec
             #writer
+            #view
         };
     })
 }
@@ -585,6 +590,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         None => codec::structure(ident, &wire)?,
     };
     let writer = crate::write::structure(ident, attrs, &fields)?;
+    let view = crate::views::structure(ident, attrs, &fields)?;
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -622,6 +628,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         };
         #record
         #fields_trait
+        #view
         #prepare_trait
     })
 }

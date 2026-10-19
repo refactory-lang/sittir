@@ -20,7 +20,7 @@ use super::{field_ids as field, kind_ids as kind};
 use ::sittir_core::VerbatimNode;
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = AnyNodeRecord)]
 pub enum AnyNode {
     #[kind(kind::SOURCE_FILE)]
     SourceFile(SourceFileNode),
@@ -2624,7 +2624,7 @@ pub type NodeLayout = ::sittir_core::layout::NodeLayout<TriviaNode>;
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = StatementNodeRecord)]
 pub enum StatementNode {
     #[kind(kind::EXPRESSION_STATEMENT)]
     ExpressionStatement(ExpressionStatementNode),
@@ -2805,8 +2805,47 @@ impl ::sittir_core::render::Render for StatementNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StatementNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ExpressionStatement(inner) => inner.kind_in(kinds),
+            Self::DeclarationStatement(inner) => inner.kind_in(kinds),
+            Self::ConstItem(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::MacroDefinition(inner) => inner.kind_in(kinds),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
+            Self::AttributeItem(inner) => inner.kind_in(kinds),
+            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
+            Self::ModItem(inner) => inner.kind_in(kinds),
+            Self::ForeignModItem(inner) => inner.kind_in(kinds),
+            Self::StructItem(inner) => inner.kind_in(kinds),
+            Self::UnionItem(inner) => inner.kind_in(kinds),
+            Self::EnumItem(inner) => inner.kind_in(kinds),
+            Self::TypeItem(inner) => inner.kind_in(kinds),
+            Self::FunctionItem(inner) => inner.kind_in(kinds),
+            Self::FunctionSignatureItem(inner) => inner.kind_in(kinds),
+            Self::ImplItem(inner) => inner.kind_in(kinds),
+            Self::TraitItem(inner) => inner.kind_in(kinds),
+            Self::AssociatedType(inner) => inner.kind_in(kinds),
+            Self::LetDeclaration(inner) => inner.kind_in(kinds),
+            Self::UseDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
+            Self::StaticItem(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StatementNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_statement_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = DeclarationStatementNodeRecord)]
 pub enum DeclarationStatementNode {
     #[kind(kind::CONST_ITEM)]
     ConstItem(Box<ConstItemNode>),
@@ -3019,8 +3058,45 @@ impl ::sittir_core::render::Render for DeclarationStatementNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DeclarationStatementNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ConstItem(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::MacroDefinition(inner) => inner.kind_in(kinds),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
+            Self::AttributeItem(inner) => inner.kind_in(kinds),
+            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
+            Self::ModItem(inner) => inner.kind_in(kinds),
+            Self::ForeignModItem(inner) => inner.kind_in(kinds),
+            Self::StructItem(inner) => inner.kind_in(kinds),
+            Self::UnionItem(inner) => inner.kind_in(kinds),
+            Self::EnumItem(inner) => inner.kind_in(kinds),
+            Self::TypeItem(inner) => inner.kind_in(kinds),
+            Self::FunctionItem(inner) => inner.kind_in(kinds),
+            Self::FunctionSignatureItem(inner) => inner.kind_in(kinds),
+            Self::ImplItem(inner) => inner.kind_in(kinds),
+            Self::TraitItem(inner) => inner.kind_in(kinds),
+            Self::AssociatedType(inner) => inner.kind_in(kinds),
+            Self::LetDeclaration(inner) => inner.kind_in(kinds),
+            Self::UseDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
+            Self::StaticItem(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for DeclarationStatementNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_declaration_statement_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = MacroDefinitionNodeRecord)]
 pub enum MacroDefinitionNode {
     #[kind(kind::MACRO_DEFINITION_PAREN)]
     MacroDefinitionParen(MacroDefinitionParenNode),
@@ -3088,8 +3164,27 @@ impl ::sittir_core::render::Render for MacroDefinitionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroDefinitionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::MacroDefinitionParen(inner) => inner.kind_in(kinds),
+            Self::MacroDefinitionBracket(inner) => inner.kind_in(kinds),
+            Self::MacroDefinitionBrace(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for MacroDefinitionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_macro_definition_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TokenTreePatternNodeRecord)]
 pub enum TokenTreePatternNode {
     #[kind(kind::TOKEN_TREE_PATTERN_PAREN)]
     TokenTreePatternParen(TokenTreePatternParenNode),
@@ -3149,8 +3244,27 @@ impl ::sittir_core::render::Render for TokenTreePatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreePatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TokenTreePatternParen(inner) => inner.kind_in(kinds),
+            Self::TokenTreePatternBracket(inner) => inner.kind_in(kinds),
+            Self::TokenTreePatternBrace(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreePatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_token_tree_pattern_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TokenTreeNodeRecord)]
 pub enum TokenTreeNode {
     #[kind(kind::TOKEN_TREE_PAREN)]
     TokenTreeParen(TokenTreeParenNode),
@@ -3210,8 +3324,27 @@ impl ::sittir_core::render::Render for TokenTreeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TokenTreeParen(inner) => inner.kind_in(kinds),
+            Self::TokenTreeBracket(inner) => inner.kind_in(kinds),
+            Self::TokenTreeBrace(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_token_tree_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ModItemNodeRecord)]
 pub enum ModItemNode {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalNode),
@@ -3271,8 +3404,26 @@ impl ::sittir_core::render::Render for ModItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ModItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ModItemExternal(inner) => inner.kind_in(kinds),
+            Self::ModItemInline(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ModItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_mod_item_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ForeignModItemNodeRecord)]
 pub enum ForeignModItemNode {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiNode),
@@ -3332,8 +3483,26 @@ impl ::sittir_core::render::Render for ForeignModItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ForeignModItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ForeignModItemSemi(inner) => inner.kind_in(kinds),
+            Self::ForeignModItemBody(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ForeignModItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_foreign_mod_item_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = StructItemNodeRecord)]
 pub enum StructItemNode {
     #[kind(kind::STRUCT_ITEM_BRACE)]
     StructItemBrace(Box<StructItemBraceNode>),
@@ -3401,8 +3570,27 @@ impl ::sittir_core::render::Render for StructItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::StructItemBrace(inner) => inner.kind_in(kinds),
+            Self::StructItemTuple(inner) => inner.kind_in(kinds),
+            Self::StructItemUnit(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StructItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_struct_item_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ImplItemNodeRecord)]
 pub enum ImplItemNode {
     #[kind(kind::IMPL_ITEM_BODY)]
     ImplItemBody(Box<ImplItemBodyNode>),
@@ -3462,8 +3650,26 @@ impl ::sittir_core::render::Render for ImplItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ImplItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ImplItemBody(inner) => inner.kind_in(kinds),
+            Self::ImplItemSemi(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ImplItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_impl_item_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TypeNodeRecord)]
 pub enum TypeNode {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -3623,8 +3829,41 @@ impl ::sittir_core::render::Render for TypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::AbstractType(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::PointerType(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
+            Self::DynamicType(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_type_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = PointerTypeNodeRecord)]
 pub enum PointerTypeNode {
     #[kind(kind::POINTER_TYPE_CONST)]
     PointerTypeConst(PointerTypeConstNode),
@@ -3684,8 +3923,26 @@ impl ::sittir_core::render::Render for PointerTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for PointerTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for PointerTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_pointer_type_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ExpressionNodeRecord)]
 pub enum ExpressionNode {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -4048,8 +4305,70 @@ impl ::sittir_core::render::Render for ExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::UnaryExpression(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpression(inner) => inner.kind_in(kinds),
+            Self::TryExpression(inner) => inner.kind_in(kinds),
+            Self::BinaryExpression(inner) => inner.kind_in(kinds),
+            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
+            Self::CompoundAssignmentExpr(inner) => inner.kind_in(kinds),
+            Self::TypeCastExpression(inner) => inner.kind_in(kinds),
+            Self::CallExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnExpression(inner) => inner.kind_in(kinds),
+            Self::YieldExpression(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteral(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteral(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericFunction(inner) => inner.kind_in(kinds),
+            Self::AwaitExpression(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::ArrayExpression(inner) => inner.kind_in(kinds),
+            Self::TupleExpression(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
+            Self::BreakExpression(inner) => inner.kind_in(kinds),
+            Self::ContinueExpression(inner) => inner.kind_in(kinds),
+            Self::IndexExpression(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::ClosureExpression(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::StructExpression(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::RangeExpression(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_expression_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = DelimTokenTreeNodeRecord)]
 pub enum DelimTokenTreeNode {
     #[kind(kind::DELIM_TOKEN_TREE_PAREN)]
     DelimTokenTreeParen(DelimTokenTreeParenNode),
@@ -4109,8 +4428,27 @@ impl ::sittir_core::render::Render for DelimTokenTreeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DelimTokenTreeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::DelimTokenTreeParen(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeBracket(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeBrace(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for DelimTokenTreeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_delim_token_tree_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = RangeExpressionNodeRecord)]
 pub enum RangeExpressionNode {
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
     RangeExpressionBinary(RangeExpressionBinaryNode),
@@ -4186,8 +4524,28 @@ impl ::sittir_core::render::Render for RangeExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangeExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::RangeExpressionBinary(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for RangeExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_range_expression_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ReferenceExpressionNodeRecord)]
 pub enum ReferenceExpressionNode {
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstNode),
@@ -4263,8 +4621,28 @@ impl ::sittir_core::render::Render for ReferenceExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReferenceExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ReferenceExpressionRawConst(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionBare(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ReferenceExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_reference_expression_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ArrayExpressionNodeRecord)]
 pub enum ArrayExpressionNode {
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
     ArrayExpressionSemi(ArrayExpressionSemiNode),
@@ -4324,8 +4702,26 @@ impl ::sittir_core::render::Render for ArrayExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ArrayExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ArrayExpressionSemi(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionList(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ArrayExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_array_expression_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = MatchArmNodeRecord)]
 pub enum MatchArmNode {
     #[kind(kind::MATCH_ARM_WITH_COMMA)]
     MatchArmWithComma(Box<MatchArmWithCommaNode>),
@@ -4378,8 +4774,26 @@ impl ::sittir_core::render::Render for MatchArmNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchArmNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::MatchArmWithComma(inner) => inner.kind_in(kinds),
+            Self::MatchArmBlockEnding(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for MatchArmNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_match_arm_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ClosureExpressionNodeRecord)]
 pub enum ClosureExpressionNode {
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
     ClosureExpressionBlock(ClosureExpressionBlockNode),
@@ -4439,8 +4853,26 @@ impl ::sittir_core::render::Render for ClosureExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ClosureExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ClosureExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_closure_expression_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = PatternNodeRecord)]
 pub enum PatternNode {
     #[kind(kind::STRING_LITERAL, kind::RAW_STRING_LITERAL, kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_PLAIN, kind::CHAR_LITERAL_EMPTY, kind::BOOLEAN_LITERAL, kind::INTEGER_LITERAL_DECIMAL, kind::INTEGER_LITERAL_HEX, kind::INTEGER_LITERAL_BINARY, kind::INTEGER_LITERAL_OCTAL, kind::FLOAT_LITERAL, kind::NEGATIVE_LITERAL, kind::_LITERAL_PATTERN, kind::CHAR_LITERAL, kind::INTEGER_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
     LiteralPattern(LiteralPatternNode),
@@ -4614,8 +5046,43 @@ impl ::sittir_core::render::Render for PatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for PatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::LiteralPattern(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::TupleStructPattern(inner) => inner.kind_in(kinds),
+            Self::StructPattern(inner) => inner.kind_in(kinds),
+            Self::RefPattern(inner) => inner.kind_in(kinds),
+            Self::SlicePattern(inner) => inner.kind_in(kinds),
+            Self::CapturedPattern(inner) => inner.kind_in(kinds),
+            Self::ReferencePattern(inner) => inner.kind_in(kinds),
+            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
+            Self::MutPattern(inner) => inner.kind_in(kinds),
+            Self::RangePattern(inner) => inner.kind_in(kinds),
+            Self::OrPattern(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for PatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_pattern_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = RangePatternNodeRecord)]
 pub enum RangePatternNode {
     #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
     RangePatternWithLeft(RangePatternWithLeftNode),
@@ -4675,8 +5142,26 @@ impl ::sittir_core::render::Render for RangePatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangePatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::RangePatternWithLeft(inner) => inner.kind_in(kinds),
+            Self::RangePatternPrefix(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for RangePatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_range_pattern_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = OrPatternNodeRecord)]
 pub enum OrPatternNode {
     #[kind(kind::OR_PATTERN_BINARY)]
     OrPatternBinary(OrPatternBinaryNode),
@@ -4736,8 +5221,26 @@ impl ::sittir_core::render::Render for OrPatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for OrPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::OrPatternBinary(inner) => inner.kind_in(kinds),
+            Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for OrPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_or_pattern_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = LiteralPatternNodeRecord)]
 pub enum LiteralPatternNode {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -4845,8 +5348,32 @@ impl ::sittir_core::render::Render for LiteralPatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LiteralPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteral(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteral(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for LiteralPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_literal_pattern_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = IntegerLiteralNodeRecord)]
 pub enum IntegerLiteralNode {
     #[kind(kind::INTEGER_LITERAL_DECIMAL)]
     IntegerLiteralDecimal(IntegerLiteralDecimalNode),
@@ -4922,8 +5449,28 @@ impl ::sittir_core::render::Render for IntegerLiteralNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IntegerLiteralNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for IntegerLiteralNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_integer_literal_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = CharLiteralNodeRecord)]
 pub enum CharLiteralNode {
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_ESCAPED)]
     CharLiteralEscaped(CharLiteralEscapedNode),
@@ -4999,8 +5546,28 @@ impl ::sittir_core::render::Render for CharLiteralNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::CharLiteralEscaped(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(146)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_char_literal_record(self, w)
+    }
+}
+
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = CharLiteralEscapedNodeRecord)]
 pub enum CharLiteralEscapedNode {
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleNode),
@@ -5076,9 +5643,29 @@ impl ::sittir_core::render::Render for CharLiteralEscapedNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralEscapedNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralEscapedNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_char_literal_escaped_record(self, w)
+    }
+}
+
+}
+
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ExpressionStatementContentNodeSlotRecord)]
 pub enum ExpressionStatementContentNodeSlot {
     #[kind(kind::EXPRESSION_STATEMENT_WITH_SEMI)]
     ExpressionStatementWithSemi(ExpressionStatementWithSemiNode),
@@ -5214,8 +5801,48 @@ impl ::sittir_core::render::Render for ExpressionStatementContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ExpressionStatementContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ExpressionStatementWithSemi(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ExpressionStatementContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ExpressionStatementContentNodeSlotRecord::ExpressionStatementWithSemi(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::UnsafeBlock(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::AsyncBlock(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::GenBlock(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::TryBlock(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::Block(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::IfExpression(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::MatchExpression(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::WhileExpression(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::LoopExpression(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::ForExpression(inner) => inner.render(w),
+            ExpressionStatementContentNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TokenRepetitionPatternTokenPatternsNodeSlotRecord)]
 pub enum TokenRepetitionPatternTokenPatternsNodeSlot {
     #[kind(kind::TOKEN_TREE_PATTERN_PAREN)]
     TokenTreePatternParen(TokenTreePatternParenNode),
@@ -5311,6 +5938,36 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternTokenPatternsNodeSl
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenRepetitionPatternTokenPatternsNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TokenTreePatternParen(inner) => inner.kind_in(kinds),
+            Self::TokenTreePatternBracket(inner) => inner.kind_in(kinds),
+            Self::TokenTreePatternBrace(inner) => inner.kind_in(kinds),
+            Self::TokenRepetitionPattern(inner) => inner.kind_in(kinds),
+            Self::TokenBindingPattern(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::NonSpecialToken(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TokenRepetitionPatternTokenPatternsNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            TokenRepetitionPatternTokenPatternsNodeSlotRecord::TokenTreePatternParen(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsNodeSlotRecord::TokenTreePatternBracket(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsNodeSlotRecord::TokenTreePatternBrace(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsNodeSlotRecord::TokenRepetitionPattern(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsNodeSlotRecord::TokenBindingPattern(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsNodeSlotRecord::NonSpecialToken(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum TokenRepetitionPatternOperatorNodeSlot {
@@ -5371,7 +6028,7 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TokenRepetitionTokensNodeSlotRecord)]
 pub enum TokenRepetitionTokensNodeSlot {
     #[kind(kind::TOKEN_TREE_PAREN)]
     TokenTreeParen(TokenTreeParenNode),
@@ -5459,6 +6116,34 @@ impl ::sittir_core::render::Render for TokenRepetitionTokensNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenRepetitionTokensNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TokenTreeParen(inner) => inner.kind_in(kinds),
+            Self::TokenTreeBracket(inner) => inner.kind_in(kinds),
+            Self::TokenTreeBrace(inner) => inner.kind_in(kinds),
+            Self::TokenRepetition(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::NonSpecialToken(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TokenRepetitionTokensNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            TokenRepetitionTokensNodeSlotRecord::TokenTreeParen(inner) => inner.render(w),
+            TokenRepetitionTokensNodeSlotRecord::TokenTreeBracket(inner) => inner.render(w),
+            TokenRepetitionTokensNodeSlotRecord::TokenTreeBrace(inner) => inner.render(w),
+            TokenRepetitionTokensNodeSlotRecord::TokenRepetition(inner) => inner.render(w),
+            TokenRepetitionTokensNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            TokenRepetitionTokensNodeSlotRecord::NonSpecialToken(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum TokenRepetitionOperatorNodeSlot {
@@ -5519,7 +6204,7 @@ impl ::sittir_core::render::Render for TokenRepetitionOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = NonSpecialTokenContentNodeSlotRecord)]
 pub enum NonSpecialTokenContentNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -5746,8 +6431,70 @@ impl ::sittir_core::render::Render for NonSpecialTokenContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for NonSpecialTokenContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
+            Self::TokenKeywords(inner) => inner.kind_in(kinds),
+            Self::MutableSpecifier => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for NonSpecialTokenContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            NonSpecialTokenContentNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::Identifier(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::TokenTreePunctuation(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::TokenKeywords(inner) => inner.render(w),
+            NonSpecialTokenContentNodeSlotRecord::MutableSpecifier => render_mutable_specifier(w),
+            NonSpecialTokenContentNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            NonSpecialTokenContentNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            NonSpecialTokenContentNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            NonSpecialTokenContentNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = AttributePathNodeSlotRecord)]
 pub enum AttributePathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -5846,8 +6593,38 @@ impl ::sittir_core::render::Render for AttributePathNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributePathNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AttributePathNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AttributePathNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            AttributePathNodeSlotRecord::Identifier(inner) => inner.render(w),
+            AttributePathNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            AttributePathNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            AttributePathNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            AttributePathNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            AttributePathNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = EnumVariantBodyNodeSlotRecord)]
 pub enum EnumVariantBodyNodeSlot {
     #[kind(kind::FIELD_DECLARATION_LIST)]
     FieldDeclarationList(FieldDeclarationListNode),
@@ -5903,8 +6680,28 @@ impl ::sittir_core::render::Render for EnumVariantBodyNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EnumVariantBodyNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::FieldDeclarationList(inner) => inner.kind_in(kinds),
+            Self::OrderedFieldDeclarationList(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for EnumVariantBodyNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            EnumVariantBodyNodeSlotRecord::FieldDeclarationList(inner) => inner.render(w),
+            EnumVariantBodyNodeSlotRecord::OrderedFieldDeclarationList(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = FunctionItemNameNodeSlotRecord)]
 pub enum FunctionItemNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -5968,8 +6765,30 @@ impl ::sittir_core::render::Render for FunctionItemNameNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionItemNameNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionItemNameNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            FunctionItemNameNodeSlotRecord::Identifier(inner) => inner.render(w),
+            FunctionItemNameNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            FunctionItemNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = FunctionModifiersModifierNodeSlotRecord)]
 pub enum FunctionModifiersModifierNodeSlot {
     #[kind(kind::EXTERN_MODIFIER)]
     ExternModifier(ExternModifierNode),
@@ -6049,8 +6868,34 @@ impl ::sittir_core::render::Render for FunctionModifiersModifierNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionModifiersModifierNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ExternModifier(inner) => inner.kind_in(kinds),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
+            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionModifiersModifierNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            FunctionModifiersModifierNodeSlotRecord::ExternModifier(inner) => inner.render(w),
+            FunctionModifiersModifierNodeSlotRecord::AsyncKeyword => render_async_keyword(w),
+            FunctionModifiersModifierNodeSlotRecord::DefaultKeyword => render_default_keyword(w),
+            FunctionModifiersModifierNodeSlotRecord::ConstKeyword => render_const_keyword(w),
+            FunctionModifiersModifierNodeSlotRecord::UnsafeKeyword => render_unsafe_keyword(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = WherePredicateLeftNodeSlotRecord)]
 pub enum WherePredicateLeftNodeSlot {
     #[kind(kind::LIFETIME)]
     Lifetime(LifetimeNode),
@@ -6178,8 +7023,46 @@ impl ::sittir_core::render::Render for WherePredicateLeftNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for WherePredicateLeftNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Lifetime(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::HigherRankedTraitBound(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for WherePredicateLeftNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            WherePredicateLeftNodeSlotRecord::Lifetime(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::GenericType(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::ReferenceType(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::PointerTypeConst(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::PointerTypeMut(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::TupleType(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::ArrayType(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::HigherRankedTraitBound(inner) => inner.render(w),
+            WherePredicateLeftNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TraitBoundsBoundsNodeSlotRecord)]
 pub enum TraitBoundsBoundsNodeSlot {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -6381,8 +7264,64 @@ impl ::sittir_core::render::Render for TraitBoundsBoundsNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TraitBoundsBoundsNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::AbstractType(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::DynamicType(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::Lifetime(inner) => inner.kind_in(kinds),
+            Self::HigherRankedTraitBound(inner) => inner.kind_in(kinds),
+            Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
+            Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TraitBoundsBoundsNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            TraitBoundsBoundsNodeSlotRecord::AbstractType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::ReferenceType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::PointerTypeConst(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::PointerTypeMut(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::GenericType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::TupleType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::ArrayType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::FunctionType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::DynamicType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::BoundedType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::RemovedTraitBound(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::Lifetime(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::HigherRankedTraitBound(inner) => inner.render(w),
+            TraitBoundsBoundsNodeSlotRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
+            TraitBoundsBoundsNodeSlotRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ConstParameterValueNodeSlotRecord)]
 pub enum ConstParameterValueNodeSlot {
     #[kind(kind::BLOCK)]
     Block(BlockNode),
@@ -6566,8 +7505,60 @@ impl ::sittir_core::render::Render for ConstParameterValueNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ConstParameterValueNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ConstParameterValueNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ConstParameterValueNodeSlotRecord::Block(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::NegativeLiteral(inner) => inner.render(w),
+            ConstParameterValueNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = UseDeclarationArgumentNodeSlotRecord)]
 pub enum UseDeclarationArgumentNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -6698,8 +7689,46 @@ impl ::sittir_core::render::Render for UseDeclarationArgumentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseDeclarationArgumentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::UseAsClause(inner) => inner.kind_in(kinds),
+            Self::UseList(inner) => inner.kind_in(kinds),
+            Self::ScopedUseList(inner) => inner.kind_in(kinds),
+            Self::UseWildcard(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for UseDeclarationArgumentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            UseDeclarationArgumentNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            UseDeclarationArgumentNodeSlotRecord::Identifier(inner) => inner.render(w),
+            UseDeclarationArgumentNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            UseDeclarationArgumentNodeSlotRecord::UseAsClause(inner) => inner.render(w),
+            UseDeclarationArgumentNodeSlotRecord::UseList(inner) => inner.render(w),
+            UseDeclarationArgumentNodeSlotRecord::ScopedUseList(inner) => inner.render(w),
+            UseDeclarationArgumentNodeSlotRecord::UseWildcard(inner) => inner.render(w),
+            UseDeclarationArgumentNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            UseDeclarationArgumentNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            UseDeclarationArgumentNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            UseDeclarationArgumentNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ParameterNameNodeSlotRecord)]
 pub enum ParameterNameNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -7030,8 +8059,96 @@ impl ::sittir_core::render::Render for ParameterNameNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ParameterNameNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::TupleStructPattern(inner) => inner.kind_in(kinds),
+            Self::StructPattern(inner) => inner.kind_in(kinds),
+            Self::RefPattern(inner) => inner.kind_in(kinds),
+            Self::SlicePattern(inner) => inner.kind_in(kinds),
+            Self::CapturedPattern(inner) => inner.kind_in(kinds),
+            Self::ReferencePattern(inner) => inner.kind_in(kinds),
+            Self::MutPattern(inner) => inner.kind_in(kinds),
+            Self::RangePatternWithLeft(inner) => inner.kind_in(kinds),
+            Self::RangePatternPrefix(inner) => inner.kind_in(kinds),
+            Self::OrPatternBinary(inner) => inner.kind_in(kinds),
+            Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ParameterNameNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ParameterNameNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::NegativeLiteral(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::GenericPattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::TuplePattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::TupleStructPattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::StructPattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::RefPattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::SlicePattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::CapturedPattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::ReferencePattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::MutPattern(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::RangePatternWithLeft(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::RangePatternPrefix(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::OrPatternBinary(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::OrPatternPrefix(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            ParameterNameNodeSlotRecord::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
+            ParameterNameNodeSlotRecord::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
+            ParameterNameNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ParameterNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = VisibilityModifierContentNodeSlotRecord)]
 pub enum VisibilityModifierContentNodeSlot {
     #[kind(kind::VISIBILITY_MODIFIER_PUB)]
     VisibilityModifierPub(VisibilityModifierPubNode),
@@ -7088,8 +8205,28 @@ impl ::sittir_core::render::Render for VisibilityModifierContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for VisibilityModifierContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::VisibilityModifierPub(inner) => inner.kind_in(kinds),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for VisibilityModifierContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            VisibilityModifierContentNodeSlotRecord::VisibilityModifierPub(inner) => inner.render(w),
+            VisibilityModifierContentNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = BracketedTypeTypeNodeSlotRecord)]
 pub enum BracketedTypeTypeNodeSlot {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -7283,8 +8420,62 @@ impl ::sittir_core::render::Render for BracketedTypeTypeNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BracketedTypeTypeNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::AbstractType(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::DynamicType(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::QualifiedType(inner) => inner.kind_in(kinds),
+            Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
+            Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for BracketedTypeTypeNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            BracketedTypeTypeNodeSlotRecord::AbstractType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::ReferenceType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::PointerTypeConst(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::PointerTypeMut(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::GenericType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::TupleType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::ArrayType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::FunctionType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::DynamicType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::BoundedType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::RemovedTraitBound(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::QualifiedType(inner) => inner.render(w),
+            BracketedTypeTypeNodeSlotRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
+            BracketedTypeTypeNodeSlotRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = FunctionTypeContentNodeSlotRecord)]
 pub enum FunctionTypeContentNodeSlot {
     #[kind(kind::FUNCTION_TYPE_TRAIT_FORM)]
     FunctionTypeTraitForm(FunctionTypeTraitFormNode),
@@ -7340,8 +8531,28 @@ impl ::sittir_core::render::Render for FunctionTypeContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionTypeContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::FunctionTypeTraitForm(inner) => inner.kind_in(kinds),
+            Self::FunctionTypeFnForm(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionTypeContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            FunctionTypeContentNodeSlotRecord::FunctionTypeTraitForm(inner) => inner.render(w),
+            FunctionTypeContentNodeSlotRecord::FunctionTypeFnForm(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = GenericFunctionFunctionNodeSlotRecord)]
 pub enum GenericFunctionFunctionNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -7413,8 +8624,32 @@ impl ::sittir_core::render::Render for GenericFunctionFunctionNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericFunctionFunctionNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for GenericFunctionFunctionNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            GenericFunctionFunctionNodeSlotRecord::Identifier(inner) => inner.render(w),
+            GenericFunctionFunctionNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            GenericFunctionFunctionNodeSlotRecord::FieldExpression(inner) => inner.render(w),
+            GenericFunctionFunctionNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = GenericTypeTypeNodeSlotRecord)]
 pub enum GenericTypeTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -7486,8 +8721,32 @@ impl ::sittir_core::render::Render for GenericTypeTypeNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericTypeTypeNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for GenericTypeTypeNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            GenericTypeTypeNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            GenericTypeTypeNodeSlotRecord::Identifier(inner) => inner.render(w),
+            GenericTypeTypeNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            GenericTypeTypeNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = GenericTypeWithTurbofishTypeNodeSlotRecord)]
 pub enum GenericTypeWithTurbofishTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -7543,8 +8802,28 @@ impl ::sittir_core::render::Render for GenericTypeWithTurbofishTypeNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericTypeWithTurbofishTypeNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for GenericTypeWithTurbofishTypeNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            GenericTypeWithTurbofishTypeNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            GenericTypeWithTurbofishTypeNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = BoundedTypeLeftNodeSlotRecord)]
 pub enum BoundedTypeLeftNodeSlot {
     #[kind(kind::LIFETIME)]
     Lifetime(LifetimeNode),
@@ -7746,8 +9025,64 @@ impl ::sittir_core::render::Render for BoundedTypeLeftNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BoundedTypeLeftNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Lifetime(inner) => inner.kind_in(kinds),
+            Self::AbstractType(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::DynamicType(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::UseBounds(inner) => inner.kind_in(kinds),
+            Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
+            Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for BoundedTypeLeftNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            BoundedTypeLeftNodeSlotRecord::Lifetime(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::AbstractType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::ReferenceType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::PointerTypeConst(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::PointerTypeMut(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::GenericType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::TupleType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::ArrayType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::FunctionType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::DynamicType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::BoundedType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::RemovedTraitBound(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::UseBounds(inner) => inner.render(w),
+            BoundedTypeLeftNodeSlotRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
+            BoundedTypeLeftNodeSlotRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = AbstractTypeTraitNodeSlotRecord)]
 pub enum AbstractTypeTraitNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -7843,8 +9178,38 @@ impl ::sittir_core::render::Render for AbstractTypeTraitNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AbstractTypeTraitNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AbstractTypeTraitNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AbstractTypeTraitNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            AbstractTypeTraitNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            AbstractTypeTraitNodeSlotRecord::RemovedTraitBound(inner) => inner.render(w),
+            AbstractTypeTraitNodeSlotRecord::GenericType(inner) => inner.render(w),
+            AbstractTypeTraitNodeSlotRecord::FunctionType(inner) => inner.render(w),
+            AbstractTypeTraitNodeSlotRecord::TupleType(inner) => inner.render(w),
+            AbstractTypeTraitNodeSlotRecord::BoundedType(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = DynamicTypeTraitNodeSlotRecord)]
 pub enum DynamicTypeTraitNodeSlot {
     #[kind(kind::HIGHER_RANKED_TRAIT_BOUND)]
     HigherRankedTraitBound(HigherRankedTraitBoundNode),
@@ -7932,8 +9297,36 @@ impl ::sittir_core::render::Render for DynamicTypeTraitNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DynamicTypeTraitNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::HigherRankedTraitBound(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for DynamicTypeTraitNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            DynamicTypeTraitNodeSlotRecord::HigherRankedTraitBound(inner) => inner.render(w),
+            DynamicTypeTraitNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            DynamicTypeTraitNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            DynamicTypeTraitNodeSlotRecord::GenericType(inner) => inner.render(w),
+            DynamicTypeTraitNodeSlotRecord::FunctionType(inner) => inner.render(w),
+            DynamicTypeTraitNodeSlotRecord::TupleType(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = MacroInvocationMacroNodeSlotRecord)]
 pub enum MacroInvocationMacroNodeSlot {
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierNode),
@@ -7997,8 +9390,30 @@ impl ::sittir_core::render::Render for MacroInvocationMacroNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroInvocationMacroNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for MacroInvocationMacroNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            MacroInvocationMacroNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            MacroInvocationMacroNodeSlotRecord::Identifier(inner) => inner.render(w),
+            MacroInvocationMacroNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ScopedIdentifierPathNodeSlotRecord)]
 pub enum ScopedIdentifierPathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -8113,8 +9528,42 @@ impl ::sittir_core::render::Render for ScopedIdentifierPathNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedIdentifierPathNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::BracketedType(inner) => inner.kind_in(kinds),
+            Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedIdentifierPathNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ScopedIdentifierPathNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            ScopedIdentifierPathNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ScopedIdentifierPathNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ScopedIdentifierPathNodeSlotRecord::BracketedType(inner) => inner.render(w),
+            ScopedIdentifierPathNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedIdentifierPathNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedIdentifierPathNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedIdentifierPathNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedIdentifierPathNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ScopedIdentifierNameNodeSlotRecord)]
 pub enum ScopedIdentifierNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -8179,8 +9628,30 @@ impl ::sittir_core::render::Render for ScopedIdentifierNameNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedIdentifierNameNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedIdentifierNameNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ScopedIdentifierNameNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ScopedIdentifierNameNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedIdentifierNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord)]
 pub enum ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -8287,8 +9758,40 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionP
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ScopedTypeIdentifierPathNodeSlotRecord)]
 pub enum ScopedTypeIdentifierPathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -8409,6 +9912,42 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierPathNodeSlot {
             ScopedTypeIdentifierPathNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierPathNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
+            Self::BracketedType(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedTypeIdentifierPathNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ScopedTypeIdentifierPathNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            ScopedTypeIdentifierPathNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ScopedTypeIdentifierPathNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierPathNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedTypeIdentifierPathNodeSlotRecord::BracketedType(inner) => inner.render(w),
+            ScopedTypeIdentifierPathNodeSlotRecord::GenericType(inner) => inner.render(w),
+            ScopedTypeIdentifierPathNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedTypeIdentifierPathNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedTypeIdentifierPathNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierPathNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
@@ -8669,7 +10208,7 @@ impl ::sittir_core::render::Render for CompoundAssignmentExprOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = CallExpressionFunctionNodeSlotRecord)]
 pub enum CallExpressionFunctionNodeSlot {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -9175,8 +10714,140 @@ impl ::sittir_core::render::Render for CallExpressionFunctionNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CallExpressionFunctionNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::UnaryExpression(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawConst(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionBare(inner) => inner.kind_in(kinds),
+            Self::TryExpression(inner) => inner.kind_in(kinds),
+            Self::BinaryExpression(inner) => inner.kind_in(kinds),
+            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
+            Self::CompoundAssignmentExpr(inner) => inner.kind_in(kinds),
+            Self::TypeCastExpression(inner) => inner.kind_in(kinds),
+            Self::CallExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnExpression(inner) => inner.kind_in(kinds),
+            Self::YieldExpression(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericFunction(inner) => inner.kind_in(kinds),
+            Self::AwaitExpression(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionSemi(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionList(inner) => inner.kind_in(kinds),
+            Self::TupleExpression(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::BreakExpression(inner) => inner.kind_in(kinds),
+            Self::ContinueExpression(inner) => inner.kind_in(kinds),
+            Self::IndexExpression(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::StructExpression(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for CallExpressionFunctionNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            CallExpressionFunctionNodeSlotRecord::UnaryExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ReferenceExpressionRawConst(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ReferenceExpressionRawMut(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ReferenceExpressionMut(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ReferenceExpressionBare(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::TryExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::BinaryExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::AssignmentExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CompoundAssignmentExpr(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::TypeCastExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CallExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ReturnExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::YieldExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::Identifier(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::GenericFunction(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::AwaitExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::FieldExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ArrayExpressionSemi(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ArrayExpressionList(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::TupleExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::BreakExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ContinueExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::IndexExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ClosureExpressionBlock(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ClosureExpressionExpr(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::StructExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::UnsafeBlock(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::AsyncBlock(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::GenBlock(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::TryBlock(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::Block(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::IfExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::MatchExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::WhileExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::LoopExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ForExpression(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            CallExpressionFunctionNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            CallExpressionFunctionNodeSlotRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
+            CallExpressionFunctionNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = StructExpressionNameNodeSlotRecord)]
 pub enum StructExpressionNameNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -9240,8 +10911,30 @@ impl ::sittir_core::render::Render for StructExpressionNameNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructExpressionNameNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifierInExpressionPosition(inner) => inner.kind_in(kinds),
+            Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StructExpressionNameNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            StructExpressionNameNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            StructExpressionNameNodeSlotRecord::ScopedTypeIdentifierInExpressionPosition(inner) => inner.render(w),
+            StructExpressionNameNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = FieldInitializerFieldNodeSlotRecord)]
 pub enum FieldInitializerFieldNodeSlot {
     #[kind(kind::_FIELD_IDENTIFIER, display)]
     FieldIdentifier(FieldIdentifierNode),
@@ -9321,8 +11014,34 @@ impl ::sittir_core::render::Render for FieldInitializerFieldNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldInitializerFieldNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::FieldIdentifier(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for FieldInitializerFieldNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            FieldInitializerFieldNodeSlotRecord::FieldIdentifier(inner) => inner.render(w),
+            FieldInitializerFieldNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            FieldInitializerFieldNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            FieldInitializerFieldNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            FieldInitializerFieldNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = IfExpressionConditionNodeSlotRecord)]
 pub enum IfExpressionConditionNodeSlot {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -9876,8 +11595,152 @@ impl ::sittir_core::render::Render for IfExpressionConditionNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IfExpressionConditionNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::UnaryExpression(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawConst(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionBare(inner) => inner.kind_in(kinds),
+            Self::TryExpression(inner) => inner.kind_in(kinds),
+            Self::BinaryExpression(inner) => inner.kind_in(kinds),
+            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
+            Self::CompoundAssignmentExpr(inner) => inner.kind_in(kinds),
+            Self::TypeCastExpression(inner) => inner.kind_in(kinds),
+            Self::CallExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnExpression(inner) => inner.kind_in(kinds),
+            Self::YieldExpression(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericFunction(inner) => inner.kind_in(kinds),
+            Self::AwaitExpression(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionSemi(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionList(inner) => inner.kind_in(kinds),
+            Self::TupleExpression(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::BreakExpression(inner) => inner.kind_in(kinds),
+            Self::ContinueExpression(inner) => inner.kind_in(kinds),
+            Self::IndexExpression(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::StructExpression(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBinary(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
+            Self::LetCondition(inner) => inner.kind_in(kinds),
+            Self::LetChain(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for IfExpressionConditionNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            IfExpressionConditionNodeSlotRecord::UnaryExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ReferenceExpressionRawConst(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ReferenceExpressionRawMut(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ReferenceExpressionMut(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ReferenceExpressionBare(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::TryExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::BinaryExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::AssignmentExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CompoundAssignmentExpr(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::TypeCastExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CallExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ReturnExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::YieldExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::Identifier(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::GenericFunction(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::AwaitExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::FieldExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ArrayExpressionSemi(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ArrayExpressionList(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::TupleExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::BreakExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ContinueExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::IndexExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ClosureExpressionBlock(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ClosureExpressionExpr(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::StructExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::UnsafeBlock(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::AsyncBlock(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::GenBlock(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::TryBlock(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::Block(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::IfExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::MatchExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::WhileExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::LoopExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ForExpression(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::RangeExpressionBinary(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::RangeExpressionPostfix(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::RangeExpressionPrefix(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::RangeExpressionBare(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::LetCondition(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::LetChain(inner) => inner.render(w),
+            IfExpressionConditionNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            IfExpressionConditionNodeSlotRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
+            IfExpressionConditionNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = LetChainLeftNodeSlotRecord)]
 pub enum LetChainLeftNodeSlot {
     #[kind(kind::_LET_CHAIN)]
     LetChain(LetChainNode),
@@ -10431,8 +12294,152 @@ impl ::sittir_core::render::Render for LetChainLeftNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LetChainLeftNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::LetChain(inner) => inner.kind_in(kinds),
+            Self::LetCondition(inner) => inner.kind_in(kinds),
+            Self::UnaryExpression(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawConst(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionBare(inner) => inner.kind_in(kinds),
+            Self::TryExpression(inner) => inner.kind_in(kinds),
+            Self::BinaryExpression(inner) => inner.kind_in(kinds),
+            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
+            Self::CompoundAssignmentExpr(inner) => inner.kind_in(kinds),
+            Self::TypeCastExpression(inner) => inner.kind_in(kinds),
+            Self::CallExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnExpression(inner) => inner.kind_in(kinds),
+            Self::YieldExpression(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericFunction(inner) => inner.kind_in(kinds),
+            Self::AwaitExpression(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionSemi(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionList(inner) => inner.kind_in(kinds),
+            Self::TupleExpression(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::BreakExpression(inner) => inner.kind_in(kinds),
+            Self::ContinueExpression(inner) => inner.kind_in(kinds),
+            Self::IndexExpression(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::StructExpression(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBinary(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for LetChainLeftNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LetChainLeftNodeSlotRecord::LetChain(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::LetCondition(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::UnaryExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ReferenceExpressionRawConst(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ReferenceExpressionRawMut(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ReferenceExpressionMut(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ReferenceExpressionBare(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::TryExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::BinaryExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::AssignmentExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CompoundAssignmentExpr(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::TypeCastExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CallExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ReturnExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::YieldExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::Identifier(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::GenericFunction(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::AwaitExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::FieldExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ArrayExpressionSemi(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ArrayExpressionList(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::TupleExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::BreakExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ContinueExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::IndexExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ClosureExpressionBlock(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ClosureExpressionExpr(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::StructExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::UnsafeBlock(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::AsyncBlock(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::GenBlock(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::TryBlock(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::Block(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::IfExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::MatchExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::WhileExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::LoopExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ForExpression(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::RangeExpressionBinary(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::RangeExpressionPostfix(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::RangeExpressionPrefix(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::RangeExpressionBare(inner) => inner.render(w),
+            LetChainLeftNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            LetChainLeftNodeSlotRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
+            LetChainLeftNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = LetChainRightNodeSlotRecord)]
 pub enum LetChainRightNodeSlot {
     #[kind(kind::LET_CONDITION)]
     LetCondition(LetConditionNode),
@@ -10978,8 +12985,150 @@ impl ::sittir_core::render::Render for LetChainRightNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LetChainRightNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::LetCondition(inner) => inner.kind_in(kinds),
+            Self::UnaryExpression(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawConst(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionBare(inner) => inner.kind_in(kinds),
+            Self::TryExpression(inner) => inner.kind_in(kinds),
+            Self::BinaryExpression(inner) => inner.kind_in(kinds),
+            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
+            Self::CompoundAssignmentExpr(inner) => inner.kind_in(kinds),
+            Self::TypeCastExpression(inner) => inner.kind_in(kinds),
+            Self::CallExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnExpression(inner) => inner.kind_in(kinds),
+            Self::YieldExpression(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericFunction(inner) => inner.kind_in(kinds),
+            Self::AwaitExpression(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionSemi(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionList(inner) => inner.kind_in(kinds),
+            Self::TupleExpression(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::BreakExpression(inner) => inner.kind_in(kinds),
+            Self::ContinueExpression(inner) => inner.kind_in(kinds),
+            Self::IndexExpression(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::StructExpression(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBinary(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for LetChainRightNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LetChainRightNodeSlotRecord::LetCondition(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::UnaryExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ReferenceExpressionRawConst(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ReferenceExpressionRawMut(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ReferenceExpressionMut(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ReferenceExpressionBare(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::TryExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::BinaryExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::AssignmentExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CompoundAssignmentExpr(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::TypeCastExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CallExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ReturnExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::YieldExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::Identifier(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::GenericFunction(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::AwaitExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::FieldExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ArrayExpressionSemi(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ArrayExpressionList(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::TupleExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::BreakExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ContinueExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::IndexExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ClosureExpressionBlock(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ClosureExpressionExpr(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::StructExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::UnsafeBlock(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::AsyncBlock(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::GenBlock(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::TryBlock(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::Block(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::IfExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::MatchExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::WhileExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::LoopExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ForExpression(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::RangeExpressionBinary(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::RangeExpressionPostfix(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::RangeExpressionPrefix(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::RangeExpressionBare(inner) => inner.render(w),
+            LetChainRightNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            LetChainRightNodeSlotRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
+            LetChainRightNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ElseClauseBodyNodeSlotRecord)]
 pub enum ElseClauseBodyNodeSlot {
     #[kind(kind::BLOCK)]
     Block(BlockNode),
@@ -11035,8 +13184,28 @@ impl ::sittir_core::render::Render for ElseClauseBodyNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ElseClauseBodyNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ElseClauseBodyNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ElseClauseBodyNodeSlotRecord::Block(inner) => inner.render(w),
+            ElseClauseBodyNodeSlotRecord::IfExpression(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = LastMatchArmAttributesNodeSlotRecord)]
 pub enum LastMatchArmAttributesNodeSlot {
     #[kind(kind::ATTRIBUTE_ITEM)]
     AttributeItem(Box<AttributeItemNode>),
@@ -11092,8 +13261,28 @@ impl ::sittir_core::render::Render for LastMatchArmAttributesNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LastMatchArmAttributesNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::AttributeItem(inner) => inner.kind_in(kinds),
+            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for LastMatchArmAttributesNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LastMatchArmAttributesNodeSlotRecord::AttributeItem(inner) => inner.render(w),
+            LastMatchArmAttributesNodeSlotRecord::InnerAttributeItem(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ClosureParametersParametersNodeSlotRecord)]
 pub enum ClosureParametersParametersNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -11423,8 +13612,96 @@ impl ::sittir_core::render::Render for ClosureParametersParametersNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ClosureParametersParametersNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::TupleStructPattern(inner) => inner.kind_in(kinds),
+            Self::StructPattern(inner) => inner.kind_in(kinds),
+            Self::RefPattern(inner) => inner.kind_in(kinds),
+            Self::SlicePattern(inner) => inner.kind_in(kinds),
+            Self::CapturedPattern(inner) => inner.kind_in(kinds),
+            Self::ReferencePattern(inner) => inner.kind_in(kinds),
+            Self::MutPattern(inner) => inner.kind_in(kinds),
+            Self::RangePatternWithLeft(inner) => inner.kind_in(kinds),
+            Self::RangePatternPrefix(inner) => inner.kind_in(kinds),
+            Self::OrPatternBinary(inner) => inner.kind_in(kinds),
+            Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::Parameter(inner) => inner.kind_in(kinds),
+            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ClosureParametersParametersNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ClosureParametersParametersNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::NegativeLiteral(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::GenericPattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::TuplePattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::TupleStructPattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::StructPattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::RefPattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::SlicePattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::CapturedPattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::ReferencePattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::MutPattern(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::RangePatternWithLeft(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::RangePatternPrefix(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::OrPatternBinary(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::OrPatternPrefix(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::Parameter(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlotRecord::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
+            ClosureParametersParametersNodeSlotRecord::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
+            ClosureParametersParametersNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = GenericPatternNameNodeSlotRecord)]
 pub enum GenericPatternNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11488,8 +13765,30 @@ impl ::sittir_core::render::Render for GenericPatternNameNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericPatternNameNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for GenericPatternNameNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            GenericPatternNameNodeSlotRecord::Identifier(inner) => inner.render(w),
+            GenericPatternNameNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            GenericPatternNameNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TupleStructPatternTypeNodeSlotRecord)]
 pub enum TupleStructPatternTypeNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11561,8 +13860,32 @@ impl ::sittir_core::render::Render for TupleStructPatternTypeNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TupleStructPatternTypeNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TupleStructPatternTypeNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            TupleStructPatternTypeNodeSlotRecord::Identifier(inner) => inner.render(w),
+            TupleStructPatternTypeNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            TupleStructPatternTypeNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+            TupleStructPatternTypeNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = StructPatternTypeNodeSlotRecord)]
 pub enum StructPatternTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -11618,8 +13941,28 @@ impl ::sittir_core::render::Render for StructPatternTypeNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructPatternTypeNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StructPatternTypeNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            StructPatternTypeNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            StructPatternTypeNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = NegativeLiteralValueNodeSlotRecord)]
 pub enum NegativeLiteralValueNodeSlot {
     #[kind(kind::INTEGER_LITERAL_DECIMAL)]
     IntegerLiteralDecimal(IntegerLiteralDecimalNode),
@@ -11707,8 +14050,36 @@ impl ::sittir_core::render::Render for NegativeLiteralValueNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for NegativeLiteralValueNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for NegativeLiteralValueNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            NegativeLiteralValueNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            NegativeLiteralValueNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            NegativeLiteralValueNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            NegativeLiteralValueNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            NegativeLiteralValueNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            NegativeLiteralValueNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = StringLiteralElementsNodeSlotRecord)]
 pub enum StringLiteralElementsNodeSlot {
     #[kind(kind::ESCAPE_SEQUENCE_SIMPLE)]
     EscapeSequenceSimple(EscapeSequenceSimpleNode),
@@ -11796,8 +14167,36 @@ impl ::sittir_core::render::Render for StringLiteralElementsNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StringLiteralElementsNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::EscapeSequenceSimple(inner) => inner.kind_in(kinds),
+            Self::EscapeSequenceUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::EscapeSequenceUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::EscapeSequenceHex(inner) => inner.kind_in(kinds),
+            Self::StringContent(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StringLiteralElementsNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            StringLiteralElementsNodeSlotRecord::EscapeSequenceSimple(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralElementsNodeSlotRecord::EscapeSequenceUnicodeFixed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralElementsNodeSlotRecord::EscapeSequenceUnicodeBraced(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralElementsNodeSlotRecord::EscapeSequenceHex(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralElementsNodeSlotRecord::StringContent(inner) => inner.render(w),
+            StringLiteralElementsNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = LineCommentContentNodeSlotRecord)]
 pub enum LineCommentContentNodeSlot {
     #[kind(kind::LINE_COMMENT_EXTRA_SLASHES)]
     LineCommentExtraSlashes(LineCommentExtraSlashesNode),
@@ -11877,8 +14276,34 @@ impl ::sittir_core::render::Render for LineCommentContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LineCommentContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::LineCommentExtraSlashes(inner) => inner.kind_in(kinds),
+            Self::LineCommentDocOuter(inner) => inner.kind_in(kinds),
+            Self::LineCommentDocInner(inner) => inner.kind_in(kinds),
+            Self::LineCommentRegular(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(155), ::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for LineCommentContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LineCommentContentNodeSlotRecord::LineCommentExtraSlashes(inner) => inner.render(w),
+            LineCommentContentNodeSlotRecord::LineCommentDocOuter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            LineCommentContentNodeSlotRecord::LineCommentDocInner(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            LineCommentContentNodeSlotRecord::LineCommentRegular(inner) => inner.render(w),
+            LineCommentContentNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = BlockCommentContentNodeSlotRecord)]
 pub enum BlockCommentContentNodeSlot {
     #[kind(kind::BLOCK_COMMENT_DOC_OUTER)]
     BlockCommentDocOuter(BlockCommentDocOuterNode),
@@ -11950,8 +14375,32 @@ impl ::sittir_core::render::Render for BlockCommentContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BlockCommentContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::BlockCommentDocOuter(inner) => inner.kind_in(kinds),
+            Self::BlockCommentDocInner(inner) => inner.kind_in(kinds),
+            Self::BlockCommentRegular(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(404)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for BlockCommentContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            BlockCommentContentNodeSlotRecord::BlockCommentDocOuter(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            BlockCommentContentNodeSlotRecord::BlockCommentDocInner(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            BlockCommentContentNodeSlotRecord::BlockCommentRegular(inner) => inner.render(w),
+            BlockCommentContentNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = UseBoundsElementsItemNodeSlotRecord)]
 pub enum UseBoundsElementsItemNodeSlot {
     #[kind(kind::LIFETIME)]
     Lifetime(LifetimeNode),
@@ -12007,8 +14456,28 @@ impl ::sittir_core::render::Render for UseBoundsElementsItemNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseBoundsElementsItemNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Lifetime(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for UseBoundsElementsItemNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            UseBoundsElementsItemNodeSlotRecord::Lifetime(inner) => inner.render(w),
+            UseBoundsElementsItemNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = FieldInitializerListElementsItemNodeSlotRecord)]
 pub enum FieldInitializerListElementsItemNodeSlot {
     #[kind(kind::SHORTHAND_FIELD_INITIALIZER)]
     ShorthandFieldInitializer(ShorthandFieldInitializerNode),
@@ -12072,8 +14541,30 @@ impl ::sittir_core::render::Render for FieldInitializerListElementsItemNodeSlot 
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldInitializerListElementsItemNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ShorthandFieldInitializer(inner) => inner.kind_in(kinds),
+            Self::FieldInitializer(inner) => inner.kind_in(kinds),
+            Self::BaseFieldInitializer(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for FieldInitializerListElementsItemNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            FieldInitializerListElementsItemNodeSlotRecord::ShorthandFieldInitializer(inner) => inner.render(w),
+            FieldInitializerListElementsItemNodeSlotRecord::FieldInitializer(inner) => inner.render(w),
+            FieldInitializerListElementsItemNodeSlotRecord::BaseFieldInitializer(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TuplePatternElementsItemNodeSlotRecord)]
 pub enum TuplePatternElementsItemNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -12411,8 +14902,98 @@ impl ::sittir_core::render::Render for TuplePatternElementsItemNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TuplePatternElementsItemNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::TupleStructPattern(inner) => inner.kind_in(kinds),
+            Self::StructPattern(inner) => inner.kind_in(kinds),
+            Self::RefPattern(inner) => inner.kind_in(kinds),
+            Self::SlicePattern(inner) => inner.kind_in(kinds),
+            Self::CapturedPattern(inner) => inner.kind_in(kinds),
+            Self::ReferencePattern(inner) => inner.kind_in(kinds),
+            Self::MutPattern(inner) => inner.kind_in(kinds),
+            Self::RangePatternWithLeft(inner) => inner.kind_in(kinds),
+            Self::RangePatternPrefix(inner) => inner.kind_in(kinds),
+            Self::OrPatternBinary(inner) => inner.kind_in(kinds),
+            Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TuplePatternElementsItemNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            TuplePatternElementsItemNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::NegativeLiteral(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::Identifier(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::GenericPattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::TuplePattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::TupleStructPattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::StructPattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::RefPattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::SlicePattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::CapturedPattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::ReferencePattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::MutPattern(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::RangePatternWithLeft(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::RangePatternPrefix(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::OrPatternBinary(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::OrPatternPrefix(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::ClosureExpressionBlock(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::ClosureExpressionExpr(inner) => inner.render(w),
+            TuplePatternElementsItemNodeSlotRecord::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
+            TuplePatternElementsItemNodeSlotRecord::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
+            TuplePatternElementsItemNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = StructPatternElementsItemNodeSlotRecord)]
 pub enum StructPatternElementsItemNodeSlot {
     #[kind(kind::FIELD_PATTERN_SHORTHAND)]
     FieldPatternShorthand(FieldPatternShorthandNode),
@@ -12477,8 +15058,30 @@ impl ::sittir_core::render::Render for StructPatternElementsItemNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructPatternElementsItemNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::FieldPatternShorthand(inner) => inner.kind_in(kinds),
+            Self::FieldPatternNamed(inner) => inner.kind_in(kinds),
+            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for StructPatternElementsItemNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            StructPatternElementsItemNodeSlotRecord::FieldPatternShorthand(inner) => inner.render(w),
+            StructPatternElementsItemNodeSlotRecord::FieldPatternNamed(inner) => inner.render(w),
+            StructPatternElementsItemNodeSlotRecord::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ClosureExpressionExprBodyNodeSlotRecord)]
 pub enum ClosureExpressionExprBodyNodeSlot {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -13029,8 +15632,155 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ClosureExpressionExprBodyNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::UnaryExpression(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawConst(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionBare(inner) => inner.kind_in(kinds),
+            Self::TryExpression(inner) => inner.kind_in(kinds),
+            Self::BinaryExpression(inner) => inner.kind_in(kinds),
+            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
+            Self::CompoundAssignmentExpr(inner) => inner.kind_in(kinds),
+            Self::TypeCastExpression(inner) => inner.kind_in(kinds),
+            Self::CallExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnExpression(inner) => inner.kind_in(kinds),
+            Self::YieldExpression(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericFunction(inner) => inner.kind_in(kinds),
+            Self::AwaitExpression(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionSemi(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionList(inner) => inner.kind_in(kinds),
+            Self::TupleExpression(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::BreakExpression(inner) => inner.kind_in(kinds),
+            Self::ContinueExpression(inner) => inner.kind_in(kinds),
+            Self::IndexExpression(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::StructExpression(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBinary(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
+            Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ClosureExpressionExprBodyNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ClosureExpressionExprBodyNodeSlotRecord::UnaryExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ReferenceExpressionRawConst(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ReferenceExpressionRawMut(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ReferenceExpressionMut(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ReferenceExpressionBare(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::TryExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::BinaryExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::AssignmentExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CompoundAssignmentExpr(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::TypeCastExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CallExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ReturnExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::YieldExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::GenericFunction(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::AwaitExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::FieldExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ArrayExpressionSemi(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ArrayExpressionList(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::TupleExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::BreakExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ContinueExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::IndexExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ClosureExpressionBlock(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ClosureExpressionExpr(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ParenthesizedExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::StructExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::UnsafeBlock(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::AsyncBlock(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::GenBlock(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::TryBlock(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::Block(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::IfExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::MatchExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::WhileExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::LoopExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ForExpression(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::RangeExpressionBinary(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::RangeExpressionPostfix(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::RangeExpressionPrefix(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::RangeExpressionBare(inner) => inner.render(w),
+            ClosureExpressionExprBodyNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ClosureExpressionExprBodyNodeSlotRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
+            ClosureExpressionExprBodyNodeSlotRecord::Underscore => {
+                w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE);
+                let written = render_underscore(w);
+                written?;
+                Ok(())
+            }
+            ClosureExpressionExprBodyNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ImplItemPositiveClauseTraitNodeSlotRecord)]
 pub enum ImplItemPositiveClauseTraitNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -13094,8 +15844,30 @@ impl ::sittir_core::render::Render for ImplItemPositiveClauseTraitNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ImplItemPositiveClauseTraitNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ImplItemPositiveClauseTraitNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ImplItemPositiveClauseTraitNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            ImplItemPositiveClauseTraitNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            ImplItemPositiveClauseTraitNodeSlotRecord::GenericType(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = ImplItemBodyTraitClauseNodeSlotRecord)]
 pub enum ImplItemBodyTraitClauseNodeSlot {
     #[kind(kind::IMPL_ITEM_POSITIVE_CLAUSE)]
     ImplItemPositiveClause(ImplItemPositiveClauseNode),
@@ -13151,8 +15923,28 @@ impl ::sittir_core::render::Render for ImplItemBodyTraitClauseNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ImplItemBodyTraitClauseNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ImplItemPositiveClause(inner) => inner.kind_in(kinds),
+            Self::ImplItemNegativeClause(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for ImplItemBodyTraitClauseNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ImplItemBodyTraitClauseNodeSlotRecord::ImplItemPositiveClause(inner) => inner.render(w),
+            ImplItemBodyTraitClauseNodeSlotRecord::ImplItemNegativeClause(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = VisibilityModifierPubScopeContentNodeSlotRecord)]
 pub enum VisibilityModifierPubScopeContentNodeSlot {
     #[kind(kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH)]
     VisibilityModifierPubScopeInPath(VisibilityModifierPubScopeInPathNode),
@@ -13227,6 +16019,30 @@ impl ::sittir_core::render::Render for VisibilityModifierPubScopeContentNodeSlot
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for VisibilityModifierPubScopeContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::VisibilityModifierPubScopeInPath(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for VisibilityModifierPubScopeContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            VisibilityModifierPubScopeContentNodeSlotRecord::VisibilityModifierPubScopeInPath(inner) => inner.render(w),
+            VisibilityModifierPubScopeContentNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            VisibilityModifierPubScopeContentNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            VisibilityModifierPubScopeContentNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum RangeExpressionBinaryOperatorNodeSlot {
@@ -13272,7 +16088,7 @@ impl ::sittir_core::render::Render for RangeExpressionBinaryOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = MatchArmBlockEndingValueNodeSlotRecord)]
 pub enum MatchArmBlockEndingValueNodeSlot {
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockNode),
@@ -13400,8 +16216,46 @@ impl ::sittir_core::render::Render for MatchArmBlockEndingValueNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchArmBlockEndingValueNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for MatchArmBlockEndingValueNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            MatchArmBlockEndingValueNodeSlotRecord::UnsafeBlock(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::AsyncBlock(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::GenBlock(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::TryBlock(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::Block(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::IfExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::MatchExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::WhileExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::LoopExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::ForExpression(inner) => inner.render(w),
+            MatchArmBlockEndingValueNodeSlotRecord::ConstBlock(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = DelimTokenTreeParenDelimTokensNodeSlotRecord)]
 pub enum DelimTokenTreeParenDelimTokensNodeSlot {
     #[kind(kind::_NON_SPECIAL_TOKEN)]
     NonSpecialToken(NonSpecialTokenNode),
@@ -13481,8 +16335,34 @@ impl ::sittir_core::render::Render for DelimTokenTreeParenDelimTokensNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DelimTokenTreeParenDelimTokensNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::NonSpecialToken(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeParen(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeBracket(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeBrace(inner) => inner.kind_in(kinds),
+            Self::Dollar => [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for DelimTokenTreeParenDelimTokensNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            DelimTokenTreeParenDelimTokensNodeSlotRecord::NonSpecialToken(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensNodeSlotRecord::DelimTokenTreeParen(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensNodeSlotRecord::DelimTokenTreeBracket(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensNodeSlotRecord::DelimTokenTreeBrace(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensNodeSlotRecord::Dollar => render_dollar(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = RangePatternPrefixRightNodeSlotRecord)]
 pub enum RangePatternPrefixRightNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -13701,6 +16581,66 @@ impl ::sittir_core::render::Render for RangePatternPrefixRightNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangePatternPrefixRightNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for RangePatternPrefixRightNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            RangePatternPrefixRightNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::NegativeLiteral(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::Identifier(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            RangePatternPrefixRightNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            RangePatternPrefixRightNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            RangePatternPrefixRightNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            RangePatternPrefixRightNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum RangePatternPrefixContentNodeSlot {
@@ -13815,7 +16755,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftWithRightContentNodeS
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = RangePatternWithLeftContentNodeSlotRecord)]
 pub enum RangePatternWithLeftContentNodeSlot {
     #[kind(kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT)]
     RangePatternWithLeftWithRight(RangePatternWithLeftWithRightNode),
@@ -13876,8 +16816,33 @@ impl ::sittir_core::render::Render for RangePatternWithLeftContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangePatternWithLeftContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::RangePatternWithLeftWithRight(inner) => inner.kind_in(kinds),
+            Self::RangePatternWithLeftBare => [::sittir_core::types::KindId(421)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for RangePatternWithLeftContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            RangePatternWithLeftContentNodeSlotRecord::RangePatternWithLeftWithRight(inner) => inner.render(w),
+            RangePatternWithLeftContentNodeSlotRecord::RangePatternWithLeftBare => {
+                w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE);
+                let written = render_range_pattern_with_left_bare(w);
+                written?;
+                Ok(())
+            }
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = AttributedParameterContentNodeSlotRecord)]
 pub enum AttributedParameterContentNodeSlot {
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterNode>),
@@ -14100,8 +17065,73 @@ impl ::sittir_core::render::Render for AttributedParameterContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedParameterContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Parameter(inner) => inner.kind_in(kinds),
+            Self::SelfParameter(inner) => inner.kind_in(kinds),
+            Self::VariadicParameter(inner) => inner.kind_in(kinds),
+            Self::AbstractType(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::DynamicType(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
+            Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
+            Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedParameterContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AttributedParameterContentNodeSlotRecord::Parameter(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::SelfParameter(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::VariadicParameter(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::AbstractType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::ReferenceType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::PointerTypeConst(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::PointerTypeMut(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::GenericType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::TupleType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::ArrayType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::FunctionType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::DynamicType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::BoundedType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::RemovedTraitBound(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
+            AttributedParameterContentNodeSlotRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
+            AttributedParameterContentNodeSlotRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
+            AttributedParameterContentNodeSlotRecord::Underscore => {
+                w.site_at(options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE);
+                let written = render_underscore(w);
+                written?;
+                Ok(())
+            }
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = AttributedTypeParameterContentNodeSlotRecord)]
 pub enum AttributedTypeParameterContentNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -14173,8 +17203,32 @@ impl ::sittir_core::render::Render for AttributedTypeParameterContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedTypeParameterContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::TypeParameter(inner) => inner.kind_in(kinds),
+            Self::LifetimeParameter(inner) => inner.kind_in(kinds),
+            Self::ConstParameter(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedTypeParameterContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AttributedTypeParameterContentNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            AttributedTypeParameterContentNodeSlotRecord::TypeParameter(inner) => inner.render(w),
+            AttributedTypeParameterContentNodeSlotRecord::LifetimeParameter(inner) => inner.render(w),
+            AttributedTypeParameterContentNodeSlotRecord::ConstParameter(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, view = TypeArgumentContentNodeSlotRecord)]
 pub enum TypeArgumentContentNodeSlot {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -14504,9 +17558,97 @@ impl ::sittir_core::render::Render for TypeArgumentContentNodeSlot {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeArgumentContentNodeSlotRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::AbstractType(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::DynamicType(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::TypeBinding(inner) => inner.kind_in(kinds),
+            Self::Lifetime(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
+            Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for TypeArgumentContentNodeSlotRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            TypeArgumentContentNodeSlotRecord::AbstractType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::ReferenceType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::PointerTypeConst(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::PointerTypeMut(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::GenericType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::TupleType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::ArrayType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::FunctionType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::TypeIdentifier(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::MacroInvocation(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::DynamicType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::BoundedType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::RemovedTraitBound(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::PrimitiveType(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::TypeBinding(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::Lifetime(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::Block(inner) => inner.render(w),
+            TypeArgumentContentNodeSlotRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
+            TypeArgumentContentNodeSlotRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
+            TypeArgumentContentNodeSlotRecord::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+}
+
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SOURCE_FILE, words = 9, fields = SourceFileFields, prepare = SourceFilePrepare)]
+#[node(kind = kind::SOURCE_FILE, words = 9, fields = SourceFileFields, prepare = SourceFilePrepare, view = SourceFileNodeRecord)]
 pub struct SourceFileNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -14538,6 +17680,21 @@ impl ::sittir_core::render::Render for SourceFileNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(176)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_source_file(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for SourceFileNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(176)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for SourceFileNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(SourceFileFields::layout(self), Some(::sittir_core::types::KindId(176)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_source_file(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for SourceFileNode {
@@ -14625,7 +17782,7 @@ impl ::sittir_core::render::Render for EmptyStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT, words = 7, fields = ExpressionStatementFields, prepare = ExpressionStatementPrepare)]
+#[node(kind = kind::EXPRESSION_STATEMENT, words = 7, fields = ExpressionStatementFields, prepare = ExpressionStatementPrepare, view = ExpressionStatementNodeRecord)]
 pub struct ExpressionStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -14651,6 +17808,21 @@ impl ::sittir_core::render::Render for ExpressionStatementNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(179)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ExpressionStatementNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(179)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ExpressionStatementNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ExpressionStatementFields::layout(self), Some(::sittir_core::types::KindId(179)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementNode {
@@ -14679,7 +17851,7 @@ fn prepare_expression_statement<N: ExpressionStatementPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_RULE, layout = [kind::EQ_GT], words = 12, fields = MacroRuleFields, prepare = MacroRulePrepare)]
+#[node(kind = kind::MACRO_RULE, layout = [kind::EQ_GT], words = 12, fields = MacroRuleFields, prepare = MacroRulePrepare, view = MacroRuleNodeRecord)]
 pub struct MacroRuleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -14710,6 +17882,21 @@ impl ::sittir_core::render::Render for MacroRuleNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroRuleNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(181)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MacroRuleNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MacroRuleFields::layout(self), Some(::sittir_core::types::KindId(181)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_rule(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MacroRuleNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_macro_rule(self, &mut (), ctx)
@@ -14738,7 +17925,7 @@ fn prepare_macro_rule<N: MacroRulePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_BINDING_PATTERN, layout = [kind::COLON], words = 12, fields = TokenBindingPatternFields, prepare = TokenBindingPatternPrepare)]
+#[node(kind = kind::TOKEN_BINDING_PATTERN, layout = [kind::COLON], words = 12, fields = TokenBindingPatternFields, prepare = TokenBindingPatternPrepare, view = TokenBindingPatternNodeRecord)]
 pub struct TokenBindingPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -14769,6 +17956,21 @@ impl ::sittir_core::render::Render for TokenBindingPatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenBindingPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(184)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenBindingPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenBindingPatternFields::layout(self), Some(::sittir_core::types::KindId(184)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_binding_pattern(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TokenBindingPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_token_binding_pattern(self, &mut (), ctx)
@@ -14797,7 +17999,7 @@ fn prepare_token_binding_pattern<N: TokenBindingPatternPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_REPETITION_PATTERN, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionPatternFields, prepare = TokenRepetitionPatternPrepare)]
+#[node(kind = kind::TOKEN_REPETITION_PATTERN, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionPatternFields, prepare = TokenRepetitionPatternPrepare, view = TokenRepetitionPatternNodeRecord)]
 pub struct TokenRepetitionPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -14832,6 +18034,21 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(185)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition_pattern(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenRepetitionPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(185)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenRepetitionPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenRepetitionPatternFields::layout(self), Some(::sittir_core::types::KindId(185)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition_pattern(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternNode {
@@ -14954,7 +18171,7 @@ impl ::sittir_core::render::Render for FragmentSpecifierEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_REPETITION, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionFields, prepare = TokenRepetitionPrepare)]
+#[node(kind = kind::TOKEN_REPETITION, layout = [kind::DOLLAR, kind::LPAREN, kind::RPAREN], words = 14, fields = TokenRepetitionFields, prepare = TokenRepetitionPrepare, view = TokenRepetitionNodeRecord)]
 pub struct TokenRepetitionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -14991,6 +18208,21 @@ impl ::sittir_core::render::Render for TokenRepetitionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenRepetitionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(188)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenRepetitionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenRepetitionFields::layout(self), Some(::sittir_core::types::KindId(188)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TokenRepetitionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_token_repetition(self, &mut (), ctx)
@@ -15023,7 +18255,7 @@ fn prepare_token_repetition<N: TokenRepetitionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_NON_SPECIAL_TOKEN, words = 7, fields = NonSpecialTokenFields, prepare = NonSpecialTokenPrepare)]
+#[node(kind = kind::_NON_SPECIAL_TOKEN, words = 7, fields = NonSpecialTokenFields, prepare = NonSpecialTokenPrepare, view = NonSpecialTokenNodeRecord)]
 pub struct NonSpecialTokenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15049,6 +18281,21 @@ impl ::sittir_core::render::Render for NonSpecialTokenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(189)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_special_token(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for NonSpecialTokenNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(189)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for NonSpecialTokenNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(NonSpecialTokenFields::layout(self), Some(::sittir_core::types::KindId(189)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_non_special_token(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for NonSpecialTokenNode {
@@ -15077,7 +18324,7 @@ fn prepare_non_special_token<N: NonSpecialTokenPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ATTRIBUTE_ITEM, layout = [kind::POUND, kind::LBRACK, kind::RBRACK], words = 7, fields = AttributeItemFields, prepare = AttributeItemPrepare)]
+#[node(kind = kind::ATTRIBUTE_ITEM, layout = [kind::POUND, kind::LBRACK, kind::RBRACK], words = 7, fields = AttributeItemFields, prepare = AttributeItemPrepare, view = AttributeItemNodeRecord)]
 pub struct AttributeItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15103,6 +18350,21 @@ impl ::sittir_core::render::Render for AttributeItemNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(190)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute_item(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributeItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(190)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributeItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributeItemFields::layout(self), Some(::sittir_core::types::KindId(190)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute_item(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for AttributeItemNode {
@@ -15132,7 +18394,7 @@ fn prepare_attribute_item<N: AttributeItemPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INNER_ATTRIBUTE_ITEM, layout = [kind::POUND, kind::BANG | kind::BANG2, kind::LBRACK, kind::RBRACK], words = 7, fields = InnerAttributeItemFields, prepare = InnerAttributeItemPrepare)]
+#[node(kind = kind::INNER_ATTRIBUTE_ITEM, layout = [kind::POUND, kind::BANG | kind::BANG2, kind::LBRACK, kind::RBRACK], words = 7, fields = InnerAttributeItemFields, prepare = InnerAttributeItemPrepare, view = InnerAttributeItemNodeRecord)]
 pub struct InnerAttributeItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15158,6 +18420,21 @@ impl ::sittir_core::render::Render for InnerAttributeItemNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(191)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inner_attribute_item(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for InnerAttributeItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(191)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for InnerAttributeItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(InnerAttributeItemFields::layout(self), Some(::sittir_core::types::KindId(191)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_inner_attribute_item(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for InnerAttributeItemNode {
@@ -15187,7 +18464,7 @@ fn prepare_inner_attribute_item<N: InnerAttributeItemPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ATTRIBUTE, words = 12, fields = AttributeFields, prepare = AttributePrepare)]
+#[node(kind = kind::ATTRIBUTE, words = 12, fields = AttributeFields, prepare = AttributePrepare, view = AttributeNodeRecord)]
 pub struct AttributeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15218,6 +18495,21 @@ impl ::sittir_core::render::Render for AttributeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(192)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributeFields::layout(self), Some(::sittir_core::types::KindId(192)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attribute(self, &mut (), ctx)
@@ -15246,7 +18538,7 @@ fn prepare_attribute<N: AttributePrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECLARATION_LIST, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DeclarationListFields, prepare = DeclarationListPrepare)]
+#[node(kind = kind::DECLARATION_LIST, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DeclarationListFields, prepare = DeclarationListPrepare, view = DeclarationListNodeRecord)]
 pub struct DeclarationListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15275,6 +18567,21 @@ impl ::sittir_core::render::Render for DeclarationListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(195)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_declaration_list(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DeclarationListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(195)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for DeclarationListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(DeclarationListFields::layout(self), Some(::sittir_core::types::KindId(195)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_declaration_list(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for DeclarationListNode {
@@ -15307,7 +18614,7 @@ fn prepare_declaration_list<N: DeclarationListPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNION_ITEM, layout = [kind::UNION_KEYWORD], words = 27, fields = UnionItemFields, prepare = UnionItemPrepare)]
+#[node(kind = kind::UNION_ITEM, layout = [kind::UNION_KEYWORD], words = 27, fields = UnionItemFields, prepare = UnionItemPrepare, view = UnionItemNodeRecord)]
 pub struct UnionItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15347,6 +18654,21 @@ impl ::sittir_core::render::Render for UnionItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UnionItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(197)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UnionItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UnionItemFields::layout(self), Some(::sittir_core::types::KindId(197)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_union_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for UnionItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_union_item(self, &mut (), ctx)
@@ -15378,7 +18700,7 @@ fn prepare_union_item<N: UnionItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_ITEM, layout = [kind::ENUM_KEYWORD], words = 27, fields = EnumItemFields, prepare = EnumItemPrepare)]
+#[node(kind = kind::ENUM_ITEM, layout = [kind::ENUM_KEYWORD], words = 27, fields = EnumItemFields, prepare = EnumItemPrepare, view = EnumItemNodeRecord)]
 pub struct EnumItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15418,6 +18740,21 @@ impl ::sittir_core::render::Render for EnumItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EnumItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(198)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EnumItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EnumItemFields::layout(self), Some(::sittir_core::types::KindId(198)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for EnumItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_enum_item(self, &mut (), ctx)
@@ -15449,7 +18786,7 @@ fn prepare_enum_item<N: EnumItemPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = EnumVariantListFields, prepare = EnumVariantListPrepare)]
+#[node(kind = kind::ENUM_VARIANT_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = EnumVariantListFields, prepare = EnumVariantListPrepare, view = EnumVariantListNodeRecord)]
 pub struct EnumVariantListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15475,6 +18812,21 @@ impl ::sittir_core::render::Render for EnumVariantListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(199)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant_list(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EnumVariantListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(199)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EnumVariantListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EnumVariantListFields::layout(self), Some(::sittir_core::types::KindId(199)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant_list(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for EnumVariantListNode {
@@ -15504,7 +18856,7 @@ fn prepare_enum_variant_list<N: EnumVariantListPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT, layout = [kind::EQ], words = 22, fields = EnumVariantFields, prepare = EnumVariantPrepare)]
+#[node(kind = kind::ENUM_VARIANT, layout = [kind::EQ], words = 22, fields = EnumVariantFields, prepare = EnumVariantPrepare, view = EnumVariantNodeRecord)]
 pub struct EnumVariantNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15541,6 +18893,21 @@ impl ::sittir_core::render::Render for EnumVariantNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EnumVariantNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(200)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EnumVariantNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EnumVariantFields::layout(self), Some(::sittir_core::types::KindId(200)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for EnumVariantNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_enum_variant(self, &mut (), ctx)
@@ -15571,7 +18938,7 @@ fn prepare_enum_variant<N: EnumVariantPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldDeclarationListFields, prepare = FieldDeclarationListPrepare)]
+#[node(kind = kind::FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldDeclarationListFields, prepare = FieldDeclarationListPrepare, view = FieldDeclarationListNodeRecord)]
 pub struct FieldDeclarationListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15597,6 +18964,21 @@ impl ::sittir_core::render::Render for FieldDeclarationListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(201)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration_list(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldDeclarationListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(201)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldDeclarationListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldDeclarationListFields::layout(self), Some(::sittir_core::types::KindId(201)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration_list(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for FieldDeclarationListNode {
@@ -15626,7 +19008,7 @@ fn prepare_field_declaration_list<N: FieldDeclarationListPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION, layout = [kind::COLON], words = 17, fields = FieldDeclarationFields, prepare = FieldDeclarationPrepare)]
+#[node(kind = kind::FIELD_DECLARATION, layout = [kind::COLON], words = 17, fields = FieldDeclarationFields, prepare = FieldDeclarationPrepare, view = FieldDeclarationNodeRecord)]
 pub struct FieldDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15660,6 +19042,21 @@ impl ::sittir_core::render::Render for FieldDeclarationNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldDeclarationNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(202)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldDeclarationNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldDeclarationFields::layout(self), Some(::sittir_core::types::KindId(202)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FieldDeclarationNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_field_declaration(self, &mut (), ctx)
@@ -15689,7 +19086,7 @@ fn prepare_field_declaration<N: FieldDeclarationPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = OrderedFieldDeclarationListFields, prepare = OrderedFieldDeclarationListPrepare)]
+#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = OrderedFieldDeclarationListFields, prepare = OrderedFieldDeclarationListPrepare, view = OrderedFieldDeclarationListNodeRecord)]
 pub struct OrderedFieldDeclarationListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15715,6 +19112,21 @@ impl ::sittir_core::render::Render for OrderedFieldDeclarationListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(203)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ordered_field_declaration_list(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for OrderedFieldDeclarationListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(203)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for OrderedFieldDeclarationListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(OrderedFieldDeclarationListFields::layout(self), Some(::sittir_core::types::KindId(203)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ordered_field_declaration_list(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListNode {
@@ -15744,7 +19156,7 @@ fn prepare_ordered_field_declaration_list<N: OrderedFieldDeclarationListPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI], words = 17, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare)]
+#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI], words = 17, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare, view = ExternCrateDeclarationNodeRecord)]
 pub struct ExternCrateDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15778,6 +19190,21 @@ impl ::sittir_core::render::Render for ExternCrateDeclarationNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ExternCrateDeclarationNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(204)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ExternCrateDeclarationNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ExternCrateDeclarationFields::layout(self), Some(::sittir_core::types::KindId(204)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extern_crate_declaration(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ExternCrateDeclarationNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_extern_crate_declaration(self, &mut (), ctx)
@@ -15807,7 +19234,7 @@ fn prepare_extern_crate_declaration<N: ExternCrateDeclarationPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONST_ITEM, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 22, fields = ConstItemFields, prepare = ConstItemPrepare)]
+#[node(kind = kind::CONST_ITEM, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 22, fields = ConstItemFields, prepare = ConstItemPrepare, view = ConstItemNodeRecord)]
 pub struct ConstItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15844,6 +19271,21 @@ impl ::sittir_core::render::Render for ConstItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ConstItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(205)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ConstItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ConstItemFields::layout(self), Some(::sittir_core::types::KindId(205)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ConstItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_const_item(self, &mut (), ctx)
@@ -15874,7 +19316,7 @@ fn prepare_const_item<N: ConstItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STATIC_ITEM, layout = [kind::STATIC_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 23, fields = StaticItemFields, prepare = StaticItemPrepare)]
+#[node(kind = kind::STATIC_ITEM, layout = [kind::STATIC_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 23, fields = StaticItemFields, prepare = StaticItemPrepare, view = StaticItemNodeRecord)]
 pub struct StaticItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15917,6 +19359,21 @@ impl ::sittir_core::render::Render for StaticItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StaticItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(206)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StaticItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StaticItemFields::layout(self), Some(::sittir_core::types::KindId(206)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_static_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for StaticItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_static_item(self, &mut (), ctx)
@@ -15947,7 +19404,7 @@ fn prepare_static_item<N: StaticItemPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ITEM, layout = [kind::TYPE_KEYWORD, kind::EQ, kind::SEMI], words = 32, fields = TypeItemFields, prepare = TypeItemPrepare)]
+#[node(kind = kind::TYPE_ITEM, layout = [kind::TYPE_KEYWORD, kind::EQ, kind::SEMI], words = 32, fields = TypeItemFields, prepare = TypeItemPrepare, view = TypeItemNodeRecord)]
 pub struct TypeItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -15990,6 +19447,21 @@ impl ::sittir_core::render::Render for TypeItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(207)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeItemFields::layout(self), Some(::sittir_core::types::KindId(207)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypeItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_type_item(self, &mut (), ctx)
@@ -16022,7 +19494,7 @@ fn prepare_type_item<N: TypeItemPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare)]
+#[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord)]
 pub struct FunctionItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16071,6 +19543,21 @@ impl ::sittir_core::render::Render for FunctionItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FunctionItemFields::layout(self), Some(::sittir_core::types::KindId(208)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FunctionItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_function_item(self, &mut (), ctx)
@@ -16105,7 +19592,7 @@ fn prepare_function_item<N: FunctionItemPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 37, fields = FunctionSignatureItemFields, prepare = FunctionSignatureItemPrepare)]
+#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 37, fields = FunctionSignatureItemFields, prepare = FunctionSignatureItemPrepare, view = FunctionSignatureItemNodeRecord)]
 pub struct FunctionSignatureItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16151,6 +19638,21 @@ impl ::sittir_core::render::Render for FunctionSignatureItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionSignatureItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(209)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionSignatureItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FunctionSignatureItemFields::layout(self), Some(::sittir_core::types::KindId(209)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_signature_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FunctionSignatureItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_function_signature_item(self, &mut (), ctx)
@@ -16184,7 +19686,7 @@ fn prepare_function_signature_item<N: FunctionSignatureItemPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_MODIFIERS, words = 4, fields = FunctionModifiersFields, prepare = FunctionModifiersPrepare)]
+#[node(kind = kind::FUNCTION_MODIFIERS, words = 4, fields = FunctionModifiersFields, prepare = FunctionModifiersPrepare, view = FunctionModifiersNodeRecord)]
 pub struct FunctionModifiersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16213,6 +19715,21 @@ impl ::sittir_core::render::Render for FunctionModifiersNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(210)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_modifiers(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionModifiersNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(210)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionModifiersNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FunctionModifiersFields::layout(self), Some(::sittir_core::types::KindId(210)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_modifiers(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionModifiersNode {
@@ -16245,7 +19762,7 @@ fn prepare_function_modifiers<N: FunctionModifiersPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHERE_CLAUSE, min_depth = 2, layout = [kind::WHERE_KEYWORD], words = 7, fields = WhereClauseFields, prepare = WhereClausePrepare)]
+#[node(kind = kind::WHERE_CLAUSE, min_depth = 2, layout = [kind::WHERE_KEYWORD], words = 7, fields = WhereClauseFields, prepare = WhereClausePrepare, view = WhereClauseNodeRecord)]
 pub struct WhereClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16271,6 +19788,21 @@ impl ::sittir_core::render::Render for WhereClauseNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(211)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_clause(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for WhereClauseNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(211)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for WhereClauseNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(WhereClauseFields::layout(self), Some(::sittir_core::types::KindId(211)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_clause(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for WhereClauseNode {
@@ -16300,7 +19832,7 @@ fn prepare_where_clause<N: WhereClausePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHERE_PREDICATE, words = 12, fields = WherePredicateFields, prepare = WherePredicatePrepare)]
+#[node(kind = kind::WHERE_PREDICATE, words = 12, fields = WherePredicateFields, prepare = WherePredicatePrepare, view = WherePredicateNodeRecord)]
 pub struct WherePredicateNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16331,6 +19863,21 @@ impl ::sittir_core::render::Render for WherePredicateNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for WherePredicateNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(212)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for WherePredicateNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(WherePredicateFields::layout(self), Some(::sittir_core::types::KindId(212)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_predicate(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for WherePredicateNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_where_predicate(self, &mut (), ctx)
@@ -16359,7 +19906,7 @@ fn prepare_where_predicate<N: WherePredicatePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRAIT_ITEM, layout = [kind::TRAIT_KEYWORD], words = 33, fields = TraitItemFields, prepare = TraitItemPrepare)]
+#[node(kind = kind::TRAIT_ITEM, layout = [kind::TRAIT_KEYWORD], words = 33, fields = TraitItemFields, prepare = TraitItemPrepare, view = TraitItemNodeRecord)]
 pub struct TraitItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16405,6 +19952,21 @@ impl ::sittir_core::render::Render for TraitItemNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TraitItemNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(214)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TraitItemNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TraitItemFields::layout(self), Some(::sittir_core::types::KindId(214)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_trait_item(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TraitItemNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_trait_item(self, &mut (), ctx)
@@ -16437,7 +19999,7 @@ fn prepare_trait_item<N: TraitItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSOCIATED_TYPE, layout = [kind::TYPE_KEYWORD, kind::SEMI], words = 22, fields = AssociatedTypeFields, prepare = AssociatedTypePrepare)]
+#[node(kind = kind::ASSOCIATED_TYPE, layout = [kind::TYPE_KEYWORD, kind::SEMI], words = 22, fields = AssociatedTypeFields, prepare = AssociatedTypePrepare, view = AssociatedTypeNodeRecord)]
 pub struct AssociatedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16474,6 +20036,21 @@ impl ::sittir_core::render::Render for AssociatedTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AssociatedTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(215)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AssociatedTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AssociatedTypeFields::layout(self), Some(::sittir_core::types::KindId(215)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_associated_type(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AssociatedTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_associated_type(self, &mut (), ctx)
@@ -16504,7 +20081,7 @@ fn prepare_associated_type<N: AssociatedTypePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRAIT_BOUNDS, layout = [kind::COLON], words = 4, fields = TraitBoundsFields, prepare = TraitBoundsPrepare)]
+#[node(kind = kind::TRAIT_BOUNDS, layout = [kind::COLON], words = 4, fields = TraitBoundsFields, prepare = TraitBoundsPrepare, view = TraitBoundsNodeRecord)]
 pub struct TraitBoundsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16538,6 +20115,21 @@ impl ::sittir_core::render::Render for TraitBoundsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TraitBoundsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(216)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TraitBoundsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TraitBoundsFields::layout(self), Some(::sittir_core::types::KindId(216)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_trait_bounds(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TraitBoundsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_trait_bounds(self, &mut (), ctx)
@@ -16569,7 +20161,7 @@ fn prepare_trait_bounds<N: TraitBoundsPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::HIGHER_RANKED_TRAIT_BOUND, layout = [kind::FOR_KEYWORD], words = 12, fields = HigherRankedTraitBoundFields, prepare = HigherRankedTraitBoundPrepare)]
+#[node(kind = kind::HIGHER_RANKED_TRAIT_BOUND, layout = [kind::FOR_KEYWORD], words = 12, fields = HigherRankedTraitBoundFields, prepare = HigherRankedTraitBoundPrepare, view = HigherRankedTraitBoundNodeRecord)]
 pub struct HigherRankedTraitBoundNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16600,6 +20192,21 @@ impl ::sittir_core::render::Render for HigherRankedTraitBoundNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for HigherRankedTraitBoundNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(217)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for HigherRankedTraitBoundNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(HigherRankedTraitBoundFields::layout(self), Some(::sittir_core::types::KindId(217)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_higher_ranked_trait_bound(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for HigherRankedTraitBoundNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_higher_ranked_trait_bound(self, &mut (), ctx)
@@ -16628,7 +20235,7 @@ fn prepare_higher_ranked_trait_bound<N: HigherRankedTraitBoundPrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REMOVED_TRAIT_BOUND, layout = [kind::QMARK], words = 7, fields = RemovedTraitBoundFields, prepare = RemovedTraitBoundPrepare)]
+#[node(kind = kind::REMOVED_TRAIT_BOUND, layout = [kind::QMARK], words = 7, fields = RemovedTraitBoundFields, prepare = RemovedTraitBoundPrepare, view = RemovedTraitBoundNodeRecord)]
 pub struct RemovedTraitBoundNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16654,6 +20261,21 @@ impl ::sittir_core::render::Render for RemovedTraitBoundNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(218)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_removed_trait_bound(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RemovedTraitBoundNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(218)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RemovedTraitBoundNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RemovedTraitBoundFields::layout(self), Some(::sittir_core::types::KindId(218)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_removed_trait_bound(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RemovedTraitBoundNode {
@@ -16683,7 +20305,7 @@ fn prepare_removed_trait_bound<N: RemovedTraitBoundPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeParametersFields, prepare = TypeParametersPrepare)]
+#[node(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeParametersFields, prepare = TypeParametersPrepare, view = TypeParametersNodeRecord)]
 pub struct TypeParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16709,6 +20331,21 @@ impl ::sittir_core::render::Render for TypeParametersNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(219)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameters(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParametersNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(219)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParametersNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParametersFields::layout(self), Some(::sittir_core::types::KindId(219)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameters(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TypeParametersNode {
@@ -16738,7 +20375,7 @@ fn prepare_type_parameters<N: TypeParametersPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONST_PARAMETER, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ], words = 17, fields = ConstParameterFields, prepare = ConstParameterPrepare)]
+#[node(kind = kind::CONST_PARAMETER, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ], words = 17, fields = ConstParameterFields, prepare = ConstParameterPrepare, view = ConstParameterNodeRecord)]
 pub struct ConstParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16772,6 +20409,21 @@ impl ::sittir_core::render::Render for ConstParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ConstParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(220)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ConstParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ConstParameterFields::layout(self), Some(::sittir_core::types::KindId(220)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ConstParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_const_parameter(self, &mut (), ctx)
@@ -16801,7 +20453,7 @@ fn prepare_const_parameter<N: ConstParameterPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETER, layout = [kind::EQ], words = 17, fields = TypeParameterFields, prepare = TypeParameterPrepare)]
+#[node(kind = kind::TYPE_PARAMETER, layout = [kind::EQ], words = 17, fields = TypeParameterFields, prepare = TypeParameterPrepare, view = TypeParameterNodeRecord)]
 pub struct TypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16835,6 +20487,21 @@ impl ::sittir_core::render::Render for TypeParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(221)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParameterFields::layout(self), Some(::sittir_core::types::KindId(221)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypeParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_type_parameter(self, &mut (), ctx)
@@ -16864,7 +20531,7 @@ fn prepare_type_parameter<N: TypeParameterPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIFETIME_PARAMETER, words = 12, fields = LifetimeParameterFields, prepare = LifetimeParameterPrepare)]
+#[node(kind = kind::LIFETIME_PARAMETER, words = 12, fields = LifetimeParameterFields, prepare = LifetimeParameterPrepare, view = LifetimeParameterNodeRecord)]
 pub struct LifetimeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16895,6 +20562,21 @@ impl ::sittir_core::render::Render for LifetimeParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LifetimeParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(222)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LifetimeParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LifetimeParameterFields::layout(self), Some(::sittir_core::types::KindId(222)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetime_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LifetimeParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_lifetime_parameter(self, &mut (), ctx)
@@ -16923,7 +20605,7 @@ fn prepare_lifetime_parameter<N: LifetimeParameterPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LET_DECLARATION, layout = [kind::LET_KEYWORD, kind::COLON, kind::EQ, kind::ELSE_KEYWORD, kind::SEMI], words = 23, fields = LetDeclarationFields, prepare = LetDeclarationPrepare)]
+#[node(kind = kind::LET_DECLARATION, layout = [kind::LET_KEYWORD, kind::COLON, kind::EQ, kind::ELSE_KEYWORD, kind::SEMI], words = 23, fields = LetDeclarationFields, prepare = LetDeclarationPrepare, view = LetDeclarationNodeRecord)]
 pub struct LetDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -16963,6 +20645,21 @@ impl ::sittir_core::render::Render for LetDeclarationNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LetDeclarationNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(223)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LetDeclarationNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LetDeclarationFields::layout(self), Some(::sittir_core::types::KindId(223)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_declaration(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LetDeclarationNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_let_declaration(self, &mut (), ctx)
@@ -16993,7 +20690,7 @@ fn prepare_let_declaration<N: LetDeclarationPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_DECLARATION, layout = [kind::USE_KEYWORD, kind::SEMI], words = 12, fields = UseDeclarationFields, prepare = UseDeclarationPrepare)]
+#[node(kind = kind::USE_DECLARATION, layout = [kind::USE_KEYWORD, kind::SEMI], words = 12, fields = UseDeclarationFields, prepare = UseDeclarationPrepare, view = UseDeclarationNodeRecord)]
 pub struct UseDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17024,6 +20721,21 @@ impl ::sittir_core::render::Render for UseDeclarationNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseDeclarationNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseDeclarationNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseDeclarationFields::layout(self), Some(::sittir_core::types::KindId(224)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_declaration(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for UseDeclarationNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_use_declaration(self, &mut (), ctx)
@@ -17052,7 +20764,7 @@ fn prepare_use_declaration<N: UseDeclarationPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_USE_LIST, layout = [kind::COLON_COLON], words = 12, fields = ScopedUseListFields, prepare = ScopedUseListPrepare)]
+#[node(kind = kind::SCOPED_USE_LIST, layout = [kind::COLON_COLON], words = 12, fields = ScopedUseListFields, prepare = ScopedUseListPrepare, view = ScopedUseListNodeRecord)]
 pub struct ScopedUseListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17083,6 +20795,21 @@ impl ::sittir_core::render::Render for ScopedUseListNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedUseListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(226)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedUseListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ScopedUseListFields::layout(self), Some(::sittir_core::types::KindId(226)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_use_list(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ScopedUseListNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_scoped_use_list(self, &mut (), ctx)
@@ -17111,7 +20838,7 @@ fn prepare_scoped_use_list<N: ScopedUseListPrepare + ?Sized>(node: &mut N, overl
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = UseListFields, prepare = UseListPrepare)]
+#[node(kind = kind::USE_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = UseListFields, prepare = UseListPrepare, view = UseListNodeRecord)]
 pub struct UseListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17137,6 +20864,21 @@ impl ::sittir_core::render::Render for UseListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(227)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_list(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(227)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseListFields::layout(self), Some(::sittir_core::types::KindId(227)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_list(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for UseListNode {
@@ -17166,7 +20908,7 @@ fn prepare_use_list<N: UseListPrepare + ?Sized>(node: &mut N, overlay: &mut N::O
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_AS_CLAUSE, layout = [kind::AS_KEYWORD], words = 12, fields = UseAsClauseFields, prepare = UseAsClausePrepare)]
+#[node(kind = kind::USE_AS_CLAUSE, layout = [kind::AS_KEYWORD], words = 12, fields = UseAsClauseFields, prepare = UseAsClausePrepare, view = UseAsClauseNodeRecord)]
 pub struct UseAsClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17197,6 +20939,21 @@ impl ::sittir_core::render::Render for UseAsClauseNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseAsClauseNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(228)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseAsClauseNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseAsClauseFields::layout(self), Some(::sittir_core::types::KindId(228)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_as_clause(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for UseAsClauseNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_use_as_clause(self, &mut (), ctx)
@@ -17225,7 +20982,7 @@ fn prepare_use_as_clause<N: UseAsClausePrepare + ?Sized>(node: &mut N, overlay: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_WILDCARD, layout = [kind::STAR], words = 7, fields = UseWildcardFields, prepare = UseWildcardPrepare)]
+#[node(kind = kind::USE_WILDCARD, layout = [kind::STAR], words = 7, fields = UseWildcardFields, prepare = UseWildcardPrepare, view = UseWildcardNodeRecord)]
 pub struct UseWildcardNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17251,6 +21008,21 @@ impl ::sittir_core::render::Render for UseWildcardNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(229)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseWildcardNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(229)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseWildcardNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseWildcardFields::layout(self), Some(::sittir_core::types::KindId(229)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for UseWildcardNode {
@@ -17280,7 +21052,7 @@ fn prepare_use_wildcard<N: UseWildcardPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParametersFields, prepare = ParametersPrepare)]
+#[node(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParametersFields, prepare = ParametersPrepare, view = ParametersNodeRecord)]
 pub struct ParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17306,6 +21078,21 @@ impl ::sittir_core::render::Render for ParametersNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(230)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ParametersNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(230)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ParametersNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ParametersFields::layout(self), Some(::sittir_core::types::KindId(230)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ParametersNode {
@@ -17335,7 +21122,7 @@ fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SELF_PARAMETER, layout = [kind::SELF], words = 8, fields = SelfParameterFields, prepare = SelfParameterPrepare)]
+#[node(kind = kind::SELF_PARAMETER, layout = [kind::SELF], words = 8, fields = SelfParameterFields, prepare = SelfParameterPrepare, view = SelfParameterNodeRecord)]
 pub struct SelfParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17369,6 +21156,21 @@ impl ::sittir_core::render::Render for SelfParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for SelfParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(231)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for SelfParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(SelfParameterFields::layout(self), Some(::sittir_core::types::KindId(231)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_self_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for SelfParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_self_parameter(self, &mut (), ctx)
@@ -17396,7 +21198,7 @@ fn prepare_self_parameter<N: SelfParameterPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VARIADIC_PARAMETER, layout = [kind::COLON, kind::DOT_DOT_DOT], words = 8, fields = VariadicParameterFields, prepare = VariadicParameterPrepare)]
+#[node(kind = kind::VARIADIC_PARAMETER, layout = [kind::COLON, kind::DOT_DOT_DOT], words = 8, fields = VariadicParameterFields, prepare = VariadicParameterPrepare, view = VariadicParameterNodeRecord)]
 pub struct VariadicParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17427,6 +21229,21 @@ impl ::sittir_core::render::Render for VariadicParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for VariadicParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(232)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for VariadicParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(VariadicParameterFields::layout(self), Some(::sittir_core::types::KindId(232)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_variadic_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for VariadicParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_variadic_parameter(self, &mut (), ctx)
@@ -17454,7 +21271,7 @@ fn prepare_variadic_parameter<N: VariadicParameterPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETER, layout = [kind::COLON], words = 13, fields = ParameterFields, prepare = ParameterPrepare)]
+#[node(kind = kind::PARAMETER, layout = [kind::COLON], words = 13, fields = ParameterFields, prepare = ParameterPrepare, view = ParameterNodeRecord)]
 pub struct ParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17488,6 +21305,21 @@ impl ::sittir_core::render::Render for ParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(233)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ParameterFields::layout(self), Some(::sittir_core::types::KindId(233)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_parameter(self, &mut (), ctx)
@@ -17516,7 +21348,7 @@ fn prepare_parameter<N: ParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTERN_MODIFIER, layout = [kind::EXTERN_KEYWORD], words = 7, fields = ExternModifierFields, prepare = ExternModifierPrepare)]
+#[node(kind = kind::EXTERN_MODIFIER, layout = [kind::EXTERN_KEYWORD], words = 7, fields = ExternModifierFields, prepare = ExternModifierPrepare, view = ExternModifierNodeRecord)]
 pub struct ExternModifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17542,6 +21374,21 @@ impl ::sittir_core::render::Render for ExternModifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(234)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extern_modifier(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ExternModifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(234)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ExternModifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ExternModifierFields::layout(self), Some(::sittir_core::types::KindId(234)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extern_modifier(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ExternModifierNode {
@@ -17571,7 +21418,7 @@ fn prepare_extern_modifier<N: ExternModifierPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER, words = 7, fields = VisibilityModifierFields, prepare = VisibilityModifierPrepare)]
+#[node(kind = kind::VISIBILITY_MODIFIER, words = 7, fields = VisibilityModifierFields, prepare = VisibilityModifierPrepare, view = VisibilityModifierNodeRecord)]
 pub struct VisibilityModifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17597,6 +21444,21 @@ impl ::sittir_core::render::Render for VisibilityModifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(235)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for VisibilityModifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(235)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for VisibilityModifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(VisibilityModifierFields::layout(self), Some(::sittir_core::types::KindId(235)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for VisibilityModifierNode {
@@ -17625,7 +21487,7 @@ fn prepare_visibility_modifier<N: VisibilityModifierPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BRACKETED_TYPE, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = BracketedTypeFields, prepare = BracketedTypePrepare)]
+#[node(kind = kind::BRACKETED_TYPE, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = BracketedTypeFields, prepare = BracketedTypePrepare, view = BracketedTypeNodeRecord)]
 pub struct BracketedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17651,6 +21513,21 @@ impl ::sittir_core::render::Render for BracketedTypeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(237)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_bracketed_type(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BracketedTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(237)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BracketedTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BracketedTypeFields::layout(self), Some(::sittir_core::types::KindId(237)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_bracketed_type(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for BracketedTypeNode {
@@ -17680,7 +21557,7 @@ fn prepare_bracketed_type<N: BracketedTypePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::QUALIFIED_TYPE, layout = [kind::AS_KEYWORD], words = 12, fields = QualifiedTypeFields, prepare = QualifiedTypePrepare)]
+#[node(kind = kind::QUALIFIED_TYPE, layout = [kind::AS_KEYWORD], words = 12, fields = QualifiedTypeFields, prepare = QualifiedTypePrepare, view = QualifiedTypeNodeRecord)]
 pub struct QualifiedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17711,6 +21588,21 @@ impl ::sittir_core::render::Render for QualifiedTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for QualifiedTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(238)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for QualifiedTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(QualifiedTypeFields::layout(self), Some(::sittir_core::types::KindId(238)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_qualified_type(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for QualifiedTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_qualified_type(self, &mut (), ctx)
@@ -17739,7 +21631,7 @@ fn prepare_qualified_type<N: QualifiedTypePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIFETIME, layout = [kind::SQUOTE], words = 7, fields = LifetimeFields, prepare = LifetimePrepare)]
+#[node(kind = kind::LIFETIME, layout = [kind::SQUOTE], words = 7, fields = LifetimeFields, prepare = LifetimePrepare, view = LifetimeNodeRecord)]
 pub struct LifetimeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17765,6 +21657,21 @@ impl ::sittir_core::render::Render for LifetimeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(239)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetime(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LifetimeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(239)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LifetimeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LifetimeFields::layout(self), Some(::sittir_core::types::KindId(239)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetime(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for LifetimeNode {
@@ -17794,7 +21701,7 @@ fn prepare_lifetime<N: LifetimePrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 12, fields = ArrayTypeFields, prepare = ArrayTypePrepare)]
+#[node(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 12, fields = ArrayTypeFields, prepare = ArrayTypePrepare, view = ArrayTypeNodeRecord)]
 pub struct ArrayTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17825,6 +21732,21 @@ impl ::sittir_core::render::Render for ArrayTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ArrayTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ArrayTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ArrayTypeFields::layout(self), Some(::sittir_core::types::KindId(240)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_type(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ArrayTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_array_type(self, &mut (), ctx)
@@ -17853,7 +21775,7 @@ fn prepare_array_type<N: ArrayTypePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_LIFETIMES, min_depth = 2, layout = [kind::FOR_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = ForLifetimesFields, prepare = ForLifetimesPrepare)]
+#[node(kind = kind::FOR_LIFETIMES, min_depth = 2, layout = [kind::FOR_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = ForLifetimesFields, prepare = ForLifetimesPrepare, view = ForLifetimesNodeRecord)]
 pub struct ForLifetimesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17879,6 +21801,21 @@ impl ::sittir_core::render::Render for ForLifetimesNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(241)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_lifetimes(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ForLifetimesNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(241)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ForLifetimesNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ForLifetimesFields::layout(self), Some(::sittir_core::types::KindId(241)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_lifetimes(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ForLifetimesNode {
@@ -17908,7 +21845,7 @@ fn prepare_for_lifetimes<N: ForLifetimesPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE, layout = [kind::DASH_GT], words = 22, fields = FunctionTypeFields, prepare = FunctionTypePrepare)]
+#[node(kind = kind::FUNCTION_TYPE, layout = [kind::DASH_GT], words = 22, fields = FunctionTypeFields, prepare = FunctionTypePrepare, view = FunctionTypeNodeRecord)]
 pub struct FunctionTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -17945,6 +21882,21 @@ impl ::sittir_core::render::Render for FunctionTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(242)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FunctionTypeFields::layout(self), Some(::sittir_core::types::KindId(242)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FunctionTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_function_type(self, &mut (), ctx)
@@ -17975,7 +21927,7 @@ fn prepare_function_type<N: FunctionTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TupleTypeFields, prepare = TupleTypePrepare)]
+#[node(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TupleTypeFields, prepare = TupleTypePrepare, view = TupleTypeNodeRecord)]
 pub struct TupleTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18001,6 +21953,21 @@ impl ::sittir_core::render::Render for TupleTypeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(243)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_type(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TupleTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(243)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TupleTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TupleTypeFields::layout(self), Some(::sittir_core::types::KindId(243)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_type(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TupleTypeNode {
@@ -18078,7 +22045,7 @@ impl ::sittir_core::render::Render for UnitTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_FUNCTION, layout = [kind::COLON_COLON], words = 12, fields = GenericFunctionFields, prepare = GenericFunctionPrepare)]
+#[node(kind = kind::GENERIC_FUNCTION, layout = [kind::COLON_COLON], words = 12, fields = GenericFunctionFields, prepare = GenericFunctionPrepare, view = GenericFunctionNodeRecord)]
 pub struct GenericFunctionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18109,6 +22076,21 @@ impl ::sittir_core::render::Render for GenericFunctionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericFunctionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(245)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for GenericFunctionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(GenericFunctionFields::layout(self), Some(::sittir_core::types::KindId(245)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_function(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for GenericFunctionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_generic_function(self, &mut (), ctx)
@@ -18137,7 +22119,7 @@ fn prepare_generic_function<N: GenericFunctionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE, words = 12, fields = GenericTypeFields, prepare = GenericTypePrepare)]
+#[node(kind = kind::GENERIC_TYPE, words = 12, fields = GenericTypeFields, prepare = GenericTypePrepare, view = GenericTypeNodeRecord)]
 pub struct GenericTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18168,6 +22150,21 @@ impl ::sittir_core::render::Render for GenericTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(246)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for GenericTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(GenericTypeFields::layout(self), Some(::sittir_core::types::KindId(246)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_type(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for GenericTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_generic_type(self, &mut (), ctx)
@@ -18196,7 +22193,7 @@ fn prepare_generic_type<N: GenericTypePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE_WITH_TURBOFISH, layout = [kind::COLON_COLON], words = 12, fields = GenericTypeWithTurbofishFields, prepare = GenericTypeWithTurbofishPrepare)]
+#[node(kind = kind::GENERIC_TYPE_WITH_TURBOFISH, layout = [kind::COLON_COLON], words = 12, fields = GenericTypeWithTurbofishFields, prepare = GenericTypeWithTurbofishPrepare, view = GenericTypeWithTurbofishNodeRecord)]
 pub struct GenericTypeWithTurbofishNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18227,6 +22224,21 @@ impl ::sittir_core::render::Render for GenericTypeWithTurbofishNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericTypeWithTurbofishNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(247)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for GenericTypeWithTurbofishNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(GenericTypeWithTurbofishFields::layout(self), Some(::sittir_core::types::KindId(247)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_type_with_turbofish(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_generic_type_with_turbofish(self, &mut (), ctx)
@@ -18255,7 +22267,7 @@ fn prepare_generic_type_with_turbofish<N: GenericTypeWithTurbofishPrepare + ?Siz
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BOUNDED_TYPE, layout = [kind::PLUS], words = 12, fields = BoundedTypeFields, prepare = BoundedTypePrepare)]
+#[node(kind = kind::BOUNDED_TYPE, layout = [kind::PLUS], words = 12, fields = BoundedTypeFields, prepare = BoundedTypePrepare, view = BoundedTypeNodeRecord)]
 pub struct BoundedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18286,6 +22298,21 @@ impl ::sittir_core::render::Render for BoundedTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BoundedTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(248)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BoundedTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BoundedTypeFields::layout(self), Some(::sittir_core::types::KindId(248)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_bounded_type(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for BoundedTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_bounded_type(self, &mut (), ctx)
@@ -18314,7 +22341,7 @@ fn prepare_bounded_type<N: BoundedTypePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_BOUNDS, min_depth = 2, layout = [kind::USE_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = UseBoundsFields, prepare = UseBoundsPrepare)]
+#[node(kind = kind::USE_BOUNDS, min_depth = 2, layout = [kind::USE_KEYWORD, kind::LT | kind::LT2, kind::GT], words = 7, fields = UseBoundsFields, prepare = UseBoundsPrepare, view = UseBoundsNodeRecord)]
 pub struct UseBoundsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18340,6 +22367,21 @@ impl ::sittir_core::render::Render for UseBoundsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(249)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_bounds(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseBoundsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(249)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseBoundsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseBoundsFields::layout(self), Some(::sittir_core::types::KindId(249)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_bounds(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for UseBoundsNode {
@@ -18369,7 +22411,7 @@ fn prepare_use_bounds<N: UseBoundsPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeArgumentsFields, prepare = TypeArgumentsPrepare)]
+#[node(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT | kind::LT2, kind::GT], words = 7, fields = TypeArgumentsFields, prepare = TypeArgumentsPrepare, view = TypeArgumentsNodeRecord)]
 pub struct TypeArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18395,6 +22437,21 @@ impl ::sittir_core::render::Render for TypeArgumentsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(250)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_arguments(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeArgumentsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(250)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeArgumentsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeArgumentsFields::layout(self), Some(::sittir_core::types::KindId(250)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_arguments(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TypeArgumentsNode {
@@ -18424,7 +22481,7 @@ fn prepare_type_arguments<N: TypeArgumentsPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_BINDING, layout = [kind::EQ], words = 17, fields = TypeBindingFields, prepare = TypeBindingPrepare)]
+#[node(kind = kind::TYPE_BINDING, layout = [kind::EQ], words = 17, fields = TypeBindingFields, prepare = TypeBindingPrepare, view = TypeBindingNodeRecord)]
 pub struct TypeBindingNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18458,6 +22515,21 @@ impl ::sittir_core::render::Render for TypeBindingNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeBindingNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(251)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeBindingNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeBindingFields::layout(self), Some(::sittir_core::types::KindId(251)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_binding(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypeBindingNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_type_binding(self, &mut (), ctx)
@@ -18487,7 +22559,7 @@ fn prepare_type_binding<N: TypeBindingPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_TYPE, layout = [kind::AMP], words = 13, fields = ReferenceTypeFields, prepare = ReferenceTypePrepare)]
+#[node(kind = kind::REFERENCE_TYPE, layout = [kind::AMP], words = 13, fields = ReferenceTypeFields, prepare = ReferenceTypePrepare, view = ReferenceTypeNodeRecord)]
 pub struct ReferenceTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18519,6 +22591,21 @@ impl ::sittir_core::render::Render for ReferenceTypeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(252)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_type(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReferenceTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(252)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ReferenceTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ReferenceTypeFields::layout(self), Some(::sittir_core::types::KindId(252)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_type(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ReferenceTypeNode {
@@ -18597,7 +22684,7 @@ impl ::sittir_core::render::Render for NeverTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_TYPE, layout = [kind::IMPL_KEYWORD, kind::FOR_KEYWORD], words = 12, fields = AbstractTypeFields, prepare = AbstractTypePrepare)]
+#[node(kind = kind::ABSTRACT_TYPE, layout = [kind::IMPL_KEYWORD, kind::FOR_KEYWORD], words = 12, fields = AbstractTypeFields, prepare = AbstractTypePrepare, view = AbstractTypeNodeRecord)]
 pub struct AbstractTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18628,6 +22715,21 @@ impl ::sittir_core::render::Render for AbstractTypeNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AbstractTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(255)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AbstractTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AbstractTypeFields::layout(self), Some(::sittir_core::types::KindId(255)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_abstract_type(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AbstractTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_abstract_type(self, &mut (), ctx)
@@ -18656,7 +22758,7 @@ fn prepare_abstract_type<N: AbstractTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DYNAMIC_TYPE, layout = [kind::DYN_KEYWORD], words = 7, fields = DynamicTypeFields, prepare = DynamicTypePrepare)]
+#[node(kind = kind::DYNAMIC_TYPE, layout = [kind::DYN_KEYWORD], words = 7, fields = DynamicTypeFields, prepare = DynamicTypePrepare, view = DynamicTypeNodeRecord)]
 pub struct DynamicTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18682,6 +22784,21 @@ impl ::sittir_core::render::Render for DynamicTypeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(256)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dynamic_type(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DynamicTypeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(256)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for DynamicTypeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(DynamicTypeFields::layout(self), Some(::sittir_core::types::KindId(256)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dynamic_type(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for DynamicTypeNode {
@@ -18739,7 +22856,7 @@ impl ::sittir_core::render::Render for MutableSpecifierNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_INVOCATION, layout = [kind::BANG | kind::BANG2], words = 12, fields = MacroInvocationFields, prepare = MacroInvocationPrepare)]
+#[node(kind = kind::MACRO_INVOCATION, layout = [kind::BANG | kind::BANG2], words = 12, fields = MacroInvocationFields, prepare = MacroInvocationPrepare, view = MacroInvocationNodeRecord)]
 pub struct MacroInvocationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18770,6 +22887,21 @@ impl ::sittir_core::render::Render for MacroInvocationNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroInvocationNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(259)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MacroInvocationNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MacroInvocationFields::layout(self), Some(::sittir_core::types::KindId(259)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_invocation(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MacroInvocationNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_macro_invocation(self, &mut (), ctx)
@@ -18798,7 +22930,7 @@ fn prepare_macro_invocation<N: MacroInvocationPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedIdentifierFields, prepare = ScopedIdentifierPrepare)]
+#[node(kind = kind::SCOPED_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedIdentifierFields, prepare = ScopedIdentifierPrepare, view = ScopedIdentifierNodeRecord)]
 pub struct ScopedIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18829,6 +22961,21 @@ impl ::sittir_core::render::Render for ScopedIdentifierNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedIdentifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(263)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedIdentifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ScopedIdentifierFields::layout(self), Some(::sittir_core::types::KindId(263)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_identifier(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ScopedIdentifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_scoped_identifier(self, &mut (), ctx)
@@ -18857,7 +23004,7 @@ fn prepare_scoped_identifier<N: ScopedIdentifierPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierInExpressionPositionFields, prepare = ScopedTypeIdentifierInExpressionPositionPrepare)]
+#[node(kind = kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierInExpressionPositionFields, prepare = ScopedTypeIdentifierInExpressionPositionPrepare, view = ScopedTypeIdentifierInExpressionPositionNodeRecord)]
 pub struct ScopedTypeIdentifierInExpressionPositionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18888,6 +23035,21 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionN
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(264)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ScopedTypeIdentifierInExpressionPositionFields::layout(self), Some(::sittir_core::types::KindId(264)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_type_identifier_in_expression_position(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_scoped_type_identifier_in_expression_position(self, &mut (), ctx)
@@ -18916,7 +23078,7 @@ fn prepare_scoped_type_identifier_in_expression_position<N: ScopedTypeIdentifier
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_TYPE_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierFields, prepare = ScopedTypeIdentifierPrepare)]
+#[node(kind = kind::SCOPED_TYPE_IDENTIFIER, layout = [kind::COLON_COLON], words = 12, fields = ScopedTypeIdentifierFields, prepare = ScopedTypeIdentifierPrepare, view = ScopedTypeIdentifierNodeRecord)]
 pub struct ScopedTypeIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -18947,6 +23109,21 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ScopedTypeIdentifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ScopedTypeIdentifierFields::layout(self), Some(::sittir_core::types::KindId(265)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_scoped_type_identifier(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_scoped_type_identifier(self, &mut (), ctx)
@@ -18975,7 +23152,7 @@ fn prepare_scoped_type_identifier<N: ScopedTypeIdentifierPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNARY_EXPRESSION, words = 12, fields = UnaryExpressionFields, prepare = UnaryExpressionPrepare)]
+#[node(kind = kind::UNARY_EXPRESSION, words = 12, fields = UnaryExpressionFields, prepare = UnaryExpressionPrepare, view = UnaryExpressionNodeRecord)]
 pub struct UnaryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19006,6 +23183,21 @@ impl ::sittir_core::render::Render for UnaryExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UnaryExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(267)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UnaryExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UnaryExpressionFields::layout(self), Some(::sittir_core::types::KindId(267)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unary_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for UnaryExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_unary_expression(self, &mut (), ctx)
@@ -19034,7 +23226,7 @@ fn prepare_unary_expression<N: UnaryExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRY_EXPRESSION, layout = [kind::QMARK], words = 7, fields = TryExpressionFields, prepare = TryExpressionPrepare)]
+#[node(kind = kind::TRY_EXPRESSION, layout = [kind::QMARK], words = 7, fields = TryExpressionFields, prepare = TryExpressionPrepare, view = TryExpressionNodeRecord)]
 pub struct TryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19060,6 +23252,21 @@ impl ::sittir_core::render::Render for TryExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(268)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_expression(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TryExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(268)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TryExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TryExpressionFields::layout(self), Some(::sittir_core::types::KindId(268)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_expression(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TryExpressionNode {
@@ -19089,7 +23296,7 @@ fn prepare_try_expression<N: TryExpressionPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BINARY_EXPRESSION, words = 17, fields = BinaryExpressionFields, prepare = BinaryExpressionPrepare)]
+#[node(kind = kind::BINARY_EXPRESSION, words = 17, fields = BinaryExpressionFields, prepare = BinaryExpressionPrepare, view = BinaryExpressionNodeRecord)]
 pub struct BinaryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19123,6 +23330,21 @@ impl ::sittir_core::render::Render for BinaryExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BinaryExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(270)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BinaryExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BinaryExpressionFields::layout(self), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_binary_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for BinaryExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_binary_expression(self, &mut (), ctx)
@@ -19152,7 +23374,7 @@ fn prepare_binary_expression<N: BinaryExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ], words = 12, fields = AssignmentExpressionFields, prepare = AssignmentExpressionPrepare)]
+#[node(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ], words = 12, fields = AssignmentExpressionFields, prepare = AssignmentExpressionPrepare, view = AssignmentExpressionNodeRecord)]
 pub struct AssignmentExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19183,6 +23405,21 @@ impl ::sittir_core::render::Render for AssignmentExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AssignmentExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(271)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AssignmentExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AssignmentExpressionFields::layout(self), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_assignment_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AssignmentExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_assignment_expression(self, &mut (), ctx)
@@ -19211,7 +23448,7 @@ fn prepare_assignment_expression<N: AssignmentExpressionPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMPOUND_ASSIGNMENT_EXPR, words = 17, fields = CompoundAssignmentExprFields, prepare = CompoundAssignmentExprPrepare)]
+#[node(kind = kind::COMPOUND_ASSIGNMENT_EXPR, words = 17, fields = CompoundAssignmentExprFields, prepare = CompoundAssignmentExprPrepare, view = CompoundAssignmentExprNodeRecord)]
 pub struct CompoundAssignmentExprNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19245,6 +23482,21 @@ impl ::sittir_core::render::Render for CompoundAssignmentExprNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CompoundAssignmentExprNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(272)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CompoundAssignmentExprNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CompoundAssignmentExprFields::layout(self), Some(::sittir_core::types::KindId(272)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_compound_assignment_expr(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_compound_assignment_expr(self, &mut (), ctx)
@@ -19274,7 +23526,7 @@ fn prepare_compound_assignment_expr<N: CompoundAssignmentExprPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_CAST_EXPRESSION, layout = [kind::AS_KEYWORD], words = 12, fields = TypeCastExpressionFields, prepare = TypeCastExpressionPrepare)]
+#[node(kind = kind::TYPE_CAST_EXPRESSION, layout = [kind::AS_KEYWORD], words = 12, fields = TypeCastExpressionFields, prepare = TypeCastExpressionPrepare, view = TypeCastExpressionNodeRecord)]
 pub struct TypeCastExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19305,6 +23557,21 @@ impl ::sittir_core::render::Render for TypeCastExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeCastExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(273)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeCastExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeCastExpressionFields::layout(self), Some(::sittir_core::types::KindId(273)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_cast_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypeCastExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_type_cast_expression(self, &mut (), ctx)
@@ -19333,7 +23600,7 @@ fn prepare_type_cast_expression<N: TypeCastExpressionPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RETURN_EXPRESSION, layout = [kind::RETURN_KEYWORD], words = 7, fields = ReturnExpressionFields, prepare = ReturnExpressionPrepare)]
+#[node(kind = kind::RETURN_EXPRESSION, layout = [kind::RETURN_KEYWORD], words = 7, fields = ReturnExpressionFields, prepare = ReturnExpressionPrepare, view = ReturnExpressionNodeRecord)]
 pub struct ReturnExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19359,6 +23626,21 @@ impl ::sittir_core::render::Render for ReturnExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_return_expression(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReturnExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(274)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ReturnExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ReturnExpressionFields::layout(self), Some(::sittir_core::types::KindId(274)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_return_expression(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ReturnExpressionNode {
@@ -19388,7 +23670,7 @@ fn prepare_return_expression<N: ReturnExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD], words = 7, fields = YieldExpressionFields, prepare = YieldExpressionPrepare)]
+#[node(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD], words = 7, fields = YieldExpressionFields, prepare = YieldExpressionPrepare, view = YieldExpressionNodeRecord)]
 pub struct YieldExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19414,6 +23696,21 @@ impl ::sittir_core::render::Render for YieldExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_expression(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for YieldExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(275)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for YieldExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(YieldExpressionFields::layout(self), Some(::sittir_core::types::KindId(275)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_yield_expression(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for YieldExpressionNode {
@@ -19443,7 +23740,7 @@ fn prepare_yield_expression<N: YieldExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL_EXPRESSION, words = 12, fields = CallExpressionFields, prepare = CallExpressionPrepare)]
+#[node(kind = kind::CALL_EXPRESSION, words = 12, fields = CallExpressionFields, prepare = CallExpressionPrepare, view = CallExpressionNodeRecord)]
 pub struct CallExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19474,6 +23771,21 @@ impl ::sittir_core::render::Render for CallExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CallExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CallExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CallExpressionFields::layout(self), Some(::sittir_core::types::KindId(276)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_call_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CallExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_call_expression(self, &mut (), ctx)
@@ -19502,7 +23814,7 @@ fn prepare_call_expression<N: CallExpressionPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENTS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ArgumentsFields, prepare = ArgumentsPrepare)]
+#[node(kind = kind::ARGUMENTS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ArgumentsFields, prepare = ArgumentsPrepare, view = ArgumentsNodeRecord)]
 pub struct ArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19528,6 +23840,21 @@ impl ::sittir_core::render::Render for ArgumentsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_arguments(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ArgumentsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ArgumentsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ArgumentsFields::layout(self), Some(::sittir_core::types::KindId(277)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_arguments(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ArgumentsNode {
@@ -19557,7 +23884,7 @@ fn prepare_arguments<N: ArgumentsPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParenthesizedExpressionFields, prepare = ParenthesizedExpressionPrepare)]
+#[node(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = ParenthesizedExpressionFields, prepare = ParenthesizedExpressionPrepare, view = ParenthesizedExpressionNodeRecord)]
 pub struct ParenthesizedExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19583,6 +23910,21 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_expression(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ParenthesizedExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ParenthesizedExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ParenthesizedExpressionFields::layout(self), Some(::sittir_core::types::KindId(279)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parenthesized_expression(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionNode {
@@ -19612,7 +23954,7 @@ fn prepare_parenthesized_expression<N: ParenthesizedExpressionPrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 9, fields = TupleExpressionFields, prepare = TupleExpressionPrepare)]
+#[node(kind = kind::TUPLE_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 9, fields = TupleExpressionFields, prepare = TupleExpressionPrepare, view = TupleExpressionNodeRecord)]
 pub struct TupleExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19644,6 +23986,21 @@ impl ::sittir_core::render::Render for TupleExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_expression(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TupleExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TupleExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TupleExpressionFields::layout(self), Some(::sittir_core::types::KindId(280)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_expression(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TupleExpressionNode {
@@ -19725,7 +24082,7 @@ impl ::sittir_core::render::Render for UnitExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_EXPRESSION, words = 12, fields = StructExpressionFields, prepare = StructExpressionPrepare)]
+#[node(kind = kind::STRUCT_EXPRESSION, words = 12, fields = StructExpressionFields, prepare = StructExpressionPrepare, view = StructExpressionNodeRecord)]
 pub struct StructExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19756,6 +24113,21 @@ impl ::sittir_core::render::Render for StructExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(282)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StructExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StructExpressionFields::layout(self), Some(::sittir_core::types::KindId(282)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for StructExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_struct_expression(self, &mut (), ctx)
@@ -19784,7 +24156,7 @@ fn prepare_struct_expression<N: StructExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_INITIALIZER_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldInitializerListFields, prepare = FieldInitializerListPrepare)]
+#[node(kind = kind::FIELD_INITIALIZER_LIST, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = FieldInitializerListFields, prepare = FieldInitializerListPrepare, view = FieldInitializerListNodeRecord)]
 pub struct FieldInitializerListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19810,6 +24182,21 @@ impl ::sittir_core::render::Render for FieldInitializerListNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(283)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer_list(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldInitializerListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(283)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldInitializerListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldInitializerListFields::layout(self), Some(::sittir_core::types::KindId(283)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer_list(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for FieldInitializerListNode {
@@ -19839,7 +24226,7 @@ fn prepare_field_initializer_list<N: FieldInitializerListPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SHORTHAND_FIELD_INITIALIZER, words = 9, fields = ShorthandFieldInitializerFields, prepare = ShorthandFieldInitializerPrepare)]
+#[node(kind = kind::SHORTHAND_FIELD_INITIALIZER, words = 9, fields = ShorthandFieldInitializerFields, prepare = ShorthandFieldInitializerPrepare, view = ShorthandFieldInitializerNodeRecord)]
 pub struct ShorthandFieldInitializerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19873,6 +24260,21 @@ impl ::sittir_core::render::Render for ShorthandFieldInitializerNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ShorthandFieldInitializerNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(284)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ShorthandFieldInitializerNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ShorthandFieldInitializerFields::layout(self), Some(::sittir_core::types::KindId(284)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_initializer(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_shorthand_field_initializer(self, &mut (), ctx)
@@ -19904,7 +24306,7 @@ fn prepare_shorthand_field_initializer<N: ShorthandFieldInitializerPrepare + ?Si
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_INITIALIZER, layout = [kind::COLON], words = 14, fields = FieldInitializerFields, prepare = FieldInitializerPrepare)]
+#[node(kind = kind::FIELD_INITIALIZER, layout = [kind::COLON], words = 14, fields = FieldInitializerFields, prepare = FieldInitializerPrepare, view = FieldInitializerNodeRecord)]
 pub struct FieldInitializerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19941,6 +24343,21 @@ impl ::sittir_core::render::Render for FieldInitializerNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldInitializerNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(285)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldInitializerNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldInitializerFields::layout(self), Some(::sittir_core::types::KindId(285)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FieldInitializerNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_field_initializer(self, &mut (), ctx)
@@ -19973,7 +24390,7 @@ fn prepare_field_initializer<N: FieldInitializerPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BASE_FIELD_INITIALIZER, layout = [kind::DOT_DOT], words = 7, fields = BaseFieldInitializerFields, prepare = BaseFieldInitializerPrepare)]
+#[node(kind = kind::BASE_FIELD_INITIALIZER, layout = [kind::DOT_DOT], words = 7, fields = BaseFieldInitializerFields, prepare = BaseFieldInitializerPrepare, view = BaseFieldInitializerNodeRecord)]
 pub struct BaseFieldInitializerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -19999,6 +24416,21 @@ impl ::sittir_core::render::Render for BaseFieldInitializerNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_base_field_initializer(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BaseFieldInitializerNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(286)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BaseFieldInitializerNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BaseFieldInitializerFields::layout(self), Some(::sittir_core::types::KindId(286)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_base_field_initializer(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for BaseFieldInitializerNode {
@@ -20028,7 +24460,7 @@ fn prepare_base_field_initializer<N: BaseFieldInitializerPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IF_EXPRESSION, layout = [kind::IF_KEYWORD], words = 17, fields = IfExpressionFields, prepare = IfExpressionPrepare)]
+#[node(kind = kind::IF_EXPRESSION, layout = [kind::IF_KEYWORD], words = 17, fields = IfExpressionFields, prepare = IfExpressionPrepare, view = IfExpressionNodeRecord)]
 pub struct IfExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20062,6 +24494,21 @@ impl ::sittir_core::render::Render for IfExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IfExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(287)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IfExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(IfExpressionFields::layout(self), Some(::sittir_core::types::KindId(287)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_if_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for IfExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_if_expression(self, &mut (), ctx)
@@ -20091,7 +24538,7 @@ fn prepare_if_expression<N: IfExpressionPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LET_CONDITION, layout = [kind::LET_KEYWORD, kind::EQ], words = 12, fields = LetConditionFields, prepare = LetConditionPrepare)]
+#[node(kind = kind::LET_CONDITION, layout = [kind::LET_KEYWORD, kind::EQ], words = 12, fields = LetConditionFields, prepare = LetConditionPrepare, view = LetConditionNodeRecord)]
 pub struct LetConditionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20122,6 +24569,21 @@ impl ::sittir_core::render::Render for LetConditionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LetConditionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(288)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LetConditionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LetConditionFields::layout(self), Some(::sittir_core::types::KindId(288)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_condition(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LetConditionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_let_condition(self, &mut (), ctx)
@@ -20150,7 +24612,7 @@ fn prepare_let_condition<N: LetConditionPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LET_CHAIN, layout = [kind::AMP_AMP], words = 9, fields = LetChainFields, prepare = LetChainPrepare)]
+#[node(kind = kind::_LET_CHAIN, layout = [kind::AMP_AMP], words = 9, fields = LetChainFields, prepare = LetChainPrepare, view = LetChainNodeRecord)]
 pub struct LetChainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20187,6 +24649,21 @@ impl ::sittir_core::render::Render for LetChainNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LetChainNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(289)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LetChainNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LetChainFields::layout(self), Some(::sittir_core::types::KindId(289)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_let_chain(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LetChainNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_let_chain(self, &mut (), ctx)
@@ -20218,7 +24695,7 @@ fn prepare_let_chain<N: LetChainPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD], words = 7, fields = ElseClauseFields, prepare = ElseClausePrepare)]
+#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD], words = 7, fields = ElseClauseFields, prepare = ElseClausePrepare, view = ElseClauseNodeRecord)]
 pub struct ElseClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20244,6 +24721,21 @@ impl ::sittir_core::render::Render for ElseClauseNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_else_clause(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ElseClauseNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(291)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ElseClauseNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ElseClauseFields::layout(self), Some(::sittir_core::types::KindId(291)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_else_clause(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ElseClauseNode {
@@ -20273,7 +24765,7 @@ fn prepare_else_clause<N: ElseClausePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_EXPRESSION, layout = [kind::MATCH_KEYWORD], words = 12, fields = MatchExpressionFields, prepare = MatchExpressionPrepare)]
+#[node(kind = kind::MATCH_EXPRESSION, layout = [kind::MATCH_KEYWORD], words = 12, fields = MatchExpressionFields, prepare = MatchExpressionPrepare, view = MatchExpressionNodeRecord)]
 pub struct MatchExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20304,6 +24796,21 @@ impl ::sittir_core::render::Render for MatchExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(292)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MatchExpressionFields::layout(self), Some(::sittir_core::types::KindId(292)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MatchExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_match_expression(self, &mut (), ctx)
@@ -20332,7 +24839,7 @@ fn prepare_match_expression<N: MatchExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_BLOCK, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = MatchBlockFields, prepare = MatchBlockPrepare)]
+#[node(kind = kind::MATCH_BLOCK, layout = [kind::LBRACE, kind::RBRACE], words = 7, fields = MatchBlockFields, prepare = MatchBlockPrepare, view = MatchBlockNodeRecord)]
 pub struct MatchBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20358,6 +24865,21 @@ impl ::sittir_core::render::Render for MatchBlockNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(293)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MatchBlockFields::layout(self), Some(::sittir_core::types::KindId(293)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for MatchBlockNode {
@@ -20387,7 +24909,7 @@ fn prepare_match_block<N: MatchBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 15, fields = LastMatchArmFields, prepare = LastMatchArmPrepare)]
+#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 15, fields = LastMatchArmFields, prepare = LastMatchArmPrepare, view = LastMatchArmNodeRecord)]
 pub struct LastMatchArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20427,6 +24949,21 @@ impl ::sittir_core::render::Render for LastMatchArmNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LastMatchArmNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(295)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LastMatchArmNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LastMatchArmFields::layout(self), Some(::sittir_core::types::KindId(295)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_last_match_arm(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LastMatchArmNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_last_match_arm(self, &mut (), ctx)
@@ -20459,7 +24996,7 @@ fn prepare_last_match_arm<N: LastMatchArmPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_PATTERN, layout = [kind::IF_KEYWORD], words = 12, fields = MatchPatternFields, prepare = MatchPatternPrepare)]
+#[node(kind = kind::MATCH_PATTERN, layout = [kind::IF_KEYWORD], words = 12, fields = MatchPatternFields, prepare = MatchPatternPrepare, view = MatchPatternNodeRecord)]
 pub struct MatchPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20490,6 +25027,21 @@ impl ::sittir_core::render::Render for MatchPatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(296)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MatchPatternFields::layout(self), Some(::sittir_core::types::KindId(296)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_pattern(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MatchPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_match_pattern(self, &mut (), ctx)
@@ -20518,7 +25070,7 @@ fn prepare_match_pattern<N: MatchPatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHILE_EXPRESSION, layout = [kind::COLON, kind::WHILE_KEYWORD], words = 17, fields = WhileExpressionFields, prepare = WhileExpressionPrepare)]
+#[node(kind = kind::WHILE_EXPRESSION, layout = [kind::COLON, kind::WHILE_KEYWORD], words = 17, fields = WhileExpressionFields, prepare = WhileExpressionPrepare, view = WhileExpressionNodeRecord)]
 pub struct WhileExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20552,6 +25104,21 @@ impl ::sittir_core::render::Render for WhileExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for WhileExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(297)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for WhileExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(WhileExpressionFields::layout(self), Some(::sittir_core::types::KindId(297)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_while_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for WhileExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_while_expression(self, &mut (), ctx)
@@ -20581,7 +25148,7 @@ fn prepare_while_expression<N: WhileExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LOOP_EXPRESSION, layout = [kind::COLON, kind::LOOP_KEYWORD], words = 12, fields = LoopExpressionFields, prepare = LoopExpressionPrepare)]
+#[node(kind = kind::LOOP_EXPRESSION, layout = [kind::COLON, kind::LOOP_KEYWORD], words = 12, fields = LoopExpressionFields, prepare = LoopExpressionPrepare, view = LoopExpressionNodeRecord)]
 pub struct LoopExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20612,6 +25179,21 @@ impl ::sittir_core::render::Render for LoopExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LoopExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(298)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LoopExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LoopExpressionFields::layout(self), Some(::sittir_core::types::KindId(298)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_loop_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LoopExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_loop_expression(self, &mut (), ctx)
@@ -20640,7 +25222,7 @@ fn prepare_loop_expression<N: LoopExpressionPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_EXPRESSION, layout = [kind::COLON, kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 22, fields = ForExpressionFields, prepare = ForExpressionPrepare)]
+#[node(kind = kind::FOR_EXPRESSION, layout = [kind::COLON, kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 22, fields = ForExpressionFields, prepare = ForExpressionPrepare, view = ForExpressionNodeRecord)]
 pub struct ForExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20677,6 +25259,21 @@ impl ::sittir_core::render::Render for ForExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ForExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(299)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ForExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ForExpressionFields::layout(self), Some(::sittir_core::types::KindId(299)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_for_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ForExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_for_expression(self, &mut (), ctx)
@@ -20707,7 +25304,7 @@ fn prepare_for_expression<N: ForExpressionPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONST_BLOCK, layout = [kind::CONST_KEYWORD], words = 7, fields = ConstBlockFields, prepare = ConstBlockPrepare)]
+#[node(kind = kind::CONST_BLOCK, layout = [kind::CONST_KEYWORD], words = 7, fields = ConstBlockFields, prepare = ConstBlockPrepare, view = ConstBlockNodeRecord)]
 pub struct ConstBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20733,6 +25330,21 @@ impl ::sittir_core::render::Render for ConstBlockNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_block(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ConstBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(300)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ConstBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ConstBlockFields::layout(self), Some(::sittir_core::types::KindId(300)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_const_block(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ConstBlockNode {
@@ -20762,7 +25374,7 @@ fn prepare_const_block<N: ConstBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLOSURE_PARAMETERS, layout = [kind::PIPE], words = 4, fields = ClosureParametersFields, prepare = ClosureParametersPrepare)]
+#[node(kind = kind::CLOSURE_PARAMETERS, layout = [kind::PIPE], words = 4, fields = ClosureParametersFields, prepare = ClosureParametersPrepare, view = ClosureParametersNodeRecord)]
 pub struct ClosureParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20796,6 +25408,21 @@ impl ::sittir_core::render::Render for ClosureParametersNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ClosureParametersNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(302)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ClosureParametersNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ClosureParametersFields::layout(self), Some(::sittir_core::types::KindId(302)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_parameters(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ClosureParametersNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_closure_parameters(self, &mut (), ctx)
@@ -20827,7 +25454,7 @@ fn prepare_closure_parameters<N: ClosureParametersPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LABEL, layout = [kind::SQUOTE], words = 7, fields = LabelFields, prepare = LabelPrepare)]
+#[node(kind = kind::LABEL, layout = [kind::SQUOTE], words = 7, fields = LabelFields, prepare = LabelPrepare, view = LabelNodeRecord)]
 pub struct LabelNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20853,6 +25480,21 @@ impl ::sittir_core::render::Render for LabelNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(303)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_label(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LabelNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(303)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LabelNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LabelFields::layout(self), Some(::sittir_core::types::KindId(303)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_label(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for LabelNode {
@@ -20882,7 +25524,7 @@ fn prepare_label<N: LabelPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BREAK_EXPRESSION, layout = [kind::BREAK_KEYWORD], words = 12, fields = BreakExpressionFields, prepare = BreakExpressionPrepare)]
+#[node(kind = kind::BREAK_EXPRESSION, layout = [kind::BREAK_KEYWORD], words = 12, fields = BreakExpressionFields, prepare = BreakExpressionPrepare, view = BreakExpressionNodeRecord)]
 pub struct BreakExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20913,6 +25555,21 @@ impl ::sittir_core::render::Render for BreakExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BreakExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(304)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BreakExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BreakExpressionFields::layout(self), Some(::sittir_core::types::KindId(304)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_break_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for BreakExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_break_expression(self, &mut (), ctx)
@@ -20941,7 +25598,7 @@ fn prepare_break_expression<N: BreakExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONTINUE_EXPRESSION, layout = [kind::CONTINUE_KEYWORD], words = 7, fields = ContinueExpressionFields, prepare = ContinueExpressionPrepare)]
+#[node(kind = kind::CONTINUE_EXPRESSION, layout = [kind::CONTINUE_KEYWORD], words = 7, fields = ContinueExpressionFields, prepare = ContinueExpressionPrepare, view = ContinueExpressionNodeRecord)]
 pub struct ContinueExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20967,6 +25624,21 @@ impl ::sittir_core::render::Render for ContinueExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_continue_expression(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ContinueExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(305)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ContinueExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ContinueExpressionFields::layout(self), Some(::sittir_core::types::KindId(305)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_continue_expression(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ContinueExpressionNode {
@@ -20996,7 +25668,7 @@ fn prepare_continue_expression<N: ContinueExpressionPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INDEX_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 12, fields = IndexExpressionFields, prepare = IndexExpressionPrepare)]
+#[node(kind = kind::INDEX_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 12, fields = IndexExpressionFields, prepare = IndexExpressionPrepare, view = IndexExpressionNodeRecord)]
 pub struct IndexExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21027,6 +25699,21 @@ impl ::sittir_core::render::Render for IndexExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IndexExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IndexExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(IndexExpressionFields::layout(self), Some(::sittir_core::types::KindId(306)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_index_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for IndexExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_index_expression(self, &mut (), ctx)
@@ -21055,7 +25742,7 @@ fn prepare_index_expression<N: IndexExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AWAIT_EXPRESSION, layout = [kind::DOT, kind::AWAIT_KEYWORD], words = 7, fields = AwaitExpressionFields, prepare = AwaitExpressionPrepare)]
+#[node(kind = kind::AWAIT_EXPRESSION, layout = [kind::DOT, kind::AWAIT_KEYWORD], words = 7, fields = AwaitExpressionFields, prepare = AwaitExpressionPrepare, view = AwaitExpressionNodeRecord)]
 pub struct AwaitExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21081,6 +25768,21 @@ impl ::sittir_core::render::Render for AwaitExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(307)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_await_expression(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AwaitExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(307)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AwaitExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AwaitExpressionFields::layout(self), Some(::sittir_core::types::KindId(307)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_await_expression(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for AwaitExpressionNode {
@@ -21110,7 +25812,7 @@ fn prepare_await_expression<N: AwaitExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_EXPRESSION, layout = [kind::DOT], words = 12, fields = FieldExpressionFields, prepare = FieldExpressionPrepare)]
+#[node(kind = kind::FIELD_EXPRESSION, layout = [kind::DOT], words = 12, fields = FieldExpressionFields, prepare = FieldExpressionPrepare, view = FieldExpressionNodeRecord)]
 pub struct FieldExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21141,6 +25843,21 @@ impl ::sittir_core::render::Render for FieldExpressionNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldExpressionNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(308)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldExpressionNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldExpressionFields::layout(self), Some(::sittir_core::types::KindId(308)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_expression(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FieldExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_field_expression(self, &mut (), ctx)
@@ -21169,7 +25886,7 @@ fn prepare_field_expression<N: FieldExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNSAFE_BLOCK, layout = [kind::UNSAFE_KEYWORD], words = 7, fields = UnsafeBlockFields, prepare = UnsafeBlockPrepare)]
+#[node(kind = kind::UNSAFE_BLOCK, layout = [kind::UNSAFE_KEYWORD], words = 7, fields = UnsafeBlockFields, prepare = UnsafeBlockPrepare, view = UnsafeBlockNodeRecord)]
 pub struct UnsafeBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21195,6 +25912,21 @@ impl ::sittir_core::render::Render for UnsafeBlockNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(309)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unsafe_block(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UnsafeBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(309)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UnsafeBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UnsafeBlockFields::layout(self), Some(::sittir_core::types::KindId(309)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unsafe_block(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for UnsafeBlockNode {
@@ -21224,7 +25956,7 @@ fn prepare_unsafe_block<N: UnsafeBlockPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASYNC_BLOCK, layout = [kind::ASYNC_KEYWORD], words = 8, fields = AsyncBlockFields, prepare = AsyncBlockPrepare)]
+#[node(kind = kind::ASYNC_BLOCK, layout = [kind::ASYNC_KEYWORD], words = 8, fields = AsyncBlockFields, prepare = AsyncBlockPrepare, view = AsyncBlockNodeRecord)]
 pub struct AsyncBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21255,6 +25987,21 @@ impl ::sittir_core::render::Render for AsyncBlockNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AsyncBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(310)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AsyncBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AsyncBlockFields::layout(self), Some(::sittir_core::types::KindId(310)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_async_block(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AsyncBlockNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_async_block(self, &mut (), ctx)
@@ -21282,7 +26029,7 @@ fn prepare_async_block<N: AsyncBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GEN_BLOCK, layout = [kind::GEN_KEYWORD], words = 8, fields = GenBlockFields, prepare = GenBlockPrepare)]
+#[node(kind = kind::GEN_BLOCK, layout = [kind::GEN_KEYWORD], words = 8, fields = GenBlockFields, prepare = GenBlockPrepare, view = GenBlockNodeRecord)]
 pub struct GenBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21313,6 +26060,21 @@ impl ::sittir_core::render::Render for GenBlockNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(311)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for GenBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(GenBlockFields::layout(self), Some(::sittir_core::types::KindId(311)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_gen_block(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for GenBlockNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_gen_block(self, &mut (), ctx)
@@ -21340,7 +26102,7 @@ fn prepare_gen_block<N: GenBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRY_BLOCK, layout = [kind::TRY_KEYWORD], words = 7, fields = TryBlockFields, prepare = TryBlockPrepare)]
+#[node(kind = kind::TRY_BLOCK, layout = [kind::TRY_KEYWORD], words = 7, fields = TryBlockFields, prepare = TryBlockPrepare, view = TryBlockNodeRecord)]
 pub struct TryBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21366,6 +26128,21 @@ impl ::sittir_core::render::Render for TryBlockNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(312)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_block(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TryBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(312)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TryBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TryBlockFields::layout(self), Some(::sittir_core::types::KindId(312)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_try_block(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TryBlockNode {
@@ -21395,7 +26172,7 @@ fn prepare_try_block<N: TryBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK, layout = [kind::COLON, kind::LBRACE, kind::RBRACE], words = 14, fields = BlockFields, prepare = BlockPrepare)]
+#[node(kind = kind::BLOCK, layout = [kind::COLON, kind::LBRACE, kind::RBRACE], words = 14, fields = BlockFields, prepare = BlockPrepare, view = BlockNodeRecord)]
 pub struct BlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21432,6 +26209,21 @@ impl ::sittir_core::render::Render for BlockNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(313)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BlockFields::layout(self), Some(::sittir_core::types::KindId(313)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for BlockNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_block(self, &mut (), ctx)
@@ -21464,7 +26256,7 @@ fn prepare_block<N: BlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_PATTERN, layout = [kind::COLON_COLON], words = 12, fields = GenericPatternFields, prepare = GenericPatternPrepare)]
+#[node(kind = kind::GENERIC_PATTERN, layout = [kind::COLON_COLON], words = 12, fields = GenericPatternFields, prepare = GenericPatternPrepare, view = GenericPatternNodeRecord)]
 pub struct GenericPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21495,6 +26287,21 @@ impl ::sittir_core::render::Render for GenericPatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for GenericPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(315)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for GenericPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(GenericPatternFields::layout(self), Some(::sittir_core::types::KindId(315)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_generic_pattern(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for GenericPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_generic_pattern(self, &mut (), ctx)
@@ -21523,7 +26330,7 @@ fn prepare_generic_pattern<N: GenericPatternPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TuplePatternFields, prepare = TuplePatternPrepare)]
+#[node(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = TuplePatternFields, prepare = TuplePatternPrepare, view = TuplePatternNodeRecord)]
 pub struct TuplePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21549,6 +26356,21 @@ impl ::sittir_core::render::Render for TuplePatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(316)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TuplePatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(316)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TuplePatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TuplePatternFields::layout(self), Some(::sittir_core::types::KindId(316)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TuplePatternNode {
@@ -21578,7 +26400,7 @@ fn prepare_tuple_pattern<N: TuplePatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SLICE_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = SlicePatternFields, prepare = SlicePatternPrepare)]
+#[node(kind = kind::SLICE_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7, fields = SlicePatternFields, prepare = SlicePatternPrepare, view = SlicePatternNodeRecord)]
 pub struct SlicePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21604,6 +26426,21 @@ impl ::sittir_core::render::Render for SlicePatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(317)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice_pattern(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for SlicePatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for SlicePatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(SlicePatternFields::layout(self), Some(::sittir_core::types::KindId(317)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice_pattern(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for SlicePatternNode {
@@ -21633,7 +26470,7 @@ fn prepare_slice_pattern<N: SlicePatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_STRUCT_PATTERN, layout = [kind::LPAREN, kind::RPAREN], words = 12, fields = TupleStructPatternFields, prepare = TupleStructPatternPrepare)]
+#[node(kind = kind::TUPLE_STRUCT_PATTERN, layout = [kind::LPAREN, kind::RPAREN], words = 12, fields = TupleStructPatternFields, prepare = TupleStructPatternPrepare, view = TupleStructPatternNodeRecord)]
 pub struct TupleStructPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21664,6 +26501,21 @@ impl ::sittir_core::render::Render for TupleStructPatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TupleStructPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(318)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TupleStructPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TupleStructPatternFields::layout(self), Some(::sittir_core::types::KindId(318)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_struct_pattern(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TupleStructPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_tuple_struct_pattern(self, &mut (), ctx)
@@ -21692,7 +26544,7 @@ fn prepare_tuple_struct_pattern<N: TupleStructPatternPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], words = 12, fields = StructPatternFields, prepare = StructPatternPrepare)]
+#[node(kind = kind::STRUCT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], words = 12, fields = StructPatternFields, prepare = StructPatternPrepare, view = StructPatternNodeRecord)]
 pub struct StructPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21721,6 +26573,21 @@ impl ::sittir_core::render::Render for StructPatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(319)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_pattern(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(319)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StructPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StructPatternFields::layout(self), Some(::sittir_core::types::KindId(319)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_pattern(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for StructPatternNode {
@@ -21799,7 +26666,7 @@ impl ::sittir_core::render::Render for RemainingFieldPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MUT_PATTERN, layout = [kind::MUTABLE_SPECIFIER], words = 7, fields = MutPatternFields, prepare = MutPatternPrepare)]
+#[node(kind = kind::MUT_PATTERN, layout = [kind::MUTABLE_SPECIFIER], words = 7, fields = MutPatternFields, prepare = MutPatternPrepare, view = MutPatternNodeRecord)]
 pub struct MutPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21825,6 +26692,21 @@ impl ::sittir_core::render::Render for MutPatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(322)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mut_pattern(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MutPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(322)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MutPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MutPatternFields::layout(self), Some(::sittir_core::types::KindId(322)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mut_pattern(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for MutPatternNode {
@@ -21854,7 +26736,7 @@ fn prepare_mut_pattern<N: MutPatternPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REF_PATTERN, layout = [kind::REF_KEYWORD], words = 7, fields = RefPatternFields, prepare = RefPatternPrepare)]
+#[node(kind = kind::REF_PATTERN, layout = [kind::REF_KEYWORD], words = 7, fields = RefPatternFields, prepare = RefPatternPrepare, view = RefPatternNodeRecord)]
 pub struct RefPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21880,6 +26762,21 @@ impl ::sittir_core::render::Render for RefPatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(324)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ref_pattern(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RefPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(324)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RefPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RefPatternFields::layout(self), Some(::sittir_core::types::KindId(324)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ref_pattern(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RefPatternNode {
@@ -21909,7 +26806,7 @@ fn prepare_ref_pattern<N: RefPatternPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CAPTURED_PATTERN, layout = [kind::AT], words = 12, fields = CapturedPatternFields, prepare = CapturedPatternPrepare)]
+#[node(kind = kind::CAPTURED_PATTERN, layout = [kind::AT], words = 12, fields = CapturedPatternFields, prepare = CapturedPatternPrepare, view = CapturedPatternNodeRecord)]
 pub struct CapturedPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21940,6 +26837,21 @@ impl ::sittir_core::render::Render for CapturedPatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CapturedPatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(325)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CapturedPatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CapturedPatternFields::layout(self), Some(::sittir_core::types::KindId(325)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_captured_pattern(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CapturedPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_captured_pattern(self, &mut (), ctx)
@@ -21968,7 +26880,7 @@ fn prepare_captured_pattern<N: CapturedPatternPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_PATTERN, layout = [kind::AMP], words = 8, fields = ReferencePatternFields, prepare = ReferencePatternPrepare)]
+#[node(kind = kind::REFERENCE_PATTERN, layout = [kind::AMP], words = 8, fields = ReferencePatternFields, prepare = ReferencePatternPrepare, view = ReferencePatternNodeRecord)]
 pub struct ReferencePatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21999,6 +26911,21 @@ impl ::sittir_core::render::Render for ReferencePatternNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReferencePatternNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(326)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ReferencePatternNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ReferencePatternFields::layout(self), Some(::sittir_core::types::KindId(326)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_pattern(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ReferencePatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_reference_pattern(self, &mut (), ctx)
@@ -22026,7 +26953,7 @@ fn prepare_reference_pattern<N: ReferencePatternPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NEGATIVE_LITERAL, layout = [kind::DASH], words = 7, fields = NegativeLiteralFields, prepare = NegativeLiteralPrepare)]
+#[node(kind = kind::NEGATIVE_LITERAL, layout = [kind::DASH], words = 7, fields = NegativeLiteralFields, prepare = NegativeLiteralPrepare, view = NegativeLiteralNodeRecord)]
 pub struct NegativeLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22052,6 +26979,21 @@ impl ::sittir_core::render::Render for NegativeLiteralNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(330)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_negative_literal(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for NegativeLiteralNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(330)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for NegativeLiteralNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(NegativeLiteralFields::layout(self), Some(::sittir_core::types::KindId(330)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_negative_literal(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for NegativeLiteralNode {
@@ -22081,7 +27023,7 @@ fn prepare_negative_literal<N: NegativeLiteralPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_LITERAL, layout = [kind::STRING_CLOSE], words = 9, fields = StringLiteralFields, prepare = StringLiteralPrepare)]
+#[node(kind = kind::STRING_LITERAL, layout = [kind::STRING_CLOSE], words = 9, fields = StringLiteralFields, prepare = StringLiteralPrepare, view = StringLiteralNodeRecord)]
 pub struct StringLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22110,6 +27052,21 @@ impl ::sittir_core::render::Render for StringLiteralNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(332)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_literal(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StringLiteralNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(332)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StringLiteralNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StringLiteralFields::layout(self), Some(::sittir_core::types::KindId(332)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_literal(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for StringLiteralNode {
@@ -22141,7 +27098,7 @@ fn prepare_string_literal<N: StringLiteralPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RAW_STRING_LITERAL, words = 17, fields = RawStringLiteralFields, prepare = RawStringLiteralPrepare)]
+#[node(kind = kind::RAW_STRING_LITERAL, words = 17, fields = RawStringLiteralFields, prepare = RawStringLiteralPrepare, view = RawStringLiteralNodeRecord)]
 pub struct RawStringLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22173,6 +27130,21 @@ impl ::sittir_core::render::Render for RawStringLiteralNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(333)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RawStringLiteralNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(333)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RawStringLiteralNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RawStringLiteralFields::layout(self), Some(::sittir_core::types::KindId(333)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RawStringLiteralNode {
@@ -22240,7 +27212,7 @@ impl ::sittir_core::render::Render for BooleanLiteralEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 7, fields = LineCommentFields, prepare = LineCommentPrepare)]
+#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 7, fields = LineCommentFields, prepare = LineCommentPrepare, view = LineCommentNodeRecord)]
 pub struct LineCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22266,6 +27238,21 @@ impl ::sittir_core::render::Render for LineCommentNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(337)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LineCommentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(337)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LineCommentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LineCommentFields::layout(self), Some(::sittir_core::types::KindId(337)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for LineCommentNode {
@@ -22351,7 +27338,7 @@ impl ::sittir_core::render::Render for OuterLineDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT, layout = [kind::SLASH_STAR, kind::STAR_SLASH], words = 7, fields = BlockCommentFields, prepare = BlockCommentPrepare)]
+#[node(kind = kind::BLOCK_COMMENT, layout = [kind::SLASH_STAR, kind::STAR_SLASH], words = 7, fields = BlockCommentFields, prepare = BlockCommentPrepare, view = BlockCommentNodeRecord)]
 pub struct BlockCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22377,6 +27364,21 @@ impl ::sittir_core::render::Render for BlockCommentNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(340)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BlockCommentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(340)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BlockCommentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BlockCommentFields::layout(self), Some(::sittir_core::types::KindId(340)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for BlockCommentNode {
@@ -22406,7 +27408,7 @@ fn prepare_block_comment<N: BlockCommentPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IDENTIFIER, folded = [kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD, kind::RAW_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD], text, words = 2, fields = IdentifierFields, prepare = IdentifierPrepare)]
+#[node(kind = kind::IDENTIFIER, folded = [kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD, kind::RAW_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD], text, words = 2, fields = IdentifierFields, prepare = IdentifierPrepare, view = IdentifierNodeRecord)]
 pub struct IdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22434,6 +27436,21 @@ impl ::sittir_core::render::Render for IdentifierNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IdentifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IdentifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(IdentifierFields::layout(self), Some(::sittir_core::types::KindId(1)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_identifier(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for IdentifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_identifier(self, &mut (), ctx)
@@ -22459,7 +27476,7 @@ fn prepare_identifier<N: IdentifierPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SHEBANG, interior = "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$", words = 6, fields = ShebangFields, prepare = ShebangPrepare)]
+#[node(kind = kind::SHEBANG, interior = "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$", words = 6, fields = ShebangFields, prepare = ShebangPrepare, view = ShebangNodeRecord)]
 pub struct ShebangNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22485,6 +27502,21 @@ impl ::sittir_core::render::Render for ShebangNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(124)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shebang(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ShebangNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ShebangNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ShebangFields::layout(self), Some(::sittir_core::types::KindId(124)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shebang(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ShebangNode {
@@ -22656,7 +27688,7 @@ impl ::sittir_core::render::Render for CrateNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METAVARIABLE, interior = "^\\$(?<name>[a-zA-Z_]\\w*)$", words = 6, fields = MetavariableFields, prepare = MetavariablePrepare)]
+#[node(kind = kind::METAVARIABLE, interior = "^\\$(?<name>[a-zA-Z_]\\w*)$", words = 6, fields = MetavariableFields, prepare = MetavariablePrepare, view = MetavariableNodeRecord)]
 pub struct MetavariableNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22682,6 +27714,21 @@ impl ::sittir_core::render::Render for MetavariableNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(128)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_metavariable(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MetavariableNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MetavariableNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MetavariableFields::layout(self), Some(::sittir_core::types::KindId(128)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_metavariable(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for MetavariableNode {
@@ -22805,7 +27852,7 @@ impl ::sittir_core::render::Render for PrimitiveTypeEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_RULES, item = item, words = 4, fields = MacroRulesFields, prepare = MacroRulesPrepare)]
+#[node(kind = kind::MACRO_RULES, item = item, words = 4, fields = MacroRulesFields, prepare = MacroRulesPrepare, view = MacroRulesNodeRecord)]
 pub struct MacroRulesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22842,6 +27889,21 @@ impl ::sittir_core::render::Render for MacroRulesNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroRulesNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(342)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MacroRulesNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MacroRulesFields::layout(self), Some(::sittir_core::types::KindId(342)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_rules(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MacroRulesNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_macro_rules(self, &mut (), ctx)
@@ -22874,7 +27936,7 @@ fn prepare_macro_rules<N: MacroRulesPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, item = item, words = 4, fields = EnumVariantListElementsFields, prepare = EnumVariantListElementsPrepare)]
+#[node(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, item = item, words = 4, fields = EnumVariantListElementsFields, prepare = EnumVariantListElementsPrepare, view = EnumVariantListElementsNodeRecord)]
 pub struct EnumVariantListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22911,6 +27973,21 @@ impl ::sittir_core::render::Render for EnumVariantListElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EnumVariantListElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(343)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EnumVariantListElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EnumVariantListElementsFields::layout(self), Some(::sittir_core::types::KindId(343)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_enum_variant_list_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for EnumVariantListElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_enum_variant_list_elements(self, &mut (), ctx)
@@ -22943,7 +28020,7 @@ fn prepare_enum_variant_list_elements<N: EnumVariantListElementsPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = FieldDeclarationListElementsFields, prepare = FieldDeclarationListElementsPrepare)]
+#[node(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = FieldDeclarationListElementsFields, prepare = FieldDeclarationListElementsPrepare, view = FieldDeclarationListElementsNodeRecord)]
 pub struct FieldDeclarationListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22980,6 +28057,21 @@ impl ::sittir_core::render::Render for FieldDeclarationListElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldDeclarationListElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(344)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldDeclarationListElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldDeclarationListElementsFields::layout(self), Some(::sittir_core::types::KindId(344)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_declaration_list_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_field_declaration_list_elements(self, &mut (), ctx)
@@ -23012,7 +28104,7 @@ fn prepare_field_declaration_list_elements<N: FieldDeclarationListElementsPrepar
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = OrderedFieldDeclarationListElementsFields, prepare = OrderedFieldDeclarationListElementsPrepare)]
+#[node(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4, fields = OrderedFieldDeclarationListElementsFields, prepare = OrderedFieldDeclarationListElementsPrepare, view = OrderedFieldDeclarationListElementsNodeRecord)]
 pub struct OrderedFieldDeclarationListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23049,6 +28141,21 @@ impl ::sittir_core::render::Render for OrderedFieldDeclarationListElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for OrderedFieldDeclarationListElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(345)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for OrderedFieldDeclarationListElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(OrderedFieldDeclarationListElementsFields::layout(self), Some(::sittir_core::types::KindId(345)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_ordered_field_declaration_list_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_ordered_field_declaration_list_elements(self, &mut (), ctx)
@@ -23081,7 +28188,7 @@ fn prepare_ordered_field_declaration_list_elements<N: OrderedFieldDeclarationLis
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHERE_PREDICATES, item = item, words = 4, fields = WherePredicatesFields, prepare = WherePredicatesPrepare)]
+#[node(kind = kind::WHERE_PREDICATES, item = item, words = 4, fields = WherePredicatesFields, prepare = WherePredicatesPrepare, view = WherePredicatesNodeRecord)]
 pub struct WherePredicatesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23118,6 +28225,21 @@ impl ::sittir_core::render::Render for WherePredicatesNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for WherePredicatesNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(346)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for WherePredicatesNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(WherePredicatesFields::layout(self), Some(::sittir_core::types::KindId(346)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_where_predicates(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for WherePredicatesNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_where_predicates(self, &mut (), ctx)
@@ -23150,7 +28272,7 @@ fn prepare_where_predicates<N: WherePredicatesPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, words = 4, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare)]
+#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, words = 4, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord)]
 pub struct TypeParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23187,6 +28309,21 @@ impl ::sittir_core::render::Render for TypeParametersElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeParametersElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(347)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeParametersElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeParametersElementsFields::layout(self), Some(::sittir_core::types::KindId(347)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_parameters_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypeParametersElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_type_parameters_elements(self, &mut (), ctx)
@@ -23219,7 +28356,7 @@ fn prepare_type_parameters_elements<N: TypeParametersElementsPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_CLAUSES, item = item, words = 4, fields = UseClausesFields, prepare = UseClausesPrepare)]
+#[node(kind = kind::USE_CLAUSES, item = item, words = 4, fields = UseClausesFields, prepare = UseClausesPrepare, view = UseClausesNodeRecord)]
 pub struct UseClausesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23256,6 +28393,21 @@ impl ::sittir_core::render::Render for UseClausesNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseClausesNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(348)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseClausesNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseClausesFields::layout(self), Some(::sittir_core::types::KindId(348)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_clauses(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for UseClausesNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_use_clauses(self, &mut (), ctx)
@@ -23288,7 +28440,7 @@ fn prepare_use_clauses<N: UseClausesPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 4, fields = ParametersElementsFields, prepare = ParametersElementsPrepare)]
+#[node(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 4, fields = ParametersElementsFields, prepare = ParametersElementsPrepare, view = ParametersElementsNodeRecord)]
 pub struct ParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23325,6 +28477,21 @@ impl ::sittir_core::render::Render for ParametersElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ParametersElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(349)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ParametersElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ParametersElementsFields::layout(self), Some(::sittir_core::types::KindId(349)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ParametersElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_parameters_elements(self, &mut (), ctx)
@@ -23357,7 +28524,7 @@ fn prepare_parameters_elements<N: ParametersElementsPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIFETIMES, item = item, words = 4, fields = LifetimesFields, prepare = LifetimesPrepare)]
+#[node(kind = kind::LIFETIMES, item = item, words = 4, fields = LifetimesFields, prepare = LifetimesPrepare, view = LifetimesNodeRecord)]
 pub struct LifetimesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23394,6 +28561,21 @@ impl ::sittir_core::render::Render for LifetimesNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LifetimesNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(350)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LifetimesNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LifetimesFields::layout(self), Some(::sittir_core::types::KindId(350)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lifetimes(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LifetimesNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_lifetimes(self, &mut (), ctx)
@@ -23426,7 +28608,7 @@ fn prepare_lifetimes<N: LifetimesPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPES, item = item, words = 4, fields = TypesFields, prepare = TypesPrepare)]
+#[node(kind = kind::TYPES, item = item, words = 4, fields = TypesFields, prepare = TypesPrepare, view = TypesNodeRecord)]
 pub struct TypesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23463,6 +28645,21 @@ impl ::sittir_core::render::Render for TypesNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypesNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(351)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypesNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypesFields::layout(self), Some(::sittir_core::types::KindId(351)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_types(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypesNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_types(self, &mut (), ctx)
@@ -23495,7 +28692,7 @@ fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_BOUNDS_ELEMENTS, item = item, words = 4, fields = UseBoundsElementsFields, prepare = UseBoundsElementsPrepare)]
+#[node(kind = kind::USE_BOUNDS_ELEMENTS, item = item, words = 4, fields = UseBoundsElementsFields, prepare = UseBoundsElementsPrepare, view = UseBoundsElementsNodeRecord)]
 pub struct UseBoundsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23532,6 +28729,21 @@ impl ::sittir_core::render::Render for UseBoundsElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseBoundsElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(352)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseBoundsElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseBoundsElementsFields::layout(self), Some(::sittir_core::types::KindId(352)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_bounds_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for UseBoundsElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_use_bounds_elements(self, &mut (), ctx)
@@ -23564,7 +28776,7 @@ fn prepare_use_bounds_elements<N: UseBoundsElementsPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ARGUMENTS_ELEMENTS, item = item, words = 4, fields = TypeArgumentsElementsFields, prepare = TypeArgumentsElementsPrepare)]
+#[node(kind = kind::TYPE_ARGUMENTS_ELEMENTS, item = item, words = 4, fields = TypeArgumentsElementsFields, prepare = TypeArgumentsElementsPrepare, view = TypeArgumentsElementsNodeRecord)]
 pub struct TypeArgumentsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23601,6 +28813,21 @@ impl ::sittir_core::render::Render for TypeArgumentsElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeArgumentsElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(353)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeArgumentsElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeArgumentsElementsFields::layout(self), Some(::sittir_core::types::KindId(353)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_arguments_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_type_arguments_elements(self, &mut (), ctx)
@@ -23633,7 +28860,7 @@ fn prepare_type_arguments_elements<N: TypeArgumentsElementsPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENTS_ELEMENTS, item = item, words = 4, fields = ArgumentsElementsFields, prepare = ArgumentsElementsPrepare)]
+#[node(kind = kind::ARGUMENTS_ELEMENTS, item = item, words = 4, fields = ArgumentsElementsFields, prepare = ArgumentsElementsPrepare, view = ArgumentsElementsNodeRecord)]
 pub struct ArgumentsElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23670,6 +28897,21 @@ impl ::sittir_core::render::Render for ArgumentsElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ArgumentsElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(354)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ArgumentsElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ArgumentsElementsFields::layout(self), Some(::sittir_core::types::KindId(354)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_arguments_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ArgumentsElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_arguments_elements(self, &mut (), ctx)
@@ -23702,7 +28944,7 @@ fn prepare_arguments_elements<N: ArgumentsElementsPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSIONS, item = item, words = 4, fields = ExpressionsFields, prepare = ExpressionsPrepare)]
+#[node(kind = kind::EXPRESSIONS, item = item, words = 4, fields = ExpressionsFields, prepare = ExpressionsPrepare, view = ExpressionsNodeRecord)]
 pub struct ExpressionsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23739,6 +28981,21 @@ impl ::sittir_core::render::Render for ExpressionsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ExpressionsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(355)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ExpressionsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ExpressionsFields::layout(self), Some(::sittir_core::types::KindId(355)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expressions(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ExpressionsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_expressions(self, &mut (), ctx)
@@ -23771,7 +29028,7 @@ fn prepare_expressions<N: ExpressionsPrepare + ?Sized>(node: &mut N, overlay: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, item = item, words = 4, fields = FieldInitializerListElementsFields, prepare = FieldInitializerListElementsPrepare)]
+#[node(kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, item = item, words = 4, fields = FieldInitializerListElementsFields, prepare = FieldInitializerListElementsPrepare, view = FieldInitializerListElementsNodeRecord)]
 pub struct FieldInitializerListElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23808,6 +29065,21 @@ impl ::sittir_core::render::Render for FieldInitializerListElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldInitializerListElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldInitializerListElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldInitializerListElementsFields::layout(self), Some(::sittir_core::types::KindId(356)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_initializer_list_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_field_initializer_list_elements(self, &mut (), ctx)
@@ -23840,7 +29112,7 @@ fn prepare_field_initializer_list_elements<N: FieldInitializerListElementsPrepar
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_PATTERN_ELEMENTS, item = item, words = 4, fields = TuplePatternElementsFields, prepare = TuplePatternElementsPrepare)]
+#[node(kind = kind::TUPLE_PATTERN_ELEMENTS, item = item, words = 4, fields = TuplePatternElementsFields, prepare = TuplePatternElementsPrepare, view = TuplePatternElementsNodeRecord)]
 pub struct TuplePatternElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23877,6 +29149,21 @@ impl ::sittir_core::render::Render for TuplePatternElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TuplePatternElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(357)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TuplePatternElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TuplePatternElementsFields::layout(self), Some(::sittir_core::types::KindId(357)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TuplePatternElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_tuple_pattern_elements(self, &mut (), ctx)
@@ -23909,7 +29196,7 @@ fn prepare_tuple_pattern_elements<N: TuplePatternElementsPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PATTERNS, item = item, words = 4, fields = PatternsFields, prepare = PatternsPrepare)]
+#[node(kind = kind::PATTERNS, item = item, words = 4, fields = PatternsFields, prepare = PatternsPrepare, view = PatternsNodeRecord)]
 pub struct PatternsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23946,6 +29233,21 @@ impl ::sittir_core::render::Render for PatternsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for PatternsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(358)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for PatternsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(PatternsFields::layout(self), Some(::sittir_core::types::KindId(358)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_patterns(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for PatternsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_patterns(self, &mut (), ctx)
@@ -23978,7 +29280,7 @@ fn prepare_patterns<N: PatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_PATTERN_ELEMENTS, item = item, words = 4, fields = StructPatternElementsFields, prepare = StructPatternElementsPrepare)]
+#[node(kind = kind::STRUCT_PATTERN_ELEMENTS, item = item, words = 4, fields = StructPatternElementsFields, prepare = StructPatternElementsPrepare, view = StructPatternElementsNodeRecord)]
 pub struct StructPatternElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24015,6 +29317,21 @@ impl ::sittir_core::render::Render for StructPatternElementsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructPatternElementsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(359)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StructPatternElementsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StructPatternElementsFields::layout(self), Some(::sittir_core::types::KindId(359)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_pattern_elements(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for StructPatternElementsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_struct_pattern_elements(self, &mut (), ctx)
@@ -24047,7 +29364,7 @@ fn prepare_struct_pattern_elements<N: StructPatternElementsPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_WILDCARD_GROUP, layout = [kind::COLON_COLON], words = 7, fields = UseWildcardGroupFields, prepare = UseWildcardGroupPrepare)]
+#[node(kind = kind::USE_WILDCARD_GROUP, layout = [kind::COLON_COLON], words = 7, fields = UseWildcardGroupFields, prepare = UseWildcardGroupPrepare, view = UseWildcardGroupNodeRecord)]
 pub struct UseWildcardGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24073,6 +29390,21 @@ impl ::sittir_core::render::Render for UseWildcardGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(360)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard_group(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for UseWildcardGroupNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(360)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseWildcardGroupNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(UseWildcardGroupFields::layout(self), Some(::sittir_core::types::KindId(360)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_use_wildcard_group(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for UseWildcardGroupNode {
@@ -24102,7 +29434,7 @@ fn prepare_use_wildcard_group<N: UseWildcardGroupPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_REPETITION_PATTERN_TEXT, text, words = 2, fields = TokenRepetitionPatternTextFields, prepare = TokenRepetitionPatternTextPrepare)]
+#[node(kind = kind::TOKEN_REPETITION_PATTERN_TEXT, text, words = 2, fields = TokenRepetitionPatternTextFields, prepare = TokenRepetitionPatternTextPrepare, view = TokenRepetitionPatternTextNodeRecord)]
 pub struct TokenRepetitionPatternTextNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24130,6 +29462,21 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternTextNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenRepetitionPatternTextNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(132)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenRepetitionPatternTextNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenRepetitionPatternTextFields::layout(self), Some(::sittir_core::types::KindId(132)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_repetition_pattern_text(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTextNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_token_repetition_pattern_text(self, &mut (), ctx)
@@ -24155,7 +29502,7 @@ fn prepare_token_repetition_pattern_text<N: TokenRepetitionPatternTextPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_OPEN, text, words = 2, fields = StringOpenFields, prepare = StringOpenPrepare)]
+#[node(kind = kind::STRING_OPEN, text, words = 2, fields = StringOpenFields, prepare = StringOpenPrepare, view = StringOpenNodeRecord)]
 pub struct StringOpenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24181,6 +29528,21 @@ impl ::sittir_core::render::Render for StringOpenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(133)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_open(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StringOpenNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(133)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StringOpenNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StringOpenFields::layout(self), Some(::sittir_core::types::KindId(133)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_open(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for StringOpenNode {
@@ -24612,7 +29974,7 @@ impl ::sittir_core::render::Render for ImplItemUnsafeMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralDecimalFields, prepare = IntegerLiteralDecimalPrepare)]
+#[node(kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralDecimalFields, prepare = IntegerLiteralDecimalPrepare, view = IntegerLiteralDecimalNodeRecord)]
 pub struct IntegerLiteralDecimalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24643,6 +30005,21 @@ impl ::sittir_core::render::Render for IntegerLiteralDecimalNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IntegerLiteralDecimalNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(141)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IntegerLiteralDecimalNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(IntegerLiteralDecimalFields::layout(self), Some(::sittir_core::types::KindId(141)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_decimal(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for IntegerLiteralDecimalNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_integer_literal_decimal(self, &mut (), ctx)
@@ -24668,7 +30045,7 @@ fn prepare_integer_literal_decimal<N: IntegerLiteralDecimalPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_HEX, interior = "^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralHexFields, prepare = IntegerLiteralHexPrepare)]
+#[node(kind = kind::INTEGER_LITERAL_HEX, interior = "^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralHexFields, prepare = IntegerLiteralHexPrepare, view = IntegerLiteralHexNodeRecord)]
 pub struct IntegerLiteralHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24699,6 +30076,21 @@ impl ::sittir_core::render::Render for IntegerLiteralHexNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IntegerLiteralHexNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(142)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IntegerLiteralHexNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(IntegerLiteralHexFields::layout(self), Some(::sittir_core::types::KindId(142)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_hex(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for IntegerLiteralHexNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_integer_literal_hex(self, &mut (), ctx)
@@ -24724,7 +30116,7 @@ fn prepare_integer_literal_hex<N: IntegerLiteralHexPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_BINARY, interior = "^(?<content>(?:0b[01_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralBinaryFields, prepare = IntegerLiteralBinaryPrepare)]
+#[node(kind = kind::INTEGER_LITERAL_BINARY, interior = "^(?<content>(?:0b[01_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralBinaryFields, prepare = IntegerLiteralBinaryPrepare, view = IntegerLiteralBinaryNodeRecord)]
 pub struct IntegerLiteralBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24755,6 +30147,21 @@ impl ::sittir_core::render::Render for IntegerLiteralBinaryNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IntegerLiteralBinaryNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IntegerLiteralBinaryNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(IntegerLiteralBinaryFields::layout(self), Some(::sittir_core::types::KindId(143)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_binary(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for IntegerLiteralBinaryNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_integer_literal_binary(self, &mut (), ctx)
@@ -24780,7 +30187,7 @@ fn prepare_integer_literal_binary<N: IntegerLiteralBinaryPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTEGER_LITERAL_OCTAL, interior = "^(?<content>(?:0o[0-7_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralOctalFields, prepare = IntegerLiteralOctalPrepare)]
+#[node(kind = kind::INTEGER_LITERAL_OCTAL, interior = "^(?<content>(?:0o[0-7_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$", words = 10, fields = IntegerLiteralOctalFields, prepare = IntegerLiteralOctalPrepare, view = IntegerLiteralOctalNodeRecord)]
 pub struct IntegerLiteralOctalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24811,6 +30218,21 @@ impl ::sittir_core::render::Render for IntegerLiteralOctalNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for IntegerLiteralOctalNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IntegerLiteralOctalNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(IntegerLiteralOctalFields::layout(self), Some(::sittir_core::types::KindId(144)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_integer_literal_octal(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for IntegerLiteralOctalNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_integer_literal_octal(self, &mut (), ctx)
@@ -24836,7 +30258,7 @@ fn prepare_integer_literal_octal<N: IntegerLiteralOctalPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_PLAIN, interior = "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$", words = 7, fields = CharLiteralPlainFields, prepare = CharLiteralPlainPrepare)]
+#[node(kind = kind::CHAR_LITERAL_PLAIN, interior = "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$", words = 7, fields = CharLiteralPlainFields, prepare = CharLiteralPlainPrepare, view = CharLiteralPlainNodeRecord)]
 pub struct CharLiteralPlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24867,6 +30289,21 @@ impl ::sittir_core::render::Render for CharLiteralPlainNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralPlainNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralPlainNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CharLiteralPlainFields::layout(self), Some(::sittir_core::types::KindId(145)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_plain(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CharLiteralPlainNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_char_literal_plain(self, &mut (), ctx)
@@ -24892,7 +30329,7 @@ fn prepare_char_literal_plain<N: CharLiteralPlainPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_EMPTY, text, words = 2, fields = CharLiteralEmptyFields, prepare = CharLiteralEmptyPrepare)]
+#[node(kind = kind::CHAR_LITERAL_EMPTY, text, words = 2, fields = CharLiteralEmptyFields, prepare = CharLiteralEmptyPrepare, view = CharLiteralEmptyNodeRecord)]
 pub struct CharLiteralEmptyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24920,6 +30357,21 @@ impl ::sittir_core::render::Render for CharLiteralEmptyNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralEmptyNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(146)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralEmptyNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CharLiteralEmptyFields::layout(self), Some(::sittir_core::types::KindId(146)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_empty(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CharLiteralEmptyNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_char_literal_empty(self, &mut (), ctx)
@@ -24945,7 +30397,7 @@ fn prepare_char_literal_empty<N: CharLiteralEmptyPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_SIMPLE, interior = "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$", words = 7, fields = CharLiteralEscapedSimpleFields, prepare = CharLiteralEscapedSimplePrepare)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_SIMPLE, interior = "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$", words = 7, fields = CharLiteralEscapedSimpleFields, prepare = CharLiteralEscapedSimplePrepare, view = CharLiteralEscapedSimpleNodeRecord)]
 pub struct CharLiteralEscapedSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24976,6 +30428,21 @@ impl ::sittir_core::render::Render for CharLiteralEscapedSimpleNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralEscapedSimpleNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralEscapedSimpleNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CharLiteralEscapedSimpleFields::layout(self), Some(::sittir_core::types::KindId(147)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_simple(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedSimpleNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_char_literal_escaped_simple(self, &mut (), ctx)
@@ -25001,7 +30468,7 @@ fn prepare_char_literal_escaped_simple<N: CharLiteralEscapedSimplePrepare + ?Siz
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$", words = 7, fields = CharLiteralEscapedUnicodeFixedFields, prepare = CharLiteralEscapedUnicodeFixedPrepare)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$", words = 7, fields = CharLiteralEscapedUnicodeFixedFields, prepare = CharLiteralEscapedUnicodeFixedPrepare, view = CharLiteralEscapedUnicodeFixedNodeRecord)]
 pub struct CharLiteralEscapedUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25032,6 +30499,21 @@ impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeFixedNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralEscapedUnicodeFixedNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(148)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeFixedNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CharLiteralEscapedUnicodeFixedFields::layout(self), Some(::sittir_core::types::KindId(148)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_unicode_fixed(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeFixedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_char_literal_escaped_unicode_fixed(self, &mut (), ctx)
@@ -25057,7 +30539,7 @@ fn prepare_char_literal_escaped_unicode_fixed<N: CharLiteralEscapedUnicodeFixedP
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$", words = 7, fields = CharLiteralEscapedUnicodeBracedFields, prepare = CharLiteralEscapedUnicodeBracedPrepare)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$", words = 7, fields = CharLiteralEscapedUnicodeBracedFields, prepare = CharLiteralEscapedUnicodeBracedPrepare, view = CharLiteralEscapedUnicodeBracedNodeRecord)]
 pub struct CharLiteralEscapedUnicodeBracedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25088,6 +30570,21 @@ impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeBracedNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralEscapedUnicodeBracedNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(149)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeBracedNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CharLiteralEscapedUnicodeBracedFields::layout(self), Some(::sittir_core::types::KindId(149)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_unicode_braced(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeBracedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_char_literal_escaped_unicode_braced(self, &mut (), ctx)
@@ -25113,7 +30610,7 @@ fn prepare_char_literal_escaped_unicode_braced<N: CharLiteralEscapedUnicodeBrace
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHAR_LITERAL_ESCAPED_HEX, interior = "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$", words = 7, fields = CharLiteralEscapedHexFields, prepare = CharLiteralEscapedHexPrepare)]
+#[node(kind = kind::CHAR_LITERAL_ESCAPED_HEX, interior = "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$", words = 7, fields = CharLiteralEscapedHexFields, prepare = CharLiteralEscapedHexPrepare, view = CharLiteralEscapedHexNodeRecord)]
 pub struct CharLiteralEscapedHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25144,6 +30641,21 @@ impl ::sittir_core::render::Render for CharLiteralEscapedHexNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for CharLiteralEscapedHexNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(150)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CharLiteralEscapedHexNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(CharLiteralEscapedHexFields::layout(self), Some(::sittir_core::types::KindId(150)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_char_literal_escaped_hex(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedHexNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_char_literal_escaped_hex(self, &mut (), ctx)
@@ -25169,7 +30681,7 @@ fn prepare_char_literal_escaped_hex<N: CharLiteralEscapedHexPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:[^xu]))$", words = 6, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare)]
+#[node(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:[^xu]))$", words = 6, fields = EscapeSequenceSimpleFields, prepare = EscapeSequenceSimplePrepare, view = EscapeSequenceSimpleNodeRecord)]
 pub struct EscapeSequenceSimpleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25197,6 +30709,21 @@ impl ::sittir_core::render::Render for EscapeSequenceSimpleNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EscapeSequenceSimpleNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(151)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EscapeSequenceSimpleNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceSimpleFields::layout(self), Some(::sittir_core::types::KindId(151)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_simple(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_escape_sequence_simple(self, &mut (), ctx)
@@ -25222,7 +30749,7 @@ fn prepare_escape_sequence_simple<N: EscapeSequenceSimplePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$", words = 6, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$", words = 6, fields = EscapeSequenceUnicodeFixedFields, prepare = EscapeSequenceUnicodeFixedPrepare, view = EscapeSequenceUnicodeFixedNodeRecord)]
 pub struct EscapeSequenceUnicodeFixedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25250,6 +30777,21 @@ impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EscapeSequenceUnicodeFixedNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(152)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EscapeSequenceUnicodeFixedNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceUnicodeFixedFields::layout(self), Some(::sittir_core::types::KindId(152)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_fixed(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_escape_sequence_unicode_fixed(self, &mut (), ctx)
@@ -25275,7 +30817,7 @@ fn prepare_escape_sequence_unicode_fixed<N: EscapeSequenceUnicodeFixedPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_BRACED, interior = "^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$", words = 6, fields = EscapeSequenceUnicodeBracedFields, prepare = EscapeSequenceUnicodeBracedPrepare)]
+#[node(kind = kind::ESCAPE_SEQUENCE_UNICODE_BRACED, interior = "^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$", words = 6, fields = EscapeSequenceUnicodeBracedFields, prepare = EscapeSequenceUnicodeBracedPrepare, view = EscapeSequenceUnicodeBracedNodeRecord)]
 pub struct EscapeSequenceUnicodeBracedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25303,6 +30845,21 @@ impl ::sittir_core::render::Render for EscapeSequenceUnicodeBracedNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EscapeSequenceUnicodeBracedNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(153)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EscapeSequenceUnicodeBracedNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceUnicodeBracedFields::layout(self), Some(::sittir_core::types::KindId(153)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_unicode_braced(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeBracedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_escape_sequence_unicode_braced(self, &mut (), ctx)
@@ -25328,7 +30885,7 @@ fn prepare_escape_sequence_unicode_braced<N: EscapeSequenceUnicodeBracedPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$", words = 6, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare)]
+#[node(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$", words = 6, fields = EscapeSequenceHexFields, prepare = EscapeSequenceHexPrepare, view = EscapeSequenceHexNodeRecord)]
 pub struct EscapeSequenceHexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25356,6 +30913,21 @@ impl ::sittir_core::render::Render for EscapeSequenceHexNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for EscapeSequenceHexNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(154)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for EscapeSequenceHexNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(EscapeSequenceHexFields::layout(self), Some(::sittir_core::types::KindId(154)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_escape_sequence_hex(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for EscapeSequenceHexNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_escape_sequence_hex(self, &mut (), ctx)
@@ -25381,7 +30953,7 @@ fn prepare_escape_sequence_hex<N: EscapeSequenceHexPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_EXPRESSION_SEMI, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 14, fields = ArrayExpressionSemiFields, prepare = ArrayExpressionSemiPrepare)]
+#[node(kind = kind::ARRAY_EXPRESSION_SEMI, layout = [kind::LBRACK, kind::SEMI, kind::RBRACK], words = 14, fields = ArrayExpressionSemiFields, prepare = ArrayExpressionSemiPrepare, view = ArrayExpressionSemiNodeRecord)]
 pub struct ArrayExpressionSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25418,6 +30990,21 @@ impl ::sittir_core::render::Render for ArrayExpressionSemiNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ArrayExpressionSemiNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(366)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ArrayExpressionSemiNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ArrayExpressionSemiFields::layout(self), Some(::sittir_core::types::KindId(366)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_expression_semi(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_array_expression_semi(self, &mut (), ctx)
@@ -25450,7 +31037,7 @@ fn prepare_array_expression_semi<N: ArrayExpressionSemiPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_EXPRESSION_LIST, layout = [kind::LBRACK, kind::RBRACK], words = 9, fields = ArrayExpressionListFields, prepare = ArrayExpressionListPrepare)]
+#[node(kind = kind::ARRAY_EXPRESSION_LIST, layout = [kind::LBRACK, kind::RBRACK], words = 9, fields = ArrayExpressionListFields, prepare = ArrayExpressionListPrepare, view = ArrayExpressionListNodeRecord)]
 pub struct ArrayExpressionListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25484,6 +31071,21 @@ impl ::sittir_core::render::Render for ArrayExpressionListNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ArrayExpressionListNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(367)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ArrayExpressionListNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ArrayExpressionListFields::layout(self), Some(::sittir_core::types::KindId(367)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_array_expression_list(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ArrayExpressionListNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_array_expression_list(self, &mut (), ctx)
@@ -25515,7 +31117,7 @@ fn prepare_array_expression_list<N: ArrayExpressionListPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ATTRIBUTE_INPUT, layout = [kind::EQ], words = 12, fields = AttributeInputFields, prepare = AttributeInputPrepare)]
+#[node(kind = kind::ATTRIBUTE_INPUT, layout = [kind::EQ], words = 12, fields = AttributeInputFields, prepare = AttributeInputPrepare, view = AttributeInputNodeRecord)]
 pub struct AttributeInputNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25546,6 +31148,21 @@ impl ::sittir_core::render::Render for AttributeInputNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributeInputNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(368)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributeInputNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributeInputFields::layout(self), Some(::sittir_core::types::KindId(368)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attribute_input(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributeInputNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attribute_input(self, &mut (), ctx)
@@ -25573,7 +31190,7 @@ fn prepare_attribute_input<N: AttributeInputPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLOSURE_EXPRESSION_BLOCK, layout = [kind::DASH_GT], words = 18, fields = ClosureExpressionBlockFields, prepare = ClosureExpressionBlockPrepare)]
+#[node(kind = kind::CLOSURE_EXPRESSION_BLOCK, layout = [kind::DASH_GT], words = 18, fields = ClosureExpressionBlockFields, prepare = ClosureExpressionBlockPrepare, view = ClosureExpressionBlockNodeRecord)]
 pub struct ClosureExpressionBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25616,6 +31233,21 @@ impl ::sittir_core::render::Render for ClosureExpressionBlockNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ClosureExpressionBlockNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(369)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ClosureExpressionBlockNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ClosureExpressionBlockFields::layout(self), Some(::sittir_core::types::KindId(369)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_expression_block(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ClosureExpressionBlockNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_closure_expression_block(self, &mut (), ctx)
@@ -25645,7 +31277,7 @@ fn prepare_closure_expression_block<N: ClosureExpressionBlockPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLOSURE_EXPRESSION_EXPR, words = 13, fields = ClosureExpressionExprFields, prepare = ClosureExpressionExprPrepare)]
+#[node(kind = kind::CLOSURE_EXPRESSION_EXPR, words = 13, fields = ClosureExpressionExprFields, prepare = ClosureExpressionExprPrepare, view = ClosureExpressionExprNodeRecord)]
 pub struct ClosureExpressionExprNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25685,6 +31317,21 @@ impl ::sittir_core::render::Render for ClosureExpressionExprNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ClosureExpressionExprNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(370)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ClosureExpressionExprNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ClosureExpressionExprFields::layout(self), Some(::sittir_core::types::KindId(370)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_expression_expr(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ClosureExpressionExprNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_closure_expression_expr(self, &mut (), ctx)
@@ -25713,7 +31360,7 @@ fn prepare_closure_expression_expr<N: ClosureExpressionExprPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_RAW_CONST, layout = [kind::AMP, kind::RAW_KEYWORD, kind::CONST_KEYWORD], words = 7, fields = ReferenceExpressionRawConstFields, prepare = ReferenceExpressionRawConstPrepare)]
+#[node(kind = kind::REFERENCE_EXPRESSION_RAW_CONST, layout = [kind::AMP, kind::RAW_KEYWORD, kind::CONST_KEYWORD], words = 7, fields = ReferenceExpressionRawConstFields, prepare = ReferenceExpressionRawConstPrepare, view = ReferenceExpressionRawConstNodeRecord)]
 pub struct ReferenceExpressionRawConstNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25739,6 +31386,21 @@ impl ::sittir_core::render::Render for ReferenceExpressionRawConstNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(371)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_const(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReferenceExpressionRawConstNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(371)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ReferenceExpressionRawConstNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ReferenceExpressionRawConstFields::layout(self), Some(::sittir_core::types::KindId(371)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_const(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawConstNode {
@@ -25768,7 +31430,7 @@ fn prepare_reference_expression_raw_const<N: ReferenceExpressionRawConstPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_RAW_MUT, layout = [kind::AMP, kind::RAW_KEYWORD, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionRawMutFields, prepare = ReferenceExpressionRawMutPrepare)]
+#[node(kind = kind::REFERENCE_EXPRESSION_RAW_MUT, layout = [kind::AMP, kind::RAW_KEYWORD, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionRawMutFields, prepare = ReferenceExpressionRawMutPrepare, view = ReferenceExpressionRawMutNodeRecord)]
 pub struct ReferenceExpressionRawMutNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25794,6 +31456,21 @@ impl ::sittir_core::render::Render for ReferenceExpressionRawMutNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(372)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_mut(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReferenceExpressionRawMutNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(372)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ReferenceExpressionRawMutNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ReferenceExpressionRawMutFields::layout(self), Some(::sittir_core::types::KindId(372)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_raw_mut(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawMutNode {
@@ -25823,7 +31500,7 @@ fn prepare_reference_expression_raw_mut<N: ReferenceExpressionRawMutPrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_MUT, layout = [kind::AMP, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionMutFields, prepare = ReferenceExpressionMutPrepare)]
+#[node(kind = kind::REFERENCE_EXPRESSION_MUT, layout = [kind::AMP, kind::MUTABLE_SPECIFIER], words = 7, fields = ReferenceExpressionMutFields, prepare = ReferenceExpressionMutPrepare, view = ReferenceExpressionMutNodeRecord)]
 pub struct ReferenceExpressionMutNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25849,6 +31526,21 @@ impl ::sittir_core::render::Render for ReferenceExpressionMutNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(373)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_mut(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReferenceExpressionMutNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(373)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ReferenceExpressionMutNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ReferenceExpressionMutFields::layout(self), Some(::sittir_core::types::KindId(373)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_mut(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ReferenceExpressionMutNode {
@@ -25878,7 +31570,7 @@ fn prepare_reference_expression_mut<N: ReferenceExpressionMutPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_EXPRESSION_BARE, layout = [kind::AMP], words = 7, fields = ReferenceExpressionBareFields, prepare = ReferenceExpressionBarePrepare)]
+#[node(kind = kind::REFERENCE_EXPRESSION_BARE, layout = [kind::AMP], words = 7, fields = ReferenceExpressionBareFields, prepare = ReferenceExpressionBarePrepare, view = ReferenceExpressionBareNodeRecord)]
 pub struct ReferenceExpressionBareNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25904,6 +31596,21 @@ impl ::sittir_core::render::Render for ReferenceExpressionBareNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(374)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_bare(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ReferenceExpressionBareNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(374)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ReferenceExpressionBareNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ReferenceExpressionBareFields::layout(self), Some(::sittir_core::types::KindId(374)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_reference_expression_bare(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ReferenceExpressionBareNode {
@@ -25933,7 +31640,7 @@ fn prepare_reference_expression_bare<N: ReferenceExpressionBarePrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_POSITIVE_CLAUSE, layout = [kind::FOR_KEYWORD], words = 7, fields = ImplItemPositiveClauseFields, prepare = ImplItemPositiveClausePrepare)]
+#[node(kind = kind::IMPL_ITEM_POSITIVE_CLAUSE, layout = [kind::FOR_KEYWORD], words = 7, fields = ImplItemPositiveClauseFields, prepare = ImplItemPositiveClausePrepare, view = ImplItemPositiveClauseNodeRecord)]
 pub struct ImplItemPositiveClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25959,6 +31666,21 @@ impl ::sittir_core::render::Render for ImplItemPositiveClauseNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(375)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_positive_clause(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ImplItemPositiveClauseNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(375)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ImplItemPositiveClauseNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ImplItemPositiveClauseFields::layout(self), Some(::sittir_core::types::KindId(375)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_positive_clause(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseNode {
@@ -25988,7 +31710,7 @@ fn prepare_impl_item_positive_clause<N: ImplItemPositiveClausePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_NEGATIVE_CLAUSE, layout = [kind::BANG | kind::BANG2, kind::FOR_KEYWORD], words = 7, fields = ImplItemNegativeClauseFields, prepare = ImplItemNegativeClausePrepare)]
+#[node(kind = kind::IMPL_ITEM_NEGATIVE_CLAUSE, layout = [kind::BANG | kind::BANG2, kind::FOR_KEYWORD], words = 7, fields = ImplItemNegativeClauseFields, prepare = ImplItemNegativeClausePrepare, view = ImplItemNegativeClauseNodeRecord)]
 pub struct ImplItemNegativeClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26014,6 +31736,21 @@ impl ::sittir_core::render::Render for ImplItemNegativeClauseNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(376)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_negative_clause(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ImplItemNegativeClauseNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(376)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ImplItemNegativeClauseNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ImplItemNegativeClauseFields::layout(self), Some(::sittir_core::types::KindId(376)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_negative_clause(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ImplItemNegativeClauseNode {
@@ -26043,7 +31780,7 @@ fn prepare_impl_item_negative_clause<N: ImplItemNegativeClausePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_BODY, layout = [kind::IMPL_KEYWORD], words = 28, fields = ImplItemBodyFields, prepare = ImplItemBodyPrepare)]
+#[node(kind = kind::IMPL_ITEM_BODY, layout = [kind::IMPL_KEYWORD], words = 28, fields = ImplItemBodyFields, prepare = ImplItemBodyPrepare, view = ImplItemBodyNodeRecord)]
 pub struct ImplItemBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26086,6 +31823,21 @@ impl ::sittir_core::render::Render for ImplItemBodyNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ImplItemBodyNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(377)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ImplItemBodyNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ImplItemBodyFields::layout(self), Some(::sittir_core::types::KindId(377)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_body(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ImplItemBodyNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_impl_item_body(self, &mut (), ctx)
@@ -26117,7 +31869,7 @@ fn prepare_impl_item_body<N: ImplItemBodyPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_SEMI, layout = [kind::IMPL_KEYWORD, kind::SEMI], words = 23, fields = ImplItemSemiFields, prepare = ImplItemSemiPrepare)]
+#[node(kind = kind::IMPL_ITEM_SEMI, layout = [kind::IMPL_KEYWORD, kind::SEMI], words = 23, fields = ImplItemSemiFields, prepare = ImplItemSemiPrepare, view = ImplItemSemiNodeRecord)]
 pub struct ImplItemSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26157,6 +31909,21 @@ impl ::sittir_core::render::Render for ImplItemSemiNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ImplItemSemiNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(378)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ImplItemSemiNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ImplItemSemiFields::layout(self), Some(::sittir_core::types::KindId(378)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_impl_item_semi(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ImplItemSemiNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_impl_item_semi(self, &mut (), ctx)
@@ -26187,7 +31954,7 @@ fn prepare_impl_item_semi<N: ImplItemSemiPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD], words = 7, fields = VisibilityModifierPubScopeInPathFields, prepare = VisibilityModifierPubScopeInPathPrepare)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD], words = 7, fields = VisibilityModifierPubScopeInPathFields, prepare = VisibilityModifierPubScopeInPathPrepare, view = VisibilityModifierPubScopeInPathNodeRecord)]
 pub struct VisibilityModifierPubScopeInPathNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26213,6 +31980,21 @@ impl ::sittir_core::render::Render for VisibilityModifierPubScopeInPathNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(379)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope_in_path(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for VisibilityModifierPubScopeInPathNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(379)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for VisibilityModifierPubScopeInPathNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(VisibilityModifierPubScopeInPathFields::layout(self), Some(::sittir_core::types::KindId(379)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope_in_path(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeInPathNode {
@@ -26242,7 +32024,7 @@ fn prepare_visibility_modifier_pub_scope_in_path<N: VisibilityModifierPubScopeIn
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = VisibilityModifierPubScopeFields, prepare = VisibilityModifierPubScopePrepare)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE, layout = [kind::LPAREN, kind::RPAREN], words = 7, fields = VisibilityModifierPubScopeFields, prepare = VisibilityModifierPubScopePrepare, view = VisibilityModifierPubScopeNodeRecord)]
 pub struct VisibilityModifierPubScopeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26268,6 +32050,21 @@ impl ::sittir_core::render::Render for VisibilityModifierPubScopeNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(380)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for VisibilityModifierPubScopeNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(380)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for VisibilityModifierPubScopeNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(VisibilityModifierPubScopeFields::layout(self), Some(::sittir_core::types::KindId(380)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub_scope(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeNode {
@@ -26297,7 +32094,7 @@ fn prepare_visibility_modifier_pub_scope<N: VisibilityModifierPubScopePrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB, layout = [kind::PUB_KEYWORD], words = 7, fields = VisibilityModifierPubFields, prepare = VisibilityModifierPubPrepare)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB, layout = [kind::PUB_KEYWORD], words = 7, fields = VisibilityModifierPubFields, prepare = VisibilityModifierPubPrepare, view = VisibilityModifierPubNodeRecord)]
 pub struct VisibilityModifierPubNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26323,6 +32120,21 @@ impl ::sittir_core::render::Render for VisibilityModifierPubNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(381)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for VisibilityModifierPubNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(381)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for VisibilityModifierPubNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(VisibilityModifierPubFields::layout(self), Some(::sittir_core::types::KindId(381)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_visibility_modifier_pub(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for VisibilityModifierPubNode {
@@ -26352,7 +32164,7 @@ fn prepare_visibility_modifier_pub<N: VisibilityModifierPubPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE_TRAIT_FORM, words = 7, fields = FunctionTypeTraitFormFields, prepare = FunctionTypeTraitFormPrepare)]
+#[node(kind = kind::FUNCTION_TYPE_TRAIT_FORM, words = 7, fields = FunctionTypeTraitFormFields, prepare = FunctionTypeTraitFormPrepare, view = FunctionTypeTraitFormNodeRecord)]
 pub struct FunctionTypeTraitFormNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26378,6 +32190,21 @@ impl ::sittir_core::render::Render for FunctionTypeTraitFormNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(382)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_trait_form(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionTypeTraitFormNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(382)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionTypeTraitFormNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FunctionTypeTraitFormFields::layout(self), Some(::sittir_core::types::KindId(382)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_trait_form(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionTypeTraitFormNode {
@@ -26406,7 +32233,7 @@ fn prepare_function_type_trait_form<N: FunctionTypeTraitFormPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE_FN_FORM, layout = [kind::FN_KEYWORD], words = 7, fields = FunctionTypeFnFormFields, prepare = FunctionTypeFnFormPrepare)]
+#[node(kind = kind::FUNCTION_TYPE_FN_FORM, layout = [kind::FN_KEYWORD], words = 7, fields = FunctionTypeFnFormFields, prepare = FunctionTypeFnFormPrepare, view = FunctionTypeFnFormNodeRecord)]
 pub struct FunctionTypeFnFormNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26432,6 +32259,21 @@ impl ::sittir_core::render::Render for FunctionTypeFnFormNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(383)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_fn_form(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FunctionTypeFnFormNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(383)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FunctionTypeFnFormNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FunctionTypeFnFormFields::layout(self), Some(::sittir_core::types::KindId(383)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_function_type_fn_form(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionTypeFnFormNode {
@@ -26461,7 +32303,7 @@ fn prepare_function_type_fn_form<N: FunctionTypeFnFormPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MOD_ITEM_EXTERNAL, layout = [kind::MOD_KEYWORD, kind::SEMI], words = 12, fields = ModItemExternalFields, prepare = ModItemExternalPrepare)]
+#[node(kind = kind::MOD_ITEM_EXTERNAL, layout = [kind::MOD_KEYWORD, kind::SEMI], words = 12, fields = ModItemExternalFields, prepare = ModItemExternalPrepare, view = ModItemExternalNodeRecord)]
 pub struct ModItemExternalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26492,6 +32334,21 @@ impl ::sittir_core::render::Render for ModItemExternalNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ModItemExternalNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(384)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ModItemExternalNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ModItemExternalFields::layout(self), Some(::sittir_core::types::KindId(384)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mod_item_external(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ModItemExternalNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_mod_item_external(self, &mut (), ctx)
@@ -26520,7 +32377,7 @@ fn prepare_mod_item_external<N: ModItemExternalPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MOD_ITEM_INLINE, layout = [kind::MOD_KEYWORD], words = 17, fields = ModItemInlineFields, prepare = ModItemInlinePrepare)]
+#[node(kind = kind::MOD_ITEM_INLINE, layout = [kind::MOD_KEYWORD], words = 17, fields = ModItemInlineFields, prepare = ModItemInlinePrepare, view = ModItemInlineNodeRecord)]
 pub struct ModItemInlineNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26554,6 +32411,21 @@ impl ::sittir_core::render::Render for ModItemInlineNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ModItemInlineNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(385)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ModItemInlineNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ModItemInlineFields::layout(self), Some(::sittir_core::types::KindId(385)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_mod_item_inline(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ModItemInlineNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_mod_item_inline(self, &mut (), ctx)
@@ -26583,7 +32455,7 @@ fn prepare_mod_item_inline<N: ModItemInlinePrepare + ?Sized>(node: &mut N, overl
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OR_PATTERN_BINARY, layout = [kind::PIPE], words = 12, fields = OrPatternBinaryFields, prepare = OrPatternBinaryPrepare)]
+#[node(kind = kind::OR_PATTERN_BINARY, layout = [kind::PIPE], words = 12, fields = OrPatternBinaryFields, prepare = OrPatternBinaryPrepare, view = OrPatternBinaryNodeRecord)]
 pub struct OrPatternBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26614,6 +32486,21 @@ impl ::sittir_core::render::Render for OrPatternBinaryNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for OrPatternBinaryNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(386)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for OrPatternBinaryNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(OrPatternBinaryFields::layout(self), Some(::sittir_core::types::KindId(386)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_or_pattern_binary(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for OrPatternBinaryNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_or_pattern_binary(self, &mut (), ctx)
@@ -26642,7 +32529,7 @@ fn prepare_or_pattern_binary<N: OrPatternBinaryPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OR_PATTERN_PREFIX, layout = [kind::PIPE], words = 7, fields = OrPatternPrefixFields, prepare = OrPatternPrefixPrepare)]
+#[node(kind = kind::OR_PATTERN_PREFIX, layout = [kind::PIPE], words = 7, fields = OrPatternPrefixFields, prepare = OrPatternPrefixPrepare, view = OrPatternPrefixNodeRecord)]
 pub struct OrPatternPrefixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26668,6 +32555,21 @@ impl ::sittir_core::render::Render for OrPatternPrefixNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(387)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_or_pattern_prefix(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for OrPatternPrefixNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(387)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for OrPatternPrefixNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(OrPatternPrefixFields::layout(self), Some(::sittir_core::types::KindId(387)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_or_pattern_prefix(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for OrPatternPrefixNode {
@@ -26697,7 +32599,7 @@ fn prepare_or_pattern_prefix<N: OrPatternPrefixPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POINTER_TYPE_CONST, layout = [kind::STAR, kind::CONST_KEYWORD], words = 7, fields = PointerTypeConstFields, prepare = PointerTypeConstPrepare)]
+#[node(kind = kind::POINTER_TYPE_CONST, layout = [kind::STAR, kind::CONST_KEYWORD], words = 7, fields = PointerTypeConstFields, prepare = PointerTypeConstPrepare, view = PointerTypeConstNodeRecord)]
 pub struct PointerTypeConstNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26723,6 +32625,21 @@ impl ::sittir_core::render::Render for PointerTypeConstNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(388)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_const(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for PointerTypeConstNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(388)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for PointerTypeConstNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(PointerTypeConstFields::layout(self), Some(::sittir_core::types::KindId(388)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_const(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for PointerTypeConstNode {
@@ -26752,7 +32669,7 @@ fn prepare_pointer_type_const<N: PointerTypeConstPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POINTER_TYPE_MUT, layout = [kind::STAR, kind::MUTABLE_SPECIFIER], words = 7, fields = PointerTypeMutFields, prepare = PointerTypeMutPrepare)]
+#[node(kind = kind::POINTER_TYPE_MUT, layout = [kind::STAR, kind::MUTABLE_SPECIFIER], words = 7, fields = PointerTypeMutFields, prepare = PointerTypeMutPrepare, view = PointerTypeMutNodeRecord)]
 pub struct PointerTypeMutNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26778,6 +32695,21 @@ impl ::sittir_core::render::Render for PointerTypeMutNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(389)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_mut(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for PointerTypeMutNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(389)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for PointerTypeMutNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(PointerTypeMutFields::layout(self), Some(::sittir_core::types::KindId(389)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_pointer_type_mut(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for PointerTypeMutNode {
@@ -26807,7 +32739,7 @@ fn prepare_pointer_type_mut<N: PointerTypeMutPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_BINARY, words = 17, fields = RangeExpressionBinaryFields, prepare = RangeExpressionBinaryPrepare)]
+#[node(kind = kind::RANGE_EXPRESSION_BINARY, words = 17, fields = RangeExpressionBinaryFields, prepare = RangeExpressionBinaryPrepare, view = RangeExpressionBinaryNodeRecord)]
 pub struct RangeExpressionBinaryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26841,6 +32773,21 @@ impl ::sittir_core::render::Render for RangeExpressionBinaryNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangeExpressionBinaryNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(390)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RangeExpressionBinaryNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RangeExpressionBinaryFields::layout(self), Some(::sittir_core::types::KindId(390)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_binary(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for RangeExpressionBinaryNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_range_expression_binary(self, &mut (), ctx)
@@ -26870,7 +32817,7 @@ fn prepare_range_expression_binary<N: RangeExpressionBinaryPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_POSTFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPostfixFields, prepare = RangeExpressionPostfixPrepare)]
+#[node(kind = kind::RANGE_EXPRESSION_POSTFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPostfixFields, prepare = RangeExpressionPostfixPrepare, view = RangeExpressionPostfixNodeRecord)]
 pub struct RangeExpressionPostfixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26896,6 +32843,21 @@ impl ::sittir_core::render::Render for RangeExpressionPostfixNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(391)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_postfix(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangeExpressionPostfixNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(391)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RangeExpressionPostfixNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RangeExpressionPostfixFields::layout(self), Some(::sittir_core::types::KindId(391)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_postfix(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RangeExpressionPostfixNode {
@@ -26925,7 +32887,7 @@ fn prepare_range_expression_postfix<N: RangeExpressionPostfixPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_PREFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPrefixFields, prepare = RangeExpressionPrefixPrepare)]
+#[node(kind = kind::RANGE_EXPRESSION_PREFIX, layout = [kind::DOT_DOT], words = 7, fields = RangeExpressionPrefixFields, prepare = RangeExpressionPrefixPrepare, view = RangeExpressionPrefixNodeRecord)]
 pub struct RangeExpressionPrefixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26951,6 +32913,21 @@ impl ::sittir_core::render::Render for RangeExpressionPrefixNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(392)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_prefix(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangeExpressionPrefixNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(392)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RangeExpressionPrefixNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RangeExpressionPrefixFields::layout(self), Some(::sittir_core::types::KindId(392)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_prefix(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RangeExpressionPrefixNode {
@@ -26980,7 +32957,7 @@ fn prepare_range_expression_prefix<N: RangeExpressionPrefixPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_EXPRESSION_BARE, words = 7, fields = RangeExpressionBareFields, prepare = RangeExpressionBarePrepare)]
+#[node(kind = kind::RANGE_EXPRESSION_BARE, words = 7, fields = RangeExpressionBareFields, prepare = RangeExpressionBarePrepare, view = RangeExpressionBareNodeRecord)]
 pub struct RangeExpressionBareNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27006,6 +32983,21 @@ impl ::sittir_core::render::Render for RangeExpressionBareNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(393)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_bare(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangeExpressionBareNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(393)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RangeExpressionBareNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RangeExpressionBareFields::layout(self), Some(::sittir_core::types::KindId(393)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_expression_bare(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RangeExpressionBareNode {
@@ -27034,7 +33026,7 @@ fn prepare_range_expression_bare<N: RangeExpressionBarePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT_WITH_SEMI, layout = [kind::SEMI], words = 7, fields = ExpressionStatementWithSemiFields, prepare = ExpressionStatementWithSemiPrepare)]
+#[node(kind = kind::EXPRESSION_STATEMENT_WITH_SEMI, layout = [kind::SEMI], words = 7, fields = ExpressionStatementWithSemiFields, prepare = ExpressionStatementWithSemiPrepare, view = ExpressionStatementWithSemiNodeRecord)]
 pub struct ExpressionStatementWithSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27060,6 +33052,21 @@ impl ::sittir_core::render::Render for ExpressionStatementWithSemiNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(394)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_with_semi(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ExpressionStatementWithSemiNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(394)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ExpressionStatementWithSemiNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ExpressionStatementWithSemiFields::layout(self), Some(::sittir_core::types::KindId(394)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_expression_statement_with_semi(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionStatementWithSemiNode {
@@ -27089,7 +33096,7 @@ fn prepare_expression_statement_with_semi<N: ExpressionStatementWithSemiPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 8, fields = ForeignModItemSemiFields, prepare = ForeignModItemSemiPrepare)]
+#[node(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 8, fields = ForeignModItemSemiFields, prepare = ForeignModItemSemiPrepare, view = ForeignModItemSemiNodeRecord)]
 pub struct ForeignModItemSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27120,6 +33127,21 @@ impl ::sittir_core::render::Render for ForeignModItemSemiNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ForeignModItemSemiNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(395)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ForeignModItemSemiNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ForeignModItemSemiFields::layout(self), Some(::sittir_core::types::KindId(395)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_foreign_mod_item_semi(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ForeignModItemSemiNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_foreign_mod_item_semi(self, &mut (), ctx)
@@ -27147,7 +33169,7 @@ fn prepare_foreign_mod_item_semi<N: ForeignModItemSemiPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 13, fields = ForeignModItemBodyFields, prepare = ForeignModItemBodyPrepare)]
+#[node(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 13, fields = ForeignModItemBodyFields, prepare = ForeignModItemBodyPrepare, view = ForeignModItemBodyNodeRecord)]
 pub struct ForeignModItemBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27181,6 +33203,21 @@ impl ::sittir_core::render::Render for ForeignModItemBodyNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ForeignModItemBodyNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(396)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ForeignModItemBodyNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ForeignModItemBodyFields::layout(self), Some(::sittir_core::types::KindId(396)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_foreign_mod_item_body(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ForeignModItemBodyNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_foreign_mod_item_body(self, &mut (), ctx)
@@ -27209,7 +33246,7 @@ fn prepare_foreign_mod_item_body<N: ForeignModItemBodyPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_ARM_WITH_COMMA, layout = [kind::EQ_GT, kind::COMMA], words = 14, fields = MatchArmWithCommaFields, prepare = MatchArmWithCommaPrepare)]
+#[node(kind = kind::MATCH_ARM_WITH_COMMA, layout = [kind::EQ_GT, kind::COMMA], words = 14, fields = MatchArmWithCommaFields, prepare = MatchArmWithCommaPrepare, view = MatchArmWithCommaNodeRecord)]
 pub struct MatchArmWithCommaNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27246,6 +33283,21 @@ impl ::sittir_core::render::Render for MatchArmWithCommaNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchArmWithCommaNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(397)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchArmWithCommaNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MatchArmWithCommaFields::layout(self), Some(::sittir_core::types::KindId(397)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_arm_with_comma(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MatchArmWithCommaNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_match_arm_with_comma(self, &mut (), ctx)
@@ -27278,7 +33330,7 @@ fn prepare_match_arm_with_comma<N: MatchArmWithCommaPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_ARM_BLOCK_ENDING, layout = [kind::EQ_GT], words = 14, fields = MatchArmBlockEndingFields, prepare = MatchArmBlockEndingPrepare)]
+#[node(kind = kind::MATCH_ARM_BLOCK_ENDING, layout = [kind::EQ_GT], words = 14, fields = MatchArmBlockEndingFields, prepare = MatchArmBlockEndingPrepare, view = MatchArmBlockEndingNodeRecord)]
 pub struct MatchArmBlockEndingNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27315,6 +33367,21 @@ impl ::sittir_core::render::Render for MatchArmBlockEndingNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchArmBlockEndingNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(398)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchArmBlockEndingNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MatchArmBlockEndingFields::layout(self), Some(::sittir_core::types::KindId(398)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_arm_block_ending(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_match_arm_block_ending(self, &mut (), ctx)
@@ -27347,7 +33414,7 @@ fn prepare_match_arm_block_ending<N: MatchArmBlockEndingPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_EXTRA_SLASHES, text, words = 2, fields = LineCommentExtraSlashesFields, prepare = LineCommentExtraSlashesPrepare)]
+#[node(kind = kind::LINE_COMMENT_EXTRA_SLASHES, text, words = 2, fields = LineCommentExtraSlashesFields, prepare = LineCommentExtraSlashesPrepare, view = LineCommentExtraSlashesNodeRecord)]
 pub struct LineCommentExtraSlashesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27375,6 +33442,21 @@ impl ::sittir_core::render::Render for LineCommentExtraSlashesNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LineCommentExtraSlashesNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LineCommentExtraSlashesNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LineCommentExtraSlashesFields::layout(self), Some(::sittir_core::types::KindId(399)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_extra_slashes(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LineCommentExtraSlashesNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_line_comment_extra_slashes(self, &mut (), ctx)
@@ -27400,7 +33482,7 @@ fn prepare_line_comment_extra_slashes<N: LineCommentExtraSlashesPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::_OUTER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocOuterFields, prepare = LineCommentDocOuterPrepare)]
+#[node(kind = kind::LINE_COMMENT_DOC_OUTER, layout = [kind::_OUTER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocOuterFields, prepare = LineCommentDocOuterPrepare, view = LineCommentDocOuterNodeRecord)]
 pub struct LineCommentDocOuterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27426,6 +33508,21 @@ impl ::sittir_core::render::Render for LineCommentDocOuterNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(400)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_outer(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LineCommentDocOuterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(400)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LineCommentDocOuterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LineCommentDocOuterFields::layout(self), Some(::sittir_core::types::KindId(400)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_outer(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for LineCommentDocOuterNode {
@@ -27454,7 +33551,7 @@ fn prepare_line_comment_doc_outer<N: LineCommentDocOuterPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::_INNER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocInnerFields, prepare = LineCommentDocInnerPrepare)]
+#[node(kind = kind::LINE_COMMENT_DOC_INNER, layout = [kind::_INNER_LINE_DOC_COMMENT_MARKER], words = 7, fields = LineCommentDocInnerFields, prepare = LineCommentDocInnerPrepare, view = LineCommentDocInnerNodeRecord)]
 pub struct LineCommentDocInnerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27480,6 +33577,21 @@ impl ::sittir_core::render::Render for LineCommentDocInnerNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(401)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_inner(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LineCommentDocInnerNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(401)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LineCommentDocInnerNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LineCommentDocInnerFields::layout(self), Some(::sittir_core::types::KindId(401)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_doc_inner(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for LineCommentDocInnerNode {
@@ -27508,7 +33620,7 @@ fn prepare_line_comment_doc_inner<N: LineCommentDocInnerPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT_REGULAR, text, words = 2, fields = LineCommentRegularFields, prepare = LineCommentRegularPrepare)]
+#[node(kind = kind::LINE_COMMENT_REGULAR, text, words = 2, fields = LineCommentRegularFields, prepare = LineCommentRegularPrepare, view = LineCommentRegularNodeRecord)]
 pub struct LineCommentRegularNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27536,6 +33648,21 @@ impl ::sittir_core::render::Render for LineCommentRegularNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for LineCommentRegularNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(155)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for LineCommentRegularNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(LineCommentRegularFields::layout(self), Some(::sittir_core::types::KindId(155)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_line_comment_regular(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for LineCommentRegularNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_line_comment_regular(self, &mut (), ctx)
@@ -27561,7 +33688,7 @@ fn prepare_line_comment_regular<N: LineCommentRegularPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT_DOC_OUTER, layout = [kind::_OUTER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocOuterFields, prepare = BlockCommentDocOuterPrepare)]
+#[node(kind = kind::BLOCK_COMMENT_DOC_OUTER, layout = [kind::_OUTER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocOuterFields, prepare = BlockCommentDocOuterPrepare, view = BlockCommentDocOuterNodeRecord)]
 pub struct BlockCommentDocOuterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27587,6 +33714,21 @@ impl ::sittir_core::render::Render for BlockCommentDocOuterNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(402)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_outer(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BlockCommentDocOuterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(402)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BlockCommentDocOuterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BlockCommentDocOuterFields::layout(self), Some(::sittir_core::types::KindId(402)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_outer(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for BlockCommentDocOuterNode {
@@ -27615,7 +33757,7 @@ fn prepare_block_comment_doc_outer<N: BlockCommentDocOuterPrepare + ?Sized>(node
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT_DOC_INNER, layout = [kind::_INNER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocInnerFields, prepare = BlockCommentDocInnerPrepare)]
+#[node(kind = kind::BLOCK_COMMENT_DOC_INNER, layout = [kind::_INNER_DOC_COMMENT_MARKER], words = 7, fields = BlockCommentDocInnerFields, prepare = BlockCommentDocInnerPrepare, view = BlockCommentDocInnerNodeRecord)]
 pub struct BlockCommentDocInnerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27641,6 +33783,21 @@ impl ::sittir_core::render::Render for BlockCommentDocInnerNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(403)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_inner(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BlockCommentDocInnerNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(403)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BlockCommentDocInnerNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BlockCommentDocInnerFields::layout(self), Some(::sittir_core::types::KindId(403)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_doc_inner(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for BlockCommentDocInnerNode {
@@ -27669,7 +33826,7 @@ fn prepare_block_comment_doc_inner<N: BlockCommentDocInnerPrepare + ?Sized>(node
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT_REGULAR, text, words = 2, fields = BlockCommentRegularFields, prepare = BlockCommentRegularPrepare)]
+#[node(kind = kind::BLOCK_COMMENT_REGULAR, text, words = 2, fields = BlockCommentRegularFields, prepare = BlockCommentRegularPrepare, view = BlockCommentRegularNodeRecord)]
 pub struct BlockCommentRegularNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27697,6 +33854,21 @@ impl ::sittir_core::render::Render for BlockCommentRegularNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BlockCommentRegularNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(404)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BlockCommentRegularNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BlockCommentRegularFields::layout(self), Some(::sittir_core::types::KindId(404)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_regular(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for BlockCommentRegularNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_block_comment_regular(self, &mut (), ctx)
@@ -27722,7 +33894,7 @@ fn prepare_block_comment_regular<N: BlockCommentRegularPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PATTERN_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreePatternParenFields, prepare = TokenTreePatternParenPrepare)]
+#[node(kind = kind::TOKEN_TREE_PATTERN_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreePatternParenFields, prepare = TokenTreePatternParenPrepare, view = TokenTreePatternParenNodeRecord)]
 pub struct TokenTreePatternParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27751,6 +33923,21 @@ impl ::sittir_core::render::Render for TokenTreePatternParenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(405)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_paren(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreePatternParenNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(405)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreePatternParenNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenTreePatternParenFields::layout(self), Some(::sittir_core::types::KindId(405)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_paren(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TokenTreePatternParenNode {
@@ -27783,7 +33970,7 @@ fn prepare_token_tree_pattern_paren<N: TokenTreePatternParenPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PATTERN_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreePatternBracketFields, prepare = TokenTreePatternBracketPrepare)]
+#[node(kind = kind::TOKEN_TREE_PATTERN_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreePatternBracketFields, prepare = TokenTreePatternBracketPrepare, view = TokenTreePatternBracketNodeRecord)]
 pub struct TokenTreePatternBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27812,6 +33999,21 @@ impl ::sittir_core::render::Render for TokenTreePatternBracketNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(406)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_bracket(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreePatternBracketNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(406)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreePatternBracketNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenTreePatternBracketFields::layout(self), Some(::sittir_core::types::KindId(406)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_bracket(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketNode {
@@ -27844,7 +34046,7 @@ fn prepare_token_tree_pattern_bracket<N: TokenTreePatternBracketPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PATTERN_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreePatternBraceFields, prepare = TokenTreePatternBracePrepare)]
+#[node(kind = kind::TOKEN_TREE_PATTERN_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreePatternBraceFields, prepare = TokenTreePatternBracePrepare, view = TokenTreePatternBraceNodeRecord)]
 pub struct TokenTreePatternBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27873,6 +34075,21 @@ impl ::sittir_core::render::Render for TokenTreePatternBraceNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(407)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_brace(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreePatternBraceNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(407)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreePatternBraceNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenTreePatternBraceFields::layout(self), Some(::sittir_core::types::KindId(407)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_pattern_brace(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceNode {
@@ -27905,7 +34122,7 @@ fn prepare_token_tree_pattern_brace<N: TokenTreePatternBracePrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreeParenFields, prepare = TokenTreeParenPrepare)]
+#[node(kind = kind::TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = TokenTreeParenFields, prepare = TokenTreeParenPrepare, view = TokenTreeParenNodeRecord)]
 pub struct TokenTreeParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27934,6 +34151,21 @@ impl ::sittir_core::render::Render for TokenTreeParenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(408)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_paren(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreeParenNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(408)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreeParenNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenTreeParenFields::layout(self), Some(::sittir_core::types::KindId(408)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_paren(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TokenTreeParenNode {
@@ -27966,7 +34198,7 @@ fn prepare_token_tree_paren<N: TokenTreeParenPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreeBracketFields, prepare = TokenTreeBracketPrepare)]
+#[node(kind = kind::TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = TokenTreeBracketFields, prepare = TokenTreeBracketPrepare, view = TokenTreeBracketNodeRecord)]
 pub struct TokenTreeBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27995,6 +34227,21 @@ impl ::sittir_core::render::Render for TokenTreeBracketNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(409)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_bracket(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreeBracketNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(409)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreeBracketNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenTreeBracketFields::layout(self), Some(::sittir_core::types::KindId(409)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_bracket(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TokenTreeBracketNode {
@@ -28027,7 +34274,7 @@ fn prepare_token_tree_bracket<N: TokenTreeBracketPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreeBraceFields, prepare = TokenTreeBracePrepare)]
+#[node(kind = kind::TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = TokenTreeBraceFields, prepare = TokenTreeBracePrepare, view = TokenTreeBraceNodeRecord)]
 pub struct TokenTreeBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28056,6 +34303,21 @@ impl ::sittir_core::render::Render for TokenTreeBraceNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(410)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_brace(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TokenTreeBraceNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(410)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TokenTreeBraceNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TokenTreeBraceFields::layout(self), Some(::sittir_core::types::KindId(410)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_token_tree_brace(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TokenTreeBraceNode {
@@ -28088,7 +34350,7 @@ fn prepare_token_tree_brace<N: TokenTreeBracePrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DELIM_TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = DelimTokenTreeParenFields, prepare = DelimTokenTreeParenPrepare)]
+#[node(kind = kind::DELIM_TOKEN_TREE_PAREN, layout = [kind::LPAREN, kind::RPAREN], words = 4, fields = DelimTokenTreeParenFields, prepare = DelimTokenTreeParenPrepare, view = DelimTokenTreeParenNodeRecord)]
 pub struct DelimTokenTreeParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28117,6 +34379,21 @@ impl ::sittir_core::render::Render for DelimTokenTreeParenNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(411)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_paren(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DelimTokenTreeParenNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(411)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for DelimTokenTreeParenNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(DelimTokenTreeParenFields::layout(self), Some(::sittir_core::types::KindId(411)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_paren(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenNode {
@@ -28149,7 +34426,7 @@ fn prepare_delim_token_tree_paren<N: DelimTokenTreeParenPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DELIM_TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = DelimTokenTreeBracketFields, prepare = DelimTokenTreeBracketPrepare)]
+#[node(kind = kind::DELIM_TOKEN_TREE_BRACKET, layout = [kind::LBRACK, kind::RBRACK], words = 4, fields = DelimTokenTreeBracketFields, prepare = DelimTokenTreeBracketPrepare, view = DelimTokenTreeBracketNodeRecord)]
 pub struct DelimTokenTreeBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28178,6 +34455,21 @@ impl ::sittir_core::render::Render for DelimTokenTreeBracketNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(412)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_bracket(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DelimTokenTreeBracketNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(412)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for DelimTokenTreeBracketNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(DelimTokenTreeBracketFields::layout(self), Some(::sittir_core::types::KindId(412)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_bracket(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketNode {
@@ -28210,7 +34502,7 @@ fn prepare_delim_token_tree_bracket<N: DelimTokenTreeBracketPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DELIM_TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DelimTokenTreeBraceFields, prepare = DelimTokenTreeBracePrepare)]
+#[node(kind = kind::DELIM_TOKEN_TREE_BRACE, layout = [kind::LBRACE, kind::RBRACE], words = 4, fields = DelimTokenTreeBraceFields, prepare = DelimTokenTreeBracePrepare, view = DelimTokenTreeBraceNodeRecord)]
 pub struct DelimTokenTreeBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28239,6 +34531,21 @@ impl ::sittir_core::render::Render for DelimTokenTreeBraceNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(413)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_brace(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DelimTokenTreeBraceNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(413)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for DelimTokenTreeBraceNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(DelimTokenTreeBraceFields::layout(self), Some(::sittir_core::types::KindId(413)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_delim_token_tree_brace(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceNode {
@@ -28271,7 +34578,7 @@ fn prepare_delim_token_tree_brace<N: DelimTokenTreeBracePrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_PATTERN_SHORTHAND, words = 8, fields = FieldPatternShorthandFields, prepare = FieldPatternShorthandPrepare)]
+#[node(kind = kind::FIELD_PATTERN_SHORTHAND, words = 8, fields = FieldPatternShorthandFields, prepare = FieldPatternShorthandPrepare, view = FieldPatternShorthandNodeRecord)]
 pub struct FieldPatternShorthandNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28305,6 +34612,21 @@ impl ::sittir_core::render::Render for FieldPatternShorthandNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldPatternShorthandNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(414)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldPatternShorthandNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldPatternShorthandFields::layout(self), Some(::sittir_core::types::KindId(414)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_pattern_shorthand(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FieldPatternShorthandNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_field_pattern_shorthand(self, &mut (), ctx)
@@ -28332,7 +34654,7 @@ fn prepare_field_pattern_shorthand<N: FieldPatternShorthandPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_PATTERN_NAMED, layout = [kind::COLON], words = 13, fields = FieldPatternNamedFields, prepare = FieldPatternNamedPrepare)]
+#[node(kind = kind::FIELD_PATTERN_NAMED, layout = [kind::COLON], words = 13, fields = FieldPatternNamedFields, prepare = FieldPatternNamedPrepare, view = FieldPatternNamedNodeRecord)]
 pub struct FieldPatternNamedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28369,6 +34691,21 @@ impl ::sittir_core::render::Render for FieldPatternNamedNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldPatternNamedNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(415)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldPatternNamedNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldPatternNamedFields::layout(self), Some(::sittir_core::types::KindId(415)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_pattern_named(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FieldPatternNamedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_field_pattern_named(self, &mut (), ctx)
@@ -28397,7 +34734,7 @@ fn prepare_field_pattern_named<N: FieldPatternNamedPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_DEFINITION_PAREN, layout = [kind::MACRO_RULES_BANG, kind::LPAREN, kind::RPAREN, kind::SEMI], words = 12, fields = MacroDefinitionParenFields, prepare = MacroDefinitionParenPrepare)]
+#[node(kind = kind::MACRO_DEFINITION_PAREN, layout = [kind::MACRO_RULES_BANG, kind::LPAREN, kind::RPAREN, kind::SEMI], words = 12, fields = MacroDefinitionParenFields, prepare = MacroDefinitionParenPrepare, view = MacroDefinitionParenNodeRecord)]
 pub struct MacroDefinitionParenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28428,6 +34765,21 @@ impl ::sittir_core::render::Render for MacroDefinitionParenNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroDefinitionParenNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(416)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MacroDefinitionParenNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MacroDefinitionParenFields::layout(self), Some(::sittir_core::types::KindId(416)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_paren(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MacroDefinitionParenNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_macro_definition_paren(self, &mut (), ctx)
@@ -28456,7 +34808,7 @@ fn prepare_macro_definition_paren<N: MacroDefinitionParenPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_DEFINITION_BRACKET, layout = [kind::MACRO_RULES_BANG, kind::LBRACK, kind::RBRACK, kind::SEMI], words = 12, fields = MacroDefinitionBracketFields, prepare = MacroDefinitionBracketPrepare)]
+#[node(kind = kind::MACRO_DEFINITION_BRACKET, layout = [kind::MACRO_RULES_BANG, kind::LBRACK, kind::RBRACK, kind::SEMI], words = 12, fields = MacroDefinitionBracketFields, prepare = MacroDefinitionBracketPrepare, view = MacroDefinitionBracketNodeRecord)]
 pub struct MacroDefinitionBracketNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28487,6 +34839,21 @@ impl ::sittir_core::render::Render for MacroDefinitionBracketNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroDefinitionBracketNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(417)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MacroDefinitionBracketNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MacroDefinitionBracketFields::layout(self), Some(::sittir_core::types::KindId(417)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_bracket(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MacroDefinitionBracketNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_macro_definition_bracket(self, &mut (), ctx)
@@ -28515,7 +34882,7 @@ fn prepare_macro_definition_bracket<N: MacroDefinitionBracketPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MACRO_DEFINITION_BRACE, layout = [kind::MACRO_RULES_BANG, kind::LBRACE, kind::RBRACE], words = 12, fields = MacroDefinitionBraceFields, prepare = MacroDefinitionBracePrepare)]
+#[node(kind = kind::MACRO_DEFINITION_BRACE, layout = [kind::MACRO_RULES_BANG, kind::LBRACE, kind::RBRACE], words = 12, fields = MacroDefinitionBraceFields, prepare = MacroDefinitionBracePrepare, view = MacroDefinitionBraceNodeRecord)]
 pub struct MacroDefinitionBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28546,6 +34913,21 @@ impl ::sittir_core::render::Render for MacroDefinitionBraceNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MacroDefinitionBraceNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(418)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MacroDefinitionBraceNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MacroDefinitionBraceFields::layout(self), Some(::sittir_core::types::KindId(418)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_macro_definition_brace(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MacroDefinitionBraceNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_macro_definition_brace(self, &mut (), ctx)
@@ -28574,7 +34956,7 @@ fn prepare_macro_definition_brace<N: MacroDefinitionBracePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_PATTERN_PREFIX, layout = [kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternPrefixFields, prepare = RangePatternPrefixPrepare)]
+#[node(kind = kind::RANGE_PATTERN_PREFIX, layout = [kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternPrefixFields, prepare = RangePatternPrefixPrepare, view = RangePatternPrefixNodeRecord)]
 pub struct RangePatternPrefixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28605,6 +34987,21 @@ impl ::sittir_core::render::Render for RangePatternPrefixNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangePatternPrefixNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(419)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RangePatternPrefixNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RangePatternPrefixFields::layout(self), Some(::sittir_core::types::KindId(419)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_prefix(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for RangePatternPrefixNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_range_pattern_prefix(self, &mut (), ctx)
@@ -28633,7 +35030,7 @@ fn prepare_range_pattern_prefix<N: RangePatternPrefixPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT, layout = [kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternWithLeftWithRightFields, prepare = RangePatternWithLeftWithRightPrepare)]
+#[node(kind = kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT, layout = [kind::DOT_DOT_DOT, kind::DOT_DOT_EQ, kind::DOT_DOT], words = 12, fields = RangePatternWithLeftWithRightFields, prepare = RangePatternWithLeftWithRightPrepare, view = RangePatternWithLeftWithRightNodeRecord)]
 pub struct RangePatternWithLeftWithRightNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28662,6 +35059,21 @@ impl ::sittir_core::render::Render for RangePatternWithLeftWithRightNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(420)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_with_left_with_right(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangePatternWithLeftWithRightNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(420)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RangePatternWithLeftWithRightNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RangePatternWithLeftWithRightFields::layout(self), Some(::sittir_core::types::KindId(420)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_with_left_with_right(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightNode {
@@ -28720,7 +35132,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftBareNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RANGE_PATTERN_WITH_LEFT, words = 12, fields = RangePatternWithLeftFields, prepare = RangePatternWithLeftPrepare)]
+#[node(kind = kind::RANGE_PATTERN_WITH_LEFT, words = 12, fields = RangePatternWithLeftFields, prepare = RangePatternWithLeftPrepare, view = RangePatternWithLeftNodeRecord)]
 pub struct RangePatternWithLeftNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28751,6 +35163,21 @@ impl ::sittir_core::render::Render for RangePatternWithLeftNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RangePatternWithLeftNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(422)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RangePatternWithLeftNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RangePatternWithLeftFields::layout(self), Some(::sittir_core::types::KindId(422)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_range_pattern_with_left(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for RangePatternWithLeftNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_range_pattern_with_left(self, &mut (), ctx)
@@ -28779,7 +35206,7 @@ fn prepare_range_pattern_with_left<N: RangePatternWithLeftPrepare + ?Sized>(node
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_BRACE, layout = [kind::STRUCT_KEYWORD], words = 27, fields = StructItemBraceFields, prepare = StructItemBracePrepare)]
+#[node(kind = kind::STRUCT_ITEM_BRACE, layout = [kind::STRUCT_KEYWORD], words = 27, fields = StructItemBraceFields, prepare = StructItemBracePrepare, view = StructItemBraceNodeRecord)]
 pub struct StructItemBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28819,6 +35246,21 @@ impl ::sittir_core::render::Render for StructItemBraceNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructItemBraceNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(423)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StructItemBraceNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StructItemBraceFields::layout(self), Some(::sittir_core::types::KindId(423)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_brace(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for StructItemBraceNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_struct_item_brace(self, &mut (), ctx)
@@ -28850,7 +35292,7 @@ fn prepare_struct_item_brace<N: StructItemBracePrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_TUPLE, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 27, fields = StructItemTupleFields, prepare = StructItemTuplePrepare)]
+#[node(kind = kind::STRUCT_ITEM_TUPLE, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 27, fields = StructItemTupleFields, prepare = StructItemTuplePrepare, view = StructItemTupleNodeRecord)]
 pub struct StructItemTupleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28890,6 +35332,21 @@ impl ::sittir_core::render::Render for StructItemTupleNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructItemTupleNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(424)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StructItemTupleNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StructItemTupleFields::layout(self), Some(::sittir_core::types::KindId(424)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_tuple(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for StructItemTupleNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_struct_item_tuple(self, &mut (), ctx)
@@ -28921,7 +35378,7 @@ fn prepare_struct_item_tuple<N: StructItemTuplePrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_UNIT, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 17, fields = StructItemUnitFields, prepare = StructItemUnitPrepare)]
+#[node(kind = kind::STRUCT_ITEM_UNIT, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 17, fields = StructItemUnitFields, prepare = StructItemUnitPrepare, view = StructItemUnitNodeRecord)]
 pub struct StructItemUnitNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28953,6 +35410,21 @@ impl ::sittir_core::render::Render for StructItemUnitNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(425)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_unit(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StructItemUnitNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(425)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StructItemUnitNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StructItemUnitFields::layout(self), Some(::sittir_core::types::KindId(425)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_struct_item_unit(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for StructItemUnitNode {
@@ -29032,7 +35504,7 @@ impl ::sittir_core::render::Render for WildcardPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_FIELD_DECLARATION, words = 9, fields = AttributedFieldDeclarationFields, prepare = AttributedFieldDeclarationPrepare)]
+#[node(kind = kind::_ATTRIBUTED_FIELD_DECLARATION, words = 9, fields = AttributedFieldDeclarationFields, prepare = AttributedFieldDeclarationPrepare, view = AttributedFieldDeclarationNodeRecord)]
 pub struct AttributedFieldDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29066,6 +35538,21 @@ impl ::sittir_core::render::Render for AttributedFieldDeclarationNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedFieldDeclarationNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(427)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedFieldDeclarationNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributedFieldDeclarationFields::layout(self), Some(::sittir_core::types::KindId(427)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_field_declaration(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attributed_field_declaration(self, &mut (), ctx)
@@ -29097,7 +35584,7 @@ fn prepare_attributed_field_declaration<N: AttributedFieldDeclarationPrepare + ?
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ENUM_VARIANT, words = 9, fields = AttributedEnumVariantFields, prepare = AttributedEnumVariantPrepare)]
+#[node(kind = kind::_ATTRIBUTED_ENUM_VARIANT, words = 9, fields = AttributedEnumVariantFields, prepare = AttributedEnumVariantPrepare, view = AttributedEnumVariantNodeRecord)]
 pub struct AttributedEnumVariantNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29131,6 +35618,21 @@ impl ::sittir_core::render::Render for AttributedEnumVariantNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedEnumVariantNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(428)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedEnumVariantNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributedEnumVariantFields::layout(self), Some(::sittir_core::types::KindId(428)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_enum_variant(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributedEnumVariantNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attributed_enum_variant(self, &mut (), ctx)
@@ -29162,7 +35664,7 @@ fn prepare_attributed_enum_variant<N: AttributedEnumVariantPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_PARAMETER, layout = [kind::UNDERSCORE], words = 12, fields = AttributedParameterFields, prepare = AttributedParameterPrepare)]
+#[node(kind = kind::_ATTRIBUTED_PARAMETER, layout = [kind::UNDERSCORE], words = 12, fields = AttributedParameterFields, prepare = AttributedParameterPrepare, view = AttributedParameterNodeRecord)]
 pub struct AttributedParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29193,6 +35695,21 @@ impl ::sittir_core::render::Render for AttributedParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(429)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributedParameterFields::layout(self), Some(::sittir_core::types::KindId(429)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributedParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attributed_parameter(self, &mut (), ctx)
@@ -29221,7 +35738,7 @@ fn prepare_attributed_parameter<N: AttributedParameterPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_TYPE_PARAMETER, words = 9, fields = AttributedTypeParameterFields, prepare = AttributedTypeParameterPrepare)]
+#[node(kind = kind::_ATTRIBUTED_TYPE_PARAMETER, words = 9, fields = AttributedTypeParameterFields, prepare = AttributedTypeParameterPrepare, view = AttributedTypeParameterNodeRecord)]
 pub struct AttributedTypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29255,6 +35772,21 @@ impl ::sittir_core::render::Render for AttributedTypeParameterNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedTypeParameterNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedTypeParameterNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributedTypeParameterFields::layout(self), Some(::sittir_core::types::KindId(430)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_type_parameter(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributedTypeParameterNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attributed_type_parameter(self, &mut (), ctx)
@@ -29286,7 +35818,7 @@ fn prepare_attributed_type_parameter<N: AttributedTypeParameterPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ARGUMENT, words = 9, fields = AttributedArgumentFields, prepare = AttributedArgumentPrepare)]
+#[node(kind = kind::_ATTRIBUTED_ARGUMENT, words = 9, fields = AttributedArgumentFields, prepare = AttributedArgumentPrepare, view = AttributedArgumentNodeRecord)]
 pub struct AttributedArgumentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29320,6 +35852,21 @@ impl ::sittir_core::render::Render for AttributedArgumentNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedArgumentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedArgumentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributedArgumentFields::layout(self), Some(::sittir_core::types::KindId(431)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_argument(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributedArgumentNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attributed_argument(self, &mut (), ctx)
@@ -29351,7 +35898,7 @@ fn prepare_attributed_argument<N: AttributedArgumentPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ORDERED_FIELD, words = 14, fields = AttributedOrderedFieldFields, prepare = AttributedOrderedFieldPrepare)]
+#[node(kind = kind::_ATTRIBUTED_ORDERED_FIELD, words = 14, fields = AttributedOrderedFieldFields, prepare = AttributedOrderedFieldPrepare, view = AttributedOrderedFieldNodeRecord)]
 pub struct AttributedOrderedFieldNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29388,6 +35935,21 @@ impl ::sittir_core::render::Render for AttributedOrderedFieldNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AttributedOrderedFieldNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(432)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AttributedOrderedFieldNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(AttributedOrderedFieldFields::layout(self), Some(::sittir_core::types::KindId(432)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_ordered_field(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_attributed_ordered_field(self, &mut (), ctx)
@@ -29420,7 +35982,7 @@ fn prepare_attributed_ordered_field<N: AttributedOrderedFieldPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_ARGUMENT, words = 12, fields = TypeArgumentFields, prepare = TypeArgumentPrepare)]
+#[node(kind = kind::_TYPE_ARGUMENT, words = 12, fields = TypeArgumentFields, prepare = TypeArgumentPrepare, view = TypeArgumentNodeRecord)]
 pub struct TypeArgumentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29451,6 +36013,21 @@ impl ::sittir_core::render::Render for TypeArgumentNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeArgumentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(433)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeArgumentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeArgumentFields::layout(self), Some(::sittir_core::types::KindId(433)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_argument(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for TypeArgumentNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_type_argument(self, &mut (), ctx)
@@ -29479,7 +36056,7 @@ fn prepare_type_argument<N: TypeArgumentPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_MATCH_BLOCK_ARMS, words = 9, fields = MatchBlockArmsFields, prepare = MatchBlockArmsPrepare)]
+#[node(kind = kind::_MATCH_BLOCK_ARMS, words = 9, fields = MatchBlockArmsFields, prepare = MatchBlockArmsPrepare, view = MatchBlockArmsNodeRecord)]
 pub struct MatchBlockArmsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29513,6 +36090,21 @@ impl ::sittir_core::render::Render for MatchBlockArmsNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for MatchBlockArmsNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(434)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchBlockArmsNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(MatchBlockArmsFields::layout(self), Some(::sittir_core::types::KindId(434)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block_arms(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for MatchBlockArmsNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_match_block_arms(self, &mut (), ctx)
@@ -29544,7 +36136,7 @@ fn prepare_match_block_arms<N: MatchBlockArmsPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOAT_LITERAL, text, words = 2, fields = FloatLiteralFields, prepare = FloatLiteralPrepare)]
+#[node(kind = kind::FLOAT_LITERAL, text, words = 2, fields = FloatLiteralFields, prepare = FloatLiteralPrepare, view = FloatLiteralNodeRecord)]
 pub struct FloatLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29572,6 +36164,21 @@ impl ::sittir_core::render::Render for FloatLiteralNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FloatLiteralNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FloatLiteralNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FloatLiteralFields::layout(self), Some(::sittir_core::types::KindId(162)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_float_literal(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for FloatLiteralNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_float_literal(self, &mut (), ctx)
@@ -29597,7 +36204,7 @@ fn prepare_float_literal<N: FloatLiteralPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CONTENT, text, words = 2, fields = StringContentFields, prepare = StringContentPrepare)]
+#[node(kind = kind::STRING_CONTENT, text, words = 2, fields = StringContentFields, prepare = StringContentPrepare, view = StringContentNodeRecord)]
 pub struct StringContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29625,6 +36232,21 @@ impl ::sittir_core::render::Render for StringContentNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StringContentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StringContentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StringContentFields::layout(self), Some(::sittir_core::types::KindId(157)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for StringContentNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_string_content(self, &mut (), ctx)
@@ -29650,7 +36272,7 @@ fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RAW_STRING_LITERAL_CONTENT, text, words = 2, fields = RawStringLiteralContentFields, prepare = RawStringLiteralContentPrepare)]
+#[node(kind = kind::RAW_STRING_LITERAL_CONTENT, text, words = 2, fields = RawStringLiteralContentFields, prepare = RawStringLiteralContentPrepare, view = RawStringLiteralContentNodeRecord)]
 pub struct RawStringLiteralContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29676,6 +36298,21 @@ impl ::sittir_core::render::Render for RawStringLiteralContentNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(160)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal_content(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RawStringLiteralContentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(160)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RawStringLiteralContentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RawStringLiteralContentFields::layout(self), Some(::sittir_core::types::KindId(160)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal_content(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for RawStringLiteralContentNode {
@@ -29759,7 +36396,7 @@ impl ::sittir_core::render::Render for InnerDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RAW_STRING_LITERAL_START, text, words = 2, fields = RawStringLiteralStartFields, prepare = RawStringLiteralStartPrepare)]
+#[node(kind = kind::_RAW_STRING_LITERAL_START, text, words = 2, fields = RawStringLiteralStartFields, prepare = RawStringLiteralStartPrepare, view = RawStringLiteralStartNodeRecord)]
 pub struct RawStringLiteralStartNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29787,6 +36424,21 @@ impl ::sittir_core::render::Render for RawStringLiteralStartNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RawStringLiteralStartNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RawStringLiteralStartNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RawStringLiteralStartFields::layout(self), Some(::sittir_core::types::KindId(159)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal_start(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for RawStringLiteralStartNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_raw_string_literal_start(self, &mut (), ctx)
@@ -29812,7 +36464,7 @@ fn prepare_raw_string_literal_start<N: RawStringLiteralStartPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RAW_STRING_LITERAL_END, text, words = 2, fields = RawStringLiteralEndFields, prepare = RawStringLiteralEndPrepare)]
+#[node(kind = kind::_RAW_STRING_LITERAL_END, text, words = 2, fields = RawStringLiteralEndFields, prepare = RawStringLiteralEndPrepare, view = RawStringLiteralEndNodeRecord)]
 pub struct RawStringLiteralEndNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29840,6 +36492,21 @@ impl ::sittir_core::render::Render for RawStringLiteralEndNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for RawStringLiteralEndNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(161)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RawStringLiteralEndNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(RawStringLiteralEndFields::layout(self), Some(::sittir_core::types::KindId(161)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_raw_string_literal_end(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for RawStringLiteralEndNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_raw_string_literal_end(self, &mut (), ctx)
@@ -29865,7 +36532,7 @@ fn prepare_raw_string_literal_end<N: RawStringLiteralEndPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_DOC_COMMENT, text, words = 2, fields = DocCommentFields, prepare = DocCommentPrepare)]
+#[node(kind = kind::_DOC_COMMENT, text, words = 2, fields = DocCommentFields, prepare = DocCommentPrepare, view = DocCommentNodeRecord)]
 pub struct DocCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29893,6 +36560,21 @@ impl ::sittir_core::render::Render for DocCommentNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for DocCommentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for DocCommentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(DocCommentFields::layout(self), Some(::sittir_core::types::KindId(166)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_doc_comment(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for DocCommentNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_doc_comment(self, &mut (), ctx)
@@ -29918,7 +36600,7 @@ fn prepare_doc_comment<N: DocCommentPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_BLOCK_COMMENT_CONTENT, text, words = 2, fields = BlockCommentContentFields, prepare = BlockCommentContentPrepare)]
+#[node(kind = kind::_BLOCK_COMMENT_CONTENT, text, words = 2, fields = BlockCommentContentFields, prepare = BlockCommentContentPrepare, view = BlockCommentContentNodeRecord)]
 pub struct BlockCommentContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29944,6 +36626,21 @@ impl ::sittir_core::render::Render for BlockCommentContentNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(165)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_content(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for BlockCommentContentNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(165)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BlockCommentContentNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(BlockCommentContentFields::layout(self), Some(::sittir_core::types::KindId(165)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_block_comment_content(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for BlockCommentContentNode {
@@ -30195,7 +36892,7 @@ impl ::sittir_core::render::Render for DedentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CLOSE, text, words = 2, fields = StringCloseFields, prepare = StringClosePrepare)]
+#[node(kind = kind::STRING_CLOSE, text, words = 2, fields = StringCloseFields, prepare = StringClosePrepare, view = StringCloseNodeRecord)]
 pub struct StringCloseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30223,6 +36920,21 @@ impl ::sittir_core::render::Render for StringCloseNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StringCloseNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StringCloseNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StringCloseFields::layout(self), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Token, w, |w| render_string_close(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for StringCloseNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_string_close(self, &mut (), ctx)
@@ -30248,7 +36960,7 @@ fn prepare_string_close<N: StringClosePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ERROR_SENTINEL, text, words = 2, fields = ErrorSentinelFields, prepare = ErrorSentinelPrepare)]
+#[node(kind = kind::_ERROR_SENTINEL, text, words = 2, fields = ErrorSentinelFields, prepare = ErrorSentinelPrepare, view = ErrorSentinelNodeRecord)]
 pub struct ErrorSentinelNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30276,6 +36988,21 @@ impl ::sittir_core::render::Render for ErrorSentinelNode {
     }
 }
 
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ErrorSentinelNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ErrorSentinelNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ErrorSentinelFields::layout(self), Some(::sittir_core::types::KindId(167)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_error_sentinel(self, w))
+    }
+}
+
+}
+
 impl ::sittir_core::prepare::Prepare for ErrorSentinelNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         prepare_error_sentinel(self, &mut (), ctx)
@@ -30301,7 +37028,7 @@ fn prepare_error_sentinel<N: ErrorSentinelPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 7, fields = TypeIdentifierFields, prepare = TypeIdentifierPrepare)]
+#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 7, fields = TypeIdentifierFields, prepare = TypeIdentifierPrepare, view = TypeIdentifierNodeRecord)]
 pub struct TypeIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30327,6 +37054,21 @@ impl ::sittir_core::render::Render for TypeIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(468)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for TypeIdentifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(468)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeIdentifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(TypeIdentifierFields::layout(self), Some(::sittir_core::types::KindId(468)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for TypeIdentifierNode {
@@ -30355,7 +37097,7 @@ fn prepare_type_identifier<N: TypeIdentifierPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FIELD_IDENTIFIER, display, content = content, words = 7, fields = FieldIdentifierFields, prepare = FieldIdentifierPrepare)]
+#[node(kind = kind::_FIELD_IDENTIFIER, display, content = content, words = 7, fields = FieldIdentifierFields, prepare = FieldIdentifierPrepare, view = FieldIdentifierNodeRecord)]
 pub struct FieldIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30381,6 +37123,21 @@ impl ::sittir_core::render::Render for FieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(465)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for FieldIdentifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(465)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FieldIdentifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(FieldIdentifierFields::layout(self), Some(::sittir_core::types::KindId(465)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for FieldIdentifierNode {
@@ -30409,7 +37166,7 @@ fn prepare_field_identifier<N: FieldIdentifierPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, content = content, words = 7, fields = ShorthandFieldIdentifierFields, prepare = ShorthandFieldIdentifierPrepare)]
+#[node(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, content = content, words = 7, fields = ShorthandFieldIdentifierFields, prepare = ShorthandFieldIdentifierPrepare, view = ShorthandFieldIdentifierNodeRecord)]
 pub struct ShorthandFieldIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30435,6 +37192,21 @@ impl ::sittir_core::render::Render for ShorthandFieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(467)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for ShorthandFieldIdentifierNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(467)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for ShorthandFieldIdentifierNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(ShorthandFieldIdentifierFields::layout(self), Some(::sittir_core::types::KindId(467)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
+    }
+}
+
 }
 
 impl ::sittir_core::prepare::Prepare for ShorthandFieldIdentifierNode {
@@ -41089,6 +47861,37 @@ fn render_statement(t: &StatementNode, w: &mut dyn ::sittir_core::render::Render
     }
 }
 
+::sittir_core::records_codec! {
+fn render_statement_record(t: &StatementNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        StatementNodeRecord::ExpressionStatement(inner) => inner.render(w),
+        StatementNodeRecord::DeclarationStatement(inner) => inner.render(w),
+        StatementNodeRecord::ConstItem(inner) => inner.render(w),
+        StatementNodeRecord::MacroInvocation(inner) => inner.render(w),
+        StatementNodeRecord::MacroDefinition(inner) => inner.render(w),
+        StatementNodeRecord::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
+        StatementNodeRecord::AttributeItem(inner) => inner.render(w),
+        StatementNodeRecord::InnerAttributeItem(inner) => inner.render(w),
+        StatementNodeRecord::ModItem(inner) => inner.render(w),
+        StatementNodeRecord::ForeignModItem(inner) => inner.render(w),
+        StatementNodeRecord::StructItem(inner) => inner.render(w),
+        StatementNodeRecord::UnionItem(inner) => inner.render(w),
+        StatementNodeRecord::EnumItem(inner) => inner.render(w),
+        StatementNodeRecord::TypeItem(inner) => inner.render(w),
+        StatementNodeRecord::FunctionItem(inner) => inner.render(w),
+        StatementNodeRecord::FunctionSignatureItem(inner) => inner.render(w),
+        StatementNodeRecord::ImplItem(inner) => inner.render(w),
+        StatementNodeRecord::TraitItem(inner) => inner.render(w),
+        StatementNodeRecord::AssociatedType(inner) => inner.render(w),
+        StatementNodeRecord::LetDeclaration(inner) => inner.render(w),
+        StatementNodeRecord::UseDeclaration(inner) => inner.render(w),
+        StatementNodeRecord::ExternCrateDeclaration(inner) => inner.render(w),
+        StatementNodeRecord::StaticItem(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_declaration_statement(t: &DeclarationStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         DeclarationStatementNode::ConstItem(inner) => inner.as_ref().render(w),
@@ -41115,12 +47918,52 @@ fn render_declaration_statement(t: &DeclarationStatementNode, w: &mut dyn ::sitt
     }
 }
 
+::sittir_core::records_codec! {
+fn render_declaration_statement_record(t: &DeclarationStatementNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        DeclarationStatementNodeRecord::ConstItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::MacroInvocation(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::MacroDefinition(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
+        DeclarationStatementNodeRecord::AttributeItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::InnerAttributeItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::ModItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::ForeignModItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::StructItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::UnionItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::EnumItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::TypeItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::FunctionItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::FunctionSignatureItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::ImplItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::TraitItem(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::AssociatedType(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::LetDeclaration(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::UseDeclaration(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::ExternCrateDeclaration(inner) => inner.render(w),
+        DeclarationStatementNodeRecord::StaticItem(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_macro_definition(t: &MacroDefinitionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         MacroDefinitionNode::MacroDefinitionParen(inner) => inner.render(w),
         MacroDefinitionNode::MacroDefinitionBracket(inner) => inner.render(w),
         MacroDefinitionNode::MacroDefinitionBrace(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_macro_definition_record(t: &MacroDefinitionNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        MacroDefinitionNodeRecord::MacroDefinitionParen(inner) => inner.render(w),
+        MacroDefinitionNodeRecord::MacroDefinitionBracket(inner) => inner.render(w),
+        MacroDefinitionNodeRecord::MacroDefinitionBrace(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_token_tree_pattern(t: &TokenTreePatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41131,12 +47974,34 @@ fn render_token_tree_pattern(t: &TokenTreePatternNode, w: &mut dyn ::sittir_core
     }
 }
 
+::sittir_core::records_codec! {
+fn render_token_tree_pattern_record(t: &TokenTreePatternNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        TokenTreePatternNodeRecord::TokenTreePatternParen(inner) => inner.render(w),
+        TokenTreePatternNodeRecord::TokenTreePatternBracket(inner) => inner.render(w),
+        TokenTreePatternNodeRecord::TokenTreePatternBrace(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_token_tree(t: &TokenTreeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         TokenTreeNode::TokenTreeParen(inner) => inner.render(w),
         TokenTreeNode::TokenTreeBracket(inner) => inner.render(w),
         TokenTreeNode::TokenTreeBrace(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_token_tree_record(t: &TokenTreeNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        TokenTreeNodeRecord::TokenTreeParen(inner) => inner.render(w),
+        TokenTreeNodeRecord::TokenTreeBracket(inner) => inner.render(w),
+        TokenTreeNodeRecord::TokenTreeBrace(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_mod_item(t: &ModItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41146,11 +48011,31 @@ fn render_mod_item(t: &ModItemNode, w: &mut dyn ::sittir_core::render::RenderSin
     }
 }
 
+::sittir_core::records_codec! {
+fn render_mod_item_record(t: &ModItemNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        ModItemNodeRecord::ModItemExternal(inner) => inner.render(w),
+        ModItemNodeRecord::ModItemInline(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_foreign_mod_item(t: &ForeignModItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ForeignModItemNode::ForeignModItemSemi(inner) => inner.render(w),
         ForeignModItemNode::ForeignModItemBody(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_foreign_mod_item_record(t: &ForeignModItemNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        ForeignModItemNodeRecord::ForeignModItemSemi(inner) => inner.render(w),
+        ForeignModItemNodeRecord::ForeignModItemBody(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_struct_item(t: &StructItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41161,11 +48046,32 @@ fn render_struct_item(t: &StructItemNode, w: &mut dyn ::sittir_core::render::Ren
     }
 }
 
+::sittir_core::records_codec! {
+fn render_struct_item_record(t: &StructItemNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        StructItemNodeRecord::StructItemBrace(inner) => inner.render(w),
+        StructItemNodeRecord::StructItemTuple(inner) => inner.render(w),
+        StructItemNodeRecord::StructItemUnit(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_impl_item(t: &ImplItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ImplItemNode::ImplItemBody(inner) => inner.as_ref().render(w),
         ImplItemNode::ImplItemSemi(inner) => inner.as_ref().render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_impl_item_record(t: &ImplItemNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        ImplItemNodeRecord::ImplItemBody(inner) => inner.render(w),
+        ImplItemNodeRecord::ImplItemSemi(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_type(t: &TypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41190,11 +48096,46 @@ fn render_type(t: &TypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> :
     }
 }
 
+::sittir_core::records_codec! {
+fn render_type_record(t: &TypeNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        TypeNodeRecord::AbstractType(inner) => inner.render(w),
+        TypeNodeRecord::ReferenceType(inner) => inner.render(w),
+        TypeNodeRecord::Metavariable(inner) => inner.render(w),
+        TypeNodeRecord::PointerType(inner) => inner.render(w),
+        TypeNodeRecord::GenericType(inner) => inner.render(w),
+        TypeNodeRecord::ScopedTypeIdentifier(inner) => inner.render(w),
+        TypeNodeRecord::TupleType(inner) => inner.render(w),
+        TypeNodeRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
+        TypeNodeRecord::ArrayType(inner) => inner.render(w),
+        TypeNodeRecord::FunctionType(inner) => inner.render(w),
+        TypeNodeRecord::TypeIdentifier(inner) => inner.render(w),
+        TypeNodeRecord::MacroInvocation(inner) => inner.render(w),
+        TypeNodeRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
+        TypeNodeRecord::DynamicType(inner) => inner.render(w),
+        TypeNodeRecord::BoundedType(inner) => inner.render(w),
+        TypeNodeRecord::RemovedTraitBound(inner) => inner.render(w),
+        TypeNodeRecord::PrimitiveType(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_pointer_type(t: &PointerTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         PointerTypeNode::PointerTypeConst(inner) => inner.render(w),
         PointerTypeNode::PointerTypeMut(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_pointer_type_record(t: &PointerTypeNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        PointerTypeNodeRecord::PointerTypeConst(inner) => inner.render(w),
+        PointerTypeNodeRecord::PointerTypeMut(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_expression(t: &ExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41248,12 +48189,77 @@ fn render_expression(t: &ExpressionNode, w: &mut dyn ::sittir_core::render::Rend
     }
 }
 
+::sittir_core::records_codec! {
+fn render_expression_record(t: &ExpressionNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        ExpressionNodeRecord::UnaryExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::ReferenceExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::TryExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::BinaryExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::AssignmentExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::CompoundAssignmentExpr(inner) => inner.render(w),
+        ExpressionNodeRecord::TypeCastExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::CallExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::ReturnExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::YieldExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::StringLiteral(inner) => inner.render(w),
+        ExpressionNodeRecord::RawStringLiteral(inner) => inner.render(w),
+        ExpressionNodeRecord::CharLiteral(inner) => inner.render(w),
+        ExpressionNodeRecord::BooleanLiteral(inner) => inner.render(w),
+        ExpressionNodeRecord::IntegerLiteral(inner) => inner.render(w),
+        ExpressionNodeRecord::FloatLiteral(inner) => inner.render(w),
+        ExpressionNodeRecord::Identifier(inner) => inner.render(w),
+        ExpressionNodeRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+        ExpressionNodeRecord::ScopedIdentifier(inner) => inner.render(w),
+        ExpressionNodeRecord::GenericFunction(inner) => inner.render(w),
+        ExpressionNodeRecord::AwaitExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::FieldExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::ArrayExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::TupleExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::MacroInvocation(inner) => inner.render(w),
+        ExpressionNodeRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
+        ExpressionNodeRecord::BreakExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::ContinueExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::IndexExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::Metavariable(inner) => inner.render(w),
+        ExpressionNodeRecord::ClosureExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::ParenthesizedExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::StructExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::UnsafeBlock(inner) => inner.render(w),
+        ExpressionNodeRecord::AsyncBlock(inner) => inner.render(w),
+        ExpressionNodeRecord::GenBlock(inner) => inner.render(w),
+        ExpressionNodeRecord::TryBlock(inner) => inner.render(w),
+        ExpressionNodeRecord::Block(inner) => inner.render(w),
+        ExpressionNodeRecord::IfExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::MatchExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::WhileExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::LoopExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::ForExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::ConstBlock(inner) => inner.render(w),
+        ExpressionNodeRecord::RangeExpression(inner) => inner.render(w),
+        ExpressionNodeRecord::Verbatim(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_delim_token_tree(t: &DelimTokenTreeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         DelimTokenTreeNode::DelimTokenTreeParen(inner) => inner.render(w),
         DelimTokenTreeNode::DelimTokenTreeBracket(inner) => inner.render(w),
         DelimTokenTreeNode::DelimTokenTreeBrace(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_delim_token_tree_record(t: &DelimTokenTreeNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        DelimTokenTreeNodeRecord::DelimTokenTreeParen(inner) => inner.render(w),
+        DelimTokenTreeNodeRecord::DelimTokenTreeBracket(inner) => inner.render(w),
+        DelimTokenTreeNodeRecord::DelimTokenTreeBrace(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_range_expression(t: &RangeExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41265,6 +48271,18 @@ fn render_range_expression(t: &RangeExpressionNode, w: &mut dyn ::sittir_core::r
     }
 }
 
+::sittir_core::records_codec! {
+fn render_range_expression_record(t: &RangeExpressionNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        RangeExpressionNodeRecord::RangeExpressionBinary(inner) => inner.render(w),
+        RangeExpressionNodeRecord::RangeExpressionPostfix(inner) => inner.render(w),
+        RangeExpressionNodeRecord::RangeExpressionPrefix(inner) => inner.render(w),
+        RangeExpressionNodeRecord::RangeExpressionBare(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_reference_expression(t: &ReferenceExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ReferenceExpressionNode::ReferenceExpressionRawConst(inner) => inner.render(w),
@@ -41274,11 +48292,33 @@ fn render_reference_expression(t: &ReferenceExpressionNode, w: &mut dyn ::sittir
     }
 }
 
+::sittir_core::records_codec! {
+fn render_reference_expression_record(t: &ReferenceExpressionNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        ReferenceExpressionNodeRecord::ReferenceExpressionRawConst(inner) => inner.render(w),
+        ReferenceExpressionNodeRecord::ReferenceExpressionRawMut(inner) => inner.render(w),
+        ReferenceExpressionNodeRecord::ReferenceExpressionMut(inner) => inner.render(w),
+        ReferenceExpressionNodeRecord::ReferenceExpressionBare(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_array_expression(t: &ArrayExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ArrayExpressionNode::ArrayExpressionSemi(inner) => inner.render(w),
         ArrayExpressionNode::ArrayExpressionList(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_array_expression_record(t: &ArrayExpressionNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        ArrayExpressionNodeRecord::ArrayExpressionSemi(inner) => inner.render(w),
+        ArrayExpressionNodeRecord::ArrayExpressionList(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_match_arm(t: &MatchArmNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41288,11 +48328,31 @@ fn render_match_arm(t: &MatchArmNode, w: &mut dyn ::sittir_core::render::RenderS
     }
 }
 
+::sittir_core::records_codec! {
+fn render_match_arm_record(t: &MatchArmNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        MatchArmNodeRecord::MatchArmWithComma(inner) => inner.render(w),
+        MatchArmNodeRecord::MatchArmBlockEnding(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_closure_expression(t: &ClosureExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ClosureExpressionNode::ClosureExpressionBlock(inner) => inner.render(w),
         ClosureExpressionNode::ClosureExpressionExpr(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_closure_expression_record(t: &ClosureExpressionNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        ClosureExpressionNodeRecord::ClosureExpressionBlock(inner) => inner.render(w),
+        ClosureExpressionNodeRecord::ClosureExpressionExpr(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_pattern(t: &PatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41319,6 +48379,33 @@ fn render_pattern(t: &PatternNode, w: &mut dyn ::sittir_core::render::RenderSink
     }
 }
 
+::sittir_core::records_codec! {
+fn render_pattern_record(t: &PatternNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        PatternNodeRecord::LiteralPattern(inner) => inner.render(w),
+        PatternNodeRecord::Identifier(inner) => inner.render(w),
+        PatternNodeRecord::ScopedIdentifier(inner) => inner.render(w),
+        PatternNodeRecord::GenericPattern(inner) => inner.render(w),
+        PatternNodeRecord::TuplePattern(inner) => inner.render(w),
+        PatternNodeRecord::TupleStructPattern(inner) => inner.render(w),
+        PatternNodeRecord::StructPattern(inner) => inner.render(w),
+        PatternNodeRecord::RefPattern(inner) => inner.render(w),
+        PatternNodeRecord::SlicePattern(inner) => inner.render(w),
+        PatternNodeRecord::CapturedPattern(inner) => inner.render(w),
+        PatternNodeRecord::ReferencePattern(inner) => inner.render(w),
+        PatternNodeRecord::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
+        PatternNodeRecord::MutPattern(inner) => inner.render(w),
+        PatternNodeRecord::RangePattern(inner) => inner.render(w),
+        PatternNodeRecord::OrPattern(inner) => inner.render(w),
+        PatternNodeRecord::ConstBlock(inner) => inner.render(w),
+        PatternNodeRecord::MacroInvocation(inner) => inner.render(w),
+        PatternNodeRecord::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
+        PatternNodeRecord::Verbatim(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_range_pattern(t: &RangePatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         RangePatternNode::RangePatternWithLeft(inner) => inner.render(w),
@@ -41326,11 +48413,31 @@ fn render_range_pattern(t: &RangePatternNode, w: &mut dyn ::sittir_core::render:
     }
 }
 
+::sittir_core::records_codec! {
+fn render_range_pattern_record(t: &RangePatternNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        RangePatternNodeRecord::RangePatternWithLeft(inner) => inner.render(w),
+        RangePatternNodeRecord::RangePatternPrefix(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_or_pattern(t: &OrPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         OrPatternNode::OrPatternBinary(inner) => inner.render(w),
         OrPatternNode::OrPatternPrefix(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_or_pattern_record(t: &OrPatternNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        OrPatternNodeRecord::OrPatternBinary(inner) => inner.render(w),
+        OrPatternNodeRecord::OrPatternPrefix(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_literal_pattern(t: &LiteralPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41346,6 +48453,22 @@ fn render_literal_pattern(t: &LiteralPatternNode, w: &mut dyn ::sittir_core::ren
     }
 }
 
+::sittir_core::records_codec! {
+fn render_literal_pattern_record(t: &LiteralPatternNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        LiteralPatternNodeRecord::StringLiteral(inner) => inner.render(w),
+        LiteralPatternNodeRecord::RawStringLiteral(inner) => inner.render(w),
+        LiteralPatternNodeRecord::CharLiteral(inner) => inner.render(w),
+        LiteralPatternNodeRecord::BooleanLiteral(inner) => inner.render(w),
+        LiteralPatternNodeRecord::IntegerLiteral(inner) => inner.render(w),
+        LiteralPatternNodeRecord::FloatLiteral(inner) => inner.render(w),
+        LiteralPatternNodeRecord::NegativeLiteral(inner) => inner.render(w),
+        LiteralPatternNodeRecord::Verbatim(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_integer_literal(t: &IntegerLiteralNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         IntegerLiteralNode::IntegerLiteralDecimal(inner) => inner.render(w),
@@ -41353,6 +48476,18 @@ fn render_integer_literal(t: &IntegerLiteralNode, w: &mut dyn ::sittir_core::ren
         IntegerLiteralNode::IntegerLiteralBinary(inner) => inner.render(w),
         IntegerLiteralNode::IntegerLiteralOctal(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_integer_literal_record(t: &IntegerLiteralNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        IntegerLiteralNodeRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+        IntegerLiteralNodeRecord::IntegerLiteralHex(inner) => inner.render(w),
+        IntegerLiteralNodeRecord::IntegerLiteralBinary(inner) => inner.render(w),
+        IntegerLiteralNodeRecord::IntegerLiteralOctal(inner) => inner.render(w),
+    }
+}
+
 }
 
 fn render_char_literal(t: &CharLiteralNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -41364,6 +48499,18 @@ fn render_char_literal(t: &CharLiteralNode, w: &mut dyn ::sittir_core::render::R
     }
 }
 
+::sittir_core::records_codec! {
+fn render_char_literal_record(t: &CharLiteralNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        CharLiteralNodeRecord::CharLiteralEscaped(inner) => inner.render(w),
+        CharLiteralNodeRecord::CharLiteralPlain(inner) => inner.render(w),
+        CharLiteralNodeRecord::CharLiteralEmpty(inner) => inner.render(w),
+        CharLiteralNodeRecord::Verbatim(inner) => inner.render(w),
+    }
+}
+
+}
+
 fn render_char_literal_escaped(t: &CharLiteralEscapedNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         CharLiteralEscapedNode::CharLiteralEscapedSimple(inner) => inner.render(w),
@@ -41371,6 +48518,18 @@ fn render_char_literal_escaped(t: &CharLiteralEscapedNode, w: &mut dyn ::sittir_
         CharLiteralEscapedNode::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
         CharLiteralEscapedNode::CharLiteralEscapedHex(inner) => inner.render(w),
     }
+}
+
+::sittir_core::records_codec! {
+fn render_char_literal_escaped_record(t: &CharLiteralEscapedNodeRecord<'_>, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        CharLiteralEscapedNodeRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+        CharLiteralEscapedNodeRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+        CharLiteralEscapedNodeRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+        CharLiteralEscapedNodeRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+    }
+}
+
 }
 
 /// Word-class table derived from this grammar's Link-pinned word pattern.
@@ -42207,6 +49366,823 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::Verbatim(t) => t.render(w),
         }
     }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SourceFile(inner) => inner.kind_in(kinds),
+            Self::ExpressionStatement(inner) => inner.kind_in(kinds),
+            Self::MacroRule(inner) => inner.kind_in(kinds),
+            Self::TokenBindingPattern(inner) => inner.kind_in(kinds),
+            Self::TokenRepetitionPattern(inner) => inner.kind_in(kinds),
+            Self::FragmentSpecifier(inner) => inner.kind_in(kinds),
+            Self::TokenRepetition(inner) => inner.kind_in(kinds),
+            Self::NonSpecialToken(inner) => inner.kind_in(kinds),
+            Self::AttributeItem(inner) => inner.kind_in(kinds),
+            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
+            Self::Attribute(inner) => inner.kind_in(kinds),
+            Self::DeclarationList(inner) => inner.kind_in(kinds),
+            Self::UnionItem(inner) => inner.kind_in(kinds),
+            Self::EnumItem(inner) => inner.kind_in(kinds),
+            Self::EnumVariantList(inner) => inner.kind_in(kinds),
+            Self::EnumVariant(inner) => inner.kind_in(kinds),
+            Self::FieldDeclarationList(inner) => inner.kind_in(kinds),
+            Self::FieldDeclaration(inner) => inner.kind_in(kinds),
+            Self::OrderedFieldDeclarationList(inner) => inner.kind_in(kinds),
+            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
+            Self::ConstItem(inner) => inner.kind_in(kinds),
+            Self::StaticItem(inner) => inner.kind_in(kinds),
+            Self::TypeItem(inner) => inner.kind_in(kinds),
+            Self::FunctionItem(inner) => inner.kind_in(kinds),
+            Self::FunctionSignatureItem(inner) => inner.kind_in(kinds),
+            Self::FunctionModifiers(inner) => inner.kind_in(kinds),
+            Self::WhereClause(inner) => inner.kind_in(kinds),
+            Self::WherePredicate(inner) => inner.kind_in(kinds),
+            Self::TraitItem(inner) => inner.kind_in(kinds),
+            Self::AssociatedType(inner) => inner.kind_in(kinds),
+            Self::TraitBounds(inner) => inner.kind_in(kinds),
+            Self::HigherRankedTraitBound(inner) => inner.kind_in(kinds),
+            Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
+            Self::TypeParameters(inner) => inner.kind_in(kinds),
+            Self::ConstParameter(inner) => inner.kind_in(kinds),
+            Self::TypeParameter(inner) => inner.kind_in(kinds),
+            Self::LifetimeParameter(inner) => inner.kind_in(kinds),
+            Self::LetDeclaration(inner) => inner.kind_in(kinds),
+            Self::UseDeclaration(inner) => inner.kind_in(kinds),
+            Self::ScopedUseList(inner) => inner.kind_in(kinds),
+            Self::UseList(inner) => inner.kind_in(kinds),
+            Self::UseAsClause(inner) => inner.kind_in(kinds),
+            Self::UseWildcard(inner) => inner.kind_in(kinds),
+            Self::Parameters(inner) => inner.kind_in(kinds),
+            Self::SelfParameter(inner) => inner.kind_in(kinds),
+            Self::VariadicParameter(inner) => inner.kind_in(kinds),
+            Self::Parameter(inner) => inner.kind_in(kinds),
+            Self::ExternModifier(inner) => inner.kind_in(kinds),
+            Self::VisibilityModifier(inner) => inner.kind_in(kinds),
+            Self::BracketedType(inner) => inner.kind_in(kinds),
+            Self::QualifiedType(inner) => inner.kind_in(kinds),
+            Self::Lifetime(inner) => inner.kind_in(kinds),
+            Self::ArrayType(inner) => inner.kind_in(kinds),
+            Self::ForLifetimes(inner) => inner.kind_in(kinds),
+            Self::FunctionType(inner) => inner.kind_in(kinds),
+            Self::TupleType(inner) => inner.kind_in(kinds),
+            Self::GenericFunction(inner) => inner.kind_in(kinds),
+            Self::GenericType(inner) => inner.kind_in(kinds),
+            Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
+            Self::BoundedType(inner) => inner.kind_in(kinds),
+            Self::UseBounds(inner) => inner.kind_in(kinds),
+            Self::TypeArguments(inner) => inner.kind_in(kinds),
+            Self::TypeBinding(inner) => inner.kind_in(kinds),
+            Self::ReferenceType(inner) => inner.kind_in(kinds),
+            Self::AbstractType(inner) => inner.kind_in(kinds),
+            Self::DynamicType(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifierInExpressionPosition(inner) => inner.kind_in(kinds),
+            Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::UnaryExpression(inner) => inner.kind_in(kinds),
+            Self::TryExpression(inner) => inner.kind_in(kinds),
+            Self::BinaryExpression(inner) => inner.kind_in(kinds),
+            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
+            Self::CompoundAssignmentExpr(inner) => inner.kind_in(kinds),
+            Self::TypeCastExpression(inner) => inner.kind_in(kinds),
+            Self::ReturnExpression(inner) => inner.kind_in(kinds),
+            Self::YieldExpression(inner) => inner.kind_in(kinds),
+            Self::CallExpression(inner) => inner.kind_in(kinds),
+            Self::Arguments(inner) => inner.kind_in(kinds),
+            Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
+            Self::TupleExpression(inner) => inner.kind_in(kinds),
+            Self::StructExpression(inner) => inner.kind_in(kinds),
+            Self::FieldInitializerList(inner) => inner.kind_in(kinds),
+            Self::ShorthandFieldInitializer(inner) => inner.kind_in(kinds),
+            Self::FieldInitializer(inner) => inner.kind_in(kinds),
+            Self::BaseFieldInitializer(inner) => inner.kind_in(kinds),
+            Self::IfExpression(inner) => inner.kind_in(kinds),
+            Self::LetCondition(inner) => inner.kind_in(kinds),
+            Self::LetChain(inner) => inner.kind_in(kinds),
+            Self::ElseClause(inner) => inner.kind_in(kinds),
+            Self::MatchExpression(inner) => inner.kind_in(kinds),
+            Self::MatchBlock(inner) => inner.kind_in(kinds),
+            Self::LastMatchArm(inner) => inner.kind_in(kinds),
+            Self::MatchPattern(inner) => inner.kind_in(kinds),
+            Self::WhileExpression(inner) => inner.kind_in(kinds),
+            Self::LoopExpression(inner) => inner.kind_in(kinds),
+            Self::ForExpression(inner) => inner.kind_in(kinds),
+            Self::ConstBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureParameters(inner) => inner.kind_in(kinds),
+            Self::Label(inner) => inner.kind_in(kinds),
+            Self::BreakExpression(inner) => inner.kind_in(kinds),
+            Self::ContinueExpression(inner) => inner.kind_in(kinds),
+            Self::IndexExpression(inner) => inner.kind_in(kinds),
+            Self::AwaitExpression(inner) => inner.kind_in(kinds),
+            Self::FieldExpression(inner) => inner.kind_in(kinds),
+            Self::UnsafeBlock(inner) => inner.kind_in(kinds),
+            Self::AsyncBlock(inner) => inner.kind_in(kinds),
+            Self::GenBlock(inner) => inner.kind_in(kinds),
+            Self::TryBlock(inner) => inner.kind_in(kinds),
+            Self::Block(inner) => inner.kind_in(kinds),
+            Self::GenericPattern(inner) => inner.kind_in(kinds),
+            Self::TuplePattern(inner) => inner.kind_in(kinds),
+            Self::SlicePattern(inner) => inner.kind_in(kinds),
+            Self::TupleStructPattern(inner) => inner.kind_in(kinds),
+            Self::StructPattern(inner) => inner.kind_in(kinds),
+            Self::MutPattern(inner) => inner.kind_in(kinds),
+            Self::RefPattern(inner) => inner.kind_in(kinds),
+            Self::CapturedPattern(inner) => inner.kind_in(kinds),
+            Self::ReferencePattern(inner) => inner.kind_in(kinds),
+            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
+            Self::StringLiteral(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
+            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
+            Self::LineComment(inner) => inner.kind_in(kinds),
+            Self::BlockComment(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Shebang(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::MacroRules(inner) => inner.kind_in(kinds),
+            Self::EnumVariantListElements(inner) => inner.kind_in(kinds),
+            Self::FieldDeclarationListElements(inner) => inner.kind_in(kinds),
+            Self::OrderedFieldDeclarationListElements(inner) => inner.kind_in(kinds),
+            Self::WherePredicates(inner) => inner.kind_in(kinds),
+            Self::TypeParametersElements(inner) => inner.kind_in(kinds),
+            Self::UseClauses(inner) => inner.kind_in(kinds),
+            Self::ParametersElements(inner) => inner.kind_in(kinds),
+            Self::Lifetimes(inner) => inner.kind_in(kinds),
+            Self::Types(inner) => inner.kind_in(kinds),
+            Self::UseBoundsElements(inner) => inner.kind_in(kinds),
+            Self::TypeArgumentsElements(inner) => inner.kind_in(kinds),
+            Self::ArgumentsElements(inner) => inner.kind_in(kinds),
+            Self::Expressions(inner) => inner.kind_in(kinds),
+            Self::FieldInitializerListElements(inner) => inner.kind_in(kinds),
+            Self::TuplePatternElements(inner) => inner.kind_in(kinds),
+            Self::Patterns(inner) => inner.kind_in(kinds),
+            Self::StructPatternElements(inner) => inner.kind_in(kinds),
+            Self::UseWildcardGroup(inner) => inner.kind_in(kinds),
+            Self::TokenRepetitionPatternText(inner) => inner.kind_in(kinds),
+            Self::StringOpen(inner) => inner.kind_in(kinds),
+            Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
+            Self::TokenKeywords(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
+            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
+            Self::EscapeSequenceSimple(inner) => inner.kind_in(kinds),
+            Self::EscapeSequenceUnicodeFixed(inner) => inner.kind_in(kinds),
+            Self::EscapeSequenceUnicodeBraced(inner) => inner.kind_in(kinds),
+            Self::EscapeSequenceHex(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionSemi(inner) => inner.kind_in(kinds),
+            Self::ArrayExpressionList(inner) => inner.kind_in(kinds),
+            Self::AttributeInput(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
+            Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawConst(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionRawMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionMut(inner) => inner.kind_in(kinds),
+            Self::ReferenceExpressionBare(inner) => inner.kind_in(kinds),
+            Self::ImplItemPositiveClause(inner) => inner.kind_in(kinds),
+            Self::ImplItemNegativeClause(inner) => inner.kind_in(kinds),
+            Self::ImplItemBody(inner) => inner.kind_in(kinds),
+            Self::ImplItemSemi(inner) => inner.kind_in(kinds),
+            Self::VisibilityModifierPubScopeInPath(inner) => inner.kind_in(kinds),
+            Self::VisibilityModifierPubScope(inner) => inner.kind_in(kinds),
+            Self::VisibilityModifierPub(inner) => inner.kind_in(kinds),
+            Self::FunctionTypeTraitForm(inner) => inner.kind_in(kinds),
+            Self::FunctionTypeFnForm(inner) => inner.kind_in(kinds),
+            Self::ModItemExternal(inner) => inner.kind_in(kinds),
+            Self::ModItemInline(inner) => inner.kind_in(kinds),
+            Self::OrPatternBinary(inner) => inner.kind_in(kinds),
+            Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
+            Self::PointerTypeConst(inner) => inner.kind_in(kinds),
+            Self::PointerTypeMut(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBinary(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
+            Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
+            Self::ExpressionStatementWithSemi(inner) => inner.kind_in(kinds),
+            Self::ForeignModItemSemi(inner) => inner.kind_in(kinds),
+            Self::ForeignModItemBody(inner) => inner.kind_in(kinds),
+            Self::MatchArmWithComma(inner) => inner.kind_in(kinds),
+            Self::MatchArmBlockEnding(inner) => inner.kind_in(kinds),
+            Self::LineCommentExtraSlashes(inner) => inner.kind_in(kinds),
+            Self::LineCommentDocOuter(inner) => inner.kind_in(kinds),
+            Self::LineCommentDocInner(inner) => inner.kind_in(kinds),
+            Self::LineCommentRegular(inner) => inner.kind_in(kinds),
+            Self::BlockCommentDocOuter(inner) => inner.kind_in(kinds),
+            Self::BlockCommentDocInner(inner) => inner.kind_in(kinds),
+            Self::BlockCommentRegular(inner) => inner.kind_in(kinds),
+            Self::TokenTreePatternParen(inner) => inner.kind_in(kinds),
+            Self::TokenTreePatternBracket(inner) => inner.kind_in(kinds),
+            Self::TokenTreePatternBrace(inner) => inner.kind_in(kinds),
+            Self::TokenTreeParen(inner) => inner.kind_in(kinds),
+            Self::TokenTreeBracket(inner) => inner.kind_in(kinds),
+            Self::TokenTreeBrace(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeParen(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeBracket(inner) => inner.kind_in(kinds),
+            Self::DelimTokenTreeBrace(inner) => inner.kind_in(kinds),
+            Self::FieldPatternShorthand(inner) => inner.kind_in(kinds),
+            Self::FieldPatternNamed(inner) => inner.kind_in(kinds),
+            Self::MacroDefinitionParen(inner) => inner.kind_in(kinds),
+            Self::MacroDefinitionBracket(inner) => inner.kind_in(kinds),
+            Self::MacroDefinitionBrace(inner) => inner.kind_in(kinds),
+            Self::RangePatternPrefix(inner) => inner.kind_in(kinds),
+            Self::RangePatternWithLeftWithRight(inner) => inner.kind_in(kinds),
+            Self::RangePatternWithLeft(inner) => inner.kind_in(kinds),
+            Self::StructItemBrace(inner) => inner.kind_in(kinds),
+            Self::StructItemTuple(inner) => inner.kind_in(kinds),
+            Self::StructItemUnit(inner) => inner.kind_in(kinds),
+            Self::AttributedFieldDeclaration(inner) => inner.kind_in(kinds),
+            Self::AttributedEnumVariant(inner) => inner.kind_in(kinds),
+            Self::AttributedParameter(inner) => inner.kind_in(kinds),
+            Self::AttributedTypeParameter(inner) => inner.kind_in(kinds),
+            Self::AttributedArgument(inner) => inner.kind_in(kinds),
+            Self::AttributedOrderedField(inner) => inner.kind_in(kinds),
+            Self::TypeArgument(inner) => inner.kind_in(kinds),
+            Self::MatchBlockArms(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::StringContent(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteralContent(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteralStart(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteralEnd(inner) => inner.kind_in(kinds),
+            Self::DocComment(inner) => inner.kind_in(kinds),
+            Self::BlockCommentContent(inner) => inner.kind_in(kinds),
+            Self::StringClose(inner) => inner.kind_in(kinds),
+            Self::ErrorSentinel(inner) => inner.kind_in(kinds),
+            Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::FieldIdentifier(inner) => inner.kind_in(kinds),
+            Self::ShorthandFieldIdentifier(inner) => inner.kind_in(kinds),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
+            Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
+            Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
+            Self::MutableSpecifier => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
+            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
+            Self::InnerLineDocCommentMarker => [::sittir_core::types::KindId(338)].iter().any(|k| kinds.contains(k)),
+            Self::OuterLineDocCommentMarker => [::sittir_core::types::KindId(339)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::_RangeExpressionBare => [::sittir_core::types::KindId(363)].iter().any(|k| kinds.contains(k)),
+            Self::ImplItemUnsafeMarker => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
+            Self::RangePatternWithLeftBare => [::sittir_core::types::KindId(421)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
+            Self::OuterDocCommentMarker => [::sittir_core::types::KindId(163)].iter().any(|k| kinds.contains(k)),
+            Self::InnerDocCommentMarker => [::sittir_core::types::KindId(164)].iter().any(|k| kinds.contains(k)),
+            Self::Tight => [::sittir_core::types::KindId(168)].iter().any(|k| kinds.contains(k)),
+            Self::Space => [::sittir_core::types::KindId(169)].iter().any(|k| kinds.contains(k)),
+            Self::Tab => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
+            Self::Newline => [::sittir_core::types::KindId(171)].iter().any(|k| kinds.contains(k)),
+            Self::Blankline => [::sittir_core::types::KindId(172)].iter().any(|k| kinds.contains(k)),
+            Self::DoubleBlankline => [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k)),
+            Self::Indent => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
+            Self::Dedent => [::sittir_core::types::KindId(175)].iter().any(|k| kinds.contains(k)),
+            Self::Semi => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
+            Self::EqGt => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Colon => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
+            Self::Dollar => [::sittir_core::types::KindId(5)].iter().any(|k| kinds.contains(k)),
+            Self::Lparen => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+            Self::Rparen => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
+            Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
+            Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
+            Self::Qmark => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
+            Self::BlockKeyword => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
+            Self::ExprKeyword => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
+            Self::Expr2021Keyword => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
+            Self::IdentKeyword => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
+            Self::ItemKeyword => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
+            Self::LifetimeKeyword => [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k)),
+            Self::LiteralKeyword => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
+            Self::MetaKeyword => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
+            Self::PatKeyword => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
+            Self::PatParamKeyword => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::PathKeyword => [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k)),
+            Self::StmtKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
+            Self::TtKeyword => [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k)),
+            Self::TyKeyword => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
+            Self::VisKeyword => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
+            Self::Pound => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
+            Self::Lbrack => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
+            Self::Rbrack => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
+            Self::Bang => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
+            Self::Lbrace => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
+            Self::Rbrace => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
+            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
+            Self::EnumKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
+            Self::Eq => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
+            Self::ExternKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
+            Self::AsKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+            Self::StaticKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
+            Self::RefKeyword => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
+            Self::TypeKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
+            Self::FnKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
+            Self::DashGt => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
+            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::WhereKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
+            Self::TraitKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
+            Self::ForKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
+            Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
+            Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
+            Self::LetKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
+            Self::ElseKeyword => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
+            Self::UseKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
+            Self::ColonColon => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
+            Self::Amp => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Squote => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::ImplKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
+            Self::DynKeyword => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
+            Self::Dash => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::AmpAmp => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::PipePipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::Caret => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::EqEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::BangEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::LtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::GtEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::LtLt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::GtGt => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Percent => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::PlusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::DashEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::ReturnKeyword => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
+            Self::YieldKeyword => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+            Self::IfKeyword => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
+            Self::MatchKeyword => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
+            Self::Comma => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
+            Self::WhileKeyword => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
+            Self::LoopKeyword => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
+            Self::InKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::BreakKeyword => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::ContinueKeyword => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
+            Self::AwaitKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::MoveKeyword => [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k)),
+            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
+            Self::TryKeyword => [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k)),
+            Self::At => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
+            Self::TrueKeyword => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
+            Self::FalseKeyword => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
+            Self::SlashSlash => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::SlashStar => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::StarSlash => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::U8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::I8Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+            Self::U16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::I16Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
+            Self::U32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::I32Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
+            Self::U64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::I64Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
+            Self::U128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
+            Self::I128Keyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::IsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::UsizeKeyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::F32Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::F64Keyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::BoolKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::StrKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::CharKeyword => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
+            Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
+            Self::ModKeyword => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
+            Self::PubKeyword => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
+            Self::StructKeyword => [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k)),
+            Self::RawKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
+            Self::MacroRulesBang => [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => false,
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            AnyNodeRecord::SourceFile(t) => t.render(w),
+            AnyNodeRecord::ExpressionStatement(t) => t.render(w),
+            AnyNodeRecord::MacroRule(t) => t.render(w),
+            AnyNodeRecord::TokenBindingPattern(t) => t.render(w),
+            AnyNodeRecord::TokenRepetitionPattern(t) => t.render(w),
+            AnyNodeRecord::FragmentSpecifier(t) => t.render(w),
+            AnyNodeRecord::TokenRepetition(t) => t.render(w),
+            AnyNodeRecord::NonSpecialToken(t) => t.render(w),
+            AnyNodeRecord::AttributeItem(t) => t.render(w),
+            AnyNodeRecord::InnerAttributeItem(t) => t.render(w),
+            AnyNodeRecord::Attribute(t) => t.render(w),
+            AnyNodeRecord::DeclarationList(t) => t.render(w),
+            AnyNodeRecord::UnionItem(t) => t.render(w),
+            AnyNodeRecord::EnumItem(t) => t.render(w),
+            AnyNodeRecord::EnumVariantList(t) => t.render(w),
+            AnyNodeRecord::EnumVariant(t) => t.render(w),
+            AnyNodeRecord::FieldDeclarationList(t) => t.render(w),
+            AnyNodeRecord::FieldDeclaration(t) => t.render(w),
+            AnyNodeRecord::OrderedFieldDeclarationList(t) => t.render(w),
+            AnyNodeRecord::ExternCrateDeclaration(t) => t.render(w),
+            AnyNodeRecord::ConstItem(t) => t.render(w),
+            AnyNodeRecord::StaticItem(t) => t.render(w),
+            AnyNodeRecord::TypeItem(t) => t.render(w),
+            AnyNodeRecord::FunctionItem(t) => t.render(w),
+            AnyNodeRecord::FunctionSignatureItem(t) => t.render(w),
+            AnyNodeRecord::FunctionModifiers(t) => t.render(w),
+            AnyNodeRecord::WhereClause(t) => t.render(w),
+            AnyNodeRecord::WherePredicate(t) => t.render(w),
+            AnyNodeRecord::TraitItem(t) => t.render(w),
+            AnyNodeRecord::AssociatedType(t) => t.render(w),
+            AnyNodeRecord::TraitBounds(t) => t.render(w),
+            AnyNodeRecord::HigherRankedTraitBound(t) => t.render(w),
+            AnyNodeRecord::RemovedTraitBound(t) => t.render(w),
+            AnyNodeRecord::TypeParameters(t) => t.render(w),
+            AnyNodeRecord::ConstParameter(t) => t.render(w),
+            AnyNodeRecord::TypeParameter(t) => t.render(w),
+            AnyNodeRecord::LifetimeParameter(t) => t.render(w),
+            AnyNodeRecord::LetDeclaration(t) => t.render(w),
+            AnyNodeRecord::UseDeclaration(t) => t.render(w),
+            AnyNodeRecord::ScopedUseList(t) => t.render(w),
+            AnyNodeRecord::UseList(t) => t.render(w),
+            AnyNodeRecord::UseAsClause(t) => t.render(w),
+            AnyNodeRecord::UseWildcard(t) => t.render(w),
+            AnyNodeRecord::Parameters(t) => t.render(w),
+            AnyNodeRecord::SelfParameter(t) => t.render(w),
+            AnyNodeRecord::VariadicParameter(t) => t.render(w),
+            AnyNodeRecord::Parameter(t) => t.render(w),
+            AnyNodeRecord::ExternModifier(t) => t.render(w),
+            AnyNodeRecord::VisibilityModifier(t) => t.render(w),
+            AnyNodeRecord::BracketedType(t) => t.render(w),
+            AnyNodeRecord::QualifiedType(t) => t.render(w),
+            AnyNodeRecord::Lifetime(t) => t.render(w),
+            AnyNodeRecord::ArrayType(t) => t.render(w),
+            AnyNodeRecord::ForLifetimes(t) => t.render(w),
+            AnyNodeRecord::FunctionType(t) => t.render(w),
+            AnyNodeRecord::TupleType(t) => t.render(w),
+            AnyNodeRecord::GenericFunction(t) => t.render(w),
+            AnyNodeRecord::GenericType(t) => t.render(w),
+            AnyNodeRecord::GenericTypeWithTurbofish(t) => t.render(w),
+            AnyNodeRecord::BoundedType(t) => t.render(w),
+            AnyNodeRecord::UseBounds(t) => t.render(w),
+            AnyNodeRecord::TypeArguments(t) => t.render(w),
+            AnyNodeRecord::TypeBinding(t) => t.render(w),
+            AnyNodeRecord::ReferenceType(t) => t.render(w),
+            AnyNodeRecord::AbstractType(t) => t.render(w),
+            AnyNodeRecord::DynamicType(t) => t.render(w),
+            AnyNodeRecord::MacroInvocation(t) => t.render(w),
+            AnyNodeRecord::ScopedIdentifier(t) => t.render(w),
+            AnyNodeRecord::ScopedTypeIdentifierInExpressionPosition(t) => t.render(w),
+            AnyNodeRecord::ScopedTypeIdentifier(t) => t.render(w),
+            AnyNodeRecord::UnaryExpression(t) => t.render(w),
+            AnyNodeRecord::TryExpression(t) => t.render(w),
+            AnyNodeRecord::BinaryExpression(t) => t.render(w),
+            AnyNodeRecord::AssignmentExpression(t) => t.render(w),
+            AnyNodeRecord::CompoundAssignmentExpr(t) => t.render(w),
+            AnyNodeRecord::TypeCastExpression(t) => t.render(w),
+            AnyNodeRecord::ReturnExpression(t) => t.render(w),
+            AnyNodeRecord::YieldExpression(t) => t.render(w),
+            AnyNodeRecord::CallExpression(t) => t.render(w),
+            AnyNodeRecord::Arguments(t) => t.render(w),
+            AnyNodeRecord::ParenthesizedExpression(t) => t.render(w),
+            AnyNodeRecord::TupleExpression(t) => t.render(w),
+            AnyNodeRecord::StructExpression(t) => t.render(w),
+            AnyNodeRecord::FieldInitializerList(t) => t.render(w),
+            AnyNodeRecord::ShorthandFieldInitializer(t) => t.render(w),
+            AnyNodeRecord::FieldInitializer(t) => t.render(w),
+            AnyNodeRecord::BaseFieldInitializer(t) => t.render(w),
+            AnyNodeRecord::IfExpression(t) => t.render(w),
+            AnyNodeRecord::LetCondition(t) => t.render(w),
+            AnyNodeRecord::LetChain(t) => t.render(w),
+            AnyNodeRecord::ElseClause(t) => t.render(w),
+            AnyNodeRecord::MatchExpression(t) => t.render(w),
+            AnyNodeRecord::MatchBlock(t) => t.render(w),
+            AnyNodeRecord::LastMatchArm(t) => t.render(w),
+            AnyNodeRecord::MatchPattern(t) => t.render(w),
+            AnyNodeRecord::WhileExpression(t) => t.render(w),
+            AnyNodeRecord::LoopExpression(t) => t.render(w),
+            AnyNodeRecord::ForExpression(t) => t.render(w),
+            AnyNodeRecord::ConstBlock(t) => t.render(w),
+            AnyNodeRecord::ClosureParameters(t) => t.render(w),
+            AnyNodeRecord::Label(t) => t.render(w),
+            AnyNodeRecord::BreakExpression(t) => t.render(w),
+            AnyNodeRecord::ContinueExpression(t) => t.render(w),
+            AnyNodeRecord::IndexExpression(t) => t.render(w),
+            AnyNodeRecord::AwaitExpression(t) => t.render(w),
+            AnyNodeRecord::FieldExpression(t) => t.render(w),
+            AnyNodeRecord::UnsafeBlock(t) => t.render(w),
+            AnyNodeRecord::AsyncBlock(t) => t.render(w),
+            AnyNodeRecord::GenBlock(t) => t.render(w),
+            AnyNodeRecord::TryBlock(t) => t.render(w),
+            AnyNodeRecord::Block(t) => t.render(w),
+            AnyNodeRecord::GenericPattern(t) => t.render(w),
+            AnyNodeRecord::TuplePattern(t) => t.render(w),
+            AnyNodeRecord::SlicePattern(t) => t.render(w),
+            AnyNodeRecord::TupleStructPattern(t) => t.render(w),
+            AnyNodeRecord::StructPattern(t) => t.render(w),
+            AnyNodeRecord::MutPattern(t) => t.render(w),
+            AnyNodeRecord::RefPattern(t) => t.render(w),
+            AnyNodeRecord::CapturedPattern(t) => t.render(w),
+            AnyNodeRecord::ReferencePattern(t) => t.render(w),
+            AnyNodeRecord::NegativeLiteral(t) => t.render(w),
+            AnyNodeRecord::StringLiteral(t) => t.render(w),
+            AnyNodeRecord::RawStringLiteral(t) => t.render(w),
+            AnyNodeRecord::BooleanLiteral(t) => t.render(w),
+            AnyNodeRecord::LineComment(t) => t.render(w),
+            AnyNodeRecord::BlockComment(t) => t.render(w),
+            AnyNodeRecord::Identifier(t) => t.render(w),
+            AnyNodeRecord::Shebang(t) => t.render(w),
+            AnyNodeRecord::Metavariable(t) => t.render(w),
+            AnyNodeRecord::PrimitiveType(t) => t.render(w),
+            AnyNodeRecord::MacroRules(t) => t.render(w),
+            AnyNodeRecord::EnumVariantListElements(t) => t.render(w),
+            AnyNodeRecord::FieldDeclarationListElements(t) => t.render(w),
+            AnyNodeRecord::OrderedFieldDeclarationListElements(t) => t.render(w),
+            AnyNodeRecord::WherePredicates(t) => t.render(w),
+            AnyNodeRecord::TypeParametersElements(t) => t.render(w),
+            AnyNodeRecord::UseClauses(t) => t.render(w),
+            AnyNodeRecord::ParametersElements(t) => t.render(w),
+            AnyNodeRecord::Lifetimes(t) => t.render(w),
+            AnyNodeRecord::Types(t) => t.render(w),
+            AnyNodeRecord::UseBoundsElements(t) => t.render(w),
+            AnyNodeRecord::TypeArgumentsElements(t) => t.render(w),
+            AnyNodeRecord::ArgumentsElements(t) => t.render(w),
+            AnyNodeRecord::Expressions(t) => t.render(w),
+            AnyNodeRecord::FieldInitializerListElements(t) => t.render(w),
+            AnyNodeRecord::TuplePatternElements(t) => t.render(w),
+            AnyNodeRecord::Patterns(t) => t.render(w),
+            AnyNodeRecord::StructPatternElements(t) => t.render(w),
+            AnyNodeRecord::UseWildcardGroup(t) => t.render(w),
+            AnyNodeRecord::TokenRepetitionPatternText(t) => t.render(w),
+            AnyNodeRecord::StringOpen(t) => t.render(w),
+            AnyNodeRecord::TokenTreePunctuation(t) => t.render(w),
+            AnyNodeRecord::TokenKeywords(t) => t.render(w),
+            AnyNodeRecord::IntegerLiteralDecimal(t) => t.render(w),
+            AnyNodeRecord::IntegerLiteralHex(t) => t.render(w),
+            AnyNodeRecord::IntegerLiteralBinary(t) => t.render(w),
+            AnyNodeRecord::IntegerLiteralOctal(t) => t.render(w),
+            AnyNodeRecord::CharLiteralPlain(t) => t.render(w),
+            AnyNodeRecord::CharLiteralEmpty(t) => t.render(w),
+            AnyNodeRecord::CharLiteralEscapedSimple(t) => t.render(w),
+            AnyNodeRecord::CharLiteralEscapedUnicodeFixed(t) => t.render(w),
+            AnyNodeRecord::CharLiteralEscapedUnicodeBraced(t) => t.render(w),
+            AnyNodeRecord::CharLiteralEscapedHex(t) => t.render(w),
+            AnyNodeRecord::EscapeSequenceSimple(t) => t.render(w),
+            AnyNodeRecord::EscapeSequenceUnicodeFixed(t) => t.render(w),
+            AnyNodeRecord::EscapeSequenceUnicodeBraced(t) => t.render(w),
+            AnyNodeRecord::EscapeSequenceHex(t) => t.render(w),
+            AnyNodeRecord::ArrayExpressionSemi(t) => t.render(w),
+            AnyNodeRecord::ArrayExpressionList(t) => t.render(w),
+            AnyNodeRecord::AttributeInput(t) => t.render(w),
+            AnyNodeRecord::ClosureExpressionBlock(t) => t.render(w),
+            AnyNodeRecord::ClosureExpressionExpr(t) => t.render(w),
+            AnyNodeRecord::ReferenceExpressionRawConst(t) => t.render(w),
+            AnyNodeRecord::ReferenceExpressionRawMut(t) => t.render(w),
+            AnyNodeRecord::ReferenceExpressionMut(t) => t.render(w),
+            AnyNodeRecord::ReferenceExpressionBare(t) => t.render(w),
+            AnyNodeRecord::ImplItemPositiveClause(t) => t.render(w),
+            AnyNodeRecord::ImplItemNegativeClause(t) => t.render(w),
+            AnyNodeRecord::ImplItemBody(t) => t.render(w),
+            AnyNodeRecord::ImplItemSemi(t) => t.render(w),
+            AnyNodeRecord::VisibilityModifierPubScopeInPath(t) => t.render(w),
+            AnyNodeRecord::VisibilityModifierPubScope(t) => t.render(w),
+            AnyNodeRecord::VisibilityModifierPub(t) => t.render(w),
+            AnyNodeRecord::FunctionTypeTraitForm(t) => t.render(w),
+            AnyNodeRecord::FunctionTypeFnForm(t) => t.render(w),
+            AnyNodeRecord::ModItemExternal(t) => t.render(w),
+            AnyNodeRecord::ModItemInline(t) => t.render(w),
+            AnyNodeRecord::OrPatternBinary(t) => t.render(w),
+            AnyNodeRecord::OrPatternPrefix(t) => t.render(w),
+            AnyNodeRecord::PointerTypeConst(t) => t.render(w),
+            AnyNodeRecord::PointerTypeMut(t) => t.render(w),
+            AnyNodeRecord::RangeExpressionBinary(t) => t.render(w),
+            AnyNodeRecord::RangeExpressionPostfix(t) => t.render(w),
+            AnyNodeRecord::RangeExpressionPrefix(t) => t.render(w),
+            AnyNodeRecord::RangeExpressionBare(t) => t.render(w),
+            AnyNodeRecord::ExpressionStatementWithSemi(t) => t.render(w),
+            AnyNodeRecord::ForeignModItemSemi(t) => t.render(w),
+            AnyNodeRecord::ForeignModItemBody(t) => t.render(w),
+            AnyNodeRecord::MatchArmWithComma(t) => t.render(w),
+            AnyNodeRecord::MatchArmBlockEnding(t) => t.render(w),
+            AnyNodeRecord::LineCommentExtraSlashes(t) => t.render(w),
+            AnyNodeRecord::LineCommentDocOuter(t) => t.render(w),
+            AnyNodeRecord::LineCommentDocInner(t) => t.render(w),
+            AnyNodeRecord::LineCommentRegular(t) => t.render(w),
+            AnyNodeRecord::BlockCommentDocOuter(t) => t.render(w),
+            AnyNodeRecord::BlockCommentDocInner(t) => t.render(w),
+            AnyNodeRecord::BlockCommentRegular(t) => t.render(w),
+            AnyNodeRecord::TokenTreePatternParen(t) => t.render(w),
+            AnyNodeRecord::TokenTreePatternBracket(t) => t.render(w),
+            AnyNodeRecord::TokenTreePatternBrace(t) => t.render(w),
+            AnyNodeRecord::TokenTreeParen(t) => t.render(w),
+            AnyNodeRecord::TokenTreeBracket(t) => t.render(w),
+            AnyNodeRecord::TokenTreeBrace(t) => t.render(w),
+            AnyNodeRecord::DelimTokenTreeParen(t) => t.render(w),
+            AnyNodeRecord::DelimTokenTreeBracket(t) => t.render(w),
+            AnyNodeRecord::DelimTokenTreeBrace(t) => t.render(w),
+            AnyNodeRecord::FieldPatternShorthand(t) => t.render(w),
+            AnyNodeRecord::FieldPatternNamed(t) => t.render(w),
+            AnyNodeRecord::MacroDefinitionParen(t) => t.render(w),
+            AnyNodeRecord::MacroDefinitionBracket(t) => t.render(w),
+            AnyNodeRecord::MacroDefinitionBrace(t) => t.render(w),
+            AnyNodeRecord::RangePatternPrefix(t) => t.render(w),
+            AnyNodeRecord::RangePatternWithLeftWithRight(t) => t.render(w),
+            AnyNodeRecord::RangePatternWithLeft(t) => t.render(w),
+            AnyNodeRecord::StructItemBrace(t) => t.render(w),
+            AnyNodeRecord::StructItemTuple(t) => t.render(w),
+            AnyNodeRecord::StructItemUnit(t) => t.render(w),
+            AnyNodeRecord::AttributedFieldDeclaration(t) => t.render(w),
+            AnyNodeRecord::AttributedEnumVariant(t) => t.render(w),
+            AnyNodeRecord::AttributedParameter(t) => t.render(w),
+            AnyNodeRecord::AttributedTypeParameter(t) => t.render(w),
+            AnyNodeRecord::AttributedArgument(t) => t.render(w),
+            AnyNodeRecord::AttributedOrderedField(t) => t.render(w),
+            AnyNodeRecord::TypeArgument(t) => t.render(w),
+            AnyNodeRecord::MatchBlockArms(t) => t.render(w),
+            AnyNodeRecord::FloatLiteral(t) => t.render(w),
+            AnyNodeRecord::StringContent(t) => t.render(w),
+            AnyNodeRecord::RawStringLiteralContent(t) => t.render(w),
+            AnyNodeRecord::RawStringLiteralStart(t) => t.render(w),
+            AnyNodeRecord::RawStringLiteralEnd(t) => t.render(w),
+            AnyNodeRecord::DocComment(t) => t.render(w),
+            AnyNodeRecord::BlockCommentContent(t) => t.render(w),
+            AnyNodeRecord::StringClose(t) => t.render(w),
+            AnyNodeRecord::ErrorSentinel(t) => t.render(w),
+            AnyNodeRecord::TypeIdentifier(t) => t.render(w),
+            AnyNodeRecord::FieldIdentifier(t) => t.render(w),
+            AnyNodeRecord::ShorthandFieldIdentifier(t) => t.render(w),
+            AnyNodeRecord::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
+            AnyNodeRecord::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
+            AnyNodeRecord::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
+            AnyNodeRecord::MutableSpecifier => render_mutable_specifier(w),
+            AnyNodeRecord::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
+            AnyNodeRecord::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
+            AnyNodeRecord::InnerLineDocCommentMarker => render_inner_line_doc_comment_marker(w),
+            AnyNodeRecord::OuterLineDocCommentMarker => render_outer_line_doc_comment_marker(w),
+            AnyNodeRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            AnyNodeRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            AnyNodeRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            AnyNodeRecord::_RangeExpressionBare => render__range_expression_bare(w),
+            AnyNodeRecord::ImplItemUnsafeMarker => render_impl_item_unsafe_marker(w),
+            AnyNodeRecord::RangePatternWithLeftBare => render_range_pattern_with_left_bare(w),
+            AnyNodeRecord::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
+            AnyNodeRecord::OuterDocCommentMarker => render_outer_doc_comment_marker(w),
+            AnyNodeRecord::InnerDocCommentMarker => render_inner_doc_comment_marker(w),
+            AnyNodeRecord::Tight => render_tight(w),
+            AnyNodeRecord::Space => render_space(w),
+            AnyNodeRecord::Tab => render_tab(w),
+            AnyNodeRecord::Newline => render_newline(w),
+            AnyNodeRecord::Blankline => render_blankline(w),
+            AnyNodeRecord::DoubleBlankline => render_double_blankline(w),
+            AnyNodeRecord::Indent => render_indent(w),
+            AnyNodeRecord::Dedent => render_dedent(w),
+            AnyNodeRecord::Semi => render_semi(w),
+            AnyNodeRecord::EqGt => render_eq_gt(w),
+            AnyNodeRecord::Colon => render_colon(w),
+            AnyNodeRecord::Dollar => render_dollar(w),
+            AnyNodeRecord::Lparen => render_lparen(w),
+            AnyNodeRecord::Rparen => render_rparen(w),
+            AnyNodeRecord::Plus => render_plus(w),
+            AnyNodeRecord::Star => render_star(w),
+            AnyNodeRecord::Qmark => render_qmark(w),
+            AnyNodeRecord::BlockKeyword => render_block_keyword(w),
+            AnyNodeRecord::ExprKeyword => render_expr_keyword(w),
+            AnyNodeRecord::Expr2021Keyword => render_expr2021_keyword(w),
+            AnyNodeRecord::IdentKeyword => render_ident_keyword(w),
+            AnyNodeRecord::ItemKeyword => render_item_keyword(w),
+            AnyNodeRecord::LifetimeKeyword => render_lifetime_keyword(w),
+            AnyNodeRecord::LiteralKeyword => render_literal_keyword(w),
+            AnyNodeRecord::MetaKeyword => render_meta_keyword(w),
+            AnyNodeRecord::PatKeyword => render_pat_keyword(w),
+            AnyNodeRecord::PatParamKeyword => render_pat_param_keyword(w),
+            AnyNodeRecord::PathKeyword => render_path_keyword(w),
+            AnyNodeRecord::StmtKeyword => render_stmt_keyword(w),
+            AnyNodeRecord::TtKeyword => render_tt_keyword(w),
+            AnyNodeRecord::TyKeyword => render_ty_keyword(w),
+            AnyNodeRecord::VisKeyword => render_vis_keyword(w),
+            AnyNodeRecord::Pound => render_pound(w),
+            AnyNodeRecord::Lbrack => render_lbrack(w),
+            AnyNodeRecord::Rbrack => render_rbrack(w),
+            AnyNodeRecord::Bang => render_bang(w),
+            AnyNodeRecord::Lbrace => render_lbrace(w),
+            AnyNodeRecord::Rbrace => render_rbrace(w),
+            AnyNodeRecord::UnionKeyword => render_union_keyword(w),
+            AnyNodeRecord::EnumKeyword => render_enum_keyword(w),
+            AnyNodeRecord::Eq => render_eq(w),
+            AnyNodeRecord::ExternKeyword => render_extern_keyword(w),
+            AnyNodeRecord::AsKeyword => render_as_keyword(w),
+            AnyNodeRecord::ConstKeyword => render_const_keyword(w),
+            AnyNodeRecord::StaticKeyword => render_static_keyword(w),
+            AnyNodeRecord::RefKeyword => render_ref_keyword(w),
+            AnyNodeRecord::TypeKeyword => render_type_keyword(w),
+            AnyNodeRecord::FnKeyword => render_fn_keyword(w),
+            AnyNodeRecord::DashGt => render_dash_gt(w),
+            AnyNodeRecord::AsyncKeyword => render_async_keyword(w),
+            AnyNodeRecord::DefaultKeyword => render_default_keyword(w),
+            AnyNodeRecord::UnsafeKeyword => render_unsafe_keyword(w),
+            AnyNodeRecord::WhereKeyword => render_where_keyword(w),
+            AnyNodeRecord::TraitKeyword => render_trait_keyword(w),
+            AnyNodeRecord::ForKeyword => render_for_keyword(w),
+            AnyNodeRecord::Lt => render_lt(w),
+            AnyNodeRecord::Gt => render_gt(w),
+            AnyNodeRecord::LetKeyword => render_let_keyword(w),
+            AnyNodeRecord::ElseKeyword => render_else_keyword(w),
+            AnyNodeRecord::UseKeyword => render_use_keyword(w),
+            AnyNodeRecord::ColonColon => render_colon_colon(w),
+            AnyNodeRecord::Amp => render_amp(w),
+            AnyNodeRecord::DotDotDot => render_dot_dot_dot(w),
+            AnyNodeRecord::Squote => render_squote(w),
+            AnyNodeRecord::ImplKeyword => render_impl_keyword(w),
+            AnyNodeRecord::DynKeyword => render_dyn_keyword(w),
+            AnyNodeRecord::Dash => render_dash(w),
+            AnyNodeRecord::AmpAmp => render_amp_amp(w),
+            AnyNodeRecord::PipePipe => render_pipe_pipe(w),
+            AnyNodeRecord::Pipe => render_pipe(w),
+            AnyNodeRecord::Caret => render_caret(w),
+            AnyNodeRecord::EqEq => render_eq_eq(w),
+            AnyNodeRecord::BangEq => render_bang_eq(w),
+            AnyNodeRecord::LtEq => render_lt_eq(w),
+            AnyNodeRecord::GtEq => render_gt_eq(w),
+            AnyNodeRecord::LtLt => render_lt_lt(w),
+            AnyNodeRecord::GtGt => render_gt_gt(w),
+            AnyNodeRecord::Slash => render_slash(w),
+            AnyNodeRecord::Percent => render_percent(w),
+            AnyNodeRecord::PlusEq => render_plus_eq(w),
+            AnyNodeRecord::DashEq => render_dash_eq(w),
+            AnyNodeRecord::StarEq => render_star_eq(w),
+            AnyNodeRecord::SlashEq => render_slash_eq(w),
+            AnyNodeRecord::PercentEq => render_percent_eq(w),
+            AnyNodeRecord::AmpEq => render_amp_eq(w),
+            AnyNodeRecord::PipeEq => render_pipe_eq(w),
+            AnyNodeRecord::CaretEq => render_caret_eq(w),
+            AnyNodeRecord::LtLtEq => render_lt_lt_eq(w),
+            AnyNodeRecord::GtGtEq => render_gt_gt_eq(w),
+            AnyNodeRecord::ReturnKeyword => render_return_keyword(w),
+            AnyNodeRecord::YieldKeyword => render_yield_keyword(w),
+            AnyNodeRecord::DotDot => render_dot_dot(w),
+            AnyNodeRecord::IfKeyword => render_if_keyword(w),
+            AnyNodeRecord::MatchKeyword => render_match_keyword(w),
+            AnyNodeRecord::Comma => render_comma(w),
+            AnyNodeRecord::WhileKeyword => render_while_keyword(w),
+            AnyNodeRecord::LoopKeyword => render_loop_keyword(w),
+            AnyNodeRecord::InKeyword => render_in_keyword(w),
+            AnyNodeRecord::BreakKeyword => render_break_keyword(w),
+            AnyNodeRecord::ContinueKeyword => render_continue_keyword(w),
+            AnyNodeRecord::Dot => render_dot(w),
+            AnyNodeRecord::AwaitKeyword => render_await_keyword(w),
+            AnyNodeRecord::MoveKeyword => render_move_keyword(w),
+            AnyNodeRecord::GenKeyword => render_gen_keyword(w),
+            AnyNodeRecord::TryKeyword => render_try_keyword(w),
+            AnyNodeRecord::At => render_at(w),
+            AnyNodeRecord::TrueKeyword => render_true_keyword(w),
+            AnyNodeRecord::FalseKeyword => render_false_keyword(w),
+            AnyNodeRecord::SlashSlash => render_slash_slash(w),
+            AnyNodeRecord::SlashStar => render_slash_star(w),
+            AnyNodeRecord::StarSlash => render_star_slash(w),
+            AnyNodeRecord::U8Keyword => render_u8_keyword(w),
+            AnyNodeRecord::I8Keyword => render_i8_keyword(w),
+            AnyNodeRecord::U16Keyword => render_u16_keyword(w),
+            AnyNodeRecord::I16Keyword => render_i16_keyword(w),
+            AnyNodeRecord::U32Keyword => render_u32_keyword(w),
+            AnyNodeRecord::I32Keyword => render_i32_keyword(w),
+            AnyNodeRecord::U64Keyword => render_u64_keyword(w),
+            AnyNodeRecord::I64Keyword => render_i64_keyword(w),
+            AnyNodeRecord::U128Keyword => render_u128_keyword(w),
+            AnyNodeRecord::I128Keyword => render_i128_keyword(w),
+            AnyNodeRecord::IsizeKeyword => render_isize_keyword(w),
+            AnyNodeRecord::UsizeKeyword => render_usize_keyword(w),
+            AnyNodeRecord::F32Keyword => render_f32_keyword(w),
+            AnyNodeRecord::F64Keyword => render_f64_keyword(w),
+            AnyNodeRecord::BoolKeyword => render_bool_keyword(w),
+            AnyNodeRecord::StrKeyword => render_str_keyword(w),
+            AnyNodeRecord::CharKeyword => render_char_keyword(w),
+            AnyNodeRecord::Underscore => render_underscore(w),
+            AnyNodeRecord::DotDotEq => render_dot_dot_eq(w),
+            AnyNodeRecord::ModKeyword => render_mod_keyword(w),
+            AnyNodeRecord::PubKeyword => render_pub_keyword(w),
+            AnyNodeRecord::StructKeyword => render_struct_keyword(w),
+            AnyNodeRecord::RawKeyword => render_raw_keyword(w),
+            AnyNodeRecord::MacroRulesBang => render_macro_rules_bang(w),
+            AnyNodeRecord::Verbatim(t) => t.render(w),
+        }
+    }
+}
+
 }
 
 use ::sittir_core::types::Source as NodeSource;

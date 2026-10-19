@@ -74,11 +74,14 @@ pub struct Prepared<T> {
     /// The seams of the kind an untouched coordinate child names, by its site:
     /// a coordinate renders its slice between them.
     coordinates: HashMap<Site<Place>, CoordinateEdges>,
+    /// A unit child's own kind's edges, by its site: a unit has no place of
+    /// its own to key them by.
+    units: HashMap<Site<Place>, Edges>,
 }
 
 impl<T> Default for Prepared<T> {
     fn default() -> Self {
-        Self { nodes: HashMap::new(), sites: HashMap::new(), coordinates: HashMap::new() }
+        Self { nodes: HashMap::new(), sites: HashMap::new(), coordinates: HashMap::new(), units: HashMap::new() }
     }
 }
 
@@ -104,6 +107,45 @@ impl<T> Prepared<T> {
     /// an unset side leaves a stored side alone, as it does on a native child.
     pub fn site_edges_mut(&mut self, site: Site<Place>, stored: Edges) -> &mut Edges {
         self.sites.entry(site).or_insert(stored)
+    }
+
+    /// The unit child at `site`'s own kind's edges, for prepare to fill.
+    pub fn unit_edges_mut(&mut self, site: Site<Place>) -> &mut Edges {
+        self.units.entry(site).or_default()
+    }
+
+    /// The edges the unit child at `site` renders with: on each side its
+    /// holder's fill there, else its own kind's. A unit stores none.
+    #[must_use]
+    pub fn unit_edges(&self, site: Option<Site<Place>>) -> Edges {
+        let Some(site) = site else { return Edges::default() };
+        let held = self.sites.get(&site).copied().unwrap_or_default();
+        let own = self.units.get(&site).copied().unwrap_or_default();
+        Edges { before: held.before.or(own.before), after: held.after.or(own.after) }
+    }
+
+    /// A node's delimiters setting: the one its record stores, else the one
+    /// prepare filled.
+    #[must_use]
+    pub fn delimiter(&self, place: Place, stored: Option<Delimiter>) -> Option<Delimiter> {
+        stored.or_else(|| self.node(place)?.delimiter)
+    }
+
+    /// A node's chosen separator: the one its record stores, else the one
+    /// prepare filled.
+    #[must_use]
+    pub fn separator_kind(&self, place: Place, stored: Option<KindId>) -> Option<KindId> {
+        stored.or_else(|| self.node(place)?.separator_kind)
+    }
+
+    /// A list slot's separator spacing on one side: the one its record
+    /// stores, else the one prepare filled.
+    #[must_use]
+    pub fn space(&self, place: Place, word: u32, before: bool, stored: Option<KindId>) -> Option<KindId> {
+        stored.or_else(|| {
+            let slot = self.node(place)?.slot(word)?;
+            if before { slot.space_before } else { slot.space_after }
+        })
     }
 
     /// The seams prepare resolved for the coordinate child at `site`.

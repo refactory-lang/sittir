@@ -72,8 +72,7 @@ import {
 	findSupertypeKindByTypeName,
 	rustFieldIdent,
 	rustTypeIdent,
-	supertypeNodeKinds,
-	type SlotClass
+	supertypeNodeKinds
 } from './node-common.ts';
 import {
 	slotLiteralValues,
@@ -588,19 +587,6 @@ function literalWrite(valueExpr: string, fixed: string | undefined): string {
 	return `w.text(${valueExpr})`;
 }
 
-function buildSlotWriteCall(cls: SlotClass, expr: string): string {
-	switch (cls.tag) {
-		case 'concrete':
-			return `if let Some(v) = ${expr}.node_or_write(w)? { render_${rustSnakeIdent(cls.typeName)}(v, w)?; }`;
-		case 'supertype':
-			return `if let Some(v) = ${expr}.node_or_write(w)? { render_${rustSnakeIdent(cls.supertypeName)}(v, w)?; }`;
-		case 'heterogeneous':
-			return `${expr}.render(w)?;`;
-		default:
-			return assertNever(cls);
-	}
-}
-
 function renderTypedDispatch(
 	structs: EmittedStruct[],
 	payloadNodes: readonly AssembledNode[],
@@ -667,9 +653,9 @@ function renderTypedDispatch(
 	lines.push(`}`);
 	lines.push('');
 
-	lines.push(
+	const anyNode = (subject: RenderSubject): string[] => [
 		...kindOfImplLines(
-			'AnyNode',
+			subject.type,
 			[
 				...payloadNodes.map((node) => ({ variant: rustNodeVariantName(node), payload: true })),
 				...[...fixed.values()].map((literal) => ({
@@ -679,23 +665,19 @@ function renderTypedDispatch(
 				}))
 			],
 			[]
-		)
-	);
-	lines.push(`impl ::sittir_core::render::Render for AnyNode {`);
-	lines.push(
-		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
-	);
-	lines.push(`        match self {`);
-	for (const node of payloadNodes) {
-		const variant = rustNodeVariantName(node);
-		lines.push(`            AnyNode::${variant}(t) => t.render(w),`);
-	}
-	for (const literal of fixed.values()) lines.push(`            ${fixedRenderArm(`AnyNode::${literal.variant}`, literal)}`);
-	lines.push(`            AnyNode::Verbatim(t) => t.render(w),`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
+		),
+		`impl ::sittir_core::render::Render for ${subject.type} {`,
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+		`        match self {`,
+		...payloadNodes.map((node) => `            ${subject.path}::${rustNodeVariantName(node)}(t) => t.render(w),`),
+		...[...fixed.values()].map((literal) => `            ${fixedRenderArm(`${subject.path}::${literal.variant}`, literal)}`),
+		`            ${subject.path}::Verbatim(t) => t.render(w),`,
+		`        }`,
+		`    }`,
+		`}`,
+		''
+	];
+	lines.push(...anyNode(nativeSubject('AnyNode')), ...recordViewImpls('AnyNode', anyNode));
 
 	return lines;
 }
@@ -721,7 +703,7 @@ function renderTypedKindFn(
 		case 'list': {
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
-				return renderTypedBranchFallbackFn(node, nodeMap);
+				return renderTypedBranchFallbackFn(node);
 			}
 			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
@@ -730,7 +712,7 @@ function renderTypedKindFn(
 			if (node instanceof AssembledSupertype) return [];
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
-				return renderTypedBranchFallbackFn(node, nodeMap);
+				return renderTypedBranchFallbackFn(node);
 			}
 			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
@@ -744,38 +726,26 @@ function renderTypedKindFn(
 	}
 }
 
-function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): string[] {
-	const fnName = rustTypedRenderFnName(node.typeName);
-	const structName = rustNodeStructName(node);
+function renderTypedBranchFallbackFn(node: AssembledNode): string[] {
 	const slotModel = renderSlotModelOf(node);
 	const allSlots = [...slotModel.named, ...slotModel.unnamed];
-	const lines: string[] = [];
-	lines.push(
-		`fn ${fnName}(node: &${structName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
-	);
-	if (allSlots.length === 0) {
-		lines.push(`    Ok(())`);
-	} else {
-		for (const slot of allSlots) {
-			const slotIdent = rustFieldIdent(slot.storageName);
-			const slotCls = slotClassOfShape(nodeSlotShapeOf(slot, nodeMap), nodeMap);
-			const writeChild = buildSlotWriteCall(slotCls, 'child');
-			if (isMultiple(slot)) {
-				lines.push(`    for child in node.${slotIdent}.iter() {`);
-				lines.push(`        ${writeChild}`);
-				lines.push(`    }`);
-			} else if (isNodeRequired(slot)) {
-				lines.push(`    ${buildSlotWriteCall(slotCls, `node.${slotIdent}`)}`);
-			} else {
-				lines.push(`    if let Some(child) = &node.${slotIdent} {`);
-				lines.push(`        ${writeChild}`);
-				lines.push(`    }`);
-			}
+	const lines = [
+		`fn ${rustTypedRenderFnName(node.typeName)}<N: ${rustNodeFieldsTraitName(node)} + ?Sized>(${allSlots.length === 0 ? '_node' : 'node'}: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
+	];
+	for (const slot of allSlots) {
+		const slotIdent = rustFieldIdent(slot.storageName);
+		if (isMultiple(slot)) {
+			lines.push(
+				`    let ${slotIdent} = node.${slotIdent}();`,
+				`    for index in 0..::sittir_core::view::SlotItems::count(&${slotIdent}) {`,
+				`        if let Some(item) = ::sittir_core::view::SlotItems::item(&${slotIdent}, index) { ::sittir_core::view::Slot::write_slot(&item, "", "", w)?; }`,
+				`    }`
+			);
+		} else {
+			lines.push(`    ::sittir_core::view::Slot::write_slot(&node.${slotIdent}(), "", "", w)?;`);
 		}
-		lines.push(`    Ok(())`);
 	}
-	lines.push(`}`);
-	lines.push('');
+	lines.push(`    Ok(())`, `}`, '');
 	return lines;
 }
 
@@ -1632,8 +1602,9 @@ function emitSupertypeNodeEnum(
 	const isBoxed = (subNode: AssembledNode): boolean => boxedInEnum(subNode, read.boxedPayloads);
 
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
+	const viewed = supertypeViewed(supertypeNode, nodeMap);
 
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice', 'enum', enumName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, viewed ? `choice, ${viewArg(enumName)}` : 'choice', 'enum', enumName));
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
@@ -1655,9 +1626,9 @@ function emitSupertypeNodeEnum(
 		])
 	);
 
-	lines.push(
-		...kindOfImplLines(
-			enumName,
+	const kindOf = (subject: RenderSubject): string[] =>
+		kindOfImplLines(
+			subject.type,
 			validSubtypes.map(({ subKind, subNode }) => {
 				const variant = rustTypeIdent(subNode.typeName);
 				if (!isFixedTextLeaf(subNode)) return { variant, payload: true };
@@ -1670,8 +1641,8 @@ function emitSupertypeNodeEnum(
 						.map(({ subKind }) => kindIdByKind.get(subKind))
 						.filter((id): id is number => id !== undefined)
 				: undefined
-		)
-	);
+		);
+	lines.push(...kindOf(nativeSubject(enumName)));
 
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_node_to_any(t: ${enumName}) -> AnyNode {`);
 	lines.push(`    match t {`);
@@ -1697,46 +1668,52 @@ function emitSupertypeNodeEnum(
 	lines.push(`}`);
 	lines.push(``);
 
-	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
-	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
-	lines.push(
-		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
-	);
-	lines.push(`        ${supertypeRenderFn}(self, w)`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push(``);
+	const render = (subject: RenderSubject): string[] => [
+		`impl ::sittir_core::render::Render for ${subject.type} {`,
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+		`        ${supertypeRenderFnName(supertypeNode, subject)}(self, w)`,
+		`    }`,
+		`}`,
+		``
+	];
+	lines.push(...render(nativeSubject(enumName)));
+	if (viewed) lines.push(...recordViewImpls(enumName, (subject) => [...kindOf(subject), ...render(subject)]));
 
 	return lines;
 }
 
+function supertypeViewed(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
+	const { subtypes } = collectEffectiveSupertypeNodeShape(supertypeNode, nodeMap);
+	return subtypes.some(({ subNode }) => !isFixedTextLeaf(subNode)) || supertypeAdmitsVerbatim(supertypeNode, nodeMap);
+}
+
+function supertypeRenderFnName(supertypeNode: AssembledSupertype, subject: RenderSubject): string {
+	return `render_${rustSnakeIdent(supertypeNode.typeName)}${subject.view ? '_record' : ''}`;
+}
+
 function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: NodeMap, fixed: FixedLiterals, boxedPayloads: readonly string[]): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Node`;
-	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
-	const lines: string[] = [];
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeNodeShape(supertypeNode, nodeMap);
-
-	lines.push(
-		`fn ${fnName}(t: &${enumName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
-	);
-	lines.push(`    match t {`);
-	for (const { subKind, subNode } of validSubtypes) {
-		const variant = rustTypeIdent(subNode.typeName);
-		if (isFixedTextLeaf(subNode)) {
-			lines.push(`        ${fixedRenderArm(`${enumName}::${variant}`, fixedLiteralOf(fixed, subKind))}`);
-			continue;
+	const helper = (subject: RenderSubject): string[] => {
+		const lines = [
+			`fn ${supertypeRenderFnName(supertypeNode, subject)}(t: &${subject.type}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+			`    match t {`
+		];
+		for (const { subKind, subNode } of validSubtypes) {
+			const variant = rustTypeIdent(subNode.typeName);
+			if (isFixedTextLeaf(subNode)) {
+				lines.push(`        ${fixedRenderArm(`${subject.path}::${variant}`, fixedLiteralOf(fixed, subKind))}`);
+				continue;
+			}
+			lines.push(`        ${subject.path}::${variant}(inner) => ${payloadExpr(subject, boxedInEnum(subNode, boxedPayloads))}.render(w),`);
 		}
-		const innerExpr = boxedInEnum(subNode, boxedPayloads) ? `inner.as_ref()` : `inner`;
-		lines.push(`        ${enumName}::${variant}(inner) => ${innerExpr}.render(w),`);
-	}
-	if (supertypeAdmitsVerbatim(supertypeNode, nodeMap)) {
-		lines.push(`        ${verbatimRenderArm(enumName, supertypeVerbatimIsImmediate(supertypeNode, nodeMap))}`);
-	}
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push(``);
-
-	return lines;
+		if (supertypeAdmitsVerbatim(supertypeNode, nodeMap)) {
+			lines.push(`        ${verbatimRenderArm(subject.path, supertypeVerbatimIsImmediate(supertypeNode, nodeMap))}`);
+		}
+		lines.push(`    }`, `}`, ``);
+		return lines;
+	};
+	return [...helper(nativeSubject(enumName)), ...(supertypeViewed(supertypeNode, nodeMap) ? recordViewImpls(enumName, helper) : [])];
 }
 
 function collectConcreteNodeKindIds(kind: string, nodeMap: NodeMap, seen: Set<string> = new Set()): number[] {
@@ -2049,7 +2026,7 @@ function shareIdenticalChoices(
 	for (const entry of entries) {
 		const name = perSlotEnumName(entry.typeName, entry.fieldName);
 		const lines = render(entry);
-		const body = lines.join('\n').replace(new RegExp(`\\b${name}\\b`, 'g'), '\0');
+		const body = lines.join('\n').replace(new RegExp(`\\b(?:${name}|${rustRecordViewName(name)})\\b`, 'g'), '\0');
 		const shared = nameByBody.get(body);
 		if (shared === undefined) {
 			nameByBody.set(body, name);
@@ -2262,7 +2239,8 @@ function emitPerSlotChildEnum(
 	}
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice', 'enum', enumName));
+	const viewed = nodeKinds.length > 0 || admitsVerbatim;
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, viewed ? `choice, ${viewArg(enumName)}` : 'choice', 'enum', enumName));
 	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
@@ -2288,9 +2266,9 @@ function emitPerSlotChildEnum(
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
 	);
-	lines.push(
-		...kindOfImplLines(
-			enumName,
+	const kindOf = (subject: RenderSubject): string[] =>
+		kindOfImplLines(
+			subject.type,
 			[
 				...nodeKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
 				...[...units.values()].map(({ fixed: unit }) => ({
@@ -2306,29 +2284,30 @@ function emitPerSlotChildEnum(
 						.map(({ kind }) => kindIdByKind.get(kind))
 						.filter((id): id is number => id !== undefined)
 				: undefined
-		)
-	);
-
-	lines.push(`impl ::sittir_core::render::Render for ${enumName} {`);
-	lines.push(
-		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
-	);
-	lines.push(`        match self {`);
-	for (const { kind, node } of nodeKinds) {
-		const variant = rustTypeIdent(node.typeName);
-		const innerExpr = isBoxed(node) ? 'inner.as_ref()' : 'inner';
-		const call = `${innerExpr}.render(w)`;
-		const arm =
-			!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
-		lines.push(`            ${enumName}::${variant}(inner) => ${arm},`);
-	}
-	for (const unit of units.values()) lines.push(...choiceUnitArm(enumName, unit));
-	if (blank) lines.push(`            ${enumName}::${BLANK_VARIANT} => Ok(()),`);
-	if (admitsVerbatim) lines.push(`            ${verbatimRenderArm(enumName, entry.verbatimImmediate)}`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push(`}`);
+		);
+	const render = (subject: RenderSubject): string[] => {
+		const out = [
+			`impl ::sittir_core::render::Render for ${subject.type} {`,
+			`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+			`        match self {`
+		];
+		for (const { kind, node } of nodeKinds) {
+			const variant = rustTypeIdent(node.typeName);
+			const call = `${payloadExpr(subject, isBoxed(node))}.render(w)`;
+			const arm =
+				!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
+			out.push(`            ${subject.path}::${variant}(inner) => ${arm},`);
+		}
+		for (const unit of units.values()) out.push(...choiceUnitArm(subject.path, unit));
+		if (blank) out.push(`            ${subject.path}::${BLANK_VARIANT} => Ok(()),`);
+		if (admitsVerbatim) out.push(`            ${verbatimRenderArm(subject.path, entry.verbatimImmediate)}`);
+		out.push(`        }`, `    }`, `}`);
+		return out;
+	};
+	lines.push(...kindOf(nativeSubject(enumName)));
+	lines.push(...render(nativeSubject(enumName)));
 	lines.push(``);
+	if (viewed) lines.push(...recordViewImpls(enumName, (subject) => [...kindOf(subject), ...render(subject)]));
 
 	return lines;
 }
@@ -2361,7 +2340,7 @@ function renderAnyNode(
 		claimedBy.set(literal.variant, [...(claimedBy.get(literal.variant) ?? []), id]);
 	}
 
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, 'choice', 'enum', 'AnyNode'));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `choice, ${viewArg('AnyNode')}`, 'enum', 'AnyNode'));
 	for (const node of payloadNodes) {
 		const variant = rustNodeVariantName(node);
 		lines.push(...variantKindLines('AnyNode', variant, node, claimedBy.get(variant) ?? [], read));
@@ -3248,7 +3227,7 @@ function renderNodeDataStruct(
 		seated: seated.some(({ ident }) => ident === field),
 		defaulted: defaulted.some(({ ident }) => ident === field)
 	});
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}`, 'struct', structName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}`, 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3274,20 +3253,27 @@ function renderNodeDataStruct(
 	}
 	lines.push('}');
 	lines.push('');
-	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
+	const kindOf = (subject: RenderSubject): string[] => kindOfImplLines(subject.type, [], undefined, ownId === undefined ? [] : [ownId]);
 	const ownKind = ownId === undefined ? 'None' : `Some(::sittir_core::types::KindId(${ownId}))`;
-	const edgedId = node.kindId;
-	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
-	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
-	lines.push(
-		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
-	);
 	const body = `${rustTypedRenderFnName(node.typeName)}(self, w)`;
 	const owner = !isLeafNode || ownsTrivia(kindEntries, node.kind);
-	lines.push(`        ${layoutRenderCall('self.layout.as_deref()', ownKind, owner, body)}`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
+	const render = (subject: RenderSubject): string[] => [
+		`impl ::sittir_core::render::Render for ${subject.type} {`,
+		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
+		`        ${
+			subject.view
+				? layoutRenderCall(`${rustNodeFieldsTraitName(node)}::${LAYOUT_FIELD.rustName}(self)`, ownKind, owner, body, '::sittir_core::arena::RecordLayout')
+				: layoutRenderCall(`self.${LAYOUT_FIELD.rustName}.as_deref()`, ownKind, owner, body)
+		}`,
+		`    }`,
+		`}`,
+		''
+	];
+	lines.push(...kindOf(nativeSubject(structName)));
+	const edgedId = node.kindId;
+	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
+	lines.push(...render(nativeSubject(structName)));
+	lines.push(...recordViewImpls(structName, (subject) => [...kindOf(subject), ...render(subject)]));
 	lines.push(...prepareStructImpl(structName, node, fillFields, plan, isCompoundOf(node), kindEntries, templateBody, seated, defaulted));
 	return lines;
 }
@@ -3416,8 +3402,35 @@ function renderFixedLiteralFn(fixed: FixedLiteral): string[] {
 	];
 }
 
-function layoutRenderCall(layout: string, ownKind: string, owner: boolean, body: string): string {
-	return `NodeLayout::render(${layout}, ${ownKind}, ::sittir_core::layout::TriviaRole::${owner ? 'Owner' : 'Token'}, w, |w| ${body})`;
+function layoutRenderCall(layout: string, ownKind: string, owner: boolean, body: string, layoutType = 'NodeLayout'): string {
+	return `${layoutType}::render(${layout}, ${ownKind}, ::sittir_core::layout::TriviaRole::${owner ? 'Owner' : 'Token'}, w, |w| ${body})`;
+}
+
+interface RenderSubject {
+	readonly type: string;
+	readonly path: string;
+	readonly view: boolean;
+}
+
+function rustRecordViewName(typeName: string): string {
+	return `${typeName}Record`;
+}
+
+function nativeSubject(typeName: string): RenderSubject {
+	return { type: typeName, path: typeName, view: false };
+}
+
+function recordViewImpls(typeName: string, emit: (subject: RenderSubject) => string[]): string[] {
+	const view = rustRecordViewName(typeName);
+	return ['::sittir_core::records_codec! {', ...emit({ type: `${view}<'_>`, path: view, view: true }), '}', ''];
+}
+
+function viewArg(typeName: string): string {
+	return `view = ${rustRecordViewName(typeName)}`;
+}
+
+function payloadExpr(subject: RenderSubject, boxed: boolean): string {
+	return boxed && !subject.view ? 'inner.as_ref()' : 'inner';
 }
 
 function ownsTrivia(kindEntries: readonly KindEnumEntry[], kind: string): boolean {
@@ -3663,27 +3676,6 @@ function presenceKindOf(slot: AssembledNonterminal, nodeMap: NodeMap): { kind?: 
 	if (slot.values.length !== 1 || value === undefined || !isNodeRef(value)) return {};
 	const node = nodeMap.nodes.get(storageKindOfRef(value.node));
 	return node !== undefined && isFixedTextLeaf(node) ? { kind: node } : {};
-}
-
-function slotClassOfShape(shape: NodeSlotShape, nodeMap: NodeMap): SlotClass {
-	switch (shape.tag) {
-		case 'kind': {
-			const node = nodeMap.nodes.get(shape.kind);
-			return node !== undefined && isFixedTextLeaf(node)
-				? { tag: 'heterogeneous', useBox: false }
-				: { tag: 'concrete', kind: shape.kind, typeName: shape.typeName };
-		}
-		case 'supertype':
-			return { tag: 'supertype', supertypeName: shape.supertypeName };
-		case 'union':
-			return { tag: 'heterogeneous', useBox: false };
-		case 'any':
-		case 'presence':
-		case 'text':
-			return { tag: 'heterogeneous', useBox: true };
-		default:
-			return assertNever(shape);
-	}
 }
 
 function slotCarrier(inner: string, adjacent: boolean): string {

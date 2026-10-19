@@ -329,12 +329,14 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		// test above, exercised via the fallback (no custom jinja) render path.
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, generatedIdTables);
-		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderStart = emitted.nodeRs.contents.indexOf('fn render_optional_repeated_child_parent<N: OptionalRepeatedChildParentFields + ?Sized>(');
+		expect(renderStart).toBeGreaterThan(-1);
 		const renderEnd = emitted.nodeRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.nodeRs.contents.slice(renderStart, renderEnd);
 
 		expect(emitted.nodeRs.contents).toMatch(/pub identifier: Vec</);
-		expect(renderBody).toContain('for child in node.identifier.iter() {');
+		expect(renderBody).toContain('let identifier = node.identifier();');
+		expect(renderBody).toContain('for index in 0..::sittir_core::view::SlotItems::count(&identifier) {');
 		expect(renderBody).not.toContain('if let Some(items)');
 	});
 

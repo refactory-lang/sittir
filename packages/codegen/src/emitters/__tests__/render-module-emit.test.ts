@@ -475,7 +475,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 
 	it("renders each struct through a body generic over the node's fields trait", async () => {
 		const nodeRs = await getRustTemplatesRs();
-		expect(nodeRs).toMatch(/#\[node\(kind = kind::FUNCTION_ITEM[^\n]*, fields = FunctionItemFields, prepare = FunctionItemPrepare\)\]\npub struct FunctionItemNode \{/);
+		expect(nodeRs).toMatch(/#\[node\(kind = kind::FUNCTION_ITEM[^\n]*, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord\)\]\npub struct FunctionItemNode \{/);
 		const from = nodeRs.indexOf('fn render_function_item<N: FunctionItemFields + ?Sized>(node: &N,');
 		expect(from).toBeGreaterThan(-1);
 		const body = nodeRs.slice(from, nodeRs.indexOf('\n}\n', from));
@@ -743,7 +743,7 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare\)\]\npub struct FunctionItemNode \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord\)\]\npub struct FunctionItemNode \{/
 		);
 		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
@@ -752,10 +752,17 @@ describe('node attributes', () => {
 	it("gives a choice's variants the ids today's decode claims for them", async () => {
 		const src = await getRustTemplatesRs();
 		const typeEnum = src.slice(src.indexOf('pub enum TypeNode {'));
-		expect(src).toMatch(/#\[node\(choice\)\]\npub enum TypeNode \{/);
+		expect(src).toMatch(/#\[node\(choice, view = TypeNodeRecord\)\]\npub enum TypeNode \{/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    #\[node\(edged\)\]\n    NeverType\(::sittir_core::options::Edges\),/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::_PRIMITIVE_TYPE[^\]]*kind::U8_KEYWORD[^\]]*\)\]\n    PrimitiveType\(PrimitiveTypeEnum\),/);
 		expect(src).toMatch(/#\[node\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
+	});
+
+	it('shares a choice that differs from another only by its own name and its view\'s', async () => {
+		const src = await getRustTemplatesRs();
+		expect(src).toContain('#[node(choice, view = IfExpressionConditionNodeSlotRecord)]\npub enum IfExpressionConditionNodeSlot {');
+		expect(extractStructBody(src, 'WhileExpressionNode')).toMatch(/pub condition: ::sittir_core::SlotValue<(Box<)?IfExpressionConditionNodeSlot>?>,/);
+		expect(src).not.toContain('pub enum WhileExpressionConditionNodeSlot');
 	});
 
 	it('marks the blank arm of a slot that has one', async () => {

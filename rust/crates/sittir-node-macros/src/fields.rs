@@ -10,7 +10,7 @@ use syn::{Ident, Type};
 
 /// What a render body asks of a field: the layout by its stamp, any other
 /// field by its type.
-enum Shape<'t> {
+pub(crate) enum Shape<'t> {
     /// `#[layout]`, an `Option<Box<NodeLayout>>`: read through `BodyLayout`.
     Layout(&'t Type),
     /// `SlotValue<…>`: a child the body renders and tests the kind of.
@@ -27,7 +27,7 @@ enum Shape<'t> {
     Value,
 }
 
-fn shape<'t>(field: &Field<'t>) -> syn::Result<Shape<'t>> {
+pub(crate) fn shape<'t>(field: &Field<'t>) -> syn::Result<Shape<'t>> {
     let ty = field.ty;
     if matches!(field.role, Role::Layout) {
         let boxed = inner_of(ty, "Option")

@@ -42,6 +42,9 @@ pub struct KindAttrs {
     /// On a struct: the name of its prepare trait, which codegen stamps and
     /// its prepare body is generic over.
     pub prepare: Option<Ident>,
+    /// On a struct or a choice: the name of its record view, which codegen
+    /// stamps on each type it writes the view's render for.
+    pub view: Option<Ident>,
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -189,6 +192,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "words" => out.words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
                 "fields" => out.fields = Some(meta.value()?.parse()?),
                 "prepare" => out.prepare = Some(meta.value()?.parse()?),
+                "view" => out.view = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())

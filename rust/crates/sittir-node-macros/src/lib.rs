@@ -12,6 +12,7 @@ mod expand;
 mod fields;
 mod prepare;
 mod record;
+mod views;
 mod write;
 
 #[proc_macro_derive(Node, attributes(node, slot, kind, flank, separator_kind, space, layout, text, wire))]

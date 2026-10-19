@@ -238,13 +238,75 @@ impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Recor
 
 /// A view built from the cell that names its value in a holder's record.
 pub trait RecordView<'a, T>: Sized {
-    /// The view of the value `cell` names, at `site` in its holder.
+    /// Whether a cell of `kind` is one this view's type is written as: its
+    /// own kind, a variant's, a member's, or blank text for verbatim text.
+    fn claims(kind: KindId) -> bool;
+
+    /// The view of the value `cell` names, at `site` in its holder; a root
+    /// has none.
     ///
     /// # Errors
     ///
     /// `ArenaError` for a cell this view's type is never written as, or a
     /// record of it that no writer writes.
-    fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, site: Site<Place>) -> Result<Self, ArenaError>;
+    fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, site: Option<Site<Place>>) -> Result<Self, ArenaError>;
+}
+
+/// What a node's view reads first from its record: its words, checked to
+/// be `len` and to name `kind` in its header, and its side record.
+///
+/// # Errors
+///
+/// What reading the words or the side record refuses, or
+/// `ArenaError::Malformed` for a header of another kind.
+pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) -> Result<(&[u32], super::SideRecord), ArenaError> {
+    let words = ctx.words(at, len)?;
+    if words[0] != u32::from(kind.0) {
+        return Err(malformed("record kind", words[0]));
+    }
+    let side = if words[1] == Address::NONE.0 { super::SideRecord::default() } else { super::SideRecord::read(ctx.arena, Address(words[1]))? };
+    Ok((words, side))
+}
+
+/// The place of the record at `at` whose side record is `side`: a parsed
+/// record's row in its tree, a built record's address.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for a parsed record whose side record names no row.
+pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Place, ArenaError> {
+    match ctx.tree {
+        Some(tree) => side.at.map(|(row, _)| Place::Row { tree, row }).ok_or(malformed("parsed record row", at.0)),
+        None => Ok(Place::Record(at)),
+    }
+}
+
+/// Text that is a slot's content with no kind of its own, or an `ERROR`
+/// node's text with its kind, as a record holds it (`VerbatimNode`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct VerbatimRecord<'a> {
+    pub text: &'a str,
+    pub kind: KindId,
+}
+
+impl<'a, T> RecordView<'a, T> for VerbatimRecord<'a> {
+    fn claims(kind: KindId) -> bool {
+        kind == KindId::BLANK || kind == KindId::ERROR
+    }
+
+    fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, _: Option<Site<Place>>) -> Result<Self, ArenaError> {
+        match cell {
+            Cell::BuiltText { text } => Ok(Self { text: ctx.string(text)?, kind: KindId::BLANK }),
+            Cell::BuiltLeaf { kind: KindId::ERROR, text, .. } => Ok(Self { text: ctx.string(text)?, kind: KindId::ERROR }),
+            _ => Err(malformed("verbatim cell", 0)),
+        }
+    }
+}
+
+impl Render for VerbatimRecord<'_> {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        w.text(self.text)
+    }
 }
 
 /// What one slot's cell holds, as its view reads it.
@@ -270,7 +332,7 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
         let cell = match Cell::decode(words) {
             Ok(Cell::Absent) => SlotCell::Absent,
             Ok(Cell::Coordinate { kind, index, span }) => SlotCell::Coordinate { kind, index, span },
-            Ok(cell) => V::from_cell(ctx, cell, site).map_or_else(SlotCell::Refused, SlotCell::View),
+            Ok(cell) => V::from_cell(ctx, cell, Some(site)).map_or_else(SlotCell::Refused, SlotCell::View),
             Err(refused) => SlotCell::Refused(refused),
         };
         Self { ctx, site, cell }
@@ -298,7 +360,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for Reco
                     return crate::slot::write_coordinate(&coord, ADJACENT, w);
                 }
                 let at = self.ctx.row_record(index).ok_or(RenderError::Record(malformed("edited coordinate record", index.0)))?;
-                V::from_cell(self.ctx, Cell::Child { kind, at, link: None }, self.site).map_err(RenderError::Record)?.render(w)
+                V::from_cell(self.ctx, Cell::Child { kind, at, link: None }, Some(self.site)).map_err(RenderError::Record)?.render(w)
             }
         }
     }
@@ -398,7 +460,11 @@ mod tests {
     struct Word<'a>(&'a str);
 
     impl<'a, T> RecordView<'a, T> for Word<'a> {
-        fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, _: Site<Place>) -> Result<Self, ArenaError> {
+        fn claims(kind: KindId) -> bool {
+            kind == WORD
+        }
+
+        fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, _: Option<Site<Place>>) -> Result<Self, ArenaError> {
             ctx.cell_text(cell).map(Word)
         }
     }

@@ -23,7 +23,7 @@ use std::fmt;
 
 pub use cell::{Cell, ListCell, ParsedLink};
 pub use prepared::{Prepared, PreparedNode, PreparedSlot};
-pub use view::{RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView};
+pub use view::{place_of, record_of, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record};
 pub use rows::TreeArena;
 pub use side::{SideRecord, SideSlot, Sides};
@@ -36,6 +36,18 @@ pub trait HasRecord {
     type Record<'a>
     where
         Self: 'a;
+}
+
+/// A boxed node's view is its node's.
+impl<N: HasRecord + ?Sized> HasRecord for Box<N> {
+    type Record<'a>
+        = N::Record<'a>
+    where
+        Self: 'a;
+}
+
+impl HasRecord for crate::verbatim::VerbatimNode {
+    type Record<'a> = VerbatimRecord<'a>;
 }
 
 /// The entry of `entries` for the slot at `word`, by each entry's own word,

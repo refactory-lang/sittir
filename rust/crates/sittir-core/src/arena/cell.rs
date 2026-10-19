@@ -94,6 +94,16 @@ fn record(word: u32) -> Result<Address, ArenaError> {
 }
 
 impl Cell {
+    /// The kind a cell names: blank for captured text, none when absent.
+    #[must_use]
+    pub const fn kind(self) -> Option<KindId> {
+        match self {
+            Cell::Absent => None,
+            Cell::ParsedText { .. } | Cell::BuiltText { .. } => Some(KindId::BLANK),
+            Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind } | Cell::BuiltLeaf { kind, .. } => Some(kind),
+        }
+    }
+
     /// The words this form takes.
     #[must_use]
     pub const fn width(self) -> u32 {
