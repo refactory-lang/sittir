@@ -1823,14 +1823,14 @@ impl ::sittir_core::prepare::Prepare for ProgramNode {
 fn prepare_program<N: ProgramPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    let inner = ::sittir_core::prepare::LayoutTarget::inner_item(&parts.layout);
-    let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&parts.definitions)].into_iter().flatten().next(), inner.clone(), ::sittir_core::options::Side::Before);
-    let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&parts.definitions)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
-    let root = ::sittir_core::prepare::LayoutTarget::snapshot_edge(&parts.layout).map(|edge| edge.span);
+    let inner = ::sittir_core::prepare::LayoutTarget::inner_item(&parts.layout, overlay);
+    let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&parts.definitions, overlay)].into_iter().flatten().next(), inner.clone(), ::sittir_core::options::Side::Before);
+    let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&parts.definitions, overlay)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
+    let root = ::sittir_core::prepare::LayoutTarget::snapshot_edge(&parts.layout, overlay).map(|edge| edge.span);
     let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_PROGRAM_PROGRAM_BEFORE), options::allowed(options::SITE_PROGRAM_PROGRAM_AFTER), &options::WHITESPACE, ctx);
     ::sittir_core::prepare::fill_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), flanks);
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(33), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_definitions").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_definitions"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.definitions_separator_space, overlay, ctx.options.site_arm(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.definitions, overlay, options::SEATS_PROGRAM_DEFINITIONS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.definitions, overlay, ctx)?;
@@ -2356,7 +2356,7 @@ impl ::sittir_core::prepare::Prepare for StringContentNode {
 fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.content, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_content").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_content"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.content, overlay, slot.as_deref()); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     Ok(())
 }
@@ -2430,7 +2430,7 @@ fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(43), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_PARAMETERS_ELEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
@@ -2580,8 +2580,8 @@ fn prepare_list<N: ListPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay,
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(44), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_definitions").as_deref());
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_definitions"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.definitions, overlay, slot.as_deref()); }
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.definitions_separator_space, overlay, ctx.options.site_arm(options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.definitions, overlay, options::SEATS_LIST_DEFINITIONS, ctx);
@@ -2666,8 +2666,8 @@ fn prepare_grouping<N: GroupingPrepare + ?Sized>(node: &mut N, overlay: &mut N::
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(45), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.grouping_group, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_grouping_group").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_grouping_group"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.grouping_group, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.grouping_group_separator_space, overlay, ctx.options.site_arm(options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_GROUPING_ELEMENTS, ctx);
@@ -2749,7 +2749,7 @@ fn prepare_missing_node<N: MissingNodePrepare + ?Sized>(node: &mut N, overlay: &
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(46), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_MISSING_NODE_ELEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
@@ -2829,7 +2829,7 @@ fn prepare_anonymous_node<N: AnonymousNodePrepare + ?Sized>(node: &mut N, overla
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(47), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_ANONYMOUS_NODE_ELEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
@@ -3560,7 +3560,7 @@ fn prepare_named_node_plain<N: NamedNodePlainPrepare + ?Sized>(node: &mut N, ove
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(61), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
@@ -3647,7 +3647,7 @@ fn prepare_named_node_supertyped<N: NamedNodeSupertypedPrepare + ?Sized>(node: &
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(62), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.supertype, overlay, ctx)?;
@@ -3729,7 +3729,7 @@ fn prepare_named_node_group_children<N: NamedNodeGroupChildrenPrepare + ?Sized>(
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(63), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_named_node_expressions").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_named_node_expressions"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.named_node_expressions_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.named_node_expressions, overlay, options::SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_expressions, overlay, ctx)?;
@@ -3811,7 +3811,7 @@ fn prepare_named_node_group_anchored_last<N: NamedNodeGroupAnchoredLastPrepare +
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(64), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_named_node_expressions").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_named_node_expressions"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.named_node_expressions, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.named_node_expressions_separator_space, overlay, ctx.options.site_arm(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.named_node_expressions, overlay, options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.named_node_expressions, overlay, ctx)?;

@@ -2710,8 +2710,8 @@ function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | u
 function slotGapFills(node: AssembledNode): string[] {
 	const slotModel = renderSlotModelOf(node);
 	return [...slotModel.named, ...slotModel.unnamed].filter(isMultiple).map((field) => {
-		const slot = `${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, ${JSON.stringify(slotWireKey(field.storageName))})`;
-		return `    ${PREPARE_MOD}::SlotTarget::fill_gaps(&mut parts.${rustFieldIdent(field.storageName)}, overlay, ${slot}.as_deref());`;
+		const slot = `${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, overlay, ${JSON.stringify(slotWireKey(field.storageName))})`;
+		return `    { let slot = ${slot}; ${PREPARE_MOD}::SlotTarget::fill_gaps(&mut parts.${rustFieldIdent(field.storageName)}, overlay, slot.as_deref()); }`;
 	});
 }
 
@@ -3023,12 +3023,12 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 		return `options::allowed(options::${site.constName})`;
 	};
 	const items = (end: 'first' | 'last'): string =>
-		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&parts.${f})`).join(', ')}].into_iter().flatten().next()`;
+		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&parts.${f}, overlay)`).join(', ')}].into_iter().flatten().next()`;
 	return [
-		`    let inner = ${PREPARE_MOD}::LayoutTarget::inner_item(&parts.layout);`,
+		`    let inner = ${PREPARE_MOD}::LayoutTarget::inner_item(&parts.layout, overlay);`,
 		`    let first = ::sittir_core::prepare::outermost(${items('first')}, inner.clone(), ::sittir_core::options::Side::Before);`,
 		`    let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
-		`    let root = ${PREPARE_MOD}::LayoutTarget::snapshot_edge(&parts.layout).map(|edge| edge.span);`,
+		`    let root = ${PREPARE_MOD}::LayoutTarget::snapshot_edge(&parts.layout, overlay).map(|edge| edge.span);`,
 		`    let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
 		`    ::sittir_core::prepare::fill_edges(${PREPARE_MOD}::LayoutTarget::edges_mut(&mut parts.layout, overlay), flanks);`
 	];
@@ -3042,9 +3042,11 @@ function prepareEdgesLine(plan: RenderPlan, node: AssembledNode, templateBody: B
 		const slot = armSlots?.[side];
 		return slot === undefined
 			? 'None'
-			: `${PREPARE_MOD}::ArmOf::arm_among(&parts.${rustFieldIdent(slot)}, ctx, ctx.options.edge_arm_sites(${id}, ::sittir_core::options::Side::${side === 'before' ? 'Before' : 'After'}))`;
+			: `${PREPARE_MOD}::ArmOf::arm_among(&parts.${rustFieldIdent(slot)}, overlay, ctx, ctx.options.edge_arm_sites(${id}, ::sittir_core::options::Side::${side === 'before' ? 'Before' : 'After'}))`;
 	};
-	return `    ${PREPARE_MOD}::prepare_edges(${PREPARE_MOD}::LayoutTarget::edges_mut(&mut parts.layout, overlay), ${id}, (${arm('before')}, ${arm('after')}), ctx);`;
+	const fill = (arms: string): string => `${PREPARE_MOD}::prepare_edges(${PREPARE_MOD}::LayoutTarget::edges_mut(&mut parts.layout, overlay), ${id}, ${arms}, ctx);`;
+	const arms = `(${arm('before')}, ${arm('after')})`;
+	return armSlots?.before === undefined && armSlots?.after === undefined ? `    ${fill(arms)}` : `    { let arms = ${arms}; ${fill('arms')} }`;
 }
 
 function prepareStructImpl(
@@ -3075,19 +3077,19 @@ function prepareStructImpl(
 			const value =
 				trailing === undefined
 					? fallback
-					: `::sittir_core::prepare::source_trailing_delimiter(${PREPARE_MOD}::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
-			body.push(`    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, ${value});`);
+					: `::sittir_core::prepare::source_trailing_delimiter(${PREPARE_MOD}::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
+			body.push(`    let delimiter = ${value};`, `    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, delimiter);`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {
 			const key = JSON.stringify(listItemWireKey(node));
 			const items = rustFieldIdent(listItemField(node).storageName);
 			body.push(
-				`    if let Some(kind) = ${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, ${key}).and_then(|slot| slot.separator).and_then(${structName}::separator_kind_of) {`,
+				`    if let Some(kind) = ${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, overlay, ${key}).and_then(|slot| slot.separator).and_then(${structName}::separator_kind_of) {`,
 				`        ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, overlay, kind);`,
 				'    }',
 				`    ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::${sep.constName}).arm);`,
-				`    if let Some(tokens) = ${PREPARE_MOD}::SlotTarget::separators(&parts.${items}, ${structName}::separator_kind_of, ctx) {`,
+				`    if let Some(tokens) = ${PREPARE_MOD}::SlotTarget::separators(&parts.${items}, overlay, ${structName}::separator_kind_of, ctx) {`,
 				`        ${PREPARE_MOD}::LayoutTarget::set_slot_tokens(&mut parts.layout, overlay, ${key}, tokens);`,
 				'    }'
 			);

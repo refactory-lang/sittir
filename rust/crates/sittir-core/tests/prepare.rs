@@ -270,7 +270,7 @@ fn a_node_prepares_the_edge_of_the_arm_its_slot_holds() {
     let prepared = |slot: Option<SlotValue<Token>>| {
         let mut node = Armed { edges: Edges::default(), slot };
         let ctx = ctx(&opts, &sources);
-        let arms = (node.slot.arm_among(&ctx, ctx.options.edge_arm_sites(KindId(3), Side::Before)), None);
+        let arms = (node.slot.arm_among(&(), &ctx, ctx.options.edge_arm_sites(KindId(3), Side::Before)), None);
         prepare_edges(&mut node.edges, KindId(3), arms, &ctx);
         node.edges.before
     };
@@ -500,7 +500,7 @@ fn a_root_reads_its_flanks_from_the_bytes_around_its_first_and_last_coordinate()
     let opts = ResolvedOptions::default();
     let sources = source_tree();
     let items = vec![parsed(1, 0, 6).unwrap(), parsed(2, 8, 17).unwrap()];
-    let flanks = root_flanks(items.first_item(), items.last_item(), None, &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
+    let flanks = root_flanks(items.first_item(&()), items.last_item(&()), None, &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks, Edges { before: Some(wire(1)), after: Some(wire(3)) });
 }
 
@@ -509,7 +509,7 @@ fn a_rebuilt_edge_item_or_a_flank_that_is_not_whitespace_leaves_the_edge_unset()
     let opts = ResolvedOptions::default();
     let sources = source_tree();
     let rebuilt_first = vec![SlotValue::Node(Seatable { kind: 2, edges: Edges::default() }), parsed(1, 0, 6).unwrap()];
-    let flanks = root_flanks(rebuilt_first.first_item(), rebuilt_first.last_item(), None, &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
+    let flanks = root_flanks(rebuilt_first.first_item(&()), rebuilt_first.last_item(&()), None, &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks.before, None);
     assert_eq!(flanks.after, None, "the bytes after `use x;` hold `fn f() {{}}`, which is not a flank");
 }
@@ -610,7 +610,7 @@ fn a_snapshot_root_reads_its_edges_from_the_geometry_of_its_first_and_last_item(
     let sources = Sources(HashMap::new());
     // "\n\nuse a;\n\nuse b;\n": items on rows 2 and 4, the root ending on row 5.
     let items = Vec::from([spanned(at(2, 0, 2, 6), Bare, Bare), spanned(at(4, 0, 4, 6), Bare, Bare)]);
-    let flanks = root_flanks(items.first_item(), items.last_item(), Some(at(0, 0, 5, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
+    let flanks = root_flanks(items.first_item(&()), items.last_item(&()), Some(at(0, 0, 5, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks, Edges { before: Some(wire(4)), after: Some(wire(3)) });
 }
 
@@ -620,7 +620,7 @@ fn a_snapshot_root_edge_reaches_past_the_trivia_of_its_end_items() {
     let sources = Sources(HashMap::new());
     // "\n// a\nuse a;\nuse b; // b\n": a comment leads the first item from row 1, one trails the last to row 2.
     let items = Vec::from([spanned(at(2, 0, 2, 6), To(pt(1, 0)), Bare), spanned(at(2, 7, 2, 13), Bare, To(pt(2, 18)))]);
-    let flanks = root_flanks(items.first_item(), items.last_item(), Some(at(0, 0, 3, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
+    let flanks = root_flanks(items.first_item(&()), items.last_item(&()), Some(at(0, 0, 3, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks, Edges { before: Some(wire(3)), after: Some(wire(3)) });
 }
 
@@ -629,7 +629,7 @@ fn a_snapshot_edge_item_with_unplaced_trivia_on_that_side_leaves_the_edge_unset(
     let opts = ResolvedOptions::default();
     let sources = Sources(HashMap::new());
     let items = Vec::from([spanned(at(2, 0, 2, 6), Unplaced, Bare), spanned(at(4, 0, 4, 6), Bare, Unplaced)]);
-    let flanks = root_flanks(items.first_item(), items.last_item(), Some(at(0, 0, 5, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
+    let flanks = root_flanks(items.first_item(&()), items.last_item(&()), Some(at(0, 0, 5, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks, Edges { before: None, after: None });
 }
 
@@ -640,7 +640,7 @@ fn a_snapshot_root_with_no_items_reads_its_edges_around_its_inner_trivia() {
     // "\n\n// only\n\n": the comment is the root's own, on row 2 of a root ending on row 4.
     let inner = Some(EdgeItem::Snapshot(SnapshotEdge { span: at(2, 0, 2, 7), leading: Bare, trailing: Bare }));
     let none: Vec<SlotValue<Spanned>> = Vec::new();
-    let (first, last) = (outermost(none.first_item(), inner.clone(), Side::Before), outermost(none.last_item(), inner, Side::After));
+    let (first, last) = (outermost(none.first_item(&()), inner.clone(), Side::Before), outermost(none.last_item(&()), inner, Side::After));
     let flanks = root_flanks(first, last, Some(at(0, 0, 4, 0)), &[KindId(1), KindId(3), KindId(4)], &[KindId(1), KindId(3), KindId(4)], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks, Edges { before: Some(wire(4)), after: Some(wire(4)) });
 }
@@ -653,8 +653,8 @@ fn the_outermost_end_of_a_root_is_its_inner_trivia_when_that_lies_beyond_its_end
         Some(EdgeItem::Snapshot(edge)) => edge.span,
         other => panic!("a snapshot end, not {other:?}"),
     };
-    assert_eq!(edge(outermost(item.first_item(), inner, Side::Before)), at(1, 0, 3, 4));
-    assert_eq!(edge(outermost(item.last_item(), None, Side::After)), at(2, 0, 2, 6));
+    assert_eq!(edge(outermost(item.first_item(&()), inner, Side::Before)), at(1, 0, 3, 4));
+    assert_eq!(edge(outermost(item.last_item(&()), None, Side::After)), at(2, 0, 2, 6));
 }
 
 fn slot(before: Option<KindId>, after: Option<KindId>) -> sittir_core::layout::SlotLayout {

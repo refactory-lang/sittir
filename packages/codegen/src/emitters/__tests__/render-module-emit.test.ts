@@ -341,7 +341,7 @@ describe('render options on nodes', () => {
 			'::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);'
 		);
 		expect(listFill).toMatch(
-			/::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::prepare::LayoutTarget::sides\(&parts\.layout\)\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\)\);/
+			/let delimiter = ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::prepare::LayoutTarget::sides\(&parts\.layout, overlay\)\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\);\n    ::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, overlay, delimiter\);/
 		);
 		expect(extractStructBody(src, 'FormalParametersElementsNode')).toMatch(
 			/    #\[space\(slot = \d+, side = before, site = options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE\)\]\n    pub item_separator_space_before: Option<KindId>,/
@@ -445,7 +445,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		const nodeRs = await getRustTemplatesRs();
 		const body = prepareBody(nodeRs, 'ArgumentsElements');
 		expect(body).toContain(
-			'::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());'
+			'{ let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }'
 		);
 		// The stored layout is set first: the list site and the seats fill only the gaps it left unset.
 		expect(body.indexOf('SlotTarget::fill_gaps')).toBeLessThan(body.indexOf('ctx.options.site_arm('));

@@ -220,7 +220,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		}).nodeRs.contents;
 
 		expect(emitted).toContain('::sittir_core::prepare::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
-		expect(emitted).toContain('if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.member, MemberListNode::separator_kind_of, ctx) {');
+		expect(emitted).toContain('if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.member, overlay, MemberListNode::separator_kind_of, ctx) {');
 		expect(emitted).toContain('_ => ";" };');
 	});
 

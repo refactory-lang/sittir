@@ -34,13 +34,14 @@ pub fn prepare_edges(edges: &mut Edges, kind: KindId, arms: (Option<KindId>, Opt
 
 /// A slot that holds the token an edge's arm is chosen by: the arm among
 /// `arms` the value is (a built value by its kind, a coordinate by the kind of
-/// the node it names), or `None` when it holds none of them.
-pub trait ArmOf {
-    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId>;
+/// the node it names), or `None` when it holds none of them. It reads through
+/// the overlay `O` its prepare trait names, as every prepare operation does.
+pub trait ArmOf<O> {
+    fn arm_among(&self, overlay: &O, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId>;
 }
 
-impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf for SlotValue<T, ADJACENT> {
-    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
+impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf<()> for SlotValue<T, ADJACENT> {
+    fn arm_among(&self, (): &(), ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
         match self {
             SlotValue::Coord(coord) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == *kind)),
             SlotValue::Node(t) => arms.iter().map(|a| a.arm).find(|kind| t.kind_in(&[*kind])),
@@ -48,15 +49,15 @@ impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf for SlotValue<T, ADJACE
     }
 }
 
-impl<X: ArmOf> ArmOf for Option<X> {
-    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
-        self.as_ref().and_then(|slot| slot.arm_among(ctx, arms))
+impl<X: ArmOf<()>> ArmOf<()> for Option<X> {
+    fn arm_among(&self, overlay: &(), ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
+        self.as_ref().and_then(|slot| slot.arm_among(overlay, ctx, arms))
     }
 }
 
-impl<X: ArmOf + ?Sized> ArmOf for &mut X {
-    fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
-        (**self).arm_among(ctx, arms)
+impl<O, X: ArmOf<O> + ?Sized> ArmOf<O> for &mut X {
+    fn arm_among(&self, overlay: &O, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
+        (**self).arm_among(overlay, ctx, arms)
     }
 }
 
@@ -91,17 +92,18 @@ pub enum EdgeItem<'a> {
 
 /// A child position of a root node, read for the item at either end of
 /// the render: `None` when the position holds nothing, otherwise the item
-/// (`EdgeItem`).
-pub trait EdgeItems {
-    fn first_item(&self) -> Option<EdgeItem<'_>>;
-    fn last_item(&self) -> Option<EdgeItem<'_>>;
+/// (`EdgeItem`). It reads through the overlay `O` its prepare trait names; the
+/// item borrows from the position alone, so a record's is owned.
+pub trait EdgeItems<O> {
+    fn first_item(&self, overlay: &O) -> Option<EdgeItem<'_>>;
+    fn last_item(&self, overlay: &O) -> Option<EdgeItem<'_>>;
 }
 
-impl<T: Prepare, const ADJACENT: bool> EdgeItems for SlotValue<T, ADJACENT> {
-    fn first_item(&self) -> Option<EdgeItem<'_>> {
+impl<T: Prepare, const ADJACENT: bool> EdgeItems<()> for SlotValue<T, ADJACENT> {
+    fn first_item(&self, (): &()) -> Option<EdgeItem<'_>> {
         Some(edge_item(self))
     }
-    fn last_item(&self) -> Option<EdgeItem<'_>> {
+    fn last_item(&self, (): &()) -> Option<EdgeItem<'_>> {
         Some(edge_item(self))
     }
 }
@@ -113,49 +115,49 @@ fn edge_item<T: Prepare, const ADJACENT: bool>(value: &SlotValue<T, ADJACENT>) -
     }
 }
 
-impl<X: EdgeItems> EdgeItems for Option<X> {
-    fn first_item(&self) -> Option<EdgeItem<'_>> {
-        self.as_ref().and_then(X::first_item)
+impl<X: EdgeItems<()>> EdgeItems<()> for Option<X> {
+    fn first_item(&self, overlay: &()) -> Option<EdgeItem<'_>> {
+        self.as_ref().and_then(|item| item.first_item(overlay))
     }
-    fn last_item(&self) -> Option<EdgeItem<'_>> {
-        self.as_ref().and_then(X::last_item)
+    fn last_item(&self, overlay: &()) -> Option<EdgeItem<'_>> {
+        self.as_ref().and_then(|item| item.last_item(overlay))
     }
 }
 
 /// The first edge item of a list: its first item that has one.
-fn first_edge_item<X: EdgeItems>(items: &[X]) -> Option<EdgeItem<'_>> {
-    items.iter().find_map(X::first_item)
+fn first_edge_item<X: EdgeItems<()>>(items: &[X]) -> Option<EdgeItem<'_>> {
+    items.iter().find_map(|item| item.first_item(&()))
 }
 
 /// The last edge item of a list: its last item that has one.
-fn last_edge_item<X: EdgeItems>(items: &[X]) -> Option<EdgeItem<'_>> {
-    items.iter().rev().find_map(X::last_item)
+fn last_edge_item<X: EdgeItems<()>>(items: &[X]) -> Option<EdgeItem<'_>> {
+    items.iter().rev().find_map(|item| item.last_item(&()))
 }
 
-impl<X: EdgeItems> EdgeItems for Vec<X> {
-    fn first_item(&self) -> Option<EdgeItem<'_>> {
+impl<X: EdgeItems<()>> EdgeItems<()> for Vec<X> {
+    fn first_item(&self, (): &()) -> Option<EdgeItem<'_>> {
         first_edge_item(self)
     }
-    fn last_item(&self) -> Option<EdgeItem<'_>> {
+    fn last_item(&self, (): &()) -> Option<EdgeItem<'_>> {
         last_edge_item(self)
     }
 }
 
-impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
-    fn first_item(&self) -> Option<EdgeItem<'_>> {
+impl<X: EdgeItems<()>> EdgeItems<()> for crate::NonEmptyVec<X> {
+    fn first_item(&self, (): &()) -> Option<EdgeItem<'_>> {
         first_edge_item(self)
     }
-    fn last_item(&self) -> Option<EdgeItem<'_>> {
+    fn last_item(&self, (): &()) -> Option<EdgeItem<'_>> {
         last_edge_item(self)
     }
 }
 
-impl<X: EdgeItems + ?Sized> EdgeItems for &mut X {
-    fn first_item(&self) -> Option<EdgeItem<'_>> {
-        (**self).first_item()
+impl<O, X: EdgeItems<O> + ?Sized> EdgeItems<O> for &mut X {
+    fn first_item(&self, overlay: &O) -> Option<EdgeItem<'_>> {
+        (**self).first_item(overlay)
     }
-    fn last_item(&self) -> Option<EdgeItem<'_>> {
-        (**self).last_item()
+    fn last_item(&self, overlay: &O) -> Option<EdgeItem<'_>> {
+        (**self).last_item(overlay)
     }
 }
 

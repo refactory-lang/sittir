@@ -33,7 +33,7 @@ fn slot_bound(field: &Field<'_>, slot: &SlotAttrs) -> syn::Result<Option<TokenSt
     }
     let mut bound = quote!(::sittir_core::prepare::SlotTarget<Self::Overlay>);
     if !list {
-        bound.extend(quote!(+ ::sittir_core::prepare::ArmOf));
+        bound.extend(quote!(+ ::sittir_core::prepare::ArmOf<Self::Overlay>));
     }
     if slot.defaulted {
         bound.extend(quote!(+ ::sittir_core::prepare::UnitSlot<Self::Overlay>));
@@ -162,7 +162,7 @@ mod tests {
         .expect("expands");
         assert!(has(&out, "type Overlay; type Layout<'a>: ::sittir_core::prepare::LayoutTarget<Self::Overlay> where Self: 'a;"));
         assert!(has(&out, "type Items<'a>: ::sittir_core::prepare::SlotTarget<Self::Overlay> + ::sittir_core::prepare::SeatSlot<Self::Overlay> where Self: 'a;"));
-        assert!(has(&out, "type Terminator<'a>: ::sittir_core::prepare::SlotTarget<Self::Overlay> + ::sittir_core::prepare::ArmOf + ::sittir_core::prepare::UnitSlot<Self::Overlay> where Self: 'a;"));
+        assert!(has(&out, "type Terminator<'a>: ::sittir_core::prepare::SlotTarget<Self::Overlay> + ::sittir_core::prepare::ArmOf<Self::Overlay> + ::sittir_core::prepare::UnitSlot<Self::Overlay> where Self: 'a;"));
         assert!(has(&out, "type Delimiter<'a>: ::sittir_core::prepare::Setting<::sittir_core::types::Delimiter, Self::Overlay> where Self: 'a;"));
         assert!(has(&out, "type ItemsSeparatorSpace<'a>: ::sittir_core::prepare::Setting<KindId, Self::Overlay> where Self: 'a;"));
         assert!(!has(&out, "type Open<'a>"), "a presence is no place");

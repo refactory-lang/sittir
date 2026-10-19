@@ -17718,14 +17718,14 @@ impl ::sittir_core::prepare::Prepare for SourceFileNode {
 fn prepare_source_file<N: SourceFilePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    let inner = ::sittir_core::prepare::LayoutTarget::inner_item(&parts.layout);
-    let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&parts.shebang), ::sittir_core::prepare::EdgeItems::first_item(&parts.statements)].into_iter().flatten().next(), inner.clone(), ::sittir_core::options::Side::Before);
-    let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&parts.statements), ::sittir_core::prepare::EdgeItems::last_item(&parts.shebang)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
-    let root = ::sittir_core::prepare::LayoutTarget::snapshot_edge(&parts.layout).map(|edge| edge.span);
+    let inner = ::sittir_core::prepare::LayoutTarget::inner_item(&parts.layout, overlay);
+    let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&parts.shebang, overlay), ::sittir_core::prepare::EdgeItems::first_item(&parts.statements, overlay)].into_iter().flatten().next(), inner.clone(), ::sittir_core::options::Side::Before);
+    let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&parts.statements, overlay), ::sittir_core::prepare::EdgeItems::last_item(&parts.shebang, overlay)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
+    let root = ::sittir_core::prepare::LayoutTarget::snapshot_edge(&parts.layout, overlay).map(|edge| edge.span);
     let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_SOURCE_FILE_SOURCE_FILE_BEFORE), options::allowed(options::SITE_SOURCE_FILE_SOURCE_FILE_AFTER), &options::WHITESPACE, ctx);
     ::sittir_core::prepare::fill_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), flanks);
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(176), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_statements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_statements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.statements_separator_space, overlay, ctx.options.site_arm(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, overlay, options::SEATS_SOURCE_FILE_STATEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.shebang, overlay, ctx)?;
@@ -18072,8 +18072,8 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternNode {
 fn prepare_token_repetition_pattern<N: TokenRepetitionPatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(185), (None, ::sittir_core::prepare::ArmOf::arm_among(&parts.operator, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After))), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_token_patterns").as_deref());
+    { let arms = (None, ::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After))); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(185), arms, ctx); }
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_token_patterns"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.token_patterns_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.token_patterns, overlay, options::SEATS_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.token_patterns, overlay, ctx)?;
@@ -18244,8 +18244,8 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionNode {
 fn prepare_token_repetition<N: TokenRepetitionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(188), (None, ::sittir_core::prepare::ArmOf::arm_among(&parts.operator, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After))), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_tokens").as_deref());
+    { let arms = (None, ::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After))); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(188), arms, ctx); }
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_tokens"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.tokens_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.tokens, overlay, options::SEATS_TOKEN_REPETITION_TOKENS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.tokens, overlay, ctx)?;
@@ -18606,7 +18606,7 @@ fn prepare_declaration_list<N: DeclarationListPrepare + ?Sized>(node: &mut N, ov
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(195), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.declarations, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_declarations").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_declarations"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.declarations, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.declarations_separator_space, overlay, ctx.options.site_arm(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.declarations, overlay, options::SEATS_DECLARATION_LIST_DECLARATIONS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.declarations, overlay, ctx)?;
@@ -19754,7 +19754,7 @@ fn prepare_function_modifiers<N: FunctionModifiersPrepare + ?Sized>(node: &mut N
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(210), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.modifier, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_modifier").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_modifier"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.modifier, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.modifier_separator_space, overlay, ctx.options.site_arm(options::SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.modifier, overlay, options::SEATS_FUNCTION_MODIFIERS_MODIFIER, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.modifier, overlay, ctx)?;
@@ -20152,7 +20152,7 @@ fn prepare_trait_bounds<N: TraitBoundsPrepare + ?Sized>(node: &mut N, overlay: &
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(216), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.bounds, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_bounds").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_bounds"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.bounds, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.bounds_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.bounds_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TRAIT_BOUNDS_BOUNDS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.bounds, overlay, options::SEATS_TRAIT_BOUNDS_BOUNDS, ctx);
@@ -23219,7 +23219,7 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionNode {
 fn prepare_unary_expression<N: UnaryExpressionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(267), (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(267), ::sittir_core::options::Side::Before)), None), ctx);
+    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(267), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(267), arms, ctx); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operand, overlay, ctx)?;
     Ok(())
@@ -24025,7 +24025,7 @@ fn prepare_tuple_expression<N: TupleExpressionPrepare + ?Sized>(node: &mut N, ov
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(280), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attributes").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attributes"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_TUPLE_EXPRESSION_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
@@ -24297,7 +24297,7 @@ fn prepare_shorthand_field_initializer<N: ShorthandFieldInitializerPrepare + ?Si
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(284), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attributes").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attributes"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
@@ -24380,7 +24380,7 @@ fn prepare_field_initializer<N: FieldInitializerPrepare + ?Sized>(node: &mut N, 
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(285), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attribute_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attribute_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attribute_item_separator_space, overlay, ctx.options.site_arm(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attribute_item, overlay, options::SEATS_FIELD_INITIALIZER_ATTRIBUTE_ITEM, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute_item, overlay, ctx)?;
@@ -24685,7 +24685,7 @@ impl ::sittir_core::prepare::Prepare for LetChainNode {
 fn prepare_let_chain<N: LetChainPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.right, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_right").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_right"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.right, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.right_separator_space_before, overlay, ctx.options.site_arm(options::SITE__LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.right_separator_space_after, overlay, ctx.options.site_arm(options::SITE__LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.right, overlay, options::SEATS__LET_CHAIN_RIGHT, ctx);
@@ -24986,7 +24986,7 @@ fn prepare_last_match_arm<N: LastMatchArmPrepare + ?Sized>(node: &mut N, overlay
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(295), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attributes").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attributes"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_LAST_MATCH_ARM_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
@@ -25445,7 +25445,7 @@ fn prepare_closure_parameters<N: ClosureParametersPrepare + ?Sized>(node: &mut N
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(302), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.parameters, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_parameters").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_parameters"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.parameters, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.parameters_separator_space_before, overlay, ctx.options.site_arm(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.parameters_separator_space_after, overlay, ctx.options.site_arm(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.parameters, overlay, options::SEATS_CLOSURE_PARAMETERS_PARAMETERS, ctx);
@@ -26246,7 +26246,7 @@ fn prepare_block<N: BlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(313), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_statements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_statements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.statements_separator_space, overlay, ctx.options.site_arm(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, overlay, options::SEATS_BLOCK_STATEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.label, overlay, ctx)?;
@@ -27091,7 +27091,7 @@ fn prepare_string_literal<N: StringLiteralPrepare + ?Sized>(node: &mut N, overla
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(332), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_elements").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_elements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.elements, overlay, slot.as_deref()); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.string_open, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
@@ -27926,11 +27926,12 @@ fn prepare_macro_rules<N: MacroRulesPrepare + ?Sized>(node: &mut N, overlay: &mu
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(342), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_MACRO_RULES_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_MACRO_RULES_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(342), &[::sittir_core::types::KindId(2)], ctx.options.delimiter_at(options::DELIM_MACRO_RULES_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(342), &[::sittir_core::types::KindId(2)], ctx.options.delimiter_at(options::DELIM_MACRO_RULES_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28010,11 +28011,12 @@ fn prepare_enum_variant_list_elements<N: EnumVariantListElementsPrepare + ?Sized
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(343), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_ENUM_VARIANT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_ENUM_VARIANT_LIST_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(343), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(343), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_ENUM_VARIANT_LIST_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28094,11 +28096,12 @@ fn prepare_field_declaration_list_elements<N: FieldDeclarationListElementsPrepar
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(344), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_FIELD_DECLARATION_LIST_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(344), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(344), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28178,11 +28181,12 @@ fn prepare_ordered_field_declaration_list_elements<N: OrderedFieldDeclarationLis
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(345), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(345), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(345), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28262,11 +28266,12 @@ fn prepare_where_predicates<N: WherePredicatesPrepare + ?Sized>(node: &mut N, ov
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(346), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_WHERE_PREDICATES_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_WHERE_PREDICATES_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(346), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_WHERE_PREDICATES_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(346), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_WHERE_PREDICATES_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28346,11 +28351,12 @@ fn prepare_type_parameters_elements<N: TypeParametersElementsPrepare + ?Sized>(n
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(347), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TYPE_PARAMETERS_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(347), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(347), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28430,11 +28436,12 @@ fn prepare_use_clauses<N: UseClausesPrepare + ?Sized>(node: &mut N, overlay: &mu
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(348), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_USE_CLAUSES_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_USE_CLAUSES_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(348), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_USE_CLAUSES_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(348), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_USE_CLAUSES_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28514,11 +28521,12 @@ fn prepare_parameters_elements<N: ParametersElementsPrepare + ?Sized>(node: &mut
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(349), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PARAMETERS_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(349), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_PARAMETERS_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(349), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_PARAMETERS_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28598,11 +28606,12 @@ fn prepare_lifetimes<N: LifetimesPrepare + ?Sized>(node: &mut N, overlay: &mut N
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(350), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_LIFETIMES_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_LIFETIMES_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(350), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_LIFETIMES_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(350), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_LIFETIMES_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28682,11 +28691,12 @@ fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(351), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TYPES_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(351), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TYPES_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(351), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TYPES_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28766,11 +28776,12 @@ fn prepare_use_bounds_elements<N: UseBoundsElementsPrepare + ?Sized>(node: &mut 
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(352), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_USE_BOUNDS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_USE_BOUNDS_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(352), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_USE_BOUNDS_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(352), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_USE_BOUNDS_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28850,11 +28861,12 @@ fn prepare_type_arguments_elements<N: TypeArgumentsElementsPrepare + ?Sized>(nod
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(353), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TYPE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TYPE_ARGUMENTS_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(353), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(353), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TYPE_ARGUMENTS_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -28934,11 +28946,12 @@ fn prepare_arguments_elements<N: ArgumentsElementsPrepare + ?Sized>(node: &mut N
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(354), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_ARGUMENTS_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(354), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_ARGUMENTS_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(354), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_ARGUMENTS_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -29018,11 +29031,12 @@ fn prepare_expressions<N: ExpressionsPrepare + ?Sized>(node: &mut N, overlay: &m
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(355), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_EXPRESSIONS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_EXPRESSIONS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(355), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_EXPRESSIONS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(355), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_EXPRESSIONS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -29102,11 +29116,12 @@ fn prepare_field_initializer_list_elements<N: FieldInitializerListElementsPrepar
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(356), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(356), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(356), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -29186,11 +29201,12 @@ fn prepare_tuple_pattern_elements<N: TuplePatternElementsPrepare + ?Sized>(node:
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(357), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TUPLE_PATTERN_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(357), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(357), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -29270,11 +29286,12 @@ fn prepare_patterns<N: PatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(358), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PATTERNS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(358), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_PATTERNS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(358), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_PATTERNS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -29354,11 +29371,12 @@ fn prepare_struct_pattern_elements<N: StructPatternElementsPrepare + ?Sized>(nod
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(359), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_STRUCT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_STRUCT_PATTERN_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout).as_deref(), ::sittir_core::types::KindId(359), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_STRUCT_PATTERN_ELEMENTS_ITEM), ctx));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(359), &[::sittir_core::types::KindId(130)], ctx.options.delimiter_at(options::DELIM_STRUCT_PATTERN_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -31027,7 +31045,7 @@ fn prepare_array_expression_semi<N: ArrayExpressionSemiPrepare + ?Sized>(node: &
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(366), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attributes").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attributes"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_ARRAY_EXPRESSION_SEMI_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
@@ -31108,7 +31126,7 @@ fn prepare_array_expression_list<N: ArrayExpressionListPrepare + ?Sized>(node: &
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(367), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attributes").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attributes"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_ARRAY_EXPRESSION_LIST_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
@@ -33320,7 +33338,7 @@ fn prepare_match_arm_with_comma<N: MatchArmWithCommaPrepare + ?Sized>(node: &mut
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(397), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attributes").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attributes"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_MATCH_ARM_WITH_COMMA_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
@@ -33404,7 +33422,7 @@ fn prepare_match_arm_block_ending<N: MatchArmBlockEndingPrepare + ?Sized>(node: 
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(398), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attributes").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attributes"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attributes, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attributes_separator_space, overlay, ctx.options.site_arm(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attributes, overlay, options::SEATS_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attributes, overlay, ctx)?;
@@ -33962,7 +33980,7 @@ fn prepare_token_tree_pattern_paren<N: TokenTreePatternParenPrepare + ?Sized>(no
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(405), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_token_patterns").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_token_patterns"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.token_patterns_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.token_patterns, overlay, options::SEATS_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.token_patterns, overlay, ctx)?;
@@ -34038,7 +34056,7 @@ fn prepare_token_tree_pattern_bracket<N: TokenTreePatternBracketPrepare + ?Sized
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(406), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_token_patterns").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_token_patterns"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.token_patterns_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.token_patterns, overlay, options::SEATS_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.token_patterns, overlay, ctx)?;
@@ -34114,7 +34132,7 @@ fn prepare_token_tree_pattern_brace<N: TokenTreePatternBracePrepare + ?Sized>(no
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(407), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_token_patterns").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_token_patterns"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.token_patterns, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.token_patterns_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.token_patterns, overlay, options::SEATS_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.token_patterns, overlay, ctx)?;
@@ -34190,7 +34208,7 @@ fn prepare_token_tree_paren<N: TokenTreeParenPrepare + ?Sized>(node: &mut N, ove
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(408), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_tokens").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_tokens"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.tokens_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.tokens, overlay, options::SEATS_TOKEN_TREE_PAREN_TOKENS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.tokens, overlay, ctx)?;
@@ -34266,7 +34284,7 @@ fn prepare_token_tree_bracket<N: TokenTreeBracketPrepare + ?Sized>(node: &mut N,
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(409), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_tokens").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_tokens"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.tokens_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.tokens, overlay, options::SEATS_TOKEN_TREE_BRACKET_TOKENS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.tokens, overlay, ctx)?;
@@ -34342,7 +34360,7 @@ fn prepare_token_tree_brace<N: TokenTreeBracePrepare + ?Sized>(node: &mut N, ove
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(410), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_tokens").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_tokens"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.tokens, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.tokens_separator_space, overlay, ctx.options.site_arm(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.tokens, overlay, options::SEATS_TOKEN_TREE_BRACE_TOKENS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.tokens, overlay, ctx)?;
@@ -34418,7 +34436,7 @@ fn prepare_delim_token_tree_paren<N: DelimTokenTreeParenPrepare + ?Sized>(node: 
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(411), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.delim_tokens, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_delim_tokens").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_delim_tokens"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.delim_tokens, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.delim_tokens_separator_space, overlay, ctx.options.site_arm(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.delim_tokens, overlay, options::SEATS_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.delim_tokens, overlay, ctx)?;
@@ -34494,7 +34512,7 @@ fn prepare_delim_token_tree_bracket<N: DelimTokenTreeBracketPrepare + ?Sized>(no
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(412), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.delim_tokens, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_delim_tokens").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_delim_tokens"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.delim_tokens, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.delim_tokens_separator_space, overlay, ctx.options.site_arm(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.delim_tokens, overlay, options::SEATS_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.delim_tokens, overlay, ctx)?;
@@ -34570,7 +34588,7 @@ fn prepare_delim_token_tree_brace<N: DelimTokenTreeBracePrepare + ?Sized>(node: 
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(413), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.delim_tokens, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_delim_tokens").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_delim_tokens"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.delim_tokens, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.delim_tokens_separator_space, overlay, ctx.options.site_arm(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.delim_tokens, overlay, options::SEATS_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.delim_tokens, overlay, ctx)?;
@@ -35023,7 +35041,7 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixNode {
 fn prepare_range_pattern_prefix<N: RangePatternPrefixPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(419), (::sittir_core::prepare::ArmOf::arm_among(&parts.content, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before)), None), ctx);
+    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.content, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(419), arms, ctx); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, overlay, ctx)?;
     Ok(())
@@ -35097,7 +35115,7 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightNode {
 fn prepare_range_pattern_with_left_with_right<N: RangePatternWithLeftWithRightPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(420), (::sittir_core::prepare::ArmOf::arm_among(&parts.content, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before)), None), ctx);
+    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.content, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(420), arms, ctx); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, overlay, ctx)?;
     Ok(())
@@ -35575,7 +35593,7 @@ fn prepare_attributed_field_declaration<N: AttributedFieldDeclarationPrepare + ?
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(427), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attribute_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attribute_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attribute_item_separator_space, overlay, ctx.options.site_arm(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attribute_item, overlay, options::SEATS_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute_item, overlay, ctx)?;
@@ -35655,7 +35673,7 @@ fn prepare_attributed_enum_variant<N: AttributedEnumVariantPrepare + ?Sized>(nod
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(428), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attribute_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attribute_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attribute_item_separator_space, overlay, ctx.options.site_arm(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attribute_item, overlay, options::SEATS_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute_item, overlay, ctx)?;
@@ -35809,7 +35827,7 @@ fn prepare_attributed_type_parameter<N: AttributedTypeParameterPrepare + ?Sized>
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(430), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attribute_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attribute_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attribute_item_separator_space, overlay, ctx.options.site_arm(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attribute_item, overlay, options::SEATS_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute_item, overlay, ctx)?;
@@ -35889,7 +35907,7 @@ fn prepare_attributed_argument<N: AttributedArgumentPrepare + ?Sized>(node: &mut
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(431), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attribute_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attribute_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attribute_item_separator_space, overlay, ctx.options.site_arm(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attribute_item, overlay, options::SEATS_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute_item, overlay, ctx)?;
@@ -35972,7 +35990,7 @@ fn prepare_attributed_ordered_field<N: AttributedOrderedFieldPrepare + ?Sized>(n
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(432), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_attribute_item").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_attribute_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.attribute_item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.attribute_item_separator_space, overlay, ctx.options.site_arm(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.attribute_item, overlay, options::SEATS_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.attribute_item, overlay, ctx)?;
@@ -36127,7 +36145,7 @@ fn prepare_match_block_arms<N: MatchBlockArmsPrepare + ?Sized>(node: &mut N, ove
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(434), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.arms, overlay, ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, "_arms").as_deref());
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_arms"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.arms, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.arms_separator_space, overlay, ctx.options.site_arm(options::SITE_MATCH_BLOCK_ARMS_ARMS_SEPARATOR_SPACE).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.arms, overlay, options::SEATS_MATCH_BLOCK_ARMS_ARMS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.arms, overlay, ctx)?;

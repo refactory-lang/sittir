@@ -14302,9 +14302,13 @@ a record alike. It takes every place at once (`prepare_parts`) and writes
 each through its handle's core trait (`sittir_core::prepare`): the layout
 through `LayoutTarget`, a slot through `SlotTarget` (and `SeatSlot`,
 `UnitSlot`, `ArmOf` where its stamp gives it them), a print setting through
-`Setting`. Every write passes the overlay the prepare trait names
-(`Overlay`), which the function takes beside the node: a record's facts go
-there, since a record is never rewritten. The struct's own impl calls the
+`Setting`. Every operation, a read as well as a write, passes the overlay
+the prepare trait names (`Overlay`), which the function takes beside the
+node: a record's facts go there, since a record is never rewritten, and a
+record's handle holds only its place, so it reads through the overlay too.
+A read's answer borrows from the handle alone, so a call that reads into
+the argument of a write first binds what it read (`slotGapFills`, the
+delimiter fill). The struct's own impl calls the
 function with itself and `&mut ()`, its overlay, so a native node is written
 in place and its callers are unchanged.
 
@@ -14380,7 +14384,8 @@ caller set is never replaced.
 The call a generated `prepare` makes for every repeated slot, before the
 seats and the option fills: `SlotTarget::fill_gaps` on the slot's handle,
 with the layout the node's source stores for that slot (`LayoutTarget::slot`,
-by the slot's wire key). A list slot's layout holds the class most of its separator gaps
+by the slot's wire key), read first in a block of its own, since the fill
+takes the overlay that read borrows. A list slot's layout holds the class most of its separator gaps
 have on each side of the separator, stored only where it differs from what
 the read-time options write. The fill gives every gap between two present
 items those classes at slot strength (`SeamStrength::Slot`): the side before the
