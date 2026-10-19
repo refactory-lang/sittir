@@ -169,24 +169,26 @@ Two committed ratchets back the run (both only ever tighten):
   head collection against the base commit's copy via
   `sittir tool check-baseline --base <base.json> --head <head.json>`.
 - `packages/tools/diagnostic-ceilings.json` — per grammar, the most
-  error- and warning-severity rows each diagnostic code may have in
+  fail-, error- and warning-severity rows each diagnostic code may have in
   `validation-report.json`. Every `validate counts` run fails when a code
   exceeds its ceiling (new debt); a code a grammar does not list has
-  ceiling 0, so every error and warning code is guarded and a cleared code
-  stays cleared. When a run reports a code below its ceiling, lower the
+  ceiling 0, so every such code is guarded and a cleared code stays
+  cleared, and a code with any fatal (`fail`) row has ceiling 0 whatever
+  the file says. When a run reports a code below its ceiling, lower the
   ceiling in the same commit.
 - `packages/tools/validation-report.json` — the report the committed
   ceilings are checked against (a unit test pins the committed pair). It
   records, per grammar, its `grammar-diagnostics.json` as counts per code and
-  severity plus a digest of the file, and every validator failure as a row,
+  severity plus a digest of its rows, and every validator failure as a row,
   one record per line. Commit it, as `validate` wrote it, in the same commit
   as any change to `diagnostic-ceilings.json` or to the validated rows;
   otherwise leave it out, since every run rewrites it. Compare two reports,
   such as the committed one and a fresh run's, with
   `sittir validate history --diff <base.json> <head.json>`: it prints
   per-grammar row and per-code count deltas, each grammar whose diagnostics
-  file moved (read that file's `git diff` for the rows), then every row only
-  one side has. It reads the older flat-array format too. It exits 1 when
+  moved (read its `grammar-diagnostics.json` `git diff` for the rows), then
+  every row only one side has. It reads the older flat-array format too, and
+  digests its grammar rows the same way, so a moved row shows across formats. It exits 1 when
   anything moved and 2 when a side is missing, empty or records nothing, so
   an empty side never reads as "nothing moved".
 

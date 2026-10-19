@@ -1813,7 +1813,7 @@ The layout rows of a grammar's corpus: how many runs, which no region's record r
 
 ### `packages/tools/src/validate/grammar-diagnostics-file.ts::readGrammarDiagnostics`
 
-Reads `packages/<grammar>/.sittir/grammar-diagnostics.json` (written by codegen's `writeGrammarDiagnosticsJson`) as report entries, with `text` the file as read. Every on-disk field is kept; `location` is added from `ownerKind` (and `.slotName` when present). A missing file reads as no entries, since a grammar may not have been generated yet. A file that exists but does not parse reads as one `grammar-diagnostics-read-error` entry naming the path, so a corrupt file is reported rather than counted as clean. The validation report (`writeMergedValidationReport`) and the regen status lines (`regenerateGrammars`) both read through it.
+Reads `packages/<grammar>/.sittir/grammar-diagnostics.json` (written by codegen's `writeGrammarDiagnosticsJson`) as report entries. Every on-disk field is kept; `location` is added from `ownerKind` (and `.slotName` when present). A missing file reads as no entries, since a grammar may not have been generated yet. A file that exists but does not parse reads as one `grammar-diagnostics-read-error` entry naming the path, so a corrupt file is reported rather than counted as clean. The validation report (`writeMergedValidationReport`) and the regen status lines (`regenerateGrammars`) both read through it.
 
 ### `packages/tools/src/validate/grammar-diagnostics-file.ts::severitySummary`
 

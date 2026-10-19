@@ -1,4 +1,4 @@
-import { readValidationReport, type ValidationReport, type ValidationReportEntry } from './validation-report.ts';
+import { canonicalKey, readValidationReport, type ValidationReport, type ValidationReportEntry } from './validation-report.ts';
 
 /** One grammar's row counts on each side (validator rows and recorded grammar diagnostics), and how many validator rows only one side has. */
 export interface GrammarRowDelta {
@@ -33,7 +33,7 @@ export interface ReportDiff {
 	readonly added: readonly ValidationReportEntry[];
 	/** Rows the base has more copies of than the head, in base order. */
 	readonly removed: readonly ValidationReportEntry[];
-	/** Grammars whose diagnostics file moved, where both sides record a digest; read that file's history for the rows. */
+	/** Grammars both sides record whose diagnostics moved, by digest; read that file's history for the rows. */
 	readonly digests: readonly DigestChange[];
 }
 
@@ -44,22 +44,6 @@ export function readComparableReport(path: string): ValidationReport {
 	return report;
 }
 
-/** A JSON value with every object's keys sorted, at every depth; array order is kept, and an array never reads as an object. */
-function canonical(value: unknown): unknown {
-	if (Array.isArray(value)) return { array: value.map(canonical) };
-	if (value === null || typeof value !== 'object') return value;
-	const record = value as Record<string, unknown>;
-	return {
-		object: Object.keys(record)
-			.sort()
-			.map((k) => [k, canonical(record[k])])
-	};
-}
-
-/** A row's identity: every field, independent of key order at any depth. */
-function rowKey(entry: ValidationReportEntry): string {
-	return JSON.stringify(canonical(entry));
-}
 
 function countBy<T>(items: readonly T[], key: (item: T) => string): Map<string, number> {
 	const counts = new Map<string, number>();
@@ -72,9 +56,9 @@ function surplus(
 	side: readonly ValidationReportEntry[],
 	other: readonly ValidationReportEntry[]
 ): ValidationReportEntry[] {
-	const remaining = countBy(other, rowKey);
+	const remaining = countBy(other, canonicalKey);
 	return side.filter((entry) => {
-		const key = rowKey(entry);
+		const key = canonicalKey(entry);
 		const left = remaining.get(key) ?? 0;
 		if (left === 0) return true;
 		remaining.set(key, left - 1);
@@ -132,8 +116,8 @@ export function diffValidationReports(base: ValidationReport, head: ValidationRe
 		.sort()
 		.flatMap((grammar) => {
 			const before = base.grammars[grammar]?.digest;
-			const after = head.grammars[grammar]?.digest;
-			return before !== undefined && after !== undefined && before !== after ? [{ grammar, base: before, head: after }] : [];
+			const after = head.grammars[grammar]!.digest;
+			return before !== undefined && before !== after ? [{ grammar, base: before, head: after }] : [];
 		});
 	return { grammars, codes, added, removed, digests };
 }

@@ -235,13 +235,13 @@ describe('emitPolymorphsOverlay', () => {
 		expect(text).not.toContain('_c(child)');
 	});
 
-	it('notes a skipped sub-factory on stdout', () => {
+	it('warns of a skipped sub-factory on stderr: the generated API omits it', () => {
 		const nodeMap = ambiguousNodeMap();
-		const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
 		emitPolymorphsOverlay({ nodeMap });
 
-		expect(log).toHaveBeenCalledWith(
+		expect(warn).toHaveBeenCalledWith(
 			'[codegen] twice: sub-factory same skipped (ambiguous): first, second'
 		);
 	});
@@ -574,10 +574,10 @@ describe('a keyword literal arm named by its text', () => {
 			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and') }, sourceArtifact: 'test' }
 		);
 		stampIrSurface(nodeMap);
-		const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
-		expect(log).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));
+		expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));
 		expect(out).not.toContain('junction$and');
-		log.mockRestore();
+		warn.mockRestore();
 	});
 });

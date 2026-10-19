@@ -218,6 +218,7 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 	const coerceEmitted: CoerceEmitted = (node) =>
 		node.fromFunctionName !== undefined && classifyFromEmission(node.kind, node, { nodeMap, kindEntries }) === 'emit';
 	const note = options.silent ? () => {} : (message: string) => console.log(message);
+	const warn = options.silent ? () => {} : (message: string) => console.warn(message);
 
 	const order: string[] = [];
 	const byKind = new Map<string, PolymorphWireSet>();
@@ -248,15 +249,12 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 		}
 		visiting.delete(node.kind);
 		for (const d of route.diagnostics) {
-			note(
-				d.reason === 'shared-key'
-					? `[codegen] ${node.kind}: sub-factory ${d.name} seated, not merged (${d.reason}: ${(d.keys ?? []).join(', ')}): ${d.claimants.join(', ')}`
-					: `[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`
-			);
+			if (d.reason === 'shared-key') note(`[codegen] ${node.kind}: sub-factory ${d.name} seated, not merged (${d.reason}: ${(d.keys ?? []).join(', ')}): ${d.claimants.join(', ')}`);
+			else warn(`[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`);
 		}
 		for (const sub of route.mismatched) {
 			if (sub.arm.via !== 'node') continue;
-			note(`[codegen] ${node.kind}: sub-factory ${sub.name} skipped (context-mismatch): ${sub.arm.child.kind}.${sub.arm.path.join('.')}`);
+			warn(`[codegen] ${node.kind}: sub-factory ${sub.name} skipped (context-mismatch): ${sub.arm.child.kind}.${sub.arm.path.join('.')}`);
 		}
 		const subs = route.subs;
 		const aliases = route.aliases;

@@ -9,18 +9,16 @@ import {
 	type ValidationReport,
 	type ValidationReportEntry
 } from '../validation-report.ts';
-import { createHash } from 'node:crypto';
 import { readFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 describe('buildValidationReport', () => {
-	it('records each grammar\'s diagnostics as counts per code and severity, with a digest of the file they came from', () => {
+	it('records each grammar\'s diagnostics as counts per code and severity, with a digest of its entries', () => {
 		const report = buildValidationReport(
 			{
 				typescript: {
-					text: '[1]',
 					entries: [
 						{ code: 'non-literal-separator', severity: 'warning', message: 'Separator is not a literal string.' },
 						{ code: 'conflict-resolution', severity: 'info', message: 'a' },
@@ -33,12 +31,20 @@ describe('buildValidationReport', () => {
 		expect(report).toEqual({
 			grammars: {
 				typescript: {
-					digest: createHash('sha256').update('[1]').digest('hex'),
+					digest: expect.stringMatching(/^[0-9a-f]{64}$/),
 					counts: { 'conflict-resolution': { info: 2 }, 'non-literal-separator': { warning: 1 } }
 				}
 			},
 			rows: []
 		});
+	});
+
+	it('digests the entries whatever their order or key order, so equal diagnostics compare equal across formats, and a changed field changes it', () => {
+		const a = { code: 'x', severity: 'info' as const, message: 'm', details: { b: 1, a: 2 } };
+		const b = { code: 'y', severity: 'error' as const, message: 'n' };
+		const digest = (entries: readonly (typeof a | typeof b)[]) => buildValidationReport({ rust: { entries } }, {}).grammars.rust!.digest;
+		expect(digest([a, b])).toBe(digest([b, { message: 'm', details: { a: 2, b: 1 }, severity: 'info', code: 'x' }]));
+		expect(digest([a, b])).not.toBe(digest([{ ...a, message: 'other' }, b]));
 	});
 
 	it('keeps every validator failure as a row tagged source=validator, unbounded', () => {
@@ -66,13 +72,13 @@ describe('buildValidationReport', () => {
 });
 
 describe('countCodeEntries', () => {
-	it('counts error and warning rows per grammar per code, and leaves info rows out', () => {
-		const rows = [entry('rust', 'a', 'error'), entry('rust', 'a', 'warning'), entry('rust', 'b', 'info'), entry('python', 'a', 'error')];
-		expect(countCodeEntries(report(rows))).toEqual({ rust: { a: 2 }, python: { a: 1 } });
+	it('counts fail, error and warning rows per grammar per code, and leaves info rows out', () => {
+		const rows = [entry('rust', 'a', 'error'), entry('rust', 'a', 'warning'), entry('rust', 'a', 'fail'), entry('rust', 'b', 'info'), entry('python', 'a', 'error')];
+		expect(countCodeEntries(report(rows))).toEqual({ rust: { a: 3 }, python: { a: 1 } });
 	});
 
 	it('adds the recorded grammar diagnostic counts at error and warning severity', () => {
-		const counted = countCodeEntries(report([entry('rust', 'a')], { rust: { counts: { a: { error: 2, info: 5 }, b: { info: 1 } } } }));
+		const counted = countCodeEntries(report([entry('rust', 'a')], { rust: { digest: 'd', counts: { a: { error: 2, info: 5 }, b: { info: 1 } } } }));
 		expect(counted).toEqual({ rust: { a: 3 } });
 	});
 });
@@ -101,6 +107,15 @@ describe('checkCodeCeilings', () => {
 		const verdict = checkCodeCeilings(report([entry('rust', 'a')]), ceilings, ['rust']);
 		expect(verdict.violations).toEqual([]);
 		expect(verdict.improvements).toEqual([{ grammar: 'rust', code: 'a', count: 1, ceiling: 2 }]);
+	});
+
+	it('fails any fatal row whatever its ceiling, from a validator row or a recorded grammar count', () => {
+		const lenient: CodeCeilings = { rust: { stale: 5 }, python: { stale: 5 } };
+		const fatal = report([entry('rust', 'stale', 'fail')], { python: { digest: 'd', counts: { stale: { fail: 1 } } } });
+		expect(checkCodeCeilings(fatal, lenient, ['python', 'rust']).violations).toEqual([
+			{ grammar: 'python', code: 'stale', count: 1, ceiling: 0 },
+			{ grammar: 'rust', code: 'stale', count: 1, ceiling: 0 }
+		]);
 	});
 
 	it('judges only the grammars validated in this run', () => {
@@ -152,11 +167,11 @@ describe('writeValidationReport', () => {
 	it('writes each grammar record and each row on its own line, rows sorted by grammar, backend and code', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-report-test-'));
 		const outPath = join(dir, 'validation-report.json');
-		writeValidationReport(report([entry('rust', 'b'), entry('python', 'a'), entry('rust', 'a')], { rust: { counts: {} }, python: { counts: {} } }), outPath);
+		writeValidationReport(report([entry('rust', 'b'), entry('python', 'a'), entry('rust', 'a')], { rust: { digest: 'd', counts: {} }, python: { digest: 'e', counts: {} } }), outPath);
 		const lines = readFileSync(outPath, 'utf8').split('\n').map((line) => line.trim().replace(/,$/, ''));
 		const rows = lines.filter((line) => line.startsWith('{"')).map((line) => JSON.parse(line) as ValidationReportEntry);
 		expect(rows.map((row) => `${row.grammar}/${row.code}`)).toEqual(['python/a', 'rust/a', 'rust/b']);
-		expect(lines).toContain('"python": {"counts":{}}');
+		expect(lines).toContain('"python": {"digest":"e","counts":{}}');
 		rmSync(dir, { recursive: true, force: true });
 	});
 });

@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runValidationReportDiffCli } from '../../commands.ts';
-import { diffValidationReports, formatReportDiff, readComparableReport } from '../report-diff.ts';
+import { diffValidationReports, formatReportDiff, readComparableReport, reportMoved } from '../report-diff.ts';
 import {
 	buildValidationReport,
 	readValidationReport,
@@ -50,10 +50,10 @@ describe('readValidationReport', () => {
 		expect(readValidationReport(written('a.json', report))).toEqual(report);
 	});
 
-	it('reads a report in the flat row-array format, folding its grammar rows into counts with no digest', () => {
+	it('reads a report in the flat row-array format, folding its grammar rows into counts and a digest', () => {
 		const grammarRow = { source: 'grammar', grammar: 'rust', backend: 'native', code: 'y', severity: 'info', message: 'g' };
 		expect(readValidationReport(file('old.json', JSON.stringify([row('rust', 'x', 'm'), grammarRow, grammarRow])))).toEqual(
-			rep([row('rust', 'x', 'm')], { rust: { counts: { y: { info: 2 } } } })
+			rep([row('rust', 'x', 'm')], { rust: { digest: expect.stringMatching(/^[0-9a-f]{64}$/), counts: { y: { info: 2 } } } })
 		);
 		expect(readValidationReport(file('empty-array.json', '[]'))).toEqual(rep([]));
 	});
@@ -141,20 +141,31 @@ describe('diffValidationReports', () => {
 		expect(diff.codes).toEqual([{ grammar: 'rust', code: 'y', base: 2, head: 3 }]);
 	});
 
-	it('reports a grammar whose diagnostics file changed, by its digests, when both sides record one', () => {
+	it('reports a grammar whose diagnostics changed, by its digests', () => {
 		const counts = { y: { info: 1 } };
 		expect(diffValidationReports(rep([], { rust: { digest: 'd', counts } }), rep([], { rust: { digest: 'e', counts } })).digests).toEqual([
 			{ grammar: 'rust', base: 'd', head: 'e' }
 		]);
-		expect(diffValidationReports(rep([], { rust: { counts } }), rep([], { rust: { digest: 'e', counts } })).digests).toEqual([]);
 	});
 
-	it('finds nothing moved between a flat-format report and the same content in the record format', () => {
-		const grammarRow = { source: 'grammar', grammar: 'rust', backend: 'native', code: 'y', severity: 'info', message: 'g' };
-		const flat = readValidationReport(file('flat.json', JSON.stringify([row('rust', 'x', 'm'), grammarRow])));
-		const records = rep([row('rust', 'x', 'm')], { rust: { digest: 'd', counts: { y: { info: 1 } } } });
-		const diff = diffValidationReports(flat, records);
+	it('finds nothing moved between a flat-format report and the same diagnostics in the record format', () => {
+		const owned = { scope: 'grammar', grammar: 'rust', code: 'y', severity: 'info' as const, message: 'g', ownerKind: 'k', location: 'k' };
+		const unowned = { scope: 'grammar', grammar: 'rust', code: 'z', severity: 'error' as const, message: 'h', location: undefined };
+		const flatRows = [owned, unowned].map((d) => ({ source: 'grammar', backend: 'native', ...d, sClass: null }));
+		const flat = readValidationReport(file('flat.json', JSON.stringify([row('rust', 'x', 'm'), ...flatRows])));
+		const records = buildValidationReport({ rust: { entries: [owned, unowned] } }, { rust: [] });
+		const diff = diffValidationReports(flat, { ...records, rows: [row('rust', 'x', 'm')] });
 		expect([diff.added, diff.removed, diff.codes, diff.digests]).toEqual([[], [], [], []]);
+	});
+
+	it('finds a grammar row that moved between a flat-format base and a record-format head though every count holds', () => {
+		const grammarRow = { source: 'grammar', grammar: 'rust', backend: 'native', code: 'y', severity: 'error', message: 'g', location: 'call_expression' };
+		const flat = readValidationReport(file('flat.json', JSON.stringify([grammarRow])));
+		const records = buildValidationReport({ rust: { entries: [{ code: 'y', severity: 'error', message: 'g', location: 'macro_invocation' }] } }, {});
+		const diff = diffValidationReports(flat, records);
+		expect(diff.codes).toEqual([]);
+		expect(diff.digests.map((d) => d.grammar)).toEqual(['rust']);
+		expect(reportMoved(diff)).toBe(true);
 	});
 });
 
@@ -190,8 +201,8 @@ describe('runValidationReportDiffCli', () => {
 
 	it('exits 1 for two reports from different trees whose only difference is one moved grammar row', () => {
 		const diagnostic = (location: string) => ({ code: 'rule-reauthored-without-cause', severity: 'error' as const, message: 'm', location });
-		const baseTree = buildValidationReport({ rust: { text: '[base]', entries: [diagnostic('call_expression')] } }, {});
-		const headTree = buildValidationReport({ rust: { text: '[head]', entries: [diagnostic('macro_invocation')] } }, {});
+		const baseTree = buildValidationReport({ rust: { entries: [diagnostic('call_expression')] } }, {});
+		const headTree = buildValidationReport({ rust: { entries: [diagnostic('macro_invocation')] } }, {});
 		expect(runValidationReportDiffCli(written('base.json', baseTree), written('head.json', headTree))).toBe(1);
 	});
 });

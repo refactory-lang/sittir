@@ -96,12 +96,12 @@ export type DiagnosticCounts = Readonly<Record<string, Readonly<Record<string, n
 
 /**
  * What the report records of one grammar's `grammar-diagnostics.json`: its
- * rows counted per code and severity, and a digest of the file, so a diff of
- * two reports names a grammar whose diagnostics moved without the report
- * copying the rows. A report in the flat format records no digest.
+ * rows counted per code and severity, and a digest of the rows (`digestOf`),
+ * so a diff of two reports names a grammar whose diagnostics moved without
+ * the report copying the rows.
  */
 export interface GrammarDiagnosticsRecord {
-	readonly digest?: string;
+	readonly digest: string;
 	readonly counts: DiagnosticCounts;
 }
 
@@ -111,10 +111,37 @@ export interface ValidationReport {
 	readonly rows: readonly ValidationReportEntry[];
 }
 
-/** One grammar's diagnostics as read from its file: the file's text, when it exists, and its rows. */
+/** One grammar's diagnostics as read from its file. */
 export interface GrammarDiagnosticsInput {
-	readonly text?: string;
 	readonly entries: readonly GrammarDiagnosticEntry[];
+}
+
+/** A JSON value with every object's keys sorted, at every depth; array order is kept, an array never reads as an object, and a key holding `undefined` is absent, as in JSON. */
+function canonical(value: unknown): unknown {
+	if (Array.isArray(value)) return { array: value.map(canonical) };
+	if (value === null || typeof value !== 'object') return value;
+	const record = value as Record<string, unknown>;
+	return {
+		object: Object.keys(record)
+			.filter((k) => record[k] !== undefined)
+			.sort()
+			.map((k) => [k, canonical(record[k])])
+	};
+}
+
+/** A value's identity: every field, independent of key order at any depth. */
+export function canonicalKey(value: unknown): string {
+	return JSON.stringify(canonical(value));
+}
+
+/** A digest of one grammar's diagnostics as a multiset: independent of their order and of key order, so both report formats digest the same diagnostics alike. */
+function digestOf(entries: readonly object[]): string {
+	return createHash('sha256').update(entries.map(digestedFields).map(canonicalKey).sort().join('\n')).digest('hex');
+}
+
+/** A diagnostic without the fields its grammar record already states or a flat-format report added: `source`, `grammar`, `backend` and the retired `sClass`. */
+function digestedFields({ source: _source, grammar: _grammar, backend: _backend, sClass: _sClass, ...diagnostic }: { readonly source?: unknown; readonly grammar?: unknown; readonly backend?: unknown; readonly sClass?: unknown }): object {
+	return diagnostic;
 }
 
 function countDiagnostics(entries: readonly DiagnosticEntryBase[]): DiagnosticCounts {
@@ -133,11 +160,8 @@ export function buildValidationReport(
 	backend = 'native'
 ): ValidationReport {
 	const grammars: Record<string, GrammarDiagnosticsRecord> = {};
-	for (const [grammar, { text, entries }] of Object.entries(grammarDiagnosticsByGrammar)) {
-		grammars[grammar] = {
-			...(text === undefined ? {} : { digest: createHash('sha256').update(text).digest('hex') }),
-			counts: countDiagnostics(entries)
-		};
+	for (const [grammar, { entries }] of Object.entries(grammarDiagnosticsByGrammar)) {
+		grammars[grammar] = { digest: digestOf(entries), counts: countDiagnostics(entries) };
 	}
 	const rows: ValidationReportEntry[] = [];
 	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
@@ -149,7 +173,7 @@ export function buildValidationReport(
 /**
  * Read a report `writeValidationReport` wrote, or one in the flat format (one
  * array of rows, grammar diagnostics among them), whose grammar rows fold into
- * counts with no digest. A missing, empty or unparseable file, a value in
+ * counts and the digest the record format gives the same diagnostics. A missing, empty or unparseable file, a value in
  * neither format, or an element that is not a row throws naming the path.
  */
 export function readValidationReport(path: string): ValidationReport {
@@ -169,7 +193,7 @@ export function readValidationReport(path: string): ValidationReport {
 			(row) => row.grammar
 		);
 		return {
-			grammars: Object.fromEntries([...grammarRows].map(([grammar, entries]) => [grammar, { counts: countDiagnostics(entries) }])),
+			grammars: Object.fromEntries([...grammarRows].map(([grammar, entries]) => [grammar, { digest: digestOf(entries), counts: countDiagnostics(entries) }])),
 			rows: rows.filter((row) => row.source !== 'grammar')
 		};
 	}
@@ -214,10 +238,14 @@ function compareReportRows(a: ValidationReportEntry, b: ValidationReportEntry): 
  */
 export type CodeCeilings = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
-const isDebt = (severity: string): boolean => severity === 'error' || severity === 'warning';
+const isDebt = (severity: string): boolean => severity === 'fail' || severity === 'error' || severity === 'warning';
 
-/** Rows per grammar per code at error or warning severity, validator rows and recorded grammar diagnostics alike; an info row records a fact, not debt. */
+/** Rows per grammar per code at fail, error or warning severity, validator rows and recorded grammar diagnostics alike; an info row records a fact, not debt. */
 export function countCodeEntries(report: ValidationReport): Record<string, Record<string, number>> {
+	return countCodeRows(report, isDebt);
+}
+
+function countCodeRows(report: ValidationReport, counted: (severity: string) => boolean): Record<string, Record<string, number>> {
 	const counts: Record<string, Record<string, number>> = {};
 	const add = (grammar: string, code: string, n: number): void => {
 		const row = (counts[grammar] ??= {});
@@ -225,8 +253,8 @@ export function countCodeEntries(report: ValidationReport): Record<string, Recor
 	};
 	for (const [grammar, { counts: byCode }] of Object.entries(report.grammars))
 		for (const [code, bySeverity] of Object.entries(byCode))
-			for (const [severity, n] of Object.entries(bySeverity)) if (isDebt(severity)) add(grammar, code, n);
-	for (const row of report.rows) if (isDebt(row.severity)) add(row.grammar, row.code, 1);
+			for (const [severity, n] of Object.entries(bySeverity)) if (counted(severity)) add(grammar, code, n);
+	for (const row of report.rows) if (counted(row.severity)) add(row.grammar, row.code, 1);
 	return counts;
 }
 
@@ -246,21 +274,23 @@ export interface CodeCeilingVerdict {
 }
 
 /**
- * The diagnostic ratchet: each validated grammar's error and warning rows per
- * code against the committed ceilings. A count above its ceiling is new debt;
+ * The diagnostic ratchet: each validated grammar's fail, error and warning rows
+ * per code against the committed ceilings. A code with any fatal (`fail`) row
+ * has ceiling 0, whatever the file says. A count above its ceiling is new debt;
  * fix the source, never raise the ceiling. A count below a non-zero ceiling is
  * paid-down debt, and the ceiling moves down with it. Only `grammars` are
  * judged, so a single-grammar run never judges a grammar it did not measure.
  */
 export function checkCodeCeilings(report: ValidationReport, ceilings: CodeCeilings, grammars: readonly string[]): CodeCeilingVerdict {
 	const counts = countCodeEntries(report);
+	const fatal = countCodeRows(report, (severity) => severity === 'fail');
 	const violations: CodeCeilingCount[] = [];
 	const improvements: CodeCeilingCount[] = [];
 	for (const grammar of [...grammars].sort()) {
 		const codes = [...new Set([...Object.keys(counts[grammar] ?? {}), ...Object.keys(ceilings[grammar] ?? {})])].sort();
 		for (const code of codes) {
 			const count = counts[grammar]?.[code] ?? 0;
-			const ceiling = ceilings[grammar]?.[code] ?? 0;
+			const ceiling = fatal[grammar]?.[code] === undefined ? (ceilings[grammar]?.[code] ?? 0) : 0;
 			if (count > ceiling) violations.push({ grammar, code, count, ceiling });
 			else if (count < ceiling) improvements.push({ grammar, code, count, ceiling });
 		}

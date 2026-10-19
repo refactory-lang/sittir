@@ -10,7 +10,6 @@ export function readGrammarDiagnostics(grammar: GrammarName): GrammarDiagnostics
 	try {
 		const raw = JSON.parse(text) as ReadonlyArray<GrammarDiagnosticEntry & { ownerKind?: string; slotName?: string }>;
 		return {
-			text,
 			entries: raw.map((d) => {
 				const location = d.ownerKind ? (d.slotName ? `${d.ownerKind}.${d.slotName}` : d.ownerKind) : d.location;
 				return { ...d, location };
@@ -18,7 +17,6 @@ export function readGrammarDiagnostics(grammar: GrammarName): GrammarDiagnostics
 		};
 	} catch (e) {
 		return {
-			text,
 			entries: [
 				{
 					code: 'grammar-diagnostics-read-error',
