@@ -46,18 +46,6 @@ first site when it differs, so `resolveRulePlaceholder` can name both places.
 The installed rule builds the real body itself (`declaredRuleFn`); this record
 exists only for the agreement check.
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticInline`
-
-```text
-/**
- * Register a synthesized `_kw_*` helper for automatic inlining.
- *
- * @remarks
- * Only wire-authored helpers participate. If the grammar author declared
- * the rule explicitly in `config.rules`, they own its `inline:` policy.
- */
-```
-
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireHasAuthoredRule`
 
@@ -208,7 +196,7 @@ The sets apply through `transform/transform.ts::withDirectVariants(base, ...patc
  */
 ```
 
-A `rule('w', body)` mints `w` itself, visible or hidden as the author named
+A field placeholder's rule keeps `_kw_x` only when the layer mints one text for `x` (`keyword-names.ts::resolveKeywordNames`); otherwise `_kw_x` stays blank, as it does over content with no string. A `rule('w', body)` mints `w` itself, visible or hidden as the author named
 it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.symbols`
@@ -913,7 +901,7 @@ body-pattern substitution.
 // ---------------------------------------------------------------------------
 ```
 
-`baseSupertypeNames` is the base grammar's supertypes list (`baseSupertypeNamesOf`): the one fact the rename path reads to tell a supertype lift from a hoisted group.
+`baseSupertypeNames` is the base grammar's supertypes list (`baseSupertypeNamesOf`): the fact the rename path reads to tell a supertype lift from a hoisted group, and a copy's reference reads to leave a supertype's copy bare (`primitives/copy.ts::copyReference`). `layerBodies` holds the body each rule's own layer function gave, and `pendingRules` the functions that have not run yet (`evaluateLayerRule`); a refused entry undoes both, so a rule a copy evaluated inside it runs again later. `keywordMints` maps each keyword rule the layer minted to its field (`wireMintKeyword`).
 
 `activeEntryPath` is the path of the entry applying now (`wireWithPatchSites`). `copies` holds each copy the layer made, by name, with its effect (`wireCopy`); `copyReferences` maps each reference `copy()` or a path returned to its copy, and `copyDepth` counts the copy edits applying now (`insideCopy`). `entry` is the scope of the edits entry applying now (`wireEntry`), or null between entries. What each key does when an entry is refused is classified once, in `WIRE_ENTRY_ROLES`.
 
@@ -1073,7 +1061,7 @@ Whether the edit applying now edits a copy's body.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::sourceBodyOf`
 
-A source rule's body as the context holds it: its deposit, or else the base's body.
+A source rule's body as the layer leaves it: its deposit, or else the body its own layer function gives (`evaluateLayerRule`, which runs it now if it has not run), or else the base's body. A kind the layer's edits mint has no body until its deposit exists. So a copy carries what the layer does to its source, through its `rules:` callback and its edits entries. The body is taken below the pattern and visible-external rewrites, as a deposit is.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::sameCopy`
 
@@ -1683,13 +1671,13 @@ minted whitespace bodies.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::evaluatingExternals`
 
-Wire's `externals` callback, always present. The runtime calls it once, before it reads any rule, and wire evaluates the config there: it applies the config's `externals` callback (or passes the base's list through), records the names on `WireContext.evaluatedExternals`, builds a `$` over the rule callbacks' names, the base's rules and the externals (`layerSymbols`), evaluates the lists (`evaluateWireLists`), calls every rule callback once in key order with the base body wire holds, appends each deposit no callback is declared for and no base rule holds (a kind a callback minted inline, such as a direct `variant` arm) as a rule of its own, in the order the deposits were made, and runs the whole-grammar operations over the bodies. A key of `WireContext.editedMints` that no callback has minted a body for by its turn is refused instead (`refuseEditSite`) and has no body. A second call is refused.
+Wire's `externals` callback, always present. The runtime calls it once, before it reads any rule, and wire evaluates the config there: it applies the config's `externals` callback (or passes the base's list through), records the names on `WireContext.evaluatedExternals`, builds a `$` over the rule callbacks' names, the base's rules and the externals (`layerSymbols`), evaluates the lists (`evaluateWireLists`), calls every rule callback once in key order with the base body wire holds (a rule a copy evaluated sooner gives the body it gave then, `evaluateLayerRule`), appends each deposit no callback is declared for and no base rule holds (a kind a callback minted inline, such as a direct `variant` arm) as a rule of its own, in the order the deposits were made, and runs the whole-grammar operations over the bodies. A key of `WireContext.editedMints` that no callback has minted a body for by its turn is refused instead (`refuseEditSite`) and has no body. A second call is refused.
 
-A whole-grammar operation sees every body at once, so its result does not depend on the order the runtime calls the rules in. The lift rename is one (`resolveLiftNames`); it refuses a renamed lift among the externals. The externals are returned unchanged: an external is never renamed.
+A whole-grammar operation sees every body at once, so its result does not depend on the order the runtime calls the rules in. The lift rename is one (`resolveLiftNames`); it refuses a renamed lift among the externals. Keyword rule naming is another (`keyword-names.ts::resolveKeywordNames`). The externals are returned unchanged: an external is never renamed.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::refuseEditSite`
 
-Refuses an `edits` key that names no rule when the layer evaluates: no rule of the base (enrich's mints included) or of the config's `rules:`, and no kind the layer minted before wire reached the key. Wire evaluates in key order and a mint exists once the callback that mints it has run, so a key naming a mint follows the key that mints it. The refusal is the blocking `edit-site-missing` diagnostic, naming the grammar and the key (`ownerKind`). Given the layer pass's handle (`WireContext.layer`), wire records it there (`recordRefusal`); given none, it throws the diagnostic's message.
+Refuses an `edits` key that names no rule when the layer evaluates: no rule of the base (enrich's mints included) or of the config's `rules:`, and no kind the layer minted before wire reached the key. Wire evaluates in key order and a mint exists once the callback that mints it has run, so a key naming a mint follows the key that mints it. A copy of such a key made before its mint exists reads no body (`sourceBodyOf`). The refusal is the blocking `edit-site-missing` diagnostic, naming the grammar and the key (`ownerKind`). Given the layer pass's handle (`WireContext.layer`), wire records it there (`recordRefusal`); given none, it throws the diagnostic's message.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.layer`
 
@@ -1765,7 +1753,7 @@ The lists the entry evaluated (`evaluateWireLists`); absent until the runtime ca
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedBodies`
 
-The body of every rule callback as the entry evaluated it, in key order; absent until the runtime calls the entry.
+The body of every rule callback as the entry evaluated it, in key order, then each deposit no callback or base rule holds; absent until the runtime calls the entry.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
 
@@ -2233,6 +2221,18 @@ Queues a rename entry for the layer's whole-grammar phase, as a `verbs/rename.ts
 
 The kinds a config's own `factoryInline:` callback names, evaluated with the runtime's symbols (`layerSymbols`) under `withStringGlobalShim`; none when the config has no such callback. It needs a DSL runtime, so it is read only when a layer has renames (`layer.ts::evaluatedLayer`), never by `evaluatedConfig`, which a wire outside a runtime calls.
 
+### `packages/codegen/src/dsl/wire/wire.ts::evaluateLayerRule`
+
+Evaluates a rule's own layer function once: its `rules:` callback, or the base passthrough, with its edits entries applied (`wrapAllRuleFns`), below the pattern and visible-external rewrites. The first call runs it and keeps the body in `WireContext.layerBodies`, and later calls return that body, so the function runs once whether a copy needs the body first (`sourceBodyOf`) or the layer's own pass reaches it (`memoizeLayerRules`). It runs outside the caller's entry: the entry scope, the patch sites, the entry path and the copy depth are cleared for the call and restored after it. A function that is running is no longer pending, so a copy of a rule made inside its own evaluation reads the base body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireMintKeyword`
+
+Mints the hidden keyword rule for a field over a text in the active context and returns its name, or nothing outside a context. The rule is minted under its spelled name (`keyword-names.ts::spelledKeywordRuleName`), recorded in `WireContext.keywordMints` with its field, and added to the synthetic inline list unless the author declared a rule of that name. The same text again reuses the rule. A spelled name another body holds, other than a base blank, is an error. Once every rule of the layer has run, a field minted over one text takes the bare name instead (`keyword-names.ts::resolveKeywordNames`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::memoizeLayerRules`
+
+Moves each rule's own layer function into `WireContext.pendingRules` and puts in its place one that evaluates it once (`evaluateLayerRule`). It sits between the rule wrapper (`wrapAllRuleFns`) and the pattern and visible-external rewrites, so the pattern pass, which evaluates every authored rule when it first runs, and the layer's pass reuse a body a copy evaluated earlier instead of running its callback again.
+
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 
 Every key in the `reparseHosts` block's `hosts`, `priority` and `gated` must name a kind of the grammar, or generation throws naming each unknown key and the list it sits in. A kind is a name in the node map or in the kind-id catalog, by its kind name or its parse (display) name, so a hidden supertype (`_simple_statement`) and an aliased kind (`lhs_expression`) both count. A host looked up by an unknown key never matches anything, so a misspelled key silently excluded every candidate that depended on it from the reparse lanes; the check makes that a generation error. The shared default `priority` is not checked: it lists names common to the grammars and a grammar that lacks one of them simply has no host reached through it.
@@ -2240,3 +2240,31 @@ Every key in the `reparseHosts` block's `hosts`, `priority` and `gated` must nam
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement` (alias-only guard)
 
 Which candidates fold is decided once, on the first call of any wrapper, over the bodies the runtime's own builder produced: every authored rule's callback runs then (hidden rules first, the order the inline list is stamped in), its body is kept and handed back when that rule is asked for, and the hidden rules with complex bodies are the detected candidates. `onlyAliasedSymbols` over those bodies and the declared candidate bodies removes the candidates referenced only under an alias. A candidate's own rule returns its body unfolded. The grammar's `inline` list is in first-evaluation order, which this pass sets; tree-sitter reads it as a set.
+
+### `packages/codegen/src/dsl/wire/keyword-names.ts::KeywordMintHolder`
+
+The parts of the wire context keyword naming reads and renames: the mints with their fields, the base bodies, the deposits and the synthetic inline list.
+
+### `packages/codegen/src/dsl/wire/keyword-names.ts::keywordRuleName`
+
+The bare name of a field's hidden keyword rule, `_kw_<field>`. Enrich names its keyword mints with it (`enrich.ts::registerKwRule`), wire pre-registers it for a field placeholder (`wire.ts::placeholderHiddenName`), and a field the layer mints over one text takes it (`resolveKeywordNames`).
+
+### `packages/codegen/src/dsl/wire/keyword-names.ts::spelledKeywordRuleName`
+
+The name a keyword rule is minted under: `_kw_<field>_<spelled text>`, with the text spelled the way a punctuation kind key is (`symbol-table.ts::spelledTokenText`), so `*` gives `_kw_<field>_star`. It depends on the field and the text alone, so a mint's name does not depend on the order the layer's rules run in.
+
+### `packages/codegen/src/dsl/wire/keyword-names.ts::resolveKeywordNames`
+
+Names the layer's keyword rules once every rule has run, as one of wire's whole-grammar operations (`wire.ts::evaluatingExternals`). A field whose mints in the layer hold one text takes the bare name (`keywordRuleName`) when the bare name is free: held by no body, by a blank, or by the same body. A field minted over more than one text, or whose bare name holds another body (an author's rule, or a base rule over another text), keeps its spelled names. The renamed rule takes the bare name's place when the bare name is already a key (a field placeholder's pre-registered rule) and the spelled name's place otherwise, in the bodies, the deposits and the synthetic inline list alike (`renameEntry`, `renameMember`), so the rule order stays as the mints made it; every reference to the rule is renamed with it (`renameRule`).
+
+### `packages/codegen/src/dsl/wire/keyword-names.ts::keywordRenames`
+
+The renames `resolveKeywordNames` applies: each single-text field's mint, from its spelled name to its bare name, where the bare name is free.
+
+### `packages/codegen/src/dsl/wire/keyword-names.ts::renameEntry`
+
+Renames a map key in place: the value takes the new key's position when that key is present, and the old key's position otherwise.
+
+### `packages/codegen/src/dsl/wire/keyword-names.ts::renameMember`
+
+Renames a set member in place, by the same rule as `renameEntry`.

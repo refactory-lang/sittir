@@ -1501,7 +1501,7 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveFieldPlaceholder`
 
-A one-arg `field(name)` patch at its site. Content that is a keyword string (or an optional one) is indirected through a hidden `_kw_<name>` symbol so the field survives tree-sitter's normalizer (`primitives/field.ts::maybeKeywordSymbol`), except inside a token (`transform-path.ts::insideLexicalToken`): there the field names an interior part of the lexeme, which the parser ignores, and the string stays, since a token cannot reference a symbol.
+A one-arg `field(name)` patch at its site. Content that is a keyword string (or an optional one) is indirected through a hidden keyword rule so the field survives tree-sitter's normalizer (`primitives/field.ts::maybeKeywordSymbol`), except inside a token (`transform-path.ts::insideLexicalToken`): there the field names an interior part of the lexeme, which the parser ignores, and the string stays, since a token cannot reference a symbol.
 
 #### body
 

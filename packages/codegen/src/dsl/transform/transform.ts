@@ -1053,7 +1053,7 @@ function resolveFieldPlaceholder(
 			content = unified;
 		}
 	}
-	const maybeSymbolized = insideLexicalToken(enclosing) ? content : maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, enclosing));
+	const maybeSymbolized = insideLexicalToken(enclosing) ? content : maybeKeywordSymbol(patch.name, content);
 	if (maybeSymbolized !== content) {
 		content = maybeSymbolized;
 	}

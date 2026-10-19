@@ -29,7 +29,8 @@ import {
 import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { aliasOf, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, type SymbolSource } from '../rule-patterns.ts';
+import { keywordRuleName, resolveKeywordNames, spelledKeywordRuleName } from './keyword-names.ts';
+import { aliasOf, isBlank, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, nativeRuleFn, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -73,6 +74,7 @@ export interface WireContext {
 	readonly deposits: Map<string, RuntimeRule>;
 	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
 	readonly syntheticInline: Set<string>;
+	readonly keywordMints: Map<string, string>;
 	readonly inlineRemovals: Set<string>;
 	readonly liftNames: Map<string, LiftName>;
 	readonly refineForms: Map<string, RefineForm[]>;
@@ -117,6 +119,8 @@ export interface WireContext {
 	readonly source: unknown;
 	evaluatedExternals: ReadonlySet<string>;
 	evaluatedBodies?: ReadonlyMap<string, unknown>;
+	readonly layerBodies: Map<string, unknown>;
+	readonly pendingRules: Map<string, RuleFn>;
 	readonly layer: WireLayer | undefined;
 }
 
@@ -133,6 +137,7 @@ export const WIRE_ENTRY_ROLES = {
 	deposits: 'undone',
 	ruleBodies: 'undone',
 	syntheticInline: 'undone',
+	keywordMints: 'undone',
 	inlineRemovals: 'outside',
 	liftNames: 'undone',
 	refineForms: 'undone',
@@ -177,6 +182,8 @@ export const WIRE_ENTRY_ROLES = {
 	source: 'outside',
 	evaluatedExternals: 'outside',
 	evaluatedBodies: 'outside',
+	layerBodies: 'undone',
+	pendingRules: 'undone',
 	layer: { name: 'outside', depth: 'outside', diagnostics: 'kept', narrows: 'undone', leads: 'undone', renames: 'undone' } satisfies WireEntryRoles<WireLayer>
 } as const satisfies { readonly [K in keyof WireContext]-?: WireEntryRole | Readonly<Record<string, WireEntryRole>> };
 
@@ -204,6 +211,21 @@ let currentContext: WireContext | null = null;
 
 export function getCurrentWireContext(): WireContext | null {
 	return currentContext;
+}
+
+export function wireMintKeyword(fieldName: string, text: string, body: RuntimeRule): string | undefined {
+	const context = currentContext;
+	if (!context) return undefined;
+	const name = spelledKeywordRuleName(fieldName, text);
+	const content = withoutLabel(body) as RuntimeRule;
+	const held = context.deposits.get(name) ?? context.baseRuleBodies[name];
+	if (held !== undefined && !isBlank(held) && !rulesEqual(held, content)) {
+		throw new Error(`field('${fieldName}', ${JSON.stringify(text)}): '${name}' already holds another body`);
+	}
+	context.deposits.set(name, content);
+	context.keywordMints.set(name, fieldName);
+	if (!context.authoredRuleNames.has(name)) context.syntheticInline.add(name);
+	return name;
 }
 
 export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
@@ -243,13 +265,6 @@ export function wireDepositTextToken(name: string, rewrite: (body: RuntimeRule) 
 
 export function wireHasDeposit(name: string): boolean {
 	return currentContext?.deposits.has(name) ?? false;
-}
-
-export function wireRegisterSyntheticInline(name: string): boolean {
-	if (!currentContext) return false;
-	if (currentContext.authoredRuleNames.has(name)) return false;
-	currentContext.syntheticInline.add(name);
-	return true;
 }
 
 export function wireRegisterFlattenedParent(name: string): boolean {
@@ -517,7 +532,40 @@ export function wireEditCopy(copy: string, edit: (body: RuntimeRule) => RuntimeR
 }
 
 function sourceBodyOf(context: WireContext, source: string): RuntimeRule | undefined {
-	return context.deposits.get(source) ?? context.baseRuleBodies[source];
+	const deposit = context.deposits.get(source);
+	if (deposit !== undefined) return deposit;
+	if (context.editedMints.has(source)) return undefined;
+	const body = evaluateLayerRule(context, source, context.currentDollar, context.baseRuleBodies[source]);
+	return (body ?? context.baseRuleBodies[source]) as RuntimeRule | undefined;
+}
+
+function memoizeLayerRules(rules: Record<string, RuleFn>, context: WireContext): void {
+	for (const [name, fn] of Object.entries(rules)) {
+		context.pendingRules.set(name, fn);
+		rules[name] = function layerRule($, previous) {
+			return evaluateLayerRule(context, name, $, previous);
+		} as RuleFn;
+	}
+}
+
+function evaluateLayerRule(context: WireContext, name: string, $: unknown, previous: unknown): unknown {
+	if (context.layerBodies.has(name)) return context.layerBodies.get(name);
+	const evaluate = context.pendingRules.get(name);
+	if (evaluate === undefined) return undefined;
+	context.pendingRules.delete(name);
+	const { entry, applyingEntries, activePatchSites, activeEntryPath, copyDepth } = context;
+	context.entry = null;
+	context.applyingEntries = false;
+	context.activePatchSites = [];
+	context.activeEntryPath = null;
+	context.copyDepth = 0;
+	try {
+		const body = (evaluate as (d: unknown, p: unknown) => unknown)($, previous);
+		context.layerBodies.set(name, body);
+		return body;
+	} finally {
+		Object.assign(context, { entry, applyingEntries, activePatchSites, activeEntryPath, copyDepth });
+	}
 }
 
 function sameCopy(prior: CopyEffect, request: WireCopyRequest, owner: string): boolean {
@@ -699,6 +747,7 @@ export function withWireContext<T>(
 		deposits: new Map(),
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
+		keywordMints: new Map(),
 		inlineRemovals: new Set(),
 		liftNames: new Map(),
 		refineForms: new Map(),
@@ -731,6 +780,8 @@ export function withWireContext<T>(
 		activeEntryPath: null,
 		copyDepth: 0,
 		entering: new Set(),
+		layerBodies: new Map(),
+		pendingRules: new Map(),
 		copies: new Map(),
 		copyReferences: new WeakMap(),
 		entry: null,
@@ -920,6 +971,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		deposits: new Map(),
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
+		keywordMints: new Map(),
 		inlineRemovals: new Set(),
 		liftNames: new Map(),
 		refineForms: new Map(),
@@ -956,6 +1008,8 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		activeEntryPath: null,
 		copyDepth: 0,
 		entering: new Set(),
+		layerBodies: new Map(),
+		pendingRules: new Map(),
 		copies: new Map(),
 		copyReferences: new WeakMap(),
 		entry: null,
@@ -974,6 +1028,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		if (!(baseName in outRules)) outRules[baseName] = passthroughBaseRuleFn;
 	}
 	wrapAllRuleFns(outRules, context);
+	memoizeLayerRules(outRules, context);
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, declared.patterns, context);
 	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
 
@@ -991,7 +1046,8 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	}
 	recordAliasTargets(outRules, context);
 	const externals = evaluatingExternals(cfg, outRules, { base: baseArg, context }, [
-		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals)
+		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals),
+		(bodies) => resolveKeywordNames(bodies, context)
 	]);
 	returnEvaluatedBodies(outRules, context);
 
@@ -1359,7 +1415,7 @@ function elementSupertypesOf(kind: string, context: WireContext): string[] {
 }
 
 function placeholderHiddenName(value: unknown, parentKind: string): string | undefined {
-	if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
+	if (isFieldPlaceholder(value)) return keywordRuleName(value.name);
 	if (isVariantPlaceholder(value)) return polymorphVisibleName(parentKind, variantMintName(value));
 	if (isAliasPlaceholder(value)) return `_${value.name}`;
 	if (isRulePlaceholder(value)) return value.name;

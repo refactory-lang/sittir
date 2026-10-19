@@ -18,6 +18,14 @@ describe('a part copy is not matched by its source kind', () => {
 		]);
 	}, 60_000);
 
+	it('T1c: a refused edit on a copy made by a rules callback records one diagnostic, not one per visit', async () => {
+		const raw = await evaluateTempGrammar({ extras: '', rules: "owner: ($) => $._decl, _decl: ($) => choice(seq('a', $.word), seq('b', $.word))" }, '', {
+			bindings: "rules: { owner: ($) => seq('(', copy('_decl', '1'), ')') }, edits: { owner: { '(_decl)': ($) => $.word } }"
+		});
+		expect(raw.layerDiagnostics).toHaveLength(1);
+		expect(codes(raw)).toEqual(['edit-site-missing']);
+	}, 60_000);
+
 	it('T1b: a path walking through a part copy edits it under its own name', async () => {
 		const raw = await evaluateTempGrammar({ extras: '', rules: "owner: ($) => $._decl, _decl: ($) => choice(seq('a', $.word), seq('b', $.word))" }, '', {
 			bindings: "rules: { owner: ($) => seq('(', copy('_decl', '1'), ')') }, edits: { owner: { '(word)': alias('w') } }"

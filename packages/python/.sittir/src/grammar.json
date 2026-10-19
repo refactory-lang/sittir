@@ -8505,12 +8505,8 @@
       }
     },
     "_kw_comma": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "STRING",
-        "value": ","
-      }
+      "type": "STRING",
+      "value": ","
     },
     "_kw_debug": {
       "type": "STRING",

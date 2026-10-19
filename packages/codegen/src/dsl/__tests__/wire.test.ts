@@ -616,9 +616,9 @@ describe('wire()', () => {
 	});
 
 	it('author-declared _kw_* wins over wire auto-pre-registration', () => {
-		// User declares `_kw_async: $ => 'custom'` in rules. wire should
-		// leave that entry alone even if a patches entry's field('async')
-		// would otherwise trigger a deferred _kw_async injection.
+		// The author's `_kw_async` keeps its body. The field('async') site mints
+		// its own keyword rule, `_kw_async_async`, so the author's name is never
+		// reused for the field text.
 		const userFn: RuleFn = () => ({ type: 'STRING', value: 'custom' });
 		const origSeq = {
 			type: 'SEQ',
@@ -643,7 +643,7 @@ describe('wire()', () => {
 				get: (_, prop: string) => ({ type: 'SYMBOL', name: prop })
 			}
 		);
-		expect(wired.inline!.call({}, $, [])).toEqual([]);
+		expect(wired.inline!.call({}, $, [])).toEqual([expect.objectContaining({ type: 'SYMBOL', name: '_kw_async_async' })]);
 	});
 });
 

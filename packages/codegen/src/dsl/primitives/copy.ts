@@ -5,7 +5,7 @@ import { recordAlias } from '../transform/transform.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { VerbRefusal } from '../verbs/copy.ts';
-import { wireCopy, wireCopyDeposit, wireCopyOf, wireCopyReference, wireEditCopy, wireEntryShown, wireNoteCopyDisplay, wireNoteCopyReference } from '../wire/wire.ts';
+import { wireCopy, wireCopyDeposit, wireCopyOf, wireCopyReference, wireEditCopy, wireEntryShown, wireIsBaseSupertype, wireNoteCopyDisplay, wireNoteCopyReference } from '../wire/wire.ts';
 
 const walker = new RuleWalker<AnyRule>();
 
@@ -16,11 +16,17 @@ const nativeAlias = (content: unknown, value: unknown): RuntimeRule => nativeRul
 const nameOf = (rule: unknown): string => (typeof rule === 'string' ? rule : (nativeAlias(symbol('_'), rule) as unknown as { readonly value: string }).value);
 
 export function copyReference(copy: string, source: string, shown?: string): RuntimeRule {
-	const display = shown ?? (isParserHiddenName(source) ? undefined : source);
-	const reference = display === undefined ? symbol(copy) : nativeAlias(symbol(copy), symbol(display));
+	const display = shown ?? (isParserHiddenName(source) || wireIsBaseSupertype(source) ? undefined : source);
+	if (display === undefined) return bareReference(copy);
+	const reference = nativeAlias(symbol(copy), symbol(display));
 	if (shown !== undefined && shown !== source) recordAlias(source, shown);
 	wireNoteCopyDisplay(copy, display);
 	return wireNoteCopyReference(reference, copy);
+}
+
+function bareReference(copy: string): RuntimeRule {
+	wireNoteCopyDisplay(copy, undefined);
+	return wireNoteCopyReference(symbol(copy), copy);
 }
 
 export function reachedCopyReference(reference: RuntimeRule, copy: string, source: string, shown?: string): RuntimeRule {
@@ -87,7 +93,8 @@ function refuseRedisplay(copy: string, source: string, display: string | undefin
 export function copy(source: unknown, path = '.'): RuntimeRule {
 	const name = nameOf(source);
 	const made = wireCopy({ source: name, part: path, via: 'copy' }, (body) => body);
-	return made === undefined ? symbol(name) : copyReference(made, name);
+	if (made === undefined) return symbol(name);
+	return path === '.' ? copyReference(made, name) : bareReference(made);
 }
 
 export function namedCopy(reference: unknown, value: unknown): RuntimeRule | undefined {

@@ -11,6 +11,7 @@ import {
 import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
 import { EnrichCtx, enrichSymbolSource, isMintOrigin, type EnrichRuleOrigin } from './enrich-ctx.ts';
 import { ENRICH_SHAPES_KEY } from './enrich-shapes.ts';
+import { keywordRuleName } from './wire/keyword-names.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import {
 	distributeInlineAliasChoices,
@@ -1297,7 +1298,7 @@ function registerKwRule(
 	rulesBag: Record<string, Rule>,
 	ruleOrigins: Map<string, EnrichRuleOrigin>
 ): Rule | null {
-	const hiddenName = `_kw_${keyword}`;
+	const hiddenName = keywordRuleName(keyword);
 	if (hiddenName in kwRules) return makeSymbol(hiddenName);
 	const existing = rulesBag[hiddenName];
 	if (existing === undefined) {
@@ -1806,7 +1807,7 @@ function tryPromoteInnerKeyword(
 		reportSkip(
 			'optional-keyword-prefix',
 			ruleName,
-			`rule '_kw_${fieldName}' already exists in base.grammar.rules with different content`
+			`rule '${keywordRuleName(fieldName)}' already exists in base.grammar.rules with different content`
 		);
 		return null;
 	}

@@ -11779,12 +11779,8 @@
       }
     },
     "_kw_operator": {
-      "type": "PREC_LEFT",
-      "value": 1,
-      "content": {
-        "type": "STRING",
-        "value": ".."
-      }
+      "type": "STRING",
+      "value": ".."
     },
     "_kw_comma": {
       "type": "STRING",
@@ -15080,12 +15076,8 @@
       ]
     },
     "_kw_raw": {
-      "type": "PREC",
-      "value": 12,
-      "content": {
-        "type": "STRING",
-        "value": "raw"
-      }
+      "type": "STRING",
+      "value": "raw"
     },
     "_parameter_receiver": {
       "type": "SEQ",

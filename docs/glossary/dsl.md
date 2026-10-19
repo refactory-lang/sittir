@@ -130,18 +130,7 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 
 ### `packages/codegen/src/dsl/enrich.ts::registerKwRule`
 
-A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
-
-```text
-/**
- * Register a `_kw_<fieldName>` hidden rule whose body is
- * `prec.left(1, stringLiteral)`. Idempotent — multiple positions that
- * promote the same keyword register the same body once.
- *
- * Returns a SYMBOL reference (in the active runtime's case, via the injected
- * `symbol()` constructor) that the caller embeds inside the new FIELD wrapper.
- */
-```
+Registers the hidden rule `_kw_<keyword>` (`wire/keyword-names.ts::keywordRuleName`), whose body is the keyword's string, and returns a SYMBOL reference to it (through the active runtime's `symbol()`) for the caller's new FIELD. Positions that promote the same keyword share one rule. A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
 
 #### body
 
@@ -7051,7 +7040,7 @@ The words tree-sitter spells control characters (below U+0020) with in a C symbo
 
 ### `packages/codegen/src/dsl/symbol-table.ts::sanitizeCIdentifier`
 
-Tree-sitter's C symbol name for a symbol name: word characters stay, punctuation and control characters become their words (`SPACE` only for a lone space) joined with `_`, and anything else becomes `uXXXX` per UTF-16 unit. `spellReplacement` spells each substituted word: as written for the C name, lower-cased for a punctuation token's kind key (`deriveSymbolRuntimeName`), so both come from the one table.
+Tree-sitter's C symbol name for a symbol name: word characters stay, punctuation and control characters become their words (`SPACE` only for a lone space) joined with `_`, and anything else becomes `uXXXX` per UTF-16 unit. `spellReplacement` spells each substituted word: as written for the C name, lower-cased for a punctuation token's kind key and a keyword rule's name (`spelledTokenText`), so both come from the one table.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::referencedNames`
 
@@ -7683,6 +7672,10 @@ The precedence wrapper types, which carry no slot topology.
 ### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
+
+### `packages/codegen/src/dsl/symbol-table.ts::spelledTokenText`
+
+A token's text spelled as a name, the way a punctuation token's kind key is spelled: word characters stay, and each punctuation character becomes its lower-cased word, joined with `_` (`*` is `star`, `?.` is `qmark_dot`), through `sanitizeCIdentifier`. `deriveSymbolRuntimeName` spells a punctuation kind key with it, and `wire/keyword-names.ts::spelledKeywordRuleName` a keyword rule's name.
 
 ### `packages/codegen/src/dsl/bind.ts::split`
 

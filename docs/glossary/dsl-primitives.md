@@ -12,41 +12,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/dsl/primitives/field.ts::maybeKeywordSymbol`
 
-```text
-/**
- * Shared `FIELD(name, <shape-containing-STRING>)` →
- * `FIELD(name, <shape with STRING replaced by SYMBOL(_kw_<name>)>)`
- * transformation. Synthesizes a hidden `_kw_<name>: 'kw'` rule via
- * registerSyntheticRule, marks it for wire-managed `inline:`, and rewrites the content so
- * tree-sitter's normalizer preserves the FIELD wrapper.
- *
- * Tree-sitter strips FIELD wrappers around bare STRING nodes at grammar-
- * normalization time. To keep the field label, we indirect every
- * contained STRING through a hidden SYMBOL rule.
- *
- * Shapes handled:
- *
- *   - **Bare STRING** — direct `field('x', 'literal')` case. The STRING
- *     is replaced by a SYMBOL reference to `_kw_<x>` (body: `'literal'`).
- *
- *   - **OPTIONAL(STRING)** — grammar like `seq(optional('&'), ...)`
- *     with an override `0: field('lifetime')` wraps position 0 as
- *     `field('lifetime', optional('&'))`. Tree-sitter would strip the
- *     FIELD if the inner were bare STRING reachable through the
- *     optional; routing through a SYMBOL preserves the label. Both
- *     the `OPTIONAL` shape and tree-sitter's `CHOICE(STRING, BLANK)`
- *     representation of optional are handled.
- *
- * Used by:
- *   - transform.ts resolvePatch (one-arg field() placeholder path)
- *   - the two-arg field(name, 'literal') path below
- *
- * Optional `wrapSyntheticBody` lets callers apply an extra wrap
- * (e.g., transform's accumulated prec stack) around the synthetic
- * rule's body before registration. Returns the content unchanged
- * when no STRING is reachable through the recognized shapes.
- */
-```
+Rewrites a field's content so a STRING it holds, directly or through an optional, becomes a reference to a hidden keyword rule (`synthesizeKwSymbol`), and returns any other content unchanged. Tree-sitter's normalizer strips a FIELD around a bare STRING, so the label survives only through a SYMBOL; wire inlines the rule, so the parser still sees the token at the site. The rule holds the token alone: a precedence around the site stays in the parent rule, and the inlined token takes it there. The one-arg `field()` placeholder (`transform/transform.ts::resolveFieldPlaceholder`) and the two-arg `field(name, 'text')` (`buildTwoArgFieldResult`) both use it.
 
 #### body
 
@@ -61,12 +27,7 @@ rewritten content is rebuilt in the representation it had
 
 ### `packages/codegen/src/dsl/primitives/field.ts::synthesizeKwSymbol`
 
-```text
-/**
- * Create the `_kw_<fieldName>` hidden rule, register it for wire-managed
- * `inline:`, and return a SYMBOL reference to it.
- */
-```
+Mints the hidden keyword rule a field over a text points at (`wire/wire.ts::wireMintKeyword`) and returns a SYMBOL reference to it. Outside a wire() context it throws.
 
 ### `packages/codegen/src/dsl/primitives/field.ts::field`
 
@@ -77,7 +38,7 @@ rewritten content is rebuilt in the representation it had
  *
  * When the two-arg form is called with a bare STRING literal content
  * (e.g. `field('async', 'async')`), the content is substituted with a
- * synthesized SYMBOL reference to a hidden `_kw_<name>` rule. This
+ * synthesized SYMBOL reference to a hidden keyword rule (named by `wire/keyword-names.ts::resolveKeywordNames`). This
  * mirrors transform.ts's placeholder path — tree-sitter's grammar
  * normalizer strips FIELD wrappers around bare STRING, so we indirect
  * through a SYMBOL to preserve the field in the parse tree.
@@ -374,7 +335,7 @@ The kind a source names: a string, or a `$` value read the way the runtime's `al
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::copyReference`
 
-The reference to a copy. A copy of a visible rule aliases back to its source, `alias($._copy, $.source)`, so the tree shows the source's kind; a copy of a hidden rule is `$._copy`. Shown as another name, the reference is `alias($._copy, $.shown)` and the alias `(source, shown)` is recorded (`transform/transform.ts::recordAlias`). The name the reference shows is stamped on the copy effect (`wire/wire.ts::wireNoteCopyDisplay`), so a copy that aliases back declares the display family of its source and itself. The reference is noted as the copy's (`wire/wire.ts::wireNoteCopyReference`).
+The reference to a whole copy. A copy of a visible rule aliases back to its source, `alias($._copy, $.source)`, so the tree shows the source's kind; a copy of a hidden rule, or of a supertype, which no tree shows, is the bare copy (`bareReference`). Shown as another name, the reference is `alias($._copy, $.shown)` and the alias `(source, shown)` is recorded (`transform/transform.ts::recordAlias`). The name the reference shows is stamped on the copy effect (`wire/wire.ts::wireNoteCopyDisplay`), so a copy that aliases back declares the display family of its source and itself. The reference is noted as the copy's (`wire/wire.ts::wireNoteCopyReference`).
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::reachedCopyReference`
 
@@ -398,7 +359,7 @@ Refuses to show a copy's reference as `shown` when the reference already has a d
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::copy`
 
-`copy(source, path?)`: the context's copy of `source`, or of the part `path` selects, made or reused (`wire/wire.ts::wireCopy`), and its reference (`copyReference`). It runs only during the layer pass: in a `rules:` callback, a replacing function or a helper. Called anywhere else it throws `edit-entry-invalid`. A refused copy leaves the source's own reference.
+`copy(source, path?)`: the context's copy of `source`, or of the part `path` selects, made or reused (`wire/wire.ts::wireCopy`), and its reference. A whole copy takes `copyReference`; a part, which is not the source's kind, is the bare copy (`bareReference`). It runs only during the layer pass: in a `rules:` callback, a replacing function or a helper. Called anywhere else it throws `edit-entry-invalid`. A refused copy leaves the source's own reference.
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::namedCopy`
 
@@ -423,6 +384,10 @@ The copy a node refers to, as a bare symbol or as an alias over one, when that n
 ### `packages/codegen/src/dsl/primitives/copy.ts::walker`
 
 The rule walker the display check descends with (`referenceDisplays`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::bareReference`
+
+A copy referenced by its own name, `$._copy`, showing no display: the reference of a copy of a hidden rule or a supertype, and of every part copy. The copy effect is stamped with no display, and the reference is noted as the copy's.
 
 ### `packages/codegen/src/dsl/primitives/refine.ts::module`
 
