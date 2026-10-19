@@ -10,7 +10,7 @@ const rule = () => ({ type: 'SEQ', members: [{ type: 'SYMBOL', name: 'a' }, { ty
 
 const inLayer = (patch: (_$: unknown, member: unknown) => unknown) =>
 	withWireContext(null, (context) => {
-		Object.assign(context, { layer: { name: 'top', depth: 1, diagnostics: [], narrows: [], leads: [] }, currentDollar: {} });
+		Object.assign(context, { layer: { name: 'top', depth: 1, diagnostics: [], narrows: [], leads: [], renames: [] }, currentDollar: {} });
 		return transformRule(rule() as never, { '(a)': patch } as never);
 	});
 

@@ -34,6 +34,7 @@ export type { LayerConfig, LayerOptions, PendingBase } from './layer.ts';
 export type { GrammarResult } from './enrich.ts';
 export { lead } from './primitives/lead.ts';
 export { match, narrow } from './primitives/narrow.ts';
+export { rename } from './primitives/rename.ts';
 export { reauthored, vocabulary } from './primitives/rule-cause.ts';
 export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts';
 export type { WireConfig, WiredOpts } from './wire/wire.ts';

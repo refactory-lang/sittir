@@ -94,19 +94,27 @@ function namesKind(record: GrammarRecord, key: string): boolean {
 	return KIND_KEYS.has(key);
 }
 
-export function renameValue(value: unknown, rename: (name: string) => string): unknown {
-	if (typeof value === 'string') return rename(value);
-	if (Array.isArray(value)) return value.map((v) => renameValue(v, rename));
+function renamedKinds(value: unknown, rename: (name: string) => string, bareNames: boolean): unknown {
+	if (typeof value === 'string') return bareNames ? rename(value) : value;
+	if (Array.isArray(value)) return value.map((v) => renamedKinds(v, rename, bareNames));
 	if (!isRecord(value)) return value;
 	const out: GrammarRecord = {};
 	for (const [key, v] of Object.entries(value)) {
 		if (typeof v === 'string') out[key] = namesKind(value, key) ? rename(v) : v;
-		else out[key] = renameValue(v, rename);
+		else out[key] = renamedKinds(v, rename, bareNames);
 	}
 	return out;
 }
 
-export function renameKeys(record: unknown, rename: (name: string) => string, renameValues = true): unknown {
+export function renameValue(value: unknown, rename: (name: string) => string): unknown {
+	return renamedKinds(value, rename, true);
+}
+
+export function renameRefs(value: unknown, rename: (name: string) => string): unknown {
+	return renamedKinds(value, rename, false);
+}
+
+function renameKeys(record: unknown, rename: (name: string) => string, renameValues = true): unknown {
 	if (!isRecord(record)) return record;
 	const out = new Map<string, unknown>();
 	for (const [key, v] of record instanceof Map ? record : Object.entries(record)) {
@@ -330,20 +338,29 @@ function renamedRecord(value: unknown, as: RecordRename, rename: (name: string) 
 	}
 }
 
-export function renameRecords(records: GrammarRecord, rename: (name: string) => string, fields: ReadonlySet<string>): GrammarRecord {
+function renameRecords(records: GrammarRecord, rename: (name: string) => string, fields: ReadonlySet<string>): GrammarRecord {
 	const out: GrammarRecord = { ...records };
 	for (const [key, as] of Object.entries(RECORD_RENAMES)) if (key in records) out[key] = renamedRecord(records[key], as, rename, fields);
 	return out;
 }
 
+export function renameMapOf(effects: readonly Effect[]): ReadonlyMap<string, string> {
+	const renames = new Map<string, string>();
+	for (const effect of effects) {
+		if (effect.kind !== 'rename') continue;
+		for (const [from, to] of renames) if (to === effect.from) renames.set(from, effect.to);
+		renames.set(effect.from, effect.to);
+	}
+	return renames;
+}
+
 export function rewriteInherited(records: LayerRecords, ctx: EffectCtx): LayerRecords {
 	const segments: SegmentEffect[] = [];
 	const aliases = new Map<string, string>();
-	const renames = new Map<string, string>();
+	const renames = renameMapOf(ctx.effects);
 	for (const effect of ctx.effects) {
 		if (effect.kind === 'segment') segments.push(effect);
 		else if (effect.kind === 'alias') aliases.set(effect.from, effect.to);
-		else if (effect.kind === 'rename') renames.set(effect.from, effect.to);
 	}
 	const splitFrom = splitFromOf(ctx.effects);
 	const fields = fieldNames(ctx.rules);

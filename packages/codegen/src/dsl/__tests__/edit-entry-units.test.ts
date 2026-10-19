@@ -7,7 +7,7 @@ import { ApplyPathSkip } from '../transform/transform-path.ts';
 import { getCurrentWireContext, withWireContext, wire, wireRecordBindingEffect, WIRE_ENTRY_ROLES, type WireContext } from '../wire/wire.ts';
 
 const count = (value: unknown, needle: string): number => JSON.stringify(value).split(needle).length - 1;
-const layer = () => ({ name: 'top', depth: 1, diagnostics: [], narrows: [], leads: [] });
+const layer = () => ({ name: 'top', depth: 1, diagnostics: [], narrows: [], leads: [], renames: [] });
 const WORD = "word: () => /[a-z]+/";
 const PAIR = `pair: ($) => seq($.fn, ',', $.fn), fn: ($) => seq('f', $.word), ${WORD}`;
 const HIDDEN = `pair: ($) => seq($._h, ',', $._h), _h: ($) => seq('h', $.fn), fn: ($) => seq('f', $.word), ${WORD}`;

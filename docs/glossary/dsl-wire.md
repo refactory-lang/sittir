@@ -1697,7 +1697,7 @@ The layer pass's handle (`WireLayer`), where wire's refusals and the lead entrie
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireLayer`
 
-What a layer pass hands wire: the layer's name and depth (1 for the authored layer, one more for each layer above it), the diagnostics list wire's refusals join, and the `narrow` and lead entries wire queues for the whole-grammar phase, each in the order it evaluates them.
+What a layer pass hands wire: the layer's name and depth (1 for the authored layer, one more for each layer above it), the diagnostics list wire's refusals join, and the `narrow`, lead and rename entries wire queues for the whole-grammar phase, each in the order it evaluates them.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal`
 
@@ -2224,6 +2224,14 @@ The size of a Map or Set, the length of an array, and `undefined` for any other 
 ### `packages/codegen/src/dsl/wire/wire.ts::refuseOutsideWrites`
 
 After an entry, an `outside` key whose value is no longer the same object, or whose collection changed size, is an error naming its path: the entry wrote state that `WIRE_ENTRY_ROLES` says no entry writes, so the classification is wrong. Every `outside` collection is a Set, where an add or a delete changes the size, or a ReadonlyMap, which the context's type keeps entries from writing. Its blind spot: an entry that adds one member to an `outside` Set and deletes another leaves the size unchanged and is not seen. Thrown from the entry's `finally`, the error replaces whatever the entry threw.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireQueueRename`
+
+Queues a rename entry for the layer's whole-grammar phase, as a `verbs/rename.ts::RenameEntry` from the kind whose callback is running. Outside a layer pass the entry has no phase to run in, so it throws.
+
+### `packages/codegen/src/dsl/wire/wire.ts::factoryInlineNamesOf`
+
+The kinds a config's own `factoryInline:` callback names, evaluated with the runtime's symbols (`layerSymbols`) under `withStringGlobalShim`; none when the config has no such callback. It needs a DSL runtime, so it is read only when a layer has renames (`layer.ts::evaluatedLayer`), never by `evaluatedConfig`, which a wire outside a runtime calls.
 
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 

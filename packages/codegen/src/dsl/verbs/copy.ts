@@ -6,7 +6,7 @@ import type { EnrichRuleOrigin } from '../enrich-ctx.ts';
 import { isParserHiddenName, isRecord, listedNames, listEntryName, rulesEqual, supertypesOf, type GrammarRecord } from '../rule-patterns.ts';
 import type { CopyOrigin, Effect, NarrowingOrigin } from './effects.ts';
 
-export type VerbRefusalCode = 'edit-site-missing' | 'edit-entry-invalid' | 'narrow-invalid' | 'edit-site-conflict' | 'rule-name-taken';
+export type VerbRefusalCode = 'edit-site-missing' | 'edit-entry-invalid' | 'narrow-invalid' | 'rename-invalid' | 'edit-site-conflict' | 'rule-name-taken';
 
 export class VerbRefusal extends Error {
 	readonly code: VerbRefusalCode;

@@ -2,21 +2,13 @@ import {
 	fieldNames,
 	isParserHiddenName,
 	isRecord,
-	listedNames,
 	OPAQUE_RULES,
 	supertypesOf,
 	transparentReach,
 	unwrapPrec,
 	type GrammarRecord
 } from './rule-patterns.ts';
-import {
-	renameKeys,
-	renameRecords,
-	renameValue,
-	type BindingEffect,
-	type Lead,
-	type LeadMatch
-} from './verbs/effects.ts';
+import type { BindingEffect, Lead, LeadMatch } from './verbs/effects.ts';
 
 export interface Split {
 	readonly kind: string;
@@ -46,48 +38,8 @@ export function split(kind: string, as: string, placement: Pick<Split, 'within' 
 	return { kind, as, within: placement.within, containers: placement.containers };
 }
 
-const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens'];
-const RULE_FIELDS = ['extras', 'externals', 'precedences', 'reserved', 'conflicts'];
-
 export function mappedName(record: Readonly<Record<string, string>> | undefined, name: string): string {
 	return record !== undefined && Object.hasOwn(record, name) ? record[name]! : name;
-}
-
-function carryHiddenFacts(from: GrammarRecord, to: GrammarRecord, rename: (name: string) => string): void {
-	for (const key of Reflect.ownKeys(from)) {
-		const descriptor = Object.getOwnPropertyDescriptor(from, key);
-		if (descriptor === undefined || descriptor.enumerable) continue;
-		const value: unknown = descriptor.value;
-		const renamed =
-			value instanceof Set
-				? new Set([...value].map((name) => (typeof name === 'string' ? rename(name) : name)))
-				: Array.isArray(value)
-					? renameValue(value, rename)
-					: value;
-		Object.defineProperty(to, key, { ...descriptor, value: renamed });
-	}
-}
-
-export function renameGrammar(grammar: GrammarRecord, renames: Readonly<Record<string, string>>): GrammarRecord {
-	const rename = (name: string): string => mappedName(renames, name);
-	const rules = isRecord(grammar.rules) ? grammar.rules : {};
-	const externals = listedNames(grammar.externals);
-	for (const [from, to] of Object.entries(renames)) {
-		if (!(from in rules) && !externals.has(from)) throw new Error(`bind: '${from}' is no rule or external of the grammar`);
-		if (isParserHiddenName(from) !== isParserHiddenName(to)) throw new Error(`bind: '${from}' → '${to}' flips hiddenness`);
-		if (to in rules && !(to in renames)) throw new Error(`bind: '${from}' → '${to}', which the grammar already names`);
-	}
-	const out = renameRecords(grammar, rename, fieldNames(grammar.rules));
-	if ('rules' in grammar) out.rules = renameKeys(grammar.rules, rename);
-	for (const field of [...LIST_FIELDS, ...RULE_FIELDS]) if (field in grammar) out[field] = renameValue(grammar[field], rename);
-	if (typeof grammar.word === 'string') out.word = rename(grammar.word);
-	for (const [field, value] of Object.entries(grammar))
-		if (value instanceof Set) out[field] = new Set([...value].map((name) => (typeof name === 'string' ? rename(name) : name)));
-	carryHiddenFacts(grammar, out, rename);
-	const renamedFrom: Record<string, string> = {};
-	for (const [from, to] of Object.entries(renames)) renamedFrom[to] = from;
-	out.renamedFrom = { ...(isRecord(grammar.renamedFrom) ? grammar.renamedFrom : {}), ...renamedFrom };
-	return out;
 }
 
 export function fieldHosts(rules: GrammarRecord, owner: string, field: string, stop: ReadonlySet<string>): string[] {

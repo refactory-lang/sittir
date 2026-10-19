@@ -16,7 +16,9 @@ import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import type { LeadPlaceholder } from '../primitives/lead.ts';
 import type { NarrowPlaceholder } from '../primitives/narrow.ts';
+import type { RenamePlaceholder } from '../primitives/rename.ts';
 import type { NarrowEntry } from '../verbs/narrow.ts';
+import type { RenameEntry } from '../verbs/rename.ts';
 import {
 	ABSENT_VARIANT_NAME,
 	isVariantPlaceholder,
@@ -56,6 +58,7 @@ export type PatchForm =
 	| 'preference'
 	| 'lead'
 	| 'narrow'
+	| 'rename'
 	| 'literal';
 
 export interface PatchSite {
@@ -174,7 +177,7 @@ export const WIRE_ENTRY_ROLES = {
 	source: 'outside',
 	evaluatedExternals: 'outside',
 	evaluatedBodies: 'outside',
-	layer: { name: 'outside', depth: 'outside', diagnostics: 'kept', narrows: 'undone', leads: 'undone' } satisfies WireEntryRoles<WireLayer>
+	layer: { name: 'outside', depth: 'outside', diagnostics: 'kept', narrows: 'undone', leads: 'undone', renames: 'undone' } satisfies WireEntryRoles<WireLayer>
 } as const satisfies { readonly [K in keyof WireContext]-?: WireEntryRole | Readonly<Record<string, WireEntryRole>> };
 
 export interface WireLayer {
@@ -183,6 +186,7 @@ export interface WireLayer {
 	readonly diagnostics: GrammarDiagnostic[];
 	readonly narrows: NarrowEntry[];
 	readonly leads: Lead[];
+	readonly renames: RenameEntry[];
 }
 
 export interface WireLists {
@@ -1151,6 +1155,13 @@ export function wireQueueLead(entry: LeadPlaceholder): void {
 	currentContext.layer.leads.push({ list, item: entry.item, field: entry.field, admits: entry.admits });
 }
 
+export function wireQueueRename(entry: RenamePlaceholder): void {
+	const from = currentContext?.currentRuleKind;
+	if (currentContext?.layer === undefined || from === null || from === undefined)
+		throw new Error(`rename('${entry.to}'): a rename entry applies in a layer pass, as the '.' entry of a kind`);
+	currentContext.layer.renames.push({ from, to: entry.to });
+}
+
 export function wireQueueNarrow(entry: NarrowPlaceholder, path: string): void {
 	const owner = currentContext?.currentRuleKind;
 	if (currentContext?.layer === undefined || owner === null || owner === undefined)
@@ -1629,6 +1640,11 @@ export function evaluatedConfig(cfg: Pick<WireConfig<any>, 'groups' | 'renderAs'
 	const bodies = (config: RenderAsConfig | VisibleExternalsConfig | undefined): Readonly<Record<string, unknown>> | undefined =>
 		config === undefined ? undefined : (withStringGlobalShim(() => config(layerSymbols())) ?? undefined);
 	return { patterns: declaredPatterns(cfg.groups), renderAs: bodies(cfg.renderAs), visibleExternals: bodies(cfg.visibleExternals) };
+}
+
+export function factoryInlineNamesOf(cfg: Pick<WireConfig<any>, 'factoryInline'>): ReadonlySet<string> {
+	const factoryInline = cfg.factoryInline;
+	return factoryInline === undefined ? new Set() : symbolNamesOf(withStringGlobalShim(() => factoryInline(layerSymbols() as ShapedSymbols<any>)));
 }
 
 function declaredPatterns(groups: GroupsConfig | undefined): DeclaredPattern[] {

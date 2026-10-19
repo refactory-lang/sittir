@@ -55,7 +55,7 @@ describe('arm.default whose parent path is missing, outside the evaluator', () =
 	it('Z4: records exactly one edit-site-missing naming the parent path, and does not throw out of the context', () => {
 		const rule = { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }] };
 		const { ctx } = withWireContext(null, (context) => {
-			Object.assign(context, { layer: { name: 'top', depth: 1, diagnostics: [], narrows: [], leads: [] } });
+			Object.assign(context, { layer: { name: 'top', depth: 1, diagnostics: [], narrows: [], leads: [], renames: [] } });
 			return transformRule(rule as never, { '(zzz)/0': arm.default } as never);
 		});
 		expect((ctx.layer as unknown as { diagnostics: unknown[] }).diagnostics).toEqual([

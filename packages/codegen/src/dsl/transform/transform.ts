@@ -28,6 +28,7 @@ import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/fla
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
 import { isLeadPlaceholder, type LeadPlaceholder } from '../primitives/lead.ts';
 import { isNarrowPlaceholder, type NarrowPlaceholder } from '../primitives/narrow.ts';
+import { isRenamePlaceholder, type RenamePlaceholder } from '../primitives/rename.ts';
 import { VerbRefusal } from '../verbs/copy.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
@@ -59,6 +60,7 @@ import {
 	wireRecordPatchSite,
 	wireQueueLead,
 	wireQueueNarrow,
+	wireQueueRename,
 	wireRefuse,
 	wireAliasTargetIssue,
 	wireGetLiftBody,
@@ -121,6 +123,7 @@ export type PatchValue =
 	| RegexPlaceholder
 	| NarrowPlaceholder
 	| LeadPlaceholder
+	| RenamePlaceholder
 	| RefinePlaceholder
 	| ReplacingFn;
 
@@ -169,7 +172,7 @@ function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
 	recordPatchSites(patches);
 	const hasPathKeys = requiresPathMode(patches);
 	const hasPlaceholderAlias = Object.values(patches).some(
-		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRefinePlaceholder(v)
+		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRenamePlaceholder(v) || isRefinePlaceholder(v)
 	);
 	if (hasPathKeys || hasPlaceholderAlias) return applyPathPatches(rule, patches);
 	return appliedAtSite(Object.keys(patches).join(', '), () => applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>)) ?? rule;
@@ -217,6 +220,7 @@ function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
 	if (isRegexPlaceholder(value)) return { form: 'regex' };
 	if (isNarrowPlaceholder(value)) return { form: 'narrow' };
 	if (isLeadPlaceholder(value)) return { form: 'lead' };
+	if (isRenamePlaceholder(value)) return { form: 'rename', name: value.to };
 	if (isPreference(value)) return { form: 'preference' };
 	if (isFieldLike(value)) return { form: 'field', name: value.name };
 	return { form: 'literal' };
@@ -234,12 +238,17 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 			wireQueueNarrow(value, key);
 			continue;
 		}
-		if (isLeadPlaceholder(value)) {
-			queueLeadEntry(value, key);
+		const dotOnly = dotOnlyEntryOf(value);
+		if (dotOnly !== undefined && key !== '.') {
+			refuseOffDotEntry(dotOnly, key);
 			continue;
 		}
-		if (isRefinePlaceholder(value) && key !== '.') {
-			refuseRefineEntry(key);
+		if (isLeadPlaceholder(value)) {
+			wireQueueLead(value);
+			continue;
+		}
+		if (isRenamePlaceholder(value)) {
+			wireQueueRename(value);
 			continue;
 		}
 		const segments = parsePath(key);
@@ -256,23 +265,27 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries) : rule;
 }
 
-function refuseRefineEntry(key: string): void {
-	const owner = wireGetCurrentRuleKind() ?? '';
-	wireRefuse({
-		code: 'edit-entry-invalid',
-		ownerKind: owner,
-		message: `edits: '${owner}': a refine entry applies at '.', the rule itself, not at '${key}'`,
-		details: { kind: owner, path: key }
-	});
+const DOT_ONLY_ENTRIES = {
+	refine: 'the rule itself',
+	lead: 'the list kind itself',
+	rename: 'the kind itself'
+} as const;
+
+type DotOnlyEntry = keyof typeof DOT_ONLY_ENTRIES;
+
+function dotOnlyEntryOf(value: PatchValue): DotOnlyEntry | undefined {
+	if (isRefinePlaceholder(value)) return 'refine';
+	if (isLeadPlaceholder(value)) return 'lead';
+	if (isRenamePlaceholder(value)) return 'rename';
+	return undefined;
 }
 
-function queueLeadEntry(entry: LeadPlaceholder, key: string): void {
-	if (key === '.') return wireQueueLead(entry);
+function refuseOffDotEntry(entry: DotOnlyEntry, key: string): void {
 	const owner = wireGetCurrentRuleKind() ?? '';
 	wireRefuse({
 		code: 'edit-entry-invalid',
 		ownerKind: owner,
-		message: `edits: '${owner}': a lead entry applies at '.', the list kind itself, not at '${key}'`,
+		message: `edits: '${owner}': a ${entry} entry applies at '.', ${DOT_ONLY_ENTRIES[entry]}, not at '${key}'`,
 		details: { kind: owner, path: key }
 	});
 }

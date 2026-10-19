@@ -162,11 +162,11 @@ One record under a kind rename, as its `RecordRename` says.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::renameRecords`
 
-Every record `RECORD_RENAMES` names, under a kind rename, with the field names that tell a field segment from a slot segment named after a kind. A key the input lacks stays absent, and the input is never changed. `rewriteInherited` applies it to a layer's inherited records, and `renameGrammar` to a whole grammar beside its own rule and list fields.
+Every record `RECORD_RENAMES` names, under a kind rename, with the field names that tell a field segment from a slot segment named after a kind. A key the input lacks stays absent, and the input is never changed. `rewriteInherited` applies it to a layer's inherited records.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::rewriteInherited`
 
-The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind or label heads, so a named copy leaves its source's labels where they are), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
+The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind or label heads, so a named copy leaves its source's labels where they are), the renames, as `renameMapOf` resolves them (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::LeadCopies`
 
@@ -212,9 +212,21 @@ A layer's projections appended to the ones it inherits: each map merged with the
 
 A `Provenance` under the presence rules: `splitFrom` and `bindingEffects` always, `leadFrom` and `renamedFrom` only when they hold an entry.
 
+### `packages/codegen/src/dsl/verbs/effects.ts::renamedKinds`
+
+The walk `renameValue` and `renameRefs` share. Inside a record only the strings `namesKind` picks out are renamed; a bare string is renamed only when `bareNames` is set.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::renameRefs`
+
+A rule value with every kind reference renamed: the strings `namesKind` picks out inside a record, and never a bare string, since in a rule list a bare string is a token or a precedence name.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::renameMapOf`
+
+A layer's renames as one map, each source to the name it ends as. A rename of a name an earlier rename gave carries the earlier source along. `rewriteInherited` and the layer's lists read it.
+
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusalCode`
 
-The blocking codes a verb refuses with: `edit-site-missing` (an entry names no rule), `edit-entry-invalid` (the entry cannot apply to what it names), `narrow-invalid` (a narrowing cannot divide its site as asked), `edit-site-conflict` (two edits disagree about one rule), and `rule-name-taken` (a copy's name is already another rule's).
+The blocking codes a verb refuses with: `edit-site-missing` (an entry names no rule), `edit-entry-invalid` (the entry cannot apply to what it names), `narrow-invalid` (a narrowing cannot divide its site as asked), `rename-invalid` (a rename cannot apply, `rename.ts::applyRename`), `edit-site-conflict` (two edits disagree about one rule), and `rule-name-taken` (a copy's name is already another rule's).
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal`
 
@@ -420,3 +432,40 @@ The rule with every field that holds the list holding a choice of the list and t
 ### `packages/codegen/src/dsl/verbs/lead.ts::referenceSites`
 
 How many places reference each rule (`rule-patterns.ts::countSymbols`), counted after the head has copied its forms, so a form that still holds a hidden rule keeps it from narrowing in place. Every symbol in every rule counts, each occurrence apart, except the list's own: the rest narrows every item of the list alike, so the list counts its item expression once (each occurrence in it apart) and its separator once.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::RenameEntry`
+
+A queued rename: the kind whose `.` entry holds it, and the name it takes.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::ListRename`
+
+How a list holds kind names. A `refs` list holds rules, where only a reference names a kind and a bare string is a token or a precedence name. A `names` list holds names, where a bare string is one.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::RenameScope`
+
+What a rename checks beyond the rules: the layer's depth, and the kinds the grammar's `factoryInline` names (`layer.ts::factoryInlineNames`).
+
+### `packages/codegen/src/dsl/verbs/rename.ts::applyRenames`
+
+Applies a layer's queued renames in order, each as its own entry (`copy.ts::applyEntry`), so a refused one leaves the rest to apply.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::applyRename`
+
+Renames one kind. It is refused (`rename-invalid`) when:
+
+- the layer is the first, which records no provenance, so the rename could not give `renamedFrom`;
+- the source is no rule or external of the grammar;
+- the source is the start rule, which must stay first;
+- it would flip hiddenness;
+- the grammar already names the target, which would make it a merge, and an alias declares a merge;
+- the source is a `factoryInline` kind, a list no rename rewrites.
+
+Otherwise every reference to the kind in every rule is renamed (`effects.ts::renameRefs`). A rule source's body moves to the new name, which joins `created` so the runtime appends it. The old name is left as a blank rule nothing reaches, since the runtime's `grammar()` can append a rule but never remove one. An external that is no rule moves no body. The externals are read under the renames the layer already made, so a second rename of a renamed external finds it. The effect it records renames the layer's lists (`renamedLists`), rewrites its inherited records (`effects.ts::rewriteInherited`) and gives `renamedFrom` (`effects.ts::provenanceOf`).
+
+### `packages/codegen/src/dsl/verbs/rename.ts::vacatedNames`
+
+The names a layer's renames vacated: each rename's source. Their rules are the blanks the renames left, which `layer.ts::completeLayer` keeps over the bodies the callbacks returned.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::renamedLists`
+
+A layer's lists under its renames (`effects.ts::renameMapOf`), each key renamed as `kinds` says (`ListRename`). With no rename it returns the input itself, so a layer that renames nothing passes its lists through untouched.

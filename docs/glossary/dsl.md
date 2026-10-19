@@ -7403,12 +7403,12 @@ layer's callbacks make become its record's `externalRoles` in either runtime.
 The layer up to completion. The config's `groups:`, `renderAs:` and `visibleExternals:` callbacks are evaluated
 once (`wire/wire.ts::evaluatedConfig`), for intake and wire to read. Intake completes the base and the pending base
 takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed
-base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues, and its alias
+base; its refusals join the pass's diagnostics and its `narrow`, lead and rename entries the pass's queues, and its alias
 edits are checked at the layer's depth (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter
 normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context
 (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the
 layer's effects resolved per owner, and runs the queued entries as the whole-grammar phase: the `narrow` entries
-(`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`). The stage bases are the ones its
+(`verbs/narrow.ts::applyNarrows`) then the leads (`verbs/lead.ts::applyLeads`), then the renames (`verbs/rename.ts::applyRenames`). A layer with renames hands them its depth and its `factoryInline` kinds (`factoryInlineNames`); a layer without reads neither. The stage bases are the ones its
 base's record carries, or, for the first layer that departs from its base (`departsFromBase`), its source and the
 base it completed. Each whole copy wire made joins the supertype and inline lists its source is in, before the queued entries run.
 
@@ -7448,9 +7448,9 @@ The conflict sets the `conflicts` callback returns. The first layer's are its se
 
 ### `packages/codegen/src/dsl/layer.ts::completeLayer`
 
-Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The layer's result (`layerResult`), its bodies and lists as the runtime takes them, is checked against enrich (`enrichFixpoint`) with the display families every effect so far declares, the inherited ones and the layer's own. The check is the record's `fixpoint`, run at most once. Every layer is checked where it is produced: an authored layer runs it at completion and records its diagnostic, while a generated layer (`LayerConfig`'s `generated`) runs it only when asked, by the layer above taking its base or by its producer (`compiler/evaluate.ts::generatedLayerDiagnostics`). The layer's result is taken here, so a later run checks the layer as it completed. No layer checks its base again. The record is built: depth, upstream, whether the layer is generated, the fixpoint check, resolutions, dead mints, text tokens, lift names, effects, the records (`layer-record.ts::mergedRecords`: the ones its base's record carries, rewritten through the effects (`rewriteInherited`), under the layer's own (`ownRecordsOf`), which take the `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`)), where the layer's render bodies go (`layer-record.ts::synthesizedOf`, after the rules the runtime holds once the layer's bodies join its base's), wire's automatic-variant record, the stage bases, the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
+Completion, in order. The layer's lists, its conflict sets among them, are renamed by its renames (`verbs/rename.ts::renamedLists`, as `LAYER_LIST_RENAMES` says), and so are the enrich text tokens. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The layer's result (`layerResult`), its bodies and lists as the runtime takes them, is checked against enrich (`enrichFixpoint`) with the display families every effect so far declares, the inherited ones and the layer's own. The check is the record's `fixpoint`, run at most once. Every layer is checked where it is produced: an authored layer runs it at completion and records its diagnostic, while a generated layer (`LayerConfig`'s `generated`) runs it only when asked, by the layer above taking its base or by its producer (`compiler/evaluate.ts::generatedLayerDiagnostics`). The layer's result is taken here, so a later run checks the layer as it completed. No layer checks its base again. The record is built: depth, upstream, whether the layer is generated, the fixpoint check, resolutions, dead mints, text tokens, lift names, effects, the records (`layer-record.ts::mergedRecords`: the ones its base's record carries, rewritten through the effects (`rewriteInherited`), under the layer's own (`ownRecordsOf`), which take the `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`)), where the layer's render bodies go (`layer-record.ts::synthesizedOf`, after the rules the runtime holds once the layer's bodies join its base's), wire's automatic-variant record, the stage bases, the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
 
-Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags). The rules the verbs created follow every body wire evaluated, in creation order, so the runtime appends them last.
+Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, a kind a rename vacated as the blank the rename left (`verbs/rename.ts::vacatedNames`), and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags). The rules the verbs created follow every body wire evaluated, in creation order, so the runtime appends them last.
 
 ### `packages/codegen/src/dsl/layer.ts::ownRecordsOf`
 
@@ -7479,6 +7479,14 @@ A record's entries that hold a value, or undefined when none does.
 ### `packages/codegen/src/dsl/layer.ts::normalizedBodies`
 
 Each render body normalized as a rule callback's value is (`normalizedBody`), or undefined when there is none.
+
+### `packages/codegen/src/dsl/layer.ts::LAYER_LIST_RENAMES`
+
+How a rename rewrites each of the layer's lists (`verbs/rename.ts::ListRename`). The rule lists (externals, reserved word sets, extras, precedences) are renamed by their references only, and the name lists (word, conflicts, inline, supertypes) by every name. It is typed over every `LayerLists` key, so a new list fails the type-check until it is given an entry.
+
+### `packages/codegen/src/dsl/layer.ts::factoryInlineNames`
+
+The kinds `factoryInline` names for the layer: the list its source grammar carries and the ones the layer's own callback names (`wire/wire.ts::factoryInlineNamesOf`). A rename refuses them (`verbs/rename.ts::applyRename`).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
@@ -7696,25 +7704,9 @@ What a field wrap fields: an unfielded reference to a kind (`symbol`, matched by
 
 A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`, and a repeat of the target is wrapped whole (`isWrapSite`).
 
-### `packages/codegen/src/dsl/bind.ts::LIST_FIELDS`
-
-The grammar's top-level fields that are plain lists of kind names (`supertypes`, `inline`, `factoryInline`, `textTokens`); a rename maps each entry. The layer records that list kind names rename through the effect table (`renameRecords`).
-
-### `packages/codegen/src/dsl/bind.ts::RULE_FIELDS`
-
-The grammar's top-level fields whose entries are rules or lists of rules and names (`extras`, `externals`, `precedences`, `reserved`, `conflicts`); a rename walks them like a rule body.
-
 ### `packages/codegen/src/dsl/bind.ts::mappedName`
 
 A name through a rename record: the mapped name where the record has one of its own, else the name unchanged. `Object.hasOwn` keeps a kind named like an object property (`constructor`) from reading a prototype member.
-
-### `packages/codegen/src/dsl/bind.ts::carryHiddenFacts`
-
-Copies the non-enumerable facts a grammar carries (the facts wire and enrich stamp on the result) onto a rebuilt grammar, renaming the names in a set or list fact. A spread copies only enumerable keys, so without it each bind step would drop them.
-
-### `packages/codegen/src/dsl/bind.ts::renameGrammar`
-
-The grammar with each rename's base rule or external taking its new name everywhere a kind is named: the rules' keys and bodies, list and rule fields, the records the effect table names (`renameRecords`), `word`, every set of names, and the hidden facts. `renamedFrom` records each new name's base name for the phases that read base names. A rename of a name the grammar lacks, one that flips hiddenness, or one onto a name the grammar already has is an error.
 
 ### `packages/codegen/src/dsl/bind.ts::fieldHosts`
 

@@ -22,8 +22,9 @@ import { RuleWalker } from './rule-walker.ts';
 import type { DisplayFamilies } from './rule-transforms.ts';
 import { baseRulesOf, VERIFIED_TREE_SITTER } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
-import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
+import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, renameMapOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
+import { applyRenames, renamedLists, vacatedNames, type ListRename } from './verbs/rename.ts';
 import { applyNarrows } from './verbs/narrow.ts';
 import { deadEnrichMints, withoutDeadNames } from './wire/dead-mints.ts';
 import { derivationRecordsOf } from './wire/derivation-records.ts';
@@ -32,6 +33,7 @@ import type { OptionsConfig } from './wire/options-block.ts';
 import {
 	authoredFieldSites,
 	evaluatedConfig,
+	factoryInlineNamesOf,
 	layerSymbols,
 	namedSymbols,
 	protectedWireRuleNames,
@@ -83,6 +85,17 @@ export interface LayerLists {
 	readonly supertypes: readonly unknown[];
 	readonly precedences?: unknown;
 }
+
+const LAYER_LIST_RENAMES = {
+	externals: 'refs',
+	reserved: 'refs',
+	extras: 'refs',
+	precedences: 'refs',
+	word: 'names',
+	conflicts: 'names',
+	inline: 'names',
+	supertypes: 'names'
+} as const satisfies { readonly [K in keyof LayerLists]-?: ListRename };
 
 export interface LayerOutput {
 	readonly name: string;
@@ -354,7 +367,7 @@ function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, confi
 	const completed = intake(source, { config, name, inherited, declared });
 	completePendingBase(base, completed);
 	const depth = (inherited?.depth ?? 0) + 1;
-	const layer: WireLayer = { name, depth, diagnostics, narrows: [], leads: [] };
+	const layer: WireLayer = { name, depth, diagnostics, narrows: [], leads: [], renames: [] };
 	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, layer, declared);
 	const wire = wired.__wireContext__!;
 	const anyName = layerSymbols();
@@ -385,7 +398,12 @@ function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, confi
 	for (const copy of wire.copies.values()) if (copy.part === '.') ctx.lists.enlist(copy.source, copy.copy);
 	applyNarrows(layer.narrows, ctx);
 	applyLeads(layer.leads, ctx);
+	if (layer.renames.length > 0) applyRenames(layer.renames, ctx, { depth, factoryInline: factoryInlineNames(source, config) });
 	return { evaluated, ctx };
+}
+
+function factoryInlineNames(source: GrammarResult, config: LayerConfig): ReadonlySet<string> {
+	return new Set([...symbolNamesOf((source.grammar as { readonly factoryInline?: unknown }).factoryInline), ...factoryInlineNamesOf(config)]);
 }
 
 function departsFromBase(wire: WireContext, config: LayerConfig): boolean {
@@ -459,7 +477,8 @@ function layerConflicts(ctx: LayerCtx): readonly (readonly unknown[])[] {
 function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, roles: ReadonlyMap<string, ExternalRole>): LayerOutput {
 	const { rules, wire, depth } = ctx;
 	const projections = ctx.inherited === undefined ? undefined : appendProvenance(ctx.inherited.projections, provenanceOf(ctx.effects, rules));
-	const view = { grammar: { ...ctx.grammar, rules, supertypes: ctx.lists.supertypes, inline: ctx.lists.inline } };
+	const renamed = renamedLists({ ...evaluated, conflicts: layerConflicts(ctx), supertypes: ctx.lists.supertypes, inline: ctx.lists.inline }, LAYER_LIST_RENAMES, ctx.effects);
+	const view = { grammar: { ...ctx.grammar, rules, supertypes: renamed.supertypes, inline: renamed.inline } };
 	stampWiredVariants(view, ctx.base, wire.automaticVariants, new Set(wire.elementSupertypes.keys()));
 	const dead = deadEnrichMints(view.grammar, { mints: getEnrichMints(ctx.base), protectedNames: ctx.protectedNames });
 	const blank = nativeRuleFn<() => Rule>('blank');
@@ -467,16 +486,17 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 	const deadMints = new Set([...(ctx.inherited?.deadMints ?? []), ...dead]);
 	const liftNames = new Map<string, LiftName>([...(ctx.inherited?.liftNames ?? []), ...wire.liftNames]);
 	const sections = resolutionSections(ctx.resolutions);
-	const supertypes = withoutDeadNames(ctx.lists.supertypes, dead) as readonly unknown[];
+	const supertypes = withoutDeadNames(renamed.supertypes, dead) as readonly unknown[];
 	const baseRules = baseRulesOf(ctx.base) ?? {};
 	const start = Object.keys(rules)[0];
+	const renames = renameMapOf(ctx.effects);
+	const vacated = vacatedNames(ctx.effects);
 	const bodies = new Map<string, unknown>();
-	for (const [name, body] of wire.evaluatedBodies!) bodies.set(name, name === start || dead.has(name) || isRecord(body) ? rules[name] : body);
+	for (const [name, body] of wire.evaluatedBodies!) bodies.set(name, name === start || dead.has(name) || vacated.has(name) || isRecord(body) ? rules[name] : body);
 	for (const name of ctx.created) if (!bodies.has(name)) bodies.set(name, rules[name]);
 	const lists: LayerLists = {
-		...evaluated,
-		conflicts: layerConflicts(ctx),
-		inline: withoutDeadNames(ctx.lists.inline, dead) as readonly unknown[],
+		...renamed,
+		inline: withoutDeadNames(renamed.inline, dead) as readonly unknown[],
 		supertypes
 	};
 	const effects = [...(ctx.inherited?.effects ?? []), ...ctx.effects];
@@ -494,7 +514,7 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 		fixpoint,
 		resolutions: ctx.resolutions,
 		deadMints,
-		textTokens: [...getEnrichTextTokens(ctx.base).keys()].filter((name) => !deadMints.has(name)),
+		textTokens: [...getEnrichTextTokens(ctx.base).keys()].filter((name) => !deadMints.has(name)).map((name) => renames.get(name) ?? name),
 		liftNames,
 		effects,
 		records: mergedRecords(ctx.inherited === undefined ? undefined : rewriteInherited(ctx.inherited.records, { effects: ctx.effects, rules }), own),

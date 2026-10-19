@@ -824,3 +824,15 @@ Whether an entry value is a `lead` placeholder.
 ### `packages/codegen/src/dsl/primitives/lead.ts::lead`
 
 `L: { '.': lead(item, field, ...admits) }` separates the head of the separated list `L` that the admits allow into a receiver form (`verbs/lead.ts::applyLead`). It is valid only at the list kind's `.`, where wire queues it for the layer's whole-grammar phase (`transform/transform.ts::queueLeadEntry`).
+
+### `packages/codegen/src/dsl/primitives/rename.ts::RenamePlaceholder`
+
+The `rename(to)` placeholder: the name the kind takes.
+
+### `packages/codegen/src/dsl/primitives/rename.ts::isRenamePlaceholder`
+
+Whether a value is a `rename` placeholder.
+
+### `packages/codegen/src/dsl/primitives/rename.ts::rename`
+
+A rename entry: `kind: { '.': rename(to) }` renames the kind to `to` in the layer it sits in (`verbs/rename.ts::applyRename`). It applies only at `.`, the kind itself.

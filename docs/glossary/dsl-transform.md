@@ -455,10 +455,6 @@ The walk behind `withDirectVariants`: it collects each labelled arm with its pat
 
 Each labelled arm's copy is noted as an inline write (`wire/wire.ts::wireNoteInlineWrite`), and so is the copy of a node that was one, so the same-site check (`refuseSameSite`) sees the arm the label wrote.
 
-### `packages/codegen/src/dsl/transform/transform.ts::refuseRefineEntry`
-
-A `refine(forms)` entry at a path other than `.` is refused (`edit-entry-invalid`): forms belong to the rule.
-
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveAt`
 
 Resolves an entry at the member a path reached: first the same-site check (`refuseSameSite`), then `resolvePatch`. Inside a copy, a replacement keeps the label of the arm it replaced (`automatic-variants.ts::carriedLabel`), because a copy keeps its members' `variantOf` stamps. The result is noted as an inline write when a rule callback, not an `edits:` set, applied it. Every route that rewrites one member goes through it: path entries, variant entries and flat positional entries.
@@ -517,15 +513,7 @@ A replacing entry's function form, `($, member) => rule`: it receives the layer'
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPathPatches`
 
-Applies a path-keyed patch set: a `narrow` entry is queued, with its path, for the layer's whole-grammar phase (`wire/wire.ts::wireQueueNarrow`), and a `lead` entry goes to `queueLeadEntry`; neither walks its path here. Every other non-variant entry applies at its path, each as its own active patch site
-(`wireWithPatchSites`) and through `appliedAtSite`, so an entry whose path matches nothing is its own
-`edit-site-missing` and the rest of the set still applies. An `arm.default` entry checks that its parent
-is a choice and clears the sibling defaults it displaced as part of its own site. The `variant()`
-entries then apply together (`applyVariantPatches`).
-
-### `packages/codegen/src/dsl/transform/transform.ts::queueLeadEntry`
-
-A `lead` entry. At `.`, the list kind itself, it is queued for the layer's whole-grammar phase (`wire/wire.ts::wireQueueLead`); at any other path it is `edit-entry-invalid` (`wire/wire.ts::wireRefuse`). It walks no path, so the rule stays as it is.
+Applies a path-keyed patch set. A `narrow` entry is queued, with its path, for the layer's whole-grammar phase (`wire/wire.ts::wireQueueNarrow`). A `refine`, `lead` or `rename` entry anywhere but `.` is refused (`refuseOffDotEntry`); at `.` a `lead` or a `rename` is queued (`wireQueueLead`, `wireQueueRename`). None of these walks its path here. Every other non-variant entry, a `refine` at `.` among them, applies at its path, each as its own active patch site (`wireWithPatchSites`) and through `appliedAtSite`, so an entry whose path matches nothing is its own `edit-site-missing` and the rest of the set still applies. An `arm.default` entry checks that its parent is a choice and clears the sibling defaults it displaced as part of its own site. The `variant()` entries then apply together (`applyVariantPatches`).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
@@ -1814,6 +1802,22 @@ Runs one entry's application as a unit (`wire/wire.ts::wireEntry`) and returns t
 ### `packages/codegen/src/dsl/transform/transform.ts::siteRefusalOf`
 
 The refusal an error out of an entry's application stands for: a `VerbRefusal` as itself, an `ApplyPathSkip` as `edit-site-missing` with the skip's reason, and nothing for any other error.
+
+### `packages/codegen/src/dsl/transform/transform.ts::DOT_ONLY_ENTRIES`
+
+The entries that apply only at `.`, each with the words its refusal names that site by: `refine` (the rule itself: forms belong to the rule), `lead` (the list kind itself) and `rename` (the kind itself).
+
+### `packages/codegen/src/dsl/transform/transform.ts::DotOnlyEntry`
+
+An entry `DOT_ONLY_ENTRIES` names.
+
+### `packages/codegen/src/dsl/transform/transform.ts::dotOnlyEntryOf`
+
+Which dot-only entry a patch value is, if any.
+
+### `packages/codegen/src/dsl/transform/transform.ts::refuseOffDotEntry`
+
+A dot-only entry at another path is refused (`edit-entry-invalid`, through `wire/wire.ts::wireRefuse`). It walks no path, so the rule stays as it is.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 
