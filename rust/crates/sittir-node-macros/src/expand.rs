@@ -220,6 +220,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         }
     };
     let codec = codec::choice(ident, &wire)?;
+    let writer = crate::write::choice(ident, &wire)?;
     let from_kind_id = all_units.then(|| {
         quote! {
             impl ::sittir_core::prepare::FromKindId for #ident {
@@ -242,6 +243,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     ::core::option::Option::None
                 }
                 #codec
+                #writer
             };
             #from_kind_id
         });
@@ -336,6 +338,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             }
             #has_layout
             #codec
+            #writer
         };
         #from_kind_id
     })
@@ -362,6 +365,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     let spelled = attrs.spelled.then(|| quote!(.or_else(|| __rt::spelled_id(&__rt::survey(cursor)).and_then(|id| __member(id, id)))));
     let ids = firsts.iter().map(|(name, first)| quote!(#ident::#name => #first,));
     let codec = codec::members(ident);
+    let writer = crate::write::members(ident);
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -406,6 +410,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                 }
             }
             #codec
+            #writer
         };
     })
 }
@@ -429,7 +434,7 @@ pub(crate) struct Field<'a> {
     pub(crate) ident: &'a Ident,
     pub(crate) ty: &'a Type,
     pub(crate) role: Role,
-    key: Option<LitStr>,
+    pub(crate) key: Option<LitStr>,
 }
 
 /// A field's role, from the one stamp it carries.
@@ -579,6 +584,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         Some(fixed) => codec::text_leaf(ident, &wire, fixed.as_ref(), attrs.kind.as_ref())?,
         None => codec::structure(ident, &wire)?,
     };
+    let writer = crate::write::structure(ident, attrs, &fields)?;
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -612,6 +618,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #has_layout
             #separator_kind_of
             #codec
+            #writer
         };
         #record
         #fields_trait

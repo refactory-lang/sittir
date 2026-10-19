@@ -11,6 +11,9 @@
 //! #[derive(sittir_core::Node)]
 //! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
 //! struct Example {
+//!     #[wire(key = "$_layout")]
+//!     #[layout]
+//!     layout: Option<Box<sittir_core::layout::NodeLayout<sittir_core::trivia::TriviaText>>>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 4)]
 //!     value: String,
@@ -24,6 +27,9 @@
 //! #[derive(sittir_core::Node)]
 //! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
 //! struct Example {
+//!     #[wire(key = "$_layout")]
+//!     #[layout]
+//!     layout: Option<Box<sittir_core::layout::NodeLayout<sittir_core::trivia::TriviaText>>>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 2, width = 3)]
 //!     value: String,
@@ -37,6 +43,9 @@
 //! #[derive(sittir_core::Node)]
 //! #[node(kind = KIND, interior = "(?<value>.*)", words = 6)]
 //! struct Example {
+//!     #[wire(key = "$_layout")]
+//!     #[layout]
+//!     layout: Option<Box<sittir_core::layout::NodeLayout<sittir_core::trivia::TriviaText>>>,
 //!     #[wire(key = "_value")]
 //!     #[slot(capture = "value", word = 1, width = 4)]
 //!     value: String,

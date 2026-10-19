@@ -32,6 +32,9 @@ pub type Link<'a> = dyn FnMut(&NodeCoordinate) -> Result<Linked, ArenaError> + '
 /// Where a record writer writes.
 pub struct RecordSink<'a, T> {
     to: Target<'a, T>,
+    /// The row of the parsed record whose cells are being written: a child
+    /// read from the same row is its envelope's content.
+    holder: Option<NodeIndex>,
 }
 
 enum Target<'a, T> {
@@ -46,12 +49,12 @@ enum Target<'a, T> {
 impl<'a, T: Clone> RecordSink<'a, T> {
     /// A first read's sink: `arena` is `tree`'s.
     pub fn parsed(tree: TreeId, arena: &'a mut TreeArena) -> Self {
-        Self { to: Target::Parsed { tree, arena } }
+        Self { to: Target::Parsed { tree, arena }, holder: None }
     }
 
     /// A built write's sink, its trivia kept in `store`.
     pub fn built(arena: &'a mut Arena, store: &'a TriviaStore<T>, link: &'a mut Link<'a>) -> Self {
-        Self { to: Target::Built { arena, store, link } }
+        Self { to: Target::Built { arena, store, link }, holder: None }
     }
 
     fn arena(&mut self) -> &mut Arena {
@@ -107,6 +110,20 @@ impl<'a, T: Clone> RecordSink<'a, T> {
         for &(word, unit) in units {
             keep(Place::Unit { holder: at, word, item: unit.item }, &unit.trivia);
         }
+    }
+}
+
+/// A node's layout field, and the trivia its layout holds: the trivia type
+/// a node's record writer writes with.
+pub trait LayoutField {
+    type Trivia;
+    fn layout(&self) -> Option<&NodeLayout<Self::Trivia>>;
+}
+
+impl<T> LayoutField for Option<Box<NodeLayout<T>>> {
+    type Trivia = T;
+    fn layout(&self) -> Option<&NodeLayout<T>> {
+        self.as_deref()
     }
 }
 
@@ -229,8 +246,11 @@ pub fn leaf_cell<T: Clone>(sink: &mut RecordSink<'_, T>, kind: KindId, text: &st
 ///
 /// A parsed node's record is written once, for its row (`layout.at`): a later
 /// write of the row answers the record the first one wrote and writes
-/// nothing. A built node's trivia and its units' move into the store of
-/// written sides, keyed by its record.
+/// nothing. An envelope's content is read from its envelope's row, so a
+/// record of its holder's row is written as part of the holder: the row's
+/// record is the outermost one, and the content's is reached through its
+/// cell. A built node's trivia and its units' move into the store of written
+/// sides, keyed by its record.
 ///
 /// # Errors
 ///
@@ -252,8 +272,10 @@ pub fn write_record<T: Clone>(
     let row = match sink.tree() {
         Some(tree) => {
             let row = RecordSink::row(tree, layout, "a parsed record with no row")?;
-            if let Some(at) = sink.recorded(row) {
-                return Ok(at);
+            if sink.holder != Some(row) {
+                if let Some(at) = sink.recorded(row) {
+                    return Ok(at);
+                }
             }
             if layout.is_some_and(|layout| layout.trivia.is_some() || !layout.units.is_empty()) {
                 return Err(ArenaError::Unwritable("written trivia in a parsed record"));
@@ -271,12 +293,17 @@ pub fn write_record<T: Clone>(
         .collect::<Result<Vec<_>, _>>()?;
     let mut record = vec![0; words as usize];
     record[0] = u32::from(kind.0);
-    cells(sink, &mut record, &mut side)?;
+    let content = row.is_some() && sink.holder == row;
+    let holder = std::mem::replace(&mut sink.holder, row);
+    let written = cells(sink, &mut record, &mut side);
+    sink.holder = holder;
+    written?;
     if !side.is_empty() {
         record[1] = side.write(sink.arena())?.0;
     }
     let at = sink.arena().push(&record)?;
     match (row, &mut sink.to) {
+        (Some(_), Target::Parsed { .. }) if content => {}
         (Some(row), Target::Parsed { arena, .. }) => arena.index(row, at)?,
         _ => sink.keep_sides(at, layout.and_then(|layout| layout.trivia.as_ref()), &units),
     }
@@ -533,6 +560,34 @@ mod tests {
             .expect("the first record");
         assert_eq!(again, first);
         assert_eq!(tree.arena().chunk(first.chunk()).expect("its chunk").len(), written);
+    }
+
+    /// An envelope: its content at words 2..7, read from the same row.
+    struct Envelope {
+        layout: Layout,
+        content: SlotValue<Pair>,
+    }
+
+    impl WriteCell<TriviaText> for Envelope {
+        fn write_cell(&self, sink: &mut RecordSink<'_, TriviaText>) -> Result<Cell, ArenaError> {
+            let at = write_record(sink, KindId(8), 7, self.layout.as_deref(), |_| None, |sink, words, _| self.content.write_cell(sink)?.encode(&mut words[2..7]))?;
+            Ok(Cell::Child { kind: KindId(8), at, link: None })
+        }
+    }
+
+    #[test]
+    fn an_envelope_s_row_holds_the_envelope_and_its_content_is_reached_through_its_cell() {
+        let mut tree = TreeArena::new();
+        let content = pair(Some(read_at(1, 3)), name("a", Some(read_at(2, 3))), Vec::new());
+        let envelope = Envelope { layout: Some(read_at(1, 3)), content: SlotValue::Node(content) };
+        let cell = envelope.write_cell(&mut RecordSink::parsed(TREE, &mut tree)).expect("written");
+        let Cell::Child { at, .. } = cell else { panic!("a record, not {cell:?}") };
+        assert_eq!(tree.record(NodeIndex(1)), Some(at), "the row's record is the outermost");
+        let inner = Cell::decode(&tree.arena().words(at, 7).expect("its words")[2..7]).expect("its content's cell");
+        let (kind, side, ..) = pair_record(tree.arena(), inner);
+        assert_eq!((kind, side.at), (PAIR, Some((NodeIndex(1), NodeIndex(3)))));
+        let again = envelope.write_cell(&mut RecordSink::parsed(TREE, &mut tree)).expect("the first record");
+        assert_eq!(again, cell);
     }
 
     #[test]

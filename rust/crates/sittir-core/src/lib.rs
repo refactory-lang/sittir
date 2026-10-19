@@ -82,6 +82,25 @@ macro_rules! napi_codec {
     ($($item:item)*) => {};
 }
 
+/// The items of a derived node's record writer (`arena::WriteCell`), kept
+/// only when this crate is built with the arena, so a crate that derives
+/// `Node` needs no feature of its own.
+#[cfg(feature = "arena")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! records_codec {
+    ($($item:item)*) => { $($item)* };
+}
+
+/// The items of a derived node's record writer, dropped: this crate is
+/// built without the arena.
+#[cfg(not(feature = "arena"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! records_codec {
+    ($($item:item)*) => {};
+}
+
 pub use verbatim::VerbatimNode;
 pub use error_read::ErrorRead;
 // Flat re-export for the typed render sink: the sink a render writes into,

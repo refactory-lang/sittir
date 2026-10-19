@@ -19,7 +19,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 pub use cell::{Cell, ListCell, ParsedLink};
-pub use write::{Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record};
+pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record};
 pub use rows::TreeArena;
 pub use side::{SideRecord, SideSlot, Sides};
 

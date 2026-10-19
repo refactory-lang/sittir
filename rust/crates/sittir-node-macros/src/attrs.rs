@@ -78,6 +78,8 @@ pub struct SlotAttrs {
 /// is read), and the site prepare fills it from.
 pub struct SpaceAttrs {
     pub slot: u32,
+    /// Whether the setting is the separator's `before` side, else its `after`.
+    pub before: bool,
     pub site: Path,
 }
 
@@ -295,7 +297,7 @@ pub fn space_attrs(attrs: &[Attribute]) -> syn::Result<Option<SpaceAttrs>> {
         Ok(())
     })?;
     match (slot, side, site) {
-        (Some(slot), Some(_), Some(site)) => Ok(Some(SpaceAttrs { slot, site })),
+        (Some(slot), Some(side), Some(site)) => Ok(Some(SpaceAttrs { slot, before: side == "before", site })),
         _ => Err(syn::Error::new_spanned(attr, "`space` names its `slot`, `side` and `site`")),
     }
 }
