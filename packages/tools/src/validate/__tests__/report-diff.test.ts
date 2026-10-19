@@ -46,14 +46,15 @@ const written = (name: string, report: ValidationReport): string => {
 
 describe('readValidationReport', () => {
 	it('reads back the report the writer wrote', () => {
-		const report = rep([row('rust', 'x', 'm')], { rust: { digest: 'd', counts: { y: { info: 2 } } } });
+		const report = rep([row('rust', 'x', 'm')], { rust: { digest: 'd', counts: { y: { info: 2 } }, blocking: { z: { error: 1 } } } });
 		expect(readValidationReport(written('a.json', report))).toEqual(report);
 	});
 
-	it('reads a report in the flat row-array format, folding its grammar rows into counts and a digest', () => {
+	it('reads a report in the flat row-array format, folding its grammar rows into counts, blocking rows and a digest', () => {
 		const grammarRow = { source: 'grammar', grammar: 'rust', backend: 'native', code: 'y', severity: 'info', message: 'g' };
-		expect(readValidationReport(file('old.json', JSON.stringify([row('rust', 'x', 'm'), grammarRow, grammarRow])))).toEqual(
-			rep([row('rust', 'x', 'm')], { rust: { digest: expect.stringMatching(/^[0-9a-f]{64}$/), counts: { y: { info: 2 } } } })
+		const blockingRow = { ...grammarRow, code: 'z', severity: 'error', canProceed: false };
+		expect(readValidationReport(file('old.json', JSON.stringify([row('rust', 'x', 'm'), grammarRow, grammarRow, blockingRow])))).toEqual(
+			rep([row('rust', 'x', 'm')], { rust: { digest: expect.stringMatching(/^[0-9a-f]{64}$/), counts: { y: { info: 2 } }, blocking: { z: { error: 1 } } } })
 		);
 		expect(readValidationReport(file('empty-array.json', '[]'))).toEqual(rep([]));
 	});
@@ -134,23 +135,26 @@ describe('diffValidationReports', () => {
 	});
 
 	it('counts recorded grammar diagnostics in the grammar totals and the per-code deltas', () => {
-		const base = rep([], { rust: { digest: 'd', counts: { y: { info: 2 }, z: { error: 1 } } } });
-		const head = rep([], { rust: { digest: 'e', counts: { y: { info: 3 }, z: { error: 1 } } } });
+		const base = rep([], { rust: { digest: 'd', counts: { y: { info: 2 }, z: { error: 1 } }, blocking: { b: { error: 1 } } } });
+		const head = rep([], { rust: { digest: 'e', counts: { y: { info: 3 }, z: { error: 1 } }, blocking: { b: { error: 2 } } } });
 		const diff = diffValidationReports(base, head);
-		expect(diff.grammars).toEqual([{ grammar: 'rust', base: 3, head: 4, added: 0, removed: 0 }]);
-		expect(diff.codes).toEqual([{ grammar: 'rust', code: 'y', base: 2, head: 3 }]);
+		expect(diff.grammars).toEqual([{ grammar: 'rust', base: 4, head: 6, added: 0, removed: 0 }]);
+		expect(diff.codes).toEqual([
+			{ grammar: 'rust', code: 'b', base: 1, head: 2 },
+			{ grammar: 'rust', code: 'y', base: 2, head: 3 }
+		]);
 	});
 
 	it('reports a grammar whose diagnostics changed, by its digests', () => {
 		const counts = { y: { info: 1 } };
-		expect(diffValidationReports(rep([], { rust: { digest: 'd', counts } }), rep([], { rust: { digest: 'e', counts } })).digests).toEqual([
+		expect(diffValidationReports(rep([], { rust: { digest: 'd', counts, blocking: {} } }), rep([], { rust: { digest: 'e', counts, blocking: {} } })).digests).toEqual([
 			{ grammar: 'rust', base: 'd', head: 'e' }
 		]);
 	});
 
 	it('finds nothing moved between a flat-format report and the same diagnostics in the record format', () => {
 		const owned = { scope: 'grammar', grammar: 'rust', code: 'y', severity: 'info' as const, message: 'g', ownerKind: 'k', location: 'k' };
-		const unowned = { scope: 'grammar', grammar: 'rust', code: 'z', severity: 'error' as const, message: 'h', location: undefined };
+		const unowned = { scope: 'grammar', grammar: 'rust', code: 'z', severity: 'error' as const, message: 'h', location: undefined, canProceed: false };
 		const flatRows = [owned, unowned].map((d) => ({ source: 'grammar', backend: 'native', ...d, sClass: null }));
 		const flat = readValidationReport(file('flat.json', JSON.stringify([row('rust', 'x', 'm'), ...flatRows])));
 		const records = buildValidationReport({ rust: { entries: [owned, unowned] } }, { rust: [] });
@@ -173,7 +177,7 @@ describe('formatReportDiff', () => {
 	it('prints every grammar, every changed code, every changed diagnostics file and every moved row, without truncating', () => {
 		const long = 'm'.repeat(400);
 		const lines = formatReportDiff(
-			diffValidationReports(rep([row('rust', 'x', 'a')], { rust: { digest: 'd', counts: {} } }), rep([row('rust', 'x', long)], { rust: { digest: 'e', counts: {} } }))
+			diffValidationReports(rep([row('rust', 'x', 'a')], { rust: { digest: 'd', counts: {}, blocking: {} } }), rep([row('rust', 'x', long)], { rust: { digest: 'e', counts: {}, blocking: {} } }))
 		);
 		expect(lines).toContain('rust: rows 1 -> 1 (+1 -1)');
 		expect(lines).toContain('  rust: grammar diagnostics changed (digest d -> e)');

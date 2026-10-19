@@ -3,6 +3,7 @@ import {
 	buildValidationReport,
 	checkCodeCeilings,
 	ceilingAdvice,
+	readCodeCeilings,
 	countCodeEntries,
 	readValidationReport,
 	writeValidationReport,
@@ -10,20 +11,22 @@ import {
 	type ValidationReport,
 	type ValidationReportEntry
 } from '../validation-report.ts';
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { readFileSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 describe('buildValidationReport', () => {
-	it('records each grammar\'s diagnostics as counts per code and severity, with a digest of its entries', () => {
+	it('records each grammar\'s diagnostics as counts per code and severity, the rows that cannot proceed apart as blocking, with a digest of its entries', () => {
 		const report = buildValidationReport(
 			{
 				typescript: {
 					entries: [
 						{ code: 'non-literal-separator', severity: 'warning', message: 'Separator is not a literal string.' },
-						{ code: 'conflict-resolution', severity: 'info', message: 'a' },
-						{ code: 'conflict-resolution', severity: 'info', message: 'b' }
+						{ code: 'conflict-resolution', severity: 'info', message: 'a', canProceed: true },
+						{ code: 'conflict-resolution', severity: 'info', message: 'b' },
+						{ code: 'unclassifiable-shape', severity: 'error', message: 'u', canProceed: false },
+						{ code: 'conflict-resolution', severity: 'info', message: 'c', canProceed: false }
 					]
 				}
 			},
@@ -33,7 +36,8 @@ describe('buildValidationReport', () => {
 			grammars: {
 				typescript: {
 					digest: expect.stringMatching(/^[0-9a-f]{64}$/),
-					counts: { 'conflict-resolution': { info: 2 }, 'non-literal-separator': { warning: 1 } }
+					counts: { 'conflict-resolution': { info: 2 }, 'non-literal-separator': { warning: 1 } },
+					blocking: { 'conflict-resolution': { info: 1 }, 'unclassifiable-shape': { error: 1 } }
 				}
 			},
 			rows: []
@@ -79,8 +83,13 @@ describe('countCodeEntries', () => {
 	});
 
 	it('adds the recorded grammar diagnostic counts at error and warning severity', () => {
-		const counted = countCodeEntries(report([entry('rust', 'a')], { rust: { digest: 'd', counts: { a: { error: 2, info: 5 }, b: { info: 1 } } } }));
+		const counted = countCodeEntries(report([entry('rust', 'a')], { rust: { digest: 'd', counts: { a: { error: 2, info: 5 }, b: { info: 1 } }, blocking: {} } }));
 		expect(counted).toEqual({ rust: { a: 3 } });
+	});
+
+	it('leaves out the grammar rows that cannot proceed: the grammar\'s expectDiagnostics gates each of them by owner', () => {
+		const counted = countCodeEntries(report([], { rust: { digest: 'd', counts: { a: { warning: 1 } }, blocking: { a: { error: 4 }, b: { fail: 1 } } } }));
+		expect(counted).toEqual({ rust: { a: 1 } });
 	});
 });
 
@@ -112,7 +121,7 @@ describe('checkCodeCeilings', () => {
 
 	it('fails any fatal row whatever its ceiling, from a validator row or a recorded grammar count', () => {
 		const lenient: CodeCeilings = { rust: { stale: 5 }, python: { stale: 5 } };
-		const fatal = report([entry('rust', 'stale', 'fail')], { python: { digest: 'd', counts: { stale: { fail: 1 } } } });
+		const fatal = report([entry('rust', 'stale', 'fail')], { python: { digest: 'd', counts: { stale: { fail: 1 } }, blocking: {} } });
 		expect(checkCodeCeilings(fatal, lenient, ['python', 'rust']).violations).toEqual([
 			{ grammar: 'python', code: 'stale', count: 1, ceiling: 0 },
 			{ grammar: 'rust', code: 'stale', count: 1, ceiling: 0 }
@@ -138,18 +147,39 @@ describe('committed diagnostic ratchet', () => {
 	it('the committed validation-report.json stays within the committed diagnostic-ceilings.json', () => {
 		const toolsRoot = fileURLToPath(new URL('../../..', import.meta.url));
 		const committed = readValidationReport(join(toolsRoot, 'validation-report.json'));
-		const ceilings = JSON.parse(readFileSync(join(toolsRoot, 'diagnostic-ceilings.json'), 'utf8')) as CodeCeilings;
+		const ceilings = readCodeCeilings(join(toolsRoot, 'diagnostic-ceilings.json'));
 		const grammars = [...new Set([...Object.keys(committed.grammars), ...committed.rows.map((e) => e.grammar)])];
 		expect(checkCodeCeilings(committed, ceilings, grammars).violations).toEqual([]);
 	});
 
 	it('stores only positive ceilings: an absent code has ceiling 0, so a 0 entry or an empty grammar would restate the default', () => {
 		const toolsRoot = fileURLToPath(new URL('../../..', import.meta.url));
-		const ceilings = JSON.parse(readFileSync(join(toolsRoot, 'diagnostic-ceilings.json'), 'utf8')) as CodeCeilings;
+		const ceilings = readCodeCeilings(join(toolsRoot, 'diagnostic-ceilings.json'));
 		const restated = Object.entries(ceilings).flatMap(([grammar, codes]) =>
 			Object.keys(codes).length === 0 ? [grammar] : Object.entries(codes).flatMap(([code, ceiling]) => (ceiling > 0 ? [] : [`${grammar} ${code}`]))
 		);
 		expect(restated).toEqual([]);
+	});
+
+	it('lists no code that has a blocking row in the committed report: expectDiagnostics is the gate for those', () => {
+		const toolsRoot = fileURLToPath(new URL('../../..', import.meta.url));
+		const committed = readValidationReport(join(toolsRoot, 'validation-report.json'));
+		const ceilings = readCodeCeilings(join(toolsRoot, 'diagnostic-ceilings.json'));
+		const gated = Object.entries(committed.grammars).flatMap(([grammar, { blocking }]) =>
+			Object.keys(blocking).filter((code) => ceilings[grammar]?.[code] !== undefined).map((code) => `${grammar} ${code}`)
+		);
+		expect(gated).toEqual([]);
+	});
+});
+
+describe('readCodeCeilings', () => {
+	it('reads a missing file as every ceiling 0, and refuses an unparseable one naming the path', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-ceilings-test-'));
+		expect(readCodeCeilings(join(dir, 'absent.json'))).toEqual({});
+		const bad = join(dir, 'bad.json');
+		writeFileSync(bad, '{');
+		expect(() => readCodeCeilings(bad)).toThrow(/bad\.json/);
+		rmSync(dir, { recursive: true, force: true });
 	});
 });
 
@@ -165,7 +195,7 @@ describe('writeValidationReport', () => {
 	it('writes the grammar records and the validator rows, overwriting any previous report', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-report-test-'));
 		const outPath = join(dir, 'validation-report.json');
-		const written = report([entry('rust', 'x')], { rust: { digest: 'd', counts: { y: { info: 1 } } } });
+		const written = report([entry('rust', 'x')], { rust: { digest: 'd', counts: { y: { info: 1 } }, blocking: { z: { error: 1 } } } });
 		writeValidationReport(written, outPath);
 		expect(JSON.parse(readFileSync(outPath, 'utf8'))).toEqual(written);
 		writeValidationReport(report([]), outPath);
@@ -176,11 +206,11 @@ describe('writeValidationReport', () => {
 	it('writes each grammar record and each row on its own line, rows sorted by grammar, backend and code', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-report-test-'));
 		const outPath = join(dir, 'validation-report.json');
-		writeValidationReport(report([entry('rust', 'b'), entry('python', 'a'), entry('rust', 'a')], { rust: { digest: 'd', counts: {} }, python: { digest: 'e', counts: {} } }), outPath);
+		writeValidationReport(report([entry('rust', 'b'), entry('python', 'a'), entry('rust', 'a')], { rust: { digest: 'd', counts: {}, blocking: {} }, python: { digest: 'e', counts: {}, blocking: {} } }), outPath);
 		const lines = readFileSync(outPath, 'utf8').split('\n').map((line) => line.trim().replace(/,$/, ''));
 		const rows = lines.filter((line) => line.startsWith('{"')).map((line) => JSON.parse(line) as ValidationReportEntry);
 		expect(rows.map((row) => `${row.grammar}/${row.code}`)).toEqual(['python/a', 'rust/a', 'rust/b']);
-		expect(lines).toContain('"python": {"digest":"e","counts":{}}');
+		expect(lines).toContain('"python": {"digest":"e","counts":{},"blocking":{}}');
 		rmSync(dir, { recursive: true, force: true });
 	});
 });

@@ -48,6 +48,7 @@ export interface DiagnosticEntryBase {
  * original fields rather than replacing them.
  */
 export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
+	readonly canProceed?: boolean;
 	readonly location?: string;
 	readonly proposal?: string;
 	readonly [key: string]: unknown;
@@ -87,7 +88,7 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
 	readonly grammar: string;
 	readonly backend: string;
 } & (
-		| Partial<Pick<GrammarDiagnosticEntry, 'location' | 'proposal'>>
+		| Partial<Pick<GrammarDiagnosticEntry, 'canProceed' | 'location' | 'proposal'>>
 		| Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>
 	);
 
@@ -96,13 +97,16 @@ export type DiagnosticCounts = Readonly<Record<string, Readonly<Record<string, n
 
 /**
  * What the report records of one grammar's `grammar-diagnostics.json`: its
- * rows counted per code and severity, and a digest of the rows (`digestOf`),
+ * rows counted per code and severity, partitioned by each row's own
+ * `canProceed` (`blocking` holds the rows that cannot proceed, `counts` the
+ * rest, so each row is counted once), and a digest of the rows (`digestOf`),
  * so a diff of two reports names a grammar whose diagnostics moved without
  * the report copying the rows.
  */
 export interface GrammarDiagnosticsRecord {
 	readonly digest: string;
 	readonly counts: DiagnosticCounts;
+	readonly blocking: DiagnosticCounts;
 }
 
 /** The validation report: each grammar's diagnostics record, and every validator failure as a row. */
@@ -144,6 +148,15 @@ function digestedFields({ source: _source, grammar: _grammar, backend: _backend,
 	return diagnostic;
 }
 
+/** One grammar's record of its diagnostics, from the diagnostics themselves or a flat report's grammar rows alike. */
+function recordOf(entries: readonly (DiagnosticEntryBase & { readonly canProceed?: boolean })[]): GrammarDiagnosticsRecord {
+	return {
+		digest: digestOf(entries),
+		counts: countDiagnostics(entries.filter((e) => e.canProceed !== false)),
+		blocking: countDiagnostics(entries.filter((e) => e.canProceed === false))
+	};
+}
+
 function countDiagnostics(entries: readonly DiagnosticEntryBase[]): DiagnosticCounts {
 	const counts: Record<string, Record<string, number>> = {};
 	for (const e of entries) {
@@ -161,7 +174,7 @@ export function buildValidationReport(
 ): ValidationReport {
 	const grammars: Record<string, GrammarDiagnosticsRecord> = {};
 	for (const [grammar, { entries }] of Object.entries(grammarDiagnosticsByGrammar)) {
-		grammars[grammar] = { digest: digestOf(entries), counts: countDiagnostics(entries) };
+		grammars[grammar] = recordOf(entries);
 	}
 	const rows: ValidationReportEntry[] = [];
 	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
@@ -198,7 +211,7 @@ export function readValidationReport(path: string): ValidationReport {
 			(row) => row.grammar
 		);
 		return {
-			grammars: Object.fromEntries([...grammarRows].map(([grammar, entries]) => [grammar, { digest: digestOf(entries), counts: countDiagnostics(entries) }])),
+			grammars: Object.fromEntries([...grammarRows].map(([grammar, entries]) => [grammar, recordOf(entries)])),
 			rows: rows.filter((row) => row.source !== 'grammar')
 		};
 	}
@@ -237,16 +250,28 @@ function compareReportRows(a: ValidationReportEntry, b: ValidationReportEntry): 
 }
 
 /**
- * Per grammar, the most report rows each diagnostic code may carry at error or
- * warning severity: the committed shape of `packages/tools/diagnostic-ceilings.json`.
- * A code a grammar does not list has ceiling 0, so every error and warning code is guarded,
- * and the file stores only positive ceilings.
+ * Per grammar, the most report rows each diagnostic code may carry at fail,
+ * error or warning severity: the committed shape of
+ * `packages/tools/diagnostic-ceilings.json`. A code a grammar does not list has
+ * ceiling 0, so every such code is guarded, and the file stores only positive
+ * ceilings. A grammar row that cannot proceed is not counted against a ceiling:
+ * the grammar's `expectDiagnostics` gates it by owner.
  */
 export type CodeCeilings = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
+/** Read the ceilings file at `path`. A missing file means every ceiling is 0; an unparseable one throws naming the path, since reading it as empty would silently pass. */
+export function readCodeCeilings(path: string): CodeCeilings {
+	if (!existsSync(path)) return {};
+	try {
+		return JSON.parse(readFileSync(path, 'utf8')) as CodeCeilings;
+	} catch (e) {
+		throw new Error(`diagnostic ceilings are not valid JSON: ${path}: ${(e as Error).message}`);
+	}
+}
+
 const isDebt = (severity: string): boolean => severity === 'fail' || severity === 'error' || severity === 'warning';
 
-/** Rows per grammar per code at fail, error or warning severity, validator rows and recorded grammar diagnostics alike; an info row records a fact, not debt. */
+/** Rows per grammar per code at fail, error or warning severity, validator rows and the recorded grammar rows that can proceed alike; an info row records a fact, not debt, and a blocking grammar row is gated by its grammar's `expectDiagnostics`. */
 export function countCodeEntries(report: ValidationReport): Record<string, Record<string, number>> {
 	return countCodeRows(report, isDebt);
 }

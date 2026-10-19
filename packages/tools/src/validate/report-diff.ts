@@ -66,11 +66,11 @@ function surplus(
 	});
 }
 
-/** Per (grammar, code), the row count: validator rows plus every recorded grammar diagnostic, whatever its severity. */
+/** Per (grammar, code), the row count: validator rows plus every recorded grammar diagnostic, blocking or not, whatever its severity. */
 function codeCounts(report: ValidationReport): Map<string, number> {
 	const counts = countBy(report.rows, (e) => JSON.stringify([e.grammar, e.code]));
 	for (const [grammar, record] of Object.entries(report.grammars))
-		for (const [code, bySeverity] of Object.entries(record.counts)) {
+		for (const [code, bySeverity] of [...Object.entries(record.counts), ...Object.entries(record.blocking)]) {
 			const key = JSON.stringify([grammar, code]);
 			counts.set(key, (counts.get(key) ?? 0) + Object.values(bySeverity).reduce((sum, n) => sum + n, 0));
 		}

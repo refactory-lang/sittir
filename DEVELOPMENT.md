@@ -170,17 +170,23 @@ Two committed ratchets back the run (both only ever tighten):
   `sittir tool check-baseline --base <base.json> --head <head.json>`.
 - `packages/tools/diagnostic-ceilings.json` — per grammar, the most
   fail-, error- and warning-severity rows each diagnostic code may have in
-  `validation-report.json`. Every `validate counts` run fails when a code
-  exceeds its ceiling (new debt); a code a grammar does not list has
-  ceiling 0, so every such code is guarded and a cleared code stays
-  cleared, and a code with any fatal (`fail`) row has ceiling 0 whatever
-  the file says. The file stores only positive ceilings. When a run
-  reports a code below its ceiling, lower the ceiling in the same commit,
-  or remove the entry once the code reaches 0.
+  `validation-report.json`, counting validator rows and the grammar rows
+  that can proceed. Every `validate counts` run fails when a code exceeds
+  its ceiling (new debt); a code a grammar does not list has ceiling 0, so
+  every such code is guarded and a cleared code stays cleared, and a code
+  with any fatal (`fail`) row has ceiling 0 whatever the file says. A
+  missing file means every ceiling is 0, which is the state today. The
+  file stores only positive ceilings. When a run reports a code below its
+  ceiling, lower the ceiling in the same commit, or remove the entry once
+  the code reaches 0. A grammar row that cannot proceed (`canProceed:
+  false`) is never counted: regeneration stops on it unless the grammar's
+  `expectDiagnostics:` floor-lists its owner for that code, and that
+  per-owner list is its gate.
 - `packages/tools/validation-report.json` — the report the committed
   ceilings are checked against (a unit test pins the committed pair). It
   records, per grammar, its `grammar-diagnostics.json` as counts per code and
-  severity plus a digest of its rows, and every validator failure as a row,
+  severity, with the rows that cannot proceed counted apart as `blocking`,
+  plus a digest of its rows, and every validator failure as a row,
   one record per line. Commit it, as `validate` wrote it, in the same commit
   as any change to `diagnostic-ceilings.json` or to the validated rows;
   otherwise leave it out, since every run rewrites it. Compare two reports,

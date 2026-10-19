@@ -6,7 +6,7 @@ Every entry heading starts with a stable backticked `ki-*` id — refer to an en
 
 Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
 
-1. `ki-diagnostic-residuals` — the error rows behind the non-zero diagnostic ceilings, biggest first
+1. `ki-diagnostic-residuals` — the error rows regeneration lets through by floor list, biggest class first
 2. `ki-from-string-composition` — blocked on a quote-style design decision
 11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
@@ -20,16 +20,15 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 
 **Fix, if/when prioritized:** when a future case exercises this shape, extend `emitSymbol`'s inlining block (`packages/codegen/src/emitters/templates.ts`, the `if (rule.type === SYMBOL && rule.inline === true)` branch) to detect "target's own top-level rule is a SEQ whose members are all field-wrapped" and route each inner field through its own presence/emission logic instead of a single shared conditional — likely mirroring render-module.ts's existing "group-lift inner field hoisting" pattern (hoisting a helper's inner named fields onto the parent struct) for the template side too.
 
-## `ki-diagnostic-residuals` — the error rows behind the non-zero diagnostic ceilings
+## `ki-diagnostic-residuals` — the error rows regeneration lets through
 
-**Found during:** the per-code diagnostic ratchet work. The live counts are `packages/tools/diagnostic-ceilings.json` (per grammar, the error and warning rows each code may have; a code a grammar does not list has ceiling 0) and `packages/tools/validation-report.json` (the rows themselves). Every non-zero ceiling is a grammar diagnostic at severity `error` that regeneration does not stop on:
+**Found during:** the per-code diagnostic ratchet work. Every grammar diagnostic at severity `error` today cannot proceed (`canProceed: false`), and regeneration continues past each one only because its grammar's `expectDiagnostics:` floor-lists the owner for that code. The validation report counts these rows apart as `blocking`; the ratchet does not count them, since the floor list is their gate:
 
-- `rule-reauthored-without-cause` — python 4, rust 4, typescript 1.
-- `patch-without-cause` — python 4.
-- `unclassifiable-shape` — rust 1, scm 1, typescript 2.
-- `union-slot-mixed-row` — typescript 1 (`binary_expression`, allowed by the grammar's `expectDiagnostics`).
+- `rule-reauthored-without-cause` — python 4, rust 4, typescript 1. `rules:` entries the rule re-authoring retirement converts to patches. Most only set a precedence, which no patch form expresses yet, and a precedence that settles a parse raises no enriched-stage diagnostic for the check to find.
+- `patch-without-cause` — python 4: the `rule('comprehension_clauses')` patch on the four comprehension kinds, from when the native read could not refill the inlined clause list.
+- `unclassifiable-shape` — rust 1, scm 1, typescript 2; `union-slot-mixed-row` — typescript 1. Shapes collect-slots cannot classify though their owners carry patches: choice-with-structured-arms (rust `_let_chain`, typescript `binary_expression`, `public_field_definition`) and nested-seq (scm `predicate`).
 
-**Status: open.** Each row is held at its count by its ceiling. A fix lowers the matching ceiling in the same commit; the gate prints a reminder when a code drops below its ceiling. Why each of these error rows lets regeneration continue, and whether any is residue of an older design, is not yet audited.
+**Status: open.** Deletion probes separate the load-bearing `rules:` entries and patches from removable ones. A fix removes the row and its floor entry together.
 
 ## `ki-let-destructuring-parse-divergence` — the typescript override parser never parses `let [...] = ...` as a declaration
 

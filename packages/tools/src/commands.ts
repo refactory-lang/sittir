@@ -24,6 +24,7 @@ import {
 	buildValidationReport,
 	checkCodeCeilings,
 	ceilingAdvice,
+	readCodeCeilings,
 	readValidationReport,
 	writeValidationReport,
 	type CodeCeilings,
@@ -575,24 +576,18 @@ export function writeMergedValidationReport(
 
 /**
  * The diagnostic ratchet on a fresh validation run: the report entries of the
- * grammars validated, counted per code at error or warning severity, against
- * the committed per-grammar ceilings in `packages/tools/diagnostic-ceilings.json`.
+ * grammars validated, counted per code at fail, error or warning severity, against
+ * the committed per-grammar ceilings in `packages/tools/diagnostic-ceilings.json`
+ * (a missing file means every ceiling is 0; see `readCodeCeilings`).
  * A count above its ceiling fails the run; a count below a non-zero ceiling
  * prints a reminder to lower it in the same commit, or to remove its entry
- * once the count reaches 0. A missing or unparsable
- * ceilings file throws: reading it as empty would fail every run, and reading
- * it as no gate would switch the ratchet off.
+ * once the count reaches 0.
  *
  * Returns true when the gate passes.
  */
 export function enforceCodeCeilings(grammars: readonly GrammarName[], report: ValidationReport): boolean {
 	const ceilingsPath = resolvePath(join('packages', 'tools', 'diagnostic-ceilings.json'));
-	let ceilings: CodeCeilings;
-	try {
-		ceilings = JSON.parse(readFileSync(ceilingsPath, 'utf8')) as CodeCeilings;
-	} catch (e) {
-		throw new Error(`enforceCodeCeilings: failed to read/parse ceilings at ${ceilingsPath}: ${(e as Error).message}`);
-	}
+	const ceilings = readCodeCeilings(ceilingsPath);
 	const { violations, improvements } = checkCodeCeilings(report, ceilings, grammars);
 	for (const v of violations) {
 		console.error(
