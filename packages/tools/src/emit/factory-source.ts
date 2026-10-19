@@ -71,7 +71,7 @@ export class Printed {
 	readonly $named = true as const;
 	$_layout?: { trivia?: ReadTrivia };
 	constructor(
-		readonly $type: number | string,
+		readonly $type: number | undefined,
 		readonly source: string,
 		readonly kind?: string,
 		readonly argsSource?: string,
@@ -229,13 +229,13 @@ function printVerbatimText(
 	slotKinds: readonly string[] = [],
 	storage?: string
 ): unknown {
-	if (leaf !== undefined) return new Printed(leaf, `${builderOf(leaf, ctx)}(${JSON.stringify(text)})`, leaf);
+	if (leaf !== undefined) return new Printed(ctx.facts.kindIdOfName(leaf), `${builderOf(leaf, ctx)}(${JSON.stringify(text)})`, leaf);
 	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
 	if (slotKinds.length === 0 && storage === 'verbatim') return text;
 	const id = storesKindId(storage) ? ctx.memberIdOfText?.(text) : undefined;
 	if (id !== undefined) return id;
 	if (ctx.textLeafKinds?.has('identifier')) {
-		return new Printed('identifier', `${builderOf('identifier', ctx)}(${JSON.stringify(text)})`, 'identifier');
+		return new Printed(ctx.facts.kindIdOfName('identifier'), `${builderOf('identifier', ctx)}(${JSON.stringify(text)})`, 'identifier');
 	}
 	return text;
 }
@@ -604,7 +604,7 @@ export function printingFactoryMap(
 			}
 			return spelling;
 		};
-		const id = kindIdOfName(kind) ?? kind;
+		const id = kindIdOfName(kind);
 		const publicName = kind.replace(/^_+/, '');
 		const entry = (...args: unknown[]): Printed | string => {
 			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
@@ -718,7 +718,7 @@ export function printingIrSurface(
 		const path = ctx.irPathOfKind(kind);
 		if (path === undefined) continue;
 		const entry: Record<string, unknown> = { strict };
-		mountArmPrinters(entry, path, kind, kind, kindIdOfName(kind) ?? kind, ctx, new Set([kind]));
+		mountArmPrinters(entry, path, kind, kind, kindIdOfName(kind), ctx, new Set([kind]));
 		entries[kind] = entry as IrEntry;
 	}
 	return { entries, seats: ctx.seats ?? {}, modelTypes };
@@ -729,7 +729,7 @@ function mountArmPrinters(
 	path: string,
 	hostKind: string,
 	builtKind: string,
-	id: number | string,
+	id: number | undefined,
 	ctx: PrintContext,
 	visiting: ReadonlySet<string>
 ): void {
@@ -758,7 +758,7 @@ function mountPrinter(
 	seat: Seat,
 	hostKind: string,
 	builtKind: string,
-	id: number | string,
+	id: number | undefined,
 	ctx: PrintContext
 ): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
@@ -1110,7 +1110,7 @@ export async function emitFactorySourceText(
 		factorySlots: withPublicNames(model.factorySlots),
 		omitOptionDefaults: true
 	};
-	const rootKind = typeof root.$type === 'number' ? kindNameFromId(root.$type) : root.$type;
+	const rootKind = root.$type === undefined ? undefined : kindNameFromId(root.$type);
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
 	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle, hydrate }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);

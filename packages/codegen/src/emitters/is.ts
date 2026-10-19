@@ -75,7 +75,7 @@ function kindPredicate(narrowType: string): string {
 }
 
 function supertypePredicate(discriminant: string): string {
-	return `<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, ${discriminant}>`;
+	return `<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, ${discriminant}>`;
 }
 
 export function emitIs(config: EmitIsConfig): string {

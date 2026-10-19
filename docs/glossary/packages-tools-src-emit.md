@@ -635,3 +635,6 @@ On the loose surface a slot whose kind is the owner keeps the owner's call (`Pri
 
 The names a generated file uses for its engine and for the language descriptor it imports. The engine is named after the grammar's first declared file type (`rs`, `ts`, `py`), read from the descriptor's `fileTypes`, the one place that fact is stamped. A grammar that declares none is named after the grammar. When the engine's name is the grammar's name (no file type, or a file type equal to the name, as with `scm`), the descriptor import takes `<grammar>Language` so the two do not collide.
 
+### `packages/tools/src/emit/factory-source.ts::Printed`
+
+A printed builder call standing in for the node it builds: its `source` text, the model `kind` it builds and, as `$type`, that kind's parser id (`ModelFacts.kindIdOfName`), or none for a kind the parser never issues. Everything that reads `$type` here tests for a number first, so a call without an id is never matched by kind id; `kind` names it either way.

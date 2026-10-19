@@ -173,12 +173,11 @@ type AdmitSlotInput<S> = S extends readonly unknown[]
 
 /**
  * Terminal node shape — shared by every leaf, keyword, and enum.
- * `ID` pins the `$type` discriminant — numeric TSKindId for parser.c-
- * derived kinds, string literal for evaluate-synthesized enum kinds
- * that have no parser symbol. `V` narrows `$text` to a specific
- * literal or literal union (defaulting to `string` for open-valued leaves).
+ * `ID` pins the `$type` discriminant, the kind's id. `V` narrows `$text`
+ * to a specific literal or literal union (defaulting to `string` for
+ * open-valued leaves).
  */
-export interface Terminal<ID extends number | string = number, V extends string = string> {
+export interface Terminal<ID extends number = number, V extends string = string> {
 	readonly $type: ID;
 	readonly $text: V;
 }
@@ -256,7 +255,7 @@ export type NoneOf<T> = { [K in keyof T]?: never };
  * whole or absent as a whole. A built node is not a config and passes as it
  * is; its accessors may share the group's key names.
  */
-export type WithoutGroup<P, G> = P extends undefined | { readonly $type: string | number } ? P : P & NoneOf<G>;
+export type WithoutGroup<P, G> = P extends undefined | { readonly $type: number } ? P : P & NoneOf<G>;
 export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
 	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
 	: never;
@@ -306,10 +305,10 @@ type HoistedFlavor<F, B> = (F extends AnyFlavorFn ? F : () => never) & {
 // Cycle-detected recursion (visited-set pattern)
 // ---------------------------------------------------------------------------
 
-/** Check if literal T (a kind name or a kind id) is already in the Visited tuple. */
-export type Contains<Visited extends (string | number)[], T extends string | number> = Visited extends [
-	infer Head extends string | number,
-	...infer Rest extends (string | number)[]
+/** Check if the kind id T is already in the Visited tuple. */
+export type Contains<Visited extends number[], T extends number> = Visited extends [
+	infer Head extends number,
+	...infer Rest extends number[]
 ]
 	? Head extends T
 		? true
@@ -335,16 +334,8 @@ import type { StringIndexRange } from './core-types.ts';
 // KindOf<T> — extract type string from a typed node
 // ---------------------------------------------------------------------------
 
-/** Extract the kind string(s) from a node type's `$type` property.
- * For leaf/terminal types (Terminal<K>), returns K. For structural types
- * with numeric TSKindId discriminants, returns the numeric discriminant type.
- * Phase A: both string and number discriminants are accepted.
- */
-export type KindOf<T> = T extends { readonly $type: infer K extends string }
-	? K
-	: T extends { readonly $type: infer N extends number }
-		? N
-		: never;
+/** Extract the kind id(s) from a node type's `$type` property; `never` for a type without one. */
+export type KindOf<T> = T extends { readonly $type: infer N extends number } ? N : never;
 
 // ---------------------------------------------------------------------------
 // Field keys — a grammar field's camelCase key, as the runtime spells it
@@ -455,7 +446,7 @@ type WidenLooseFieldValue<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = K extends keyof LooseHintsOf<T>
 	?
 			| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
@@ -730,18 +721,11 @@ export type NumericLiteral<N extends string | number | bigint, Integer extends b
 		: never;
 
 /**
- * @param Visited - Set of `$type` discriminants already seen on the
- *   current expansion path. Combined with `Depth`, gives belt-and-
- *   suspenders cycle protection: `Depth` caps non-cyclic chains at
- *   `MaxDepth`; `Visited` short-circuits as soon as a kind reappears,
- *   even within depth budget. Necessary because TypeScript's
- *   recursive-mapped-type checker computes both branches of a
- *   conditional eagerly when a generic parameter could distribute, so
- *   a structural cycle (e.g. rust `Statement → ConstItem → type:
- *   _Type → PointerType → type: _Type → …`) trips TS2615 before the
- *   `Depth` arm fires. `Contains<Visited, K>` makes the cycle visible
- *   as a literal-tuple membership check that TS resolves
- *   non-recursively.
+ * @param Depth - The config bags already opened on the current expansion
+ *   path; at `MaxDepth` a slot takes the node alone.
+ * @param Visited - The kind ids bare hops have descended into on the
+ *   current expansion path ({@link BareArm}), so a chain of elided
+ *   wrappers ends on a revisit.
  */
 export type LooseConfigOf<
 	T,
@@ -749,28 +733,22 @@ export type LooseConfigOf<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = Simplify<
 	Depth['length'] extends MaxDepth
 		? Admit<T>
-		: T extends { readonly $type: infer K extends string }
-			? Contains<Visited, K> extends true
-				? Admit<T>
-				: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
-			: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, Visited>
+		: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, Visited>
 >;
 
-/** @internal — body of `LooseConfigOf`, factored out so the cycle-check
- *  conditional in the parent type stays scannable. The discriminant
- *  branch happens in `LooseConfigOf` itself; here we just emit the
- *  field/children projections with the (possibly extended) `Visited`. */
+/** @internal — body of `LooseConfigOf`: the field and children
+ *  projections, each one config level deeper. */
 type LooseConfigBody<
 	T,
 	Scalars,
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = (T extends {
 	readonly $type: infer K;
 }
@@ -791,9 +769,9 @@ type LooseConfigBody<
 
 /** @internal — slot-level widen that projects boolean-keyword / bitflag
  * brands to their Config surface BEFORE delegating to WidenValue for
- * the recursive structural case. Threads `Visited` so the structural
- * branch can detect $type cycles. */
-type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[] = []> =
+ * the recursive structural case. Threads `Visited`, the bare hops taken
+ * on this path. */
+type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends number[] = []> =
 	IsBooleanKeywordSlot<T> extends true
 		? boolean | BooleanKeywordSlotText<T> | T
 		: IsBitflagSlot<T> extends true
@@ -852,7 +830,7 @@ type TagEachArm<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = T extends infer U
 	? U extends { readonly $type: infer K extends keyof NsMap }
 		? NsMap[K] extends { readonly Kind: infer Name extends number }
@@ -864,7 +842,7 @@ type TagEachArm<
 								: LooseProjection<U, NsMap>))
 						| Admit<U>
 			: Admit<U>
-		: U extends { readonly $type: infer K extends string | number }
+		: U extends { readonly $type: infer K extends number }
 			? ({ $type: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | Admit<U>
 			: never
 	: never;
@@ -915,18 +893,10 @@ type LooseOrConfigBag<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[] = []
-> = T extends {
-	readonly $type: infer K extends string;
-}
-	? Contains<Visited, K> extends true
-		? Admit<T>
-		: [LooseProjection<T, NsMap>] extends [never]
-			? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
-			: LooseProjection<T, NsMap> | Admit<T>
-	: [LooseProjection<T, NsMap>] extends [never]
-		? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
-		: LooseProjection<T, NsMap> | Admit<T>;
+	Visited extends number[] = []
+> = [LooseProjection<T, NsMap>] extends [never]
+	? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
+	: LooseProjection<T, NsMap> | Admit<T>;
 
 type WidenValue<
 	T,
@@ -934,7 +904,7 @@ type WidenValue<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = Depth['length'] extends MaxDepth
 	? Admit<T>
 	:
@@ -970,7 +940,7 @@ type WidenArrayMembers<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = T extends readonly (infer E)[]
 	? [readonly []] extends [T]
 		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
@@ -982,7 +952,7 @@ type WidenArrayMembers<
 /** @internal — the leaf members (a node type carrying `$text`), each widened
  *  to itself, its narrowed string and its scalar. */
 type WidenLeafMembers<T, Scalars, Strings> = T extends {
-	readonly $type: infer K extends string | number;
+	readonly $type: infer K extends number;
 	readonly $text: string;
 }
 	? Admit<T> | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
@@ -998,14 +968,13 @@ type BranchMembers<T> = T extends { readonly $type: number }
 	: never;
 
 /** @internal — members that are neither arrays, brands, leaves, ids nor
- *  structural nodes (string literal unions, plain booleans,
- *  string-discriminated node data): passed through unchanged. */
+ *  structural nodes (string literal unions, plain booleans): passed
+ *  through unchanged. */
 type OtherMembers<T> = T extends
 	| readonly unknown[]
 	| number
 	| { readonly __booleanKeyword__?: unknown }
 	| { readonly $type: number }
-	| { readonly $type: string | number; readonly $text: string }
 	? never
 	: T;
 
@@ -1016,7 +985,7 @@ type OtherMembers<T> = T extends
  *  several do. A lone kind additionally takes its bag untagged, because with
  *  one candidate no tag is needed, while with several the resolver cannot
  *  tell untagged bags of different kinds apart. */
-type WidenBranches<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[]> = [
+type WidenBranches<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends number[]> = [
 	T
 ] extends [never]
 	? never
@@ -1032,7 +1001,7 @@ type BareArms<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = T extends unknown ? BareArm<T, Scalars, Strings, Depth, NsMap, Visited> : never;
 
 /** @internal — the members of `T` that are a kind id stored bare: numeric
@@ -1062,7 +1031,7 @@ type WidenChildSlot<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = T extends readonly unknown[]
 	? WidenArrayMembers<T, Scalars, Strings, Depth, NsMap, Visited>
 	: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
@@ -1099,7 +1068,7 @@ type BareLoose<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = Key extends keyof FieldsOf<T> ? WidenLooseFieldValue<T, Key, Scalars, Strings, Depth, NsMap, Visited> : never;
 
 /**
@@ -1111,8 +1080,8 @@ type BareLoose<
  * value belongs to. Rows without a bare slot (`Bare` is `never`) contribute
  * nothing.
  */
-type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[] = []> = T extends {
-	readonly $type: infer K extends keyof NsMap & (string | number);
+type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends number[] = []> = T extends {
+	readonly $type: infer K extends keyof NsMap & number;
 }
 	? Visited['length'] extends MaxBareHops
 		? never
@@ -1164,7 +1133,7 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  *   built from a bag, so its row carries no id and its arm offers no bag.
  */
 export interface NodeNs<
-	T extends { readonly $type: string | number },
+	T extends { readonly $type: number },
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
@@ -1278,7 +1247,7 @@ export interface KeywordNs<Id extends number, Text extends string, Kind extends 
  * namespace lookup index all three uniformly.
  */
 export interface LeafNs<
-	Node extends { readonly $type: string | number; readonly $text: string },
+	Node extends { readonly $type: number; readonly $text: string },
 	Text extends string | number | bigint,
 	Bound = Node,
 	Kind extends number = number
