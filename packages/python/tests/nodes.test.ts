@@ -5413,7 +5413,7 @@ describe('comprehension_clauses', () => {
 			_async: true as never,
 			_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any],
-			_comma: true as never
+			_trailing_comma: TSKindId.Comma as never
 		} as any);
 		expect(node.$type).toBe(TSKindId.ComprehensionClauses);
 		expect(node.$source).toBe(2);
@@ -5427,7 +5427,7 @@ describe('comprehension_clauses', () => {
 			_async: true as never,
 			_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			_right: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any],
-			_comma: true as never
+			_trailing_comma: TSKindId.Comma as never
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -5502,12 +5502,12 @@ describe('float_leading_point', () => {
 
 describe('float_scientific', () => {
 	it('factory produces correct type', () => {
-		const node = ir.floatScientific({ integer: '1', marker: 'e', exponent: '1' });
+		const node = ir.floatScientific({ integer: '1', exponent: '1' }, { marker: 'e' });
 		expect(node.$type).toBe(TSKindId.FloatScientific);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.floatScientific({ integer: '1', marker: 'e', exponent: '1' });
+		const node = ir.floatScientific({ integer: '1', exponent: '1' }, { marker: 'e' });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});

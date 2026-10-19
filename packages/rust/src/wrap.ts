@@ -3921,8 +3921,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
 		},
-		comma() {
-			return this._comma;
+		trailingComma() {
+			return this._trailing_comma;
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
@@ -3931,8 +3931,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 				),
 			value: (v: NonNullable<T.LastMatchArm['_value']>) =>
 				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _value: v }, tree)),
-			comma: (v: NonNullable<T.LastMatchArm['_comma']>) =>
-				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)),
+			trailingComma: (v: NonNullable<T.LastMatchArm['_trailing_comma']> | null) =>
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree)),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
