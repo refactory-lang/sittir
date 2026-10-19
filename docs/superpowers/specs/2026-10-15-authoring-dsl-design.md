@@ -434,6 +434,8 @@ It is refused with `rename-invalid` when:
 - the source is the start rule, which must stay first;
 - the rename flips hiddenness;
 - the grammar already has the target name. That makes it a merge, which an `alias` to the existing display declares (§3.2).
+- the layer is the first. The first layer records no provenance, so a rename there could not give `renamedFrom`, and the conflict derivation would read its sources in first-layer names. The first grammar that needs a first-layer rename designs the mapping from first-layer names to upstream names.
+- the source is a `factoryInline` kind. `factoryInline` is metadata only sittir reads, and a rename does not rewrite it.
 
 No layer uses it yet. The derived kind renames stay data (§2.4), and the generator never writes a `rename` entry. Where `rename` is unused, which today is everywhere, it adds no rule, and `parser.c`'s symbol table is unchanged.
 
