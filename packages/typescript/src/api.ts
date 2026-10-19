@@ -18,8 +18,8 @@ import { wrapNode, hydrate, type ProgramTree } from './wrap.js';
 export interface TypescriptAPI extends LanguageAPI {
 	readonly name: 'typescript';
 	readonly build: typeof ir;
-	readonly is: typeof is;
-	readonly kinds: typeof TSKindId;
+	readonly is: typeof is & { readonly portable: PortableIs };
+	readonly kinds: typeof TSKindId & { readonly portable: PortableKinds };
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
 	readonly node: TypescriptNode;

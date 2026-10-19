@@ -26,10 +26,9 @@ describe('a portable guard', () => {
 		is.declaration.function(TSKindId.FunctionItem);
 	});
 
-	it('takes context as the enclosing nodes, not kind ids', () => {
+	it('takes the node alone', () => {
+		// @ts-expect-error a guard takes no context
 		is.declaration.method(node, [node]);
-		// @ts-expect-error context holds nodes
-		is.declaration.method(node, [TSKindId.ImplItem]);
 	});
 
 	it('has no guard for a path the grammar does not bind', () => {

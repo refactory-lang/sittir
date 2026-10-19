@@ -17,8 +17,8 @@ import { wrapNode, hydrate, type SourceFileTree } from './wrap.js';
 export interface RustAPI extends LanguageAPI {
 	readonly name: 'rust';
 	readonly build: typeof ir;
-	readonly is: typeof is;
-	readonly kinds: typeof TSKindId;
+	readonly is: typeof is & { readonly portable: PortableIs };
+	readonly kinds: typeof TSKindId & { readonly portable: PortableKinds };
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: SourceFileTree;
 	readonly node: RustNode;

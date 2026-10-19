@@ -15,7 +15,6 @@ import type {
 	PortableEngine,
 	PortableEngineOptions,
 	PortableLanguageAPI,
-	PortableRows,
 	Pending,
 	Rendered,
 	RenderArgument,
@@ -23,13 +22,13 @@ import type {
 	StructureTable
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
-import { guardsOf, inLanguage as inLanguageOf, languageGuards } from './language.ts';
+import { guardsOf, inLanguage as inLanguageOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
-import { portableSurface } from './portable.ts';
+import { portable } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
@@ -288,20 +287,11 @@ function assembleEngine<API extends LanguageAPI>(
 	return frozen;
 }
 
-const surfaces = new WeakMap<PortableRows, { readonly kinds: object; readonly is: object }>();
-
-function surfaceOf(rows: PortableRows): { readonly kinds: object; readonly is: object } {
-	let surface = surfaces.get(rows);
-	if (surface === undefined) surfaces.set(rows, (surface = portableSurface<object, object>(rows.table, rows.querySlots)));
-	return surface;
-}
-
 function assemblePortableEngine<API extends PortableLanguageAPI>(language: Language<API>, hooks: LanguageHooks<API>): PortableEngine<API> {
 	const rows = hooks.portable;
 	if (rows === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
-	const portable = surfaceOf(rows) as { readonly kinds: API['portable']['kinds']; readonly is: API['portable']['is'] };
 	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia, portable: rows };
-	return Object.freeze({ ...identity, kinds: portable.kinds, is: languageGuards(portable.is, language) });
+	return Object.freeze({ ...identity, kinds: portable.kinds as API['portable']['kinds'], is: portable.is as API['portable']['is'] });
 }
 
 function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {

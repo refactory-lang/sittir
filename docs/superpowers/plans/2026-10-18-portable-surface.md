@@ -61,21 +61,21 @@ On the portable surface, a fixed-literal leaf's identity is the vocabulary const
 
 The cost of keeping bare ids on grammar guards: a bare id carries no language, so `inLanguage` passes every number. Task 5 adds one sentence saying so to the `Language.is` JSDoc. Kind guards (`_g`) keep refusing ids, since `x === kinds.X` is the documented test for a fixed-literal leaf.
 
-**Q1 — placement-dependent read entries.** The emitted tables still hold 42 entries with a non-empty `within`, plus 1 condition with `up: 1`. Today these are reachable only through the guard's `context` parameter, which node-only removes. They come from seven claims:
+**Q1 — placement-dependent read entries.** The emitted tables hold 61 entries with a non-empty `within` (rust 55, python 6), plus 1 condition with `up: 1` (python), counted from the runtime rows. Today these are reachable only through the guard's `context` parameter, which node-only removes. They come from seven claims:
 
 | grammar | claim | entries | form (ruled) |
 |---|---|---|---|
 | rust | a pattern within `closure_parameters` reads as `declaration.parameter` | 35 | an envelope alias at the `closure_parameters` site, one claim on the envelope |
-| rust | `function_item` / `function_signature_item` within an impl or trait `declaration_list` reads as `declaration.method` (`.signature`) | 2 | the method alias (2026-10-10) |
+| rust | `function_item` / `function_signature_item` within an impl or trait `declaration_list` reads as `declaration.method` (`.signature`), with each visibility | 19 | the method alias (2026-10-10) |
 | rust | `crate` within `visibility_modifier` reads as `modifier.visibility.public.internal` | 1 | an alias, `internal_public_visibility_modifier` (2026-10-10, P2) |
-| python | `function_definition` in a class body reads as `declaration.method` | 1 | the method alias, five clones (2026-10-10, P1) |
-| python | `staticmethod` read through the enclosing `decorated_definition` (the `up: 1` condition) | 1 | the envelope sets its element's flag (2026-10-10, P4) |
+| python | `function_definition` in a class body, directly or decorated, reads as `declaration.method` | 2 | the method alias, five clones (2026-10-10, P1) |
+| python | `staticmethod` read through the enclosing `decorated_definition` (within it, and the `up: 1` condition) | 1 | the envelope sets its element's flag (2026-10-10, P4) |
 | python | an `identifier` within `parameters` / `lambda_parameters` reads as `declaration.parameter` | 2 | the claims are deleted: an identifier is slotless and reads through its parent's member |
 | python | an `identifier` within `type` reads as `identifier.type` | 1 | deleted, as above |
 
 `grammar.bindings.ts` is generated from `bindings.scm` (`bindings-inventory --write`), so the restatement goes in `bindings.scm`, with the aliases in `grammar.sittir.ts`.
 
-Ruled: the residue is restated in its own PR (Task 3b), after the node-only guards and before `ofType`. Until it lands, node-only guards skip placed entries, as a guard given no context does today, so these classifications answer false; a ratchet pins the placed count at 43 (rust 38, python 4 plus 1 `up`), shrink-only. Task 3b ends with the emitter refusing a `within` entry or an `up > 0` condition with a generator diagnostic, gated at 0. Coordinate builds it from the rulings above; its `bindings.scm` and `grammar.sittir.ts` lines go to sittir-design for review, and a probe that moves rows or trees beyond what the 2026-10-10 measurements expected goes back to brainstorm.
+Ruled: the residue is restated in its own PR (Task 3b), after the node-only guards and before `ofType`. Until it lands, node-only guards skip placed entries, as a guard given no context does today, so these classifications answer false; a ratchet pins the placed counts (rust 55; python 6 plus 1 `up`), shrink-only. Task 3b ends with the emitter refusing a `within` entry or an `up > 0` condition with a generator diagnostic, gated at 0. Coordinate builds it from the rulings above; its `bindings.scm` and `grammar.sittir.ts` lines go to sittir-design for review, and a probe that moves rows or trees beyond what the 2026-10-10 measurements expected goes back to brainstorm.
 
 **Q2 — typing `rust.is.portable`.** Ruled: one runtime object, typed per language through an interface the codegen emits:
 - `PortableIsAt<RustIds>`: each guard is `<T extends RustNode>(node: T) => node is T & { $type: Ids }`.
@@ -200,7 +200,7 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 - Test: `packages/rust/tests/portable-guards.test.ts`
 
 **Interfaces:**
-- Consumes: `EngineIdentity.portable` (Task 3), `engineOf` (`engine-scope.ts`). Placed entries are skipped (Q1); a ratchet test pins their count at 43 per the tables (rust 38, python 4 plus 1 `up`), shrink-only, and `portable.is`'s JSDoc names the classifications that answer false until Task 3b.
+- Consumes: `EngineIdentity.portable` (Task 3), `engineOf` (`engine-scope.ts`). Placed entries are skipped (Q1); a ratchet test pins their counts per the tables (rust 55; python 6 plus 1 `up`), shrink-only, and `portable.is`'s JSDoc names the classifications that answer false until Task 3b. Keyword leaves read as bare kind ids, which name no engine, so every claim on a fixed-text kind answers false too (ruled: guards stay node-only); the same ratchet test pins those claims per the tables' `fixedText` (rust 67, typescript 37, python 8), shrink-only, and the JSDoc names their classes. `packages/tools/tests/portable/is.test.ts` pins both gaps false.
 - Produces: `classifierOf(rows: PortableRows): (node: { $type: number }) => string | undefined`.
 
 - [ ] **Step 1:** Write the failing tests.
@@ -271,3 +271,4 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 These are the next generator pieces that were assigned to coordinate on 2026-10-10.
 
 - The grammar guards' bare-id acceptance gets revisited when parsed units become nodes (arena 3b).
+- Portable classification of keyword leaves. A fixed-text kind reads as a bare kind id until parsed units carry identity; that work drives the keyword-leaf ratchet to 0 (rust's primitive types, booleans, `self`/`super`/`crate`, `()`, `!`, `_`, `..` and macro fragment specifiers; typescript's predefined types, `unique symbol`, `this`, `super`, `null`/`undefined` and visibility keywords; python's `True`/`False`/`None`, `...`, `pass`/`break`/`continue`; `;` everywhere).

@@ -106,7 +106,7 @@ describe('emitPortableSurface', () => {
 	it('types a kinds node and a guard per path, each holding only its child segments', async () => {
 		const text = await emit(SCM);
 		expect(text).toContain(
-			'\t"expression": { readonly $ids: readonly PortableIds["expression"][]; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
+			'\t"expression": { readonly $path: "expression"; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
 		);
 		expect(text).toContain(
 			'\t"expression.call": PortableGuard<PortableIds["expression.call"]> & { readonly "nested": PortableIsAt["expression.call.nested"] };'

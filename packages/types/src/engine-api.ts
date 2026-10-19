@@ -135,10 +135,12 @@ export interface Language<API extends LanguageAPI> {
 	 * The language's guards, the same object as every engine's `is` (an engine of a descriptor copied from another binds the guards
 	 * to the copy instead). Each narrows a node of this language by its kind, and refuses
 	 * a node of another language or a value no engine stamped. A supertype or member guard also takes a bare kind id, and passes
-	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine.
+	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine. On a grammar with bindings,
+	 * `is.portable` holds the shared portable guards, the same object for every language: each takes a node alone and refuses a
+	 * bare kind id, since a bare id carries no language.
 	 */
 	readonly is: API['is'];
-	/** The language's kind ids by name, the same object as every engine's `kinds`. */
+	/** The language's kind ids by name, the same object as every engine's `kinds`. On a grammar with bindings, `kinds.portable` holds the shared portable kinds. */
 	readonly kinds: API['kinds'];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;

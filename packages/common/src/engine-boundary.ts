@@ -18,5 +18,4 @@ export type {
 	SittirEngine,
 	ParsedRoot
 } from './engine.ts';
-export { portableSurface } from './portable.ts';
-export { portablePathHasFacts } from './portable-path.ts';
+export { portablePathHasFacts } from './portable/facts.ts';

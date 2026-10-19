@@ -4,11 +4,11 @@ export type PortableKind = { readonly $path: string };
 /** A portable guard: whether a node is of the guard's vocabulary path. */
 export type PortableGuard = (node: unknown) => boolean;
 
-/** The portable kinds, one node per vocabulary path, nested by path segment. */
-export type PortableKindTree = Readonly<Record<string, unknown>>;
+/** The portable kinds, one node per vocabulary path, nested by path segment; a language types it with its own paths. */
+export type PortableKindTree = object;
 
 /** The portable guards, one per vocabulary path, nested like {@link PortableKindTree}. */
-export type PortableGuardTree = Readonly<Record<string, unknown>>;
+export type PortableGuardTree = object;
 
 /**
  * Builds the frozen kind and guard trees for a list of vocabulary paths.

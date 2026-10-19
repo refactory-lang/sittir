@@ -169,7 +169,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			types: emitted.types,
 			typesInternal: emitted.typesInternal,
 			kinds: emitted.kinds,
-			descriptor: emitDescriptor({ grammar: cfg.grammar, nodeMap }),
+			descriptor: emitDescriptor({ grammar: cfg.grammar, nodeMap, portable: portable !== undefined }),
 			templates: emitted.templates,
 			factories: emitted.factories,
 			overlays: emitted.overlays,

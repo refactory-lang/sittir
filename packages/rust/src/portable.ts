@@ -853,14 +853,14 @@ export interface PortableIds {
 
 export interface PortableKindsAt {
 	attribute: {
-		readonly $ids: readonly PortableIds['attribute'][];
+		readonly $path: 'attribute';
 		readonly content: PortableKindsAt['attribute.content'];
 		readonly inner: PortableKindsAt['attribute.inner'];
 	};
-	'attribute.content': { readonly $ids: readonly PortableIds['attribute.content'][] };
-	'attribute.inner': { readonly $ids: readonly PortableIds['attribute.inner'][] };
+	'attribute.content': { readonly $path: 'attribute.content' };
+	'attribute.inner': { readonly $path: 'attribute.inner' };
 	clause: {
-		readonly $ids: readonly PortableIds['clause'][];
+		readonly $path: 'clause';
 		readonly bounds: PortableKindsAt['clause.bounds'];
 		readonly else: PortableKindsAt['clause.else'];
 		readonly import: PortableKindsAt['clause.import'];
@@ -871,80 +871,56 @@ export interface PortableKindsAt {
 		readonly where: PortableKindsAt['clause.where'];
 	};
 	'clause.bounds': {
-		readonly $ids: readonly PortableIds['clause.bounds'][];
+		readonly $path: 'clause.bounds';
 		readonly higher_ranked: PortableKindsAt['clause.bounds.higher_ranked'];
 		readonly removed: PortableKindsAt['clause.bounds.removed'];
 		readonly use: PortableKindsAt['clause.bounds.use'];
 	};
-	'clause.bounds.higher_ranked': { readonly $ids: readonly PortableIds['clause.bounds.higher_ranked'][] };
-	'clause.bounds.removed': { readonly $ids: readonly PortableIds['clause.bounds.removed'][] };
-	'clause.bounds.use': { readonly $ids: readonly PortableIds['clause.bounds.use'][] };
-	'clause.else': { readonly $ids: readonly PortableIds['clause.else'][] };
+	'clause.bounds.higher_ranked': { readonly $path: 'clause.bounds.higher_ranked' };
+	'clause.bounds.removed': { readonly $path: 'clause.bounds.removed' };
+	'clause.bounds.use': { readonly $path: 'clause.bounds.use' };
+	'clause.else': { readonly $path: 'clause.else' };
 	'clause.import': {
-		readonly $ids: readonly PortableIds['clause.import'][];
+		readonly $path: 'clause.import';
 		readonly alias: PortableKindsAt['clause.import.alias'];
 		readonly list: PortableKindsAt['clause.import.list'];
 		readonly wildcard: PortableKindsAt['clause.import.wildcard'];
 	};
-	'clause.import.alias': { readonly $ids: readonly PortableIds['clause.import.alias'][] };
+	'clause.import.alias': { readonly $path: 'clause.import.alias' };
 	'clause.import.list': {
-		readonly $ids: readonly PortableIds['clause.import.list'][];
+		readonly $path: 'clause.import.list';
 		readonly scoped: PortableKindsAt['clause.import.list.scoped'];
 	};
-	'clause.import.list.scoped': { readonly $ids: readonly PortableIds['clause.import.list.scoped'][] };
-	'clause.import.wildcard': { readonly $ids: readonly PortableIds['clause.import.wildcard'][] };
-	'clause.let': {
-		readonly $ids: readonly PortableIds['clause.let'][];
-		readonly chain: PortableKindsAt['clause.let.chain'];
-	};
-	'clause.let.chain': { readonly $ids: readonly PortableIds['clause.let.chain'][] };
-	'clause.lifetimes': { readonly $ids: readonly PortableIds['clause.lifetimes'][] };
-	'clause.macro': {
-		readonly $ids: readonly PortableIds['clause.macro'][];
-		readonly rule: PortableKindsAt['clause.macro.rule'];
-	};
-	'clause.macro.rule': { readonly $ids: readonly PortableIds['clause.macro.rule'][] };
-	'clause.match': {
-		readonly $ids: readonly PortableIds['clause.match'][];
-		readonly arm: PortableKindsAt['clause.match.arm'];
-	};
-	'clause.match.arm': {
-		readonly $ids: readonly PortableIds['clause.match.arm'][];
-		readonly last: PortableKindsAt['clause.match.arm.last'];
-	};
-	'clause.match.arm.last': { readonly $ids: readonly PortableIds['clause.match.arm.last'][] };
-	'clause.where': {
-		readonly $ids: readonly PortableIds['clause.where'][];
-		readonly predicate: PortableKindsAt['clause.where.predicate'];
-	};
-	'clause.where.predicate': { readonly $ids: readonly PortableIds['clause.where.predicate'][] };
+	'clause.import.list.scoped': { readonly $path: 'clause.import.list.scoped' };
+	'clause.import.wildcard': { readonly $path: 'clause.import.wildcard' };
+	'clause.let': { readonly $path: 'clause.let'; readonly chain: PortableKindsAt['clause.let.chain'] };
+	'clause.let.chain': { readonly $path: 'clause.let.chain' };
+	'clause.lifetimes': { readonly $path: 'clause.lifetimes' };
+	'clause.macro': { readonly $path: 'clause.macro'; readonly rule: PortableKindsAt['clause.macro.rule'] };
+	'clause.macro.rule': { readonly $path: 'clause.macro.rule' };
+	'clause.match': { readonly $path: 'clause.match'; readonly arm: PortableKindsAt['clause.match.arm'] };
+	'clause.match.arm': { readonly $path: 'clause.match.arm'; readonly last: PortableKindsAt['clause.match.arm.last'] };
+	'clause.match.arm.last': { readonly $path: 'clause.match.arm.last' };
+	'clause.where': { readonly $path: 'clause.where'; readonly predicate: PortableKindsAt['clause.where.predicate'] };
+	'clause.where.predicate': { readonly $path: 'clause.where.predicate' };
 	comment: {
-		readonly $ids: readonly PortableIds['comment'][];
+		readonly $path: 'comment';
 		readonly block: PortableKindsAt['comment.block'];
 		readonly line: PortableKindsAt['comment.line'];
 		readonly text: PortableKindsAt['comment.text'];
 	};
-	'comment.block': {
-		readonly $ids: readonly PortableIds['comment.block'][];
-		readonly doc: PortableKindsAt['comment.block.doc'];
-	};
+	'comment.block': { readonly $path: 'comment.block'; readonly doc: PortableKindsAt['comment.block.doc'] };
 	'comment.block.doc': {
-		readonly $ids: readonly PortableIds['comment.block.doc'][];
+		readonly $path: 'comment.block.doc';
 		readonly inner: PortableKindsAt['comment.block.doc.inner'];
 	};
-	'comment.block.doc.inner': { readonly $ids: readonly PortableIds['comment.block.doc.inner'][] };
-	'comment.line': {
-		readonly $ids: readonly PortableIds['comment.line'][];
-		readonly doc: PortableKindsAt['comment.line.doc'];
-	};
-	'comment.line.doc': {
-		readonly $ids: readonly PortableIds['comment.line.doc'][];
-		readonly inner: PortableKindsAt['comment.line.doc.inner'];
-	};
-	'comment.line.doc.inner': { readonly $ids: readonly PortableIds['comment.line.doc.inner'][] };
-	'comment.text': { readonly $ids: readonly PortableIds['comment.text'][] };
+	'comment.block.doc.inner': { readonly $path: 'comment.block.doc.inner' };
+	'comment.line': { readonly $path: 'comment.line'; readonly doc: PortableKindsAt['comment.line.doc'] };
+	'comment.line.doc': { readonly $path: 'comment.line.doc'; readonly inner: PortableKindsAt['comment.line.doc.inner'] };
+	'comment.line.doc.inner': { readonly $path: 'comment.line.doc.inner' };
+	'comment.text': { readonly $path: 'comment.text' };
 	declaration: {
-		readonly $ids: readonly PortableIds['declaration'][];
+		readonly $path: 'declaration';
 		readonly constant: PortableKindsAt['declaration.constant'];
 		readonly enum: PortableKindsAt['declaration.enum'];
 		readonly enum_member: PortableKindsAt['declaration.enum_member'];
@@ -963,384 +939,324 @@ export interface PortableKindsAt {
 		readonly variable: PortableKindsAt['declaration.variable'];
 	};
 	'declaration.constant': {
-		readonly $ids: readonly PortableIds['declaration.constant'][];
+		readonly $path: 'declaration.constant';
 		readonly private: PortableKindsAt['declaration.constant.private'];
 		readonly public: PortableKindsAt['declaration.constant.public'];
 	};
-	'declaration.constant.private': { readonly $ids: readonly PortableIds['declaration.constant.private'][] };
+	'declaration.constant.private': { readonly $path: 'declaration.constant.private' };
 	'declaration.constant.public': {
-		readonly $ids: readonly PortableIds['declaration.constant.public'][];
+		readonly $path: 'declaration.constant.public';
 		readonly internal: PortableKindsAt['declaration.constant.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.constant.public.restricted'];
 	};
-	'declaration.constant.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.constant.public.internal'][];
-	};
-	'declaration.constant.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.constant.public.restricted'][];
-	};
+	'declaration.constant.public.internal': { readonly $path: 'declaration.constant.public.internal' };
+	'declaration.constant.public.restricted': { readonly $path: 'declaration.constant.public.restricted' };
 	'declaration.enum': {
-		readonly $ids: readonly PortableIds['declaration.enum'][];
+		readonly $path: 'declaration.enum';
 		readonly private: PortableKindsAt['declaration.enum.private'];
 		readonly public: PortableKindsAt['declaration.enum.public'];
 	};
-	'declaration.enum.private': { readonly $ids: readonly PortableIds['declaration.enum.private'][] };
+	'declaration.enum.private': { readonly $path: 'declaration.enum.private' };
 	'declaration.enum.public': {
-		readonly $ids: readonly PortableIds['declaration.enum.public'][];
+		readonly $path: 'declaration.enum.public';
 		readonly internal: PortableKindsAt['declaration.enum.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.enum.public.restricted'];
 	};
-	'declaration.enum.public.internal': { readonly $ids: readonly PortableIds['declaration.enum.public.internal'][] };
-	'declaration.enum.public.restricted': { readonly $ids: readonly PortableIds['declaration.enum.public.restricted'][] };
+	'declaration.enum.public.internal': { readonly $path: 'declaration.enum.public.internal' };
+	'declaration.enum.public.restricted': { readonly $path: 'declaration.enum.public.restricted' };
 	'declaration.enum_member': {
-		readonly $ids: readonly PortableIds['declaration.enum_member'][];
+		readonly $path: 'declaration.enum_member';
 		readonly private: PortableKindsAt['declaration.enum_member.private'];
 		readonly public: PortableKindsAt['declaration.enum_member.public'];
 		readonly struct: PortableKindsAt['declaration.enum_member.struct'];
 		readonly tuple: PortableKindsAt['declaration.enum_member.tuple'];
 	};
-	'declaration.enum_member.private': { readonly $ids: readonly PortableIds['declaration.enum_member.private'][] };
+	'declaration.enum_member.private': { readonly $path: 'declaration.enum_member.private' };
 	'declaration.enum_member.public': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.public'][];
+		readonly $path: 'declaration.enum_member.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.public.restricted'];
 	};
-	'declaration.enum_member.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.public.internal'][];
-	};
-	'declaration.enum_member.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.public.restricted'][];
-	};
+	'declaration.enum_member.public.internal': { readonly $path: 'declaration.enum_member.public.internal' };
+	'declaration.enum_member.public.restricted': { readonly $path: 'declaration.enum_member.public.restricted' };
 	'declaration.enum_member.struct': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.struct'][];
+		readonly $path: 'declaration.enum_member.struct';
 		readonly private: PortableKindsAt['declaration.enum_member.struct.private'];
 		readonly public: PortableKindsAt['declaration.enum_member.struct.public'];
 	};
-	'declaration.enum_member.struct.private': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.struct.private'][];
-	};
+	'declaration.enum_member.struct.private': { readonly $path: 'declaration.enum_member.struct.private' };
 	'declaration.enum_member.struct.public': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.struct.public'][];
+		readonly $path: 'declaration.enum_member.struct.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.struct.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.struct.public.restricted'];
 	};
 	'declaration.enum_member.struct.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.struct.public.internal'][];
+		readonly $path: 'declaration.enum_member.struct.public.internal';
 	};
 	'declaration.enum_member.struct.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.struct.public.restricted'][];
+		readonly $path: 'declaration.enum_member.struct.public.restricted';
 	};
 	'declaration.enum_member.tuple': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.tuple'][];
+		readonly $path: 'declaration.enum_member.tuple';
 		readonly private: PortableKindsAt['declaration.enum_member.tuple.private'];
 		readonly public: PortableKindsAt['declaration.enum_member.tuple.public'];
 	};
-	'declaration.enum_member.tuple.private': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.private'][];
-	};
+	'declaration.enum_member.tuple.private': { readonly $path: 'declaration.enum_member.tuple.private' };
 	'declaration.enum_member.tuple.public': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.public'][];
+		readonly $path: 'declaration.enum_member.tuple.public';
 		readonly internal: PortableKindsAt['declaration.enum_member.tuple.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.enum_member.tuple.public.restricted'];
 	};
-	'declaration.enum_member.tuple.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.public.internal'][];
-	};
+	'declaration.enum_member.tuple.public.internal': { readonly $path: 'declaration.enum_member.tuple.public.internal' };
 	'declaration.enum_member.tuple.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.public.restricted'][];
+		readonly $path: 'declaration.enum_member.tuple.public.restricted';
 	};
 	'declaration.extension': {
-		readonly $ids: readonly PortableIds['declaration.extension'][];
+		readonly $path: 'declaration.extension';
 		readonly conformance: PortableKindsAt['declaration.extension.conformance'];
 	};
-	'declaration.extension.conformance': { readonly $ids: readonly PortableIds['declaration.extension.conformance'][] };
+	'declaration.extension.conformance': { readonly $path: 'declaration.extension.conformance' };
 	'declaration.field': {
-		readonly $ids: readonly PortableIds['declaration.field'][];
+		readonly $path: 'declaration.field';
 		readonly private: PortableKindsAt['declaration.field.private'];
 		readonly public: PortableKindsAt['declaration.field.public'];
 	};
-	'declaration.field.private': { readonly $ids: readonly PortableIds['declaration.field.private'][] };
+	'declaration.field.private': { readonly $path: 'declaration.field.private' };
 	'declaration.field.public': {
-		readonly $ids: readonly PortableIds['declaration.field.public'][];
+		readonly $path: 'declaration.field.public';
 		readonly internal: PortableKindsAt['declaration.field.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.field.public.restricted'];
 	};
-	'declaration.field.public.internal': { readonly $ids: readonly PortableIds['declaration.field.public.internal'][] };
-	'declaration.field.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.field.public.restricted'][];
-	};
+	'declaration.field.public.internal': { readonly $path: 'declaration.field.public.internal' };
+	'declaration.field.public.restricted': { readonly $path: 'declaration.field.public.restricted' };
 	'declaration.function': {
-		readonly $ids: readonly PortableIds['declaration.function'][];
+		readonly $path: 'declaration.function';
 		readonly private: PortableKindsAt['declaration.function.private'];
 		readonly public: PortableKindsAt['declaration.function.public'];
 		readonly signature: PortableKindsAt['declaration.function.signature'];
 	};
-	'declaration.function.private': { readonly $ids: readonly PortableIds['declaration.function.private'][] };
+	'declaration.function.private': { readonly $path: 'declaration.function.private' };
 	'declaration.function.public': {
-		readonly $ids: readonly PortableIds['declaration.function.public'][];
+		readonly $path: 'declaration.function.public';
 		readonly internal: PortableKindsAt['declaration.function.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.function.public.restricted'];
 	};
-	'declaration.function.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.function.public.internal'][];
-	};
-	'declaration.function.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.function.public.restricted'][];
-	};
+	'declaration.function.public.internal': { readonly $path: 'declaration.function.public.internal' };
+	'declaration.function.public.restricted': { readonly $path: 'declaration.function.public.restricted' };
 	'declaration.function.signature': {
-		readonly $ids: readonly PortableIds['declaration.function.signature'][];
+		readonly $path: 'declaration.function.signature';
 		readonly private: PortableKindsAt['declaration.function.signature.private'];
 		readonly public: PortableKindsAt['declaration.function.signature.public'];
 	};
-	'declaration.function.signature.private': {
-		readonly $ids: readonly PortableIds['declaration.function.signature.private'][];
-	};
+	'declaration.function.signature.private': { readonly $path: 'declaration.function.signature.private' };
 	'declaration.function.signature.public': {
-		readonly $ids: readonly PortableIds['declaration.function.signature.public'][];
+		readonly $path: 'declaration.function.signature.public';
 		readonly internal: PortableKindsAt['declaration.function.signature.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.function.signature.public.restricted'];
 	};
 	'declaration.function.signature.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.function.signature.public.internal'][];
+		readonly $path: 'declaration.function.signature.public.internal';
 	};
 	'declaration.function.signature.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.function.signature.public.restricted'][];
+		readonly $path: 'declaration.function.signature.public.restricted';
 	};
 	'declaration.interface': {
-		readonly $ids: readonly PortableIds['declaration.interface'][];
+		readonly $path: 'declaration.interface';
 		readonly trait: PortableKindsAt['declaration.interface.trait'];
 	};
 	'declaration.interface.trait': {
-		readonly $ids: readonly PortableIds['declaration.interface.trait'][];
+		readonly $path: 'declaration.interface.trait';
 		readonly private: PortableKindsAt['declaration.interface.trait.private'];
 		readonly public: PortableKindsAt['declaration.interface.trait.public'];
 	};
-	'declaration.interface.trait.private': {
-		readonly $ids: readonly PortableIds['declaration.interface.trait.private'][];
-	};
+	'declaration.interface.trait.private': { readonly $path: 'declaration.interface.trait.private' };
 	'declaration.interface.trait.public': {
-		readonly $ids: readonly PortableIds['declaration.interface.trait.public'][];
+		readonly $path: 'declaration.interface.trait.public';
 		readonly internal: PortableKindsAt['declaration.interface.trait.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.interface.trait.public.restricted'];
 	};
-	'declaration.interface.trait.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.interface.trait.public.internal'][];
-	};
-	'declaration.interface.trait.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.interface.trait.public.restricted'][];
-	};
-	'declaration.macro': { readonly $ids: readonly PortableIds['declaration.macro'][] };
+	'declaration.interface.trait.public.internal': { readonly $path: 'declaration.interface.trait.public.internal' };
+	'declaration.interface.trait.public.restricted': { readonly $path: 'declaration.interface.trait.public.restricted' };
+	'declaration.macro': { readonly $path: 'declaration.macro' };
 	'declaration.method': {
-		readonly $ids: readonly PortableIds['declaration.method'][];
+		readonly $path: 'declaration.method';
 		readonly private: PortableKindsAt['declaration.method.private'];
 		readonly public: PortableKindsAt['declaration.method.public'];
 		readonly signature: PortableKindsAt['declaration.method.signature'];
 	};
-	'declaration.method.private': { readonly $ids: readonly PortableIds['declaration.method.private'][] };
+	'declaration.method.private': { readonly $path: 'declaration.method.private' };
 	'declaration.method.public': {
-		readonly $ids: readonly PortableIds['declaration.method.public'][];
+		readonly $path: 'declaration.method.public';
 		readonly internal: PortableKindsAt['declaration.method.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.method.public.restricted'];
 	};
-	'declaration.method.public.internal': { readonly $ids: readonly PortableIds['declaration.method.public.internal'][] };
-	'declaration.method.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.method.public.restricted'][];
-	};
+	'declaration.method.public.internal': { readonly $path: 'declaration.method.public.internal' };
+	'declaration.method.public.restricted': { readonly $path: 'declaration.method.public.restricted' };
 	'declaration.method.signature': {
-		readonly $ids: readonly PortableIds['declaration.method.signature'][];
+		readonly $path: 'declaration.method.signature';
 		readonly private: PortableKindsAt['declaration.method.signature.private'];
 		readonly public: PortableKindsAt['declaration.method.signature.public'];
 	};
-	'declaration.method.signature.private': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.private'][];
-	};
+	'declaration.method.signature.private': { readonly $path: 'declaration.method.signature.private' };
 	'declaration.method.signature.public': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.public'][];
+		readonly $path: 'declaration.method.signature.public';
 		readonly internal: PortableKindsAt['declaration.method.signature.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.method.signature.public.restricted'];
 	};
-	'declaration.method.signature.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.public.internal'][];
-	};
+	'declaration.method.signature.public.internal': { readonly $path: 'declaration.method.signature.public.internal' };
 	'declaration.method.signature.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.public.restricted'][];
+		readonly $path: 'declaration.method.signature.public.restricted';
 	};
 	'declaration.module': {
-		readonly $ids: readonly PortableIds['declaration.module'][];
+		readonly $path: 'declaration.module';
 		readonly foreign: PortableKindsAt['declaration.module.foreign'];
 		readonly private: PortableKindsAt['declaration.module.private'];
 		readonly public: PortableKindsAt['declaration.module.public'];
 	};
-	'declaration.module.foreign': { readonly $ids: readonly PortableIds['declaration.module.foreign'][] };
-	'declaration.module.private': { readonly $ids: readonly PortableIds['declaration.module.private'][] };
+	'declaration.module.foreign': { readonly $path: 'declaration.module.foreign' };
+	'declaration.module.private': { readonly $path: 'declaration.module.private' };
 	'declaration.module.public': {
-		readonly $ids: readonly PortableIds['declaration.module.public'][];
+		readonly $path: 'declaration.module.public';
 		readonly internal: PortableKindsAt['declaration.module.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.module.public.restricted'];
 	};
-	'declaration.module.public.internal': { readonly $ids: readonly PortableIds['declaration.module.public.internal'][] };
-	'declaration.module.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.module.public.restricted'][];
-	};
+	'declaration.module.public.internal': { readonly $path: 'declaration.module.public.internal' };
+	'declaration.module.public.restricted': { readonly $path: 'declaration.module.public.restricted' };
 	'declaration.parameter': {
-		readonly $ids: readonly PortableIds['declaration.parameter'][];
+		readonly $path: 'declaration.parameter';
 		readonly receiver: PortableKindsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
-	'declaration.parameter.receiver': { readonly $ids: readonly PortableIds['declaration.parameter.receiver'][] };
-	'declaration.parameter.variadic': { readonly $ids: readonly PortableIds['declaration.parameter.variadic'][] };
+	'declaration.parameter.receiver': { readonly $path: 'declaration.parameter.receiver' };
+	'declaration.parameter.variadic': { readonly $path: 'declaration.parameter.variadic' };
 	'declaration.struct': {
-		readonly $ids: readonly PortableIds['declaration.struct'][];
+		readonly $path: 'declaration.struct';
 		readonly private: PortableKindsAt['declaration.struct.private'];
 		readonly public: PortableKindsAt['declaration.struct.public'];
 		readonly tuple: PortableKindsAt['declaration.struct.tuple'];
 		readonly unit: PortableKindsAt['declaration.struct.unit'];
 	};
-	'declaration.struct.private': { readonly $ids: readonly PortableIds['declaration.struct.private'][] };
+	'declaration.struct.private': { readonly $path: 'declaration.struct.private' };
 	'declaration.struct.public': {
-		readonly $ids: readonly PortableIds['declaration.struct.public'][];
+		readonly $path: 'declaration.struct.public';
 		readonly internal: PortableKindsAt['declaration.struct.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.struct.public.restricted'];
 	};
-	'declaration.struct.public.internal': { readonly $ids: readonly PortableIds['declaration.struct.public.internal'][] };
-	'declaration.struct.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.struct.public.restricted'][];
-	};
+	'declaration.struct.public.internal': { readonly $path: 'declaration.struct.public.internal' };
+	'declaration.struct.public.restricted': { readonly $path: 'declaration.struct.public.restricted' };
 	'declaration.struct.tuple': {
-		readonly $ids: readonly PortableIds['declaration.struct.tuple'][];
+		readonly $path: 'declaration.struct.tuple';
 		readonly private: PortableKindsAt['declaration.struct.tuple.private'];
 		readonly public: PortableKindsAt['declaration.struct.tuple.public'];
 	};
-	'declaration.struct.tuple.private': { readonly $ids: readonly PortableIds['declaration.struct.tuple.private'][] };
+	'declaration.struct.tuple.private': { readonly $path: 'declaration.struct.tuple.private' };
 	'declaration.struct.tuple.public': {
-		readonly $ids: readonly PortableIds['declaration.struct.tuple.public'][];
+		readonly $path: 'declaration.struct.tuple.public';
 		readonly internal: PortableKindsAt['declaration.struct.tuple.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.struct.tuple.public.restricted'];
 	};
-	'declaration.struct.tuple.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.struct.tuple.public.internal'][];
-	};
-	'declaration.struct.tuple.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.struct.tuple.public.restricted'][];
-	};
+	'declaration.struct.tuple.public.internal': { readonly $path: 'declaration.struct.tuple.public.internal' };
+	'declaration.struct.tuple.public.restricted': { readonly $path: 'declaration.struct.tuple.public.restricted' };
 	'declaration.struct.unit': {
-		readonly $ids: readonly PortableIds['declaration.struct.unit'][];
+		readonly $path: 'declaration.struct.unit';
 		readonly private: PortableKindsAt['declaration.struct.unit.private'];
 		readonly public: PortableKindsAt['declaration.struct.unit.public'];
 	};
-	'declaration.struct.unit.private': { readonly $ids: readonly PortableIds['declaration.struct.unit.private'][] };
+	'declaration.struct.unit.private': { readonly $path: 'declaration.struct.unit.private' };
 	'declaration.struct.unit.public': {
-		readonly $ids: readonly PortableIds['declaration.struct.unit.public'][];
+		readonly $path: 'declaration.struct.unit.public';
 		readonly internal: PortableKindsAt['declaration.struct.unit.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.struct.unit.public.restricted'];
 	};
-	'declaration.struct.unit.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.struct.unit.public.internal'][];
-	};
-	'declaration.struct.unit.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.struct.unit.public.restricted'][];
-	};
+	'declaration.struct.unit.public.internal': { readonly $path: 'declaration.struct.unit.public.internal' };
+	'declaration.struct.unit.public.restricted': { readonly $path: 'declaration.struct.unit.public.restricted' };
 	'declaration.type_alias': {
-		readonly $ids: readonly PortableIds['declaration.type_alias'][];
+		readonly $path: 'declaration.type_alias';
 		readonly associated: PortableKindsAt['declaration.type_alias.associated'];
 		readonly private: PortableKindsAt['declaration.type_alias.private'];
 		readonly public: PortableKindsAt['declaration.type_alias.public'];
 	};
-	'declaration.type_alias.associated': { readonly $ids: readonly PortableIds['declaration.type_alias.associated'][] };
-	'declaration.type_alias.private': { readonly $ids: readonly PortableIds['declaration.type_alias.private'][] };
+	'declaration.type_alias.associated': { readonly $path: 'declaration.type_alias.associated' };
+	'declaration.type_alias.private': { readonly $path: 'declaration.type_alias.private' };
 	'declaration.type_alias.public': {
-		readonly $ids: readonly PortableIds['declaration.type_alias.public'][];
+		readonly $path: 'declaration.type_alias.public';
 		readonly internal: PortableKindsAt['declaration.type_alias.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.type_alias.public.restricted'];
 	};
-	'declaration.type_alias.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.type_alias.public.internal'][];
-	};
-	'declaration.type_alias.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.type_alias.public.restricted'][];
-	};
+	'declaration.type_alias.public.internal': { readonly $path: 'declaration.type_alias.public.internal' };
+	'declaration.type_alias.public.restricted': { readonly $path: 'declaration.type_alias.public.restricted' };
 	'declaration.type_parameter': {
-		readonly $ids: readonly PortableIds['declaration.type_parameter'][];
+		readonly $path: 'declaration.type_parameter';
 		readonly lifetime: PortableKindsAt['declaration.type_parameter.lifetime'];
 		readonly value: PortableKindsAt['declaration.type_parameter.value'];
 	};
-	'declaration.type_parameter.lifetime': {
-		readonly $ids: readonly PortableIds['declaration.type_parameter.lifetime'][];
-	};
-	'declaration.type_parameter.value': { readonly $ids: readonly PortableIds['declaration.type_parameter.value'][] };
+	'declaration.type_parameter.lifetime': { readonly $path: 'declaration.type_parameter.lifetime' };
+	'declaration.type_parameter.value': { readonly $path: 'declaration.type_parameter.value' };
 	'declaration.union': {
-		readonly $ids: readonly PortableIds['declaration.union'][];
+		readonly $path: 'declaration.union';
 		readonly private: PortableKindsAt['declaration.union.private'];
 		readonly public: PortableKindsAt['declaration.union.public'];
 	};
-	'declaration.union.private': { readonly $ids: readonly PortableIds['declaration.union.private'][] };
+	'declaration.union.private': { readonly $path: 'declaration.union.private' };
 	'declaration.union.public': {
-		readonly $ids: readonly PortableIds['declaration.union.public'][];
+		readonly $path: 'declaration.union.public';
 		readonly internal: PortableKindsAt['declaration.union.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.union.public.restricted'];
 	};
-	'declaration.union.public.internal': { readonly $ids: readonly PortableIds['declaration.union.public.internal'][] };
-	'declaration.union.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.union.public.restricted'][];
-	};
+	'declaration.union.public.internal': { readonly $path: 'declaration.union.public.internal' };
+	'declaration.union.public.restricted': { readonly $path: 'declaration.union.public.restricted' };
 	'declaration.variable': {
-		readonly $ids: readonly PortableIds['declaration.variable'][];
+		readonly $path: 'declaration.variable';
 		readonly private: PortableKindsAt['declaration.variable.private'];
 		readonly public: PortableKindsAt['declaration.variable.public'];
 	};
-	'declaration.variable.private': { readonly $ids: readonly PortableIds['declaration.variable.private'][] };
+	'declaration.variable.private': { readonly $path: 'declaration.variable.private' };
 	'declaration.variable.public': {
-		readonly $ids: readonly PortableIds['declaration.variable.public'][];
+		readonly $path: 'declaration.variable.public';
 		readonly internal: PortableKindsAt['declaration.variable.public.internal'];
 		readonly restricted: PortableKindsAt['declaration.variable.public.restricted'];
 	};
-	'declaration.variable.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.variable.public.internal'][];
-	};
-	'declaration.variable.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.variable.public.restricted'][];
-	};
+	'declaration.variable.public.internal': { readonly $path: 'declaration.variable.public.internal' };
+	'declaration.variable.public.restricted': { readonly $path: 'declaration.variable.public.restricted' };
 	element: {
-		readonly $ids: readonly PortableIds['element'][];
+		readonly $path: 'element';
 		readonly macro: PortableKindsAt['element.macro'];
 		readonly struct: PortableKindsAt['element.struct'];
 		readonly type_argument: PortableKindsAt['element.type_argument'];
 		readonly type_binding: PortableKindsAt['element.type_binding'];
 	};
 	'element.macro': {
-		readonly $ids: readonly PortableIds['element.macro'][];
+		readonly $path: 'element.macro';
 		readonly fragment: PortableKindsAt['element.macro.fragment'];
 		readonly token_binding: PortableKindsAt['element.macro.token_binding'];
 		readonly token_repetition: PortableKindsAt['element.macro.token_repetition'];
 		readonly token_tree: PortableKindsAt['element.macro.token_tree'];
 	};
-	'element.macro.fragment': { readonly $ids: readonly PortableIds['element.macro.fragment'][] };
-	'element.macro.token_binding': { readonly $ids: readonly PortableIds['element.macro.token_binding'][] };
+	'element.macro.fragment': { readonly $path: 'element.macro.fragment' };
+	'element.macro.token_binding': { readonly $path: 'element.macro.token_binding' };
 	'element.macro.token_repetition': {
-		readonly $ids: readonly PortableIds['element.macro.token_repetition'][];
+		readonly $path: 'element.macro.token_repetition';
 		readonly pattern: PortableKindsAt['element.macro.token_repetition.pattern'];
 	};
-	'element.macro.token_repetition.pattern': {
-		readonly $ids: readonly PortableIds['element.macro.token_repetition.pattern'][];
-	};
+	'element.macro.token_repetition.pattern': { readonly $path: 'element.macro.token_repetition.pattern' };
 	'element.macro.token_tree': {
-		readonly $ids: readonly PortableIds['element.macro.token_tree'][];
+		readonly $path: 'element.macro.token_tree';
 		readonly delimited: PortableKindsAt['element.macro.token_tree.delimited'];
 		readonly pattern: PortableKindsAt['element.macro.token_tree.pattern'];
 	};
-	'element.macro.token_tree.delimited': { readonly $ids: readonly PortableIds['element.macro.token_tree.delimited'][] };
-	'element.macro.token_tree.pattern': { readonly $ids: readonly PortableIds['element.macro.token_tree.pattern'][] };
+	'element.macro.token_tree.delimited': { readonly $path: 'element.macro.token_tree.delimited' };
+	'element.macro.token_tree.pattern': { readonly $path: 'element.macro.token_tree.pattern' };
 	'element.struct': {
-		readonly $ids: readonly PortableIds['element.struct'][];
+		readonly $path: 'element.struct';
 		readonly base: PortableKindsAt['element.struct.base'];
 		readonly field: PortableKindsAt['element.struct.field'];
 	};
-	'element.struct.base': { readonly $ids: readonly PortableIds['element.struct.base'][] };
-	'element.struct.field': { readonly $ids: readonly PortableIds['element.struct.field'][] };
-	'element.type_argument': { readonly $ids: readonly PortableIds['element.type_argument'][] };
-	'element.type_binding': { readonly $ids: readonly PortableIds['element.type_binding'][] };
+	'element.struct.base': { readonly $path: 'element.struct.base' };
+	'element.struct.field': { readonly $path: 'element.struct.field' };
+	'element.type_argument': { readonly $path: 'element.type_argument' };
+	'element.type_binding': { readonly $path: 'element.type_binding' };
 	expression: {
-		readonly $ids: readonly PortableIds['expression'][];
+		readonly $path: 'expression';
 		readonly assignment: PortableKindsAt['expression.assignment'];
 		readonly await: PortableKindsAt['expression.await'];
 		readonly binary: PortableKindsAt['expression.binary'];
@@ -1361,11 +1277,11 @@ export interface PortableKindsAt {
 		readonly yield: PortableKindsAt['expression.yield'];
 	};
 	'expression.assignment': {
-		readonly $ids: readonly PortableIds['expression.assignment'][];
+		readonly $path: 'expression.assignment';
 		readonly compound: PortableKindsAt['expression.assignment.compound'];
 	};
 	'expression.assignment.compound': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound'][];
+		readonly $path: 'expression.assignment.compound';
 		readonly add: PortableKindsAt['expression.assignment.compound.add'];
 		readonly bitwise_and: PortableKindsAt['expression.assignment.compound.bitwise_and'];
 		readonly bitwise_or: PortableKindsAt['expression.assignment.compound.bitwise_or'];
@@ -1377,37 +1293,19 @@ export interface PortableKindsAt {
 		readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
 		readonly subtract: PortableKindsAt['expression.assignment.compound.subtract'];
 	};
-	'expression.assignment.compound.add': { readonly $ids: readonly PortableIds['expression.assignment.compound.add'][] };
-	'expression.assignment.compound.bitwise_and': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.bitwise_and'][];
-	};
-	'expression.assignment.compound.bitwise_or': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.bitwise_or'][];
-	};
-	'expression.assignment.compound.bitwise_xor': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.bitwise_xor'][];
-	};
-	'expression.assignment.compound.divide': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.divide'][];
-	};
-	'expression.assignment.compound.modulo': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.modulo'][];
-	};
-	'expression.assignment.compound.multiply': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.multiply'][];
-	};
-	'expression.assignment.compound.shift_left': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.shift_left'][];
-	};
-	'expression.assignment.compound.shift_right': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.shift_right'][];
-	};
-	'expression.assignment.compound.subtract': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.subtract'][];
-	};
-	'expression.await': { readonly $ids: readonly PortableIds['expression.await'][] };
+	'expression.assignment.compound.add': { readonly $path: 'expression.assignment.compound.add' };
+	'expression.assignment.compound.bitwise_and': { readonly $path: 'expression.assignment.compound.bitwise_and' };
+	'expression.assignment.compound.bitwise_or': { readonly $path: 'expression.assignment.compound.bitwise_or' };
+	'expression.assignment.compound.bitwise_xor': { readonly $path: 'expression.assignment.compound.bitwise_xor' };
+	'expression.assignment.compound.divide': { readonly $path: 'expression.assignment.compound.divide' };
+	'expression.assignment.compound.modulo': { readonly $path: 'expression.assignment.compound.modulo' };
+	'expression.assignment.compound.multiply': { readonly $path: 'expression.assignment.compound.multiply' };
+	'expression.assignment.compound.shift_left': { readonly $path: 'expression.assignment.compound.shift_left' };
+	'expression.assignment.compound.shift_right': { readonly $path: 'expression.assignment.compound.shift_right' };
+	'expression.assignment.compound.subtract': { readonly $path: 'expression.assignment.compound.subtract' };
+	'expression.await': { readonly $path: 'expression.await' };
 	'expression.binary': {
-		readonly $ids: readonly PortableIds['expression.binary'][];
+		readonly $path: 'expression.binary';
 		readonly arithmetic: PortableKindsAt['expression.binary.arithmetic'];
 		readonly bitwise: PortableKindsAt['expression.binary.bitwise'];
 		readonly comparison: PortableKindsAt['expression.binary.comparison'];
@@ -1415,37 +1313,29 @@ export interface PortableKindsAt {
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
-		readonly $ids: readonly PortableIds['expression.binary.arithmetic'][];
+		readonly $path: 'expression.binary.arithmetic';
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly modulo: PortableKindsAt['expression.binary.arithmetic.modulo'];
 		readonly multiply: PortableKindsAt['expression.binary.arithmetic.multiply'];
 		readonly subtract: PortableKindsAt['expression.binary.arithmetic.subtract'];
 	};
-	'expression.binary.arithmetic.add': { readonly $ids: readonly PortableIds['expression.binary.arithmetic.add'][] };
-	'expression.binary.arithmetic.divide': {
-		readonly $ids: readonly PortableIds['expression.binary.arithmetic.divide'][];
-	};
-	'expression.binary.arithmetic.modulo': {
-		readonly $ids: readonly PortableIds['expression.binary.arithmetic.modulo'][];
-	};
-	'expression.binary.arithmetic.multiply': {
-		readonly $ids: readonly PortableIds['expression.binary.arithmetic.multiply'][];
-	};
-	'expression.binary.arithmetic.subtract': {
-		readonly $ids: readonly PortableIds['expression.binary.arithmetic.subtract'][];
-	};
+	'expression.binary.arithmetic.add': { readonly $path: 'expression.binary.arithmetic.add' };
+	'expression.binary.arithmetic.divide': { readonly $path: 'expression.binary.arithmetic.divide' };
+	'expression.binary.arithmetic.modulo': { readonly $path: 'expression.binary.arithmetic.modulo' };
+	'expression.binary.arithmetic.multiply': { readonly $path: 'expression.binary.arithmetic.multiply' };
+	'expression.binary.arithmetic.subtract': { readonly $path: 'expression.binary.arithmetic.subtract' };
 	'expression.binary.bitwise': {
-		readonly $ids: readonly PortableIds['expression.binary.bitwise'][];
+		readonly $path: 'expression.binary.bitwise';
 		readonly and: PortableKindsAt['expression.binary.bitwise.and'];
 		readonly or: PortableKindsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
 	};
-	'expression.binary.bitwise.and': { readonly $ids: readonly PortableIds['expression.binary.bitwise.and'][] };
-	'expression.binary.bitwise.or': { readonly $ids: readonly PortableIds['expression.binary.bitwise.or'][] };
-	'expression.binary.bitwise.xor': { readonly $ids: readonly PortableIds['expression.binary.bitwise.xor'][] };
+	'expression.binary.bitwise.and': { readonly $path: 'expression.binary.bitwise.and' };
+	'expression.binary.bitwise.or': { readonly $path: 'expression.binary.bitwise.or' };
+	'expression.binary.bitwise.xor': { readonly $path: 'expression.binary.bitwise.xor' };
 	'expression.binary.comparison': {
-		readonly $ids: readonly PortableIds['expression.binary.comparison'][];
+		readonly $path: 'expression.binary.comparison';
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
@@ -1453,102 +1343,94 @@ export interface PortableKindsAt {
 		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
 		readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
 	};
-	'expression.binary.comparison.equal': { readonly $ids: readonly PortableIds['expression.binary.comparison.equal'][] };
-	'expression.binary.comparison.greater': {
-		readonly $ids: readonly PortableIds['expression.binary.comparison.greater'][];
-	};
-	'expression.binary.comparison.greater_equal': {
-		readonly $ids: readonly PortableIds['expression.binary.comparison.greater_equal'][];
-	};
-	'expression.binary.comparison.less': { readonly $ids: readonly PortableIds['expression.binary.comparison.less'][] };
-	'expression.binary.comparison.less_equal': {
-		readonly $ids: readonly PortableIds['expression.binary.comparison.less_equal'][];
-	};
-	'expression.binary.comparison.not_equal': {
-		readonly $ids: readonly PortableIds['expression.binary.comparison.not_equal'][];
-	};
+	'expression.binary.comparison.equal': { readonly $path: 'expression.binary.comparison.equal' };
+	'expression.binary.comparison.greater': { readonly $path: 'expression.binary.comparison.greater' };
+	'expression.binary.comparison.greater_equal': { readonly $path: 'expression.binary.comparison.greater_equal' };
+	'expression.binary.comparison.less': { readonly $path: 'expression.binary.comparison.less' };
+	'expression.binary.comparison.less_equal': { readonly $path: 'expression.binary.comparison.less_equal' };
+	'expression.binary.comparison.not_equal': { readonly $path: 'expression.binary.comparison.not_equal' };
 	'expression.binary.logical': {
-		readonly $ids: readonly PortableIds['expression.binary.logical'][];
+		readonly $path: 'expression.binary.logical';
 		readonly and: PortableKindsAt['expression.binary.logical.and'];
 		readonly or: PortableKindsAt['expression.binary.logical.or'];
 	};
-	'expression.binary.logical.and': { readonly $ids: readonly PortableIds['expression.binary.logical.and'][] };
-	'expression.binary.logical.or': { readonly $ids: readonly PortableIds['expression.binary.logical.or'][] };
+	'expression.binary.logical.and': { readonly $path: 'expression.binary.logical.and' };
+	'expression.binary.logical.or': { readonly $path: 'expression.binary.logical.or' };
 	'expression.binary.shift': {
-		readonly $ids: readonly PortableIds['expression.binary.shift'][];
+		readonly $path: 'expression.binary.shift';
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 	};
-	'expression.binary.shift.left': { readonly $ids: readonly PortableIds['expression.binary.shift.left'][] };
-	'expression.binary.shift.right': { readonly $ids: readonly PortableIds['expression.binary.shift.right'][] };
+	'expression.binary.shift.left': { readonly $path: 'expression.binary.shift.left' };
+	'expression.binary.shift.right': { readonly $path: 'expression.binary.shift.right' };
 	'expression.block': {
-		readonly $ids: readonly PortableIds['expression.block'][];
+		readonly $path: 'expression.block';
 		readonly async: PortableKindsAt['expression.block.async'];
 		readonly const: PortableKindsAt['expression.block.const'];
 		readonly generator: PortableKindsAt['expression.block.generator'];
 		readonly try: PortableKindsAt['expression.block.try'];
 		readonly unsafe: PortableKindsAt['expression.block.unsafe'];
 	};
-	'expression.block.async': { readonly $ids: readonly PortableIds['expression.block.async'][] };
-	'expression.block.const': { readonly $ids: readonly PortableIds['expression.block.const'][] };
-	'expression.block.generator': { readonly $ids: readonly PortableIds['expression.block.generator'][] };
-	'expression.block.try': { readonly $ids: readonly PortableIds['expression.block.try'][] };
-	'expression.block.unsafe': { readonly $ids: readonly PortableIds['expression.block.unsafe'][] };
+	'expression.block.async': { readonly $path: 'expression.block.async' };
+	'expression.block.const': { readonly $path: 'expression.block.const' };
+	'expression.block.generator': { readonly $path: 'expression.block.generator' };
+	'expression.block.try': { readonly $path: 'expression.block.try' };
+	'expression.block.unsafe': { readonly $path: 'expression.block.unsafe' };
 	'expression.call': {
-		readonly $ids: readonly PortableIds['expression.call'][];
+		readonly $path: 'expression.call';
 		readonly macro: PortableKindsAt['expression.call.macro'];
 		readonly member: PortableKindsAt['expression.call.member'];
 		readonly qualified: PortableKindsAt['expression.call.qualified'];
 	};
-	'expression.call.macro': { readonly $ids: readonly PortableIds['expression.call.macro'][] };
-	'expression.call.member': { readonly $ids: readonly PortableIds['expression.call.member'][] };
-	'expression.call.qualified': { readonly $ids: readonly PortableIds['expression.call.qualified'][] };
+	'expression.call.macro': { readonly $path: 'expression.call.macro' };
+	'expression.call.member': { readonly $path: 'expression.call.member' };
+	'expression.call.qualified': { readonly $path: 'expression.call.qualified' };
 	'expression.cast': {
-		readonly $ids: readonly PortableIds['expression.cast'][];
+		readonly $path: 'expression.cast';
 		readonly conversion: PortableKindsAt['expression.cast.conversion'];
 	};
-	'expression.cast.conversion': { readonly $ids: readonly PortableIds['expression.cast.conversion'][] };
+	'expression.cast.conversion': { readonly $path: 'expression.cast.conversion' };
 	'expression.collection': {
-		readonly $ids: readonly PortableIds['expression.collection'][];
+		readonly $path: 'expression.collection';
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly struct: PortableKindsAt['expression.collection.struct'];
 		readonly tuple: PortableKindsAt['expression.collection.tuple'];
 	};
 	'expression.collection.list': {
-		readonly $ids: readonly PortableIds['expression.collection.list'][];
+		readonly $path: 'expression.collection.list';
 		readonly repeat: PortableKindsAt['expression.collection.list.repeat'];
 	};
-	'expression.collection.list.repeat': { readonly $ids: readonly PortableIds['expression.collection.list.repeat'][] };
-	'expression.collection.struct': { readonly $ids: readonly PortableIds['expression.collection.struct'][] };
-	'expression.collection.tuple': { readonly $ids: readonly PortableIds['expression.collection.tuple'][] };
-	'expression.instantiation': { readonly $ids: readonly PortableIds['expression.instantiation'][] };
-	'expression.lambda': { readonly $ids: readonly PortableIds['expression.lambda'][] };
-	'expression.member': { readonly $ids: readonly PortableIds['expression.member'][] };
-	'expression.parenthesized': { readonly $ids: readonly PortableIds['expression.parenthesized'][] };
-	'expression.propagate': { readonly $ids: readonly PortableIds['expression.propagate'][] };
+	'expression.collection.list.repeat': { readonly $path: 'expression.collection.list.repeat' };
+	'expression.collection.struct': { readonly $path: 'expression.collection.struct' };
+	'expression.collection.tuple': { readonly $path: 'expression.collection.tuple' };
+	'expression.instantiation': { readonly $path: 'expression.instantiation' };
+	'expression.lambda': { readonly $path: 'expression.lambda' };
+	'expression.member': { readonly $path: 'expression.member' };
+	'expression.parenthesized': { readonly $path: 'expression.parenthesized' };
+	'expression.propagate': { readonly $path: 'expression.propagate' };
 	'expression.range': {
-		readonly $ids: readonly PortableIds['expression.range'][];
+		readonly $path: 'expression.range';
 		readonly exclusive: PortableKindsAt['expression.range.exclusive'];
 		readonly inclusive: PortableKindsAt['expression.range.inclusive'];
 	};
-	'expression.range.exclusive': { readonly $ids: readonly PortableIds['expression.range.exclusive'][] };
-	'expression.range.inclusive': { readonly $ids: readonly PortableIds['expression.range.inclusive'][] };
-	'expression.reference': { readonly $ids: readonly PortableIds['expression.reference'][] };
-	'expression.subscript': { readonly $ids: readonly PortableIds['expression.subscript'][] };
+	'expression.range.exclusive': { readonly $path: 'expression.range.exclusive' };
+	'expression.range.inclusive': { readonly $path: 'expression.range.inclusive' };
+	'expression.reference': { readonly $path: 'expression.reference' };
+	'expression.subscript': { readonly $path: 'expression.subscript' };
 	'expression.unary': {
-		readonly $ids: readonly PortableIds['expression.unary'][];
+		readonly $path: 'expression.unary';
 		readonly deref: PortableKindsAt['expression.unary.deref'];
 		readonly negation: PortableKindsAt['expression.unary.negation'];
 		readonly not: PortableKindsAt['expression.unary.not'];
 	};
-	'expression.unary.deref': { readonly $ids: readonly PortableIds['expression.unary.deref'][] };
-	'expression.unary.negation': { readonly $ids: readonly PortableIds['expression.unary.negation'][] };
-	'expression.unary.not': { readonly $ids: readonly PortableIds['expression.unary.not'][] };
-	'expression.unit': { readonly $ids: readonly PortableIds['expression.unit'][] };
-	'expression.yield': { readonly $ids: readonly PortableIds['expression.yield'][] };
-	file: { readonly $ids: readonly PortableIds['file'][] };
+	'expression.unary.deref': { readonly $path: 'expression.unary.deref' };
+	'expression.unary.negation': { readonly $path: 'expression.unary.negation' };
+	'expression.unary.not': { readonly $path: 'expression.unary.not' };
+	'expression.unit': { readonly $path: 'expression.unit' };
+	'expression.yield': { readonly $path: 'expression.yield' };
+	file: { readonly $path: 'file' };
 	identifier: {
-		readonly $ids: readonly PortableIds['identifier'][];
+		readonly $path: 'identifier';
 		readonly crate: PortableKindsAt['identifier.crate'];
 		readonly field: PortableKindsAt['identifier.field'];
 		readonly label: PortableKindsAt['identifier.label'];
@@ -1560,88 +1442,84 @@ export interface PortableKindsAt {
 		readonly super: PortableKindsAt['identifier.super'];
 		readonly type: PortableKindsAt['identifier.type'];
 	};
-	'identifier.crate': { readonly $ids: readonly PortableIds['identifier.crate'][] };
-	'identifier.field': { readonly $ids: readonly PortableIds['identifier.field'][] };
-	'identifier.label': { readonly $ids: readonly PortableIds['identifier.label'][] };
-	'identifier.lifetime': { readonly $ids: readonly PortableIds['identifier.lifetime'][] };
-	'identifier.metavariable': { readonly $ids: readonly PortableIds['identifier.metavariable'][] };
+	'identifier.crate': { readonly $path: 'identifier.crate' };
+	'identifier.field': { readonly $path: 'identifier.field' };
+	'identifier.label': { readonly $path: 'identifier.label' };
+	'identifier.lifetime': { readonly $path: 'identifier.lifetime' };
+	'identifier.metavariable': { readonly $path: 'identifier.metavariable' };
 	'identifier.property': {
-		readonly $ids: readonly PortableIds['identifier.property'][];
+		readonly $path: 'identifier.property';
 		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	};
-	'identifier.property.shorthand': { readonly $ids: readonly PortableIds['identifier.property.shorthand'][] };
-	'identifier.receiver': { readonly $ids: readonly PortableIds['identifier.receiver'][] };
-	'identifier.scoped': { readonly $ids: readonly PortableIds['identifier.scoped'][] };
-	'identifier.super': { readonly $ids: readonly PortableIds['identifier.super'][] };
-	'identifier.type': { readonly $ids: readonly PortableIds['identifier.type'][] };
+	'identifier.property.shorthand': { readonly $path: 'identifier.property.shorthand' };
+	'identifier.receiver': { readonly $path: 'identifier.receiver' };
+	'identifier.scoped': { readonly $path: 'identifier.scoped' };
+	'identifier.super': { readonly $path: 'identifier.super' };
+	'identifier.type': { readonly $path: 'identifier.type' };
 	literal: {
-		readonly $ids: readonly PortableIds['literal'][];
+		readonly $path: 'literal';
 		readonly boolean: PortableKindsAt['literal.boolean'];
 		readonly character: PortableKindsAt['literal.character'];
 		readonly number: PortableKindsAt['literal.number'];
 		readonly string: PortableKindsAt['literal.string'];
 	};
 	'literal.boolean': {
-		readonly $ids: readonly PortableIds['literal.boolean'][];
+		readonly $path: 'literal.boolean';
 		readonly false: PortableKindsAt['literal.boolean.false'];
 		readonly true: PortableKindsAt['literal.boolean.true'];
 	};
-	'literal.boolean.false': { readonly $ids: readonly PortableIds['literal.boolean.false'][] };
-	'literal.boolean.true': { readonly $ids: readonly PortableIds['literal.boolean.true'][] };
-	'literal.character': { readonly $ids: readonly PortableIds['literal.character'][] };
+	'literal.boolean.false': { readonly $path: 'literal.boolean.false' };
+	'literal.boolean.true': { readonly $path: 'literal.boolean.true' };
+	'literal.character': { readonly $path: 'literal.character' };
 	'literal.number': {
-		readonly $ids: readonly PortableIds['literal.number'][];
+		readonly $path: 'literal.number';
 		readonly float: PortableKindsAt['literal.number.float'];
 		readonly integer: PortableKindsAt['literal.number.integer'];
 		readonly negative: PortableKindsAt['literal.number.negative'];
 	};
-	'literal.number.float': { readonly $ids: readonly PortableIds['literal.number.float'][] };
+	'literal.number.float': { readonly $path: 'literal.number.float' };
 	'literal.number.integer': {
-		readonly $ids: readonly PortableIds['literal.number.integer'][];
+		readonly $path: 'literal.number.integer';
 		readonly binary: PortableKindsAt['literal.number.integer.binary'];
 		readonly hex: PortableKindsAt['literal.number.integer.hex'];
 		readonly octal: PortableKindsAt['literal.number.integer.octal'];
 	};
-	'literal.number.integer.binary': { readonly $ids: readonly PortableIds['literal.number.integer.binary'][] };
-	'literal.number.integer.hex': { readonly $ids: readonly PortableIds['literal.number.integer.hex'][] };
-	'literal.number.integer.octal': { readonly $ids: readonly PortableIds['literal.number.integer.octal'][] };
-	'literal.number.negative': { readonly $ids: readonly PortableIds['literal.number.negative'][] };
+	'literal.number.integer.binary': { readonly $path: 'literal.number.integer.binary' };
+	'literal.number.integer.hex': { readonly $path: 'literal.number.integer.hex' };
+	'literal.number.integer.octal': { readonly $path: 'literal.number.integer.octal' };
+	'literal.number.negative': { readonly $path: 'literal.number.negative' };
 	'literal.string': {
-		readonly $ids: readonly PortableIds['literal.string'][];
+		readonly $path: 'literal.string';
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly text: PortableKindsAt['literal.string.text'];
 	};
-	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
-	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
-	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
-	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
+	'literal.string.bytes': { readonly $path: 'literal.string.bytes' };
+	'literal.string.escape': { readonly $path: 'literal.string.escape' };
+	'literal.string.raw': { readonly $path: 'literal.string.raw' };
+	'literal.string.text': { readonly $path: 'literal.string.text' };
 	modifier: {
-		readonly $ids: readonly PortableIds['modifier'][];
+		readonly $path: 'modifier';
 		readonly extern: PortableKindsAt['modifier.extern'];
 		readonly visibility: PortableKindsAt['modifier.visibility'];
 	};
-	'modifier.extern': { readonly $ids: readonly PortableIds['modifier.extern'][] };
+	'modifier.extern': { readonly $path: 'modifier.extern' };
 	'modifier.visibility': {
-		readonly $ids: readonly PortableIds['modifier.visibility'][];
+		readonly $path: 'modifier.visibility';
 		readonly private: PortableKindsAt['modifier.visibility.private'];
 		readonly public: PortableKindsAt['modifier.visibility.public'];
 	};
-	'modifier.visibility.private': { readonly $ids: readonly PortableIds['modifier.visibility.private'][] };
+	'modifier.visibility.private': { readonly $path: 'modifier.visibility.private' };
 	'modifier.visibility.public': {
-		readonly $ids: readonly PortableIds['modifier.visibility.public'][];
+		readonly $path: 'modifier.visibility.public';
 		readonly internal: PortableKindsAt['modifier.visibility.public.internal'];
 		readonly restricted: PortableKindsAt['modifier.visibility.public.restricted'];
 	};
-	'modifier.visibility.public.internal': {
-		readonly $ids: readonly PortableIds['modifier.visibility.public.internal'][];
-	};
-	'modifier.visibility.public.restricted': {
-		readonly $ids: readonly PortableIds['modifier.visibility.public.restricted'][];
-	};
+	'modifier.visibility.public.internal': { readonly $path: 'modifier.visibility.public.internal' };
+	'modifier.visibility.public.restricted': { readonly $path: 'modifier.visibility.public.restricted' };
 	pattern: {
-		readonly $ids: readonly PortableIds['pattern'][];
+		readonly $path: 'pattern';
 		readonly as: PortableKindsAt['pattern.as'];
 		readonly generic: PortableKindsAt['pattern.generic'];
 		readonly list: PortableKindsAt['pattern.list'];
@@ -1654,39 +1532,36 @@ export interface PortableKindsAt {
 		readonly tuple: PortableKindsAt['pattern.tuple'];
 		readonly wildcard: PortableKindsAt['pattern.wildcard'];
 	};
-	'pattern.as': { readonly $ids: readonly PortableIds['pattern.as'][] };
-	'pattern.generic': { readonly $ids: readonly PortableIds['pattern.generic'][] };
-	'pattern.list': { readonly $ids: readonly PortableIds['pattern.list'][] };
-	'pattern.match': { readonly $ids: readonly PortableIds['pattern.match'][] };
-	'pattern.mutable': { readonly $ids: readonly PortableIds['pattern.mutable'][] };
-	'pattern.or': { readonly $ids: readonly PortableIds['pattern.or'][] };
+	'pattern.as': { readonly $path: 'pattern.as' };
+	'pattern.generic': { readonly $path: 'pattern.generic' };
+	'pattern.list': { readonly $path: 'pattern.list' };
+	'pattern.match': { readonly $path: 'pattern.match' };
+	'pattern.mutable': { readonly $path: 'pattern.mutable' };
+	'pattern.or': { readonly $path: 'pattern.or' };
 	'pattern.range': {
-		readonly $ids: readonly PortableIds['pattern.range'][];
+		readonly $path: 'pattern.range';
 		readonly exclusive: PortableKindsAt['pattern.range.exclusive'];
 		readonly inclusive: PortableKindsAt['pattern.range.inclusive'];
 	};
-	'pattern.range.exclusive': { readonly $ids: readonly PortableIds['pattern.range.exclusive'][] };
-	'pattern.range.inclusive': { readonly $ids: readonly PortableIds['pattern.range.inclusive'][] };
+	'pattern.range.exclusive': { readonly $path: 'pattern.range.exclusive' };
+	'pattern.range.inclusive': { readonly $path: 'pattern.range.inclusive' };
 	'pattern.reference': {
-		readonly $ids: readonly PortableIds['pattern.reference'][];
+		readonly $path: 'pattern.reference';
 		readonly value: PortableKindsAt['pattern.reference.value'];
 	};
-	'pattern.reference.value': { readonly $ids: readonly PortableIds['pattern.reference.value'][] };
+	'pattern.reference.value': { readonly $path: 'pattern.reference.value' };
 	'pattern.struct': {
-		readonly $ids: readonly PortableIds['pattern.struct'][];
+		readonly $path: 'pattern.struct';
 		readonly field: PortableKindsAt['pattern.struct.field'];
 		readonly rest: PortableKindsAt['pattern.struct.rest'];
 	};
-	'pattern.struct.field': { readonly $ids: readonly PortableIds['pattern.struct.field'][] };
-	'pattern.struct.rest': { readonly $ids: readonly PortableIds['pattern.struct.rest'][] };
-	'pattern.tuple': {
-		readonly $ids: readonly PortableIds['pattern.tuple'][];
-		readonly struct: PortableKindsAt['pattern.tuple.struct'];
-	};
-	'pattern.tuple.struct': { readonly $ids: readonly PortableIds['pattern.tuple.struct'][] };
-	'pattern.wildcard': { readonly $ids: readonly PortableIds['pattern.wildcard'][] };
+	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
+	'pattern.struct.rest': { readonly $path: 'pattern.struct.rest' };
+	'pattern.tuple': { readonly $path: 'pattern.tuple'; readonly struct: PortableKindsAt['pattern.tuple.struct'] };
+	'pattern.tuple.struct': { readonly $path: 'pattern.tuple.struct' };
+	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
 	statement: {
-		readonly $ids: readonly PortableIds['statement'][];
+		readonly $path: 'statement';
 		readonly block: PortableKindsAt['statement.block'];
 		readonly break: PortableKindsAt['statement.break'];
 		readonly continue: PortableKindsAt['statement.continue'];
@@ -1698,54 +1573,50 @@ export interface PortableKindsAt {
 		readonly match: PortableKindsAt['statement.match'];
 		readonly return: PortableKindsAt['statement.return'];
 	};
-	'statement.block': { readonly $ids: readonly PortableIds['statement.block'][] };
-	'statement.break': { readonly $ids: readonly PortableIds['statement.break'][] };
-	'statement.continue': { readonly $ids: readonly PortableIds['statement.continue'][] };
-	'statement.empty': { readonly $ids: readonly PortableIds['statement.empty'][] };
-	'statement.expression': { readonly $ids: readonly PortableIds['statement.expression'][] };
-	'statement.if': { readonly $ids: readonly PortableIds['statement.if'][] };
+	'statement.block': { readonly $path: 'statement.block' };
+	'statement.break': { readonly $path: 'statement.break' };
+	'statement.continue': { readonly $path: 'statement.continue' };
+	'statement.empty': { readonly $path: 'statement.empty' };
+	'statement.expression': { readonly $path: 'statement.expression' };
+	'statement.if': { readonly $path: 'statement.if' };
 	'statement.import': {
-		readonly $ids: readonly PortableIds['statement.import'][];
+		readonly $path: 'statement.import';
 		readonly package: PortableKindsAt['statement.import.package'];
 		readonly private: PortableKindsAt['statement.import.private'];
 		readonly public: PortableKindsAt['statement.import.public'];
 	};
 	'statement.import.package': {
-		readonly $ids: readonly PortableIds['statement.import.package'][];
+		readonly $path: 'statement.import.package';
 		readonly private: PortableKindsAt['statement.import.package.private'];
 		readonly public: PortableKindsAt['statement.import.package.public'];
 	};
-	'statement.import.package.private': { readonly $ids: readonly PortableIds['statement.import.package.private'][] };
+	'statement.import.package.private': { readonly $path: 'statement.import.package.private' };
 	'statement.import.package.public': {
-		readonly $ids: readonly PortableIds['statement.import.package.public'][];
+		readonly $path: 'statement.import.package.public';
 		readonly internal: PortableKindsAt['statement.import.package.public.internal'];
 		readonly restricted: PortableKindsAt['statement.import.package.public.restricted'];
 	};
-	'statement.import.package.public.internal': {
-		readonly $ids: readonly PortableIds['statement.import.package.public.internal'][];
-	};
-	'statement.import.package.public.restricted': {
-		readonly $ids: readonly PortableIds['statement.import.package.public.restricted'][];
-	};
-	'statement.import.private': { readonly $ids: readonly PortableIds['statement.import.private'][] };
+	'statement.import.package.public.internal': { readonly $path: 'statement.import.package.public.internal' };
+	'statement.import.package.public.restricted': { readonly $path: 'statement.import.package.public.restricted' };
+	'statement.import.private': { readonly $path: 'statement.import.private' };
 	'statement.import.public': {
-		readonly $ids: readonly PortableIds['statement.import.public'][];
+		readonly $path: 'statement.import.public';
 		readonly internal: PortableKindsAt['statement.import.public.internal'];
 		readonly restricted: PortableKindsAt['statement.import.public.restricted'];
 	};
-	'statement.import.public.internal': { readonly $ids: readonly PortableIds['statement.import.public.internal'][] };
-	'statement.import.public.restricted': { readonly $ids: readonly PortableIds['statement.import.public.restricted'][] };
+	'statement.import.public.internal': { readonly $path: 'statement.import.public.internal' };
+	'statement.import.public.restricted': { readonly $path: 'statement.import.public.restricted' };
 	'statement.loop': {
-		readonly $ids: readonly PortableIds['statement.loop'][];
+		readonly $path: 'statement.loop';
 		readonly for_each: PortableKindsAt['statement.loop.for_each'];
 		readonly while: PortableKindsAt['statement.loop.while'];
 	};
-	'statement.loop.for_each': { readonly $ids: readonly PortableIds['statement.loop.for_each'][] };
-	'statement.loop.while': { readonly $ids: readonly PortableIds['statement.loop.while'][] };
-	'statement.match': { readonly $ids: readonly PortableIds['statement.match'][] };
-	'statement.return': { readonly $ids: readonly PortableIds['statement.return'][] };
+	'statement.loop.for_each': { readonly $path: 'statement.loop.for_each' };
+	'statement.loop.while': { readonly $path: 'statement.loop.while' };
+	'statement.match': { readonly $path: 'statement.match' };
+	'statement.return': { readonly $path: 'statement.return' };
 	type: {
-		readonly $ids: readonly PortableIds['type'][];
+		readonly $path: 'type';
 		readonly abstract: PortableKindsAt['type.abstract'];
 		readonly array: PortableKindsAt['type.array'];
 		readonly bounded: PortableKindsAt['type.bounded'];
@@ -1762,30 +1633,21 @@ export interface PortableKindsAt {
 		readonly tuple: PortableKindsAt['type.tuple'];
 		readonly unit: PortableKindsAt['type.unit'];
 	};
-	'type.abstract': { readonly $ids: readonly PortableIds['type.abstract'][] };
-	'type.array': { readonly $ids: readonly PortableIds['type.array'][] };
-	'type.bounded': { readonly $ids: readonly PortableIds['type.bounded'][] };
-	'type.bracketed': { readonly $ids: readonly PortableIds['type.bracketed'][] };
-	'type.dynamic': { readonly $ids: readonly PortableIds['type.dynamic'][] };
-	'type.function': { readonly $ids: readonly PortableIds['type.function'][] };
-	'type.generic': {
-		readonly $ids: readonly PortableIds['type.generic'][];
-		readonly turbofish: PortableKindsAt['type.generic.turbofish'];
-	};
-	'type.generic.turbofish': { readonly $ids: readonly PortableIds['type.generic.turbofish'][] };
-	'type.named': {
-		readonly $ids: readonly PortableIds['type.named'][];
-		readonly prelude: PortableKindsAt['type.named.prelude'];
-	};
-	'type.named.prelude': { readonly $ids: readonly PortableIds['type.named.prelude'][] };
-	'type.path': {
-		readonly $ids: readonly PortableIds['type.path'][];
-		readonly expression: PortableKindsAt['type.path.expression'];
-	};
-	'type.path.expression': { readonly $ids: readonly PortableIds['type.path.expression'][] };
-	'type.pointer': { readonly $ids: readonly PortableIds['type.pointer'][] };
+	'type.abstract': { readonly $path: 'type.abstract' };
+	'type.array': { readonly $path: 'type.array' };
+	'type.bounded': { readonly $path: 'type.bounded' };
+	'type.bracketed': { readonly $path: 'type.bracketed' };
+	'type.dynamic': { readonly $path: 'type.dynamic' };
+	'type.function': { readonly $path: 'type.function' };
+	'type.generic': { readonly $path: 'type.generic'; readonly turbofish: PortableKindsAt['type.generic.turbofish'] };
+	'type.generic.turbofish': { readonly $path: 'type.generic.turbofish' };
+	'type.named': { readonly $path: 'type.named'; readonly prelude: PortableKindsAt['type.named.prelude'] };
+	'type.named.prelude': { readonly $path: 'type.named.prelude' };
+	'type.path': { readonly $path: 'type.path'; readonly expression: PortableKindsAt['type.path.expression'] };
+	'type.path.expression': { readonly $path: 'type.path.expression' };
+	'type.pointer': { readonly $path: 'type.pointer' };
 	'type.primitive': {
-		readonly $ids: readonly PortableIds['type.primitive'][];
+		readonly $path: 'type.primitive';
 		readonly boolean: PortableKindsAt['type.primitive.boolean'];
 		readonly character: PortableKindsAt['type.primitive.character'];
 		readonly floating: PortableKindsAt['type.primitive.floating'];
@@ -1793,17 +1655,17 @@ export interface PortableKindsAt {
 		readonly never: PortableKindsAt['type.primitive.never'];
 		readonly string: PortableKindsAt['type.primitive.string'];
 	};
-	'type.primitive.boolean': { readonly $ids: readonly PortableIds['type.primitive.boolean'][] };
-	'type.primitive.character': { readonly $ids: readonly PortableIds['type.primitive.character'][] };
+	'type.primitive.boolean': { readonly $path: 'type.primitive.boolean' };
+	'type.primitive.character': { readonly $path: 'type.primitive.character' };
 	'type.primitive.floating': {
-		readonly $ids: readonly PortableIds['type.primitive.floating'][];
+		readonly $path: 'type.primitive.floating';
 		readonly float32: PortableKindsAt['type.primitive.floating.float32'];
 		readonly float64: PortableKindsAt['type.primitive.floating.float64'];
 	};
-	'type.primitive.floating.float32': { readonly $ids: readonly PortableIds['type.primitive.floating.float32'][] };
-	'type.primitive.floating.float64': { readonly $ids: readonly PortableIds['type.primitive.floating.float64'][] };
+	'type.primitive.floating.float32': { readonly $path: 'type.primitive.floating.float32' };
+	'type.primitive.floating.float64': { readonly $path: 'type.primitive.floating.float64' };
 	'type.primitive.integral': {
-		readonly $ids: readonly PortableIds['type.primitive.integral'][];
+		readonly $path: 'type.primitive.integral';
 		readonly int128: PortableKindsAt['type.primitive.integral.int128'];
 		readonly int16: PortableKindsAt['type.primitive.integral.int16'];
 		readonly int32: PortableKindsAt['type.primitive.integral.int32'];
@@ -1811,18 +1673,18 @@ export interface PortableKindsAt {
 		readonly int8: PortableKindsAt['type.primitive.integral.int8'];
 		readonly size: PortableKindsAt['type.primitive.integral.size'];
 	};
-	'type.primitive.integral.int128': { readonly $ids: readonly PortableIds['type.primitive.integral.int128'][] };
-	'type.primitive.integral.int16': { readonly $ids: readonly PortableIds['type.primitive.integral.int16'][] };
-	'type.primitive.integral.int32': { readonly $ids: readonly PortableIds['type.primitive.integral.int32'][] };
-	'type.primitive.integral.int64': { readonly $ids: readonly PortableIds['type.primitive.integral.int64'][] };
-	'type.primitive.integral.int8': { readonly $ids: readonly PortableIds['type.primitive.integral.int8'][] };
-	'type.primitive.integral.size': { readonly $ids: readonly PortableIds['type.primitive.integral.size'][] };
-	'type.primitive.never': { readonly $ids: readonly PortableIds['type.primitive.never'][] };
-	'type.primitive.string': { readonly $ids: readonly PortableIds['type.primitive.string'][] };
-	'type.qualified': { readonly $ids: readonly PortableIds['type.qualified'][] };
-	'type.reference': { readonly $ids: readonly PortableIds['type.reference'][] };
-	'type.tuple': { readonly $ids: readonly PortableIds['type.tuple'][] };
-	'type.unit': { readonly $ids: readonly PortableIds['type.unit'][] };
+	'type.primitive.integral.int128': { readonly $path: 'type.primitive.integral.int128' };
+	'type.primitive.integral.int16': { readonly $path: 'type.primitive.integral.int16' };
+	'type.primitive.integral.int32': { readonly $path: 'type.primitive.integral.int32' };
+	'type.primitive.integral.int64': { readonly $path: 'type.primitive.integral.int64' };
+	'type.primitive.integral.int8': { readonly $path: 'type.primitive.integral.int8' };
+	'type.primitive.integral.size': { readonly $path: 'type.primitive.integral.size' };
+	'type.primitive.never': { readonly $path: 'type.primitive.never' };
+	'type.primitive.string': { readonly $path: 'type.primitive.string' };
+	'type.qualified': { readonly $path: 'type.qualified' };
+	'type.reference': { readonly $path: 'type.reference' };
+	'type.tuple': { readonly $path: 'type.tuple' };
+	'type.unit': { readonly $path: 'type.unit' };
 }
 
 export interface PortableIsAt {

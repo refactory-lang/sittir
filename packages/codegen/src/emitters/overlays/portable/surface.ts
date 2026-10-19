@@ -56,7 +56,7 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, fla
 		'}',
 		'',
 		'export interface PortableKindsAt {',
-		...nodes.map((n) => `\t${q(n.path)}: ${braces([`readonly $ids: readonly PortableIds[${q(n.path)}][]`, ...members(n.path, 'PortableKindsAt')])};`),
+		...nodes.map((n) => `\t${q(n.path)}: ${braces([`readonly $path: ${q(n.path)}`, ...members(n.path, 'PortableKindsAt')])};`),
 		'}',
 		'',
 		'export interface PortableIsAt {',

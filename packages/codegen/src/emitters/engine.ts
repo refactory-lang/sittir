@@ -147,8 +147,8 @@ import { wrapNode, hydrate, type ${rootTreeTypeName} } from './wrap.js';
 export interface ${api} extends LanguageAPI {
 	readonly name: '${grammar}';
 	readonly build: typeof ir;
-	readonly is: typeof is;
-	readonly kinds: typeof TSKindId;
+	readonly is: typeof is${config.portable === true ? ' & { readonly portable: PortableIs }' : ''};
+	readonly kinds: typeof TSKindId${config.portable === true ? ' & { readonly portable: PortableKinds }' : ''};
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ${rootTreeTypeName};
 	readonly node: ${grammarTypePrefix(grammar)}Node;

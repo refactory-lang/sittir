@@ -4,6 +4,7 @@ import { languageApiName } from '../grammars.ts';
 export interface EmitIndexConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	portable?: boolean;
 }
 
 export function emitDescriptor(config: EmitIndexConfig): string {
@@ -18,6 +19,12 @@ export function emitDescriptor(config: EmitIndexConfig): string {
 		`import * as ${self} from './descriptor.js';`,
 		"import { TSKindId } from './kinds.js';",
 		"import { is as guards } from './is.js';",
+		...(config.portable === true
+			? [
+					"import { portable } from '@sittir/common/portable';",
+					"import type { PortableIs, PortableKinds } from './portable.js';"
+				]
+			: []),
 		'',
 		"export type * from './types.js';",
 		"export type * from './options.js';",
@@ -28,8 +35,12 @@ export function emitDescriptor(config: EmitIndexConfig): string {
 		'',
 		`export const name = '${config.grammar}';`,
 		`export const fileTypes: readonly string[] = Object.freeze(${JSON.stringify(config.nodeMap.fileTypes)});`,
-		'export const kinds = TSKindId;',
-		`export const is = languageGuards(guards, ${self});`,
+		...(config.portable === true
+			? [
+					'export const kinds: typeof TSKindId & { readonly portable: PortableKinds } = Object.freeze({ ...TSKindId, portable: portable.kinds as PortableKinds });',
+					`export const is = languageGuards(guards, ${self}, { portable: portable.is as PortableIs });`
+				]
+			: ['export const kinds = TSKindId;', `export const is = languageGuards(guards, ${self});`]),
 		`export const load: Language<${api}>['load'] = () => import('./api.js').then((m) => m.hooks);`,
 		`export const createEngine: Language<${api}>['createEngine'] = (options) => import('@sittir/common').then((m) => m.createEngine(${self}, options));`,
 		'',
