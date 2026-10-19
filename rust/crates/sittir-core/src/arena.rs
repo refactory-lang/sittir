@@ -2,8 +2,10 @@
 //! and a string table of UTF-8 bytes in chunks that never move either.
 //!
 //! [`cell`] encodes and decodes one slot's cell, [`side`] a record's side
-//! record, and [`rows`] keeps a parsed tree's arena with its row index. A built record's trivia is outside it, in the engine's
-//! store of written sides (`trivia_store`).
+//! record, and [`rows`] keeps a parsed tree's arena with its row index. The
+//! record writer (`write_record`) writes a native node's records, children
+//! before parents. A built record's trivia is outside the arena, in the
+//! engine's store of written sides (`trivia_store`).
 //!
 //! An arena only appends: no record is freed or moved, so an address names
 //! one record for as long as the arena lives.
@@ -17,6 +19,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 pub use cell::{Cell, ListCell, ParsedLink};
+pub use write::{Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record};
 pub use rows::TreeArena;
 pub use side::{SideRecord, SideSlot, Sides};
 
@@ -110,6 +113,8 @@ pub enum ArenaError {
     /// A node's layout names a list slot, by its wire key, that has no
     /// stamped cell in the node's record.
     UnknownSlot(Box<str>),
+    /// A value no record holds: `what` names it.
+    Unwritable(&'static str),
 }
 
 impl fmt::Display for ArenaError {
@@ -124,6 +129,7 @@ impl fmt::Display for ArenaError {
             }
             ArenaError::Malformed { what, word } => write!(f, "{what} {word} is not one a record writer writes"),
             ArenaError::UnknownSlot(key) => write!(f, "the layout names slot `{key}`, which has no stamped cell in its record"),
+            ArenaError::Unwritable(what) => write!(f, "a record writer does not write {what}"),
         }
     }
 }

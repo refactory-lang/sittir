@@ -35,29 +35,31 @@ impl TreeArena {
         self.rows.get(row.0 as usize).copied().filter(|&at| at != Address::NONE)
     }
 
-    /// `row`'s record: the one a read wrote for it, else the one `write`
-    /// appends now, which the index then holds for every later read. `write`
-    /// runs at most once per row.
+    pub(super) fn arena_mut(&mut self) -> &mut Arena {
+        &mut self.arena
+    }
+
+    /// Holds `at` as `row`'s record, for every later read. The record writer
+    /// calls it once it has written the record of a row that had none.
     ///
     /// # Errors
     ///
-    /// What `write` refused with, or `ArenaError::Malformed` when it answers
-    /// `Address::NONE`, which names no record. Either way the row stays
-    /// without one.
-    pub fn record_or_write(&mut self, row: NodeIndex, write: impl FnOnce(&mut Arena) -> Result<Address, ArenaError>) -> Result<Address, ArenaError> {
-        if let Some(at) = self.record(row) {
-            return Ok(at);
-        }
-        let at = write(&mut self.arena)?;
+    /// `ArenaError::Malformed` for `Address::NONE`, which names no record, and
+    /// `ArenaError::Unwritable` when `row` holds a record already. Either way
+    /// the index is unchanged.
+    pub(super) fn index(&mut self, row: NodeIndex, at: Address) -> Result<(), ArenaError> {
         if at == Address::NONE {
             return Err(ArenaError::Malformed { what: "record address", word: 0 });
+        }
+        if self.record(row).is_some() {
+            return Err(ArenaError::Unwritable("a second record for a row"));
         }
         let index = row.0 as usize;
         if self.rows.len() <= index {
             self.rows.resize(index + 1, Address::NONE);
         }
         self.rows[index] = at;
-        Ok(at)
+        Ok(())
     }
 }
 
@@ -66,23 +68,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn a_row_s_record_is_written_once() {
+    fn a_row_holds_one_record() {
         let mut tree = TreeArena::new();
         let row = NodeIndex(3);
         assert_eq!(tree.record(row), None);
-        let first = tree.record_or_write(row, |arena| arena.push(&[7, 8])).expect("written");
-        let again = tree.record_or_write(row, |_| panic!("a row's record is written once")).expect("the record");
-        assert_eq!(again, first);
+        let first = tree.arena_mut().push(&[7, 8]).expect("room");
+        tree.index(row, first).expect("the row had none");
         assert_eq!(tree.record(row), Some(first));
+        let second = tree.arena_mut().push(&[9]).expect("room");
+        assert_eq!(tree.index(row, second), Err(ArenaError::Unwritable("a second record for a row")));
+        assert_eq!(tree.record(row), Some(first), "the first record stays the row's");
         assert_eq!(tree.arena().words(first, 2).expect("its words"), &[7, 8]);
     }
 
     #[test]
-    fn rows_are_written_in_any_order_and_the_rest_stay_unwritten() {
+    fn rows_are_indexed_in_any_order_and_the_rest_stay_unwritten() {
         let mut tree = TreeArena::new();
-        let late = tree.record_or_write(NodeIndex(9), |arena| arena.push(&[9])).expect("written");
-        let early = tree.record_or_write(NodeIndex(2), |arena| arena.push(&[2])).expect("written");
-        assert_ne!(late, early);
+        let late = tree.arena_mut().push(&[9]).expect("room");
+        tree.index(NodeIndex(9), late).expect("indexed");
+        let early = tree.arena_mut().push(&[2]).expect("room");
+        tree.index(NodeIndex(2), early).expect("indexed");
         assert_eq!(tree.record(NodeIndex(9)), Some(late));
         assert_eq!(tree.record(NodeIndex(2)), Some(early));
         for row in [0, 1, 3, 8, 10] {
@@ -91,14 +96,9 @@ mod tests {
     }
 
     #[test]
-    fn a_refused_or_addressless_write_leaves_the_row_without_a_record() {
+    fn no_address_names_no_record() {
         let mut tree = TreeArena::new();
-        let row = NodeIndex(4);
-        assert_eq!(tree.record_or_write(row, |_| Err(ArenaError::Full)), Err(ArenaError::Full));
-        assert_eq!(tree.record(row), None);
-        assert_eq!(tree.record_or_write(row, |_| Ok(Address::NONE)), Err(ArenaError::Malformed { what: "record address", word: 0 }));
-        assert_eq!(tree.record(row), None);
-        let at = tree.record_or_write(row, |arena| arena.push(&[1])).expect("a later read writes it");
-        assert_eq!(tree.record(row), Some(at));
+        assert_eq!(tree.index(NodeIndex(4), Address::NONE), Err(ArenaError::Malformed { what: "record address", word: 0 }));
+        assert_eq!(tree.record(NodeIndex(4)), None);
     }
 }

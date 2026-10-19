@@ -1954,10 +1954,13 @@ mod tests {
     #[cfg(feature = "arena")]
     #[test]
     fn each_tree_keeps_its_own_records() {
+        use crate::arena::{RecordSink, write_record};
+        use crate::layout::NodeLayout;
         let (one, _) = parsed("fn f() {}");
         let (two, _) = parsed("fn g() {}");
         let row = NodeIndex::new(1);
-        let at = one.tree_arena().record_or_write(row, |arena| arena.push(&[1, 2])).expect("written");
+        let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 })), ..NodeLayout::default() };
+        let at = write_record(&mut RecordSink::parsed(one.tree_id(), &mut one.tree_arena()), KindId(3), 2, Some(&layout), |_| None, |_, _, _| Ok(())).expect("written");
         assert_eq!(one.tree_arena().record(row), Some(at), "a later read reaches the record");
         assert_eq!(two.tree_arena().record(row), None, "another tree's row has a record of its own");
     }
