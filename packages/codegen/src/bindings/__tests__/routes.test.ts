@@ -372,6 +372,58 @@ describe('resolveRoutes', () => {
 		});
 	});
 
+describe("keptKinds over a flag capture", () => {
+	const KEPT_MODEL = new Map(
+		[
+			node("holder", [slot("part", ["a_kind", "b_kind"])]),
+			node("s_kind", [], { modelType: "supertype", subtypes: ["a_kind"] }),
+			node("a_kind"),
+			node("b_kind")
+		].map((n) => [n.kind, n])
+	);
+	const KEPT_VOCABULARY: Vocabulary = {
+		kinds: new Map([["declaration.function", { name: "declaration.function", own: new Map([["marked", { optional: true, flag: true }]]), parent: undefined, refines: undefined }]]),
+		flags: new Set(["marked"]),
+		members: (path) => (path === "declaration.function" ? new Map([["marked", { optional: true, flag: true }]]) : new Map())
+	};
+	const kept = async (bindings: string): Promise<GrammarInput> => ({
+		grammar: "g",
+		bindings: resolveFlags(await readBindings(bindings), KEPT_VOCABULARY, KEPT_MODEL),
+		model: KEPT_MODEL,
+		textTokens: new Set(),
+		layoutSlots: []
+	});
+	it("ignores a flag capture, so the kind capture alone decides what the slot keeps", async () => {
+		const members = resolveRoutes(await kept("(holder (a_kind) @x @marked) @declaration.function")).members.get("holder") ?? [];
+		expect(members[0]).toEqual({ route: "slot", name: "x", slot: slot("part", ["a_kind"]), except: ["b_kind"], path: [{ owner: "holder", slot: "part" }] });
+		expect(members[1]).toMatchObject({ name: "marked", flag: true, kind: "a_kind" });
+	});
+});
+
+describe("keptKinds over a supertype the slot holds", () => {
+	const SUPER_MODEL = new Map(
+		[
+			node("holder", [slot("part", ["s_kind", "b_kind"])]),
+			node("s_kind", [], { modelType: "supertype", subtypes: ["a_kind", "c_kind"] }),
+			node("a_kind"),
+			node("b_kind"),
+			node("c_kind")
+		].map((n) => [n.kind, n])
+	);
+	const superGrammar = async (bindings: string): Promise<GrammarInput> => ({
+		grammar: "g",
+		bindings: await readBindings(bindings),
+		model: SUPER_MODEL,
+		textTokens: new Set(),
+		layoutSlots: []
+	});
+
+	it("keeps the supertype the slot holds when the capture names one of its subtypes, and lists the other kind in except", async () => {
+		const members = resolveRoutes(await superGrammar("(holder (a_kind) @x) @declaration.function")).members.get("holder");
+		expect(members).toEqual([{ route: "slot", name: "x", slot: slot("part", ["s_kind"]), except: ["b_kind"], path: [{ owner: "holder", slot: "part" }] }]);
+	});
+});
+
 	it("routes a flag through the slot its first capture names, testing that slot's kind", async () => {
 		const routes = resolveRoutes(
 			await grammar(
