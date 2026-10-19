@@ -4611,8 +4611,8 @@ rule names.
 
 A separator gap names the token it flanks:
 `(arguments_elements)/element:/separator/","/before`. The token is read from the
-site's label, which is the only place it is recorded — the address says which
-slot and which side, and the label says which token.
+site's separator address, which records it with the side; the slot comes from
+the site.
 
 Without it a grammar-wide fact has nowhere to live. A comma's leading gap is one
 rule across every comma-separated list in a grammar, and every list has a
