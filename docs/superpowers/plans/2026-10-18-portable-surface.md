@@ -5,7 +5,7 @@
 **Goal:** `createEngine(lang, { api: 'portable' })` gets the language-neutral vocabulary surface the maintainer ruled. `portable.is` and `portable.kinds` live in `@sittir/common/portable`, `rust.is.portable` and `rust.kinds.portable` are those same objects typed for Rust, guards take a node only, and `ofType` accepts a vocabulary kind.
 
 **Architecture:**
-- The vocabulary's path list is emitted once into `@sittir/types/vocabulary`.
+- The vocabulary's path list is emitted once into `@sittir/common/portable`. `@sittir/types` stays type-only, and the vocabulary folder reads every top-level file as a vocabulary source.
 - `@sittir/common/portable` builds two frozen trees from that list: kinds nodes holding `$path`, and guards.
 - A guard reaches the node's engine through `engineOf(node)`. It reads the portable rows that engine loaded with its language (`EngineIdentity.portable`) and decides from `$type`, the node's own read entries and `portablePathHasFacts`.
 - Per-language generated `portable.ts` stops building a surface of its own. It exports its rows and the language-typed views of the shared trees.
@@ -84,9 +84,9 @@ Ruled: **the 43 are re-stated in bindings before Task 4** (an alias or envelope 
 
 | file | responsibility |
 |---|---|
-| `packages/types/src/vocabulary/paths.ts` (generated, committed) | `export const vocabularyPaths: readonly string[]`, frozen, every vocabulary kind path, one path per line, sorted |
-| `packages/types/package.json` | adds the `./vocabulary` export (paths plus the existing vocabulary types) |
-| `packages/codegen/src/bindings/vocabulary-paths.ts` | `emitVocabularyPaths(vocabulary: Vocabulary): string`, the file body above, from `readVocabulary` |
+| `packages/common/src/portable/vocabulary-paths.ts` (generated, committed) | `export const vocabularyPaths: readonly string[]`, frozen, every vocabulary kind path, one path per line, sorted |
+| `packages/codegen/src/bindings/vocabulary-paths.ts` | `emitVocabularyPaths(vocabulary: Vocabulary): string`, the file body above, from `readVocabulary`; `writeVocabularyPaths()` writes it |
+| `packages/tools/src/regen.ts` | `regenerateGrammars` calls `writeVocabularyPaths` once per run, before the per-grammar generations (one writer, no race) |
 | `packages/common/src/portable/tree.ts` | `portableTrees(paths, guardOf): { kinds; is }`: the two frozen namespaced trees, one shape |
 | `packages/common/src/portable/classify.ts` | `classifierOf(rows): (node) => string \| undefined`, read entries tried in order, node-only (moved from `portable.ts`) |
 | `packages/common/src/portable/index.ts` | `export const portable: { kinds; is }`, served at the `@sittir/common/portable` export |
@@ -108,22 +108,22 @@ Ruled: **the 43 are re-stated in bindings before Task 4** (an alias or envelope 
 
 **Files:**
 - Create: `packages/codegen/src/bindings/vocabulary-paths.ts`
-- Create (generated): `packages/types/src/vocabulary/paths.ts`
-- Modify: `packages/types/package.json` (exports `./vocabulary`), the regen entry that writes generated files
+- Create (generated): `packages/common/src/portable/vocabulary-paths.ts`
+- Modify: `packages/tools/src/regen.ts` (`regenerateGrammars` writes the list once per run), `packages/tools/src/codegen-surface.ts` (loads the writer)
 - Test: `packages/codegen/src/bindings/__tests__/vocabulary-paths.test.ts`
 
 **Interfaces:**
 - Consumes: `readVocabulary(dir): Promise<Vocabulary>` (`packages/codegen/src/bindings/vocabulary.ts:144`).
-- Produces: `vocabularyPaths: readonly string[]` from `@sittir/types/vocabulary`, and `emitVocabularyPaths(vocabulary): string`.
+- Produces: `vocabularyPaths: readonly string[]` from `@sittir/common/portable`, `emitVocabularyPaths(vocabulary): string`, and `writeVocabularyPaths(): Promise<void>`.
 
 - [ ] **Step 1:** Write the failing tests.
   - `'lists every vocabulary kind path once, sorted'`: `expect(vocabularyPaths).toEqual([...new Set(pathsOf(await readVocabulary(dir)))].sort())`.
   - `'writes one path per line'`: every path literal in the emitted body sits on its own line, in sorted order.
-  - `'the committed file is what the emitter writes'`: `expect(readFileSync(paths.ts)).toBe(emitVocabularyPaths(await readVocabulary(dir)))`.
+  - `'the committed file is what the emitter writes'`: `expect(readFileSync(VOCABULARY_PATHS_FILE)).toBe(emitVocabularyPaths(await readVocabulary(dir)))`.
   - `'is frozen'`: `Object.isFrozen(vocabularyPaths)`.
 - [ ] **Step 2:** Run `SITTIR_HISTORY_NO_COMMIT=1 pnpm vitest run packages/codegen/src/bindings/__tests__/vocabulary-paths.test.ts`. Expected: FAIL (module missing).
 - [ ] **Step 3:** Implement `emitVocabularyPaths` and wire it into the regen step that already reads the vocabulary. Add the glossary entry in `docs/glossary/`.
-- [ ] **Step 4:** Have exec run the regen, then rerun the tests. Expected: PASS. Only `packages/types/src/vocabulary/paths.ts` is new, and 0 validation rows move.
+- [ ] **Step 4:** Have exec run the regen, then rerun the tests. Expected: PASS. Only `packages/common/src/portable/vocabulary-paths.ts` is new, and 0 validation rows move.
 - [ ] **Step 5:** Pathspec commit.
 
 ### Task 2: The shared namespaced trees
@@ -145,10 +145,10 @@ Ruled: **the 43 are re-stated in bindings before Task 4** (an alias or envelope 
   - Every node is frozen.
   - `portable.kinds.declaration.nope === undefined`.
   - The trees have the same keys at every level (walk both).
-  - `typeof portable.is.declaration.function === 'function'`.
+  - `typeof portableTrees(paths, guardOf).is.declaration.function === 'function'`, and `portable` has the key `kinds` only.
   - A path segment named `call` is a guard, not `Function.prototype.call`.
 - [ ] **Step 2:** Run the test. Expected: FAIL.
-- [ ] **Step 3:** Implement `portableTrees` with `Object.defineProperty` links (the existing `link` loop in `portable.ts`). `index.ts` passes a `guardOf` that Task 4 fills; until then it returns `() => false`.
+- [ ] **Step 3:** Implement `portableTrees` with `Object.defineProperty` links (the existing `link` loop in `portable.ts`). `index.ts` serves `portable.kinds` only; `portable.is` joins it in Task 4, with the classifier, so no exported guard answers false for want of one.
 - [ ] **Step 4:** Run the test. Expected: PASS. Then run the root type-check and lint.
 - [ ] **Step 5:** Pathspec commit.
 
@@ -190,7 +190,7 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 
 **Files:**
 - Create: `packages/common/src/portable/classify.ts` (moved logic: `placed`/`context` removed, `$subType` removed, numbers refused)
-- Modify: `packages/common/src/portable/index.ts` (`guardOf`), `packages/types/src/portable.ts` (`PortableGuard` loses `context`)
+- Modify: `packages/common/src/portable/index.ts` (`guardOf`, and `portable` gains `is`), `packages/types/src/portable.ts` (`PortableGuard` loses `context`)
 - Delete: `packages/common/src/portable.ts`; `portable-path.ts` moves to `portable/facts.ts`
 - Test: `packages/rust/tests/portable-guards.test.ts`
 

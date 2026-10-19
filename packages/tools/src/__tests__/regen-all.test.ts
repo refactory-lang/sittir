@@ -34,6 +34,7 @@ vi.mock('../codegen-surface.ts', () => {
 	const surface: Record<string, unknown> = {
 		workspaceCheck: { runWorkspaceCheck },
 		treeSitterCli: { ensureWasmToolchain: () => surfaceCalls.push('ensureWasmToolchain') },
+		vocabularyPaths: { writeVocabularyPaths: async () => void surfaceCalls.push('writeVocabularyPaths') },
 		generatedManifest: {
 			verifyManifestForGrammar: (grammar: string) => (surfaceCalls.push('verifyManifestForGrammar'), { ok: fresh.has(grammar), sourceChanged: !fresh.has(grammar), missing: [], modified: [], extra: [], differs: [], stale: [] }),
 			computeSourceHash: (grammar: string) => (surfaceCalls.push('computeSourceHash'), sources.get(grammar) ?? `source of ${grammar}`)
@@ -220,6 +221,21 @@ describe('regen:all sequencing', () => {
 			await run;
 			expect(surfaceCalls[0]).toBe('ensureWasmToolchain');
 			expect(surfaceCalls.filter((call) => call === 'ensureWasmToolchain')).toHaveLength(1);
+		});
+	}
+
+	for (const stale of [false, true]) {
+		it(`writes the vocabulary path list once, before any grammar's sources are fingerprinted, when ${stale ? 'a grammar is stale' : 'every grammar is fresh'}`, async () => {
+			finished(...(stale ? ['typescript', 'python'] : ['rust', 'typescript', 'python']));
+			vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+			const run = import('../scripts/regen-all.ts');
+			if (stale) {
+				await generationsStarted(1);
+				children[0]!.finish(0);
+			}
+			await run;
+			expect(surfaceCalls.slice(0, 2)).toEqual(['ensureWasmToolchain', 'writeVocabularyPaths']);
+			expect(surfaceCalls.filter((call) => call === 'writeVocabularyPaths')).toHaveLength(1);
 		});
 	}
 
