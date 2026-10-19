@@ -84,6 +84,10 @@ export function grammarTypePrefix(name: string): string {
 	return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
+export function grammarNodeTypeName(grammar: string): string {
+	return `${grammarTypePrefix(grammar)}Node`;
+}
+
 export function languageApiName(grammar: string): string {
 	return `${grammarTypePrefix(grammar)}API`;
 }

@@ -6,6 +6,7 @@ import type { SlotFlag } from './flags.ts';
 import { descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
 
 export interface PortableSurfaceConfig {
+	readonly nodeType: string;
 	readonly routes: GrammarRoutes;
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly kindIdOf: (kind: string) => string;
@@ -18,7 +19,7 @@ export interface PortableSurfaceConfig {
 
 const q = (text: string): string => JSON.stringify(text);
 
-export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
+export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixedText, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
 	const root = namespaceTree(routes.readEntries);
 	const nodes = descendants(root);
 	const byPath = new Map([root, ...nodes].map((n) => [n.path, n]));
@@ -49,6 +50,7 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, fla
 		'',
 		"import type { PortableGuard, PortableRows, PortableTable, QueryFlags, QuerySlotFlags } from '@sittir/types';",
 		"import { TSKindId } from './kinds.js';",
+		`import type { ${nodeType} } from './types.js';`,
 		"import { querySlots } from './utils.js';",
 		'',
 		'export interface PortableIds {',
@@ -60,7 +62,7 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, fla
 		'}',
 		'',
 		'export interface PortableIsAt {',
-		...nodes.map((n) => `\t${q(n.path)}: PortableGuard<PortableIds[${q(n.path)}], TSKindId> & ${braces(members(n.path, 'PortableIsAt'))};`),
+		...nodes.map((n) => `\t${q(n.path)}: PortableGuard<PortableIds[${q(n.path)}], ${nodeType}> & ${braces(members(n.path, 'PortableIsAt'))};`),
 		'}',
 		'',
 		`export interface PortableKinds ${braces(members('', 'PortableKindsAt'))}`,
