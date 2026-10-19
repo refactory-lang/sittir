@@ -9097,7 +9097,23 @@
   ],
   "conflicts": [
     [
-      "pattern",
+      "as_pattern",
+      "except_clause_exception_as"
+    ],
+    [
+      "except_clause_exception_as",
+      "except_clause_exception_list"
+    ],
+    [
+      "expression_statement",
+      "expression_statement_tuple"
+    ],
+    [
+      "list_pattern",
+      "list"
+    ],
+    [
+      "list_splat_pattern",
       "primary_expression"
     ],
     [
@@ -9105,15 +9121,11 @@
       "primary_expression"
     ],
     [
-      "type_alias_statement",
-      "primary_expression"
+      "named_expression",
+      "as_pattern"
     ],
     [
-      "expression_statement",
-      "expression_statement_tuple"
-    ],
-    [
-      "list_splat_pattern",
+      "pattern",
       "primary_expression"
     ],
     [
@@ -9121,24 +9133,12 @@
       "tuple"
     ],
     [
-      "list_pattern",
-      "list"
+      "type_alias_statement",
+      "primary_expression"
     ],
     [
       "with_item",
       "_tuple_elements"
-    ],
-    [
-      "named_expression",
-      "as_pattern"
-    ],
-    [
-      "except_clause_exception_as",
-      "except_clause_exception_list"
-    ],
-    [
-      "as_pattern",
-      "except_clause_exception_as"
     ]
   ],
   "precedences": [],

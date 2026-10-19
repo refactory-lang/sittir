@@ -4,6 +4,7 @@ import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { buildNodeModel } from '../node-model.ts';
+import { valueNameOf } from '../node-model-read.ts';
 
 describe('a hoisted group whose builder forwards to another kind\'s builder', () => {
 	it('is seated on its parent as forwarded, wherever the parent takes it', async () => {
@@ -11,7 +12,7 @@ describe('a hoisted group whose builder forwards to another kind\'s builder', ()
 		const model = buildNodeModel(nodeMap);
 		const seatsOf = (group: string): unknown[] =>
 			model.nodes.flatMap((node) =>
-				'slots' in node ? node.slots.flatMap((slot) => slot.values.filter((value) => value.name === group).map((value) => value.seat)) : []
+				'slots' in node ? node.slots.flatMap((slot) => slot.values.filter((value) => valueNameOf(value) === group).map((value) => value.seat)) : []
 			);
 		for (const group of ['count_quantifier_group', 'unicode_property_value_expression_group']) {
 			expect(seatsOf(group)).not.toEqual([]);

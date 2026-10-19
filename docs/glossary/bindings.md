@@ -1207,7 +1207,7 @@ The part of a node-model record the bindings read: each node's kind, model type,
 
 ### `packages/codegen/src/bindings/input.ts::slotModelOf`
 
-The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`), and each kind's `shownAs` from `shownNames`.
+The slot model of a node-model record: per kind its slots, with each slot's kinds from its values (`slotKindsOf`) and its property name from the model's own naming (`slotPropertyName`), a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`), and each kind's `shownAs` from `shownNames`.
 
 ### `packages/codegen/src/bindings/input.ts::shownNames`
 
@@ -1227,11 +1227,11 @@ A grammar's `GrammarInput`, or `undefined` when it ships no `bindings.scm`: its 
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelValue`
 
-One admitted value of a serialized slot: its kind (`terminal` for literal text) and the text, or for a node reference the grammar kind (`name`) and the kind the parser shows at that site (`parseKind`).
+One admitted value of a serialized slot: its kind (`terminal` for literal text) and the text, or for a node reference the kind the parser shows at that site (`parseKind`), its grammar kind (`name`) where that differs, and its multiplicity.
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelSlot`
 
-A slot as `node-model.json5` serializes it, every fact but its names optional, as written.
+A slot as `node-model.json5` serializes it, every fact but its name optional. The record writes no kind list or property name; `slotModelOf` derives both.
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelNode`
 

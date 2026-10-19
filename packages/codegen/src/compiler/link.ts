@@ -2224,7 +2224,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 			const target = resolveGroupPath(parentBody, path);
 			const aliasFace = namedAliasFaceOf(target);
 			if (aliasFace !== undefined) {
-				console.warn(
+				console.log(
 					`[codegen] group-lift ${kind}/${path} (${discriminator}) rides the visible alias '${aliasFace}' — no hidden kind minted`
 				);
 				continue;

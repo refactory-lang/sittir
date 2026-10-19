@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { conflictKey, parseGenerateOutcome, unnecessaryConflictsOf, type ConflictReport } from '../conflict-summary.ts';
+import { conflictKey, parseGenerateOutcome, splitGenerateStderr, unnecessaryConflictsOf, type ConflictReport } from '../conflict-summary.ts';
 
 const report: ConflictReport = {
 	symbol_sequence: ['expression'],
@@ -58,6 +58,17 @@ describe('parseGenerateOutcome', () => {
 
 	it('surfaces a failure with no summary on stderr as an error carrying the raw text', () => {
 		expect(parseGenerateOutcome(1, 'segfault')).toEqual({ kind: 'error', summary: 'segfault' });
+	});
+});
+
+describe('splitGenerateStderr', () => {
+	it('splits what the grammar wrote from the closing JSON summary', () => {
+		expect(splitGenerateStderr('enrich: note\nwarning: x\n{\n  "error": null\n}\n')).toEqual({ preamble: 'enrich: note\nwarning: x\n', summary: '{\n  "error": null\n}\n' });
+	});
+
+	it('reads a summary with nothing before it, and text with no summary, as one side each', () => {
+		expect(splitGenerateStderr('{\n  "error": null\n}\n')).toEqual({ preamble: '', summary: '{\n  "error": null\n}\n' });
+		expect(splitGenerateStderr('panic: no summary\n')).toEqual({ preamble: 'panic: no summary\n', summary: '' });
 	});
 });
 

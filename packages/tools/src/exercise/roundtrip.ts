@@ -3,14 +3,7 @@ import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
-import type { FactoryShape } from '../codegen-surface.ts';
-type FactorySlotMeta = {
-	readonly unnamed: boolean;
-	readonly required: boolean;
-	readonly multiple: boolean;
-	readonly nonEmpty: boolean;
-	readonly slotCount: number;
-};
+import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 
 interface ExerciseCase {
 	readonly kind: string;

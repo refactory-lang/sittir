@@ -74,7 +74,7 @@ import {
 	ownTextLeaf,
 	type OwnTextLeaf,
 	resolveDirectFactorySlot,
-	warnSkippedParserSymbol,
+	reportSkippedParserSymbol,
 	soleSlotFacts,
 	type SoleSlotFacts,
 	needsNonEmptyHoist,
@@ -2700,7 +2700,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			emission === 'skip-synthesized-kind' ||
 			emission === 'skip-missing-parser-symbol'
 		) {
-			warnSkippedParserSymbol(kind, 'factory', emission);
+			reportSkippedParserSymbol(kind, 'factory', emission);
 		}
 		if (emission !== 'emit') return;
 
