@@ -1704,6 +1704,12 @@
 			"field": "continue_expression_after"
 		}
 	],
+	"crate_visibility_modifier": [
+		{
+			"kind": "text",
+			"text": "crate"
+		}
+	],
 	"declaration_list": [
 		{
 			"kind": "seam",

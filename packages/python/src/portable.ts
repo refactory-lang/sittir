@@ -55,7 +55,6 @@ export interface PortableIds {
 		| TSKindId.ClassDefinition
 		| TSKindId.DefaultParameter
 		| TSKindId.FunctionDefinition
-		| TSKindId.Identifier
 		| TSKindId.TypeAliasStatement
 		| TSKindId.TypeParameter
 		| TSKindId.TypedDefaultParameter
@@ -66,11 +65,7 @@ export interface PortableIds {
 	'declaration.function': TSKindId.FunctionDefinition;
 	'declaration.method': TSKindId.FunctionDefinition;
 	'declaration.method.special': TSKindId.FunctionDefinition;
-	'declaration.parameter':
-		| TSKindId.DefaultParameter
-		| TSKindId.Identifier
-		| TSKindId.TypedDefaultParameter
-		| TSKindId.TypedParameter;
+	'declaration.parameter': TSKindId.DefaultParameter | TSKindId.TypedDefaultParameter | TSKindId.TypedParameter;
 	'declaration.parameter.default': TSKindId.DefaultParameter;
 	'declaration.parameter.typed': TSKindId.TypedParameter;
 	'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
@@ -223,7 +218,6 @@ export interface PortableIds {
 	file: TSKindId.Module;
 	identifier: TSKindId.DottedName | TSKindId.Identifier;
 	'identifier.dotted': TSKindId.DottedName;
-	'identifier.type': TSKindId.Identifier;
 	literal:
 		| TSKindId.ConcatenatedString
 		| TSKindId.Ellipsis
@@ -746,13 +740,8 @@ export interface PortableKindsAt {
 	};
 	'expression.yield.delegate': { readonly $path: 'expression.yield.delegate' };
 	file: { readonly $path: 'file' };
-	identifier: {
-		readonly $path: 'identifier';
-		readonly dotted: PortableKindsAt['identifier.dotted'];
-		readonly type: PortableKindsAt['identifier.type'];
-	};
+	identifier: { readonly $path: 'identifier'; readonly dotted: PortableKindsAt['identifier.dotted'] };
 	'identifier.dotted': { readonly $path: 'identifier.dotted' };
-	'identifier.type': { readonly $path: 'identifier.type' };
 	literal: {
 		readonly $path: 'literal';
 		readonly boolean: PortableKindsAt['literal.boolean'];
@@ -1472,10 +1461,8 @@ export interface PortableIsAt {
 	file: PortableGuard<PortableIds['file'], PythonNode, TSKindId> & {};
 	identifier: PortableGuard<PortableIds['identifier'], PythonNode, TSKindId> & {
 		readonly dotted: PortableIsAt['identifier.dotted'];
-		readonly type: PortableIsAt['identifier.type'];
 	};
 	'identifier.dotted': PortableGuard<PortableIds['identifier.dotted'], PythonNode, TSKindId> & {};
-	'identifier.type': PortableGuard<PortableIds['identifier.type'], PythonNode, TSKindId> & {};
 	literal: PortableGuard<PortableIds['literal'], PythonNode, TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly ellipsis: PortableIsAt['literal.ellipsis'];
@@ -1784,13 +1771,12 @@ const table: PortableTable = {
 				TSKindId.ClassDefinition,
 				TSKindId.DefaultParameter,
 				TSKindId.FunctionDefinition,
-				TSKindId.Identifier,
 				TSKindId.TypeAliasStatement,
 				TSKindId.TypeParameter,
 				TSKindId.TypedDefaultParameter,
 				TSKindId.TypedParameter
 			],
-			exact: false
+			exact: true
 		},
 		'declaration.class': { ids: [TSKindId.ClassDefinition], exact: true },
 		'declaration.constant': {
@@ -1802,8 +1788,8 @@ const table: PortableTable = {
 		'declaration.method': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method.special': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.parameter': {
-			ids: [TSKindId.DefaultParameter, TSKindId.Identifier, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
-			exact: false
+			ids: [TSKindId.DefaultParameter, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
+			exact: true
 		},
 		'declaration.parameter.default': { ids: [TSKindId.DefaultParameter], exact: true },
 		'declaration.parameter.typed': { ids: [TSKindId.TypedParameter], exact: true },
@@ -1977,9 +1963,8 @@ const table: PortableTable = {
 		'expression.yield': { ids: [TSKindId.Yield, TSKindId.YieldFromClause], exact: true },
 		'expression.yield.delegate': { ids: [TSKindId.YieldFromClause], exact: true },
 		file: { ids: [TSKindId.Module], exact: true },
-		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier], exact: false },
+		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier], exact: true },
 		'identifier.dotted': { ids: [TSKindId.DottedName], exact: true },
-		'identifier.type': { ids: [TSKindId.Identifier], exact: false },
 		literal: {
 			ids: [
 				TSKindId.ConcatenatedString,
@@ -2650,12 +2635,7 @@ const table: PortableTable = {
 		[TSKindId.GeneratorExpression]: [{ path: 'expression.comprehension.generator', within: [], test: [] }],
 		[TSKindId.GenericType]: [{ path: 'type.generic', within: [], test: [] }],
 		[TSKindId.GlobalStatement]: [{ path: 'statement.global', within: [], test: [] }],
-		[TSKindId.Identifier]: [
-			{ path: 'declaration.parameter', within: [TSKindId.ParametersElements, TSKindId.Parameters], test: [] },
-			{ path: 'declaration.parameter', within: [TSKindId.ParametersElements, TSKindId.LambdaParameters], test: [] },
-			{ path: 'identifier.type', within: [TSKindId.Type], test: [] },
-			{ path: 'identifier', within: [], test: [] }
-		],
+		[TSKindId.Identifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.IfClause]: [{ path: 'clause.comprehension.if', within: [], test: [] }],
 		[TSKindId.IfStatement]: [{ path: 'statement.if', within: [], test: [] }],
 		[TSKindId.ImportFromStatement]: [{ path: 'statement.import.from', within: [], test: [] }],

@@ -1087,24 +1087,39 @@ describe('extern_modifier', () => {
 
 describe('visibility_modifier', () => {
 	it('factory produces correct type', () => {
-		const node = ir.visibilityModifier({ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any);
+		const node = ir.visibilityModifier({
+			$type: TSKindId.CrateVisibilityModifier,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_content: TSKindId.Crate as never
+		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.visibilityModifier({ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any);
+		const node = ir.visibilityModifier({
+			$type: TSKindId.CrateVisibilityModifier,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_content: TSKindId.Crate as never
+		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('crate');
 	});
 });
 
 describe('visibility_modifier sub-factories', () => {
 	it('crate builds the parent', () => {
-		const node = ir.visibilityModifier.crate();
+		const node = ir.visibilityModifier.crate({
+			$type: TSKindId.Crate,
+			$text: 'crate',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Crate);
+		expect((node as any).content()?.$type).toBe(TSKindId.CrateVisibilityModifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub builds the parent', () => {
@@ -1116,7 +1131,7 @@ describe('visibility_modifier sub-factories', () => {
 			_content: { $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope builds the parent', () => {
@@ -1127,25 +1142,25 @@ describe('visibility_modifier sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.self builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope.self();
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.super builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope.super();
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.crate builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope.crate();
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.inPath builds the parent', () => {
@@ -1156,7 +1171,7 @@ describe('visibility_modifier sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
