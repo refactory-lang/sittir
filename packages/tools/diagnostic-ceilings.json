@@ -1,38 +1,9 @@
 {
 	"python": {
-		"built-render-parse-ast-mismatch": 0,
-		"built-render-parse-error": 0,
-		"factory-storage-ast-mismatch": 0,
-		"factory-storage-error": 0,
-		"from-error": 0,
-		"ir-storage-ast-mismatch": 0,
-		"ir-storage-error": 0,
 		"patch-without-cause": 4,
-		"read-render-parse-ast-mismatch": 0,
-		"read-render-parse-error": 0,
-		"read-render-parse-shallow-ast-mismatch": 0,
-		"read-render-parse-shallow-error": 0,
 		"rule-reauthored-without-cause": 4
 	},
-	"regex": {},
 	"rust": {
-		"built-render-parse-ast-mismatch": 0,
-		"built-render-parse-error": 0,
-		"factory-storage-ast-mismatch": 0,
-		"factory-storage-error": 0,
-		"factory-storage-trivia": 0,
-		"from-error": 0,
-		"from-trivia": 0,
-		"ir-storage-ast-mismatch": 0,
-		"ir-storage-error": 0,
-		"ir-storage-trivia": 0,
-		"parsekind-noninjective": 0,
-		"read-render-parse-ast-mismatch": 0,
-		"read-render-parse-error": 0,
-		"read-render-parse-shallow-ast-mismatch": 0,
-		"read-render-parse-shallow-error": 0,
-		"read-render-parse-shallow-trivia": 0,
-		"read-render-parse-trivia": 0,
 		"rule-reauthored-without-cause": 4,
 		"unclassifiable-shape": 1
 	},
@@ -40,21 +11,8 @@
 		"unclassifiable-shape": 1
 	},
 	"typescript": {
-		"built-render-parse-ast-mismatch": 0,
-		"built-render-parse-error": 0,
-		"factory-storage-ast-mismatch": 0,
-		"factory-storage-error": 0,
-		"from-error": 0,
-		"ir-storage-ast-mismatch": 0,
-		"ir-storage-error": 0,
-		"read-render-parse-ast-mismatch": 0,
-		"read-render-parse-error": 0,
-		"read-render-parse-shallow-ast-mismatch": 0,
-		"read-render-parse-shallow-error": 0,
 		"rule-reauthored-without-cause": 1,
 		"unclassifiable-shape": 2,
-		"union-slot-mixed-row": 1,
-		"union-slot-routed-repeated": 0,
-		"union-slot-unaddressable": 0
+		"union-slot-mixed-row": 1
 	}
 }

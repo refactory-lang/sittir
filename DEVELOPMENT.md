@@ -174,8 +174,9 @@ Two committed ratchets back the run (both only ever tighten):
   exceeds its ceiling (new debt); a code a grammar does not list has
   ceiling 0, so every such code is guarded and a cleared code stays
   cleared, and a code with any fatal (`fail`) row has ceiling 0 whatever
-  the file says. When a run reports a code below its ceiling, lower the
-  ceiling in the same commit.
+  the file says. The file stores only positive ceilings. When a run
+  reports a code below its ceiling, lower the ceiling in the same commit,
+  or remove the entry once the code reaches 0.
 - `packages/tools/validation-report.json` — the report the committed
   ceilings are checked against (a unit test pins the committed pair). It
   records, per grammar, its `grammar-diagnostics.json` as counts per code and

@@ -175,6 +175,11 @@ export function buildValidationReport(
  * array of rows, grammar diagnostics among them), whose grammar rows fold into
  * counts and the digest the record format gives the same diagnostics. A missing, empty or unparseable file, a value in
  * neither format, or an element that is not a row throws naming the path.
+ *
+ * The flat format is read only so `validate history` can compare against
+ * reports written before the record format. Once the committed report and
+ * every report kept to compare against are in the record format, the flat
+ * branch can be removed.
  */
 export function readValidationReport(path: string): ValidationReport {
 	if (!existsSync(path)) throw new Error(`validation report not found: ${path}`);
@@ -234,7 +239,8 @@ function compareReportRows(a: ValidationReportEntry, b: ValidationReportEntry): 
 /**
  * Per grammar, the most report rows each diagnostic code may carry at error or
  * warning severity: the committed shape of `packages/tools/diagnostic-ceilings.json`.
- * A code a grammar does not list has ceiling 0, so every error and warning code is guarded.
+ * A code a grammar does not list has ceiling 0, so every error and warning code is guarded,
+ * and the file stores only positive ceilings.
  */
 export type CodeCeilings = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
@@ -271,6 +277,11 @@ export interface CodeCeilingVerdict {
 	readonly violations: readonly CodeCeilingCount[];
 	/** Pairs whose count is below a non-zero ceiling: lower the ceiling in the same commit. */
 	readonly improvements: readonly CodeCeilingCount[];
+}
+
+/** How to tighten the ceilings file for a paid-down pair: lower its ceiling to the new count, or remove its entry once the count reaches 0, since an absent code already has ceiling 0. */
+export function ceilingAdvice({ grammar, code, count }: CodeCeilingCount): string {
+	return count === 0 ? `remove ${grammar} ${code}: an absent code has ceiling 0` : `lower ${grammar} ${code} to ${count}`;
 }
 
 /**

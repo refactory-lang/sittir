@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	buildValidationReport,
 	checkCodeCeilings,
+	ceilingAdvice,
 	countCodeEntries,
 	readValidationReport,
 	writeValidationReport,
@@ -118,6 +119,11 @@ describe('checkCodeCeilings', () => {
 		]);
 	});
 
+	it('advises lowering a ceiling to the new count, and removing the entry once the count reaches 0', () => {
+		expect(ceilingAdvice({ grammar: 'rust', code: 'a', count: 1, ceiling: 2 })).toBe('lower rust a to 1');
+		expect(ceilingAdvice({ grammar: 'rust', code: 'a', count: 0, ceiling: 2 })).toBe('remove rust a: an absent code has ceiling 0');
+	});
+
 	it('judges only the grammars validated in this run', () => {
 		expect(checkCodeCeilings(report([entry('python', 'a')]), ceilings, ['rust']).violations).toEqual([]);
 	});
@@ -137,10 +143,13 @@ describe('committed diagnostic ratchet', () => {
 		expect(checkCodeCeilings(committed, ceilings, grammars).violations).toEqual([]);
 	});
 
-	it('holds no negative ceiling', () => {
+	it('stores only positive ceilings: an absent code has ceiling 0, so a 0 entry or an empty grammar would restate the default', () => {
 		const toolsRoot = fileURLToPath(new URL('../../..', import.meta.url));
 		const ceilings = JSON.parse(readFileSync(join(toolsRoot, 'diagnostic-ceilings.json'), 'utf8')) as CodeCeilings;
-		for (const codes of Object.values(ceilings)) for (const ceiling of Object.values(codes)) expect(ceiling).toBeGreaterThanOrEqual(0);
+		const restated = Object.entries(ceilings).flatMap(([grammar, codes]) =>
+			Object.keys(codes).length === 0 ? [grammar] : Object.entries(codes).flatMap(([code, ceiling]) => (ceiling > 0 ? [] : [`${grammar} ${code}`]))
+		);
+		expect(restated).toEqual([]);
 	});
 });
 

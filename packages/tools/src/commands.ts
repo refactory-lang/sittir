@@ -23,6 +23,7 @@ import { diffValidationReports, formatReportDiff, readComparableReport, reportMo
 import {
 	buildValidationReport,
 	checkCodeCeilings,
+	ceilingAdvice,
 	readValidationReport,
 	writeValidationReport,
 	type CodeCeilings,
@@ -577,7 +578,8 @@ export function writeMergedValidationReport(
  * grammars validated, counted per code at error or warning severity, against
  * the committed per-grammar ceilings in `packages/tools/diagnostic-ceilings.json`.
  * A count above its ceiling fails the run; a count below a non-zero ceiling
- * prints a reminder to lower it in the same commit. A missing or unparsable
+ * prints a reminder to lower it in the same commit, or to remove its entry
+ * once the count reaches 0. A missing or unparsable
  * ceilings file throws: reading it as empty would fail every run, and reading
  * it as no gate would switch the ratchet off.
  *
@@ -598,7 +600,7 @@ export function enforceCodeCeilings(grammars: readonly GrammarName[], report: Va
 		);
 	}
 	for (const i of improvements) {
-		console.log(`  diagnostic ratchet: ${i.grammar} ${i.code} is at ${i.count} (ceiling ${i.ceiling}) — lower the ceiling in ${ceilingsPath} in this commit`);
+		console.log(`  diagnostic ratchet: ${i.grammar} ${i.code} is at ${i.count} (ceiling ${i.ceiling}) — ${ceilingAdvice(i)} in ${ceilingsPath} in this commit`);
 	}
 	return violations.length === 0;
 }
