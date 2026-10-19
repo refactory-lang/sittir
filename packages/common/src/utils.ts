@@ -373,14 +373,14 @@ const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
 /**
  * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
  * own `_separator` when its data stores one, else the one its tree answers (`slotSeparatorOf`).
- * An owner names the accessor that returns its list.
+ * An owner names the accessor that returns its list and answers that list's `separator`.
  */
 export function defineListSeparator(node: object, accessor?: string): void {
 	let getter = SEPARATOR_GETTERS.get(accessor);
 	if (getter === undefined) {
 		getter = function (this: Record<string, unknown>) {
-			const list = (accessor === undefined ? this : (this[accessor] as () => unknown).call(this)) as Record<string, unknown> | null | undefined;
-			return list == null ? undefined : (list._separator ?? slotSeparatorOf(list));
+			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
+			return this._separator ?? slotSeparatorOf(this);
 		};
 		SEPARATOR_GETTERS.set(accessor, getter);
 	}

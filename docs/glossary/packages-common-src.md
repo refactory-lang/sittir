@@ -689,7 +689,7 @@ The separator a list writes between its items, as a grammar id: its live tree's 
 
 ### `packages/common/src/utils.ts::defineListSeparator`
 
-Defines the `separator` of a wrapped list or list owner as a shared, non-enumerable getter, one function per owner accessor: the list's own stored `_separator` when it has one, else the separator its tree answers (`slotSeparatorOf`). It is a getter because the tree's answer measures the list's gaps and records its render, which a wrapped list pays on first read, not at wrap time. An owner names its list accessor, so the getter reads the list the owner holds; a list defines it on itself.
+Defines the `separator` of a wrapped list or list owner as a shared, non-enumerable getter, one function per owner accessor: the list's own stored `_separator` when it has one, else the separator its tree answers (`slotSeparatorOf`). It is a getter because the tree's answer measures the list's gaps and records its render, which a wrapped list pays on first read, not at wrap time. An owner names its list accessor and answers the `separator` of the list that accessor returns, whatever that list is (parsed, or built with or without its own separator), so an owner never disagrees with its list; a list defines it on itself.
 
 ### `packages/common/src/utils.ts::defineListIndices`
 
