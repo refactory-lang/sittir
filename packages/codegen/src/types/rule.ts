@@ -17,6 +17,7 @@ import {
 	TOKEN
 } from './rule-types.ts';
 import type { RuleMetadata } from './rule-metadata-brand.ts';
+import type { SpacingAddress } from './spacing.ts';
 
 export type RuleId = string;
 
@@ -38,7 +39,7 @@ export type RuleAnnotations = {
 	readonly variantOf?: string;
 	readonly definedBy?: LabelProvenance;
 	readonly default?: true;
-	readonly preference?: string;
+	readonly spacing?: SpacingAddress;
 	readonly arm?: string;
 	readonly hoisted?: true;
 	readonly flattened?: true;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { SEAM_DECLARED, edgeSitesOf, planRenderOptions, renderOptionsRs, seatTableName, seatTablesOf } from '../render-options-rs.ts';
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
+import { parseSpacingAddress } from '../../dsl/primitives/spacing.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 import { makeSiteKindsNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 
@@ -17,10 +18,10 @@ const kindEntries = [
 const BASE_KIND_ENTRIES = kindEntries;
 
 const sites: SitePreference[] = [
-	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_separator_space_before', label: 'comma_separator_space_before', arms: SPACING, defaultArm: 'tight', source: 'spacing' },
-	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_separator_space_after', label: 'comma_separator_space_after', arms: SPACING, defaultArm: 'space', source: 'spacing' },
+	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_separator_space_before', label: 'comma_separator_space_before', arms: SPACING, defaultArm: 'tight', source: 'spacing', spacing: { at: 'separator', token: 'comma', side: 'before' } },
+	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_separator_space_after', label: 'comma_separator_space_after', arms: SPACING, defaultArm: 'space', source: 'spacing', spacing: { at: 'separator', token: 'comma', side: 'after' } },
 	{ kind: 'formal_parameters', slot: 'elements', address: 'elements_delimiter', label: 'delimiter', arms: [{ value: 'Delimiter.Trailing' }], defaultArm: 'Delimiter.None', source: 'delimiter' },
-	{ kind: '_statement_block', slot: 'statements', address: 'statements_separator_space', label: 'empty_separator_space', arms: SPACING, defaultArm: 'newline', source: 'spacing' },
+	{ kind: '_statement_block', slot: 'statements', address: 'statements_separator_space', label: 'empty_separator_space', arms: SPACING, defaultArm: 'newline', source: 'spacing', spacing: { at: 'separator', token: 'empty' } },
 	{
 		kind: 'return_statement',
 		slot: 'terminator',
@@ -33,7 +34,7 @@ const sites: SitePreference[] = [
 		defaultArm: ';',
 		source: 'declared'
 	},
-	{ kind: 'call_expression', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' }
+	{ kind: 'call_expression', slot: 'lparen', address: 'lparen_before', label: 'lparen_before', arms: SPACING, defaultArm: 'tight', source: 'spacing', spacing: { at: 'seam', token: 'lparen', side: 'before' } }
 ];
 const whitespaceText = new Map([
 	['tight', ''],
@@ -70,7 +71,7 @@ describe('planRenderOptions', () => {
 	});
 
 	it("orders a kind's own sides after everything nested beneath them", () => {
-		const edge: SitePreference = { kind: 'call_expression', slot: 'call_expression', address: 'call_expression_after', label: 'call_expression_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
+		const edge: SitePreference = { kind: 'call_expression', slot: 'call_expression', address: 'call_expression_after', label: 'call_expression_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', spacing: { at: 'seam', token: 'call_expression', side: 'after' } };
 		const plan = planRenderOptions([edge, ...sites], kindEntries, makeSiteKindsNodeMap([edge, ...sites]), whitespaceText, undefined, 'rust');
 		expect(plan.sitePaths.slice(0, 2).map((p) => p.path)).toEqual(['(call_expression)/"("/before', '(call_expression)/after']);
 	});
@@ -85,7 +86,7 @@ describe('planRenderOptions', () => {
 	it('a token seam site is numbered under its kind by its label', () => {
 		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const seam = plan.spacingSites.find((s) => s.label === 'lparen_before')!;
-		expect([seam.constName, seam.fieldIdent, seam.wireKey, seam.defaultId, seam.side]).toEqual(['SITE_CALL_EXPRESSION_LPAREN_BEFORE', 'lparen_before', '_lparen_before', 167, 'seam']);
+		expect([seam.constName, seam.fieldIdent, seam.wireKey, seam.defaultId, seam.spacing?.at]).toEqual(['SITE_CALL_EXPRESSION_LPAREN_BEFORE', 'lparen_before', '_lparen_before', 167, 'seam']);
 	});
 
 	it('a separator site rides the spacing table under its kind and fills separator_kind', () => {
@@ -104,7 +105,7 @@ describe('planRenderOptions', () => {
 		};
 		const plan = planRenderOptions([...sites, site], entries, makeSiteKindsNodeMap([...sites, site], entries as never), whitespaceText, undefined, 'rust');
 		const row = plan.spacingSites.find((s) => s.role === 'separator')!;
-		expect([row.constName, row.fieldIdent, row.wireKey, row.defaultId, row.allowedIds, row.side, row.defaultText]).toEqual([
+		expect([row.constName, row.fieldIdent, row.wireKey, row.defaultId, row.allowedIds, row.spacing?.side, row.defaultText]).toEqual([
 			'SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR',
 			'separator_kind',
 			'_separator',
@@ -184,9 +185,9 @@ describe('renderOptionsRs', () => {
 	});
 
 	it("gives a list flank its origin's strength: declared only when a preference declares it", () => {
-		const flank = (origin?: SitePreference['origin']): SitePreference => ({ kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'start', ...(origin === undefined ? {} : { origin }) });
+		const flank = (origin?: SitePreference['origin']): SitePreference => ({ kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', spacing: { at: 'flank', kind: 'elements', side: 'start' }, ...(origin === undefined ? {} : { origin }) });
 		const strengthOf = (site: SitePreference) =>
-			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust').spacingSites.find((s) => s.display === 'arguments' && s.side === 'start')?.strength;
+			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust').spacingSites.find((s) => s.display === 'arguments' && s.spacing?.side === 'start')?.strength;
 		expect(strengthOf(flank('preference'))).toBe(SEAM_DECLARED);
 		expect(strengthOf(flank())).toBe('Fallback');
 	});
@@ -200,7 +201,8 @@ describe('renderOptionsRs', () => {
 			arms: SPACING,
 			defaultArm: 'space',
 			source: 'spacing',
-			seat: { kind: child, display: child, field: `${child}_after` }
+			spacing: { at: 'seam', token: child, side: 'after' },
+			seat: { kind: child, display: child }
 		});
 		const entries = [...kindEntries, { kind: 'zeta', member: 'Zeta', id: 300 }, { kind: 'alpha', member: 'Alpha', id: 200 }];
 		const plan = planRenderOptions([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')], entries as never), whitespaceText, undefined, 'rust');
@@ -248,7 +250,7 @@ describe('renderOptionsRs', () => {
 	it('lists each kind\'s indent-capable sites in rule order for the resolver\'s depth walk', () => {
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
 		const entries = [...kindEntries, { kind: 'indent', member: 'Indent', id: 170 }, { kind: 'dedent', member: 'Dedent', id: 171 }];
-		const depth = (slot: string, address: string): SitePreference => ({ kind: 'call_expression', slot, address, label: address, arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' });
+		const depth = (slot: string, address: string): SitePreference => ({ kind: 'call_expression', slot, address, label: address, arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', spacing: parseSpacingAddress(address)! });
 		const plan = planRenderOptions([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, makeSiteKindsNodeMap([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')]), whitespaceText, undefined, 'rust');
 		expect(plan.spacingSites.slice(0, 3).map((s) => s.fieldIdent)).toEqual(['lparen_before', 'lparen_after', 'rparen_before']);
 		expect(plan.depthSites).toEqual([{ kind: 'call_expression', sites: [2, 1] }]);
@@ -284,13 +286,13 @@ describe('a kind edge over a choice of tokens', () => {
 		arms: SPACING,
 		defaultArm: 'space',
 		source: 'spacing',
-		side: 'seam',
+		spacing: parseSpacingAddress(address)!,
 		...extra
 	});
 	const armSites = [
 		seam('bracket_before', { edgeLiterals: ['lparen', 'semi'], kindEdge: true }),
-		seam('lparen_before', { slot: 'lparen', edgeArm: { parent: 'bracket_before', token: 'lparen', kindId: 21 } }),
-		seam('semi_before', { slot: 'semi', edgeArm: { parent: 'bracket_before', token: 'semi', kindId: 20 } })
+		seam('lparen_before', { slot: 'lparen', edgeArm: { kindId: 21 } }),
+		seam('semi_before', { slot: 'semi', edgeArm: { kindId: 20 } })
 	];
 	const plan = planRenderOptions(armSites, entries, makeSiteKindsNodeMap(armSites, entries), whitespaceText, undefined, 'rust');
 
@@ -312,7 +314,7 @@ describe('a kind edge over a choice of tokens', () => {
 	});
 
 	it('refuses an arm token with no kind id', () => {
-		const lost = [armSites[0]!, { ...armSites[1]!, edgeArm: { parent: 'bracket_before', token: 'unknown_token' } }];
+		const lost = [armSites[0]!, { ...armSites[1]!, spacing: { at: 'seam', token: 'unknown_token', side: 'before' } as const, edgeArm: {} }];
 		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost, entries), whitespaceText, undefined, 'rust');
 		expect(() => edgeSitesOf(lostPlan)).toThrow(/unknown_token/);
 	});

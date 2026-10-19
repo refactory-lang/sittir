@@ -1,3 +1,5 @@
+import type { FlankSide, SeparatorSide, SpacingAddress } from '../../types/spacing.ts';
+
 export const LAYOUT_SUPERTYPE = '_layout';
 export const DEPTH_KINDS = ['indent', 'dedent'] as const;
 export const INDENT_TEXT = '\u{FDD0}\n';
@@ -30,52 +32,41 @@ export function isSeparatorAddress(address: string): boolean {
 	return address.endsWith(`_${SEPARATOR_LABEL}`);
 }
 
-export type SeparatorSide = 'before' | 'after';
-export type FlankSide = 'start' | 'end';
+export function spacingLabelOf(address: SpacingAddress): string {
+	switch (address.at) {
+		case 'separator':
+			return address.side === undefined ? `${address.token}_separator_space` : `${address.token}_separator_space_${address.side}`;
+		case 'seam':
+			return `${address.token}_${address.side}`;
+		case 'flank':
+			return `${address.kind}_${address.side}`;
+	}
+}
 
-export function spacingLabel(token: string, side?: SeparatorSide): string {
-	return side === undefined ? `${token}_separator_space` : `${token}_separator_space_${side}`;
+export function siteKey(slot: string, address: SpacingAddress): string {
+	return address.at === 'separator' ? spacingLabelOf({ ...address, token: slot }) : `${slot}_${spacingLabelOf(address)}`;
 }
 
 const LABEL_TOKEN = '[A-Za-z][A-Za-z0-9_]*?';
 
 const SPACING_LABEL = new RegExp(`^(${LABEL_TOKEN})_separator_space(?:_(before|after))?$`);
 
-export function parseSpacingLabel(name: string): { readonly token: string; readonly side?: SeparatorSide } | undefined {
-	const m = SPACING_LABEL.exec(name);
-	if (!m) return undefined;
-	const token = m[1]!;
-	const side = m[2] as SeparatorSide | undefined;
-	if (token === EMPTY_SEPARATOR_TOKEN) return side === undefined ? { token } : undefined;
-	return side === undefined ? undefined : { token, side };
-}
-
-export function seamLabel(token: string, side: SeparatorSide): string {
-	return `${token}_${side}`;
-}
-
 const SEAM_LABEL = new RegExp(`^(${LABEL_TOKEN})_(before|after)$`);
-
-export function parseSeamLabel(name: string): { readonly token: string; readonly side: SeparatorSide } | undefined {
-	if (parseSpacingLabel(name) !== undefined) return undefined;
-	const m = SEAM_LABEL.exec(name);
-	return m ? { token: m[1]!, side: m[2] as SeparatorSide } : undefined;
-}
-
-export function siteKey(slot: string, label: string): string {
-	const spacing = parseSpacingLabel(label);
-	if (spacing === undefined) return `${slot}_${label}`;
-	return spacing.side === undefined ? `${slot}_separator_space` : `${slot}_separator_space_${spacing.side}`;
-}
-
-export function flankAddress(publicKind: string, side: FlankSide): string {
-	return `${publicKind}_${side}`;
-}
 
 const FLANK_ADDRESS = new RegExp(`^(_*${LABEL_TOKEN})_(start|end)$`);
 
-export function parseFlankAddress(key: string): { readonly kind: string; readonly side: FlankSide } | undefined {
-	const m = FLANK_ADDRESS.exec(key);
-	return m ? { kind: m[1]!, side: m[2] as FlankSide } : undefined;
+export function parseSpacingAddress(key: string): SpacingAddress | undefined {
+	const separator = SPACING_LABEL.exec(key);
+	if (separator) {
+		const token = separator[1]!;
+		const side = separator[2] as SeparatorSide | undefined;
+		if ((token === EMPTY_SEPARATOR_TOKEN) === (side === undefined)) {
+			return side === undefined ? { at: 'separator', token } : { at: 'separator', token, side };
+		}
+	}
+	const seam = SEAM_LABEL.exec(key);
+	if (seam) return { at: 'seam', token: seam[1]!, side: seam[2] as SeparatorSide };
+	const flank = FLANK_ADDRESS.exec(key);
+	return flank ? { at: 'flank', kind: flank[1]!, side: flank[2] as FlankSide } : undefined;
 }
 

@@ -437,6 +437,11 @@ emitter.
 as the member is built; `partOf` and `seamChoiceDefault` read it back rather
 than recover the arm from the member's symbol.
 
+`spacing` is the address of the site a `whitespaceChoice` member belongs to
+(`SpacingAddress`), stamped on every member as it is built. `isWhitespaceChoice`
+recognises a whitespace choice by it, and `partOf`, `isSeamChoice` and
+`seamChoiceDefault` read it back rather than parse a label.
+
 `origin` names where a seam choice's resolved default arm came from, stamped by
 `render-rules.ts::whitespaceChoice` alongside `default: true`. It never selects
 an arm or changes a rendered value: it is read back by the template emitter's
@@ -1655,3 +1660,36 @@ The ref's own storage identity: the rule, or literal symbol, that parsed it.
 ### `packages/codegen/src/types/rule.ts::BlankRule`
 
 tree-sitter's empty rule, as `blank()` builds it (`dsl/builders.ts::structuralBuilder`). Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`), and a choice with a blank arm becomes `OPTIONAL` there.
+
+### `packages/codegen/src/types/spacing.ts::SpacingAddress`
+
+Where a synthesized whitespace choice sits, the one fact every reader of a
+spacing site reads. A separator gap (`at: 'separator'`) names the token it
+flanks and its side; the single gap of an unseparated repeat has no side and
+the token `empty`. A token seam (`at: 'seam'`) names its token (a catalog kind
+name, a field, or the kind's own display for the kind's edge) and the side of
+it the gap is on. An array flank (`at: 'flank'`) names the kind's display and
+its start or end.
+
+The render rules mint the address once, where they build the part
+(`gapAddressesOf`, `seamChoice`, `DefaultResolver.resolveFlank`), stamp it on
+every member of the choice (`RuleAnnotations.spacing`) and carry it on the
+part, the site and the emitted row. `spacingLabelOf` spells it as the site's
+label and `siteKey` as its key under a slot. Nothing reads a token or a side
+back out of a spelled label: the one parser, `parseSpacingAddress`, serves
+wire's check of authored `patches:` keys.
+
+### `packages/codegen/src/types/spacing.ts::SeamAddress`
+
+The seam member of `SpacingAddress`, for the code that builds or reads only
+seams: `seamChoice`, `DefaultResolver.resolveSeam`, `seamPartOf`, and the
+emitters' kind-edge and edge-arm rows.
+
+### `packages/codegen/src/types/spacing.ts::SeparatorSide`
+
+`before` or `after`: the side of a separator token, or of a seam's token, that
+a gap sits on.
+
+### `packages/codegen/src/types/spacing.ts::FlankSide`
+
+`start` or `end`: the end of a flanked array a flank gap sits at.
