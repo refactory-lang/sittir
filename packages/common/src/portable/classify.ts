@@ -92,11 +92,12 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 			types: (subject) => subjects(subject).flatMap(typeOf)
 		});
 	};
+	const entriesWhere = (keep: (entry: PortableReadEntry) => boolean): ReadonlyMap<number, readonly PortableReadEntry[]> =>
+		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), entries.filter(keep)]));
+	const nodeEntries = entriesWhere(unplaced);
+	const kindIdEntries = entriesWhere((entry) => unplaced(entry) && decidesKindId(entry));
 	return (value) =>
-		table.entries[typeof value === 'number' ? value : value.$type]?.find(
-			(entry) =>
-				unplaced(entry) &&
-				(typeof value !== 'number' || decidesKindId(entry)) &&
-				entry.test.every((condition) => conditionHolds(condition, value))
+		(typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type))?.find((entry) =>
+			entry.test.every((condition) => conditionHolds(condition, value))
 		)?.path;
 }
