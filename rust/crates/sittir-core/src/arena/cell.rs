@@ -37,8 +37,10 @@ pub enum Cell {
     /// this holder changed: a fact of this site, held here and never in the
     /// child's record, so two holders of one record can differ.
     Child { kind: KindId, at: Address, link: Option<TreeId>, changed: ChangedEdges },
-    /// A unit, which carries no text. `KindId::BLANK` is a blank arm.
-    Unit { kind: KindId },
+    /// A unit, which carries no text. `KindId::BLANK` is a blank arm. A
+    /// parsed unit names its row, which keys its sides as any parsed node's
+    /// row does; a built unit has none.
+    Unit { kind: KindId, row: Option<NodeIndex> },
     /// A built leaf: its text in the string table, and its own header-only
     /// record, the key its sides take in the built trivia table.
     BuiltLeaf { kind: KindId, text: StringRef, record: Address },
@@ -78,6 +80,20 @@ fn read_link(tree: u32) -> Option<TreeId> {
     tree.checked_sub(1).map(TreeId)
 }
 
+/// A parsed unit's row as one word, plus one so 0 is a built unit's none.
+fn row_word(row: Option<NodeIndex>) -> Result<u32, ArenaError> {
+    row.map_or(Ok(0), |row| row.0.checked_add(1).ok_or(malformed("unit row", row.0)))
+}
+
+/// A unit cell of `kind` naming the row word `row`: a blank arm is no node,
+/// so it names none.
+fn unit(kind: KindId, row: u32) -> Result<Cell, ArenaError> {
+    match (kind, row.checked_sub(1).map(NodeIndex)) {
+        (KindId::BLANK, Some(_)) => Err(malformed("blank unit row", row)),
+        (kind, row) => Ok(Cell::Unit { kind, row }),
+    }
+}
+
 fn read_changed(word: u32) -> Result<ChangedEdges, ArenaError> {
     if word >= 4 {
         return Err(malformed("child changed edges", word));
@@ -96,7 +112,7 @@ impl Cell {
         match self {
             Cell::Absent => None,
             Cell::ParsedText { .. } | Cell::BuiltText { .. } => Some(KindId::BLANK),
-            Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind } | Cell::BuiltLeaf { kind, .. } => Some(kind),
+            Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } => Some(kind),
         }
     }
 
@@ -105,7 +121,7 @@ impl Cell {
     pub const fn width(self) -> u32 {
         match self {
             Cell::Absent => 1,
-            Cell::Unit { .. } => 2,
+            Cell::Unit { .. } => 3,
             Cell::ParsedText { .. } | Cell::BuiltText { .. } => 4,
             Cell::Coordinate { .. } | Cell::ParsedLeaf { .. } | Cell::Child { .. } | Cell::BuiltLeaf { .. } => 5,
         }
@@ -130,7 +146,11 @@ impl Cell {
                 let [tree, changed] = link_words(link, changed)?;
                 [tag::CHILD, named(kind)?, record(at.0)?.0, tree, changed]
             }
-            Cell::Unit { kind } => [tag::UNIT, u32::from(kind.0), 0, 0, 0],
+            Cell::Unit { kind, row } => {
+                let row = row_word(row)?;
+                unit(kind, row)?;
+                [tag::UNIT, u32::from(kind.0), row, 0, 0]
+            }
             Cell::BuiltLeaf { kind, text, record: at } => {
                 let [offset, len] = text_words(text)?;
                 [tag::BUILT_LEAF, named(kind)?, offset, len, record(at.0)?.0]
@@ -161,7 +181,7 @@ impl Cell {
                 }
             }
             tag::CHILD => Ok(Cell::Child { kind: named_kind(field(1)?)?, at: record(field(2)?)?, link: read_link(field(3)?), changed: read_changed(field(4)?)? }),
-            tag::UNIT => Ok(Cell::Unit { kind: kind(field(1)?)? }),
+            tag::UNIT => unit(kind(field(1)?)?, field(2)?),
             tag::BUILT_LEAF => {
                 let text = StringRef::from_offset(field(2)?, field(3)?);
                 match kind(field(1)?)? {
@@ -260,8 +280,10 @@ mod tests {
             Cell::Child { kind: KindId(14), at: record, link: Some(TreeId(0)), changed: ChangedEdges::default() },
             Cell::Child { kind: KindId(14), at: record, link: Some(TreeId(9)), changed: ChangedEdges { leading: true, trailing: false } },
             Cell::Child { kind: KindId(14), at: record, link: Some(TreeId(9)), changed: ChangedEdges { leading: true, trailing: true } },
-            Cell::Unit { kind: KindId(15) },
-            Cell::Unit { kind: KindId::BLANK },
+            Cell::Unit { kind: KindId(15), row: None },
+            Cell::Unit { kind: KindId(15), row: Some(NodeIndex(0)) },
+            Cell::Unit { kind: KindId(15), row: Some(NodeIndex(42)) },
+            Cell::Unit { kind: KindId::BLANK, row: None },
             Cell::BuiltLeaf { kind: KindId(16), text, record },
             Cell::BuiltLeaf { kind: KindId::ERROR, text, record },
             Cell::BuiltText { text },
@@ -303,9 +325,22 @@ mod tests {
     #[test]
     fn a_blank_arm_is_a_unit_apart_from_absent() {
         let mut words = [7; 5];
-        Cell::Unit { kind: KindId::BLANK }.encode(&mut words).expect("it fits");
+        Cell::Unit { kind: KindId::BLANK, row: None }.encode(&mut words).expect("it fits");
         assert_eq!(words, [tag::UNIT, 0, 0, 0, 0]);
         assert_ne!(Cell::decode(&words), Ok(Cell::Absent));
+    }
+
+    #[test]
+    fn a_parsed_unit_names_its_row_and_a_blank_arm_names_none() {
+        let mut words = [7; 5];
+        Cell::Unit { kind: KindId(3), row: Some(NodeIndex(0)) }.encode(&mut words).expect("it fits");
+        assert_eq!(words, [tag::UNIT, 3, 1, 0, 0], "row 0 is one, apart from a built unit's none");
+        Cell::Unit { kind: KindId(3), row: None }.encode(&mut words).expect("it fits");
+        assert_eq!(words, [tag::UNIT, 3, 0, 0, 0]);
+        assert!(Cell::Unit { kind: KindId::BLANK, row: Some(NodeIndex(2)) }.encode(&mut words).is_err());
+        assert!(Cell::Unit { kind: KindId(3), row: Some(NodeIndex(u32::MAX)) }.encode(&mut words).is_err());
+        assert!(Cell::decode(&[tag::UNIT, 0, 3, 0, 0]).is_err(), "a blank arm is no node, so it has no row");
+        assert!(Cell::Unit { kind: KindId(3), row: None }.encode(&mut [0; 2]).is_err(), "a unit takes three words");
     }
 
     #[test]

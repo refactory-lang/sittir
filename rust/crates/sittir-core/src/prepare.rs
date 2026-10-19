@@ -7,7 +7,7 @@
 use crate::options::{EdgeArm, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
 use crate::render::{CoordinateError, SourceTable};
-use crate::slot::{NodeCoordinate, SeamArm, SlotValue};
+use crate::slot::{CoordinateEdges, NodeCoordinate, SeamArm, SlotValue};
 
 /// Everything a render reads that is not the node itself.
 pub struct RenderContext<'a> {
@@ -342,23 +342,31 @@ impl<T, const ADJACENT: bool> PresentItems for Vec<&mut SlotValue<T, ADJACENT>> 
 impl<T: Prepare, const ADJACENT: bool> GapItems for Vec<&mut SlotValue<T, ADJACENT>> {
     fn fill_gap(&mut self, at: usize, side: Side, seam: SeamArm) {
         match &mut *self[at] {
-            SlotValue::Coord(coord) => {
-                let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
-                match side {
-                    Side::Before => edges.before.get_or_insert(seam),
-                    Side::After => edges.after.get_or_insert(seam),
-                };
-            }
+            SlotValue::Coord(coord) => fill_coordinate_gap(&mut coord.edges, side, seam),
             SlotValue::Node(t) => {
                 if let Some(edges) = t.gap_edges() {
-                    match side {
-                        Side::Before => edges.before.get_or_insert(EdgeArm::from(seam)),
-                        Side::After => edges.after.get_or_insert(EdgeArm::from(seam)),
-                    };
+                    fill_node_gap(edges, side, seam);
                 }
             }
         }
     }
+}
+
+/// A coordinate's `side` takes a gap's `seam`, unless something set it.
+pub fn fill_coordinate_gap(edges: &mut Option<CoordinateEdges>, side: Side, seam: SeamArm) {
+    let edges = edges.get_or_insert(CoordinateEdges { before: None, after: None });
+    match side {
+        Side::Before => edges.before.get_or_insert(seam),
+        Side::After => edges.after.get_or_insert(seam),
+    };
+}
+
+/// A node's base edge on `side` takes a gap's `seam`, unless something set it.
+pub fn fill_node_gap(edges: &mut Edges, side: Side, seam: SeamArm) {
+    match side {
+        Side::Before => edges.before.get_or_insert(EdgeArm::from(seam)),
+        Side::After => edges.after.get_or_insert(EdgeArm::from(seam)),
+    };
 }
 
 impl<T: SeatTarget, const ADJACENT: bool> SeatItems for Vec<&mut SlotValue<T, ADJACENT>> {
@@ -366,17 +374,26 @@ impl<T: SeatTarget, const ADJACENT: bool> SeatItems for Vec<&mut SlotValue<T, AD
         match &mut *self[at] {
             SlotValue::Node(t) => {
                 if let Some((edges, site)) = t.seat_target(table, ctx) {
-                    edges.after.get_or_insert(EdgeArm::from(ctx.options.site_arm(site)));
+                    seat_node(edges, site, ctx);
                 }
             }
             SlotValue::Coord(coord) => {
                 if let Some(site) = coord_seat(coord, table, ctx) {
-                    let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
-                    edges.after.get_or_insert(ctx.options.site_arm(site));
+                    seat_coordinate(&mut coord.edges, site, ctx);
                 }
             }
         }
     }
+}
+
+/// A seated node's base `after` edge takes its seat's arm, unless set.
+pub fn seat_node(edges: &mut Edges, site: SiteId, ctx: &RenderContext<'_>) {
+    edges.after.get_or_insert(EdgeArm::from(ctx.options.site_arm(site)));
+}
+
+/// A seated coordinate's `after` edge takes its seat's arm, unless set.
+pub fn seat_coordinate(edges: &mut Option<CoordinateEdges>, site: SiteId, ctx: &RenderContext<'_>) {
+    edges.get_or_insert(CoordinateEdges { before: None, after: None }).after.get_or_insert(ctx.options.site_arm(site));
 }
 
 /// Fill the gap after every present element but the last present one from
@@ -483,28 +500,13 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
                 coord.resolve(ctx.sources)?;
                 if let Some(mut node) = read_edited::<T>(coord, ctx)? {
                     if let (Some(seated), Some(edges)) = (coord.edges, node.gap_edges()) {
-                        if seated.before.is_some() {
-                            edges.before = seated.before.map(EdgeArm::from);
-                        }
-                        if seated.after.is_some() {
-                            edges.after = seated.after.map(EdgeArm::from);
-                        }
+                        seat_read_node(edges, seated);
                     }
                     node.prepare(ctx)?;
                     *self = SlotValue::Node(node);
                     return Ok(());
                 }
-                let seated = coord.edges;
-                coord.edges = [coord.kind, ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind));
-                if let Some(seated) = seated {
-                    let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
-                    if seated.before.is_some() {
-                        edges.before = seated.before;
-                    }
-                    if seated.after.is_some() {
-                        edges.after = seated.after;
-                    }
-                }
+                coord.edges = coordinate_edges(coord, coord.edges, ctx);
                 Ok(())
             }
             SlotValue::Node(t) => t.prepare(ctx),
@@ -529,11 +531,40 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     }
 }
 
+/// A coordinate's edges once it is prepared: its kind's edge row (its stamped
+/// kind's, or, for a display kind with no edge row of its own, its grammar
+/// kind's), with each side its holder seated (`seated`) set over it.
+#[must_use]
+pub fn coordinate_edges(coord: &NodeCoordinate, seated: Option<CoordinateEdges>, ctx: &RenderContext<'_>) -> Option<CoordinateEdges> {
+    let mut edges = [coord.kind, ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind));
+    if let Some(seated) = seated {
+        let edges = edges.get_or_insert(CoordinateEdges { before: None, after: None });
+        if seated.before.is_some() {
+            edges.before = seated.before;
+        }
+        if seated.after.is_some() {
+            edges.after = seated.after;
+        }
+    }
+    edges
+}
+
+/// The base edges of the node an edited coordinate was read into take each
+/// side its holder seated on the coordinate.
+pub fn seat_read_node(edges: &mut Edges, seated: CoordinateEdges) {
+    if seated.before.is_some() {
+        edges.before = seated.before.map(EdgeArm::from);
+    }
+    if seated.after.is_some() {
+        edges.after = seated.after.map(EdgeArm::from);
+    }
+}
+
 /// The node a coordinate names, read one level into `T` when a write lies in
 /// its range (`SourceTable::edited_within`), its changed edges carried into
 /// the read (`ReadCtx::with_changed`); `None` when no write lies there, or
 /// when `T` reads nothing.
-fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<T>, CoordinateError> {
+pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<T>, CoordinateError> {
     if !ctx.sources.edited_within(coord) {
         return Ok(None);
     }

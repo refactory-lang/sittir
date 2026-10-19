@@ -148,6 +148,16 @@ impl std::fmt::Debug for ReadCtx<'_> {
     }
 }
 
+/// A unit child a read takes inline: its slot's wire key, its item there,
+/// its row, and its sides as the read seats them (`ReadCtx::unit_sides`).
+#[derive(Debug, Clone, PartialEq)]
+pub struct UnitRead<T> {
+    pub slot: &'static str,
+    pub item: ItemIndex,
+    pub row: NodeIndex,
+    pub trivia: Option<NodeTrivia<T>>,
+}
+
 /// One entry of a node's side as a read seats it, with where it came from.
 #[derive(Debug, Clone, PartialEq)]
 pub enum SideEntry<T> {
@@ -337,17 +347,19 @@ impl<'s> ReadCtx<'s> {
         })
     }
 
-    /// `layout`, holding the sides of the node's unit children (`units`).
+    /// `layout`, holding the rows of the node's unit children and the sides
+    /// of those that have any (`units`).
     #[must_use]
     pub fn layout_with_units<T: crate::trivia::FromTriviaText + 'static>(
         &mut self,
         index: NodeIndex,
         at: Origin,
         held: bool,
-        units: Vec<crate::layout::UnitSides<T>>,
+        units: Vec<UnitRead<T>>,
     ) -> Box<NodeLayout<T>> {
         let mut layout = self.layout(index, at, held);
-        layout.units = units;
+        layout.unit_rows = units.iter().map(|unit| crate::layout::UnitRow { slot: unit.slot, item: unit.item, row: unit.row }).collect();
+        layout.units = units.into_iter().filter_map(|unit| unit.trivia.map(|trivia| crate::layout::UnitSides { slot: unit.slot.to_owned(), item: unit.item, trivia })).collect();
         layout
     }
 
@@ -816,13 +828,17 @@ fn origin_of<T>(layout: &NodeLayout<T>) -> Option<Origin> {
 }
 
 /// A struct's layout taken for its envelope: the whole layout, with where
-/// the struct came from left behind on it when the layout records that.
+/// the struct came from left behind on it when the layout records that, and
+/// the facts of the struct's own fields its record writer reads (its unit
+/// children's rows and its captures' spans).
 pub fn take_layout_keeping_at<T>(layout: &mut Option<Box<NodeLayout<T>>>) -> Option<Box<NodeLayout<T>>> {
-    let taken = layout.take();
-    if let Some(at) = taken.as_deref().and_then(origin_of) {
-        *layout = Some(Box::new(placed_at(at)));
+    let mut taken = layout.take()?;
+    let origin = origin_of(&taken);
+    let (captures, unit_rows) = (std::mem::take(&mut taken.captures), std::mem::take(&mut taken.unit_rows));
+    if origin.is_some() || !unit_rows.is_empty() || !captures.is_empty() {
+        *layout = Some(Box::new(NodeLayout { captures, unit_rows, ..origin.map_or_else(NodeLayout::default, placed_at) }));
     }
-    taken
+    Some(taken)
 }
 
 impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {

@@ -62,6 +62,20 @@ pub struct NodeLayout<T> {
     /// has none. It never crosses: a record keeps each span in its capture's
     /// cell.
     pub captures: Vec<Option<crate::types::Span>>,
+    /// The row of each unit child the read took inline, by its slot and its
+    /// item there: a parsed record's unit cell names it, so the unit's sides
+    /// key by its row as any parsed node's do. A read writes it; a built node
+    /// has none. It never crosses.
+    pub unit_rows: Vec<UnitRow>,
+}
+
+/// The row of one unit child a read took inline, by the slot that holds it
+/// (its wire key) and its item in that slot.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct UnitRow {
+    pub slot: &'static str,
+    pub item: crate::types::ItemIndex,
+    pub row: crate::types::NodeIndex,
 }
 
 /// A list slot's layout: the class its separator gaps take before and after
@@ -293,6 +307,7 @@ impl<T> Default for NodeLayout<T> {
             slots: Vec::new(),
             separator: None,
             captures: Vec::new(),
+            unit_rows: Vec::new(),
         }
     }
 }
@@ -573,6 +588,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                 slots: property(env, napi_val, c"slots")?.unwrap_or_default(),
                 separator: property(env, napi_val, c"separator")?,
                 captures: Vec::new(),
+                unit_rows: Vec::new(),
             })
         }
     }

@@ -412,7 +412,7 @@ pub fn members(ident: &Ident) -> TokenStream {
                 _: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::trivia_store::Place>>,
             ) -> ::core::result::Result<Self, ::sittir_core::arena::ArenaError> {
                 match cell {
-                    ::sittir_core::arena::Cell::Unit { kind } => __member(kind, kind).ok_or(#refused),
+                    ::sittir_core::arena::Cell::Unit { kind, .. } => __member(kind, kind).ok_or(#refused),
                     _ => ::core::result::Result::Err(#refused),
                 }
             }
@@ -576,7 +576,7 @@ mod tests {
         })
         .expect("expands");
         assert!(has(&members, "impl ::sittir_core::arena::HasRecord for OperatorNode { type Record<'a> = OperatorNode; }"));
-        assert!(has(&members, "::sittir_core::arena::Cell::Unit { kind } => __member(kind, kind).ok_or("));
+        assert!(has(&members, "::sittir_core::arena::Cell::Unit { kind, .. } => __member(kind, kind).ok_or("));
     }
 
     #[test]

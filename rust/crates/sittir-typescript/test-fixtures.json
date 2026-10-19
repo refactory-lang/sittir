@@ -33111,6 +33111,17 @@
                         "$text": "string"
                       }
                     ]
+                  },
+                  "$_layout": {
+                    "units": [
+                      {
+                        "slot": "_accessibility_modifier",
+                        "item": 0,
+                        "leading": [
+                          181
+                        ]
+                      }
+                    ]
                   }
                 },
                 "_terminator": 22
@@ -33293,7 +33304,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
+    "expectedOutput": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "options": {
       "program": {
         "before": 183
@@ -33306,9 +33317,9 @@
     "sourceIn": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
+    "expectedSourceOut": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator expression: (identifier)) decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
-    "wrappedText": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
+    "wrappedText": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -33460,6 +33471,17 @@
                   {
                     "$type": 119,
                     "$text": "string"
+                  }
+                ]
+              },
+              "$_layout": {
+                "units": [
+                  {
+                    "slot": "_accessibility_modifier",
+                    "item": 0,
+                    "leading": [
+                      181
+                    ]
                   }
                 ]
               }
@@ -33641,7 +33663,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
+    "expectedOutput": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "options": {
       "program": {
         "before": 183
@@ -33654,9 +33676,9 @@
     "sourceIn": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "pattern": "class_declaration",
     "edits": [],
-    "expectedSourceOut": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
+    "expectedSourceOut": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "expectedReparseTree": "(class_declaration decorator: (decorator expression: (identifier)) decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
-    "wrappedText": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
+    "wrappedText": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -34087,6 +34109,17 @@
                   "$text": "string"
                 }
               ]
+            },
+            "$_layout": {
+              "units": [
+                {
+                  "slot": "_accessibility_modifier",
+                  "item": 0,
+                  "leading": [
+                    181
+                  ]
+                }
+              ]
             }
           },
           "_terminator": 22
@@ -34264,7 +34297,7 @@
         }
       ]
     },
-    "expectedOutput": "{\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
+    "expectedOutput": "{\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "options": {
       "program": {
         "before": 183
@@ -34277,9 +34310,9 @@
     "sourceIn": "{\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "pattern": "class_body",
     "edits": [],
-    "expectedSourceOut": "{\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
+    "expectedSourceOut": "{\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "expectedReparseTree": "(class_body members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) members: (class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (identifier)) name: (string_single elements: (string_fragment)) type: (type_annotation type: (type_identifier)) value: (string_single elements: (string_fragment)))) members: (class_body_member_method decorator: (decorator expression: (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (optional_parameter decorator: (decorator expression: (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
-    "wrappedText": "class _C {\n  @foo static 2: string;\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
+    "wrappedText": "class _C {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "wrappedOffset": 9
   },
   {
@@ -34417,11 +34450,22 @@
               "$text": "string"
             }
           ]
+        },
+        "$_layout": {
+          "units": [
+            {
+              "slot": "_accessibility_modifier",
+              "item": 0,
+              "leading": [
+                181
+              ]
+            }
+          ]
         }
       },
       "_terminator": 22
     },
-    "expectedOutput": "@bar.buzz(grue)\npublic static 2: string = 'string';",
+    "expectedOutput": "@bar.buzz(grue) public static 2: string = 'string';",
     "options": {
       "program": {
         "before": 183
@@ -34434,9 +34478,9 @@
     "sourceIn": "@bar.buzz(grue) public static 2: string = 'string';",
     "pattern": "class_body_member_declaration",
     "edits": [],
-    "expectedSourceOut": "@bar.buzz(grue)\npublic static 2: string = 'string';",
+    "expectedSourceOut": "@bar.buzz(grue) public static 2: string = 'string';",
     "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment))))",
-    "wrappedText": "class _C {\n  @bar.buzz(grue)\n  public static 2: string = 'string';\n}",
+    "wrappedText": "class _C {\n  @bar.buzz(grue) public static 2: string = 'string';\n}",
     "wrappedOffset": 13
   },
   {
@@ -34655,9 +34699,20 @@
             "$text": "string"
           }
         ]
+      },
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_accessibility_modifier",
+            "item": 0,
+            "leading": [
+              181
+            ]
+          }
+        ]
       }
     },
-    "expectedOutput": "@bar.buzz(grue)\npublic static 2: string = 'string'",
+    "expectedOutput": "@bar.buzz(grue) public static 2: string = 'string'",
     "options": {
       "program": {
         "before": 183
@@ -34670,9 +34725,9 @@
     "sourceIn": "@bar.buzz(grue) public static 2: string = 'string'",
     "pattern": "public_field_definition",
     "edits": [],
-    "expectedSourceOut": "@bar.buzz(grue)\npublic static 2: string = 'string'",
+    "expectedSourceOut": "@bar.buzz(grue) public static 2: string = 'string'",
     "expectedReparseTree": "(public_field_definition decorator: (decorator expression: (decorator_call_expression function: (decorator_member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))",
-    "wrappedText": "class _C {\n  @bar.buzz(grue)\n  public static 2: string = 'string'\n}",
+    "wrappedText": "class _C {\n  @bar.buzz(grue) public static 2: string = 'string'\n}",
     "wrappedOffset": 13
   },
   {
@@ -82288,7 +82343,16 @@
                   183,
                   186
                 ]
-              }
+              },
+              "units": [
+                {
+                  "slot": "_type",
+                  "item": 0,
+                  "leading": [
+                    183
+                  ]
+                }
+              ]
             }
           },
           "_body": {
@@ -82349,7 +82413,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\nfunction f(): any {\n 'a';\n 'b';\n}\n\nfunction\nf\n()\n : any {\n 'a'\n 'b'\n }\n",
+    "expectedOutput": "\nfunction f(): any {\n 'a';\n 'b';\n}\n\nfunction\nf\n()\n :\n any {\n 'a'\n 'b'\n }\n",
     "options": {
       "layout": {
         "indent": " "
@@ -82365,9 +82429,9 @@
     "sourceIn": "\nfunction f(): any {\n  'a';\n  'b';\n}\n\nfunction\nf\n()\n :\n any {\n  'a'\n  'b'\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "\nfunction f(): any {\n 'a';\n 'b';\n}\n\nfunction\nf\n()\n : any {\n 'a'\n 'b'\n }\n",
+    "expectedSourceOut": "\nfunction f(): any {\n 'a';\n 'b';\n}\n\nfunction\nf\n()\n :\n any {\n 'a'\n 'b'\n }\n",
     "expectedReparseTree": "(program statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string_single elements: (string_fragment))) statements: (expression_statement expression: (string_single elements: (string_fragment))) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) statements: (function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)))",
-    "wrappedText": "\nfunction f(): any {\n 'a';\n 'b';\n}\n\nfunction\nf\n()\n : any {\n 'a'\n 'b'\n }\n",
+    "wrappedText": "\nfunction f(): any {\n 'a';\n 'b';\n}\n\nfunction\nf\n()\n :\n any {\n 'a'\n 'b'\n }\n",
     "wrappedOffset": 0
   },
   {
@@ -82480,7 +82544,16 @@
               183,
               186
             ]
-          }
+          },
+          "units": [
+            {
+              "slot": "_type",
+              "item": 0,
+              "leading": [
+                183
+              ]
+            }
+          ]
         }
       },
       "_body": {
@@ -82538,7 +82611,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "function\nf\n()\n : any {\n 'a'\n 'b'\n }\n",
+    "expectedOutput": "function\nf\n()\n :\n any {\n 'a'\n 'b'\n }\n",
     "options": {
       "layout": {
         "indent": " "
@@ -82554,9 +82627,9 @@
     "sourceIn": "function\nf\n()\n :\n any {\n  'a'\n  'b'\n}",
     "pattern": "function_declaration",
     "edits": [],
-    "expectedSourceOut": "function\nf\n()\n : any {\n 'a'\n 'b'\n }\n",
+    "expectedSourceOut": "function\nf\n()\n :\n any {\n 'a'\n 'b'\n }\n",
     "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (expression_statement expression: (string_single elements: (string_fragment)) terminator: (automatic_semicolon)) terminator: (automatic_semicolon)) terminator: (automatic_semicolon))",
-    "wrappedText": "function\nf\n()\n : any {\n 'a'\n 'b'\n }\n",
+    "wrappedText": "function\nf\n()\n :\n any {\n 'a'\n 'b'\n }\n",
     "wrappedOffset": 0
   },
   {
@@ -82650,9 +82723,20 @@
     "pattern": "type_annotation",
     "input": {
       "$type": 332,
-      "_type": 40
+      "_type": 40,
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_type",
+            "item": 0,
+            "leading": [
+              183
+            ]
+          }
+        ]
+      }
     },
-    "expectedOutput": ": any",
+    "expectedOutput": ":\nany",
     "options": {
       "layout": {
         "indent": " "
@@ -82668,9 +82752,9 @@
     "sourceIn": ":\n any",
     "pattern": "type_annotation",
     "edits": [],
-    "expectedSourceOut": ": any",
+    "expectedSourceOut": ":\nany",
     "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _: any;",
+    "wrappedText": "let _:\nany;",
     "wrappedOffset": 5
   },
   {
@@ -86593,7 +86677,18 @@
               },
               "_type": {
                 "$type": 332,
-                "_type": 144
+                "_type": 144,
+                "$_layout": {
+                  "units": [
+                    {
+                      "slot": "_type",
+                      "item": 0,
+                      "inner": [
+                        181
+                      ]
+                    }
+                  ]
+                }
               },
               "_value": {
                 "$type": 417,
@@ -86707,7 +86802,18 @@
           },
           "_type": {
             "$type": 332,
-            "_type": 144
+            "_type": 144,
+            "$_layout": {
+              "units": [
+                {
+                  "slot": "_type",
+                  "item": 0,
+                  "inner": [
+                    181
+                  ]
+                }
+              ]
+            }
           },
           "_value": {
             "$type": 417,
@@ -86836,7 +86942,18 @@
       },
       "_type": {
         "$type": 332,
-        "_type": 144
+        "_type": 144,
+        "$_layout": {
+          "units": [
+            {
+              "slot": "_type",
+              "item": 0,
+              "inner": [
+                181
+              ]
+            }
+          ]
+        }
       },
       "_value": {
         "$type": 417,
@@ -86949,7 +87066,18 @@
     "pattern": "type_annotation",
     "input": {
       "$type": 332,
-      "_type": 144
+      "_type": 144,
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_type",
+            "item": 0,
+            "inner": [
+              181
+            ]
+          }
+        ]
+      }
     },
     "expectedOutput": ": unique symbol",
     "options": {
@@ -118313,7 +118441,18 @@
               "_item": [
                 {
                   "$type": 340,
-                  "_type": 43
+                  "_type": 43,
+                  "$_layout": {
+                    "units": [
+                      {
+                        "slot": "_type",
+                        "item": 0,
+                        "trailing": [
+                          180
+                        ]
+                      }
+                    ]
+                  }
                 },
                 {
                   "$type": 341,
@@ -118440,7 +118579,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string ?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
+    "expectedOutput": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "options": {
       "program": {
         "before": 183
@@ -118453,9 +118592,9 @@
     "sourceIn": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string ?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
+    "expectedSourceOut": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (tuple_type) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_members item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_members item: (union_type left: (type_identifier) right: (type_identifier)) item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type (tuple_type_members item: (array_type type: (type_identifier)) item: (nested_type_identifier module: (identifier) name: (type_identifier))))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_members item: (tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (optional_tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (tuple_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (array_type type: (type_identifier)))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string ?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
+    "wrappedText": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "wrappedOffset": 0
   },
   {
@@ -118712,7 +118851,18 @@
           "_item": [
             {
               "$type": 340,
-              "_type": 43
+              "_type": 43,
+              "$_layout": {
+                "units": [
+                  {
+                    "slot": "_type",
+                    "item": 0,
+                    "trailing": [
+                      180
+                    ]
+                  }
+                ]
+              }
             },
             {
               "$type": 341,
@@ -118730,7 +118880,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type t = [string ?, ...B]\n",
+    "expectedOutput": "type t = [string?, ...B]\n",
     "options": {
       "program": {
         "before": 183
@@ -118743,9 +118893,9 @@
     "sourceIn": "type t = [string?, ...B]",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type t = [string ?, ...B]\n",
+    "expectedSourceOut": "type t = [string?, ...B]\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (tuple_type (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))) terminator: (automatic_semicolon))",
-    "wrappedText": "type t = [string ?, ...B]\n",
+    "wrappedText": "type t = [string?, ...B]\n",
     "wrappedOffset": 0
   },
   {
@@ -119538,7 +119688,18 @@
         "_item": [
           {
             "$type": 340,
-            "_type": 43
+            "_type": 43,
+            "$_layout": {
+              "units": [
+                {
+                  "slot": "_type",
+                  "item": 0,
+                  "trailing": [
+                    180
+                  ]
+                }
+              ]
+            }
           },
           {
             "$type": 341,
@@ -119554,7 +119715,7 @@
         "_delimiter": 0
       }
     },
-    "expectedOutput": "[string ?, ...B]",
+    "expectedOutput": "[string?, ...B]",
     "options": {
       "program": {
         "before": 183
@@ -119567,9 +119728,9 @@
     "sourceIn": "[string?, ...B]",
     "pattern": "tuple_type",
     "edits": [],
-    "expectedSourceOut": "[string ?, ...B]",
+    "expectedSourceOut": "[string?, ...B]",
     "expectedReparseTree": "(tuple_type (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier))))",
-    "wrappedText": "type _X = [string ?, ...B];",
+    "wrappedText": "type _X = [string?, ...B];",
     "wrappedOffset": 10
   },
   {
@@ -119829,7 +119990,18 @@
       "_item": [
         {
           "$type": 340,
-          "_type": 43
+          "_type": 43,
+          "$_layout": {
+            "units": [
+              {
+                "slot": "_type",
+                "item": 0,
+                "trailing": [
+                  180
+                ]
+              }
+            ]
+          }
         },
         {
           "$type": 341,
@@ -119844,7 +120016,7 @@
       ],
       "_delimiter": 0
     },
-    "expectedOutput": "string ?, ...B",
+    "expectedOutput": "string?, ...B",
     "options": {
       "program": {
         "before": 183
@@ -119857,9 +120029,9 @@
     "sourceIn": "string?, ...B",
     "pattern": "tuple_type_members",
     "edits": [],
-    "expectedSourceOut": "string ?, ...B",
+    "expectedSourceOut": "string?, ...B",
     "expectedReparseTree": "(tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))",
-    "wrappedText": "type _X = [string ?, ...B];",
+    "wrappedText": "type _X = [string?, ...B];",
     "wrappedOffset": 11
   },
   {
@@ -120171,9 +120343,20 @@
     "pattern": "optional_type",
     "input": {
       "$type": 340,
-      "_type": 43
+      "_type": 43,
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_type",
+            "item": 0,
+            "trailing": [
+              180
+            ]
+          }
+        ]
+      }
     },
-    "expectedOutput": "string ?",
+    "expectedOutput": "string?",
     "options": {
       "program": {
         "before": 183
@@ -120186,9 +120369,9 @@
     "sourceIn": "string?",
     "pattern": "optional_type",
     "edits": [],
-    "expectedSourceOut": "string ?",
+    "expectedSourceOut": "string?",
     "expectedReparseTree": "(optional_type type: (predefined_type))",
-    "wrappedText": "type _X = [string ?, ...B];",
+    "wrappedText": "type _X = [string?, ...B];",
     "wrappedOffset": 11
   },
   {
@@ -129022,10 +129205,38 @@
                   "trailing": [
                     183
                   ]
-                }
+                },
+                "units": [
+                  {
+                    "slot": "_right",
+                    "item": 0,
+                    "trailing": [
+                      183,
+                      186
+                    ]
+                  },
+                  {
+                    "slot": "_alternative",
+                    "item": 0,
+                    "trailing": [
+                      187
+                    ]
+                  }
+                ]
               }
             },
-            "_alternative": 146
+            "_alternative": 146,
+            "$_layout": {
+              "units": [
+                {
+                  "slot": "_alternative",
+                  "item": 0,
+                  "trailing": [
+                    187
+                  ]
+                }
+              ]
+            }
           },
           "_terminator": 173
         },
@@ -129250,7 +129461,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
+    "expectedOutput": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "options": {
       "program": {
         "after": 180,
@@ -129264,9 +129475,9 @@
     "sourceIn": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R>  : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
+    "expectedSourceOut": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (lookup_type type: (type_identifier) index_type: (literal_type (number_decimal)))) elements: (string_fragment) elements: (template_type type: (type_identifier)) elements: (string_fragment) elements: (template_type type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type type: (literal_type (string_single elements: (string_fragment)))) elements: (template_type type: (literal_type (number_decimal))) elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string_single elements: (string_fragment))) right: (literal_type (false)))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type))))",
-    "wrappedText": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
+    "wrappedText": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "wrappedOffset": 0
   },
   {
@@ -129699,14 +129910,42 @@
               "trailing": [
                 183
               ]
-            }
+            },
+            "units": [
+              {
+                "slot": "_right",
+                "item": 0,
+                "trailing": [
+                  183,
+                  186
+                ]
+              },
+              {
+                "slot": "_alternative",
+                "item": 0,
+                "trailing": [
+                  187
+                ]
+              }
+            ]
           }
         },
-        "_alternative": 146
+        "_alternative": 146,
+        "$_layout": {
+          "units": [
+            {
+              "slot": "_alternative",
+              "item": 0,
+              "trailing": [
+                187
+              ]
+            }
+          ]
+        }
       },
       "_terminator": 173
     },
-    "expectedOutput": "type A<B, C> = B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never\n",
+    "expectedOutput": "type A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\n",
     "options": {
       "program": {
         "after": 180,
@@ -129720,9 +129959,9 @@
     "sourceIn": "type A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type A<B, C> = B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never\n",
+    "expectedSourceOut": "type A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) terminator: (automatic_semicolon))",
-    "wrappedText": "type A<B, C> = B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never\n",
+    "wrappedText": "type A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\n",
     "wrappedOffset": 0
   },
   {
@@ -133390,12 +133629,40 @@
             "trailing": [
               183
             ]
-          }
+          },
+          "units": [
+            {
+              "slot": "_right",
+              "item": 0,
+              "trailing": [
+                183,
+                186
+              ]
+            },
+            {
+              "slot": "_alternative",
+              "item": 0,
+              "trailing": [
+                187
+              ]
+            }
+          ]
         }
       },
-      "_alternative": 146
+      "_alternative": 146,
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_alternative",
+            "item": 0,
+            "trailing": [
+              187
+            ]
+          }
+        ]
+      }
     },
-    "expectedOutput": "B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never",
+    "expectedOutput": "B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never",
     "options": {
       "program": {
         "after": 180,
@@ -133409,9 +133676,9 @@
     "sourceIn": "B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never",
+    "expectedSourceOut": "B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type))",
-    "wrappedText": "type _X = B extends C\n  ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never\n  : never;",
+    "wrappedText": "type _X = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never;",
     "wrappedOffset": 10
   },
   {
@@ -133499,9 +133766,28 @@
           }
         }
       },
-      "_alternative": 146
+      "_alternative": 146,
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_right",
+            "item": 0,
+            "trailing": [
+              183,
+              186
+            ]
+          },
+          {
+            "slot": "_alternative",
+            "item": 0,
+            "trailing": [
+              187
+            ]
+          }
+        ]
+      }
     },
-    "expectedOutput": "C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n: never",
+    "expectedOutput": "C extends string\n  ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never",
     "options": {
       "program": {
         "after": 180,
@@ -133515,9 +133801,9 @@
     "sourceIn": "C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n: never",
+    "expectedSourceOut": "C extends string\n  ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type))",
-    "wrappedText": "type _X = C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n: never;",
+    "wrappedText": "type _X = C extends string\n  ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n  : never;",
     "wrappedOffset": 10
   },
   {

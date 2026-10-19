@@ -12,7 +12,7 @@ use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
 use crate::trivia::NodeTrivia;
 use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{ItemIndex, KindId, NodeIndex, Span, TreeId};
 use crate::verbatim::VerbatimNode;
 
 /// What a built record's link to an untouched parsed node finds.
@@ -220,6 +220,7 @@ fn bare_past_at<T>(layout: &NodeLayout<T>) -> bool {
         && layout.slots.is_empty()
         && layout.separator.is_none()
         && layout.captures.is_empty()
+        && layout.unit_rows.is_empty()
 }
 
 /// The cell of a leaf of `kind` holding `text`. A parsed leaf has no record:
@@ -350,15 +351,56 @@ fn write_words<T: Clone>(
     Ok((at, site_changed))
 }
 
-/// Writes a list slot's items as a run of `run`-word cells, after the
-/// records they need, and answers the list's cell.
+/// Writes the cell of the value a single slot holds, the slot `slot` of the
+/// node whose layout is `layout` (`unit_cell`).
 ///
 /// # Errors
 ///
-/// What an item's `write_cell` or the arena refuses.
-pub fn write_list<'i, T: Clone, C: WriteCell<T> + 'i>(sink: &mut RecordSink<'_, T>, run: u32, items: impl IntoIterator<Item = &'i C>) -> Result<ListCell, ArenaError> {
-    let cells = items.into_iter().map(|item| item.write_cell(sink)).collect::<Result<Vec<_>, _>>()?;
+/// What the value's `write_cell` or `unit_cell` refuses.
+pub fn write_slot<T: Clone, C: WriteCell<T>>(sink: &mut RecordSink<'_, T>, value: &C, layout: Option<&NodeLayout<T>>, slot: &str) -> Result<Cell, ArenaError> {
+    let cell = value.write_cell(sink)?;
+    unit_cell(sink, cell, layout, slot, ItemIndex(0))
+}
+
+/// Writes the list slot `slot`'s items as a run of `run`-word cells, after
+/// the records they need, and answers the list's cell (`unit_cell`).
+///
+/// # Errors
+///
+/// What an item's `write_cell`, `unit_cell` or the arena refuses.
+pub fn write_list<'i, T: Clone, C: WriteCell<T> + 'i>(
+    sink: &mut RecordSink<'_, T>,
+    run: u32,
+    items: impl IntoIterator<Item = &'i C>,
+    layout: Option<&NodeLayout<T>>,
+    slot: &str,
+) -> Result<ListCell, ArenaError> {
+    let cells = items
+        .into_iter()
+        .enumerate()
+        .map(|(item, value)| {
+            let cell = value.write_cell(sink)?;
+            unit_cell(sink, cell, layout, slot, ItemIndex(u32::try_from(item).map_err(|_| ArenaError::Full)?))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
     ListCell::write(sink.arena(), run, &cells)
+}
+
+/// The cell of the value at `item` of the slot `slot`: a parsed unit names
+/// the row its read took it from (`NodeLayout::unit_rows`), so its sides key
+/// by its row.
+///
+/// # Errors
+///
+/// `ArenaError::Unwritable` for a parsed unit its read gave no row.
+fn unit_cell<T: Clone>(sink: &RecordSink<'_, T>, cell: Cell, layout: Option<&NodeLayout<T>>, slot: &str, item: ItemIndex) -> Result<Cell, ArenaError> {
+    match cell {
+        Cell::Unit { kind, row: None } if kind != KindId::BLANK && sink.tree().is_some() => {
+            let row = layout.and_then(|layout| layout.unit_rows.iter().find(|unit| unit.slot == slot && unit.item == item)).ok_or(ArenaError::Unwritable("a parsed unit with no row"))?;
+            Ok(Cell::Unit { kind, row: Some(row.row) })
+        }
+        cell => Ok(cell),
+    }
 }
 
 /// The capture spans of a token interior's `count` captures: none for a
@@ -447,6 +489,7 @@ mod tests {
             slots: vec![SlotLayout { slot: "_items".to_owned(), before: Some(KindId(7)), after: None, separator: Some(KindId(8)), tokens: vec![None, Some(KindId(8))] }],
             separator: Some(KindId(9)),
             captures: Vec::new(),
+            unit_rows: Vec::new(),
         }
     }
 
@@ -517,8 +560,8 @@ mod tests {
             };
             write_record(sink, PAIR, 10, self.layout.as_deref(), slot_word, |sink, words, side| {
                 words[2] |= u32::from(self.open);
-                self.left.write_cell(sink)?.encode(&mut words[3..8])?;
-                write_list(sink, 5, &self.items)?.encode(&mut words[8..10])?;
+                write_slot(sink, &self.left, self.layout.as_deref(), "_left")?.encode(&mut words[3..8])?;
+                write_list(sink, 5, &self.items, self.layout.as_deref(), "_items")?.encode(&mut words[8..10])?;
                 if let Some(space) = self.items_space {
                     side.slot_mut(8).space_after = Some(space);
                 }
@@ -773,7 +816,32 @@ mod tests {
     #[test]
     fn an_empty_list_has_no_run() {
         let (mut arena, store) = (Arena::new(), TriviaStore::<TriviaText>::new());
-        let list = write_list::<_, SlotValue<Name>>(&mut RecordSink::built(&mut arena, &store, &mut unlinked), 5, &[]).expect("written");
+        let list = write_list::<_, SlotValue<Name>>(&mut RecordSink::built(&mut arena, &store, &mut unlinked), 5, &[], None, "_items").expect("written");
         assert_eq!(list, ListCell::EMPTY);
+    }
+
+    const MARK: KindId = KindId(30);
+
+    /// A unit, as a choice's unit arm writes one: its kind alone.
+    struct Mark;
+
+    impl WriteCell<TriviaText> for Mark {
+        fn write_cell(&self, _: &mut RecordSink<'_, TriviaText>) -> Result<Cell, ArenaError> {
+            Ok(Cell::Unit { kind: MARK, row: None })
+        }
+    }
+
+    #[test]
+    fn a_parsed_unit_names_the_row_its_read_took_it_from_and_a_built_one_names_none() {
+        let row = |item, row| crate::layout::UnitRow { slot: "_marks", item: ItemIndex(item), row: NodeIndex(row) };
+        let layout = NodeLayout::<TriviaText> { unit_rows: vec![row(0, 7), row(1, 9)], ..NodeLayout::default() };
+        let mut tree = TreeArena::new();
+        let list = write_list(&mut RecordSink::parsed(TREE, &mut tree), 5, &[Mark, Mark], Some(&layout), "_marks").expect("written");
+        let words = tree.arena().words(list.run, 10).expect("the run");
+        assert_eq!(Cell::decode(&words[5..10]), Ok(Cell::Unit { kind: MARK, row: Some(NodeIndex(9)) }));
+        assert_eq!(write_slot(&mut RecordSink::parsed(TREE, &mut tree), &Mark, Some(&layout), "_marks"), Ok(Cell::Unit { kind: MARK, row: Some(NodeIndex(7)) }));
+        assert_eq!(write_slot(&mut RecordSink::parsed(TREE, &mut tree), &Mark, Some(&layout), "_other"), Err(ArenaError::Unwritable("a parsed unit with no row")));
+        let (mut arena, store) = (Arena::new(), TriviaStore::<TriviaText>::new());
+        assert_eq!(write_slot(&mut RecordSink::built(&mut arena, &store, &mut unlinked), &Mark, None, "_marks"), Ok(Cell::Unit { kind: MARK, row: None }));
     }
 }

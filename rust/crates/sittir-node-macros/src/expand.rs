@@ -395,7 +395,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     <Self as __rt::ReadNode>::admits(grammar, display)
                 }
                 fn scalar(grammar: __Kind, display: __Kind) -> bool {
-                    __member(grammar, display).is_some()
+                    <Self as __rt::ReadNode>::admits(grammar, display)
                 }
                 fn read(
                     cursor: &mut ::tree_sitter::TreeCursor<'_>,
@@ -1020,10 +1020,8 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                                 __rt::SlotSite { kind: __KIND, slot: #labels, index },
                             )?;
                             if scalar {
-                                if let ::core::option::Option::Some(trivia) = ctx.unit_sides(__child, depth) {
-                                    __units.push(::sittir_core::layout::UnitSides { slot: ::std::string::String::from(#keys), item: __arrival, trivia });
-                                    __unit_slots.push(#idxs);
-                                }
+                                __units.push(__rt::UnitRead { slot: #keys, item: __arrival, row: __child, trivia: ctx.unit_sides(__child, depth) });
+                                __unit_slots.push(#idxs);
                             }
                             __items[#positions] += 1;
                         })*
