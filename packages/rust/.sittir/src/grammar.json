@@ -8692,132 +8692,128 @@
       "value": "\\$(?<name>[a-zA-Z_]\\w*)"
     },
     "_primitive_type": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "u8",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i8",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u16",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i16",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u32",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i32",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u64",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i64",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u128",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i128",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "isize",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "usize",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "f32",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "f64",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "bool",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "str",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "char",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "u8",
+          "annotations": {
+            "variantOf": "_primitive_type"
           }
-        ]
-      }
+        },
+        {
+          "type": "STRING",
+          "value": "i8",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u16",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i16",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u32",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i32",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u64",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i64",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u128",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i128",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "isize",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "usize",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "f32",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "f64",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "bool",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "str",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "char",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        }
+      ]
     },
     "_kw_unsafe": {
       "type": "STRING",
@@ -14956,6 +14952,10 @@
   "conflicts": [
     [
       "_attributed_argument"
+    ],
+    [
+      "_pattern",
+      "_primitive_type"
     ],
     [
       "_type",

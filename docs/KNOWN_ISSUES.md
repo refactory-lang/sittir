@@ -24,10 +24,9 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 
 **Found during:** the per-code diagnostic ratchet work. Every grammar diagnostic at severity `error` today cannot proceed (`canProceed: false`), and regeneration continues past each one only because its grammar's `expectDiagnostics:` floor-lists the owner for that code. The validation report counts these rows apart as `blocking`; the ratchet does not count them, since the floor list is their gate:
 
-- `rule-reauthored-without-cause` — python 4, rust 4, typescript 1. `rules:` entries the rule re-authoring retirement converts to patches. A deletion probe of each shows every one is load-bearing, and each waits on a patch form for what it supplies:
+- `rule-reauthored-without-cause` — python 4, rust 3, typescript 1. `rules:` entries the rule re-authoring retirement converts to patches. A deletion probe of each shows every one is load-bearing, and each waits on a patch form for what it supplies:
   - **Precedence:**
     - python `primary_expression` sets `prec.dynamic(-1)` on its list_splat_pattern arm. Without it, `*bar` misparses: 6 validator error rows.
-    - rust `_primitive_type` sets `prec(-1)`. It resolves `fn f((u8))`, where the inner `u8` reads as either a pattern or a type. Without it, validation holds, but tree-sitter settles the ambiguity with a GLR conflict on `[_pattern, _primitive_type]` instead, so the entry stays as precedence.
   - **Alias or arm references that tree-sitter needs:**
     - python `string_content` aliases `_string_content` to `string_fragment`. Without it: `hidden-terminal-nonliteral`.
     - python `print_statement` and `_simple_pattern` are the only references to vocabulary arms (`print_statement_chevron`, `case_list_pattern`). Without them, those kinds have no parser symbol.
