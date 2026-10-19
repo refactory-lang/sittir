@@ -1,0 +1,11 @@
+site	atoms	verdict	minimal	line	kind	codes	witness
+except clause	(none)	valid			except_clause		"try:\n    pass\nexcept ValueError:\n    pass\n"
+except clause	*	valid			except_clause		"try:\n    pass\nexcept* ValueError:\n    pass\n"
+except clause	* + no type	rejected	yes	exclusion	except_clause	SyntaxError: expected one or more exception types	"try:\n    pass\nexcept*:\n    pass\n"
+except clause	no type	valid			except_clause		"try:\n    pass\nexcept:\n    pass\n"
+function definition	(none)	valid			function_definition		"def f():\n    pass\n"
+function definition	async	valid			function_definition		"async def f():\n    pass\n"
+function definition	async + yield	valid			function_definition		"async def f():\n    yield 1\n"
+function definition	yield	valid			function_definition		"def f():\n    yield 1\n"
+async loop	(none)	valid			for_statement		"async def f(xs, c):\n    for x in xs:\n        pass\n"
+async loop	async	valid			for_statement		"async def f(xs, c):\n    async for x in xs:\n        pass\n"

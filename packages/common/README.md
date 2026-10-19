@@ -25,9 +25,10 @@ const portable = await createEngine(rust, { api: 'portable' });
 const name = grammar.build.identifier('value');
 
 portable.is.identifier(name); // true
-portable.kinds.identifier.$ids.includes(grammar.kinds.Identifier); // true
+grammar.is.portable.identifier(name); // true: the same guards, on every engine of the language
+portable.kinds.identifier.$path; // 'identifier': one kind object, shared by every language
 ```
 
-The preview contains classification metadata and guards; the grammar-specific engine owns native resources and supplies node construction, parsing, queries, and rendering. Portable node projections, readers, and builders remain planned.
+The guards take a node. A keyword leaf (a kind id such as rust's `u8`) reads as no portable kind yet, and a kind whose reading depends on where it sits reads by its next reading: a method inside an impl or class body reads as a function, and a closure parameter as no parameter. The preview contains classification metadata and guards; the grammar-specific engine owns native resources and supplies node construction, parsing, queries, and rendering. Portable node projections, readers, and builders remain planned.
 
 See the [usage guide](../../docs/use-cases-and-examples.md), [architecture](../../docs/architecture.md), and [development guide](../../DEVELOPMENT.md).

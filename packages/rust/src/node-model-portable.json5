@@ -10256,13 +10256,13 @@
           ]
         },
         {
-          "name": "comma",
+          "name": "trailingComma",
           "route": "slot",
-          "slot": "comma",
+          "slot": "trailing_comma",
           "path": [
             {
               "owner": "last_match_arm",
-              "slot": "comma"
+              "slot": "trailing_comma"
             }
           ]
         }

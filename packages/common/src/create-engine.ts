@@ -22,12 +22,13 @@ import type {
 	StructureTable
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
-import { guardsOf, inLanguage as inLanguageOf, languageGuards } from './language.ts';
+import { guardsOf, inLanguage as inLanguageOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
+import { portable } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
@@ -170,7 +171,8 @@ function assembleEngine<API extends LanguageAPI>(
 		language,
 		renderModuleHash: hooks.renderModuleHash,
 		options: options?.render,
-		trivia: hooks.trivia
+		trivia: hooks.trivia,
+		portable: hooks.portable
 	});
 	const handle: TreeEngineHandle = {
 		current: identity,
@@ -286,10 +288,10 @@ function assembleEngine<API extends LanguageAPI>(
 }
 
 function assemblePortableEngine<API extends PortableLanguageAPI>(language: Language<API>, hooks: LanguageHooks<API>): PortableEngine<API> {
-	const portable = hooks.portable;
-	if (portable === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
-	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia };
-	return Object.freeze({ ...identity, kinds: portable.kinds, is: languageGuards(portable.is, language) });
+	const rows = hooks.portable;
+	if (rows === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
+	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia, portable: rows };
+	return Object.freeze({ ...identity, kinds: portable.kinds as API['portable']['kinds'], is: portable.is as API['portable']['is'] });
 }
 
 function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {

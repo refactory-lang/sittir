@@ -407,7 +407,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['attributes', 0],
 		['pattern', 1],
 		['value', 2],
-		['comma', 3, ',']
+		['trailingComma', 3]
 	],
 	296: [
 		['pattern', 0],
@@ -1549,8 +1549,7 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_attributes', 'LastMatchArm.attributes', 'a built AttributeItem / InnerAttributeItem'],
 			['_pattern', 'LastMatchArm.pattern', 'a built MatchPattern'],
-			['_value', 'LastMatchArm.value', 'a built Expression'],
-			['_comma', 'LastMatchArm.comma', 'a boolean']
+			['_value', 'LastMatchArm.value', 'a built Expression']
 		]
 	},
 	296: {

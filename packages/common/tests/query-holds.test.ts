@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
-import { holds, type PlanSubjects } from '../src/query.ts';
+import { holds, type PlanSubjects } from '../src/query-holds.ts';
 
 const DEF = 1;
 const NAME = { slots: { [DEF]: 0 } };

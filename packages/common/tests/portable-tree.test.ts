@@ -11,7 +11,7 @@ const PATHS = [
 	'expression.call.member'
 ];
 
-const trees = () => portableTrees(PATHS, (path) => (node) => node === path);
+const trees = () => portableTrees(PATHS, (path) => (node): node is { readonly $type: number } => node === path);
 
 type Tree = Record<string, unknown>;
 const at = (root: unknown, path: string): Tree =>
@@ -65,7 +65,7 @@ describe('portableTrees', () => {
 	});
 
 	it('refuses a path whose parent is not listed', () => {
-		expect(() => portableTrees(['a.b'], () => () => false)).toThrow(/a\.b.*a/);
+		expect(() => portableTrees(['a.b'], () => (_node): _node is { readonly $type: number } => false)).toThrow(/a\.b.*a/);
 	});
 });
 
@@ -76,8 +76,10 @@ describe('portable', () => {
 		expect(at(portable.kinds, 'declaration').nope).toBeUndefined();
 	});
 
-	it('serves no guards before node classification exists, so no guard can silently answer false', () => {
-		expect(Object.keys(portable)).toEqual(['kinds']);
+	it('serves one guard per vocabulary path beside the kinds, with the same keys', () => {
+		expect(Object.keys(portable).sort()).toEqual(['is', 'kinds']);
+		expect(typeof at(portable.is, 'declaration.function')).toBe('function');
+		expect(at(portable.is, 'expression.call')).not.toBe(Function.prototype.call);
 		expect(Object.isFrozen(portable)).toBe(true);
 	});
 });

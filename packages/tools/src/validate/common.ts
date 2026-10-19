@@ -1353,12 +1353,14 @@ function splitRegisteredSlots(
 ): { readonly base: Record<string, unknown>; readonly registered: Record<string, unknown> | undefined } {
 	const slotMeta = opts.factorySlots?.[kind];
 	if (slotMeta === undefined) return { base: config, registered: undefined };
-	const registeredKeys = Object.keys(config).filter((key) => slotMeta[key]?.registered === true);
+	const metaOf = (key: string): FactorySlotMeta | undefined =>
+		Object.entries(slotMeta).find(([name]) => name === key || snakeToCamel(name) === key)?.[1];
+	const registeredKeys = Object.keys(config).filter((key) => metaOf(key)?.registered === true);
 	if (registeredKeys.length === 0) return { base: config, registered: undefined };
 	const base: Record<string, unknown> = { ...config };
 	const registered: Record<string, unknown> = {};
 	for (const key of registeredKeys) {
-		if (opts.omitOptionDefaults !== true || base[key] !== slotMeta[key]!.optionDefault) registered[key] = base[key];
+		if (opts.omitOptionDefaults !== true || base[key] !== metaOf(key)!.optionDefault) registered[key] = base[key];
 		delete base[key];
 	}
 	return { base, registered: Object.keys(registered).length > 0 ? registered : undefined };

@@ -5,7 +5,7 @@ import rust from '@sittir/rust';
 import python from '@sittir/python';
 import typescript from '@sittir/typescript';
 import { createEngine } from '../src/create-engine.ts';
-import { slotItems } from '../src/query.ts';
+import { slotItems } from '../src/query-holds.ts';
 import { hooks as rustHooks } from '../../rust/src/api.ts';
 import { hooks as pythonHooks } from '../../python/src/api.ts';
 import { hooks as typescriptHooks } from '../../typescript/src/api.ts';

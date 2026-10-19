@@ -4,7 +4,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { isMember, membersOf, type is } from './is.js';
-import { portable, queryFlags, querySlotFlags } from './portable.js';
+import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, TypescriptNode, TypescriptTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
@@ -18,8 +18,8 @@ import { wrapNode, hydrate, type ProgramTree } from './wrap.js';
 export interface TypescriptAPI extends LanguageAPI {
 	readonly name: 'typescript';
 	readonly build: typeof ir;
-	readonly is: typeof is;
-	readonly kinds: typeof TSKindId;
+	readonly is: typeof is & { readonly portable: PortableIs };
+	readonly kinds: typeof TSKindId & { readonly portable: PortableKinds };
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
 	readonly node: TypescriptNode;
@@ -27,7 +27,7 @@ export interface TypescriptAPI extends LanguageAPI {
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: TypescriptTypeMap['empty'];
-	readonly portable: typeof portable;
+	readonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };
 }
 
 export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<TypescriptAPI>>({
@@ -48,7 +48,7 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 	createNative: (options) => nativeLanguageEngine<TypescriptAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
-	portable,
+	portable: rows,
 	queryFlags,
 	querySlotFlags
 });

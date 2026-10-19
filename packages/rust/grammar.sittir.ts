@@ -160,7 +160,7 @@ export default sittirGrammar(base, {
 			'"{"/after': preference('space'),
 			'"}"/before': preference('space')
 		},
-		last_match_arm: { before: preference('newline') },
+		last_match_arm: { before: preference('newline'), 'trailing_comma:': preference('blank') },
 
 		range_expression_binary: { 'operator:/before': preference('tight'), 'operator:/after': preference('tight') },
 		range_expression_prefix: { 'operator:/after': preference('tight') },
@@ -287,7 +287,7 @@ export default sittirGrammar(base, {
 		last_match_arm: {
 			'0': field('attributes'),
 			'1': flatten(),
-			'4/0': field('comma')
+			'4/0': field('trailing_comma')
 		},
 
 		match_block: {

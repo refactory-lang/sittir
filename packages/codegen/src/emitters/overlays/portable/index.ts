@@ -2,6 +2,7 @@ import { resolveRoutes, type GrammarInput, type ReadEntry } from '../../../bindi
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
+import { grammarNodeTypeName } from '../../../grammars.ts';
 import { valueParseKindsOf } from '../../../compiler/model/node-map.ts';
 import { memberKindsOf } from '../../../compiler/model/supertype-members.ts';
 import { expandToConcreteParseKinds, isSlotBearingCompound } from '../../shared.ts';
@@ -63,6 +64,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	return {
 		nodeModel: emitPortableNodeModel(routes, readTest),
 		surface: emitPortableSurface({
+			nodeType: grammarNodeTypeName(nodeMap.name),
 			routes,
 			readTest,
 			kindIdOf,

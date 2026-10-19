@@ -1038,7 +1038,7 @@ const lastMatchArm$seatedCoerce: (...args: T.LastMatchArm.LooseArgs) => ReturnTy
 	lastMatchArm$flatten$pattern(C.coerceToLastMatchArm, C.coerceToMatchPattern, TSKindId.MatchPattern);
 export const lastMatchArm = Object.freeze({
 	...B.lastMatchArm,
-	...bundle(lastMatchArm$seated, lastMatchArm$seatedCoerce, { key: 'lastMatchArm', max: 1 })
+	...bundle(lastMatchArm$seated, lastMatchArm$seatedCoerce, { key: 'lastMatchArm', max: 2 })
 }) as unknown as Omit<typeof B.lastMatchArm, 'strict' | 'coerce'> & {
 	strict: typeof lastMatchArm$seated;
 	coerce: typeof lastMatchArm$seatedCoerce;

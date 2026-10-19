@@ -6,19 +6,26 @@ import type * as T from '../src/types.ts';
 import { TSKindId } from '../src/types.ts';
 
 declare const is: PortableIs;
-declare const node: { readonly $type: TSKindId; readonly $text?: string };
+declare const node: T.RustNode;
+
+type NodeKindsOf<Ids> = Extract<T.RustNode, { readonly $type: Ids }>['$type'];
 
 describe('a portable guard', () => {
-	it('narrows a node to the kinds its path reads as', () => {
-		if (is.declaration.function(node)) expectTypeOf(node.$type).toEqualTypeOf<PortableIds['declaration.function']>();
+	it('narrows a node to the node kinds its path reads as', () => {
+		if (is.declaration.function(node)) expectTypeOf(node.$type).toEqualTypeOf<NodeKindsOf<PortableIds['declaration.function']>>();
 	});
 
 	it('narrows by a namespace to every kind read under it', () => {
-		if (is.declaration(node)) expectTypeOf(node.$type).toEqualTypeOf<PortableIds['declaration']>();
+		if (is.declaration(node)) expectTypeOf(node.$type).toEqualTypeOf<NodeKindsOf<PortableIds['declaration']>>();
 	});
 
-	it('keeps the node\'s other members', () => {
-		if (is.declaration.function(node)) expectTypeOf(node.$text).toEqualTypeOf<string | undefined>();
+	it('keeps the node\'s own type', () => {
+		if (is.declaration.function(node)) expectTypeOf(node).toExtend<T.RustNode>();
+	});
+
+	it('refuses a node whose language was widened away', () => {
+		// @ts-expect-error a guard takes a rust node
+		is.declaration.function({ $type: TSKindId.FunctionItem } as { readonly $type: number });
 	});
 
 	it('tests a node, not a bare kind id', () => {
@@ -26,10 +33,9 @@ describe('a portable guard', () => {
 		is.declaration.function(TSKindId.FunctionItem);
 	});
 
-	it('takes context as the enclosing nodes, not kind ids', () => {
+	it('takes the node alone', () => {
+		// @ts-expect-error a guard takes no context
 		is.declaration.method(node, [node]);
-		// @ts-expect-error context holds nodes
-		is.declaration.method(node, [TSKindId.ImplItem]);
 	});
 
 	it('has no guard for a path the grammar does not bind', () => {

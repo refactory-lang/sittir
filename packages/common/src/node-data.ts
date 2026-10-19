@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
@@ -12,6 +12,14 @@ export function coordinateOf(node: object): NodeCoordinate | undefined {
 	if (isCoordinate(node)) return node;
 	const at = (node as { readonly $_layout?: NodeLayout }).$_layout?.at;
 	return at !== undefined && isCoordinate(at) ? at : undefined;
+}
+
+/**
+ * The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node surface, and the range belongs to the version of the tree the node was read from, so it says nothing about the node after an edit.
+ */
+export function spanOf(node: object): ByteSpan | undefined {
+	const span = coordinateOf(node)?.$span;
+	return span === undefined ? undefined : { start: span.start, end: span.end };
 }
 
 /** The trivia a node owns: its layout's, read or written. */

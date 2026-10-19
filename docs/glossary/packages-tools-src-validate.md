@@ -1326,6 +1326,11 @@ The same rule serves the `elements`, `tuple` and `flatten` shapes; the container
 
 ### `packages/tools/src/validate/common.ts::splitRegisteredSlots`
 
+A config key is the camelCase of its slot name (a kind-origin slot keeps its
+name), while the factory slot metadata is keyed by the slot name. A key is
+registered when it equals a metadata name or the camelCase of one, so a
+multi-word registered slot keeps its option instead of falling into the config.
+
 ```text
 /**
  * Pulls a kind's registered (spelling/choice) slots out of a projected

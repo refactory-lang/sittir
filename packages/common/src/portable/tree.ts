@@ -1,14 +1,22 @@
 /** A portable kind: one vocabulary path, the same object for every language. */
-export type PortableKind = { readonly $path: string };
+export type PortableKind<Path extends string = string> = { readonly $path: Path };
 
-/** A portable guard: whether a node is of the guard's vocabulary path. */
-export type PortableGuard = (node: unknown) => boolean;
+/** A portable guard: whether a value is a node that reads as the guard's vocabulary path or one under it. */
+export type PortableGuard = (node: unknown) => node is { readonly $type: number };
 
-/** The portable kinds, one node per vocabulary path, nested by path segment. */
-export type PortableKindTree = Readonly<Record<string, unknown>>;
+type RootsOf<Paths extends string> = Paths extends `${string}.${string}` ? never : Paths;
 
-/** The portable guards, one per vocabulary path, nested like {@link PortableKindTree}. */
-export type PortableGuardTree = Readonly<Record<string, unknown>>;
+type ChildrenOf<Paths extends string, Path extends string> = Paths extends `${Path}.${infer Rest}` ? (Rest extends `${string}.${string}` ? never : Rest) : never;
+
+type KindAt<Paths extends string, Path extends string> = PortableKind<Path> & { readonly [Child in ChildrenOf<Paths, Path>]: KindAt<Paths, `${Path}.${Child}`> };
+
+type GuardAt<Paths extends string, Path extends string> = PortableGuard & { readonly [Child in ChildrenOf<Paths, Path>]: GuardAt<Paths, `${Path}.${Child}`> };
+
+/** The portable kinds, one node per vocabulary path in `Paths`, nested by path segment. */
+export type PortableKindTree<Paths extends string = string> = { readonly [Root in RootsOf<Paths>]: KindAt<Paths, Root> };
+
+/** The portable guards, one per vocabulary path in `Paths`, nested like {@link PortableKindTree}. */
+export type PortableGuardTree<Paths extends string = string> = { readonly [Root in RootsOf<Paths>]: GuardAt<Paths, Root> };
 
 /**
  * Builds the frozen kind and guard trees for a list of vocabulary paths.
@@ -18,10 +26,10 @@ export type PortableGuardTree = Readonly<Record<string, unknown>>;
  * @returns the two trees, with the same keys at every level.
  * @throws when a path's parent path is not listed.
  */
-export function portableTrees(
-	paths: readonly string[],
-	guardOf: (path: string) => PortableGuard
-): { readonly kinds: PortableKindTree; readonly is: PortableGuardTree } {
+export function portableTrees<Paths extends string>(
+	paths: readonly Paths[],
+	guardOf: (path: Paths) => PortableGuard
+): { readonly kinds: PortableKindTree<Paths>; readonly is: PortableGuardTree<Paths> } {
 	const kinds = new Map<string, object>([['', {}]]);
 	const guards = new Map<string, object>([['', {}]]);
 	for (const path of paths) {
@@ -41,5 +49,5 @@ export function portableTrees(
 			});
 	}
 	for (const node of [...kinds.values(), ...guards.values()]) Object.freeze(node);
-	return Object.freeze({ kinds: kinds.get('') as PortableKindTree, is: guards.get('') as PortableGuardTree });
+	return Object.freeze({ kinds: kinds.get('') as PortableKindTree<Paths>, is: guards.get('') as PortableGuardTree<Paths> });
 }

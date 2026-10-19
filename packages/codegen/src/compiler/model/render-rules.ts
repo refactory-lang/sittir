@@ -503,6 +503,13 @@ function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | u
 	return text === undefined ? undefined : tokenNameOfText(text, config.kindEntries);
 }
 
+export function slotPunctuationTokenOfNode(
+	node: AssembledNode | undefined,
+	kindEntries: readonly KindEntryLike[],
+	wordMatcher: RegExp | undefined
+): string | undefined {
+	return punctuationTokenOfNode(node, kindEntries) ?? (node !== undefined && isFixedTextLeaf(node) && !matchesWordShape(node.text, wordMatcher) ? tokenNameOfText(node.text, kindEntries) : undefined);
+}
 export function punctuationTokenOfNode(node: AssembledNode | undefined, kindEntries: readonly KindEntryLike[]): string | undefined {
 	return node !== undefined && isVisiblePunctuationLeaf(node) ? tokenNameOfText(node.text, kindEntries) : undefined;
 }
@@ -568,6 +575,10 @@ function literalSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	if (!texts.some((text) => text.trim() !== '')) return undefined;
 	const punctuated = texts.some((text) => text.trim() !== '' && !matchesWordShape(text, config.nodeMap.wordMatcher));
 	if (!punctuated && isOptionalRule(rule)) return undefined;
+	if (r.id !== undefined && config.nodeMap.slotByRuleId.get(r.id)?.registeredOption === 'choice') {
+		const spellings = new Set(texts.filter((text) => text.trim() !== ''));
+		return spellings.size === 1 ? tokenNameOfText([...spellings][0]!, config.kindEntries) : undefined;
+	}
 	const [field] = fields;
 	return field;
 }

@@ -18,7 +18,7 @@ The error a file verb (`read`, `create`, `write`) raises while file changes are 
 
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
-Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the language's guards (`guardsOf`: the descriptor's own `is` when it was composed for that descriptor) and kind ids (`language.kinds`), the same objects on every engine of the language, and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with an inner side and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
+Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` (carrying the language's portable rows when its grammar has bindings, so a guard reaches them through the node's engine) and the handle that shares it with every node the engine stamps, and exposes the language's guards (`guardsOf`: the descriptor's own `is` when it was composed for that descriptor) and kind ids (`language.kinds`), the same objects on every engine of the language, and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with an inner side and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
 
 The `intercept` option activates build, parse and render middleware. Parse hooks surround the existing read/bind/error/wrap operation, while raw `diagnostics.parseAndRead` remains a direct diagnostic path. Render checks language ownership before invoking its chain, including when a hook short-circuits. File verbs are still unimplemented, so the reserved file hook has no write pipeline to run around.
 
@@ -56,7 +56,7 @@ Produces text from an already captured native handle and, when enabled, records 
 
 ### `packages/common/src/create-engine.ts::assemblePortableEngine`
 
-The portable engine: the language's identity, its portable `kinds` as the language's hooks carry them, and its portable `is` composed with the language check (`language.ts::languageGuards`), so a node of another language whose kind id a guard would read is rejected. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
+The portable engine: the language's identity, with its portable rows, and the shared portable `kinds` and `is` (`portable/index.ts::portable`), the same objects as the descriptor's `kinds.portable` and `is.portable`. They are not composed with the language check: each guard reads a node by the rows of the engine that stamped it (`guardOf`), so a node of another bound language is read by its own rows. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
 
 ### `packages/common/src/create-engine.ts::mergeRenderOptions`
 
@@ -190,7 +190,7 @@ The `where` step. Compiles the condition when the step is added, so a malformed 
 
 Iterates a view. It splits the plan, runs the early steps over entries (a kind, an address and a way to hydrate) from the source, and hydrates only what survives them. It then runs the late steps over nodes. Being a generator, it stops pulling as soon as the consumer stops.
 
-### `packages/common/src/query.ts::slotItems`
+### `packages/common/src/query-holds.ts::slotItems`
 
 The items a node's slot holds, read through its accessor: the accessor's value, called when it is a method, as an array (a single item wrapped, an absent one empty). The query facet's slot views and the portable guards read slots through it.
 
@@ -306,25 +306,33 @@ An accessor's member in the check a `where` runs before its view's kinds are kno
 
 The member of a slot that holds a keyword's presence. `eq(true)` records a presence leaf over the slot, and `eq(false)` its negation, so the leaf carries no boolean. A text, and `match`, are refused with a message naming `eq(true)` and `eq(false)`, never compiled to a text leaf that would match the keyword's spelling.
 
-### `packages/common/src/query.ts::holds`
+### `packages/common/src/query-holds.ts::holds`
 
 The JavaScript evaluation of a plan over what its `PlanSubjects` read: the texts, the node types for an `is` leaf, and the child subjects for a `child` step. A presence leaf (`present`) holds when its subject reads any text: a child sits in the slot. A `child` step keeps the nodes its slot holds, narrows them by its anchor (`anchored`), and holds when its condition holds on one of them, evaluated with that child as the node. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself.
 
-### `packages/common/src/query.ts::PlanSubjects`
+### `packages/common/src/query-holds.ts::PlanSubjects`
 
 What a caller of `holds` reads for a node: the texts a subject holds, the node types (`$type`) it holds, and the subjects of the nodes a slot holds. A caller that reads no types or no children leaves them out, and an `is` leaf or a `child` step is refused there (`NO_TYPES`, `NO_CHILDREN`).
 
-### `packages/common/src/query.ts::NO_TYPES`
+### `packages/common/src/query-holds.ts::NO_TYPES`
 
 The node-type reader of a caller that reads none: an `is` plan is refused there rather than read as holding nowhere.
 
-### `packages/common/src/query.ts::NO_CHILDREN`
+### `packages/common/src/query-holds.ts::NO_CHILDREN`
 
 The child reader of a caller that reads none: a `child` step is refused there rather than read as holding nowhere.
 
-### `packages/common/src/query.ts::anchored`
+### `packages/common/src/query-holds.ts::anchored`
 
 A slot's nodes as an anchored step reads them: the first, the last, the one node when it holds exactly one (none otherwise), or all of them. The portable read tests' `via` steps and `holds`'s `child` step both narrow by it, as the native child step does.
+
+### `packages/common/src/query-holds.ts::refuse`
+
+Throws a query refusal as a `TypeError` with the message given. The query facet and the evaluator refuse through it alike.
+
+### `packages/common/src/query-holds.ts::module`
+
+The query plan evaluator and the slot reader it shares with the portable classifier, kept apart from the query facet so that a module a language descriptor loads (the portable guards) reaches no engine runtime.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
@@ -699,7 +707,7 @@ Defines the index positions of a wrapped list or list owner: one getter per posi
 
 The refusal of a raw factory given a list owner's storage that is a read stub, a parsed list that cannot be counted without its tree. A factory has no tree, and `engine.build` already refuses a bare stub, so the build throws naming the stub rather than carrying a node whose `length` or items cannot be read. A built owner's `length` is always plain data, so it keeps its fast shape.
 
-### `packages/common/src/utils.ts::spanOf`
+### `packages/common/src/node-data.ts::spanOf`
 
 The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node type (`ParsedOf` declares no `$span`), and the range belongs to the version of the tree the node was read from, so after an edit it says nothing about the rebuilt node. Tools that slice source or report a line read it here; the bindings reader slices a pattern's source text by this range, so a definition keeps the exact bytes of its leading comments, and also reports the line from it.
 
@@ -752,17 +760,22 @@ A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the s
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
 
-### `packages/common/src/portable-path.ts::portablePathHasFacts`
+### `packages/common/src/portable/facts.ts::portablePathHasFacts`
 
-Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and runtime guard matching, including stamped portable paths. An absent read path matches nothing.
+Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
 
-### `packages/common/src/portable.ts::portableSurface`
+### `packages/common/src/portable/classify.ts::classifierOf`
 
-A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it. A path is reached only through its full path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when `portablePathHasFacts` finds every fact of its path in that reading, within the same namespace and in order. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the holder (the node, or the context node `up` places out), an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. A value's type is its `$type`, or a kind-id leaf's own number. Texts come from a slot's items through `query.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword, the text the parser holds there, and `false` reads as no item, so a presence leaf holds exactly when the keyword is there. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
+The classifier of a bound grammar's `PortableRows`, built once per rows object (`classifiers`), so every guard reading nodes of a language shares one. It reads a node as the path of its kind's first read entry, in table order, whose conditions all hold. An entry that depends on where the node sits, a `within` placement or a condition on an enclosing node (`up > 0`), is skipped (`unplaced`): a node alone carries no context, so it reads as its next entry: the placed reading answers false and the next one true (an impl or class-body method reads as a function) until placed readings become kinds of their own. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the node, an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. Texts come from a slot's items through `query-holds.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword and `false` as no item. A value's text is a kind-id item's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a value's type is its `$type`, or a kind-id item's own number.
 
-### `packages/common/src/portable.ts::placed`
+### `packages/common/src/portable/classify.ts::hasKind`
 
-Whether a read entry's placement holds for the context: no placement always does; otherwise the context's nearest nodes, nearest first, must have the placement's kinds (`null` admits any). Without context a placed entry never matches, so the node falls to its next entry.
+Whether a value is an object with a numeric `$type`: the shape a classifier reads, and the first test of a portable guard, which refuses a bare kind id. A keyword leaf reads as one until parsed units carry identity, so every claim on a fixed-text kind answers false; a ratchet test counts those claims per language from the rows' `fixedText`.
+
+### `packages/common/src/portable/index.ts::guardOf`
+
+The portable guard of a vocabulary path. It refuses a value without a kind (`hasKind`), then reads the rows of the language whose engine stamped the node (`engineOf(node)?.portable`): no engine, or a grammar without bindings, answers false. The node's kind must be among the path's ids in those rows; an exact path then holds by the kind alone, and otherwise the guard holds when the node's reading (`classifierOf`) carries every fact of the path (`portablePathHasFacts`).
+
 ### `packages/common/src/identity.ts::Role`
 
 How a route reaches a parsed node, the second half of its registry key. `aliasContent` is the content of an alias envelope that shares the envelope's parser node, and so its descendant index; every other route, an alias content that is its own parser node included, reaches a node as `node`. The role comes from the route, never from what the registry already holds.
@@ -833,11 +846,11 @@ The language check a language's guards use: a value whose stamped engine is of `
 
 ### `packages/common/src/language.ts::languageGuards`
 
-Composes every function on a language's `is` table with the language check (`inLanguage`): the guard runs only for a value of `language`, and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. The generated descriptor composes its guards with it at import, against the descriptor module itself, so `rust.is` needs no engine and is the object every engine of that descriptor exposes; the portable engine composes its portable table the same way. It records each composed table with the guards and the language it was composed from, which `guardsOf` reads. The module imports only `engine-scope.ts`, which reaches no native addon, so the descriptor stays light.
+Composes every function on a language's `is` table with the language check (`inLanguage`): the guard runs only for a value of `language`, and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. The generated descriptor composes its guards with it at import, against the descriptor module itself, so `rust.is` needs no engine and is the object every engine of that descriptor exposes. `shared` members are added beside the composed guards as they are, without the check: a bound grammar's descriptor passes the shared portable guards as `portable`, which read a node's language themselves. It records each composed table with the guards, the language and the shared members it was composed from, which `guardsOf` reads. The module imports only `engine-scope.ts`, which reaches no native addon, so the descriptor stays light.
 
 ### `packages/common/src/language.ts::guardsOf`
 
-The guards an engine of `language` exposes: `language.is` itself when it was composed against `language`, as a generated descriptor's is. Otherwise the same guards composed against `language`: a descriptor copied from another (`{ ...rust }`) carries guards checking the original, while its engine stamps nodes with the copy, so reusing them would reject the engine's own nodes and pass the original's, disagreeing with `isNode`. A hand-built table that no composition recorded is composed as it is. The result is kept per language, so every engine of one descriptor exposes one object.
+The guards an engine of `language` exposes: `language.is` itself when it was composed against `language`, as a generated descriptor's is. Otherwise the same guards composed against `language`: a descriptor copied from another (`{ ...rust }`) carries guards checking the original, while its engine stamps nodes with the copy, so reusing them would reject the engine's own nodes and pass the original's, disagreeing with `isNode`. The shared members recorded with the original are kept as they are, so a copy's `is.portable` is still the shared portable guards. A hand-built table that no composition recorded is composed as it is. The result is kept per language, so every engine of one descriptor exposes one object.
 
 ### `packages/common/src/language.ts::composed`
 
@@ -846,3 +859,11 @@ The composition over one table: each guard composed through `languageGuard`, the
 ### `packages/common/src/language.ts::languageGuard`
 
 One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn and defined on the composed function, so `rust.is.suite.block` checks the language as `rust.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.
+
+### `packages/common/src/portable/tree.ts::ChildrenOf`
+
+The child segments of a path among a union of vocabulary paths: each path one segment below it, by its last segment. `RootsOf` is the same for the top level (the paths with no dot). With `string` for the union, both read as `string`, so a tree typed over arbitrary paths is an index signature.
+
+### `packages/common/src/portable/tree.ts::KindAt`
+
+The type of one node of the shared kind tree: its `$path` as a literal, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards: each node is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
