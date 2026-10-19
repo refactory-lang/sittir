@@ -137,11 +137,15 @@ The layer pass runs five steps. They are the same at every depth and in both run
       - enrich runs once over the layer's result, with its sidecars;
       - any rule it would add, remove or change is `layer-not-enrich-fixpoint`, naming the layer and the rules;
       - the checked enrichment goes into the record, for the layer above;
+      - the check runs at most once per layer, where the layer is produced (below);
    5. text tokens are recorded;
    6. inherited records are rewritten through the effect log (§1.7);
    7. the layer record is attached (§1.6).
 
-   A layer cannot know whether another layer will extend it, so every layer checks its own result. The top layer is therefore checked, and no layer checks its base again.
+   Every layer is checked where it is produced, and no layer checks its base again.
+   - An authored layer is produced by its author. It runs the check at completion, and the compile reports the diagnostic.
+   - A generated layer carries `generated: true`, which its generator writes: `bindings-inventory --write` prints it into `grammar.bindings.ts`. The generator runs the check: `bindings-inventory --write` refuses a layer it wrote that is not enrich's fixpoint, and `--check` reports it. `gen`, which regenerates from the layer, runs it too, so CI's regeneration and `validate:native` check it. A compile that only evaluates the layer leaves the check unrun.
+   - A layer above that takes a generated layer as its base runs that layer's check for the checked enrichment.
 
 **Rule order.**
 - The runtime appends the rules a layer creates in the order of `options.rules`' keys.

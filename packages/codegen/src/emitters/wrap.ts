@@ -1,5 +1,5 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
-import { continuationTriviaKinds, layoutTriviaKinds } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, isPatternLeaf, storesNodes } from '../compiler/model/node-map.ts';
@@ -305,6 +305,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 	readonly #emittedStructuralKinds = new Set<string>();
 	#rootTreeTypeName: string | undefined;
+	#rootMember: string | undefined;
 
 	get rootTreeTypeName(): string | undefined {
 		return this.#rootTreeTypeName;
@@ -409,11 +410,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			throw new Error(`emitWrap: root kind '${this.#rootKind}' has no wrap-table row — cannot name the wrapped root surface`);
 		}
 		this.#rootTreeTypeName = `${rootEntry.member}Tree`;
+		this.#rootMember = rootEntry.member;
+		const empty = this.#rootEmptyForm();
 		return [
 			'/** The wrapped root of a whole-source parse — what `engine.parse()` returns. */',
-			`export type ${this.#rootTreeTypeName} = T.ParsedByKindId[TSKindId.${rootEntry.member}] & ParsedRoot;`,
+			`export type ${this.#rootTreeTypeName} = ${empty === undefined ? `T.ParsedByKindId[TSKindId.${rootEntry.member}]` : `${empty}.Parsed`} & ParsedRoot;`,
 			''
 		];
+	}
+
+	#rootEmptyForm(): string | undefined {
+		return this.#rootKind === undefined ? undefined : emptyForms(this.#nodeMap).get(this.#rootKind)?.typeName;
 	}
 
 	finalize(): string {
@@ -427,6 +434,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
 			...(keyed ? ["import { TSKindId } from './kinds.js';"] : []),
+			...(keyed && this.#rootEmptyForm() !== undefined ? [`import type { ${this.#rootEmptyForm()} } from './types.js';`] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			"import * as RAW from './factories/raw.js';",
@@ -474,6 +482,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'/** Wrap a node into its kind\'s node: the node as it crossed, with the kind\'s members attached. */'
 		);
 		if (keyed) {
+			if (this.#rootTreeTypeName !== undefined) {
+				lines.push(
+					`export function wrapNode(data: _UntypedNode & { readonly $type: TSKindId.${this.#rootMember} } & ParsedRoot, tree: TreeHandle): ${this.#rootTreeTypeName};`
+				);
+			}
 			lines.push(
 				'export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(',
 				'  data: D,',

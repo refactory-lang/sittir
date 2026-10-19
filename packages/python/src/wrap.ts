@@ -37,6 +37,7 @@ import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
+import type { EmptyModule } from './types.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
 
@@ -5678,9 +5679,13 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
-export type ModuleTree = T.ParsedByKindId[TSKindId.Module] & ParsedRoot;
+export type ModuleTree = EmptyModule.Parsed & ParsedRoot;
 
 /** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */
+export function wrapNode(
+	data: _UntypedNode & { readonly $type: TSKindId.Module } & ParsedRoot,
+	tree: TreeHandle
+): ModuleTree;
 export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle
