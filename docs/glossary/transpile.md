@@ -156,7 +156,7 @@ Scaffolding that lets the tree-sitter CLI run a package's grammar layers. The CL
 
 ### `packages/codegen/src/transpile/prune-grammar-json.ts::TreeSitterGrammarDoc`
 
-The fields of a grammar that `treeSitterPruned` reads: a `grammar.json` document, or an evaluated grammar.
+The fields of a grammar that tree-sitter reads: a `grammar.json` document, or an evaluated grammar. `treeSitterPruned` prunes over them, and `evaluate-for-derivation.ts::grammarHash` hashes them.
 
 ### `packages/codegen/src/transpile/prune-grammar-json.ts::TreeSitterPrune`
 
@@ -422,15 +422,18 @@ Orders two canonical values by their JSON text.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::grammarHash`
 
-sha256 of the canonical JSON of the grammar tree-sitter sees (`prune-grammar-json.ts::treeSitterPruned` of the evaluated grammar), without `conflicts` and without the derivation records, together with the tree-sitter CLI version.
-While every resolution is an AddConflict, `conflicts` is the only field the resolutions change, so the hash identifies everything the resolutions were derived from: the grammar and the CLI that builds its tables.
-A rule tree-sitter never receives, such as a placeholder mint nothing deposited into, stays out of the hash, as it stays out of grammar.json.
+sha256 of the canonical JSON of what a conflict derivation reads, and nothing else:
+- the parser input tree-sitter sees: `PARSER_INPUT`'s fields of the grammar as `prune-grammar-json.ts::treeSitterPruned` leaves it;
+- the upstream context the policy maps upstream's declared conflicts through (`upstreamConflicts`, `sourceEdges`, `baseNames`);
+- the tree-sitter CLI version.
+
+`conflicts` stays out: while every resolution is an AddConflict, it is the only field the resolutions change. The grammar's name and every model-only fact it carries (options, patch sites, provenance, the layer record) stay out too, so an edit tree-sitter and the policy never read reuses the saved resolutions. A rule tree-sitter never receives, such as a placeholder mint nothing deposited into, stays out of the hash, as it stays out of grammar.json.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::derivationInputsOf`
 
 The derivation inputs of an evaluated grammar. A grammar without derivation records was built by no layer pass, which the loop cannot derive for.
 
-The edges are the records' `sourceEdges`, which each layer's pass computes over its own rules from the one upstream grammar. `baseNames` comes from the grammar's own `renamedFrom` and `splitFrom` stamps (`dsl/bind.ts::baseNamesOf`), so a renamed or split name chains through its base name to the upstream rule. A grammar with neither stamp has an empty `baseNames`.
+The edges are the records' `sourceEdges`, which each layer's pass computes over its own rules from the one upstream grammar. `baseNames` comes from the grammar's own `renamedFrom` and `splitFrom` stamps (`dsl/bind.ts::baseNamesOf`), so a renamed or split name chains through its base name to the upstream rule. A grammar with neither stamp has an empty `baseNames`. The hash takes the same upstream context, so a changed edge or base name derives again.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::requireFromHere`
 
@@ -442,6 +445,10 @@ same loader whatever the caller's working directory.
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::evaluateForDerivation`
 
 Evaluates a grammar package's two layers in a fresh Node process (tsx loader, `evaluate-for-derivation.child.ts`): layer 1 for the base section and the top layer for the bound one (`grammars.ts::layerPath`), and returns the derivation inputs of both. A fresh process because Node caches an ES module, and the JSON it imports, for the life of the process: evaluating the grammar in the regen process would pin the `resolutions.json` it imported, and the compile that follows the loop would read those stale resolutions.
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::PARSER_INPUT`
+
+The grammar fields tree-sitter builds its parse tables from, which `grammarHash` hashes: `rules`, `extras`, `externals`, `inline`, `supertypes`, `word`, `precedences` and `reserved`. `conflicts` is not one of them, because the derivation writes it.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.child.ts::module`
 

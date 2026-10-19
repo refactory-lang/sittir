@@ -20,30 +20,63 @@ function upstreamGrammarJson(name: GrammarName, grammarJsonPath: string): Upstre
 }
 
 describe('grammarHash', () => {
+	const V = '0.26.9';
+	const none = { upstreamConflicts: [], sourceEdges: {}, baseNames: {} };
 	const grammar = { name: 'g', rules: { a: { type: 'STRING', value: 'a' } }, conflicts: [['a']] };
 
-	it('ignores conflicts', () => {
-		expect(grammarHash({ ...grammar, conflicts: [] }, '0.26.9')).toBe(grammarHash(grammar, '0.26.9'));
+	it('leaves the hash unchanged for options, patch sites and provenance', () => {
+		const decorated = {
+			...grammar,
+			options: { x: { 'a:': 1 } },
+			patchSites: [{ rule: 'a', path: ['x'] }],
+			provenance: new Map([
+				['y', 2],
+				['x', 1]
+			])
+		};
+		expect(grammarHash(decorated, none, V)).toBe(grammarHash(grammar, none, V));
 	});
 
-	it('ignores key order and Map insertion order', () => {
+	it('ignores the grammar name and conflicts', () => {
+		expect(grammarHash({ ...grammar, name: 'other', conflicts: [] }, none, V)).toBe(grammarHash(grammar, none, V));
+	});
+
+	it('ignores key order in rules and in source edges', () => {
 		const reordered = { conflicts: [['a']], rules: { a: { value: 'a', type: 'STRING' } }, name: 'g' };
-		expect(grammarHash(reordered, '0.26.9')).toBe(grammarHash(grammar, '0.26.9'));
-		const mapped = { ...grammar, provenance: new Map([['x', 1], ['y', 2]]) };
-		expect(grammarHash({ ...grammar, provenance: new Map([['y', 2], ['x', 1]]) }, '0.26.9')).toBe(grammarHash(mapped, '0.26.9'));
+		expect(grammarHash(reordered, none, V)).toBe(grammarHash(grammar, none, V));
+		expect(grammarHash(grammar, { ...none, sourceEdges: { a: 'b', c: 'd' } }, V)).toBe(
+			grammarHash(grammar, { ...none, sourceEdges: { c: 'd', a: 'b' } }, V)
+		);
 	});
 
 	it('changes when the tree-sitter CLI version changes', () => {
-		expect(grammarHash(grammar, '0.27.0')).not.toBe(grammarHash(grammar, '0.26.9'));
+		expect(grammarHash(grammar, none, '0.27.0')).not.toBe(grammarHash(grammar, none, V));
 	});
 
 	it('changes when a rule changes', () => {
-		expect(grammarHash({ ...grammar, rules: { a: { type: 'STRING', value: 'b' } } }, '0.26.9')).not.toBe(grammarHash(grammar, '0.26.9'));
+		expect(grammarHash({ ...grammar, rules: { a: { type: 'STRING', value: 'b' } } }, none, V)).not.toBe(grammarHash(grammar, none, V));
+	});
+
+	it('changes when a reserved set changes', () => {
+		const reserved = (value: string) => ({ ...grammar, reserved: { global: [{ type: 'STRING', value }] } });
+		expect(grammarHash(reserved('if'), none, V)).not.toBe(grammarHash(reserved('else'), none, V));
+	});
+
+	it('changes when a source edge changes', () => {
+		expect(grammarHash(grammar, { ...none, sourceEdges: { a: 'b' } }, V)).not.toBe(grammarHash(grammar, none, V));
+	});
+
+	it('changes when a base name changes', () => {
+		expect(grammarHash(grammar, { ...none, baseNames: { a: 'x' } }, V)).not.toBe(grammarHash(grammar, none, V));
+	});
+
+	it('changes when an upstream conflict set changes', () => {
+		expect(grammarHash(grammar, { ...none, upstreamConflicts: [['a', 'b']] }, V)).not.toBe(grammarHash(grammar, none, V));
 	});
 
 	it('ignores a hidden rule nothing reaches', () => {
 		const orphaned = { ...grammar, rules: { ...grammar.rules, _orphan: { type: 'CHOICE', members: [] } } };
-		expect(grammarHash(orphaned, '0.26.9')).toBe(grammarHash(grammar, '0.26.9'));
+		expect(grammarHash(orphaned, none, V)).toBe(grammarHash(grammar, none, V));
 	});
 
 	describe('a hidden rule a route keeps alive moves the hash when its body changes', () => {
@@ -55,11 +88,11 @@ describe('grammarHash', () => {
 			...extra
 		});
 		const moves = (hidden: string, extra: Record<string, unknown>) =>
-			expect(grammarHash(route(hidden, 'x', extra), '0.26.9')).not.toBe(grammarHash(route(hidden, 'y', extra), '0.26.9'));
+			expect(grammarHash(route(hidden, 'x', extra), none, V)).not.toBe(grammarHash(route(hidden, 'y', extra), none, V));
 
 		it('a rule that a references', () => {
-			expect(grammarHash({ name: 'g', rules: { a: { type: 'SEQ', members: [body('a'), ref('_h')] }, _h: body('x') } }, '0.26.9')).not.toBe(
-				grammarHash({ name: 'g', rules: { a: { type: 'SEQ', members: [body('a'), ref('_h')] }, _h: body('y') } }, '0.26.9')
+			expect(grammarHash({ name: 'g', rules: { a: { type: 'SEQ', members: [body('a'), ref('_h')] }, _h: body('x') } }, none, V)).not.toBe(
+				grammarHash({ name: 'g', rules: { a: { type: 'SEQ', members: [body('a'), ref('_h')] }, _h: body('y') } }, none, V)
 			);
 		});
 

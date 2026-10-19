@@ -12,6 +12,7 @@ export interface TreeSitterGrammarDoc {
 	readonly inline?: readonly string[];
 	readonly supertypes?: readonly unknown[];
 	readonly word?: string | null;
+	readonly reserved?: unknown;
 }
 
 export interface TreeSitterPrune<G> {

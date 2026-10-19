@@ -54,20 +54,26 @@ function byJson(left: unknown, right: unknown): number {
 	return a < b ? -1 : a > b ? 1 : 0;
 }
 
-export function grammarHash<G extends TreeSitterGrammarDoc>(evaluated: G, treeSitterVersion: string): string {
-	const grammar = { ...treeSitterPruned(evaluated).grammar, conflicts: undefined, derivationRecords: undefined };
-	return sha256(JSON.stringify(canonical({ grammar, treeSitterVersion })));
+const PARSER_INPUT = ['rules', 'extras', 'externals', 'inline', 'supertypes', 'word', 'precedences', 'reserved'] as const satisfies readonly (keyof TreeSitterGrammarDoc)[];
+
+export function grammarHash<G extends TreeSitterGrammarDoc>(evaluated: G, upstream: UpstreamContext, treeSitterVersion: string): string {
+	const pruned: TreeSitterGrammarDoc = treeSitterPruned(evaluated).grammar;
+	const parserInput = Object.fromEntries(PARSER_INPUT.map((key) => [key, pruned[key]]));
+	return sha256(JSON.stringify(canonical({ parserInput, upstream, treeSitterVersion })));
 }
 
 export function derivationInputsOf(evaluated: EvaluatedGrammar): GrammarDerivationInputs {
 	const records = evaluated.derivationRecords;
 	if (records === undefined) throw new Error('evaluated grammar carries no derivation records: no layer pass built it');
-	return {
-		grammarHash: grammarHash(evaluated, treeSitterCliVersion()),
-		ruleCount: Object.keys(evaluated.rules).length,
+	const upstream: UpstreamContext = {
 		upstreamConflicts: records.upstreamConflicts,
 		sourceEdges: records.sourceEdges,
 		baseNames: baseNamesOf(evaluated.renamedFrom, evaluated.splitFrom)
+	};
+	return {
+		grammarHash: grammarHash(evaluated, upstream, treeSitterCliVersion()),
+		ruleCount: Object.keys(evaluated.rules).length,
+		...upstream
 	};
 }
 
