@@ -23,7 +23,7 @@ import { invoke } from '../codegen-surface.ts';
 export const PIPELINE_MODULES: readonly string[] = [
 	'compiler/normalize.ts',
 	'compiler/simplify.ts',
-	'compiler/evaluate.ts',
+	'dsl/evaluate.ts',
 	'compiler/link.ts',
 	'compiler/assemble.ts',
 	'compiler/model/node-map.ts',

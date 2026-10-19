@@ -4,7 +4,7 @@
  *
  * Usage: tsx inspect-refs.ts <grammar> <symbolName>
  */
-import { evaluatePackage } from '../src/compiler/evaluate-package.ts';
+import { evaluatePackage } from '../src/dsl/evaluate-package.ts';
 import { grammarPackage } from '../src/grammars.ts';
 
 const grammar = process.argv[2] ?? 'rust';

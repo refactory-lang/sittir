@@ -4,7 +4,7 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 type Evaluated = Awaited<ReturnType<typeof evaluatePackage>>;

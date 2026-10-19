@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'node:url';
-import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { OptionsConfig } from './wire/options-block.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -27,18 +27,18 @@ import type {
 	SymbolRule,
 	TokenRule
 } from '../types/rule.ts';
-import { structuralBuilder } from '../dsl/builders.ts';
-import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, StageEvaluation } from './types.ts';
-import { canonicalGrammar } from './canonical-rules.ts';
-import { isComplexBody, onlyAliasedSymbols, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
-import { withRoleScope } from '../dsl/primitives/role.ts';
-import { baseRulesOf } from '../dsl/shared.ts';
-import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
-import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
-import { getDerivationRecords } from '../dsl/wire/derivation-records.ts';
-import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
-import { getTextTokens } from '../dsl/enrich.ts';
-import type { GrammarResult } from '../dsl/enrich.ts';
+import { structuralBuilder } from './builders.ts';
+import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, StageEvaluation } from '../compiler/types.ts';
+import { canonicalGrammar } from '../compiler/canonical-rules.ts';
+import { isComplexBody, onlyAliasedSymbols, optionalContentOf, ruleListEntryOf, type RuleListEntry } from './rule-patterns.ts';
+import { withRoleScope } from './primitives/role.ts';
+import { baseRulesOf } from './shared.ts';
+import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from './wire/wire.ts';
+import { getDeadEnrichMints } from './wire/dead-mints.ts';
+import { getDerivationRecords } from './wire/derivation-records.ts';
+import { UNBOUND_ENV } from './sittir-grammar.ts';
+import { getTextTokens } from './enrich.ts';
+import type { GrammarResult } from './enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 

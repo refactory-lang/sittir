@@ -5,8 +5,8 @@ import { join } from 'node:path';
 import { transpileOverrides } from '../transpile-overrides.ts';
 import { runTreeSitterCliCapturing } from '../tree-sitter-cli.ts';
 import { grammarPackage, sittirDirOf } from '../../grammars.ts';
-import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { packageEntryPath } from '../../dsl/resolve-grammar.ts';
+import { evaluateDsl } from '../../dsl/evaluate.ts';
 
 describe('transpileOverrides', () => {
 	const GRAMMAR = 'python';

@@ -5,7 +5,7 @@ import { kindCatalogOf, stampVisibleExternals } from '../../dsl/symbol-table.ts'
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { rebaseRuleIds } from '../../dsl/rule-attrs.ts';
 import type { Rule } from '../../types/rule.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 describe('rule ids', () => {

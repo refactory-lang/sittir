@@ -9,8 +9,8 @@ import { join, resolve } from 'node:path';
 // compileGrammar()/Compilation unify the two into one compile, reused by
 // both the diagnostics gate and emission.
 const evaluateCalls: number[] = [];
-vi.mock('../src/compiler/evaluate.ts', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('../src/compiler/evaluate.ts')>();
+vi.mock('../src/dsl/evaluate.ts', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('../src/dsl/evaluate.ts')>();
 	return {
 		...actual,
 		evaluate: async (entryPath: string, fileTypes: readonly string[]) => {

@@ -4,7 +4,7 @@ import { grammarPackage } from '../../grammars.ts';
 import { dynamicPrecedenceRecords } from '../diagnostics/dynamic-precedence.ts';
 import { unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 
 type Fixture = Pick<RawGrammar, 'name' | 'derivationRecords' | 'ruleCauses' | 'undeclaredRules'>;
 

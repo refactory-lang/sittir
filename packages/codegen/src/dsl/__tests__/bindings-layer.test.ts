@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { describe, expect, it, vi } from 'vitest';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluateDsl } from '../evaluate.ts';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 
 const PACKAGES = join(__dirname, '../../../..');
