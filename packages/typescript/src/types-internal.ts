@@ -81,6 +81,9 @@ export namespace TupleTypeMember {
 }
 
 export interface SubBuilderRowKind {
+	'abstractMethodSignature.getter': TSKindId.AbstractMethodSignatureGetter;
+	'abstractMethodSignature.plain': TSKindId.AbstractMethodSignaturePlain;
+	'abstractMethodSignature.setter': TSKindId.AbstractMethodSignatureSetter;
 	'ambientDeclaration.module': TSKindId.AmbientDeclarationModule;
 	'callExpression.call': TSKindId.CallExpressionCall;
 	'callExpression.member': TSKindId.CallExpressionMember;
@@ -127,6 +130,12 @@ export interface SubBuilderRowKind {
 	'indexSignature.mappedTypeClause': TSKindId.IndexSignatureMappedTypeClause;
 	'metaProperty.importMeta': TSKindId.MetaPropertyImportMeta;
 	'metaProperty.newTarget': TSKindId.MetaPropertyNewTarget;
+	'methodDefinition.getter': TSKindId.MethodDefinitionGetter;
+	'methodDefinition.plain': TSKindId.MethodDefinitionPlain;
+	'methodDefinition.setter': TSKindId.MethodDefinitionSetter;
+	'methodSignature.getter': TSKindId.MethodSignatureGetter;
+	'methodSignature.plain': TSKindId.MethodSignaturePlain;
+	'methodSignature.setter': TSKindId.MethodSignatureSetter;
 	number: TSKindId.NumberDecimal;
 	'number.bigint': TSKindId.NumberBigintDecimal;
 	'number.bigint.binary': TSKindId.NumberBigintBinary;
@@ -149,6 +158,8 @@ export interface SubBuilderRowKind {
 	'parenthesizedExpression.typed': TSKindId.ParenthesizedExpressionTyped;
 	'pattern.lhs': TSKindId.LhsExpression;
 	'pattern.rest': TSKindId.RestPattern;
+	'publicFieldDefinition.accessor': TSKindId.PublicFieldDefinitionAccessor;
+	'publicFieldDefinition.plain': TSKindId.PublicFieldDefinitionPlain;
 	'statement.block': TSKindId.StatementBlock;
 	'statement.break': TSKindId.BreakStatement;
 	'statement.continue': TSKindId.ContinueStatement;

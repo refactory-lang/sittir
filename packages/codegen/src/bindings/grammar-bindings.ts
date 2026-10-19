@@ -13,7 +13,7 @@ import type { Lead } from '../dsl/verbs/effects.ts';
 import { isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
-import type { RawGrammar } from '../compiler/types.ts';
+import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { type BindingFacts, type MemberFact, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
@@ -59,6 +59,7 @@ export interface GrammarBindingsInput {
 	readonly file: string;
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
+	readonly layerRules: EvaluatedGrammar['rules'];
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf'>;
 	readonly model: SlotModel;
@@ -413,7 +414,8 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		else fieldWraps.push(request);
 	}
 
-	const patches = grammarBindingsPatches(checks, fieldRenames, fieldWraps, aliases);
+	const layerRules = Object.fromEntries(Object.keys(rules).map((name) => [name, input.layerRules[name]]));
+	const patches = grammarBindingsPatches({ ...checks, rules: layerRules }, fieldRenames, fieldWraps, aliases);
 	const { leads, diagnostics } = deriveLeads({ file: input.file, base, facts });
 	return {
 		bindings: { patches, renames, leads, splits },

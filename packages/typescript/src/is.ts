@@ -236,9 +236,6 @@ export interface IsGuards {
 	restPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RestPattern };
-	methodDefinition<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinition };
 	pair<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Pair };
@@ -248,18 +245,9 @@ export interface IsGuards {
 	computedPropertyName<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComputedPropertyName };
-	publicFieldDefinition<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinition };
 	nonNullExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NonNullExpression };
-	methodSignature<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignature };
-	abstractMethodSignature<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignature };
 	functionSignature<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionSignature };
@@ -496,6 +484,9 @@ export interface IsGuards {
 	tupleTypeMembers<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleTypeMembers };
+	GetAccessorSignature<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GetAccessorSignature };
 	ambientDeclarationGlobal<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationGlobal };
@@ -619,6 +610,45 @@ export interface IsGuards {
 	forHeaderUsingKind<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderUsingKind };
+	FormalParameters_SetAccessorSignature<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersUSetAccessorSignature };
+	setterParameter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SetterParameter };
+	methodDefinitionPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionPlain };
+	methodDefinitionGetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionGetter };
+	methodDefinitionSetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionSetter };
+	methodSignaturePlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignaturePlain };
+	methodSignatureGetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureGetter };
+	methodSignatureSetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureSetter };
+	abstractMethodSignaturePlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignaturePlain };
+	abstractMethodSignatureGetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureGetter };
+	abstractMethodSignatureSetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureSetter };
+	publicFieldDefinitionPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionPlain };
+	publicFieldDefinitionAccessor<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionAccessor };
 	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
@@ -1095,6 +1125,70 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RestPattern };
 	};
+	readonly methodDefinition: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			TSKindId.MethodDefinitionPlain | TSKindId.MethodDefinitionGetter | TSKindId.MethodDefinitionSetter
+		>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionPlain };
+		getter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionGetter };
+		setter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionSetter };
+	};
+	readonly publicFieldDefinition: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<T, TSKindId.PublicFieldDefinitionPlain | TSKindId.PublicFieldDefinitionAccessor>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionPlain };
+		accessor<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionAccessor };
+	};
+	readonly methodSignature: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			TSKindId.MethodSignaturePlain | TSKindId.MethodSignatureGetter | TSKindId.MethodSignatureSetter
+		>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignaturePlain };
+		getter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureGetter };
+		setter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureSetter };
+	};
+	readonly abstractMethodSignature: {
+		<T extends { readonly $type: string | number } | number>(
+			v: T
+		): v is NarrowTo<
+			T,
+			| TSKindId.AbstractMethodSignaturePlain
+			| TSKindId.AbstractMethodSignatureGetter
+			| TSKindId.AbstractMethodSignatureSetter
+		>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignaturePlain };
+		getter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureGetter };
+		setter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureSetter };
+	};
 	type<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<
@@ -1311,6 +1405,9 @@ export interface IsGuards {
 	metaPropertyImportMeta<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.MetaPropertyImportMeta>;
+	formalParameters_GetAccessorSignature<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.FormalParametersUGetAccessorSignature>;
 	htmlComment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.HtmlComment };
@@ -1348,50 +1445,54 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-const _supertype_exportStatement_ids = new Set<number>([427, 428, 400, 399]);
+const _supertype_exportStatement_ids = new Set<number>([429, 430, 402, 401]);
 const _supertype_declaration_ids = new Set<number>([
 	247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([413, 414]);
+const _supertype_importSpecifier_ids = new Set<number>([415, 416]);
 const _supertype_statement_ids = new Set<number>([
-	427, 428, 400, 399, 196, 222, 204, 247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311, 209,
+	429, 430, 402, 401, 196, 222, 204, 247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311, 209,
 	211, 212, 213, 214, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([434, 435]);
-const _supertype_forHeader_ids = new Set<number>([438, 439, 440, 441]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([415, 416]);
+const _supertype_variableDeclarator_ids = new Set<number>([436, 437]);
+const _supertype_forHeader_ids = new Set<number>([440, 441, 442, 443]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([417, 418]);
 const _supertype_expression_ids = new Set<number>([
-	304, 305, 306, 314, 303, 258, 257, 415, 416, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
-	420, 421, 272, 274, 279, 280, 281, 236, 240, 246, 250, 248, 243, 436, 437, 417, 418, 419, 298, 260, 262, 256, 268,
-	267, 266, 422, 423, 255, 235
+	304, 305, 306, 314, 303, 258, 257, 417, 418, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
+	422, 423, 272, 274, 279, 280, 281, 236, 240, 246, 250, 248, 243, 438, 439, 419, 420, 421, 298, 260, 262, 256, 268,
+	267, 266, 424, 425, 255, 235
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	258, 257, 415, 416, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 420, 421, 272, 274, 279,
-	280, 281, 236, 240, 246, 250, 248, 243, 436, 437, 417, 418, 419, 298
+	258, 257, 417, 418, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 422, 423, 272, 274, 279,
+	280, 281, 236, 240, 246, 250, 248, 243, 438, 439, 419, 420, 421, 298
 ]);
-const _supertype_callExpression_ids = new Set<number>([417, 418, 419]);
-const _supertype_updateExpression_ids = new Set<number>([422, 423]);
-const _supertype_string_ids = new Set<number>([420, 421]);
+const _supertype_callExpression_ids = new Set<number>([419, 420, 421]);
+const _supertype_updateExpression_ids = new Set<number>([424, 425]);
+const _supertype_string_ids = new Set<number>([422, 423]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164]);
-const _supertype_metaProperty_ids = new Set<number>([436, 437]);
+const _supertype_metaProperty_ids = new Set<number>([438, 439]);
 const _supertype_pattern_ids = new Set<number>([259, 290]);
+const _supertype_methodDefinition_ids = new Set<number>([451, 452, 453]);
+const _supertype_publicFieldDefinition_ids = new Set<number>([460, 461]);
+const _supertype_methodSignature_ids = new Set<number>([454, 455, 456]);
+const _supertype_abstractMethodSignature_ids = new Set<number>([457, 458, 459]);
 const _supertype_type_ids = new Set<number>([
-	480, 479, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379, 381, 378, 343,
+	500, 499, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379, 381, 378, 343,
 	347, 333, 334
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	480, 479, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379
+	500, 499, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379
 ]);
-const _supertype_indexSignature_ids = new Set<number>([408, 409]);
-const _supertype_classBodyMember_ids = new Set<number>([405, 406, 288, 407, 404]);
+const _supertype_indexSignature_ids = new Set<number>([410, 411]);
+const _supertype_classBodyMember_ids = new Set<number>([407, 408, 288, 409, 406]);
 const _supertype_enumBodyElement_ids = new Set<number>([386, 322]);
-const _supertype_exportStatementDefault_ids = new Set<number>([427, 428]);
+const _supertype_exportStatementDefault_ids = new Set<number>([429, 430]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
 
 const _enum_accessibilityModifier_ids = new Set<number>([34, 35, 36]);
-const _enum_predefinedType_ids = new Set<number>([40, 41, 42, 43, 44, 144, 77, 145, 146, 46]);
+const _enum_predefinedType_ids = new Set<number>([40, 41, 42, 43, 44, 143, 77, 144, 145, 46]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[189, _supertype_exportStatement_ids],
@@ -1409,13 +1510,17 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[275, _supertype_number_ids],
 	[276, _supertype_metaProperty_ids],
 	[289, _supertype_pattern_ids],
+	[291, _supertype_methodDefinition_ids],
+	[296, _supertype_publicFieldDefinition_ids],
+	[299, _supertype_methodSignature_ids],
+	[300, _supertype_abstractMethodSignature_ids],
 	[337, _supertype_type_ids],
 	[344, _supertype_primaryType_ids],
 	[375, _supertype_indexSignature_ids],
 	[384, _supertype_classBodyMember_ids],
 	[387, _supertype_enumBodyElement_ids],
-	[398, _supertype_exportStatementDefault_ids],
-	[402, _supertype_numberBigint_ids]
+	[400, _supertype_exportStatementDefault_ids],
+	[404, _supertype_numberBigint_ids]
 ]);
 export function isMember(kind: number, type: number): boolean {
 	return _members.get(kind)?.has(type) ?? type === kind;
@@ -1479,6 +1584,25 @@ const _supertype_metaProperty_guard = _vg(_mg(276), {
 	importMeta: _g(TSKindId.MetaPropertyImportMeta)
 });
 const _supertype_pattern_guard = _vg(_mg(289), { lhs: _g(TSKindId.LhsExpression), rest: _g(TSKindId.RestPattern) });
+const _supertype_methodDefinition_guard = _vg(_mg(291), {
+	plain: _g(TSKindId.MethodDefinitionPlain),
+	getter: _g(TSKindId.MethodDefinitionGetter),
+	setter: _g(TSKindId.MethodDefinitionSetter)
+});
+const _supertype_publicFieldDefinition_guard = _vg(_mg(296), {
+	plain: _g(TSKindId.PublicFieldDefinitionPlain),
+	accessor: _g(TSKindId.PublicFieldDefinitionAccessor)
+});
+const _supertype_methodSignature_guard = _vg(_mg(299), {
+	plain: _g(TSKindId.MethodSignaturePlain),
+	getter: _g(TSKindId.MethodSignatureGetter),
+	setter: _g(TSKindId.MethodSignatureSetter)
+});
+const _supertype_abstractMethodSignature_guard = _vg(_mg(300), {
+	plain: _g(TSKindId.AbstractMethodSignaturePlain),
+	getter: _g(TSKindId.AbstractMethodSignatureGetter),
+	setter: _g(TSKindId.AbstractMethodSignatureSetter)
+});
 const _supertype_indexSignature_guard = _vg(_mg(375), {
 	colon: _g(TSKindId.IndexSignatureColon),
 	mappedTypeClause: _g(TSKindId.IndexSignatureMappedTypeClause)
@@ -1494,11 +1618,11 @@ const _supertype_enumBodyElement_guard = _vg(_mg(387), {
 	name: _g(TSKindId.EnumBodyElementName),
 	assignment: _g(TSKindId.EnumAssignment)
 });
-const _supertype_exportStatementDefault_guard = _vg(_mg(398), {
+const _supertype_exportStatementDefault_guard = _vg(_mg(400), {
 	from: _g(TSKindId.ExportStatementDefaultFrom),
 	declaration: _g(TSKindId.ExportStatementDefaultDeclaration)
 });
-const _supertype_numberBigint_guard = _vg(_mg(402), {
+const _supertype_numberBigint_guard = _vg(_mg(404), {
 	hex: _g(TSKindId.NumberBigintHex),
 	binary: _g(TSKindId.NumberBigintBinary),
 	octal: _g(TSKindId.NumberBigintOctal),
@@ -1619,14 +1743,10 @@ export const is = Object.freeze({
 	formalParameters: _g(TSKindId.FormalParameters),
 	classStaticBlock: _g(TSKindId.ClassStaticBlock),
 	restPattern: _g(TSKindId.RestPattern),
-	methodDefinition: _g(TSKindId.MethodDefinition),
 	pair: _g(TSKindId.Pair),
 	pairPattern: _g(TSKindId.PairPattern),
 	computedPropertyName: _g(TSKindId.ComputedPropertyName),
-	publicFieldDefinition: _g(TSKindId.PublicFieldDefinition),
 	nonNullExpression: _g(TSKindId.NonNullExpression),
-	methodSignature: _g(TSKindId.MethodSignature),
-	abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
 	functionSignature: _g(TSKindId.FunctionSignature),
 	decoratorParenthesizedExpression: _g(TSKindId.DecoratorParenthesizedExpression),
 	typeAssertion: _g(TSKindId.TypeAssertion),
@@ -1705,6 +1825,7 @@ export const is = Object.freeze({
 	types: _g(TSKindId.Types),
 	typeParametersElements: _g(TSKindId.TypeParametersElements),
 	tupleTypeMembers: _g(TSKindId.TupleTypeMembers),
+	GetAccessorSignature: _g(TSKindId.GetAccessorSignature),
 	ambientDeclarationGlobal: _g(TSKindId.AmbientDeclarationGlobal),
 	ambientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
@@ -1746,6 +1867,19 @@ export const is = Object.freeze({
 	forHeaderVarKind: _g(TSKindId.ForHeaderVarKind),
 	forHeaderLetConstKind: _g(TSKindId.ForHeaderLetConstKind),
 	forHeaderUsingKind: _g(TSKindId.ForHeaderUsingKind),
+	FormalParameters_SetAccessorSignature: _g(TSKindId.FormalParametersUSetAccessorSignature),
+	setterParameter: _g(TSKindId.SetterParameter),
+	methodDefinitionPlain: _g(TSKindId.MethodDefinitionPlain),
+	methodDefinitionGetter: _g(TSKindId.MethodDefinitionGetter),
+	methodDefinitionSetter: _g(TSKindId.MethodDefinitionSetter),
+	methodSignaturePlain: _g(TSKindId.MethodSignaturePlain),
+	methodSignatureGetter: _g(TSKindId.MethodSignatureGetter),
+	methodSignatureSetter: _g(TSKindId.MethodSignatureSetter),
+	abstractMethodSignaturePlain: _g(TSKindId.AbstractMethodSignaturePlain),
+	abstractMethodSignatureGetter: _g(TSKindId.AbstractMethodSignatureGetter),
+	abstractMethodSignatureSetter: _g(TSKindId.AbstractMethodSignatureSetter),
+	publicFieldDefinitionPlain: _g(TSKindId.PublicFieldDefinitionPlain),
+	publicFieldDefinitionAccessor: _g(TSKindId.PublicFieldDefinitionAccessor),
 	receiverParameterDeclaration: _g(TSKindId.ReceiverParameterDeclaration),
 	formalParametersElementsReceiver: _g(TSKindId.FormalParametersElementsReceiver),
 	statementIdentifier: _g(TSKindId.StatementIdentifier),
@@ -1771,6 +1905,10 @@ export const is = Object.freeze({
 	number: _supertype_number_guard,
 	metaProperty: _supertype_metaProperty_guard,
 	pattern: _supertype_pattern_guard,
+	methodDefinition: _supertype_methodDefinition_guard,
+	publicFieldDefinition: _supertype_publicFieldDefinition_guard,
+	methodSignature: _supertype_methodSignature_guard,
+	abstractMethodSignature: _supertype_abstractMethodSignature_guard,
 	type: _mg(337),
 	primaryType: _mg(344),
 	indexSignature: _supertype_indexSignature_guard,
@@ -1803,6 +1941,7 @@ export const is = Object.freeze({
 	optionalChainMarker: _mg(TSKindId.OptionalChainMarker),
 	metaPropertyNewTarget: _mg(TSKindId.MetaPropertyNewTarget),
 	metaPropertyImportMeta: _mg(TSKindId.MetaPropertyImportMeta),
+	formalParameters_GetAccessorSignature: _mg(TSKindId.FormalParametersUGetAccessorSignature),
 	htmlComment: _g(TSKindId.HtmlComment),
 	jsxText: _g(TSKindId.JsxText),
 	templateChars: _g(TSKindId.TemplateChars),

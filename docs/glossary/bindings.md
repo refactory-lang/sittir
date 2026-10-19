@@ -86,7 +86,9 @@ A container's captures land only on the kinds its element slot names directly,
 by their direct claim (the first two steps of the resolution below), never on a
 kind reached through a supertype or a further container: a capture spread
 through a supertype would give every kind of a namespace a member only one
-wrapper carries. A container whose element slot names no directly claimed kind
+wrapper carries. A kind split into variants is not such a supertype: its
+forms (`routes.ts::formsOf`) are the one kind's, so each form's direct claim is
+a target. A container whose element slot names no directly claimed kind
 carries information of its own, so its captures are reported (`untargeted`)
 instead of placed, and the bindings claim the container as a vocabulary kind.
 A container also reads as its element only when nothing else it holds is lost:
@@ -470,7 +472,7 @@ What the derivation realized and left: the claim and member totals, the aliases,
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput`
 
-The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), the grammar's routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routes`: each claimed kind's member routes and each kind's vocabulary path, `vocabOf`), and that model (`model`), whose forms the claims refine through (`refineClaims`).
+The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings (`base`, canonical), the rules of that layer as it evaluates them, before canonicalization (`layerRules`: the coordinates the patches are written in), each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), the grammar's routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routes`: each claimed kind's member routes and each kind's vocabulary path, `vocabOf`), and that model (`model`), whose forms the claims refine through (`refineClaims`).
 
 ### `packages/codegen/src/bindings/names.ts::boundKindName`
 
@@ -560,7 +562,7 @@ The kinds one path names that the grammar bindings may merge under the path's na
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::grammarBindingsPatches`
 
-The grammar changes as patch-stage edits: each field rename and wrap the derivation accepted, and each alias, as a patch at the position where it applies in layer 1's rules. Each request is resolved on those rules directly.
+The grammar changes as patch-stage edits: each field rename and wrap the derivation accepted, and each alias, as a patch at the position where it applies in layer 1's rules as that layer evaluates them (`GrammarBindingsInput.layerRules`), for the rules the canonical grammar keeps. Each request is resolved on those rules directly. The patch stage indexes raw members, so a blank member counts; the canonical rules drop a blank member and peel a lone one, so a path counted there can name another member.
 
 - A rename applies at every `FIELD` of its name in the hosts `bind.ts::fieldHosts` finds. Renames apply in order, so one can rename another's result.
 - A wrap applies at a site `bind.ts::isWrapSite` matches in the hosts `bind.ts::wrapHosts` finds, and its field is the patch. Nothing below a wrapped site is wrapped again, and a wrap does not reach inside `OPAQUE_RULES`, aliases (whose contents belong to the aliased kind) or a visible group's alias.

@@ -1157,6 +1157,277 @@ export const constraint = Object.freeze({
 	};
 };
 
+const classBodyMemberMethod$plain =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'methodDefinition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (
+				key === 'accessibilityModifier' ||
+				key === 'static' ||
+				key === 'override' ||
+				key === 'readonly' ||
+				key === 'async' ||
+				key === 'generator' ||
+				key === 'name' ||
+				key === 'optional' ||
+				key === 'typeParameters' ||
+				key === 'parameters' ||
+				key === 'returnType' ||
+				key === 'body'
+			)
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, methodDefinition: _c(child)(inner) } as never, options as never);
+	};
+const classBodyMemberMethod$plain$strict = classBodyMemberMethod$plain(
+	F.buildClassBodyMemberMethod,
+	F.buildMethodDefinitionPlain
+);
+const classBodyMemberMethod$plain$coerce = classBodyMemberMethod$plain(
+	C.coerceToClassBodyMemberMethod,
+	C.coerceToMethodDefinitionPlain
+);
+const classBodyMemberMethod$getter =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'methodDefinition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (
+				key === 'accessibilityModifier' ||
+				key === 'static' ||
+				key === 'override' ||
+				key === 'name' ||
+				key === 'type' ||
+				key === 'body'
+			)
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, methodDefinition: _c(child)(inner) } as never, options as never);
+	};
+const classBodyMemberMethod$getter$strict = classBodyMemberMethod$getter(
+	F.buildClassBodyMemberMethod,
+	F.buildMethodDefinitionGetter
+);
+const classBodyMemberMethod$getter$coerce = classBodyMemberMethod$getter(
+	C.coerceToClassBodyMemberMethod,
+	C.coerceToMethodDefinitionGetter
+);
+const classBodyMemberMethod$setter =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'methodDefinition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (
+				key === 'accessibilityModifier' ||
+				key === 'static' ||
+				key === 'override' ||
+				key === 'name' ||
+				key === 'parameters' ||
+				key === 'body'
+			)
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, methodDefinition: _c(child)(inner) } as never, options as never);
+	};
+const classBodyMemberMethod$setter$strict = classBodyMemberMethod$setter(
+	F.buildClassBodyMemberMethod,
+	F.buildMethodDefinitionSetter
+);
+const classBodyMemberMethod$setter$coerce = classBodyMemberMethod$setter(
+	C.coerceToClassBodyMemberMethod,
+	C.coerceToMethodDefinitionSetter
+);
+export const classBodyMemberMethod = Object.freeze({
+	...B.classBodyMemberMethod,
+	plain: bundle(classBodyMemberMethod$plain$strict, classBodyMemberMethod$plain$coerce, {
+		key: 'classBodyMemberMethod.plain',
+		max: 2
+	}),
+	getter: bundle(classBodyMemberMethod$getter$strict, classBodyMemberMethod$getter$coerce, {
+		key: 'classBodyMemberMethod.getter',
+		max: 2
+	}),
+	setter: bundle(classBodyMemberMethod$setter$strict, classBodyMemberMethod$setter$coerce, {
+		key: 'classBodyMemberMethod.setter',
+		max: 2
+	})
+}) as unknown as typeof B.classBodyMemberMethod & {
+	plain: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof F.buildMethodDefinitionPlain>[0],
+			options?: OptionsArg<typeof F.buildClassBodyMemberMethod>
+		) => ReturnType<typeof F.buildClassBodyMemberMethod>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof C.coerceToMethodDefinitionPlain>[0],
+			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethod>
+		) => ReturnType<typeof C.coerceToClassBodyMemberMethod>;
+	};
+	getter: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof F.buildMethodDefinitionGetter>[0],
+			options?: OptionsArg<typeof F.buildClassBodyMemberMethod>
+		) => ReturnType<typeof F.buildClassBodyMemberMethod>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof C.coerceToMethodDefinitionGetter>[0],
+			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethod>
+		) => ReturnType<typeof C.coerceToClassBodyMemberMethod>;
+	};
+	setter: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof F.buildMethodDefinitionSetter>[0],
+			options?: OptionsArg<typeof F.buildClassBodyMemberMethod>
+		) => ReturnType<typeof F.buildClassBodyMemberMethod>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof C.coerceToMethodDefinitionSetter>[0],
+			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethod>
+		) => ReturnType<typeof C.coerceToClassBodyMemberMethod>;
+	};
+};
+
+const classBodyMemberMethodSig$plain =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'methodSignature'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (
+				key === 'accessibilityModifier' ||
+				key === 'static' ||
+				key === 'override' ||
+				key === 'readonly' ||
+				key === 'async' ||
+				key === 'generator' ||
+				key === 'name' ||
+				key === 'optional' ||
+				key === 'typeParameters' ||
+				key === 'parameters' ||
+				key === 'returnType'
+			)
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, methodSignature: _c(child)(inner) } as never, options as never);
+	};
+const classBodyMemberMethodSig$plain$strict = classBodyMemberMethodSig$plain(
+	F.buildClassBodyMemberMethodSig,
+	F.buildMethodSignaturePlain
+);
+const classBodyMemberMethodSig$plain$coerce = classBodyMemberMethodSig$plain(
+	C.coerceToClassBodyMemberMethodSig,
+	C.coerceToMethodSignaturePlain
+);
+const classBodyMemberMethodSig$getter =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'methodSignature'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'accessibilityModifier' || key === 'static' || key === 'override' || key === 'name' || key === 'type')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, methodSignature: _c(child)(inner) } as never, options as never);
+	};
+const classBodyMemberMethodSig$getter$strict = classBodyMemberMethodSig$getter(
+	F.buildClassBodyMemberMethodSig,
+	F.buildMethodSignatureGetter
+);
+const classBodyMemberMethodSig$getter$coerce = classBodyMemberMethodSig$getter(
+	C.coerceToClassBodyMemberMethodSig,
+	C.coerceToMethodSignatureGetter
+);
+const classBodyMemberMethodSig$setter =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'methodSignature'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (
+				key === 'accessibilityModifier' ||
+				key === 'static' ||
+				key === 'override' ||
+				key === 'name' ||
+				key === 'parameters'
+			)
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, methodSignature: _c(child)(inner) } as never, options as never);
+	};
+const classBodyMemberMethodSig$setter$strict = classBodyMemberMethodSig$setter(
+	F.buildClassBodyMemberMethodSig,
+	F.buildMethodSignatureSetter
+);
+const classBodyMemberMethodSig$setter$coerce = classBodyMemberMethodSig$setter(
+	C.coerceToClassBodyMemberMethodSig,
+	C.coerceToMethodSignatureSetter
+);
+export const classBodyMemberMethodSig = Object.freeze({
+	...B.classBodyMemberMethodSig,
+	plain: bundle(classBodyMemberMethodSig$plain$strict, classBodyMemberMethodSig$plain$coerce, {
+		key: 'classBodyMemberMethodSig.plain',
+		max: 2
+	}),
+	getter: bundle(classBodyMemberMethodSig$getter$strict, classBodyMemberMethodSig$getter$coerce, {
+		key: 'classBodyMemberMethodSig.getter',
+		max: 2
+	}),
+	setter: bundle(classBodyMemberMethodSig$setter$strict, classBodyMemberMethodSig$setter$coerce, {
+		key: 'classBodyMemberMethodSig.setter',
+		max: 2
+	})
+}) as unknown as typeof B.classBodyMemberMethodSig & {
+	plain: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof F.buildMethodSignaturePlain>[0],
+			options?: OptionsArg<typeof F.buildClassBodyMemberMethodSig>
+		) => ReturnType<typeof F.buildClassBodyMemberMethodSig>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof C.coerceToMethodSignaturePlain>[0],
+			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethodSig>
+		) => ReturnType<typeof C.coerceToClassBodyMemberMethodSig>;
+	};
+	getter: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof F.buildMethodSignatureGetter>[0],
+			options?: OptionsArg<typeof F.buildClassBodyMemberMethodSig>
+		) => ReturnType<typeof F.buildClassBodyMemberMethodSig>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof C.coerceToMethodSignatureGetter>[0],
+			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethodSig>
+		) => ReturnType<typeof C.coerceToClassBodyMemberMethodSig>;
+	};
+	setter: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof F.buildMethodSignatureSetter>[0],
+			options?: OptionsArg<typeof F.buildClassBodyMemberMethodSig>
+		) => ReturnType<typeof F.buildClassBodyMemberMethodSig>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof C.coerceToMethodSignatureSetter>[0],
+			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethodSig>
+		) => ReturnType<typeof C.coerceToClassBodyMemberMethodSig>;
+	};
+};
+
 const importSpecifierAs$default =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
@@ -5890,6 +6161,44 @@ export const pattern: {
 	rest: restPattern
 });
 
+export const methodDefinition: {
+	readonly plain: typeof B.methodDefinitionPlain;
+	readonly getter: typeof B.methodDefinitionGetter;
+	readonly setter: typeof B.methodDefinitionSetter;
+} = Object.freeze({
+	plain: B.methodDefinitionPlain,
+	getter: B.methodDefinitionGetter,
+	setter: B.methodDefinitionSetter
+});
+
+export const publicFieldDefinition: {
+	readonly plain: typeof B.publicFieldDefinitionPlain;
+	readonly accessor: typeof B.publicFieldDefinitionAccessor;
+} = Object.freeze({
+	plain: B.publicFieldDefinitionPlain,
+	accessor: B.publicFieldDefinitionAccessor
+});
+
+export const methodSignature: {
+	readonly plain: typeof B.methodSignaturePlain;
+	readonly getter: typeof B.methodSignatureGetter;
+	readonly setter: typeof B.methodSignatureSetter;
+} = Object.freeze({
+	plain: B.methodSignaturePlain,
+	getter: B.methodSignatureGetter,
+	setter: B.methodSignatureSetter
+});
+
+export const abstractMethodSignature: {
+	readonly plain: typeof B.abstractMethodSignaturePlain;
+	readonly getter: typeof B.abstractMethodSignatureGetter;
+	readonly setter: typeof B.abstractMethodSignatureSetter;
+} = Object.freeze({
+	plain: B.abstractMethodSignaturePlain,
+	getter: B.abstractMethodSignatureGetter,
+	setter: B.abstractMethodSignatureSetter
+});
+
 export const indexSignature: {
 	readonly colon: typeof B.indexSignatureColon;
 	readonly mappedTypeClause: typeof B.indexSignatureMappedTypeClause;
@@ -5899,14 +6208,14 @@ export const indexSignature: {
 });
 
 export const classBodyMember: {
-	readonly method: typeof B.classBodyMemberMethod;
-	readonly methodSig: typeof B.classBodyMemberMethodSig;
+	readonly method: typeof classBodyMemberMethod;
+	readonly methodSig: typeof classBodyMemberMethodSig;
 	readonly staticBlock: typeof B.classStaticBlock;
 	readonly declaration: typeof B.classBodyMemberDeclaration;
 	readonly empty: typeof F.buildEmptyMember;
 } = Object.freeze({
-	method: B.classBodyMemberMethod,
-	methodSig: B.classBodyMemberMethodSig,
+	method: classBodyMemberMethod,
+	methodSig: classBodyMemberMethodSig,
 	staticBlock: B.classStaticBlock,
 	declaration: B.classBodyMemberDeclaration,
 	empty: F.buildEmptyMember

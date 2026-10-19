@@ -28,15 +28,15 @@ describe('a flag a boolean slot holds', () => {
 			...hooks
 				.wrap(data, native)
 				.$query()
-				.$descendants.ofType(ts.kinds.MethodDefinition)
+				.$descendants.ofType(ts.kinds.MethodDefinitionPlain)
 				.where((c) => c.static.eq(true))
 		];
 		expect(found).toHaveLength(2);
-		expect(plans).toContainEqual(queryFlags[TSKindId.MethodDefinition]!['static']);
+		expect(plans).toContainEqual(queryFlags[TSKindId.MethodDefinitionPlain]!['static']);
 	});
 
 	it('is marked on every keyword slot of a member that claims the flag', () => {
-		expect(Object.keys(queryFlags[TSKindId.MethodDefinition]!)).toEqual(
+		expect(Object.keys(queryFlags[TSKindId.MethodDefinitionPlain]!)).toEqual(
 			expect.arrayContaining(['static', 'override', 'readonly', 'async'])
 		);
 		const asyncSlot = hooks.querySlots[TSKindId.ArrowFunction]!.find(([name]) => name === 'async')![1];
@@ -53,7 +53,7 @@ describe('a flag a boolean slot holds', () => {
 
 describe('c.is(flag) with slot comparisons', () => {
 	const SOURCE = 'class C {\n  static m() {}\n  m() {}\n  static n() {}\n}\n';
-	const methods = () => ts.parse(SOURCE).$query().$descendants.ofType(ts.kinds.MethodDefinition);
+	const methods = () => ts.parse(SOURCE).$query().$descendants.ofType(ts.kinds.MethodDefinitionPlain);
 	const spanOf = (node: unknown) => (node as { $_layout: { at: { $span: { start: number; end: number } } } }).$_layout.at.$span;
 	const text = (node: unknown) => SOURCE.slice(spanOf(node).start, spanOf(node).end);
 

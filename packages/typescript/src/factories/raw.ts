@@ -3191,104 +3191,6 @@ export function buildRestPattern(
 	return node as unknown as T.RestPattern.Bound;
 }
 
-export function buildMethodDefinition(config: T.MethodDefinition.Config): T.MethodDefinition.Bound {
-	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodDefinition['_accessibility_modifier']>>(
-		config.accessibilityModifier
-	);
-	const _static = strictBooleanStorage(config.static);
-	const _override = strictBooleanStorage(config.override);
-	const _readonly = strictBooleanStorage(config.readonly);
-	const _async = strictBooleanStorage(config.async);
-	const _generator = kindIdStorage<NonNullable<T.MethodDefinition['_generator']>>(config.generator);
-	const _name = admitAliasContent<NonNullable<T.MethodDefinition['_name']>>(
-		rejectReservedText(config.name, 'MethodDefinition.name', TSKindId.Identifier, _reservedWordset_properties),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
-	);
-	const _optional = strictBooleanStorage(config.optional);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
-	const _return_type = config.returnType;
-	const _body = orDefault(config.body, () => buildStatementBlock());
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.MethodDefinition as const,
-		$source: 2 as const,
-		$named: true as const,
-		_accessibility_modifier,
-		_static,
-		_override,
-		_readonly,
-		_async,
-		_generator,
-		_name,
-		_optional,
-		_type_parameters,
-		_parameters,
-		_return_type,
-		_body,
-		$with: {
-			accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinition.Config>['accessibilityModifier']>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessibilityModifier: value })),
-			static: (value?: Admit<NonNullable<T.MethodDefinition.Config>['static']>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, static: value })),
-			override: (value?: Admit<NonNullable<T.MethodDefinition.Config>['override']>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, override: value })),
-			readonly: (value?: Admit<NonNullable<T.MethodDefinition.Config>['readonly']>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, readonly: value })),
-			async: (value?: Admit<NonNullable<T.MethodDefinition.Config>['async']>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, async: value })),
-			generator: (value?: Admit<NonNullable<T.MethodDefinition.Config>['generator']>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, generator: value })),
-			name: (
-				value: Admit<
-					| T.PropertyIdentifier
-					| T.PrivatePropertyIdentifier
-					| T.String
-					| T.Number
-					| T.ComputedPropertyName
-					| T.PropertyIdentifier.Types
-				>
-			) => rebuilt(node, handle, () => buildMethodDefinition({ ...config, name: value })),
-			optional: (value?: Admit<NonNullable<T.MethodDefinition.Config>['optional']>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, optional: value })),
-			typeParameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildMethodDefinition({ ...config, typeParameters: value })
-					)
-				),
-			parameters: (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, parameters: value })),
-			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, returnType: value })),
-			body: (value: Admit<T.StatementBlock>) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, body: value }))
-		},
-		accessibilityModifier: () => _accessibility_modifier,
-		static: () => _static,
-		override: () => _override,
-		readonly: () => _readonly,
-		async: () => _async,
-		generator: () => _generator,
-		name: () => hydrateStoredSlot(node, '_name'),
-		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
-		returnType: () => hydrateStoredSlot(node, '_return_type'),
-		body: () => hydrateStoredSlot(node, '_body'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.MethodDefinition.Bound;
-}
-
 export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 	const _key = admitAliasContent<NonNullable<T.Pair['_key']>>(
 		rejectReservedText(config.key, 'Pair.key', TSKindId.Identifier, _reservedWordset_properties),
@@ -3393,100 +3295,6 @@ export function buildComputedPropertyName(value: Admit<T.Expression>): T.Compute
 	return node as unknown as T.ComputedPropertyName.Bound;
 }
 
-export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config): T.PublicFieldDefinition.Bound {
-	const _decorator = listStorage<NonNullable<T.PublicFieldDefinition['_decorator']>>(config.decorator ?? []);
-	const _declare = strictBooleanStorage(config.declare);
-	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>>(
-		config.accessibilityModifier
-	);
-	const _static = strictBooleanStorage(config.static);
-	const _override = strictBooleanStorage(config.override);
-	const _readonly = strictBooleanStorage(config.readonly);
-	const _abstract = strictBooleanStorage(config.abstract);
-	const _accessor = strictBooleanStorage(config.accessor);
-	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinition['_name']>>(
-		rejectReservedText(config.name, 'PublicFieldDefinition.name', TSKindId.Identifier, _reservedWordset_properties),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
-	);
-	const _optionality = kindIdStorage<NonNullable<T.PublicFieldDefinition['_optionality']>>(config.optionality);
-	const _type = config.type;
-	const _value = kindIdStorage<NonNullable<T.PublicFieldDefinition['_value']>>(config.value);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.PublicFieldDefinition as const,
-		$source: 2 as const,
-		$named: true as const,
-		_decorator,
-		_declare,
-		_accessibility_modifier,
-		_static,
-		_override,
-		_readonly,
-		_abstract,
-		_accessor,
-		_name,
-		_optionality,
-		_type,
-		_value,
-		$with: {
-			decorators: (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () =>
-					buildPublicFieldDefinition({ ...config, decorator: restItems('decorators', values) })
-				),
-			declare: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['declare']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, declare: value })),
-			accessibilityModifier: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessibilityModifier: value })),
-			static: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['static']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, static: value })),
-			override: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['override']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, override: value })),
-			readonly: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['readonly']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, readonly: value })),
-			abstract: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['abstract']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, abstract: value })),
-			accessor: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['accessor']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessor: value })),
-			name: (
-				value: Admit<
-					| T.PropertyIdentifier
-					| T.PrivatePropertyIdentifier
-					| T.String
-					| T.Number
-					| T.ComputedPropertyName
-					| T.PropertyIdentifier.Types
-				>
-			) => rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, name: value })),
-			optionality: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['optionality']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, optionality: value })),
-			type: (value?: Admit<T.TypeAnnotation>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, type: value })),
-			value: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['value']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, value: value }))
-		},
-		decorators: () => hydrateStoredSlots(node, '_decorator'),
-		declare: () => _declare,
-		accessibilityModifier: () => _accessibility_modifier,
-		static: () => _static,
-		override: () => _override,
-		readonly: () => _readonly,
-		abstract: () => _abstract,
-		accessor: () => _accessor,
-		name: () => hydrateStoredSlot(node, '_name'),
-		optionality: () => _optionality,
-		type: () => hydrateStoredSlot(node, '_type'),
-		value: () => hydrateStoredSlot(node, '_value'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.PublicFieldDefinition.Bound;
-}
-
 export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.NonNullExpression['_expression']>>(value);
 	const handle = currentHandle();
@@ -3509,179 +3317,6 @@ export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExp
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.NonNullExpression.Bound;
-}
-
-export function buildMethodSignature(config: T.MethodSignature.Config): T.MethodSignature.Bound {
-	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodSignature['_accessibility_modifier']>>(
-		config.accessibilityModifier
-	);
-	const _static = strictBooleanStorage(config.static);
-	const _override = strictBooleanStorage(config.override);
-	const _readonly = strictBooleanStorage(config.readonly);
-	const _async = strictBooleanStorage(config.async);
-	const _generator = kindIdStorage<NonNullable<T.MethodSignature['_generator']>>(config.generator);
-	const _name = admitAliasContent<NonNullable<T.MethodSignature['_name']>>(
-		rejectReservedText(config.name, 'MethodSignature.name', TSKindId.Identifier, _reservedWordset_properties),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
-	);
-	const _optional = strictBooleanStorage(config.optional);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
-	const _return_type = config.returnType;
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.MethodSignature as const,
-		$source: 2 as const,
-		$named: true as const,
-		_accessibility_modifier,
-		_static,
-		_override,
-		_readonly,
-		_async,
-		_generator,
-		_name,
-		_optional,
-		_type_parameters,
-		_parameters,
-		_return_type,
-		$with: {
-			accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignature.Config>['accessibilityModifier']>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessibilityModifier: value })),
-			static: (value?: Admit<NonNullable<T.MethodSignature.Config>['static']>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, static: value })),
-			override: (value?: Admit<NonNullable<T.MethodSignature.Config>['override']>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, override: value })),
-			readonly: (value?: Admit<NonNullable<T.MethodSignature.Config>['readonly']>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, readonly: value })),
-			async: (value?: Admit<NonNullable<T.MethodSignature.Config>['async']>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, async: value })),
-			generator: (value?: Admit<NonNullable<T.MethodSignature.Config>['generator']>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, generator: value })),
-			name: (
-				value: Admit<
-					| T.PropertyIdentifier
-					| T.PrivatePropertyIdentifier
-					| T.String
-					| T.Number
-					| T.ComputedPropertyName
-					| T.PropertyIdentifier.Types
-				>
-			) => rebuilt(node, handle, () => buildMethodSignature({ ...config, name: value })),
-			optional: (value?: Admit<NonNullable<T.MethodSignature.Config>['optional']>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, optional: value })),
-			typeParameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildMethodSignature({ ...config, typeParameters: value })
-					)
-				),
-			parameters: (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, parameters: value })),
-			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, returnType: value }))
-		},
-		accessibilityModifier: () => _accessibility_modifier,
-		static: () => _static,
-		override: () => _override,
-		readonly: () => _readonly,
-		async: () => _async,
-		generator: () => _generator,
-		name: () => hydrateStoredSlot(node, '_name'),
-		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
-		returnType: () => hydrateStoredSlot(node, '_return_type'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.MethodSignature.Bound;
-}
-
-export function buildAbstractMethodSignature(
-	config: T.AbstractMethodSignature.Config
-): T.AbstractMethodSignature.Bound {
-	const _accessibility_modifier = kindIdStorage<NonNullable<T.AbstractMethodSignature['_accessibility_modifier']>>(
-		config.accessibilityModifier
-	);
-	const _override = strictBooleanStorage(config.override);
-	const _generator = kindIdStorage<NonNullable<T.AbstractMethodSignature['_generator']>>(config.generator);
-	const _name = admitAliasContent<NonNullable<T.AbstractMethodSignature['_name']>>(
-		rejectReservedText(config.name, 'AbstractMethodSignature.name', TSKindId.Identifier, _reservedWordset_properties),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
-	);
-	const _optional = strictBooleanStorage(config.optional);
-	const _type_parameters = config.typeParameters;
-	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
-	const _return_type = config.returnType;
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.AbstractMethodSignature as const,
-		$source: 2 as const,
-		$named: true as const,
-		_accessibility_modifier,
-		_override,
-		_generator,
-		_name,
-		_optional,
-		_type_parameters,
-		_parameters,
-		_return_type,
-		$with: {
-			accessibilityModifier: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessibilityModifier: value })),
-			override: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['override']>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, override: value })),
-			generator: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['generator']>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, generator: value })),
-			name: (
-				value: Admit<
-					| T.PropertyIdentifier
-					| T.PrivatePropertyIdentifier
-					| T.String
-					| T.Number
-					| T.ComputedPropertyName
-					| T.PropertyIdentifier.Types
-				>
-			) => rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, name: value })),
-			optional: (value?: Admit<NonNullable<T.AbstractMethodSignature.Config>['optional']>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, optional: value })),
-			typeParameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-						(value?: Admit<T.TypeParameters>) => buildAbstractMethodSignature({ ...config, typeParameters: value })
-					)
-				),
-			parameters: (value: Admit<T.FormalParameters>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, parameters: value })),
-			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, returnType: value }))
-		},
-		accessibilityModifier: () => _accessibility_modifier,
-		override: () => _override,
-		generator: () => _generator,
-		name: () => hydrateStoredSlot(node, '_name'),
-		optional: () => _optional,
-		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		parameters: () => hydrateStoredSlot(node, '_parameters'),
-		returnType: () => hydrateStoredSlot(node, '_return_type'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.AbstractMethodSignature.Bound;
 }
 
 export function buildFunctionSignature(
@@ -7021,6 +6656,32 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 	return node as unknown as T.CatchClauseGroup.Bound;
 }
 
+export function buildGetAccessorSignature(
+	config: Partial<T.GetAccessorSignature.Config> = {}
+): T.GetAccessorSignature.Bound {
+	const _type = config.type;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.GetAccessorSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_type,
+		$with: {
+			type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildGetAccessorSignature({ ...config, type: value }))
+		},
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.GetAccessorSignature.Bound;
+}
+
 export function buildAmbientDeclarationGlobal(
 	value: Admit<T.StatementBlock>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
@@ -9124,6 +8785,980 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 	return node as unknown as T.ForHeaderUsingKind.Bound;
 }
 
+export const buildFormalParametersUGetAccessorSignature: TSKindId.FormalParametersUGetAccessorSignature =
+	TSKindId.FormalParametersUGetAccessorSignature;
+
+export function buildFormalParametersUSetAccessorSignature(
+	value: Admit<T.FormalParametersElementsUSetAccessorSignature>
+): ReturnType<typeof _buildFormalParametersUSetAccessorSignature>;
+export function buildFormalParametersUSetAccessorSignature(
+	_config: T.SetterParameter.Config
+): ReturnType<typeof _buildFormalParametersUSetAccessorSignature>;
+export function buildFormalParametersUSetAccessorSignature(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildFormalParametersUSetAccessorSignature(
+			args[0] as Parameters<typeof _buildFormalParametersUSetAccessorSignature>[0]
+		);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElementsUSetAccessorSignature as const);
+	return prebuilt
+		? _buildFormalParametersUSetAccessorSignature(
+				args[0] as Parameters<typeof _buildFormalParametersUSetAccessorSignature>[0]
+			)
+		: _buildFormalParametersUSetAccessorSignature(
+				(buildFormalParametersElementsUSetAccessorSignature as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildFormalParametersUSetAccessorSignature
+				>[0]
+			);
+}
+function _buildFormalParametersUSetAccessorSignature(
+	value: Admit<T.FormalParametersElementsUSetAccessorSignature>
+): T.FormalParametersUSetAccessorSignature.Bound {
+	const _elements = value;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FormalParametersUSetAccessorSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_elements,
+		$with: {
+			elements: (value: Admit<T.FormalParametersElementsUSetAccessorSignature>) =>
+				rebuilt(node, handle, () => _buildFormalParametersUSetAccessorSignature(value))
+		},
+		elements: () => hydrateStoredSlot(node, '_elements'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FormalParametersUSetAccessorSignature.Bound;
+}
+
+export function buildFormalParametersElementsUSetAccessorSignature(
+	value: Admit<T.SetterParameter>
+): ReturnType<typeof _buildFormalParametersElementsUSetAccessorSignature>;
+export function buildFormalParametersElementsUSetAccessorSignature(
+	_config: T.SetterParameter.Config
+): ReturnType<typeof _buildFormalParametersElementsUSetAccessorSignature>;
+export function buildFormalParametersElementsUSetAccessorSignature(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildFormalParametersElementsUSetAccessorSignature(
+			args[0] as Parameters<typeof _buildFormalParametersElementsUSetAccessorSignature>[0]
+		);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SetterParameter as const);
+	return prebuilt
+		? _buildFormalParametersElementsUSetAccessorSignature(
+				args[0] as Parameters<typeof _buildFormalParametersElementsUSetAccessorSignature>[0]
+			)
+		: _buildFormalParametersElementsUSetAccessorSignature(
+				(buildSetterParameter as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildFormalParametersElementsUSetAccessorSignature
+				>[0]
+			);
+}
+function _buildFormalParametersElementsUSetAccessorSignature(
+	value: Admit<T.SetterParameter>
+): T.FormalParametersElementsUSetAccessorSignature.Bound {
+	const _item = value;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FormalParametersElementsUSetAccessorSignature as const,
+		$source: 2 as const,
+		$named: true as const,
+		_item,
+		$with: {
+			item: (value: Admit<T.SetterParameter>) =>
+				rebuilt(node, handle, () => _buildFormalParametersElementsUSetAccessorSignature(value))
+		},
+		item: () => hydrateStoredSlot(node, '_item'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.FormalParametersElementsUSetAccessorSignature.Bound;
+}
+
+export function buildSetterParameter(config: T.SetterParameter.Config): T.SetterParameter.Bound {
+	const _decorator = listStorage<NonNullable<T.SetterParameter['_decorator']>>(config.decorator ?? []);
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.SetterParameter['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _override = strictBooleanStorage(config.override);
+	const _readonly = strictBooleanStorage(config.readonly);
+	const _pattern = kindIdStorage<NonNullable<T.SetterParameter['_pattern']>>(config.pattern);
+	const _type = config.type;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SetterParameter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_decorator,
+		_accessibility_modifier,
+		_override,
+		_readonly,
+		_pattern,
+		_type,
+		$with: {
+			decorators: (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, decorator: restItems('decorators', values) })),
+			accessibilityModifier: (value?: Admit<NonNullable<T.SetterParameter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, accessibilityModifier: value })),
+			override: (value?: Admit<NonNullable<T.SetterParameter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, override: value })),
+			readonly: (value?: Admit<NonNullable<T.SetterParameter.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, readonly: value })),
+			pattern: (value: Admit<NonNullable<T.SetterParameter.Config>['pattern']>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, pattern: value })),
+			type: (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildSetterParameter({ ...config, type: value }))
+		},
+		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		accessibilityModifier: () => _accessibility_modifier,
+		override: () => _override,
+		readonly: () => _readonly,
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SetterParameter.Bound;
+}
+
+export function buildMethodDefinitionPlain(config: T.MethodDefinitionPlain.Config): T.MethodDefinitionPlain.Bound {
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodDefinitionPlain['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _static = strictBooleanStorage(config.static);
+	const _override = strictBooleanStorage(config.override);
+	const _readonly = strictBooleanStorage(config.readonly);
+	const _async = strictBooleanStorage(config.async);
+	const _generator = strictBooleanStorage(config.generator);
+	const _name = admitAliasContent<NonNullable<T.MethodDefinitionPlain['_name']>>(
+		rejectReservedText(config.name, 'MethodDefinitionPlain.name', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _optional = strictBooleanStorage(config.optional);
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _return_type = config.returnType;
+	const _body = orDefault(config.body, () => buildStatementBlock());
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodDefinitionPlain as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static,
+		_override,
+		_readonly,
+		_async,
+		_generator,
+		_name,
+		_optional,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body,
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, static: value })),
+			override: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, override: value })),
+			readonly: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, readonly: value })),
+			async: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['async']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, async: value })),
+			generator: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['generator']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, generator: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, name: value })),
+			optional: (value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['optional']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, optional: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildMethodDefinitionPlain({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, parameters: value })),
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, returnType: value })),
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionPlain({ ...config, body: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		override: () => _override,
+		readonly: () => _readonly,
+		async: () => _async,
+		generator: () => _generator,
+		name: () => hydrateStoredSlot(node, '_name'),
+		optional: () => _optional,
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		returnType: () => hydrateStoredSlot(node, '_return_type'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodDefinitionPlain.Bound;
+}
+
+export function buildMethodDefinitionGetter(config: T.MethodDefinitionGetter.Config): T.MethodDefinitionGetter.Bound {
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodDefinitionGetter['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _static = strictBooleanStorage(config.static);
+	const _override = strictBooleanStorage(config.override);
+	const _name = admitAliasContent<NonNullable<T.MethodDefinitionGetter['_name']>>(
+		rejectReservedText(config.name, 'MethodDefinitionGetter.name', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _type = config.type;
+	const _body = orDefault(config.body, () => buildStatementBlock());
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodDefinitionGetter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static,
+		_override,
+		_name,
+		_type,
+		_body,
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, static: value })),
+			override: (value?: Admit<NonNullable<T.MethodDefinitionGetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, override: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, name: value })),
+			type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, type: value })),
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionGetter({ ...config, body: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		override: () => _override,
+		name: () => hydrateStoredSlot(node, '_name'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodDefinitionGetter.Bound;
+}
+
+export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Config): T.MethodDefinitionSetter.Bound {
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodDefinitionSetter['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _static = strictBooleanStorage(config.static);
+	const _override = strictBooleanStorage(config.override);
+	const _name = admitAliasContent<NonNullable<T.MethodDefinitionSetter['_name']>>(
+		rejectReservedText(config.name, 'MethodDefinitionSetter.name', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _parameters = config.parameters;
+	const _body = orDefault(config.body, () => buildStatementBlock());
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodDefinitionSetter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static,
+		_override,
+		_name,
+		_parameters,
+		_body,
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, static: value })),
+			override: (value?: Admit<NonNullable<T.MethodDefinitionSetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, override: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, name: value })),
+			parameters: (value: Admit<T.FormalParametersUSetAccessorSignature>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value })),
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, body: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		override: () => _override,
+		name: () => hydrateStoredSlot(node, '_name'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodDefinitionSetter.Bound;
+}
+
+export function buildMethodSignaturePlain(config: T.MethodSignaturePlain.Config): T.MethodSignaturePlain.Bound {
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodSignaturePlain['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _static = strictBooleanStorage(config.static);
+	const _override = strictBooleanStorage(config.override);
+	const _readonly = strictBooleanStorage(config.readonly);
+	const _async = strictBooleanStorage(config.async);
+	const _generator = strictBooleanStorage(config.generator);
+	const _name = admitAliasContent<NonNullable<T.MethodSignaturePlain['_name']>>(
+		rejectReservedText(config.name, 'MethodSignaturePlain.name', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _optional = strictBooleanStorage(config.optional);
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _return_type = config.returnType;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodSignaturePlain as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static,
+		_override,
+		_readonly,
+		_async,
+		_generator,
+		_name,
+		_optional,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, static: value })),
+			override: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, override: value })),
+			readonly: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, readonly: value })),
+			async: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['async']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, async: value })),
+			generator: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['generator']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, generator: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, name: value })),
+			optional: (value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['optional']>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, optional: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildMethodSignaturePlain({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, parameters: value })),
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodSignaturePlain({ ...config, returnType: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		override: () => _override,
+		readonly: () => _readonly,
+		async: () => _async,
+		generator: () => _generator,
+		name: () => hydrateStoredSlot(node, '_name'),
+		optional: () => _optional,
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		returnType: () => hydrateStoredSlot(node, '_return_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodSignaturePlain.Bound;
+}
+
+export function buildMethodSignatureGetter(config: T.MethodSignatureGetter.Config): T.MethodSignatureGetter.Bound {
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodSignatureGetter['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _static = strictBooleanStorage(config.static);
+	const _override = strictBooleanStorage(config.override);
+	const _name = admitAliasContent<NonNullable<T.MethodSignatureGetter['_name']>>(
+		rejectReservedText(config.name, 'MethodSignatureGetter.name', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _type = config.type;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodSignatureGetter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static,
+		_override,
+		_name,
+		_type,
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, static: value })),
+			override: (value?: Admit<NonNullable<T.MethodSignatureGetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, override: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, name: value })),
+			type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildMethodSignatureGetter({ ...config, type: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		override: () => _override,
+		name: () => hydrateStoredSlot(node, '_name'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodSignatureGetter.Bound;
+}
+
+export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Config): T.MethodSignatureSetter.Bound {
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodSignatureSetter['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _static = strictBooleanStorage(config.static);
+	const _override = strictBooleanStorage(config.override);
+	const _name = admitAliasContent<NonNullable<T.MethodSignatureSetter['_name']>>(
+		rejectReservedText(config.name, 'MethodSignatureSetter.name', TSKindId.Identifier, _reservedWordset_properties),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _parameters = config.parameters;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.MethodSignatureSetter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_static,
+		_override,
+		_name,
+		_parameters,
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['static']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, static: value })),
+			override: (value?: Admit<NonNullable<T.MethodSignatureSetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, override: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, name: value })),
+			parameters: (value: Admit<T.FormalParametersUSetAccessorSignature>) =>
+				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		override: () => _override,
+		name: () => hydrateStoredSlot(node, '_name'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodSignatureSetter.Bound;
+}
+
+export function buildAbstractMethodSignaturePlain(
+	config: T.AbstractMethodSignaturePlain.Config
+): T.AbstractMethodSignaturePlain.Bound {
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.AbstractMethodSignaturePlain['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _override = strictBooleanStorage(config.override);
+	const _generator = strictBooleanStorage(config.generator);
+	const _name = admitAliasContent<NonNullable<T.AbstractMethodSignaturePlain['_name']>>(
+		rejectReservedText(
+			config.name,
+			'AbstractMethodSignaturePlain.name',
+			TSKindId.Identifier,
+			_reservedWordset_properties
+		),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _optional = strictBooleanStorage(config.optional);
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _return_type = config.returnType;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AbstractMethodSignaturePlain as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_override,
+		_generator,
+		_name,
+		_optional,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		$with: {
+			accessibilityModifier: (
+				value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['accessibilityModifier']>
+			) => rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, accessibilityModifier: value })),
+			override: (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, override: value })),
+			generator: (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['generator']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, generator: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, name: value })),
+			optional: (value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['optional']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, optional: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+						(value?: Admit<T.TypeParameters>) => buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, parameters: value })),
+			returnType: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignaturePlain({ ...config, returnType: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		override: () => _override,
+		generator: () => _generator,
+		name: () => hydrateStoredSlot(node, '_name'),
+		optional: () => _optional,
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		returnType: () => hydrateStoredSlot(node, '_return_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AbstractMethodSignaturePlain.Bound;
+}
+
+export function buildAbstractMethodSignatureGetter(
+	config: T.AbstractMethodSignatureGetter.Config
+): T.AbstractMethodSignatureGetter.Bound {
+	const _accessibility_modifier = kindIdStorage<
+		NonNullable<T.AbstractMethodSignatureGetter['_accessibility_modifier']>
+	>(config.accessibilityModifier);
+	const _override = strictBooleanStorage(config.override);
+	const _name = admitAliasContent<NonNullable<T.AbstractMethodSignatureGetter['_name']>>(
+		rejectReservedText(
+			config.name,
+			'AbstractMethodSignatureGetter.name',
+			TSKindId.Identifier,
+			_reservedWordset_properties
+		),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _type = config.type;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AbstractMethodSignatureGetter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_override,
+		_name,
+		_type,
+		$with: {
+			accessibilityModifier: (
+				value?: Admit<NonNullable<T.AbstractMethodSignatureGetter.Config>['accessibilityModifier']>
+			) => rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, accessibilityModifier: value })),
+			override: (value?: Admit<NonNullable<T.AbstractMethodSignatureGetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, override: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, name: value })),
+			type: (value?: Admit<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureGetter({ ...config, type: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		override: () => _override,
+		name: () => hydrateStoredSlot(node, '_name'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AbstractMethodSignatureGetter.Bound;
+}
+
+export function buildAbstractMethodSignatureSetter(
+	config: T.AbstractMethodSignatureSetter.Config
+): T.AbstractMethodSignatureSetter.Bound {
+	const _accessibility_modifier = kindIdStorage<
+		NonNullable<T.AbstractMethodSignatureSetter['_accessibility_modifier']>
+	>(config.accessibilityModifier);
+	const _override = strictBooleanStorage(config.override);
+	const _name = admitAliasContent<NonNullable<T.AbstractMethodSignatureSetter['_name']>>(
+		rejectReservedText(
+			config.name,
+			'AbstractMethodSignatureSetter.name',
+			TSKindId.Identifier,
+			_reservedWordset_properties
+		),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _parameters = config.parameters;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AbstractMethodSignatureSetter as const,
+		$source: 2 as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_override,
+		_name,
+		_parameters,
+		$with: {
+			accessibilityModifier: (
+				value?: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['accessibilityModifier']>
+			) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, accessibilityModifier: value })),
+			override: (value?: Admit<NonNullable<T.AbstractMethodSignatureSetter.Config>['override']>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, override: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, name: value })),
+			parameters: (value: Admit<T.FormalParametersUSetAccessorSignature>) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		override: () => _override,
+		name: () => hydrateStoredSlot(node, '_name'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AbstractMethodSignatureSetter.Bound;
+}
+
+export function buildPublicFieldDefinitionPlain(
+	config: T.PublicFieldDefinitionPlain.Config
+): T.PublicFieldDefinitionPlain.Bound {
+	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionPlain['_decorator']>>(config.decorator ?? []);
+	const _declare = strictBooleanStorage(config.declare);
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _static = strictBooleanStorage(config.static);
+	const _override = strictBooleanStorage(config.override);
+	const _readonly = strictBooleanStorage(config.readonly);
+	const _abstract = strictBooleanStorage(config.abstract);
+	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinitionPlain['_name']>>(
+		rejectReservedText(
+			config.name,
+			'PublicFieldDefinitionPlain.name',
+			TSKindId.Identifier,
+			_reservedWordset_properties
+		),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _optionality = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_optionality']>>(config.optionality);
+	const _type = config.type;
+	const _value = kindIdStorage<NonNullable<T.PublicFieldDefinitionPlain['_value']>>(config.value);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.PublicFieldDefinitionPlain as const,
+		$source: 2 as const,
+		$named: true as const,
+		_decorator,
+		_declare,
+		_accessibility_modifier,
+		_static,
+		_override,
+		_readonly,
+		_abstract,
+		_name,
+		_optionality,
+		_type,
+		_value,
+		$with: {
+			decorators: (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildPublicFieldDefinitionPlain({ ...config, decorator: restItems('decorators', values) })
+				),
+			declare: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['declare']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, declare: value })),
+			accessibilityModifier: (
+				value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['accessibilityModifier']>
+			) => rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['static']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, static: value })),
+			override: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['override']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, override: value })),
+			readonly: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['readonly']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, readonly: value })),
+			abstract: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, abstract: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, name: value })),
+			optionality: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['optionality']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, optionality: value })),
+			type: (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, type: value })),
+			value: (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['value']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, value: value }))
+		},
+		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		declare: () => _declare,
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		override: () => _override,
+		readonly: () => _readonly,
+		abstract: () => _abstract,
+		name: () => hydrateStoredSlot(node, '_name'),
+		optionality: () => _optionality,
+		type: () => hydrateStoredSlot(node, '_type'),
+		value: () => hydrateStoredSlot(node, '_value'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.PublicFieldDefinitionPlain.Bound;
+}
+
+export function buildPublicFieldDefinitionAccessor(
+	config: T.PublicFieldDefinitionAccessor.Config
+): T.PublicFieldDefinitionAccessor.Bound {
+	const _decorator = listStorage<NonNullable<T.PublicFieldDefinitionAccessor['_decorator']>>(config.decorator ?? []);
+	const _accessibility_modifier = kindIdStorage<
+		NonNullable<T.PublicFieldDefinitionAccessor['_accessibility_modifier']>
+	>(config.accessibilityModifier);
+	const _static = strictBooleanStorage(config.static);
+	const _abstract = strictBooleanStorage(config.abstract);
+	const _override = strictBooleanStorage(config.override);
+	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinitionAccessor['_name']>>(
+		rejectReservedText(
+			config.name,
+			'PublicFieldDefinitionAccessor.name',
+			TSKindId.Identifier,
+			_reservedWordset_properties
+		),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	const _type = config.type;
+	const _value = kindIdStorage<NonNullable<T.PublicFieldDefinitionAccessor['_value']>>(config.value);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.PublicFieldDefinitionAccessor as const,
+		$source: 2 as const,
+		$named: true as const,
+		_decorator,
+		_accessibility_modifier,
+		_static,
+		_abstract,
+		_override,
+		_name,
+		_type,
+		_value,
+		$with: {
+			decorators: (...values: Admit<T.Decorator[]>) =>
+				rebuilt(node, handle, () =>
+					buildPublicFieldDefinitionAccessor({ ...config, decorator: restItems('decorators', values) })
+				),
+			accessibilityModifier: (
+				value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['accessibilityModifier']>
+			) => rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, accessibilityModifier: value })),
+			static: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['static']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, static: value })),
+			abstract: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, abstract: value })),
+			override: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['override']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, override: value })),
+			name: (
+				value: Admit<
+					| T.PropertyIdentifier
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
+					| T.PropertyIdentifier.Types
+				>
+			) => rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, name: value })),
+			type: (value?: Admit<T.TypeAnnotation>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, type: value })),
+			value: (value?: Admit<NonNullable<T.PublicFieldDefinitionAccessor.Config>['value']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionAccessor({ ...config, value: value }))
+		},
+		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		accessibilityModifier: () => _accessibility_modifier,
+		static: () => _static,
+		abstract: () => _abstract,
+		override: () => _override,
+		name: () => hydrateStoredSlot(node, '_name'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		value: () => hydrateStoredSlot(node, '_value'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.PublicFieldDefinitionAccessor.Bound;
+}
+
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
 	if (typeof text !== 'string' || !_leafRe_buildHtmlComment.test(text))
@@ -9658,14 +10293,10 @@ export type FluentKindMap = {
 	formal_parameters: T.FormalParameters.Bound;
 	class_static_block: T.ClassStaticBlock.Bound;
 	rest_pattern: T.RestPattern.Bound;
-	method_definition: T.MethodDefinition.Bound;
 	pair: T.Pair.Bound;
 	pair_pattern: T.PairPattern.Bound;
 	computed_property_name: T.ComputedPropertyName.Bound;
-	public_field_definition: T.PublicFieldDefinition.Bound;
 	non_null_expression: T.NonNullExpression.Bound;
-	method_signature: T.MethodSignature.Bound;
-	abstract_method_signature: T.AbstractMethodSignature.Bound;
 	function_signature: T.FunctionSignature.Bound;
 	decorator_parenthesized_expression: T.DecoratorParenthesizedExpression.Bound;
 	type_assertion: T.TypeAssertion.Bound;
@@ -9749,6 +10380,7 @@ export type FluentKindMap = {
 	import_clause_group: T.ImportClauseGroup.Bound;
 	using_declaration_arm: T.UsingDeclarationArm;
 	catch_clause_group: T.CatchClauseGroup.Bound;
+	_get_accessor_signature: T.GetAccessorSignature.Bound;
 	ambient_declaration_global: T.AmbientDeclarationGlobal.Bound;
 	ambient_declaration_module: T.AmbientDeclarationModule.Bound;
 	object_type_content: T.ObjectTypeContent.Bound;
@@ -9807,6 +10439,21 @@ export type FluentKindMap = {
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
 	for_header_using_kind: T.ForHeaderUsingKind.Bound;
+	_formal_parameters__get_accessor_signature: T.FormalParametersUGetAccessorSignature;
+	_formal_parameters__set_accessor_signature: T.FormalParametersUSetAccessorSignature.Bound;
+	_formal_parameters_elements__set_accessor_signature: T.FormalParametersElementsUSetAccessorSignature.Bound;
+	setter_parameter: T.SetterParameter.Bound;
+	method_definition_plain: T.MethodDefinitionPlain.Bound;
+	method_definition_getter: T.MethodDefinitionGetter.Bound;
+	method_definition_setter: T.MethodDefinitionSetter.Bound;
+	method_signature_plain: T.MethodSignaturePlain.Bound;
+	method_signature_getter: T.MethodSignatureGetter.Bound;
+	method_signature_setter: T.MethodSignatureSetter.Bound;
+	abstract_method_signature_plain: T.AbstractMethodSignaturePlain.Bound;
+	abstract_method_signature_getter: T.AbstractMethodSignatureGetter.Bound;
+	abstract_method_signature_setter: T.AbstractMethodSignatureSetter.Bound;
+	public_field_definition_plain: T.PublicFieldDefinitionPlain.Bound;
+	public_field_definition_accessor: T.PublicFieldDefinitionAccessor.Bound;
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	_template_chars: T.TemplateChars;
@@ -9924,14 +10571,10 @@ export const _factoryMap = {
 	formal_parameters: buildFormalParameters,
 	class_static_block: buildClassStaticBlock,
 	rest_pattern: buildRestPattern,
-	method_definition: buildMethodDefinition,
 	pair: buildPair,
 	pair_pattern: buildPairPattern,
 	computed_property_name: buildComputedPropertyName,
-	public_field_definition: buildPublicFieldDefinition,
 	non_null_expression: buildNonNullExpression,
-	method_signature: buildMethodSignature,
-	abstract_method_signature: buildAbstractMethodSignature,
 	function_signature: buildFunctionSignature,
 	decorator_parenthesized_expression: buildDecoratorParenthesizedExpression,
 	type_assertion: buildTypeAssertion,
@@ -10015,6 +10658,7 @@ export const _factoryMap = {
 	import_clause_group: buildImportClauseGroup,
 	using_declaration_arm: buildUsingDeclarationArm,
 	catch_clause_group: buildCatchClauseGroup,
+	_get_accessor_signature: buildGetAccessorSignature,
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
@@ -10073,6 +10717,21 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
+	_formal_parameters__get_accessor_signature: buildFormalParametersUGetAccessorSignature,
+	_formal_parameters__set_accessor_signature: buildFormalParametersUSetAccessorSignature,
+	_formal_parameters_elements__set_accessor_signature: buildFormalParametersElementsUSetAccessorSignature,
+	setter_parameter: buildSetterParameter,
+	method_definition_plain: buildMethodDefinitionPlain,
+	method_definition_getter: buildMethodDefinitionGetter,
+	method_definition_setter: buildMethodDefinitionSetter,
+	method_signature_plain: buildMethodSignaturePlain,
+	method_signature_getter: buildMethodSignatureGetter,
+	method_signature_setter: buildMethodSignatureSetter,
+	abstract_method_signature_plain: buildAbstractMethodSignaturePlain,
+	abstract_method_signature_getter: buildAbstractMethodSignatureGetter,
+	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
+	public_field_definition_plain: buildPublicFieldDefinitionPlain,
+	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,

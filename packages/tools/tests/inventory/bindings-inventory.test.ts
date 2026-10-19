@@ -184,6 +184,13 @@ describe('deriveVocabulary', () => {
 			'declaration.method',
 			'declaration.method.signature',
 			'declaration.method.signature.abstract',
+			'declaration.property',
+			'declaration.property.getter',
+			'declaration.property.setter',
+			'declaration.property.signature.abstract.getter',
+			'declaration.property.signature.abstract.setter',
+			'declaration.property.signature.getter',
+			'declaration.property.signature.setter',
 			'declaration.signature.index',
 			'statement.block.static'
 		]);

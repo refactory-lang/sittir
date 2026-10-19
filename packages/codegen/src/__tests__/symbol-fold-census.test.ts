@@ -6,7 +6,7 @@ import { grammarPackage, sittirDirOf } from '../grammars.ts';
 
 const PINS: Record<string, number> = {
 	rust: 4,
-	typescript: 7,
+	typescript: 10,
 	python: 2,
 	scm: 4,
 	regex: 1

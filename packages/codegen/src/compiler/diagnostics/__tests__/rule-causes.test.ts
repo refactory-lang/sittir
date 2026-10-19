@@ -4,6 +4,7 @@ import { diagnoseRuleCauses, isWitnessVerified } from '../rule-causes.ts';
 import type { StageDiagnosis } from '../../stage.ts';
 import type { GrammarDiagnostic } from '../../../types/diagnostics.ts';
 import type { RuleCauseDeclaration } from '../../../dsl/primitives/rule-cause.ts';
+import { reauthoredDeclaration as reauthoredDecl } from '../../__tests__/_rule-declarations.ts';
 
 function enriched(partial: Partial<StageDiagnosis>): StageDiagnosis {
 	return { ruleNames: new Set(), externalNames: new Set(), diagnostics: [], ...partial };
@@ -64,7 +65,7 @@ describe('semantic-gap reauthoring witnesses', () => {
 	const check = (evidence: typeof witness | undefined) =>
 		diagnose({
 			ruleCauses: {
-				tuple: { kind: 'reauthored', cause: 'semantic-gap', witnesses: evidence === undefined ? undefined : [evidence] }
+				tuple: reauthoredDecl('semantic-gap', evidence === undefined ? undefined : [evidence])
 			},
 			enriched: enriched({ ruleNames: new Set(['tuple']) }),
 			upstreamRules
@@ -93,7 +94,7 @@ describe('a witnessed cause given an empty witness array', () => {
 		'%s is a mismatch',
 		(cause) => {
 			const ds = diagnose({
-				ruleCauses: { tuple: { kind: 'reauthored', cause, witnesses: [] as never } },
+				ruleCauses: { tuple: reauthoredDecl(cause, [] as never) },
 				enriched: enriched({ ruleNames: new Set(['tuple']) }),
 				upstreamRules,
 				authoredRules: upstreamRules
@@ -107,7 +108,7 @@ describe('a witnessed cause given an empty witness array', () => {
 describe('diagnoseRuleCauses', () => {
 	it('a reauthored rule provoked by a code of its cause class is silent, whether or not that code blocks yet', () => {
 		const ds = diagnose({
-			ruleCauses: { a: { kind: 'reauthored', cause: 'alias-shape' } },
+			ruleCauses: { a: reauthoredDecl('alias-shape') },
 			enriched: enriched({ ruleNames: new Set(['a']), diagnostics: [fired('unclassifiable-shape', 'a')] })
 		});
 		expect(ds).toEqual([]);
@@ -115,7 +116,7 @@ describe('diagnoseRuleCauses', () => {
 
 	it('a reauthored rule with no provocation is rule-reauthored-without-cause, blocking', () => {
 		const ds = diagnose({
-			ruleCauses: { a: { kind: 'reauthored', cause: 'ambiguity' } },
+			ruleCauses: { a: reauthoredDecl('ambiguity') },
 			enriched: enriched({ ruleNames: new Set(['a']), diagnostics: [fired('content-collision', 'a', false)] })
 		});
 		expect(codesOf(ds)).toEqual(['rule-reauthored-without-cause:a']);
@@ -124,7 +125,7 @@ describe('diagnoseRuleCauses', () => {
 
 	it('rule-reauthored-without-cause is accepted at the gate when the owner is floor-listed for that code', () => {
 		const ds = diagnose({
-			ruleCauses: { a: { kind: 'reauthored', cause: 'ambiguity' } },
+			ruleCauses: { a: reauthoredDecl('ambiguity') },
 			enriched: enriched({ ruleNames: new Set(['a']) })
 		});
 		expect(ds).toEqual([expect.objectContaining({ code: 'rule-reauthored-without-cause', canProceed: false })]);
@@ -133,7 +134,7 @@ describe('diagnoseRuleCauses', () => {
 
 	it('a provoked rule whose declared cause does not match the provoking code is rule-cause-mismatch', () => {
 		const ds = diagnose({
-			ruleCauses: { a: { kind: 'reauthored', cause: 'ambiguity' } },
+			ruleCauses: { a: reauthoredDecl('ambiguity') },
 			enriched: enriched({ ruleNames: new Set(['a']), diagnostics: [fired('unclassifiable-shape', 'a')] })
 		});
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:a']);
@@ -142,7 +143,7 @@ describe('diagnoseRuleCauses', () => {
 	it('a reauthored declaration with a cause that is not one is rule-cause-mismatch naming the valid causes', () => {
 		for (const diagnostics of [[fired('unclassifiable-shape', 'a')], []]) {
 			const ds = diagnose({
-				ruleCauses: { a: { kind: 'reauthored', cause: 'bogus' } as never },
+				ruleCauses: { a: reauthoredDecl('bogus' as never) },
 				enriched: enriched({ ruleNames: new Set(['a']), diagnostics })
 			});
 			expect(codesOf(ds)).toEqual(['rule-cause-mismatch:a']);
@@ -152,7 +153,7 @@ describe('diagnoseRuleCauses', () => {
 
 	it('a reauthored declaration on a name upstream does not declare is rule-cause-mismatch', () => {
 		const ds = diagnose({
-			ruleCauses: { brand_new: { kind: 'reauthored', cause: 'ambiguity' } },
+			ruleCauses: { brand_new: reauthoredDecl('ambiguity') },
 			enriched: enriched({ ruleNames: new Set(['a']) })
 		});
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:brand_new']);
@@ -207,17 +208,17 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 		list: seq(str('['), { type: 'OPTIONAL', content: sym('_elements') }, str(']'))
 	};
 	const ruleNames = new Set(Object.keys(upstreamRules));
-	const declared = (
+	const causesOf = (
 		form: readonly (string | { symbol: string })[],
 		kind: string
 	): Record<string, RuleCauseDeclaration> => ({
-		tuple: { kind: 'reauthored', cause: 'accepts-other-kind', witnesses: [{ text: '(a)', form, kind }] }
+		tuple: reauthoredDecl('accepts-other-kind', [{ text: '(a)', form, kind }])
 	});
 	const parenthesizedForm = ['(', { symbol: 'expression' }, ')'];
 
 	it("is silent when the upstream rule and the other kind's rule both derive the witness form", () => {
 		const ds = diagnose({
-			ruleCauses: declared(parenthesizedForm, 'parenthesized'),
+			ruleCauses: causesOf(parenthesizedForm, 'parenthesized'),
 			enriched: enriched({ ruleNames }),
 			upstreamRules
 		});
@@ -226,7 +227,7 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 
 	it('is a mismatch when the upstream rule does not derive the form', () => {
 		const ds = diagnose({
-			ruleCauses: declared(['(', { symbol: 'yield' }, ')'], 'parenthesized'),
+			ruleCauses: causesOf(['(', { symbol: 'yield' }, ')'], 'parenthesized'),
 			enriched: enriched({ ruleNames }),
 			upstreamRules
 		});
@@ -236,7 +237,7 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 
 	it("is a mismatch when the other kind's rule does not derive the form", () => {
 		const ds = diagnose({
-			ruleCauses: declared(parenthesizedForm, 'list'),
+			ruleCauses: causesOf(parenthesizedForm, 'list'),
 			enriched: enriched({ ruleNames }),
 			upstreamRules
 		});
@@ -246,7 +247,7 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 
 	it('is a mismatch when the other kind is not an upstream rule', () => {
 		const ds = diagnose({
-			ruleCauses: declared(parenthesizedForm, 'absent'),
+			ruleCauses: causesOf(parenthesizedForm, 'absent'),
 			enriched: enriched({ ruleNames }),
 			upstreamRules
 		});
@@ -255,7 +256,7 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 
 	it('is a mismatch when no witness is declared', () => {
 		const ds = diagnose({
-			ruleCauses: { tuple: { kind: 'reauthored', cause: 'accepts-other-kind' } },
+			ruleCauses: { tuple: reauthoredDecl('accepts-other-kind') },
 			enriched: enriched({ ruleNames }),
 			upstreamRules
 		});
@@ -265,13 +266,13 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 	it('derives through a repeat: a longer form of the same rule is accepted, and one the rule cannot produce is not', () => {
 		const longer = ['(', { symbol: 'expression' }, ',', { symbol: 'expression' }, ',', ')'];
 		const viaRepeat = diagnose({
-			ruleCauses: declared(longer, 'tuple'),
+			ruleCauses: causesOf(longer, 'tuple'),
 			enriched: enriched({ ruleNames }),
 			upstreamRules
 		});
 		expect(viaRepeat).toEqual([]);
 		const doubled = diagnose({
-			ruleCauses: declared(['(', { symbol: 'expression' }, ',', ',', ')'], 'tuple'),
+			ruleCauses: causesOf(['(', { symbol: 'expression' }, ',', ',', ')'], 'tuple'),
 			enriched: enriched({ ruleNames }),
 			upstreamRules
 		});
@@ -297,7 +298,7 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 	const check = (witnesses: readonly (typeof witness)[] | undefined, authored: Record<string, unknown> = authoredRules) =>
 		diagnose({
 			ruleCauses: {
-				getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: witnesses as never }
+				getter: reauthoredDecl('accepts-invalid-syntax', witnesses as never)
 			},
 			enriched: enriched({ ruleNames }),
 			upstreamRules,
@@ -337,7 +338,7 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 		const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
 		const doubled = { text: 'x x', form: ['x', 'x'], kind: 'getter', production: 'p' };
 		const ds = diagnose({
-			ruleCauses: { getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: [doubled] } },
+			ruleCauses: { getter: reauthoredDecl('accepts-invalid-syntax', [doubled]) },
 			enriched: enriched({ ruleNames: new Set(['getter']) }),
 			upstreamRules: upstream,
 			authoredRules: { getter: sym('variant'), variant: choice(seq(sym('variant'), str('x')), str('x')) }
@@ -349,7 +350,7 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 	it('reads a symbol upstream also declares as a witness item, not as its body', () => {
 		const withName = { ...upstreamRules, name: str('x') };
 		const ds = diagnose({
-			ruleCauses: { getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: [witness] } },
+			ruleCauses: { getter: reauthoredDecl('accepts-invalid-syntax', [witness]) },
 			enriched: enriched({ ruleNames: new Set(Object.keys(withName)) }),
 			upstreamRules: withName,
 			authoredRules: { ...authoredRules, name: str('x') }
@@ -371,7 +372,68 @@ describe('a rule reauthored because upstream accepts a form the language exclude
 		expect(ds[0]!.message).toContain('witness 1');
 	});
 
+	it('ruled-narrowing with no ruling is a mismatch that says it states no ruling', () => {
+		const ds = diagnose({
+			ruleCauses: { getter: reauthoredDecl('ruled-narrowing', [witness] as never) },
+			enriched: enriched({ ruleNames }),
+			upstreamRules,
+			authoredRules
+		});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain('it states no ruling');
+	});
+
+	it('ruled-narrowing with a ruling passes the way accepts-invalid-syntax passes with a production', () => {
+		const ds = diagnose({
+			ruleCauses: { getter: reauthoredDecl('ruled-narrowing', [{ ...witness, ruling: 'the grammar excludes an optional parameter' }] as never) },
+			enriched: enriched({ ruleNames }),
+			upstreamRules,
+			authoredRules
+		});
+		expect(ds).toEqual([]);
+	});
+
+	it('judges a multi-cause rule per cause, with one diagnostic for each failing cause', () => {
+		const ds = diagnose({
+			ruleCauses: {
+				getter: {
+					kind: 'reauthored',
+					causes: [
+						{ cause: 'accepts-invalid-syntax', witnesses: [{ ...witness, form: ['get', { symbol: 'name' }, '(', ',', ')'] }] },
+						{ cause: 'ruled-narrowing', witnesses: [witness] }
+					]
+				} as never
+			},
+			enriched: enriched({ ruleNames }),
+			upstreamRules,
+			authoredRules
+		});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter', 'rule-cause-mismatch:getter']);
+		expect(ds.map((d) => d.details)).toEqual([
+			expect.objectContaining({ cause: 'accepts-invalid-syntax' }),
+			expect.objectContaining({ cause: 'ruled-narrowing' })
+		]);
+	});
+
+	it('a multi-cause rule whose every cause holds is silent', () => {
+		const ds = diagnose({
+			ruleCauses: {
+				getter: {
+					kind: 'reauthored',
+					causes: [
+						{ cause: 'accepts-invalid-syntax', witnesses: [witness] },
+						{ cause: 'ruled-narrowing', witnesses: [{ ...witness, ruling: 'the grammar excludes an optional parameter' }] }
+					]
+				} as never
+			},
+			enriched: enriched({ ruleNames }),
+			upstreamRules,
+			authoredRules
+		});
+		expect(ds).toEqual([]);
+	});
+
 	it('is a witness-verified cause', () => {
-		expect(isWitnessVerified({ kind: 'reauthored', cause: 'accepts-invalid-syntax' })).toBe(true);
+		expect(isWitnessVerified(reauthoredDecl('accepts-invalid-syntax'))).toBe(true);
 	});
 });

@@ -2185,27 +2185,6 @@ describe('rest_pattern sub-factories', () => {
 	});
 });
 
-describe('method_definition', () => {
-	it('factory produces correct type', () => {
-		const node = ir.methodDefinition({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
-		});
-		expect(node.$type).toBe(TSKindId.MethodDefinition);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.methodDefinition({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
 describe('pair', () => {
 	it('factory produces correct type', () => {
 		const node = ir.pair({
@@ -2294,23 +2273,6 @@ describe('computed_property_name', () => {
 	});
 });
 
-describe('public_field_definition', () => {
-	it('factory produces correct type', () => {
-		const node = ir.publicFieldDefinition({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.publicFieldDefinition({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
 describe('non_null_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.nonNullExpression({
@@ -2332,44 +2294,6 @@ describe('non_null_expression', () => {
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 		expect(rendered).toContain('undefined');
-	});
-});
-
-describe('method_signature', () => {
-	it('factory produces correct type', () => {
-		const node = ir.methodSignature({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.MethodSignature);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.methodSignature({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('abstract_method_signature', () => {
-	it('factory produces correct type', () => {
-		const node = ir.abstractMethodSignature({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.abstractMethodSignature({
-			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
 	});
 });
 
@@ -4945,7 +4869,7 @@ describe('class_body_member_method', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classBodyMemberMethod({
 			methodDefinition: {
-				$type: TSKindId.MethodDefinition,
+				$type: TSKindId.MethodDefinitionPlain,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -4960,7 +4884,7 @@ describe('class_body_member_method', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.classBodyMemberMethod({
 			methodDefinition: {
-				$type: TSKindId.MethodDefinition,
+				$type: TSKindId.MethodDefinitionPlain,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -4974,11 +4898,62 @@ describe('class_body_member_method', () => {
 	});
 });
 
+describe('class_body_member_method sub-factories', () => {
+	it('plain builds the parent', () => {
+		const node = ir.classBodyMemberMethod.plain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethod);
+		expect((node as any).methodDefinition()?.$type).toBe(TSKindId.MethodDefinitionPlain);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('getter builds the parent', () => {
+		const node = ir.classBodyMemberMethod.getter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethod);
+		expect((node as any).methodDefinition()?.$type).toBe(TSKindId.MethodDefinitionGetter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('setter builds the parent', () => {
+		const node = ir.classBodyMemberMethod.setter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethod);
+		expect((node as any).methodDefinition()?.$type).toBe(TSKindId.MethodDefinitionSetter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('class_body_member_method_sig', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classBodyMemberMethodSig({
 			methodSignature: {
-				$type: TSKindId.MethodSignature,
+				$type: TSKindId.MethodSignaturePlain,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -4993,7 +4968,7 @@ describe('class_body_member_method_sig', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.classBodyMemberMethodSig({
 			methodSignature: {
-				$type: TSKindId.MethodSignature,
+				$type: TSKindId.MethodSignaturePlain,
 				$text: 'test',
 				$source: 2,
 				$named: true,
@@ -5007,17 +4982,68 @@ describe('class_body_member_method_sig', () => {
 	});
 });
 
+describe('class_body_member_method_sig sub-factories', () => {
+	it('plain builds the parent', () => {
+		const node = ir.classBodyMemberMethodSig.plain({
+			terminator: '\n',
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
+		expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignaturePlain);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('getter builds the parent', () => {
+		const node = ir.classBodyMemberMethodSig.getter({
+			terminator: '\n',
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
+		expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignatureGetter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('setter builds the parent', () => {
+		const node = ir.classBodyMemberMethodSig.setter({
+			terminator: '\n',
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
+		expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignatureSetter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('class_body_member_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classBodyMemberDeclaration(
 			{
-				$type: TSKindId.AbstractMethodSignature,
+				$type: TSKindId.AbstractMethodSignaturePlain,
 				$text: 'test',
 				$source: 2,
 				$named: true,
 				_accessibility_modifier: TSKindId.PublicKeyword as never,
 				_override: true as never,
-				_generator: TSKindId.GetKeyword as never,
+				_generator: true as never,
 				_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
 				_optional: true as never,
 				_type_parameters: {
@@ -5064,13 +5090,13 @@ describe('class_body_member_declaration', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.classBodyMemberDeclaration(
 			{
-				$type: TSKindId.AbstractMethodSignature,
+				$type: TSKindId.AbstractMethodSignaturePlain,
 				$text: 'test',
 				$source: 2,
 				$named: true,
 				_accessibility_modifier: TSKindId.PublicKeyword as never,
 				_override: true as never,
-				_generator: TSKindId.GetKeyword as never,
+				_generator: true as never,
 				_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
 				_optional: true as never,
 				_type_parameters: {
@@ -6875,6 +6901,388 @@ describe('for_header_using_kind', () => {
 			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('_formal_parameters__get_accessor_signature', () => {
+	it('is the kind id', () => {
+		expect(ir.formalParametersGetAccessorSignature).toBe(TSKindId.FormalParametersUGetAccessorSignature);
+	});
+});
+
+describe('_formal_parameters__set_accessor_signature', () => {
+	it('factory produces correct type', () => {
+		const node = ir.formalParametersSetAccessorSignature({
+			$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_item: {
+				$type: TSKindId.SetterParameter,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_decorator: [],
+				_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+			} as any
+		} as any);
+		expect(node.$type).toBe(TSKindId.FormalParametersUSetAccessorSignature);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.formalParametersSetAccessorSignature({
+			$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_item: {
+				$type: TSKindId.SetterParameter,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_decorator: [],
+				_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+			} as any
+		} as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('this');
+	});
+});
+
+describe('setter_parameter', () => {
+	it('factory produces correct type', () => {
+		const node = ir.setterParameter({
+			pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.SetterParameter);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.setterParameter({
+			pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('method_definition_plain', () => {
+	it('factory produces correct type', () => {
+		const node = ir.methodDefinitionPlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		expect(node.$type).toBe(TSKindId.MethodDefinitionPlain);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.methodDefinitionPlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('method_definition_getter', () => {
+	it('factory produces correct type', () => {
+		const node = ir.methodDefinitionGetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		expect(node.$type).toBe(TSKindId.MethodDefinitionGetter);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.methodDefinitionGetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('method_definition_setter', () => {
+	it('factory produces correct type', () => {
+		const node = ir.methodDefinitionSetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		expect(node.$type).toBe(TSKindId.MethodDefinitionSetter);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.methodDefinitionSetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any,
+			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true, _statements: [] } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('method_signature_plain', () => {
+	it('factory produces correct type', () => {
+		const node = ir.methodSignaturePlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.MethodSignaturePlain);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.methodSignaturePlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('method_signature_getter', () => {
+	it('factory produces correct type', () => {
+		const node = ir.methodSignatureGetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.MethodSignatureGetter);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.methodSignatureGetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('method_signature_setter', () => {
+	it('factory produces correct type', () => {
+		const node = ir.methodSignatureSetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.MethodSignatureSetter);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.methodSignatureSetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('abstract_method_signature_plain', () => {
+	it('factory produces correct type', () => {
+		const node = ir.abstractMethodSignaturePlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.AbstractMethodSignaturePlain);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.abstractMethodSignaturePlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('abstract_method_signature_getter', () => {
+	it('factory produces correct type', () => {
+		const node = ir.abstractMethodSignatureGetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.AbstractMethodSignatureGetter);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.abstractMethodSignatureGetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('abstract_method_signature_setter', () => {
+	it('factory produces correct type', () => {
+		const node = ir.abstractMethodSignatureSetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.AbstractMethodSignatureSetter);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.abstractMethodSignatureSetter({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
+			parameters: {
+				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_elements: {
+					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_item: {
+						$type: TSKindId.SetterParameter,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_decorator: [],
+						_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+					} as any
+				} as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('public_field_definition_plain', () => {
+	it('factory produces correct type', () => {
+		const node = ir.publicFieldDefinitionPlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.PublicFieldDefinitionPlain);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.publicFieldDefinitionPlain({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('public_field_definition_accessor', () => {
+	it('factory produces correct type', () => {
+		const node = ir.publicFieldDefinitionAccessor({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.PublicFieldDefinitionAccessor);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.publicFieldDefinitionAccessor({
+			name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

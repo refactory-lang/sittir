@@ -64,7 +64,7 @@ export async function run(opts: OverrideCensusOptions): Promise<number> {
 	}
 	process.stdout.write(`${grammar}: ${report.handWrittenRules.count} hand-written rules\n`);
 	for (const rule of declared) {
-		const cause = 'cause' in rule ? rule.cause : '';
+		const cause = rule.kind === 'reauthored' ? rule.causes.map((declared) => declared.cause).join('+') : '';
 		process.stdout.write(`  ${rule.kind.padEnd(11)} ${cause.padEnd(17)} ${rule.name}\n`);
 	}
 	for (const name of undeclared) process.stdout.write(`  ${'bare'.padEnd(11)} ${''.padEnd(17)} ${name}\n`);

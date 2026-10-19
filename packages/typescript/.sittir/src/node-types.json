@@ -62,6 +62,24 @@
     ]
   },
   {
+    "type": "abstract_method_signature",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "abstract_method_signature_getter",
+        "named": true
+      },
+      {
+        "type": "abstract_method_signature_plain",
+        "named": true
+      },
+      {
+        "type": "abstract_method_signature_setter",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "call_expression",
     "named": true,
     "subtypes": [
@@ -281,6 +299,42 @@
       },
       {
         "type": "meta_property_new_target",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "method_definition",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "method_definition_getter",
+        "named": true
+      },
+      {
+        "type": "method_definition_plain",
+        "named": true
+      },
+      {
+        "type": "method_definition_setter",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "method_signature",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "method_signature_getter",
+        "named": true
+      },
+      {
+        "type": "method_signature_plain",
+        "named": true
+      },
+      {
+        "type": "method_signature_setter",
         "named": true
       }
     ]
@@ -558,6 +612,20 @@
     ]
   },
   {
+    "type": "public_field_definition",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "public_field_definition_accessor",
+        "named": true
+      },
+      {
+        "type": "public_field_definition_plain",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "statement",
     "named": true,
     "subtypes": [
@@ -786,7 +854,97 @@
     }
   },
   {
-    "type": "abstract_method_signature",
+    "type": "abstract_method_signature_getter",
+    "named": true,
+    "fields": {
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "accessor_kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "get",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_parameters",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "asserts_annotation",
+            "named": true
+          },
+          {
+            "type": "type_annotation",
+            "named": true
+          },
+          {
+            "type": "type_predicate_annotation",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "abstract_method_signature_plain",
     "named": true,
     "fields": {
       "accessibility_modifier": {
@@ -805,14 +963,6 @@
         "types": [
           {
             "type": "*",
-            "named": false
-          },
-          {
-            "type": "get",
-            "named": false
-          },
-          {
-            "type": "set",
             "named": false
           }
         ]
@@ -897,6 +1047,78 @@
         "types": [
           {
             "type": "type_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "abstract_method_signature_setter",
+    "named": true,
+    "fields": {
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "accessor_kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "set",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_parameters",
             "named": true
           }
         ]
@@ -3635,6 +3857,10 @@
           {
             "type": "required_parameter",
             "named": true
+          },
+          {
+            "type": "setter_parameter",
+            "named": true
           }
         ]
       }
@@ -5221,7 +5447,117 @@
     "fields": {}
   },
   {
-    "type": "method_definition",
+    "type": "method_definition_getter",
+    "named": true,
+    "fields": {
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "accessor_kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "get",
+            "named": false
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_parameters",
+            "named": true
+          }
+        ]
+      },
+      "static": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static",
+            "named": false
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "asserts_annotation",
+            "named": true
+          },
+          {
+            "type": "type_annotation",
+            "named": true
+          },
+          {
+            "type": "type_predicate_annotation",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "method_definition_plain",
     "named": true,
     "fields": {
       "accessibility_modifier": {
@@ -5260,14 +5596,6 @@
         "types": [
           {
             "type": "*",
-            "named": false
-          },
-          {
-            "type": "get",
-            "named": false
-          },
-          {
-            "type": "set",
             "named": false
           }
         ]
@@ -5379,7 +5707,199 @@
     }
   },
   {
-    "type": "method_signature",
+    "type": "method_definition_setter",
+    "named": true,
+    "fields": {
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "accessor_kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "set",
+            "named": false
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_parameters",
+            "named": true
+          }
+        ]
+      },
+      "static": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "method_signature_getter",
+    "named": true,
+    "fields": {
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "accessor_kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "get",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_parameters",
+            "named": true
+          }
+        ]
+      },
+      "static": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static",
+            "named": false
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "asserts_annotation",
+            "named": true
+          },
+          {
+            "type": "type_annotation",
+            "named": true
+          },
+          {
+            "type": "type_predicate_annotation",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "method_signature_plain",
     "named": true,
     "fields": {
       "accessibility_modifier": {
@@ -5408,14 +5928,6 @@
         "types": [
           {
             "type": "*",
-            "named": false
-          },
-          {
-            "type": "get",
-            "named": false
-          },
-          {
-            "type": "set",
             "named": false
           }
         ]
@@ -5521,6 +6033,88 @@
           {
             "type": "type_parameters",
             "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "method_signature_setter",
+    "named": true,
+    "fields": {
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "accessor_kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "set",
+            "named": false
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_parameters",
+            "named": true
+          }
+        ]
+      },
+      "static": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static",
+            "named": false
           }
         ]
       }
@@ -6354,7 +6948,7 @@
     }
   },
   {
-    "type": "public_field_definition",
+    "type": "public_field_definition_accessor",
     "named": true,
     "fields": {
       "abstract": {
@@ -6379,11 +6973,113 @@
       },
       "accessor": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "accessor",
             "named": false
+          }
+        ]
+      },
+      "decorator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "decorator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "static": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static",
+            "named": false
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_annotation",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "public_field_definition_plain",
+    "named": true,
+    "fields": {
+      "abstract": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "abstract",
+            "named": false
+          }
+        ]
+      },
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
           }
         ]
       },
@@ -6822,6 +7518,76 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "setter_parameter",
+    "named": true,
+    "fields": {
+      "decorator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "decorator",
+            "named": true
+          }
+        ]
+      },
+      "override": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "override_modifier",
+            "named": true
+          }
+        ]
+      },
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "lhs_expression",
+            "named": true
+          },
+          {
+            "type": "this",
+            "named": true
+          }
+        ]
+      },
+      "readonly": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "readonly",
+            "named": false
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_annotation",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "accessibility_modifier",
+          "named": true
+        }
+      ]
     }
   },
   {

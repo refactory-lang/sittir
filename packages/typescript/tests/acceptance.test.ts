@@ -39,3 +39,30 @@ describe('accessor arity', () => {
 		expect(errorsOf(source)).toEqual([]);
 	});
 });
+
+describe('class accessor modifiers', () => {
+	it.each([
+		['optional getter', 'export class A { get x?() {} }\n'],
+		['readonly getter', 'export class A { readonly get x() {} }\n'],
+		['declare accessor', 'export class A { declare accessor x: number }\n'],
+		['readonly accessor', 'export class A { readonly accessor x: number }\n'],
+		['optional accessor', 'export class A { accessor x?: number }\n']
+	])('rejects the %s', (_, source) => {
+		expect(errorsOf(source)).not.toEqual([]);
+	});
+
+	it.each([
+		['abstract accessor in an abstract class', 'export abstract class A { abstract accessor x: number }\n'],
+		['static accessor with an initializer', 'export class A { static accessor y = 1 }\n'],
+		['private override accessor', 'export class B {}\nexport class A extends B { private override accessor x = 1 }\n'],
+		// TS1243 (`static` with `abstract`) is a checker error, not a parse error: the grammar is context-free and the builder exclusions refuse it.
+		['static abstract accessor', 'export abstract class A { static abstract accessor x: number }\n']
+	])('accepts the %s', (_, source) => {
+		expect(errorsOf(source)).toEqual([]);
+	});
+
+	it("parses a setter's parameter as a setter_parameter", () => {
+		const found = [...ts.parse('export class A { set x(v: number) {} }\n').$query().$descendants.ofType(ts.kinds.SetterParameter)];
+		expect(found).toHaveLength(1);
+	});
+});

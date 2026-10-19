@@ -606,7 +606,7 @@ A grammar's rules by name. The gate reads two such records. The upstream rules,
 as evaluated before any sittir change, are the raw stage. The authored rules are
 the evaluated grammar's own, with `rules:` applied. Witnesses that claim what
 upstream derives are judged against the upstream rules. Only
-`'accepts-invalid-syntax'` also reads the authored rules, to show the authored
+`'accepts-invalid-syntax'` and `'ruled-narrowing'` also read the authored rules, to show the authored
 body no longer derives the excluded form.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeRejectedWitnesses`
@@ -618,12 +618,14 @@ missing witness, a `kind` upstream does not declare, or an upstream rule that
 already derives the form is a `rule-cause-mismatch`. The rule being reauthored must still
 be an upstream rule, which `judgeReauthored` checks first.
 
-### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeInvalidWitnesses`
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeNarrowingWitnesses`
 
-Judges a rule declared `reauthored('accepts-invalid-syntax', witnesses, body)`.
-The claim is that upstream accepts a form the language's productions exclude,
-and the authored rule does not. For each witness:
-- it must cite the excluding `production`;
+Judges the witnesses of a narrowing cause, `'accepts-invalid-syntax'` or
+`'ruled-narrowing'`. The claim is that upstream accepts a form the language's
+productions exclude, or the maintainer ruled out, and the authored rule does
+not. For each witness:
+- it must state its cause's justification (`NARROWING_JUSTIFICATIONS`): the
+  excluding `production`, or the `ruling`;
 - the upstream rule named by its `kind` must derive its `form`;
 - the grammar must author a rule of that name, and that rule must not derive
   the `form`.
@@ -640,8 +642,7 @@ parse clean, so a recovery that swallows a neighbour fails.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
 
-Whether a rule's declaration is one the gate verifies by witness: today,
-every cause in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'` and `'accepts-invalid-syntax'`. The second additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
+Whether the gate verifies every cause of a rule's declaration by witness, each one in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'`, `'accepts-invalid-syntax'` and `'ruled-narrowing'`. The second additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
 reads it to tell a verified correction from debt.
 
 ### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`
@@ -704,7 +705,8 @@ the declaration or deletion that resolves it:
   external, as the evaluated externals list spells it.
 - `vocabulary-replaces-upstream`: a `vocabulary` entry named like an upstream
   rule.
-- `rule-cause-mismatch`: a `reauthored` entry whose cause is not a cause, on a
+- `rule-cause-mismatch`: a cause of a `reauthored` entry (each is judged on
+  its own) that is not a cause, on a
   name upstream does not declare, or whose upstream provocations all belong to
   other causes.
 - `rule-reauthored-without-cause`: a `reauthored` entry no `PROVOKING_CODES`
@@ -721,11 +723,19 @@ The `whitespace-mint-collision` message for each collision site: a `visibleExter
 
 ## `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeReauthored`
 
-The `reauthored` judgement: the declared cause must be a `PROVOKING_CODES` key (grammar files are unchecked, so an unknown cause reaches here and is `rule-cause-mismatch` naming the valid causes), the name must be an upstream rule, some
+The judgement of one cause of a `reauthored` entry (`diagnoseRuleCauses` judges each on its own): the cause must be a `PROVOKING_CODES` key (grammar files are unchecked, so an unknown cause reaches here and is `rule-cause-mismatch` naming the valid causes), the name must be an upstream rule, some
 `PROVOKING_CODES` code must fire on it upstream, and one of those codes must
 belong to the declared cause. A witnessed cause is judged by its witnesses
 instead: `judgeOtherKindWitnesses`, `judgeRejectedWitnesses` or
-`judgeInvalidWitnesses`.
+`judgeNarrowingWitnesses`.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::NARROWING_JUSTIFICATIONS`
+
+The justification each narrowing cause's witness must state, and the reason a witness without it fails: `production` for `'accepts-invalid-syntax'`, `ruling` for `'ruled-narrowing'`.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::NarrowingCause`
+
+The causes `judgeNarrowingWitnesses` judges: the keys of `NARROWING_JUSTIFICATIONS`.
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::labelPatchSites`
 

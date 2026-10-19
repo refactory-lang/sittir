@@ -1,4 +1,4 @@
-export const WITNESSED_CAUSES = ['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'accepts-invalid-syntax'] as const;
+export const WITNESSED_CAUSES = ['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'accepts-invalid-syntax', 'ruled-narrowing'] as const;
 
 export type WitnessedCause = (typeof WITNESSED_CAUSES)[number];
 
@@ -20,10 +20,33 @@ export interface InvalidSyntaxWitness extends OtherKindWitness {
 	readonly production: string;
 }
 
+export interface RuledNarrowingWitness extends OtherKindWitness {
+	readonly ruling: string;
+}
+
 export type Witnesses<W> = readonly [W, ...W[]];
 
+interface CauseWitnesses {
+	readonly 'accepts-other-kind': OtherKindWitness;
+	readonly 'semantic-gap': SemanticGapWitness;
+	readonly 'rejects-valid-syntax': OtherKindWitness;
+	readonly 'accepts-invalid-syntax': InvalidSyntaxWitness;
+	readonly 'ruled-narrowing': RuledNarrowingWitness;
+}
+
+export type CauseWitness<C extends WitnessedCause> = CauseWitnesses[C];
+
+export type CausePair =
+	| { readonly [C in WitnessedCause]: readonly [C, Witnesses<CauseWitness<C>>] }[WitnessedCause]
+	| readonly [Exclude<RuleCause, WitnessedCause>];
+
+export interface DeclaredCause {
+	readonly cause: RuleCause;
+	readonly witnesses?: Witnesses<OtherKindWitness>;
+}
+
 export type RuleCauseDeclaration =
-	| { readonly kind: 'reauthored'; readonly cause: RuleCause; readonly witnesses?: Witnesses<OtherKindWitness> }
+	| { readonly kind: 'reauthored'; readonly causes: readonly [DeclaredCause, ...DeclaredCause[]] }
 	| { readonly kind: 'vocabulary' };
 
 const RULE_CAUSE = Symbol.for('sittir.ruleCause');
@@ -33,36 +56,20 @@ function tag<F extends (...args: never[]) => unknown>(body: F, declaration: Rule
 	return body;
 }
 
+function declaredCause([cause, witnesses]: CausePair): DeclaredCause {
+	return witnesses === undefined ? { cause } : { cause, witnesses };
+}
+
+export function reauthored<F extends (...args: never[]) => unknown, C extends WitnessedCause>(cause: C, witnesses: Witnesses<CauseWitness<C>>, body: F): F;
+export function reauthored<F extends (...args: never[]) => unknown>(cause: Exclude<RuleCause, WitnessedCause>, body: F): F;
+export function reauthored<F extends (...args: never[]) => unknown>(causes: readonly [CausePair, CausePair, ...CausePair[]], body: F): F;
 export function reauthored<F extends (...args: never[]) => unknown>(
-	cause: 'accepts-other-kind',
-	witnesses: Witnesses<OtherKindWitness>,
-	body: F
-): F;
-export function reauthored<F extends (...args: never[]) => unknown>(
-	cause: 'semantic-gap',
-	witnesses: Witnesses<SemanticGapWitness>,
-	body: F
-): F;
-export function reauthored<F extends (...args: never[]) => unknown>(
-	cause: 'rejects-valid-syntax',
-	witnesses: Witnesses<OtherKindWitness>,
-	body: F
-): F;
-export function reauthored<F extends (...args: never[]) => unknown>(
-	cause: 'accepts-invalid-syntax',
-	witnesses: Witnesses<InvalidSyntaxWitness>,
-	body: F
-): F;
-export function reauthored<F extends (...args: never[]) => unknown>(
-	cause: Exclude<RuleCause, WitnessedCause>,
-	body: F
-): F;
-export function reauthored<F extends (...args: never[]) => unknown>(
-	cause: RuleCause,
+	first: RuleCause | readonly [CausePair, ...CausePair[]],
 	...rest: [F] | [Witnesses<OtherKindWitness>, F]
 ): F {
-	if (rest.length === 1) return tag(rest[0], { kind: 'reauthored', cause });
-	return tag(rest[1], { kind: 'reauthored', cause, witnesses: rest[0] });
+	const pairs = (typeof first === 'string' ? [rest.length === 1 ? [first] : [first, rest[0]]] : first) as readonly [CausePair, ...CausePair[]];
+	const body = rest[rest.length - 1] as F;
+	return tag(body, { kind: 'reauthored', causes: pairs.map(declaredCause) as [DeclaredCause, ...DeclaredCause[]] });
 }
 
 export function vocabulary<F extends (...args: never[]) => unknown>(body: F): F {

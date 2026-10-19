@@ -78,7 +78,9 @@ export interface PortableIds {
 	'comment.line': TSKindId.CommentLine;
 	declaration:
 		| TSKindId.AbstractClassDeclaration
-		| TSKindId.AbstractMethodSignature
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignaturePlain
+		| TSKindId.AbstractMethodSignatureSetter
 		| TSKindId.AmbientDeclaration
 		| TSKindId.AmbientDeclarationModule
 		| TSKindId.CallSignature
@@ -96,14 +98,20 @@ export interface PortableIds {
 		| TSKindId.InterfaceDeclaration
 		| TSKindId.InternalModule
 		| TSKindId.LexicalDeclaration
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodDefinitionPlain
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignaturePlain
+		| TSKindId.MethodSignatureSetter
 		| TSKindId.Module
 		| TSKindId.OptionalParameter
 		| TSKindId.PropertySignature
-		| TSKindId.PublicFieldDefinition
+		| TSKindId.PublicFieldDefinitionAccessor
+		| TSKindId.PublicFieldDefinitionPlain
 		| TSKindId.ReceiverParameterDeclaration
 		| TSKindId.RequiredParameter
+		| TSKindId.SetterParameter
 		| TSKindId.TypeAliasDeclaration
 		| TSKindId.TypeParameter
 		| TSKindId.VariableDeclaration
@@ -111,16 +119,16 @@ export interface PortableIds {
 		| TSKindId.VariableDeclaratorPlain;
 	'declaration.ambient': TSKindId.AmbientDeclaration;
 	'declaration.class': TSKindId.AbstractClassDeclaration | TSKindId.ClassDeclaration;
-	'declaration.constructor': TSKindId.MethodDefinition;
-	'declaration.constructor.private': TSKindId.MethodDefinition;
-	'declaration.constructor.protected': TSKindId.MethodDefinition;
-	'declaration.constructor.public': TSKindId.MethodDefinition;
+	'declaration.constructor': TSKindId.MethodDefinitionPlain;
+	'declaration.constructor.private': TSKindId.MethodDefinitionPlain;
+	'declaration.constructor.protected': TSKindId.MethodDefinitionPlain;
+	'declaration.constructor.public': TSKindId.MethodDefinitionPlain;
 	'declaration.enum': TSKindId.EnumDeclaration;
 	'declaration.enum_member': TSKindId.EnumAssignment | TSKindId.EnumBodyElementName;
-	'declaration.field': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
-	'declaration.field.private': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
-	'declaration.field.protected': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
-	'declaration.field.public': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
+	'declaration.field': TSKindId.PropertySignature | TSKindId.PublicFieldDefinitionPlain;
+	'declaration.field.private': TSKindId.PropertySignature | TSKindId.PublicFieldDefinitionPlain;
+	'declaration.field.protected': TSKindId.PropertySignature | TSKindId.PublicFieldDefinitionPlain;
+	'declaration.field.public': TSKindId.PropertySignature | TSKindId.PublicFieldDefinitionPlain;
 	'declaration.field.signature': TSKindId.PropertySignature;
 	'declaration.field.signature.private': TSKindId.PropertySignature;
 	'declaration.field.signature.protected': TSKindId.PropertySignature;
@@ -131,121 +139,171 @@ export interface PortableIds {
 		| TSKindId.GeneratorFunctionDeclaration;
 	'declaration.function.signature': TSKindId.FunctionSignature;
 	'declaration.interface': TSKindId.InterfaceDeclaration;
-	'declaration.method': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
-	'declaration.method.private': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
+	'declaration.method':
+		| TSKindId.AbstractMethodSignaturePlain
+		| TSKindId.MethodDefinitionPlain
+		| TSKindId.MethodSignaturePlain;
+	'declaration.method.private':
+		| TSKindId.AbstractMethodSignaturePlain
+		| TSKindId.MethodDefinitionPlain
+		| TSKindId.MethodSignaturePlain;
 	'declaration.method.protected':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
-	'declaration.method.public': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
-	'declaration.method.signature': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.abstract': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.private': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.protected': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.public': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignaturePlain
+		| TSKindId.MethodDefinitionPlain
+		| TSKindId.MethodSignaturePlain;
+	'declaration.method.public':
+		| TSKindId.AbstractMethodSignaturePlain
+		| TSKindId.MethodDefinitionPlain
+		| TSKindId.MethodSignaturePlain;
+	'declaration.method.signature': TSKindId.AbstractMethodSignaturePlain | TSKindId.MethodSignaturePlain;
+	'declaration.method.signature.abstract': TSKindId.AbstractMethodSignaturePlain;
+	'declaration.method.signature.abstract.private': TSKindId.AbstractMethodSignaturePlain;
+	'declaration.method.signature.abstract.protected': TSKindId.AbstractMethodSignaturePlain;
+	'declaration.method.signature.abstract.public': TSKindId.AbstractMethodSignaturePlain;
+	'declaration.method.signature.private': TSKindId.AbstractMethodSignaturePlain | TSKindId.MethodSignaturePlain;
+	'declaration.method.signature.protected': TSKindId.AbstractMethodSignaturePlain | TSKindId.MethodSignaturePlain;
+	'declaration.method.signature.public': TSKindId.AbstractMethodSignaturePlain | TSKindId.MethodSignaturePlain;
 	'declaration.module': TSKindId.InternalModule | TSKindId.Module;
 	'declaration.module.external': TSKindId.Module;
 	'declaration.module_property': TSKindId.AmbientDeclarationModule;
 	'declaration.parameter':
 		| TSKindId.OptionalParameter
 		| TSKindId.ReceiverParameterDeclaration
-		| TSKindId.RequiredParameter;
+		| TSKindId.RequiredParameter
+		| TSKindId.SetterParameter;
 	'declaration.parameter.private':
 		| TSKindId.OptionalParameter
 		| TSKindId.ReceiverParameterDeclaration
-		| TSKindId.RequiredParameter;
+		| TSKindId.RequiredParameter
+		| TSKindId.SetterParameter;
 	'declaration.parameter.protected':
 		| TSKindId.OptionalParameter
 		| TSKindId.ReceiverParameterDeclaration
-		| TSKindId.RequiredParameter;
+		| TSKindId.RequiredParameter
+		| TSKindId.SetterParameter;
 	'declaration.parameter.public':
 		| TSKindId.OptionalParameter
 		| TSKindId.ReceiverParameterDeclaration
-		| TSKindId.RequiredParameter;
+		| TSKindId.RequiredParameter
+		| TSKindId.SetterParameter;
 	'declaration.parameter.receiver': TSKindId.ReceiverParameterDeclaration | TSKindId.RequiredParameter;
 	'declaration.property':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature
-		| TSKindId.PublicFieldDefinition;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignatureSetter
+		| TSKindId.PublicFieldDefinitionAccessor;
 	'declaration.property.getter':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodSignatureGetter;
 	'declaration.property.getter.private':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodSignatureGetter;
 	'declaration.property.getter.protected':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodSignatureGetter;
 	'declaration.property.getter.public':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodSignatureGetter;
 	'declaration.property.private':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature
-		| TSKindId.PublicFieldDefinition;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignatureSetter
+		| TSKindId.PublicFieldDefinitionAccessor;
 	'declaration.property.protected':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature
-		| TSKindId.PublicFieldDefinition;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignatureSetter
+		| TSKindId.PublicFieldDefinitionAccessor;
 	'declaration.property.public':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature
-		| TSKindId.PublicFieldDefinition;
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignatureSetter
+		| TSKindId.PublicFieldDefinitionAccessor;
 	'declaration.property.setter':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureSetter;
 	'declaration.property.setter.private':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureSetter;
 	'declaration.property.setter.protected':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureSetter;
 	'declaration.property.setter.public':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
-	'declaration.property.signature': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.abstract': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.getter': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.getter.private': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.getter.protected': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.getter.public': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.setter': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.setter.private': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.setter.protected': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.abstract.setter.public': TSKindId.AbstractMethodSignature;
-	'declaration.property.signature.getter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.getter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.getter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.getter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.setter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.setter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.setter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.property.signature.setter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodDefinitionSetter
+		| TSKindId.MethodSignatureSetter;
+	'declaration.property.signature':
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignatureSetter
+		| TSKindId.PublicFieldDefinitionAccessor;
+	'declaration.property.signature.abstract':
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.PublicFieldDefinitionAccessor;
+	'declaration.property.signature.abstract.getter': TSKindId.AbstractMethodSignatureGetter;
+	'declaration.property.signature.abstract.getter.private': TSKindId.AbstractMethodSignatureGetter;
+	'declaration.property.signature.abstract.getter.protected': TSKindId.AbstractMethodSignatureGetter;
+	'declaration.property.signature.abstract.getter.public': TSKindId.AbstractMethodSignatureGetter;
+	'declaration.property.signature.abstract.setter': TSKindId.AbstractMethodSignatureSetter;
+	'declaration.property.signature.abstract.setter.private': TSKindId.AbstractMethodSignatureSetter;
+	'declaration.property.signature.abstract.setter.protected': TSKindId.AbstractMethodSignatureSetter;
+	'declaration.property.signature.abstract.setter.public': TSKindId.AbstractMethodSignatureSetter;
+	'declaration.property.signature.getter': TSKindId.AbstractMethodSignatureGetter | TSKindId.MethodSignatureGetter;
+	'declaration.property.signature.getter.private':
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.MethodSignatureGetter;
+	'declaration.property.signature.getter.protected':
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.MethodSignatureGetter;
+	'declaration.property.signature.getter.public':
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.MethodSignatureGetter;
+	'declaration.property.signature.setter': TSKindId.AbstractMethodSignatureSetter | TSKindId.MethodSignatureSetter;
+	'declaration.property.signature.setter.private':
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodSignatureSetter;
+	'declaration.property.signature.setter.protected':
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodSignatureSetter;
+	'declaration.property.signature.setter.public':
+		| TSKindId.AbstractMethodSignatureSetter
+		| TSKindId.MethodSignatureSetter;
 	'declaration.signature':
-		| TSKindId.AbstractMethodSignature
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignaturePlain
+		| TSKindId.AbstractMethodSignatureSetter
 		| TSKindId.CallSignature
 		| TSKindId.ConstructSignature
 		| TSKindId.FunctionSignature
 		| TSKindId.IndexSignature
 		| TSKindId.IndexSignatureColon
 		| TSKindId.IndexSignatureMappedTypeClause
-		| TSKindId.MethodSignature
-		| TSKindId.PropertySignature;
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignaturePlain
+		| TSKindId.MethodSignatureSetter
+		| TSKindId.PropertySignature
+		| TSKindId.PublicFieldDefinitionAccessor;
 	'declaration.signature.call': TSKindId.CallSignature;
 	'declaration.signature.construct': TSKindId.ConstructSignature;
 	'declaration.signature.index':
@@ -2472,7 +2530,9 @@ const table: PortableTable = {
 		declaration: {
 			ids: [
 				TSKindId.AbstractClassDeclaration,
-				TSKindId.AbstractMethodSignature,
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignaturePlain,
+				TSKindId.AbstractMethodSignatureSetter,
 				TSKindId.AmbientDeclaration,
 				TSKindId.AmbientDeclarationModule,
 				TSKindId.CallSignature,
@@ -2490,14 +2550,20 @@ const table: PortableTable = {
 				TSKindId.InterfaceDeclaration,
 				TSKindId.InternalModule,
 				TSKindId.LexicalDeclaration,
-				TSKindId.MethodDefinition,
-				TSKindId.MethodSignature,
+				TSKindId.MethodDefinitionGetter,
+				TSKindId.MethodDefinitionPlain,
+				TSKindId.MethodDefinitionSetter,
+				TSKindId.MethodSignatureGetter,
+				TSKindId.MethodSignaturePlain,
+				TSKindId.MethodSignatureSetter,
 				TSKindId.Module,
 				TSKindId.OptionalParameter,
 				TSKindId.PropertySignature,
-				TSKindId.PublicFieldDefinition,
+				TSKindId.PublicFieldDefinitionAccessor,
+				TSKindId.PublicFieldDefinitionPlain,
 				TSKindId.ReceiverParameterDeclaration,
 				TSKindId.RequiredParameter,
+				TSKindId.SetterParameter,
 				TSKindId.TypeAliasDeclaration,
 				TSKindId.TypeParameter,
 				TSKindId.VariableDeclaration,
@@ -2508,16 +2574,25 @@ const table: PortableTable = {
 		},
 		'declaration.ambient': { ids: [TSKindId.AmbientDeclaration], exact: true },
 		'declaration.class': { ids: [TSKindId.AbstractClassDeclaration, TSKindId.ClassDeclaration], exact: true },
-		'declaration.constructor': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.constructor.private': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.constructor.protected': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.constructor.public': { ids: [TSKindId.MethodDefinition], exact: false },
+		'declaration.constructor': { ids: [TSKindId.MethodDefinitionPlain], exact: false },
+		'declaration.constructor.private': { ids: [TSKindId.MethodDefinitionPlain], exact: false },
+		'declaration.constructor.protected': { ids: [TSKindId.MethodDefinitionPlain], exact: false },
+		'declaration.constructor.public': { ids: [TSKindId.MethodDefinitionPlain], exact: false },
 		'declaration.enum': { ids: [TSKindId.EnumDeclaration], exact: true },
 		'declaration.enum_member': { ids: [TSKindId.EnumAssignment, TSKindId.EnumBodyElementName], exact: true },
-		'declaration.field': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
-		'declaration.field.private': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
-		'declaration.field.protected': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
-		'declaration.field.public': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
+		'declaration.field': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinitionPlain], exact: true },
+		'declaration.field.private': {
+			ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinitionPlain],
+			exact: false
+		},
+		'declaration.field.protected': {
+			ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinitionPlain],
+			exact: false
+		},
+		'declaration.field.public': {
+			ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinitionPlain],
+			exact: false
+		},
 		'declaration.field.signature': { ids: [TSKindId.PropertySignature], exact: true },
 		'declaration.field.signature.private': { ids: [TSKindId.PropertySignature], exact: false },
 		'declaration.field.signature.protected': { ids: [TSKindId.PropertySignature], exact: false },
@@ -2529,55 +2604,78 @@ const table: PortableTable = {
 		'declaration.function.signature': { ids: [TSKindId.FunctionSignature], exact: true },
 		'declaration.interface': { ids: [TSKindId.InterfaceDeclaration], exact: true },
 		'declaration.method': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
-		'declaration.method.signature': { ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.abstract': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.protected': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.method.signature': {
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodSignaturePlain],
+			exact: true
+		},
+		'declaration.method.signature.abstract': { ids: [TSKindId.AbstractMethodSignaturePlain], exact: true },
+		'declaration.method.signature.abstract.private': { ids: [TSKindId.AbstractMethodSignaturePlain], exact: false },
+		'declaration.method.signature.abstract.protected': { ids: [TSKindId.AbstractMethodSignaturePlain], exact: false },
+		'declaration.method.signature.abstract.public': { ids: [TSKindId.AbstractMethodSignaturePlain], exact: false },
 		'declaration.method.signature.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.signature.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.signature.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.module': { ids: [TSKindId.InternalModule, TSKindId.Module], exact: true },
 		'declaration.module.external': { ids: [TSKindId.Module], exact: true },
 		'declaration.module_property': { ids: [TSKindId.AmbientDeclarationModule], exact: true },
 		'declaration.parameter': {
-			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			ids: [
+				TSKindId.OptionalParameter,
+				TSKindId.ReceiverParameterDeclaration,
+				TSKindId.RequiredParameter,
+				TSKindId.SetterParameter
+			],
 			exact: true
 		},
 		'declaration.parameter.private': {
-			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			ids: [
+				TSKindId.OptionalParameter,
+				TSKindId.ReceiverParameterDeclaration,
+				TSKindId.RequiredParameter,
+				TSKindId.SetterParameter
+			],
 			exact: false
 		},
 		'declaration.parameter.protected': {
-			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			ids: [
+				TSKindId.OptionalParameter,
+				TSKindId.ReceiverParameterDeclaration,
+				TSKindId.RequiredParameter,
+				TSKindId.SetterParameter
+			],
 			exact: false
 		},
 		'declaration.parameter.public': {
-			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			ids: [
+				TSKindId.OptionalParameter,
+				TSKindId.ReceiverParameterDeclaration,
+				TSKindId.RequiredParameter,
+				TSKindId.SetterParameter
+			],
 			exact: false
 		},
 		'declaration.parameter.receiver': {
@@ -2586,136 +2684,178 @@ const table: PortableTable = {
 		},
 		'declaration.property': {
 			ids: [
-				TSKindId.AbstractMethodSignature,
-				TSKindId.MethodDefinition,
-				TSKindId.MethodSignature,
-				TSKindId.PublicFieldDefinition
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignatureSetter,
+				TSKindId.MethodDefinitionGetter,
+				TSKindId.MethodDefinitionSetter,
+				TSKindId.MethodSignatureGetter,
+				TSKindId.MethodSignatureSetter,
+				TSKindId.PublicFieldDefinitionAccessor
 			],
-			exact: false
+			exact: true
 		},
 		'declaration.property.getter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodDefinitionGetter, TSKindId.MethodSignatureGetter],
+			exact: true
 		},
 		'declaration.property.getter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodDefinitionGetter, TSKindId.MethodSignatureGetter],
 			exact: false
 		},
 		'declaration.property.getter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodDefinitionGetter, TSKindId.MethodSignatureGetter],
 			exact: false
 		},
 		'declaration.property.getter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodDefinitionGetter, TSKindId.MethodSignatureGetter],
 			exact: false
 		},
 		'declaration.property.private': {
 			ids: [
-				TSKindId.AbstractMethodSignature,
-				TSKindId.MethodDefinition,
-				TSKindId.MethodSignature,
-				TSKindId.PublicFieldDefinition
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignatureSetter,
+				TSKindId.MethodDefinitionGetter,
+				TSKindId.MethodDefinitionSetter,
+				TSKindId.MethodSignatureGetter,
+				TSKindId.MethodSignatureSetter,
+				TSKindId.PublicFieldDefinitionAccessor
 			],
 			exact: false
 		},
 		'declaration.property.protected': {
 			ids: [
-				TSKindId.AbstractMethodSignature,
-				TSKindId.MethodDefinition,
-				TSKindId.MethodSignature,
-				TSKindId.PublicFieldDefinition
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignatureSetter,
+				TSKindId.MethodDefinitionGetter,
+				TSKindId.MethodDefinitionSetter,
+				TSKindId.MethodSignatureGetter,
+				TSKindId.MethodSignatureSetter,
+				TSKindId.PublicFieldDefinitionAccessor
 			],
 			exact: false
 		},
 		'declaration.property.public': {
 			ids: [
-				TSKindId.AbstractMethodSignature,
-				TSKindId.MethodDefinition,
-				TSKindId.MethodSignature,
-				TSKindId.PublicFieldDefinition
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignatureSetter,
+				TSKindId.MethodDefinitionGetter,
+				TSKindId.MethodDefinitionSetter,
+				TSKindId.MethodSignatureGetter,
+				TSKindId.MethodSignatureSetter,
+				TSKindId.PublicFieldDefinitionAccessor
 			],
 			exact: false
 		},
 		'declaration.property.setter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodDefinitionSetter, TSKindId.MethodSignatureSetter],
+			exact: true
 		},
 		'declaration.property.setter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodDefinitionSetter, TSKindId.MethodSignatureSetter],
 			exact: false
 		},
 		'declaration.property.setter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodDefinitionSetter, TSKindId.MethodSignatureSetter],
 			exact: false
 		},
 		'declaration.property.setter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodDefinitionSetter, TSKindId.MethodSignatureSetter],
 			exact: false
 		},
 		'declaration.property.signature': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignatureSetter,
+				TSKindId.MethodSignatureGetter,
+				TSKindId.MethodSignatureSetter,
+				TSKindId.PublicFieldDefinitionAccessor
+			],
 			exact: false
 		},
-		'declaration.property.signature.abstract': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.property.signature.abstract.getter': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.property.signature.abstract.getter.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract': {
+			ids: [
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignatureSetter,
+				TSKindId.PublicFieldDefinitionAccessor
+			],
+			exact: false
+		},
+		'declaration.property.signature.abstract.getter': { ids: [TSKindId.AbstractMethodSignatureGetter], exact: true },
+		'declaration.property.signature.abstract.getter.private': {
+			ids: [TSKindId.AbstractMethodSignatureGetter],
+			exact: false
+		},
 		'declaration.property.signature.abstract.getter.protected': {
-			ids: [TSKindId.AbstractMethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureGetter],
 			exact: false
 		},
-		'declaration.property.signature.abstract.getter.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.property.signature.abstract.setter': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.property.signature.abstract.setter.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract.getter.public': {
+			ids: [TSKindId.AbstractMethodSignatureGetter],
+			exact: false
+		},
+		'declaration.property.signature.abstract.setter': { ids: [TSKindId.AbstractMethodSignatureSetter], exact: true },
+		'declaration.property.signature.abstract.setter.private': {
+			ids: [TSKindId.AbstractMethodSignatureSetter],
+			exact: false
+		},
 		'declaration.property.signature.abstract.setter.protected': {
-			ids: [TSKindId.AbstractMethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureSetter],
 			exact: false
 		},
-		'declaration.property.signature.abstract.setter.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.property.signature.getter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+		'declaration.property.signature.abstract.setter.public': {
+			ids: [TSKindId.AbstractMethodSignatureSetter],
 			exact: false
+		},
+		'declaration.property.signature.getter': {
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodSignatureGetter],
+			exact: true
 		},
 		'declaration.property.signature.getter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodSignatureGetter],
 			exact: false
 		},
 		'declaration.property.signature.getter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodSignatureGetter],
 			exact: false
 		},
 		'declaration.property.signature.getter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureGetter, TSKindId.MethodSignatureGetter],
 			exact: false
 		},
 		'declaration.property.signature.setter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodSignatureSetter],
+			exact: true
 		},
 		'declaration.property.signature.setter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodSignatureSetter],
 			exact: false
 		},
 		'declaration.property.signature.setter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodSignatureSetter],
 			exact: false
 		},
 		'declaration.property.signature.setter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			ids: [TSKindId.AbstractMethodSignatureSetter, TSKindId.MethodSignatureSetter],
 			exact: false
 		},
 		'declaration.signature': {
 			ids: [
-				TSKindId.AbstractMethodSignature,
+				TSKindId.AbstractMethodSignatureGetter,
+				TSKindId.AbstractMethodSignaturePlain,
+				TSKindId.AbstractMethodSignatureSetter,
 				TSKindId.CallSignature,
 				TSKindId.ConstructSignature,
 				TSKindId.FunctionSignature,
 				TSKindId.IndexSignature,
 				TSKindId.IndexSignatureColon,
 				TSKindId.IndexSignatureMappedTypeClause,
-				TSKindId.MethodSignature,
-				TSKindId.PropertySignature
+				TSKindId.MethodSignatureGetter,
+				TSKindId.MethodSignaturePlain,
+				TSKindId.MethodSignatureSetter,
+				TSKindId.PropertySignature,
+				TSKindId.PublicFieldDefinitionAccessor
 			],
-			exact: true
+			exact: false
 		},
 		'declaration.signature.call': { ids: [TSKindId.CallSignature], exact: true },
 		'declaration.signature.construct': { ids: [TSKindId.ConstructSignature], exact: true },
@@ -3259,96 +3399,86 @@ const table: PortableTable = {
 	entries: {
 		[TSKindId.TemplateChars]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.AbstractClassDeclaration]: [{ path: 'declaration.class', within: [], test: [] }],
-		[TSKindId.AbstractMethodSignature]: [
+		[TSKindId.AbstractMethodSignatureGetter]: [
 			{
 				path: 'declaration.property.signature.abstract.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '300': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '458': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '300': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '458': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.abstract.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '300': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '458': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '458': 0 } } }
 				]
 			},
-			{
-				path: 'declaration.property.signature.abstract.setter.private',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '300': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.signature.abstract.setter.protected',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '300': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.signature.abstract.setter.public',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '300': 0 } } }
-				]
-			},
+			{ path: 'declaration.property.signature.abstract.getter', within: [], test: [] }
+		],
+		[TSKindId.AbstractMethodSignaturePlain]: [
 			{
 				path: 'declaration.method.signature.abstract.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '300': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '457': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '300': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '457': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '300': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '300': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '457': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '457': 0 } } }
+				]
+			},
+			{ path: 'declaration.method.signature.abstract', within: [], test: [] }
+		],
+		[TSKindId.AbstractMethodSignatureSetter]: [
+			{
+				path: 'declaration.property.signature.abstract.setter.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '459': 0 } } }
 				]
 			},
 			{
-				path: 'declaration.property.signature.abstract.getter',
+				path: 'declaration.property.signature.abstract.setter.protected',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '300': 2 } } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '459': 0 } } }
+				]
 			},
 			{
-				path: 'declaration.property.signature.abstract.setter',
+				path: 'declaration.property.signature.abstract.setter.public',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '300': 2 } } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '459': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '459': 0 } } }
+				]
 			},
-			{ path: 'declaration.method.signature.abstract', within: [], test: [] }
+			{ path: 'declaration.property.signature.abstract.setter', within: [], test: [] }
 		],
 		[TSKindId.AmbientDeclaration]: [{ path: 'declaration.ambient', within: [], test: [] }],
 		[TSKindId.AmbientDeclarationModule]: [{ path: 'declaration.module_property', within: [], test: [] }],
@@ -3447,7 +3577,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [403], slots: { '267': 3 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [405], slots: { '267': 3 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.add',
@@ -3580,7 +3710,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '417': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [257], slots: { '419': 0 } } }]
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
@@ -3634,7 +3764,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.default',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [432], slots: { '428': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [434], slots: { '430': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -3642,7 +3772,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.all',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [429], slots: { '427': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [431], slots: { '429': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -3677,7 +3807,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '414': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '416': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3685,7 +3815,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '413': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '415': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3731,19 +3861,46 @@ const table: PortableTable = {
 		[TSKindId.MetaProperty]: [{ path: 'expression.meta', within: [], test: [] }],
 		[TSKindId.MetaPropertyImportMeta]: [{ path: 'expression.meta', within: [], test: [] }],
 		[TSKindId.MetaPropertyNewTarget]: [{ path: 'expression.meta', within: [], test: [] }],
-		[TSKindId.MethodDefinition]: [
+		[TSKindId.MethodDefinitionGetter]: [
+			{
+				path: 'declaration.property.getter.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '452': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '452': 0 } } }
+				]
+			},
+			{
+				path: 'declaration.property.getter.protected',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '452': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '452': 0 } } }
+				]
+			},
+			{
+				path: 'declaration.property.getter.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '452': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '452': 0 } } }
+				]
+			},
+			{ path: 'declaration.property.getter', within: [], test: [] }
+		],
+		[TSKindId.MethodDefinitionPlain]: [
 			{
 				path: 'declaration.constructor.private',
 				within: [],
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '291': 6 } }, { slots: { '475': 0 } }],
+						via: [{ slots: { '451': 6 } }, { slots: { '495': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [475], slots: { '291': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [495], slots: { '451': 6 } } }
 				]
 			},
 			{
@@ -3752,12 +3909,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '291': 6 } }, { slots: { '475': 0 } }],
+						via: [{ slots: { '451': 6 } }, { slots: { '495': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [475], slots: { '291': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [495], slots: { '451': 6 } } }
 				]
 			},
 			{
@@ -3766,12 +3923,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '291': 6 } }, { slots: { '475': 0 } }],
+						via: [{ slots: { '451': 6 } }, { slots: { '495': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [475], slots: { '291': 6 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [495], slots: { '451': 6 } } }
 				]
 			},
 			{
@@ -3780,192 +3937,145 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '291': 6 } }, { slots: { '475': 0 } }],
+						via: [{ slots: { '451': 6 } }, { slots: { '495': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [475], slots: { '291': 6 } } }
-				]
-			},
-			{
-				path: 'declaration.property.getter.private',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.getter.protected',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.getter.public',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.setter.private',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.setter.protected',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.setter.public',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [495], slots: { '451': 6 } } }
 				]
 			},
 			{
 				path: 'declaration.method.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '291': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '451': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '291': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '451': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '291': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '291': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '451': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '451': 0 } } }
 				]
-			},
-			{
-				path: 'declaration.property.getter',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '291': 5 } } }]
-			},
-			{
-				path: 'declaration.property.setter',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '291': 5 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
-		[TSKindId.MethodSignature]: [
+		[TSKindId.MethodDefinitionSetter]: [
+			{
+				path: 'declaration.property.setter.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '453': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '453': 0 } } }
+				]
+			},
+			{
+				path: 'declaration.property.setter.protected',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '453': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '453': 0 } } }
+				]
+			},
+			{
+				path: 'declaration.property.setter.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '453': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '453': 0 } } }
+				]
+			},
+			{ path: 'declaration.property.setter', within: [], test: [] }
+		],
+		[TSKindId.MethodSignatureGetter]: [
 			{
 				path: 'declaration.property.signature.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '299': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '455': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '455': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '299': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '455': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '455': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.property.signature.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '299': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '455': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '455': 0 } } }
 				]
 			},
-			{
-				path: 'declaration.property.signature.setter.private',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '299': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.signature.setter.protected',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '299': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.property.signature.setter.public',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '299': 0 } } }
-				]
-			},
+			{ path: 'declaration.property.signature.getter', within: [], test: [] }
+		],
+		[TSKindId.MethodSignaturePlain]: [
 			{
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '299': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '454': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '454': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '299': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '454': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '454': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '299': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '299': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '454': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '454': 0 } } }
+				]
+			},
+			{ path: 'declaration.method.signature', within: [], test: [] }
+		],
+		[TSKindId.MethodSignatureSetter]: [
+			{
+				path: 'declaration.property.signature.setter.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '456': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '456': 0 } } }
 				]
 			},
 			{
-				path: 'declaration.property.signature.getter',
+				path: 'declaration.property.signature.setter.protected',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '299': 5 } } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '456': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '456': 0 } } }
+				]
 			},
 			{
-				path: 'declaration.property.signature.setter',
+				path: 'declaration.property.signature.setter.public',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '299': 5 } } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '456': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '456': 0 } } }
+				]
 			},
-			{ path: 'declaration.method.signature', within: [], test: [] }
+			{ path: 'declaration.property.signature.setter', within: [], test: [] }
 		],
 		[TSKindId.Module]: [{ path: 'declaration.module.external', within: [], test: [] }],
 		[TSKindId.NamespaceExport]: [{ path: 'clause.export.namespace', within: [], test: [] }],
@@ -4110,62 +4220,62 @@ const table: PortableTable = {
 			{ path: 'modifier.visibility.protected', within: [], test: [] },
 			{ path: 'modifier.visibility', within: [], test: [] }
 		],
-		[TSKindId.PublicFieldDefinition]: [
+		[TSKindId.PublicFieldDefinitionAccessor]: [
 			{
 				path: 'declaration.property.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '296': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '461': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '461': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.property.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '296': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '461': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '461': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.property.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '296': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '461': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '461': 1 } } }
 				]
 			},
+			{
+				path: 'declaration.property.signature.abstract',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '461': 3 } } }]
+			},
+			{ path: 'declaration.property', within: [], test: [] }
+		],
+		[TSKindId.PublicFieldDefinitionPlain]: [
 			{
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '296': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '460': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '460': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '296': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '460': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '460': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '296': 2 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '296': 2 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '460': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '460': 2 } } }
 				]
-			},
-			{
-				path: 'declaration.property',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '296': 7 } } }]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
 		],
@@ -4179,24 +4289,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '443': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '443': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '463': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '463': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '443': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '443': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '463': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '463': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '443': 1 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '443': 1 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '463': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '463': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] },
@@ -4242,6 +4352,33 @@ const table: PortableTable = {
 		[TSKindId.ReturnStatement]: [{ path: 'statement.return', within: [], test: [] }],
 		[TSKindId.SatisfiesExpression]: [{ path: 'expression.cast.satisfies', within: [], test: [] }],
 		[TSKindId.SequenceExpression]: [{ path: 'expression.sequence', within: [], test: [] }],
+		[TSKindId.SetterParameter]: [
+			{
+				path: 'declaration.parameter.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '448': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '448': 1 } } }
+				]
+			},
+			{
+				path: 'declaration.parameter.protected',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '448': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '448': 1 } } }
+				]
+			},
+			{
+				path: 'declaration.parameter.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [324, 34, 35, 36], slots: { '448': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '448': 1 } } }
+				]
+			},
+			{ path: 'declaration.parameter', within: [], test: [] }
+		],
 		[TSKindId.ShorthandPropertyIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.ShorthandPropertyIdentifierPattern]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.SpreadElement]: [{ path: 'element.spread', within: [], test: [] }],
@@ -4334,12 +4471,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '422': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '424': 1 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '422': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '424': 1 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -4347,12 +4484,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '423': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '425': 0 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '423': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '425': 0 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -4364,7 +4501,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.pattern',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [241, 237], slots: { '434': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [241, 237], slots: { '436': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -4394,6 +4531,7 @@ const table: PortableTable = {
 		[TSKindId.OptionalChainMarker]: '?.',
 		[TSKindId.MetaPropertyNewTarget]: 'new.target',
 		[TSKindId.MetaPropertyImportMeta]: 'import.meta',
+		[TSKindId.FormalParametersUGetAccessorSignature]: '()',
 		[TSKindId.AutomaticSemicolon]: '\n',
 		[TSKindId.FunctionSignatureAutomaticSemicolon]: '\n',
 		[TSKindId.Space]: ' ',
@@ -4499,16 +4637,12 @@ const table: PortableTable = {
 		[TSKindId.NullKeyword]: 'null',
 		[TSKindId.At]: '@',
 		[TSKindId.StaticKeyword]: 'static',
-		[TSKindId.ReadonlyKeyword]: 'readonly',
-		[TSKindId.GetKeyword]: 'get',
-		[TSKindId.SetKeyword]: 'set',
-		[TSKindId.DeclareKeyword]: 'declare',
-		[TSKindId.AbstractKeyword]: 'abstract',
-		[TSKindId.AccessorKeyword]: 'accessor',
 		[TSKindId.SatisfiesKeyword]: 'satisfies',
 		[TSKindId.RequireKeyword]: 'require',
 		[TSKindId.ExtendsKeyword]: 'extends',
 		[TSKindId.ImplementsKeyword]: 'implements',
+		[TSKindId.DeclareKeyword]: 'declare',
+		[TSKindId.AbstractKeyword]: 'abstract',
 		[TSKindId.ModuleKeyword]: 'module',
 		[TSKindId.NamespaceKeyword]: 'namespace',
 		[TSKindId.InterfaceKeyword]: 'interface',
@@ -4517,6 +4651,7 @@ const table: PortableTable = {
 		[TSKindId.PrivateKeyword]: 'private',
 		[TSKindId.ProtectedKeyword]: 'protected',
 		[TSKindId.OverrideKeyword]: 'override',
+		[TSKindId.ReadonlyKeyword]: 'readonly',
 		[TSKindId.DashQmarkColon]: '-?:',
 		[TSKindId.PlusQmarkColon]: '+?:',
 		[TSKindId.QmarkColon]: '?:',
@@ -4546,7 +4681,10 @@ const table: PortableTable = {
 		[TSKindId.DashDash]: '--',
 		[TSKindId.TargetKeyword]: 'target',
 		[TSKindId.MetaKeyword]: 'meta',
-		[TSKindId.OfKeyword]: 'of'
+		[TSKindId.OfKeyword]: 'of',
+		[TSKindId.GetKeyword]: 'get',
+		[TSKindId.SetKeyword]: 'set',
+		[TSKindId.AccessorKeyword]: 'accessor'
 	}
 };
 
@@ -4554,12 +4692,22 @@ export const portable = portableSurface<PortableKinds, PortableIs>(table, queryS
 
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AbstractClassDeclaration]: { abstract: { op: 'and', of: [] } },
-	[TSKindId.AbstractMethodSignature]: {
-		override: { op: 'present', slots: { '300': 1 } },
-		optional: { op: 'present', slots: { '300': 4 } },
-		generator: { op: 'eq', text: '*', slots: { '300': 2 } },
-		privateName: { op: 'is', types: [127], slots: { '300': 3 } },
-		computed: { op: 'is', types: [295], slots: { '300': 3 } }
+	[TSKindId.AbstractMethodSignatureGetter]: {
+		override: { op: 'present', slots: { '458': 1 } },
+		privateName: { op: 'is', types: [127], slots: { '458': 2 } },
+		computed: { op: 'is', types: [295], slots: { '458': 2 } }
+	},
+	[TSKindId.AbstractMethodSignaturePlain]: {
+		override: { op: 'present', slots: { '457': 1 } },
+		optional: { op: 'present', slots: { '457': 4 } },
+		generator: { op: 'present', slots: { '457': 2 } },
+		privateName: { op: 'is', types: [127], slots: { '457': 3 } },
+		computed: { op: 'is', types: [295], slots: { '457': 3 } }
+	},
+	[TSKindId.AbstractMethodSignatureSetter]: {
+		override: { op: 'present', slots: { '459': 1 } },
+		privateName: { op: 'is', types: [127], slots: { '459': 2 } },
+		computed: { op: 'is', types: [295], slots: { '459': 2 } }
 	},
 	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '250': 0 } } },
 	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', slots: { '260': 0 } } },
@@ -4568,7 +4716,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '343': 0 } } },
 	[TSKindId.EnumDeclaration]: { const: { op: 'present', slots: { '320': 0 } } },
 	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', slots: { '192': 0 } } },
-	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '427': 0 } } },
+	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '429': 0 } } },
 	[TSKindId.ForInStatement]: { async: { op: 'present', slots: { '214': 0 } } },
 	[TSKindId.FunctionDeclaration]: { async: { op: 'present', slots: { '247': 0 } } },
 	[TSKindId.FunctionExpression]: { async: { op: 'present', slots: { '246': 0 } } },
@@ -4578,34 +4726,58 @@ export const queryFlags: QueryFlags = Object.freeze({
 		async: { op: 'present', slots: { '249': 0 } },
 		generator: { op: 'and', of: [] }
 	},
-	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '414': 0 } } },
-	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '413': 0 } } },
+	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '416': 0 } } },
+	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '415': 0 } } },
 	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', slots: { '196': 0 } } },
-	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '408': 1 } } },
-	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '409': 1 } } },
+	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '410': 1 } } },
+	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '411': 1 } } },
 	[TSKindId.MemberExpression]: {
 		optionalChain: { op: 'is', types: [253], slots: { '257': 1 } },
 		privateName: { op: 'is', types: [127], slots: { '257': 2 } }
 	},
-	[TSKindId.MethodDefinition]: {
-		static: { op: 'present', slots: { '291': 1 } },
-		override: { op: 'present', slots: { '291': 2 } },
-		readonly: { op: 'present', slots: { '291': 3 } },
-		async: { op: 'present', slots: { '291': 4 } },
-		optional: { op: 'present', slots: { '291': 7 } },
-		generator: { op: 'eq', text: '*', slots: { '291': 5 } },
-		privateName: { op: 'is', types: [127], slots: { '291': 6 } },
-		computed: { op: 'is', types: [295], slots: { '291': 6 } }
+	[TSKindId.MethodDefinitionGetter]: {
+		static: { op: 'present', slots: { '452': 1 } },
+		override: { op: 'present', slots: { '452': 2 } },
+		privateName: { op: 'is', types: [127], slots: { '452': 3 } },
+		computed: { op: 'is', types: [295], slots: { '452': 3 } }
 	},
-	[TSKindId.MethodSignature]: {
-		static: { op: 'present', slots: { '299': 1 } },
-		override: { op: 'present', slots: { '299': 2 } },
-		readonly: { op: 'present', slots: { '299': 3 } },
-		async: { op: 'present', slots: { '299': 4 } },
-		optional: { op: 'present', slots: { '299': 7 } },
-		generator: { op: 'eq', text: '*', slots: { '299': 5 } },
-		privateName: { op: 'is', types: [127], slots: { '299': 6 } },
-		computed: { op: 'is', types: [295], slots: { '299': 6 } }
+	[TSKindId.MethodDefinitionPlain]: {
+		static: { op: 'present', slots: { '451': 1 } },
+		override: { op: 'present', slots: { '451': 2 } },
+		readonly: { op: 'present', slots: { '451': 3 } },
+		async: { op: 'present', slots: { '451': 4 } },
+		optional: { op: 'present', slots: { '451': 7 } },
+		generator: { op: 'present', slots: { '451': 5 } },
+		privateName: { op: 'is', types: [127], slots: { '451': 6 } },
+		computed: { op: 'is', types: [295], slots: { '451': 6 } }
+	},
+	[TSKindId.MethodDefinitionSetter]: {
+		static: { op: 'present', slots: { '453': 1 } },
+		override: { op: 'present', slots: { '453': 2 } },
+		privateName: { op: 'is', types: [127], slots: { '453': 3 } },
+		computed: { op: 'is', types: [295], slots: { '453': 3 } }
+	},
+	[TSKindId.MethodSignatureGetter]: {
+		static: { op: 'present', slots: { '455': 1 } },
+		override: { op: 'present', slots: { '455': 2 } },
+		privateName: { op: 'is', types: [127], slots: { '455': 3 } },
+		computed: { op: 'is', types: [295], slots: { '455': 3 } }
+	},
+	[TSKindId.MethodSignaturePlain]: {
+		static: { op: 'present', slots: { '454': 1 } },
+		override: { op: 'present', slots: { '454': 2 } },
+		readonly: { op: 'present', slots: { '454': 3 } },
+		async: { op: 'present', slots: { '454': 4 } },
+		optional: { op: 'present', slots: { '454': 7 } },
+		generator: { op: 'present', slots: { '454': 5 } },
+		privateName: { op: 'is', types: [127], slots: { '454': 6 } },
+		computed: { op: 'is', types: [295], slots: { '454': 6 } }
+	},
+	[TSKindId.MethodSignatureSetter]: {
+		static: { op: 'present', slots: { '456': 1 } },
+		override: { op: 'present', slots: { '456': 2 } },
+		privateName: { op: 'is', types: [127], slots: { '456': 3 } },
+		computed: { op: 'is', types: [295], slots: { '456': 3 } }
 	},
 	[TSKindId.OptionalParameter]: {
 		override: { op: 'present', slots: { '327': 2 } },
@@ -4622,24 +4794,34 @@ export const queryFlags: QueryFlags = Object.freeze({
 		privateName: { op: 'is', types: [127], slots: { '369': 4 } },
 		computed: { op: 'is', types: [295], slots: { '369': 4 } }
 	},
-	[TSKindId.PublicFieldDefinition]: {
-		declare: { op: 'present', slots: { '296': 1 } },
-		static: { op: 'present', slots: { '296': 3 } },
-		override: { op: 'present', slots: { '296': 4 } },
-		readonly: { op: 'present', slots: { '296': 5 } },
-		abstract: { op: 'present', slots: { '296': 6 } },
-		optional: { op: 'eq', text: '?', slots: { '296': 9 } },
-		definite: { op: 'eq', text: '!', slots: { '296': 9 } },
-		privateName: { op: 'is', types: [127], slots: { '296': 8 } },
-		computed: { op: 'is', types: [295], slots: { '296': 8 } }
+	[TSKindId.PublicFieldDefinitionAccessor]: {
+		static: { op: 'present', slots: { '461': 2 } },
+		override: { op: 'present', slots: { '461': 4 } },
+		privateName: { op: 'is', types: [127], slots: { '461': 5 } },
+		computed: { op: 'is', types: [295], slots: { '461': 5 } }
+	},
+	[TSKindId.PublicFieldDefinitionPlain]: {
+		declare: { op: 'present', slots: { '460': 1 } },
+		static: { op: 'present', slots: { '460': 3 } },
+		override: { op: 'present', slots: { '460': 4 } },
+		readonly: { op: 'present', slots: { '460': 5 } },
+		abstract: { op: 'present', slots: { '460': 6 } },
+		optional: { op: 'eq', text: '?', slots: { '460': 8 } },
+		definite: { op: 'eq', text: '!', slots: { '460': 8 } },
+		privateName: { op: 'is', types: [127], slots: { '460': 7 } },
+		computed: { op: 'is', types: [295], slots: { '460': 7 } }
 	},
 	[TSKindId.ReceiverParameterDeclaration]: {
-		override: { op: 'present', slots: { '443': 2 } },
-		readonly: { op: 'present', slots: { '443': 3 } }
+		override: { op: 'present', slots: { '463': 2 } },
+		readonly: { op: 'present', slots: { '463': 3 } }
 	},
 	[TSKindId.RequiredParameter]: {
 		override: { op: 'present', slots: { '326': 2 } },
 		readonly: { op: 'present', slots: { '326': 3 } }
+	},
+	[TSKindId.SetterParameter]: {
+		override: { op: 'present', slots: { '448': 2 } },
+		readonly: { op: 'present', slots: { '448': 3 } }
 	},
 	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [253], slots: { '258': 1 } } },
 	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '371': 0 } } },
@@ -4654,7 +4836,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	204: {
@@ -4662,20 +4844,20 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	205: { declarators: { definite: { types: [435], kinds: [] } } },
-	206: { declarators: { definite: { types: [435], kinds: [] } } },
-	207: { variableDeclarators: { definite: { types: [435], kinds: [] } } },
+	205: { declarators: { definite: { types: [437], kinds: [] } } },
+	206: { declarators: { definite: { types: [437], kinds: [] } } },
+	207: { variableDeclarators: { definite: { types: [437], kinds: [] } } },
 	209: {
 		statements: {
 			abstract: { types: [312], kinds: [] },
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	210: {
@@ -4684,7 +4866,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	211: {
@@ -4693,7 +4875,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	213: {
@@ -4701,21 +4883,21 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		condition: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		increment: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		body: {
@@ -4723,7 +4905,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	214: {
@@ -4732,7 +4914,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	216: {
@@ -4741,7 +4923,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	217: {
@@ -4750,7 +4932,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	219: {
@@ -4759,7 +4941,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	223: {
@@ -4767,7 +4949,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4776,7 +4958,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4786,7 +4968,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	228: {
@@ -4794,7 +4976,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		bodies: {
@@ -4802,7 +4984,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	229: {
@@ -4811,7 +4993,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [214, 247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] },
-			typeOnly: { types: [], kinds: [196, 427] }
+			typeOnly: { types: [], kinds: [196, 429] }
 		}
 	},
 	235: {
@@ -4819,20 +5001,20 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
 	236: {
 		properties: {
-			async: { types: [], kinds: [291] },
-			computed: { types: [], kinds: [291, 292] },
-			generator: { types: [], kinds: [291] },
-			optional: { types: [], kinds: [291] },
-			override: { types: [], kinds: [291] },
-			privateName: { types: [], kinds: [291] },
-			readonly: { types: [], kinds: [291] },
-			static: { types: [], kinds: [291] }
+			async: { types: [], kinds: [451] },
+			computed: { types: [], kinds: [292, 451, 452, 453] },
+			generator: { types: [], kinds: [451] },
+			optional: { types: [], kinds: [451] },
+			override: { types: [], kinds: [451, 452, 453] },
+			privateName: { types: [], kinds: [451, 452, 453] },
+			readonly: { types: [], kinds: [451] },
+			static: { types: [], kinds: [451, 452, 453] }
 		}
 	},
 	237: { properties: { computed: { types: [], kinds: [293] } } },
@@ -4841,7 +5023,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4850,7 +5032,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4859,7 +5041,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4868,7 +5050,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4876,7 +5058,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		function: {
 			async: { types: [], kinds: [246, 248, 250] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4885,7 +5067,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4894,7 +5076,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4903,14 +5085,14 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		index: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4920,7 +5102,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4930,7 +5112,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4939,7 +5121,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4948,21 +5130,21 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		consequence: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		alternative: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4971,14 +5153,14 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		right: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4987,7 +5169,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -4996,7 +5178,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5005,7 +5187,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5014,7 +5196,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5024,7 +5206,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5033,16 +5215,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
-			privateName: { types: [], kinds: [257] }
-		}
-	},
-	296: {
-		value: {
-			async: { types: [], kinds: [246, 248, 250] },
-			disposable: { types: [], kinds: [260] },
-			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5051,7 +5224,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5060,7 +5233,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5069,27 +5242,27 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
-		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
 	305: {
 		expression: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
-		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
 	306: {
 		expression: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5098,11 +5271,11 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	310: { types: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	310: { types: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
 	311: {
 		content: {
 			abstract: { types: [312], kinds: [] },
@@ -5116,17 +5289,17 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	323: { value: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	323: { value: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
 	326: {
 		value: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5135,56 +5308,56 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	329: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	330: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	331: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	332: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	340: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	341: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	343: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	345: { type: { unique: { types: [144], kinds: [] } } },
-	347: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	329: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	330: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	331: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	332: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	340: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	341: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	343: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	345: { type: { unique: { types: [143], kinds: [] } } },
+	347: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
 	348: {
-		left: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
-		right: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
-		consequence: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
-		alternative: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		left: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } },
+		right: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } },
+		consequence: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } },
+		alternative: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
 	350: {
-		name: { unique: { types: [144], kinds: [] } },
-		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		name: { unique: { types: [143], kinds: [] } },
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
-	353: { index: { unique: { types: [144], kinds: [] } } },
-	357: { type: { unique: { types: [144], kinds: [] } } },
+	353: { index: { unique: { types: [143], kinds: [] } } },
+	357: { type: { unique: { types: [143], kinds: [] } } },
 	358: {
-		type: { unique: { types: [144], kinds: [] } },
-		indexType: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		type: { unique: { types: [143], kinds: [] } },
+		indexType: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
 	359: {
-		type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
-		alias: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } },
+		alias: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
-	363: { type: { unique: { types: [144], kinds: [] } } },
-	364: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	372: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	373: { bounds: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	376: { type: { unique: { types: [144], kinds: [] } } },
-	378: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	363: { type: { unique: { types: [143], kinds: [] } } },
+	364: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	372: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	373: { bounds: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	376: { type: { unique: { types: [143], kinds: [] } } },
+	378: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
 	379: {
-		left: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
-		right: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		left: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } },
+		right: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
 	380: {
-		left: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } },
-		right: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } }
+		left: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } },
+		right: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } }
 	},
-	381: { returnType: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	381: { returnType: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
 	382: { items: { typeOnly: { types: [], kinds: [192] } } },
-	383: { items: { typeOnly: { types: [], kinds: [413, 414] } } },
+	383: { items: { typeOnly: { types: [], kinds: [415, 416] } } },
 	385: {
 		items: {
 			optional: { types: [327], kinds: [] },
@@ -5192,206 +5365,181 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			readonly: { types: [], kinds: [326, 327] }
 		}
 	},
-	389: { items: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
+	389: { items: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
 	390: { items: { const: { types: [], kinds: [371] } } },
-	391: { items: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	396: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	397: {
+	391: { items: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	398: { type: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	399: {
 		items: {
 			abstract: { types: [], kinds: [374] },
-			async: { types: [], kinds: [299] },
-			computed: { types: [], kinds: [299, 369] },
-			generator: { types: [], kinds: [299] },
-			optional: { types: [], kinds: [299, 369] },
-			override: { types: [], kinds: [299, 369] },
-			privateName: { types: [], kinds: [299, 369] },
-			readonly: { types: [], kinds: [299, 369, 408, 409] },
-			static: { types: [], kinds: [299, 369] },
-			typeOnly: { types: [], kinds: [427] }
+			async: { types: [], kinds: [454] },
+			computed: { types: [], kinds: [369, 454, 455, 456] },
+			generator: { types: [], kinds: [454] },
+			optional: { types: [], kinds: [369, 454] },
+			override: { types: [], kinds: [369, 454, 455, 456] },
+			privateName: { types: [], kinds: [369, 454, 455, 456] },
+			readonly: { types: [], kinds: [369, 410, 411, 454] },
+			static: { types: [], kinds: [369, 454, 455, 456] },
+			typeOnly: { types: [], kinds: [429] }
 		}
 	},
-	400: {
+	402: {
 		value: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	403: {
+	405: {
 		left: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		},
 		right: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
-		}
-	},
-	405: {
-		methodDefinition: {
-			async: { types: [], kinds: [291] },
-			computed: { types: [], kinds: [291] },
-			generator: { types: [], kinds: [291] },
-			optional: { types: [], kinds: [291] },
-			override: { types: [], kinds: [291] },
-			privateName: { types: [], kinds: [291] },
-			readonly: { types: [], kinds: [291] },
-			static: { types: [], kinds: [291] }
-		}
-	},
-	406: {
-		methodSignature: {
-			async: { types: [], kinds: [299] },
-			computed: { types: [], kinds: [299] },
-			generator: { types: [], kinds: [299] },
-			optional: { types: [], kinds: [299] },
-			override: { types: [], kinds: [299] },
-			privateName: { types: [], kinds: [299] },
-			readonly: { types: [], kinds: [299] },
-			static: { types: [], kinds: [299] }
 		}
 	},
 	407: {
+		methodDefinition: {
+			async: { types: [], kinds: [451] },
+			computed: { types: [], kinds: [451, 452, 453] },
+			generator: { types: [], kinds: [451] },
+			optional: { types: [], kinds: [451] },
+			override: { types: [], kinds: [451, 452, 453] },
+			privateName: { types: [], kinds: [451, 452, 453] },
+			readonly: { types: [], kinds: [451] },
+			static: { types: [], kinds: [451, 452, 453] }
+		}
+	},
+	408: {
+		methodSignature: {
+			async: { types: [], kinds: [454] },
+			computed: { types: [], kinds: [454, 455, 456] },
+			generator: { types: [], kinds: [454] },
+			optional: { types: [], kinds: [454] },
+			override: { types: [], kinds: [454, 455, 456] },
+			privateName: { types: [], kinds: [454, 455, 456] },
+			readonly: { types: [], kinds: [454] },
+			static: { types: [], kinds: [454, 455, 456] }
+		}
+	},
+	409: {
 		member: {
-			abstract: { types: [], kinds: [296] },
-			async: { types: [], kinds: [299] },
-			computed: { types: [], kinds: [296, 299, 300] },
-			declare: { types: [], kinds: [296] },
-			definite: { types: [], kinds: [296] },
-			generator: { types: [], kinds: [299, 300] },
-			optional: { types: [], kinds: [296, 299, 300] },
-			override: { types: [], kinds: [296, 299, 300] },
-			privateName: { types: [], kinds: [296, 299, 300] },
-			readonly: { types: [], kinds: [296, 299, 408, 409] },
-			static: { types: [], kinds: [296, 299] }
+			abstract: { types: [], kinds: [460] },
+			async: { types: [], kinds: [454] },
+			computed: { types: [], kinds: [454, 455, 456, 457, 458, 459, 460, 461] },
+			declare: { types: [], kinds: [460] },
+			definite: { types: [], kinds: [460] },
+			generator: { types: [], kinds: [454, 457] },
+			optional: { types: [], kinds: [454, 457, 460] },
+			override: { types: [], kinds: [454, 455, 456, 457, 458, 459, 460, 461] },
+			privateName: { types: [], kinds: [454, 455, 456, 457, 458, 459, 460, 461] },
+			readonly: { types: [], kinds: [410, 411, 454, 460] },
+			static: { types: [], kinds: [454, 455, 456, 460, 461] }
 		}
 	},
-	408: { indexType: { abstract: { types: [], kinds: [343] }, unique: { types: [144], kinds: [] } } },
-	411: {
+	410: { indexType: { abstract: { types: [], kinds: [343] }, unique: { types: [143], kinds: [] } } },
+	413: {
 		expression: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
-			privateName: { types: [], kinds: [257] }
-		}
-	},
-	415: {
-		expression: {
-			async: { types: [], kinds: [246, 248, 250] },
-			disposable: { types: [], kinds: [260] },
-			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
 	417: {
-		function: {
+		expression: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
-			privateName: { types: [], kinds: [257] }
-		}
-	},
-	418: {
-		function: {
-			async: { types: [], kinds: [246, 248, 250] },
-			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
 	419: {
 		function: {
 			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	422: {
+	420: {
+		function: {
+			async: { types: [], kinds: [246, 248, 250] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		}
+	},
+	421: {
+		function: {
+			async: { types: [], kinds: [246, 248, 250] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		}
+	},
+	424: {
 		argument: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	423: {
+	425: {
 		argument: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	428: {
+	430: {
 		content: {
 			abstract: { types: [312], kinds: [] },
 			async: { types: [], kinds: [247, 249, 301] },
 			const: { types: [], kinds: [320] },
 			generator: { types: [249], kinds: [] }
-		}
-	},
-	432: {
-		content: {
-			abstract: { types: [312], kinds: [] },
-			async: { types: [], kinds: [247, 249, 301] },
-			const: { types: [], kinds: [320] },
-			generator: { types: [249], kinds: [] }
-		}
-	},
-	433: {
-		value: {
-			async: { types: [], kinds: [246, 248, 250] },
-			disposable: { types: [], kinds: [260] },
-			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
-			privateName: { types: [], kinds: [257] }
 		}
 	},
 	434: {
+		content: {
+			abstract: { types: [312], kinds: [] },
+			async: { types: [], kinds: [247, 249, 301] },
+			const: { types: [], kinds: [320] },
+			generator: { types: [249], kinds: [] }
+		}
+	},
+	435: {
 		value: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	438: {
-		right: {
-			async: { types: [], kinds: [246, 248, 250] },
-			disposable: { types: [], kinds: [260] },
-			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
-			privateName: { types: [], kinds: [257] }
-		}
-	},
-	439: {
+	436: {
 		value: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
-			privateName: { types: [], kinds: [257] }
-		},
-		right: {
-			async: { types: [], kinds: [246, 248, 250] },
-			disposable: { types: [], kinds: [260] },
-			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
@@ -5400,37 +5548,87 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
 	441: {
-		right: {
-			async: { types: [], kinds: [246, 248, 250] },
-			disposable: { types: [], kinds: [260] },
-			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
-			privateName: { types: [], kinds: [257] }
-		}
-	},
-	443: {
 		value: {
 			async: { types: [], kinds: [246, 248, 250] },
 			disposable: { types: [], kinds: [260] },
 			generator: { types: [248], kinds: [] },
-			optionalChain: { types: [419], kinds: [257, 258] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		},
+		right: {
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
 			privateName: { types: [], kinds: [257] }
 		}
 	},
-	445: { receiver: { override: { types: [], kinds: [443] }, readonly: { types: [], kinds: [443] } } }
+	442: {
+		right: {
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		}
+	},
+	443: {
+		right: {
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		}
+	},
+	447: { item: { override: { types: [], kinds: [448] }, readonly: { types: [], kinds: [448] } } },
+	460: {
+		value: {
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		}
+	},
+	461: {
+		value: {
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		}
+	},
+	463: {
+		value: {
+			async: { types: [], kinds: [246, 248, 250] },
+			disposable: { types: [], kinds: [260] },
+			generator: { types: [248], kinds: [] },
+			optionalChain: { types: [421], kinds: [257, 258] },
+			privateName: { types: [], kinds: [257] }
+		}
+	},
+	465: { receiver: { override: { types: [], kinds: [463] }, readonly: { types: [], kinds: [463] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
 	interface AbstractClassDeclaration {
 		readonly __flags__?: 'abstract';
 	}
-	interface AbstractMethodSignature {
+	interface AbstractMethodSignatureGetter {
+		readonly __flags__?: 'override' | 'privateName' | 'computed';
+	}
+	interface AbstractMethodSignaturePlain {
 		readonly __flags__?: 'override' | 'optional' | 'generator' | 'privateName' | 'computed';
+	}
+	interface AbstractMethodSignatureSetter {
+		readonly __flags__?: 'override' | 'privateName' | 'computed';
 	}
 	interface ArrowFunction {
 		readonly __flags__?: 'async';
@@ -5492,7 +5690,10 @@ declare module './types.js' {
 	interface MemberExpression {
 		readonly __flags__?: 'optionalChain' | 'privateName';
 	}
-	interface MethodDefinition {
+	interface MethodDefinitionGetter {
+		readonly __flags__?: 'static' | 'override' | 'privateName' | 'computed';
+	}
+	interface MethodDefinitionPlain {
 		readonly __flags__?:
 			| 'static'
 			| 'override'
@@ -5503,7 +5704,13 @@ declare module './types.js' {
 			| 'privateName'
 			| 'computed';
 	}
-	interface MethodSignature {
+	interface MethodDefinitionSetter {
+		readonly __flags__?: 'static' | 'override' | 'privateName' | 'computed';
+	}
+	interface MethodSignatureGetter {
+		readonly __flags__?: 'static' | 'override' | 'privateName' | 'computed';
+	}
+	interface MethodSignaturePlain {
 		readonly __flags__?:
 			| 'static'
 			| 'override'
@@ -5513,6 +5720,9 @@ declare module './types.js' {
 			| 'generator'
 			| 'privateName'
 			| 'computed';
+	}
+	interface MethodSignatureSetter {
+		readonly __flags__?: 'static' | 'override' | 'privateName' | 'computed';
 	}
 	interface OptionalParameter {
 		readonly __flags__?: 'override' | 'readonly' | 'optional';
@@ -5526,7 +5736,10 @@ declare module './types.js' {
 	interface PropertySignature {
 		readonly __flags__?: 'static' | 'override' | 'readonly' | 'optional' | 'privateName' | 'computed';
 	}
-	interface PublicFieldDefinition {
+	interface PublicFieldDefinitionAccessor {
+		readonly __flags__?: 'static' | 'override' | 'privateName' | 'computed';
+	}
+	interface PublicFieldDefinitionPlain {
 		readonly __flags__?:
 			| 'declare'
 			| 'static'
@@ -5542,6 +5755,9 @@ declare module './types.js' {
 		readonly __flags__?: 'override' | 'readonly';
 	}
 	interface RequiredParameter {
+		readonly __flags__?: 'override' | 'readonly';
+	}
+	interface SetterParameter {
 		readonly __flags__?: 'override' | 'readonly';
 	}
 	interface SubscriptExpression {
@@ -5735,9 +5951,6 @@ declare module './types.js' {
 		readonly __slotFlags__?: {
 			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName';
 		};
-	}
-	interface PublicFieldDefinition {
-		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface NonNullExpression {
 		readonly __slotFlags__?: {
@@ -6011,6 +6224,15 @@ declare module './types.js' {
 	}
 	interface ForHeaderUsingKind {
 		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
+	}
+	interface FormalParametersElementsUSetAccessorSignature {
+		readonly __slotFlags__?: { readonly item: 'override' | 'readonly' };
+	}
+	interface PublicFieldDefinitionPlain {
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
+	}
+	interface PublicFieldDefinitionAccessor {
+		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface ReceiverParameterDeclaration {
 		readonly __slotFlags__?: { readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };

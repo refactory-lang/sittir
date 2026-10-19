@@ -111,14 +111,10 @@ export const _fromMap = {
 	formal_parameters: coerceToFormalParameters,
 	class_static_block: coerceToClassStaticBlock,
 	rest_pattern: coerceToRestPattern,
-	method_definition: coerceToMethodDefinition,
 	pair: coerceToPair,
 	pair_pattern: coerceToPairPattern,
 	computed_property_name: coerceToComputedPropertyName,
-	public_field_definition: coerceToPublicFieldDefinition,
 	non_null_expression: coerceToNonNullExpression,
-	method_signature: coerceToMethodSignature,
-	abstract_method_signature: coerceToAbstractMethodSignature,
 	function_signature: coerceToFunctionSignature,
 	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression,
 	type_assertion: coerceToTypeAssertion,
@@ -260,6 +256,21 @@ export const _fromMap = {
 	for_header_var_kind: coerceToForHeaderVarKind,
 	for_header_let_const_kind: coerceToForHeaderLetConstKind,
 	for_header_using_kind: coerceToForHeaderUsingKind,
+	_formal_parameters__get_accessor_signature: coerceToFormalParametersUGetAccessorSignature,
+	_formal_parameters__set_accessor_signature: coerceToFormalParametersUSetAccessorSignature,
+	_formal_parameters_elements__set_accessor_signature: coerceToFormalParametersElementsUSetAccessorSignature,
+	setter_parameter: coerceToSetterParameter,
+	method_definition_plain: coerceToMethodDefinitionPlain,
+	method_definition_getter: coerceToMethodDefinitionGetter,
+	method_definition_setter: coerceToMethodDefinitionSetter,
+	method_signature_plain: coerceToMethodSignaturePlain,
+	method_signature_getter: coerceToMethodSignatureGetter,
+	method_signature_setter: coerceToMethodSignatureSetter,
+	abstract_method_signature_plain: coerceToAbstractMethodSignaturePlain,
+	abstract_method_signature_getter: coerceToAbstractMethodSignatureGetter,
+	abstract_method_signature_setter: coerceToAbstractMethodSignatureSetter,
+	public_field_definition_plain: coerceToPublicFieldDefinitionPlain,
+	public_field_definition_accessor: coerceToPublicFieldDefinitionAccessor,
 	html_comment: coerceToHtmlComment,
 	jsx_text: coerceToJsxText,
 	_template_chars: coerceToTemplateChars,
@@ -371,6 +382,10 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	optional_chain_marker: { values: ['?.'], factory: () => F.buildOptionalChainMarker },
 	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget },
 	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta },
+	_formal_parameters__get_accessor_signature: {
+		values: ['()'],
+		factory: () => F.buildFormalParametersUGetAccessorSignature
+	},
 	html_comment: { pattern: F._leafRe_buildHtmlComment, factory: F.buildHtmlComment },
 	jsx_text: { pattern: F._leafRe_buildJsxText, factory: F.buildJsxText },
 	_template_chars: { pattern: F._leafRe_buildTemplateChars, factory: F.buildTemplateChars },
@@ -471,7 +486,8 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'statement_identifier',
 	'type_identifier',
 	'meta_property_new_target',
-	'meta_property_import_meta'
+	'meta_property_import_meta',
+	'_formal_parameters__get_accessor_signature'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
@@ -595,232 +611,234 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
 	117, 121, 123, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
 	148, 149, 150, 151, 165, 167, 169, 170, 171, 172, 173, 178, 180, 181, 182, 183, 184, 185, 186, 187, 195, 225, 253,
-	277, 278, 279, 280, 281, 324, 325, 362, 365, 393, 404, 412, 436, 437
+	277, 278, 279, 280, 281, 324, 325, 362, 365, 393, 406, 414, 438, 439, 445
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	namespace_export: new Set([1, 420, 421]),
-	export_clause: new Set([1, 192, 382, 420, 421]),
-	import_clause: new Set([1, 199, 200, 383, 413, 414, 426]),
+	namespace_export: new Set([1, 422, 423]),
+	export_clause: new Set([1, 192, 382, 422, 423]),
+	import_clause: new Set([1, 199, 200, 383, 415, 416, 428]),
 	namespace_import: new Set([1]),
-	named_imports: new Set([383, 413, 414]),
+	named_imports: new Set([383, 415, 416]),
 	expression_statement: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	else_clause: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 173, 196, 204, 205, 206, 207, 209, 211, 212, 213,
 		214, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 235, 236, 240, 243, 244, 246, 247, 248, 249, 250, 255,
 		256, 257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 301, 303, 304, 305, 306, 311,
-		312, 313, 314, 316, 318, 320, 323, 395, 396, 399, 400, 411, 415, 416, 417, 418, 419, 420, 421, 422, 423, 427, 428,
-		436, 437, 478
+		312, 313, 314, 316, 318, 320, 323, 397, 398, 401, 402, 413, 417, 418, 419, 420, 421, 422, 423, 424, 425, 429, 430,
+		438, 439, 498
 	]),
-	break_statement: new Set([1, 478]),
-	continue_statement: new Set([1, 478]),
+	break_statement: new Set([1, 498]),
+	continue_statement: new Set([1, 498]),
 	debugger_statement: new Set([173]),
 	return_statement: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	throw_statement: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	finally_clause: new Set([209]),
 	yield_expression: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
-	class_heritage: new Set([310, 425]),
+	class_heritage: new Set([310, 427]),
 	await_expression: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	_lhs_expression: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 237, 240, 241, 243, 246, 248, 250, 255,
-		256, 257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411,
-		415, 416, 417, 418, 419, 420, 421, 422, 423, 436, 437
+		256, 257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413,
+		417, 418, 419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	spread_element: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	template_substitution: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	decorator: new Set([1, 284, 285, 302]),
-	formal_parameters: new Set([326, 327, 385, 445]),
+	formal_parameters: new Set([326, 327, 385, 465]),
 	class_static_block: new Set([209]),
 	rest_pattern: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 237, 240, 241, 243, 246, 248, 250, 255,
-		256, 257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411,
-		415, 416, 417, 418, 419, 420, 421, 422, 423, 436, 437
+		256, 257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413,
+		417, 418, 419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	computed_property_name: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	non_null_expression: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	decorator_parenthesized_expression: new Set([1, 284, 285]),
 	ambient_declaration: new Set([
-		205, 206, 207, 209, 244, 247, 249, 301, 311, 312, 313, 314, 316, 318, 320, 323, 395, 396
+		205, 206, 207, 209, 244, 247, 249, 301, 311, 312, 313, 314, 316, 318, 320, 323, 397, 398
 	]),
 	enum_body: new Set([
 		1, 127, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256,
 		257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 295, 298, 303, 304, 305, 306, 314, 322,
-		386, 388, 411, 415, 416, 417, 418, 419, 420, 421, 422, 423, 436, 437, 475
+		386, 388, 413, 417, 418, 419, 420, 421, 422, 423, 424, 425, 438, 439, 495
 	]),
 	omitting_type_annotation: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	adding_type_annotation: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	opting_type_annotation: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	type_annotation: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	asserts: new Set([1, 277, 350]),
 	asserts_annotation: new Set([1, 277, 335, 350]),
 	optional_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	rest_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	template_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	type_predicate_annotation: new Set([350]),
 	type_query: new Set([1, 277, 352, 353, 354, 355]),
 	index_type_query: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
-	literal_type: new Set([128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 279, 280, 281, 401, 420, 421]),
+	literal_type: new Set([128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 279, 280, 281, 403, 422, 423]),
 	flow_maybe_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	parenthesized_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	type_arguments: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 389, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 389, 391, 403, 422, 423, 500
 	]),
-	type_parameters: new Set([1, 371, 390, 480]),
+	type_parameters: new Set([1, 371, 390, 500]),
 	default_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	array_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	tuple_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
 	readonly_type: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
-	export_specifiers: new Set([1, 192, 420, 421]),
-	import_specifiers: new Set([413, 414]),
+	export_specifiers: new Set([1, 192, 422, 423]),
+	import_specifiers: new Set([415, 416]),
 	formal_parameters_elements: new Set([326, 327]),
 	enum_body_element_name: new Set([
 		1, 127, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256,
-		257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 295, 298, 303, 304, 305, 306, 314, 411,
-		415, 416, 417, 418, 419, 420, 421, 422, 423, 436, 437, 475
+		257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 295, 298, 303, 304, 305, 306, 314, 413,
+		417, 418, 419, 420, 421, 422, 423, 424, 425, 438, 439, 495
 	]),
 	enum_body_elements: new Set([
 		1, 127, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256,
 		257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 295, 298, 303, 304, 305, 306, 314, 322,
-		386, 411, 415, 416, 417, 418, 419, 420, 421, 422, 423, 436, 437, 475
+		386, 413, 417, 418, 419, 420, 421, 422, 423, 424, 425, 438, 439, 495
 	]),
 	types: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
-	type_parameters_elements: new Set([1, 371, 480]),
+	type_parameters_elements: new Set([1, 371, 500]),
 	tuple_type_members: new Set([
-		1, 40, 41, 42, 43, 44, 46, 77, 128, 144, 145, 146, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
+		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 401, 420, 421, 480
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
 	]),
-	import_clause_group: new Set([1, 199, 200, 383, 413, 414]),
+	import_clause_group: new Set([1, 199, 200, 383, 415, 416]),
 	ambient_declaration_global: new Set([209]),
 	object_type_content: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 299, 303, 304, 305, 306, 314, 368, 369,
-		374, 399, 400, 408, 409, 411, 415, 416, 417, 418, 419, 420, 421, 422, 423, 427, 428, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 368, 369, 374,
+		401, 402, 410, 411, 413, 417, 418, 419, 420, 421, 422, 423, 424, 425, 429, 430, 438, 439, 454, 455, 456
 	]),
 	export_statement_namespace_export: new Set([1]),
 	export_statement_equals_export: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	literal_type_negative_number: new Set([154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164]),
-	class_body_member_declaration: new Set([296, 299, 300, 408, 409]),
+	class_body_member_declaration: new Set([410, 411, 454, 455, 456, 457, 458, 459, 460, 461]),
 	yield_expression_delegate: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
 	parenthesized_expression_sequence: new Set([270]),
 	arrow_function_parameter: new Set([1]),
-	export_statement_default_from_star_from: new Set([420, 421]),
+	export_statement_default_from_star_from: new Set([422, 423]),
 	export_statement_default_declaration_default_kw: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 205, 206, 207, 209, 235, 236, 240, 243, 244, 246,
 		247, 248, 249, 250, 255, 256, 257, 258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 301,
-		303, 304, 305, 306, 311, 312, 313, 314, 316, 318, 320, 323, 395, 396, 411, 415, 416, 417, 418, 419, 420, 421, 422,
-		423, 433, 436, 437
+		303, 304, 305, 306, 311, 312, 313, 314, 316, 318, 320, 323, 397, 398, 413, 417, 418, 419, 420, 421, 422, 423, 424,
+		425, 435, 438, 439
 	]),
 	export_statement_default_declaration_default_kw_value: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
-		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
-		417, 418, 419, 420, 421, 422, 423, 436, 437
+		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
+	_formal_parameters__set_accessor_signature: new Set([447, 448]),
+	_formal_parameters_elements__set_accessor_signature: new Set([448]),
 	formal_parameters_elements_receiver_group: new Set([326, 327, 385]),
 	statement_identifier: new Set([1]),
 	shorthand_property_identifier: new Set([1]),
@@ -840,9 +858,9 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	44: ['predefined_type'],
 	46: ['predefined_type'],
 	77: ['predefined_type'],
+	143: ['predefined_type'],
 	144: ['predefined_type'],
-	145: ['predefined_type'],
-	146: ['predefined_type']
+	145: ['predefined_type']
 };
 
 function _resolveOne<T>(
@@ -1090,6 +1108,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	export_statement_default_from_star_from: TSKindId.ExportStatementDefaultFromStarFrom,
 	export_statement_default_declaration_default_kw: TSKindId.ExportStatementDefaultDeclarationDefaultKw,
 	export_statement_default_declaration_default_kw_value: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue,
+	_formal_parameters__set_accessor_signature: TSKindId.FormalParametersUSetAccessorSignature,
+	_formal_parameters_elements__set_accessor_signature: TSKindId.FormalParametersElementsUSetAccessorSignature,
 	formal_parameters_elements_receiver_group: TSKindId.FormalParametersElementsReceiverGroup,
 	statement_identifier: TSKindId.StatementIdentifier,
 	shorthand_property_identifier: TSKindId.ShorthandPropertyIdentifier,
@@ -1151,6 +1171,8 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	arrow_function_parameter: 'identifier',
 	export_statement_default_from_star_from: 'string',
 	export_statement_default_declaration_default_kw_value: 'expression',
+	_formal_parameters__set_accessor_signature: '_formal_parameters_elements__set_accessor_signature',
+	_formal_parameters_elements__set_accessor_signature: 'setter_parameter',
 	formal_parameters_elements_receiver_group: 'formal_parameters_elements',
 	statement_identifier: 'identifier',
 	shorthand_property_identifier: 'identifier',
@@ -1223,6 +1245,8 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'export_statement_default_from_star_from',
 	'export_statement_default_declaration_default_kw',
 	'export_statement_default_declaration_default_kw_value',
+	'_formal_parameters__set_accessor_signature',
+	'_formal_parameters_elements__set_accessor_signature',
 	'formal_parameters_elements_receiver_group',
 	'statement_identifier',
 	'shorthand_property_identifier',
@@ -1437,6 +1461,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildExportStatementDefaultDeclarationDefaultKwValue(
 				children[0] as Parameters<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0]
 			);
+		case '_formal_parameters__set_accessor_signature':
+			return F.buildFormalParametersUSetAccessorSignature(
+				children[0] as Parameters<typeof F.buildFormalParametersUSetAccessorSignature>[0]
+			);
+		case '_formal_parameters_elements__set_accessor_signature':
+			return F.buildFormalParametersElementsUSetAccessorSignature(
+				children[0] as Parameters<typeof F.buildFormalParametersElementsUSetAccessorSignature>[0]
+			);
 		case 'formal_parameters_elements_receiver_group':
 			return F.buildFormalParametersElementsReceiverGroup(
 				children[0] as Parameters<typeof F.buildFormalParametersElementsReceiverGroup>[0]
@@ -1570,6 +1602,16 @@ const _super_import_specifier: readonly string[] = ['import_specifier_name', 'im
 const _super_formal_parameter: readonly string[] = ['required_parameter', 'optional_parameter'];
 const _super_enum_body_element: readonly string[] = ['enum_body_element_name', 'enum_assignment'];
 const _super_destructuring_pattern: readonly string[] = ['object_pattern', 'array_pattern'];
+const _super_method_definition: readonly string[] = [
+	'method_definition_plain',
+	'method_definition_getter',
+	'method_definition_setter'
+];
+const _super_method_signature: readonly string[] = [
+	'method_signature_plain',
+	'method_signature_getter',
+	'method_signature_setter'
+];
 const _K0: readonly string[] = ['empty_statement'];
 const _K1: readonly string[] = [
 	'export_statement_default_from',
@@ -1784,7 +1826,14 @@ const _K11: readonly string[] = [
 	'new_expression',
 	'yield_expression'
 ];
-const _K12: readonly string[] = ['pair', 'spread_element', 'method_definition', 'shorthand_property_identifier'];
+const _K12: readonly string[] = [
+	'pair',
+	'spread_element',
+	'method_definition_plain',
+	'method_definition_getter',
+	'method_definition_setter',
+	'shorthand_property_identifier'
+];
 const _K13: readonly string[] = [
 	'pair_pattern',
 	'rest_pattern',
@@ -2238,7 +2287,9 @@ const _K68: readonly string[] = [
 	'construct_signature',
 	'index_signature_colon',
 	'index_signature_mapped_type_clause',
-	'method_signature'
+	'method_signature_plain',
+	'method_signature_getter',
+	'method_signature_setter'
 ];
 const _K69: readonly string[] = [
 	'number_hex',
@@ -2299,11 +2350,16 @@ const _K70: readonly string[] = [
 	'private_property_identifier'
 ];
 const _K71: readonly string[] = [
-	'abstract_method_signature',
+	'abstract_method_signature_plain',
+	'abstract_method_signature_getter',
+	'abstract_method_signature_setter',
 	'index_signature_colon',
 	'index_signature_mapped_type_clause',
-	'method_signature',
-	'public_field_definition'
+	'method_signature_plain',
+	'method_signature_getter',
+	'method_signature_setter',
+	'public_field_definition_plain',
+	'public_field_definition_accessor'
 ];
 const _K72: readonly string[] = [
 	'type_annotation',
@@ -2391,6 +2447,7 @@ const _K80: readonly string[] = [
 	'parenthesized_expression_typed',
 	'parenthesized_expression_sequence'
 ];
+const _K81: readonly string[] = ['_lhs_expression'];
 
 export function resolveProgram_hashBangLine(
 	value: T.Program.LooseConfig['hashBangLine']
@@ -4835,114 +4892,6 @@ export function coerceToRestPattern(input: T.RestPattern.Loose): ReturnType<type
 	);
 }
 
-export function resolveMethodDefinition_accessibilityModifier(
-	value: T.MethodDefinition.LooseConfig['accessibilityModifier']
-): Admit<T.MethodDefinition['_accessibility_modifier']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
-		),
-		[
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const
-		]
-	);
-}
-
-export function resolveMethodDefinition_static(
-	value: T.MethodDefinition.LooseConfig['static']
-): Admit<T.MethodDefinition['_static']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodDefinition_override(
-	value: T.MethodDefinition.LooseConfig['override']
-): Admit<T.MethodDefinition['_override']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodDefinition_readonly(
-	value: T.MethodDefinition.LooseConfig['readonly']
-): Admit<T.MethodDefinition['_readonly']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodDefinition_async(
-	value: T.MethodDefinition.LooseConfig['async']
-): Admit<T.MethodDefinition['_async']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodDefinition_generator(
-	value: T.MethodDefinition.LooseConfig['generator']
-): Admit<T.MethodDefinition['_generator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
-		[['get', TSKindId.GetKeyword] as const, ['set', TSKindId.SetKeyword] as const, ['*', TSKindId.Star] as const]
-	);
-}
-
-export function resolveMethodDefinition_name(
-	value: T.MethodDefinition.LooseConfig['name']
-): Admit<T.MethodDefinition['_name']> {
-	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
-		value,
-		_K37,
-		_K38,
-		'string_double'
-	);
-}
-
-export function resolveMethodDefinition_optional(
-	value: T.MethodDefinition.LooseConfig['optional']
-): Admit<T.MethodDefinition['_optional']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodDefinition_typeParameters(
-	value: T.MethodDefinition.LooseConfig['typeParameters']
-): Admit<T.MethodDefinition['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
-}
-
-export function resolveMethodDefinition_parameters(
-	value: T.MethodDefinition.LooseConfig['parameters']
-): Admit<T.MethodDefinition['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
-}
-
-export function resolveMethodDefinition_returnType(
-	value: T.MethodDefinition.LooseConfig['returnType']
-): Admit<T.MethodDefinition['_return_type']> {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
-}
-
-export function resolveMethodDefinition_body(
-	value: T.MethodDefinition.LooseConfig['body']
-): Admit<T.MethodDefinition['_body']> {
-	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
-}
-
-export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): ReturnType<typeof F.buildMethodDefinition> {
-	if (!_isLooseConfig<T.MethodDefinition.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildMethodDefinition>;
-	return F.buildMethodDefinition({
-		accessibilityModifier: resolveMethodDefinition_accessibilityModifier(input.accessibilityModifier),
-		static: resolveMethodDefinition_static(input.static),
-		override: resolveMethodDefinition_override(input.override),
-		readonly: resolveMethodDefinition_readonly(input.readonly),
-		async: resolveMethodDefinition_async(input.async),
-		generator: resolveMethodDefinition_generator(input.generator),
-		name: resolveMethodDefinition_name(input.name),
-		optional: resolveMethodDefinition_optional(input.optional),
-		typeParameters: resolveMethodDefinition_typeParameters(input.typeParameters),
-		parameters: resolveMethodDefinition_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveMethodDefinition_returnType(input.returnType),
-		body: resolveMethodDefinition_body(input.body) ?? F.buildStatementBlock()
-	});
-}
-
 export function resolvePair_key(value: T.Pair.LooseConfig['key']): Admit<T.Pair['_key']> {
 	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
@@ -5019,119 +4968,6 @@ export function coerceToComputedPropertyName(
 	);
 }
 
-export function resolvePublicFieldDefinition_decorators(
-	value: T.PublicFieldDefinition.LooseConfig['decorator']
-): Admit<T.PublicFieldDefinition['_decorator']> {
-	return _resolveManyBranch<T.Decorator>(value, 'decorator');
-}
-
-export function resolvePublicFieldDefinition_declare(
-	value: T.PublicFieldDefinition.LooseConfig['declare']
-): Admit<T.PublicFieldDefinition['_declare']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinition_accessibilityModifier(
-	value: T.PublicFieldDefinition.LooseConfig['accessibilityModifier']
-): Admit<T.PublicFieldDefinition['_accessibility_modifier']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
-		),
-		[
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const
-		]
-	);
-}
-
-export function resolvePublicFieldDefinition_static(
-	value: T.PublicFieldDefinition.LooseConfig['static']
-): Admit<T.PublicFieldDefinition['_static']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinition_override(
-	value: T.PublicFieldDefinition.LooseConfig['override']
-): Admit<T.PublicFieldDefinition['_override']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinition_readonly(
-	value: T.PublicFieldDefinition.LooseConfig['readonly']
-): Admit<T.PublicFieldDefinition['_readonly']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinition_abstract(
-	value: T.PublicFieldDefinition.LooseConfig['abstract']
-): Admit<T.PublicFieldDefinition['_abstract']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinition_accessor(
-	value: T.PublicFieldDefinition.LooseConfig['accessor']
-): Admit<T.PublicFieldDefinition['_accessor']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinition_name(
-	value: T.PublicFieldDefinition.LooseConfig['name']
-): Admit<T.PublicFieldDefinition['_name']> {
-	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
-		value,
-		_K37,
-		_K38,
-		'string_double'
-	);
-}
-
-export function resolvePublicFieldDefinition_optionality(
-	value: T.PublicFieldDefinition.LooseConfig['optionality']
-): Admit<T.PublicFieldDefinition['_optionality']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'?' | '!'>(value, _K2, _K2)),
-		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
-	);
-}
-
-export function resolvePublicFieldDefinition_type(
-	value: T.PublicFieldDefinition.LooseConfig['type']
-): Admit<T.PublicFieldDefinition['_type']> {
-	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
-}
-
-export function resolvePublicFieldDefinition_value(
-	value: T.PublicFieldDefinition.LooseConfig['value']
-): Admit<T.PublicFieldDefinition['_value']> {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K6, _K14)),
-		[]
-	);
-}
-
-export function coerceToPublicFieldDefinition(
-	input: T.PublicFieldDefinition.Loose
-): ReturnType<typeof F.buildPublicFieldDefinition> {
-	if (!_isLooseConfig<T.PublicFieldDefinition.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildPublicFieldDefinition>;
-	return F.buildPublicFieldDefinition({
-		decorator: resolvePublicFieldDefinition_decorators(input.decorator),
-		declare: resolvePublicFieldDefinition_declare(input.declare),
-		accessibilityModifier: resolvePublicFieldDefinition_accessibilityModifier(input.accessibilityModifier),
-		static: resolvePublicFieldDefinition_static(input.static),
-		override: resolvePublicFieldDefinition_override(input.override),
-		readonly: resolvePublicFieldDefinition_readonly(input.readonly),
-		abstract: resolvePublicFieldDefinition_abstract(input.abstract),
-		accessor: resolvePublicFieldDefinition_accessor(input.accessor),
-		name: resolvePublicFieldDefinition_name(input.name),
-		optionality: resolvePublicFieldDefinition_optionality(input.optionality),
-		type: resolvePublicFieldDefinition_type(input.type),
-		value: resolvePublicFieldDefinition_value(input.value)
-	});
-}
-
 export function resolveNonNullExpression_expression(
 	value: T.NonNullExpression.LooseConfig['expression']
 ): Admit<T.NonNullExpression['_expression']> {
@@ -5158,189 +4994,6 @@ export function coerceToNonNullExpression(
 			[]
 		)
 	);
-}
-
-export function resolveMethodSignature_accessibilityModifier(
-	value: T.MethodSignature.LooseConfig['accessibilityModifier']
-): Admit<T.MethodSignature['_accessibility_modifier']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
-		),
-		[
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const
-		]
-	);
-}
-
-export function resolveMethodSignature_static(
-	value: T.MethodSignature.LooseConfig['static']
-): Admit<T.MethodSignature['_static']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodSignature_override(
-	value: T.MethodSignature.LooseConfig['override']
-): Admit<T.MethodSignature['_override']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodSignature_readonly(
-	value: T.MethodSignature.LooseConfig['readonly']
-): Admit<T.MethodSignature['_readonly']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodSignature_async(
-	value: T.MethodSignature.LooseConfig['async']
-): Admit<T.MethodSignature['_async']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodSignature_generator(
-	value: T.MethodSignature.LooseConfig['generator']
-): Admit<T.MethodSignature['_generator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
-		[['get', TSKindId.GetKeyword] as const, ['set', TSKindId.SetKeyword] as const, ['*', TSKindId.Star] as const]
-	);
-}
-
-export function resolveMethodSignature_name(
-	value: T.MethodSignature.LooseConfig['name']
-): Admit<T.MethodSignature['_name']> {
-	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
-		value,
-		_K37,
-		_K38,
-		'string_double'
-	);
-}
-
-export function resolveMethodSignature_optional(
-	value: T.MethodSignature.LooseConfig['optional']
-): Admit<T.MethodSignature['_optional']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveMethodSignature_typeParameters(
-	value: T.MethodSignature.LooseConfig['typeParameters']
-): Admit<T.MethodSignature['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
-}
-
-export function resolveMethodSignature_parameters(
-	value: T.MethodSignature.LooseConfig['parameters']
-): Admit<T.MethodSignature['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
-}
-
-export function resolveMethodSignature_returnType(
-	value: T.MethodSignature.LooseConfig['returnType']
-): Admit<T.MethodSignature['_return_type']> {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
-}
-
-export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnType<typeof F.buildMethodSignature> {
-	if (!_isLooseConfig<T.MethodSignature.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildMethodSignature>;
-	return F.buildMethodSignature({
-		accessibilityModifier: resolveMethodSignature_accessibilityModifier(input.accessibilityModifier),
-		static: resolveMethodSignature_static(input.static),
-		override: resolveMethodSignature_override(input.override),
-		readonly: resolveMethodSignature_readonly(input.readonly),
-		async: resolveMethodSignature_async(input.async),
-		generator: resolveMethodSignature_generator(input.generator),
-		name: resolveMethodSignature_name(input.name),
-		optional: resolveMethodSignature_optional(input.optional),
-		typeParameters: resolveMethodSignature_typeParameters(input.typeParameters),
-		parameters: resolveMethodSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveMethodSignature_returnType(input.returnType)
-	});
-}
-
-export function resolveAbstractMethodSignature_accessibilityModifier(
-	value: T.AbstractMethodSignature.LooseConfig['accessibilityModifier']
-): Admit<T.AbstractMethodSignature['_accessibility_modifier']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
-		),
-		[
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const
-		]
-	);
-}
-
-export function resolveAbstractMethodSignature_override(
-	value: T.AbstractMethodSignature.LooseConfig['override']
-): Admit<T.AbstractMethodSignature['_override']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveAbstractMethodSignature_generator(
-	value: T.AbstractMethodSignature.LooseConfig['generator']
-): Admit<T.AbstractMethodSignature['_generator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'get' | 'set' | '*'>(value, _K2, _K2)),
-		[['get', TSKindId.GetKeyword] as const, ['set', TSKindId.SetKeyword] as const, ['*', TSKindId.Star] as const]
-	);
-}
-
-export function resolveAbstractMethodSignature_name(
-	value: T.AbstractMethodSignature.LooseConfig['name']
-): Admit<T.AbstractMethodSignature['_name']> {
-	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
-		value,
-		_K37,
-		_K38,
-		'string_double'
-	);
-}
-
-export function resolveAbstractMethodSignature_optional(
-	value: T.AbstractMethodSignature.LooseConfig['optional']
-): Admit<T.AbstractMethodSignature['_optional']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveAbstractMethodSignature_typeParameters(
-	value: T.AbstractMethodSignature.LooseConfig['typeParameters']
-): Admit<T.AbstractMethodSignature['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
-}
-
-export function resolveAbstractMethodSignature_parameters(
-	value: T.AbstractMethodSignature.LooseConfig['parameters']
-): Admit<T.AbstractMethodSignature['_parameters']> {
-	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
-}
-
-export function resolveAbstractMethodSignature_returnType(
-	value: T.AbstractMethodSignature.LooseConfig['returnType']
-): Admit<T.AbstractMethodSignature['_return_type']> {
-	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
-}
-
-export function coerceToAbstractMethodSignature(
-	input: T.AbstractMethodSignature.Loose
-): ReturnType<typeof F.buildAbstractMethodSignature> {
-	if (!_isLooseConfig<T.AbstractMethodSignature.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildAbstractMethodSignature>;
-	return F.buildAbstractMethodSignature({
-		accessibilityModifier: resolveAbstractMethodSignature_accessibilityModifier(input.accessibilityModifier),
-		override: resolveAbstractMethodSignature_override(input.override),
-		generator: resolveAbstractMethodSignature_generator(input.generator),
-		name: resolveAbstractMethodSignature_name(input.name),
-		optional: resolveAbstractMethodSignature_optional(input.optional),
-		typeParameters: resolveAbstractMethodSignature_typeParameters(input.typeParameters),
-		parameters: resolveAbstractMethodSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveAbstractMethodSignature_returnType(input.returnType)
-	});
 }
 
 export function resolveFunctionSignature_async(
@@ -8046,7 +7699,9 @@ export function coerceToObjectTypeContent(
 				'construct_signature',
 				'index_signature_colon',
 				'index_signature_mapped_type_clause',
-				'method_signature'
+				'method_signature_plain',
+				'method_signature_getter',
+				'method_signature_setter'
 			]
 		) as unknown as NonEmptyArray<
 			Admit<
@@ -8568,7 +8223,7 @@ export function resolveClassBodyMemberMethod_decorators(
 export function resolveClassBodyMemberMethod_methodDefinition(
 	value: T.ClassBodyMemberMethod.LooseConfig['methodDefinition']
 ): Admit<T.ClassBodyMemberMethod['_method_definition']> {
-	return _resolveOneBranch<T.MethodDefinition>(value, 'method_definition');
+	return _resolveOne<T.MethodDefinition>(value, _K2, _super_method_definition);
 }
 
 export function coerceToClassBodyMemberMethod(
@@ -8589,7 +8244,7 @@ export function coerceToClassBodyMemberMethod(
 export function resolveClassBodyMemberMethodSig_methodSignature(
 	value: T.ClassBodyMemberMethodSig.LooseConfig['methodSignature']
 ): Admit<T.ClassBodyMemberMethodSig['_method_signature']> {
-	return _resolveOneBranch<T.MethodSignature>(value, 'method_signature');
+	return _resolveOne<T.MethodSignature>(value, _K2, _super_method_signature);
 }
 
 export function resolveClassBodyMemberMethodSig_terminator(
@@ -9600,6 +9255,947 @@ export function coerceToForHeaderUsingKind(
 		terminator: resolveForHeaderUsingKind_terminator(input.terminator),
 		operator: resolveForHeaderUsingKind_operator(input.operator),
 		right: resolveForHeaderUsingKind_right(input.right)
+	});
+}
+
+export function coerceToFormalParametersUGetAccessorSignature(
+	_input?: T.FormalParametersUGetAccessorSignature.Loose
+): typeof F.buildFormalParametersUGetAccessorSignature {
+	return F.buildFormalParametersUGetAccessorSignature;
+}
+
+export function resolveFormalParametersUSetAccessorSignature_elements(
+	value: T.FormalParametersUSetAccessorSignature.LooseConfig['elements']
+): Admit<T.FormalParametersUSetAccessorSignature['_elements']> {
+	return _resolveOneBranch<T.FormalParametersElementsUSetAccessorSignature>(
+		value,
+		'_formal_parameters_elements__set_accessor_signature'
+	);
+}
+
+export function coerceToFormalParametersUSetAccessorSignature(
+	input: T.FormalParametersUSetAccessorSignature.Loose
+): ReturnType<typeof F.buildFormalParametersUSetAccessorSignature> {
+	if (isNodeOfKind(input, TSKindId.FormalParametersUSetAccessorSignature))
+		return input as unknown as ReturnType<typeof F.buildFormalParametersUSetAccessorSignature>;
+	return F.buildFormalParametersUSetAccessorSignature(
+		_resolveOneBranch<T.FormalParametersElementsUSetAccessorSignature>(
+			configFieldOr(input, 'elements', () => input),
+			'_formal_parameters_elements__set_accessor_signature'
+		)
+	);
+}
+
+export function resolveFormalParametersElementsUSetAccessorSignature_item(
+	value: T.FormalParametersElementsUSetAccessorSignature.LooseConfig['item']
+): Admit<T.FormalParametersElementsUSetAccessorSignature['_item']> {
+	return _resolveOneBranch<T.SetterParameter>(value, 'setter_parameter');
+}
+
+export function coerceToFormalParametersElementsUSetAccessorSignature(
+	input: T.FormalParametersElementsUSetAccessorSignature.Loose
+): ReturnType<typeof F.buildFormalParametersElementsUSetAccessorSignature> {
+	if (isNodeOfKind(input, TSKindId.FormalParametersElementsUSetAccessorSignature))
+		return input as unknown as ReturnType<typeof F.buildFormalParametersElementsUSetAccessorSignature>;
+	return F.buildFormalParametersElementsUSetAccessorSignature(
+		_resolveOneBranch<T.SetterParameter>(
+			configFieldOr(input, 'item', () => input),
+			'setter_parameter'
+		)
+	);
+}
+
+export function resolveSetterParameter_decorators(
+	value: T.SetterParameter.LooseConfig['decorator']
+): Admit<T.SetterParameter['_decorator']> {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+}
+
+export function resolveSetterParameter_accessibilityModifier(
+	value: T.SetterParameter.LooseConfig['accessibilityModifier']
+): Admit<T.SetterParameter['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveSetterParameter_override(
+	value: T.SetterParameter.LooseConfig['override']
+): Admit<T.SetterParameter['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveSetterParameter_readonly(
+	value: T.SetterParameter.LooseConfig['readonly']
+): Admit<T.SetterParameter['_readonly']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveSetterParameter_pattern(
+	value: T.SetterParameter.LooseConfig['pattern']
+): Admit<T.SetterParameter['_pattern']> {
+	return _keywordOr(value, [['this', TSKindId.This] as const], () =>
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () => _resolveOne<T.LhsExpression | 'this'>(value, _K45, _K81)),
+			[['this', TSKindId.This] as const]
+		)
+	);
+}
+
+export function resolveSetterParameter_type(
+	value: T.SetterParameter.LooseConfig['type']
+): Admit<T.SetterParameter['_type']> {
+	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+}
+
+export function coerceToSetterParameter(input: T.SetterParameter.Loose): ReturnType<typeof F.buildSetterParameter> {
+	if (!_isLooseConfig<T.SetterParameter.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildSetterParameter>;
+	return F.buildSetterParameter({
+		decorator: resolveSetterParameter_decorators(input.decorator),
+		accessibilityModifier: resolveSetterParameter_accessibilityModifier(input.accessibilityModifier),
+		override: resolveSetterParameter_override(input.override),
+		readonly: resolveSetterParameter_readonly(input.readonly),
+		pattern: resolveSetterParameter_pattern(input.pattern),
+		type: resolveSetterParameter_type(input.type)
+	});
+}
+
+export function resolveMethodDefinitionPlain_accessibilityModifier(
+	value: T.MethodDefinitionPlain.LooseConfig['accessibilityModifier']
+): Admit<T.MethodDefinitionPlain['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveMethodDefinitionPlain_static(
+	value: T.MethodDefinitionPlain.LooseConfig['static']
+): Admit<T.MethodDefinitionPlain['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionPlain_override(
+	value: T.MethodDefinitionPlain.LooseConfig['override']
+): Admit<T.MethodDefinitionPlain['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionPlain_readonly(
+	value: T.MethodDefinitionPlain.LooseConfig['readonly']
+): Admit<T.MethodDefinitionPlain['_readonly']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionPlain_async(
+	value: T.MethodDefinitionPlain.LooseConfig['async']
+): Admit<T.MethodDefinitionPlain['_async']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionPlain_generator(
+	value: T.MethodDefinitionPlain.LooseConfig['generator']
+): Admit<T.MethodDefinitionPlain['_generator']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionPlain_name(
+	value: T.MethodDefinitionPlain.LooseConfig['name']
+): Admit<T.MethodDefinitionPlain['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveMethodDefinitionPlain_optional(
+	value: T.MethodDefinitionPlain.LooseConfig['optional']
+): Admit<T.MethodDefinitionPlain['_optional']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionPlain_typeParameters(
+	value: T.MethodDefinitionPlain.LooseConfig['typeParameters']
+): Admit<T.MethodDefinitionPlain['_type_parameters']> {
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+}
+
+export function resolveMethodDefinitionPlain_parameters(
+	value: T.MethodDefinitionPlain.LooseConfig['parameters']
+): Admit<T.MethodDefinitionPlain['_parameters']> {
+	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+}
+
+export function resolveMethodDefinitionPlain_returnType(
+	value: T.MethodDefinitionPlain.LooseConfig['returnType']
+): Admit<T.MethodDefinitionPlain['_return_type']> {
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
+}
+
+export function resolveMethodDefinitionPlain_body(
+	value: T.MethodDefinitionPlain.LooseConfig['body']
+): Admit<T.MethodDefinitionPlain['_body']> {
+	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
+}
+
+export function coerceToMethodDefinitionPlain(
+	input: T.MethodDefinitionPlain.Loose
+): ReturnType<typeof F.buildMethodDefinitionPlain> {
+	if (!_isLooseConfig<T.MethodDefinitionPlain.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildMethodDefinitionPlain>;
+	return F.buildMethodDefinitionPlain({
+		accessibilityModifier: resolveMethodDefinitionPlain_accessibilityModifier(input.accessibilityModifier),
+		static: resolveMethodDefinitionPlain_static(input.static),
+		override: resolveMethodDefinitionPlain_override(input.override),
+		readonly: resolveMethodDefinitionPlain_readonly(input.readonly),
+		async: resolveMethodDefinitionPlain_async(input.async),
+		generator: resolveMethodDefinitionPlain_generator(input.generator),
+		name: resolveMethodDefinitionPlain_name(input.name),
+		optional: resolveMethodDefinitionPlain_optional(input.optional),
+		typeParameters: resolveMethodDefinitionPlain_typeParameters(input.typeParameters),
+		parameters: resolveMethodDefinitionPlain_parameters(input.parameters) ?? F.buildFormalParameters(),
+		returnType: resolveMethodDefinitionPlain_returnType(input.returnType),
+		body: resolveMethodDefinitionPlain_body(input.body) ?? F.buildStatementBlock()
+	});
+}
+
+export function resolveMethodDefinitionGetter_accessibilityModifier(
+	value: T.MethodDefinitionGetter.LooseConfig['accessibilityModifier']
+): Admit<T.MethodDefinitionGetter['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveMethodDefinitionGetter_static(
+	value: T.MethodDefinitionGetter.LooseConfig['static']
+): Admit<T.MethodDefinitionGetter['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionGetter_override(
+	value: T.MethodDefinitionGetter.LooseConfig['override']
+): Admit<T.MethodDefinitionGetter['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionGetter_name(
+	value: T.MethodDefinitionGetter.LooseConfig['name']
+): Admit<T.MethodDefinitionGetter['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveMethodDefinitionGetter_type(
+	value: T.MethodDefinitionGetter.LooseConfig['type']
+): Admit<T.MethodDefinitionGetter['_type']> {
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
+}
+
+export function resolveMethodDefinitionGetter_body(
+	value: T.MethodDefinitionGetter.LooseConfig['body']
+): Admit<T.MethodDefinitionGetter['_body']> {
+	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
+}
+
+export function coerceToMethodDefinitionGetter(
+	input: T.MethodDefinitionGetter.Loose
+): ReturnType<typeof F.buildMethodDefinitionGetter> {
+	if (!_isLooseConfig<T.MethodDefinitionGetter.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildMethodDefinitionGetter>;
+	return F.buildMethodDefinitionGetter({
+		accessibilityModifier: resolveMethodDefinitionGetter_accessibilityModifier(input.accessibilityModifier),
+		static: resolveMethodDefinitionGetter_static(input.static),
+		override: resolveMethodDefinitionGetter_override(input.override),
+		name: resolveMethodDefinitionGetter_name(input.name),
+		type: resolveMethodDefinitionGetter_type(input.type),
+		body: resolveMethodDefinitionGetter_body(input.body) ?? F.buildStatementBlock()
+	});
+}
+
+export function resolveMethodDefinitionSetter_accessibilityModifier(
+	value: T.MethodDefinitionSetter.LooseConfig['accessibilityModifier']
+): Admit<T.MethodDefinitionSetter['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveMethodDefinitionSetter_static(
+	value: T.MethodDefinitionSetter.LooseConfig['static']
+): Admit<T.MethodDefinitionSetter['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionSetter_override(
+	value: T.MethodDefinitionSetter.LooseConfig['override']
+): Admit<T.MethodDefinitionSetter['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDefinitionSetter_name(
+	value: T.MethodDefinitionSetter.LooseConfig['name']
+): Admit<T.MethodDefinitionSetter['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveMethodDefinitionSetter_parameters(
+	value: T.MethodDefinitionSetter.LooseConfig['parameters']
+): Admit<T.MethodDefinitionSetter['_parameters']> {
+	return _resolveOneBranch<T.FormalParametersUSetAccessorSignature>(
+		value,
+		'_formal_parameters__set_accessor_signature'
+	);
+}
+
+export function resolveMethodDefinitionSetter_body(
+	value: T.MethodDefinitionSetter.LooseConfig['body']
+): Admit<T.MethodDefinitionSetter['_body']> {
+	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
+}
+
+export function coerceToMethodDefinitionSetter(
+	input: T.MethodDefinitionSetter.Loose
+): ReturnType<typeof F.buildMethodDefinitionSetter> {
+	if (!_isLooseConfig<T.MethodDefinitionSetter.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildMethodDefinitionSetter>;
+	return F.buildMethodDefinitionSetter({
+		accessibilityModifier: resolveMethodDefinitionSetter_accessibilityModifier(input.accessibilityModifier),
+		static: resolveMethodDefinitionSetter_static(input.static),
+		override: resolveMethodDefinitionSetter_override(input.override),
+		name: resolveMethodDefinitionSetter_name(input.name),
+		parameters: resolveMethodDefinitionSetter_parameters(input.parameters),
+		body: resolveMethodDefinitionSetter_body(input.body) ?? F.buildStatementBlock()
+	});
+}
+
+export function resolveMethodSignaturePlain_accessibilityModifier(
+	value: T.MethodSignaturePlain.LooseConfig['accessibilityModifier']
+): Admit<T.MethodSignaturePlain['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveMethodSignaturePlain_static(
+	value: T.MethodSignaturePlain.LooseConfig['static']
+): Admit<T.MethodSignaturePlain['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignaturePlain_override(
+	value: T.MethodSignaturePlain.LooseConfig['override']
+): Admit<T.MethodSignaturePlain['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignaturePlain_readonly(
+	value: T.MethodSignaturePlain.LooseConfig['readonly']
+): Admit<T.MethodSignaturePlain['_readonly']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignaturePlain_async(
+	value: T.MethodSignaturePlain.LooseConfig['async']
+): Admit<T.MethodSignaturePlain['_async']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignaturePlain_generator(
+	value: T.MethodSignaturePlain.LooseConfig['generator']
+): Admit<T.MethodSignaturePlain['_generator']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignaturePlain_name(
+	value: T.MethodSignaturePlain.LooseConfig['name']
+): Admit<T.MethodSignaturePlain['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveMethodSignaturePlain_optional(
+	value: T.MethodSignaturePlain.LooseConfig['optional']
+): Admit<T.MethodSignaturePlain['_optional']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignaturePlain_typeParameters(
+	value: T.MethodSignaturePlain.LooseConfig['typeParameters']
+): Admit<T.MethodSignaturePlain['_type_parameters']> {
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+}
+
+export function resolveMethodSignaturePlain_parameters(
+	value: T.MethodSignaturePlain.LooseConfig['parameters']
+): Admit<T.MethodSignaturePlain['_parameters']> {
+	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+}
+
+export function resolveMethodSignaturePlain_returnType(
+	value: T.MethodSignaturePlain.LooseConfig['returnType']
+): Admit<T.MethodSignaturePlain['_return_type']> {
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
+}
+
+export function coerceToMethodSignaturePlain(
+	input: T.MethodSignaturePlain.Loose
+): ReturnType<typeof F.buildMethodSignaturePlain> {
+	if (!_isLooseConfig<T.MethodSignaturePlain.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildMethodSignaturePlain>;
+	return F.buildMethodSignaturePlain({
+		accessibilityModifier: resolveMethodSignaturePlain_accessibilityModifier(input.accessibilityModifier),
+		static: resolveMethodSignaturePlain_static(input.static),
+		override: resolveMethodSignaturePlain_override(input.override),
+		readonly: resolveMethodSignaturePlain_readonly(input.readonly),
+		async: resolveMethodSignaturePlain_async(input.async),
+		generator: resolveMethodSignaturePlain_generator(input.generator),
+		name: resolveMethodSignaturePlain_name(input.name),
+		optional: resolveMethodSignaturePlain_optional(input.optional),
+		typeParameters: resolveMethodSignaturePlain_typeParameters(input.typeParameters),
+		parameters: resolveMethodSignaturePlain_parameters(input.parameters) ?? F.buildFormalParameters(),
+		returnType: resolveMethodSignaturePlain_returnType(input.returnType)
+	});
+}
+
+export function resolveMethodSignatureGetter_accessibilityModifier(
+	value: T.MethodSignatureGetter.LooseConfig['accessibilityModifier']
+): Admit<T.MethodSignatureGetter['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveMethodSignatureGetter_static(
+	value: T.MethodSignatureGetter.LooseConfig['static']
+): Admit<T.MethodSignatureGetter['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignatureGetter_override(
+	value: T.MethodSignatureGetter.LooseConfig['override']
+): Admit<T.MethodSignatureGetter['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignatureGetter_name(
+	value: T.MethodSignatureGetter.LooseConfig['name']
+): Admit<T.MethodSignatureGetter['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveMethodSignatureGetter_type(
+	value: T.MethodSignatureGetter.LooseConfig['type']
+): Admit<T.MethodSignatureGetter['_type']> {
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
+}
+
+export function coerceToMethodSignatureGetter(
+	input: T.MethodSignatureGetter.Loose
+): ReturnType<typeof F.buildMethodSignatureGetter> {
+	if (!_isLooseConfig<T.MethodSignatureGetter.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildMethodSignatureGetter>;
+	return F.buildMethodSignatureGetter({
+		accessibilityModifier: resolveMethodSignatureGetter_accessibilityModifier(input.accessibilityModifier),
+		static: resolveMethodSignatureGetter_static(input.static),
+		override: resolveMethodSignatureGetter_override(input.override),
+		name: resolveMethodSignatureGetter_name(input.name),
+		type: resolveMethodSignatureGetter_type(input.type)
+	});
+}
+
+export function resolveMethodSignatureSetter_accessibilityModifier(
+	value: T.MethodSignatureSetter.LooseConfig['accessibilityModifier']
+): Admit<T.MethodSignatureSetter['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveMethodSignatureSetter_static(
+	value: T.MethodSignatureSetter.LooseConfig['static']
+): Admit<T.MethodSignatureSetter['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignatureSetter_override(
+	value: T.MethodSignatureSetter.LooseConfig['override']
+): Admit<T.MethodSignatureSetter['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodSignatureSetter_name(
+	value: T.MethodSignatureSetter.LooseConfig['name']
+): Admit<T.MethodSignatureSetter['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveMethodSignatureSetter_parameters(
+	value: T.MethodSignatureSetter.LooseConfig['parameters']
+): Admit<T.MethodSignatureSetter['_parameters']> {
+	return _resolveOneBranch<T.FormalParametersUSetAccessorSignature>(
+		value,
+		'_formal_parameters__set_accessor_signature'
+	);
+}
+
+export function coerceToMethodSignatureSetter(
+	input: T.MethodSignatureSetter.Loose
+): ReturnType<typeof F.buildMethodSignatureSetter> {
+	if (!_isLooseConfig<T.MethodSignatureSetter.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildMethodSignatureSetter>;
+	return F.buildMethodSignatureSetter({
+		accessibilityModifier: resolveMethodSignatureSetter_accessibilityModifier(input.accessibilityModifier),
+		static: resolveMethodSignatureSetter_static(input.static),
+		override: resolveMethodSignatureSetter_override(input.override),
+		name: resolveMethodSignatureSetter_name(input.name),
+		parameters: resolveMethodSignatureSetter_parameters(input.parameters)
+	});
+}
+
+export function resolveAbstractMethodSignaturePlain_accessibilityModifier(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['accessibilityModifier']
+): Admit<T.AbstractMethodSignaturePlain['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveAbstractMethodSignaturePlain_override(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['override']
+): Admit<T.AbstractMethodSignaturePlain['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveAbstractMethodSignaturePlain_generator(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['generator']
+): Admit<T.AbstractMethodSignaturePlain['_generator']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveAbstractMethodSignaturePlain_name(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['name']
+): Admit<T.AbstractMethodSignaturePlain['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveAbstractMethodSignaturePlain_optional(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['optional']
+): Admit<T.AbstractMethodSignaturePlain['_optional']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveAbstractMethodSignaturePlain_typeParameters(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['typeParameters']
+): Admit<T.AbstractMethodSignaturePlain['_type_parameters']> {
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
+}
+
+export function resolveAbstractMethodSignaturePlain_parameters(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['parameters']
+): Admit<T.AbstractMethodSignaturePlain['_parameters']> {
+	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
+}
+
+export function resolveAbstractMethodSignaturePlain_returnType(
+	value: T.AbstractMethodSignaturePlain.LooseConfig['returnType']
+): Admit<T.AbstractMethodSignaturePlain['_return_type']> {
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
+}
+
+export function coerceToAbstractMethodSignaturePlain(
+	input: T.AbstractMethodSignaturePlain.Loose
+): ReturnType<typeof F.buildAbstractMethodSignaturePlain> {
+	if (!_isLooseConfig<T.AbstractMethodSignaturePlain.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildAbstractMethodSignaturePlain>;
+	return F.buildAbstractMethodSignaturePlain({
+		accessibilityModifier: resolveAbstractMethodSignaturePlain_accessibilityModifier(input.accessibilityModifier),
+		override: resolveAbstractMethodSignaturePlain_override(input.override),
+		generator: resolveAbstractMethodSignaturePlain_generator(input.generator),
+		name: resolveAbstractMethodSignaturePlain_name(input.name),
+		optional: resolveAbstractMethodSignaturePlain_optional(input.optional),
+		typeParameters: resolveAbstractMethodSignaturePlain_typeParameters(input.typeParameters),
+		parameters: resolveAbstractMethodSignaturePlain_parameters(input.parameters) ?? F.buildFormalParameters(),
+		returnType: resolveAbstractMethodSignaturePlain_returnType(input.returnType)
+	});
+}
+
+export function resolveAbstractMethodSignatureGetter_accessibilityModifier(
+	value: T.AbstractMethodSignatureGetter.LooseConfig['accessibilityModifier']
+): Admit<T.AbstractMethodSignatureGetter['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveAbstractMethodSignatureGetter_override(
+	value: T.AbstractMethodSignatureGetter.LooseConfig['override']
+): Admit<T.AbstractMethodSignatureGetter['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveAbstractMethodSignatureGetter_name(
+	value: T.AbstractMethodSignatureGetter.LooseConfig['name']
+): Admit<T.AbstractMethodSignatureGetter['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveAbstractMethodSignatureGetter_type(
+	value: T.AbstractMethodSignatureGetter.LooseConfig['type']
+): Admit<T.AbstractMethodSignatureGetter['_type']> {
+	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K20);
+}
+
+export function coerceToAbstractMethodSignatureGetter(
+	input: T.AbstractMethodSignatureGetter.Loose
+): ReturnType<typeof F.buildAbstractMethodSignatureGetter> {
+	if (!_isLooseConfig<T.AbstractMethodSignatureGetter.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildAbstractMethodSignatureGetter>;
+	return F.buildAbstractMethodSignatureGetter({
+		accessibilityModifier: resolveAbstractMethodSignatureGetter_accessibilityModifier(input.accessibilityModifier),
+		override: resolveAbstractMethodSignatureGetter_override(input.override),
+		name: resolveAbstractMethodSignatureGetter_name(input.name),
+		type: resolveAbstractMethodSignatureGetter_type(input.type)
+	});
+}
+
+export function resolveAbstractMethodSignatureSetter_accessibilityModifier(
+	value: T.AbstractMethodSignatureSetter.LooseConfig['accessibilityModifier']
+): Admit<T.AbstractMethodSignatureSetter['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolveAbstractMethodSignatureSetter_override(
+	value: T.AbstractMethodSignatureSetter.LooseConfig['override']
+): Admit<T.AbstractMethodSignatureSetter['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveAbstractMethodSignatureSetter_name(
+	value: T.AbstractMethodSignatureSetter.LooseConfig['name']
+): Admit<T.AbstractMethodSignatureSetter['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolveAbstractMethodSignatureSetter_parameters(
+	value: T.AbstractMethodSignatureSetter.LooseConfig['parameters']
+): Admit<T.AbstractMethodSignatureSetter['_parameters']> {
+	return _resolveOneBranch<T.FormalParametersUSetAccessorSignature>(
+		value,
+		'_formal_parameters__set_accessor_signature'
+	);
+}
+
+export function coerceToAbstractMethodSignatureSetter(
+	input: T.AbstractMethodSignatureSetter.Loose
+): ReturnType<typeof F.buildAbstractMethodSignatureSetter> {
+	if (!_isLooseConfig<T.AbstractMethodSignatureSetter.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildAbstractMethodSignatureSetter>;
+	return F.buildAbstractMethodSignatureSetter({
+		accessibilityModifier: resolveAbstractMethodSignatureSetter_accessibilityModifier(input.accessibilityModifier),
+		override: resolveAbstractMethodSignatureSetter_override(input.override),
+		name: resolveAbstractMethodSignatureSetter_name(input.name),
+		parameters: resolveAbstractMethodSignatureSetter_parameters(input.parameters)
+	});
+}
+
+export function resolvePublicFieldDefinitionPlain_decorators(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['decorator']
+): Admit<T.PublicFieldDefinitionPlain['_decorator']> {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+}
+
+export function resolvePublicFieldDefinitionPlain_declare(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['declare']
+): Admit<T.PublicFieldDefinitionPlain['_declare']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionPlain_accessibilityModifier(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['accessibilityModifier']
+): Admit<T.PublicFieldDefinitionPlain['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolvePublicFieldDefinitionPlain_static(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['static']
+): Admit<T.PublicFieldDefinitionPlain['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionPlain_override(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['override']
+): Admit<T.PublicFieldDefinitionPlain['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionPlain_readonly(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['readonly']
+): Admit<T.PublicFieldDefinitionPlain['_readonly']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionPlain_abstract(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['abstract']
+): Admit<T.PublicFieldDefinitionPlain['_abstract']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionPlain_name(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['name']
+): Admit<T.PublicFieldDefinitionPlain['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolvePublicFieldDefinitionPlain_optionality(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['optionality']
+): Admit<T.PublicFieldDefinitionPlain['_optionality']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () => _resolveOne<'?' | '!'>(value, _K2, _K2)),
+		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
+	);
+}
+
+export function resolvePublicFieldDefinitionPlain_type(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['type']
+): Admit<T.PublicFieldDefinitionPlain['_type']> {
+	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+}
+
+export function resolvePublicFieldDefinitionPlain_value(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['value']
+): Admit<T.PublicFieldDefinitionPlain['_value']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K6, _K14)),
+		[]
+	);
+}
+
+export function coerceToPublicFieldDefinitionPlain(
+	input: T.PublicFieldDefinitionPlain.Loose
+): ReturnType<typeof F.buildPublicFieldDefinitionPlain> {
+	if (!_isLooseConfig<T.PublicFieldDefinitionPlain.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildPublicFieldDefinitionPlain>;
+	return F.buildPublicFieldDefinitionPlain({
+		decorator: resolvePublicFieldDefinitionPlain_decorators(input.decorator),
+		declare: resolvePublicFieldDefinitionPlain_declare(input.declare),
+		accessibilityModifier: resolvePublicFieldDefinitionPlain_accessibilityModifier(input.accessibilityModifier),
+		static: resolvePublicFieldDefinitionPlain_static(input.static),
+		override: resolvePublicFieldDefinitionPlain_override(input.override),
+		readonly: resolvePublicFieldDefinitionPlain_readonly(input.readonly),
+		abstract: resolvePublicFieldDefinitionPlain_abstract(input.abstract),
+		name: resolvePublicFieldDefinitionPlain_name(input.name),
+		optionality: resolvePublicFieldDefinitionPlain_optionality(input.optionality),
+		type: resolvePublicFieldDefinitionPlain_type(input.type),
+		value: resolvePublicFieldDefinitionPlain_value(input.value)
+	});
+}
+
+export function resolvePublicFieldDefinitionAccessor_decorators(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['decorator']
+): Admit<T.PublicFieldDefinitionAccessor['_decorator']> {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator');
+}
+
+export function resolvePublicFieldDefinitionAccessor_accessibilityModifier(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['accessibilityModifier']
+): Admit<T.PublicFieldDefinitionAccessor['_accessibility_modifier']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+		),
+		[
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const
+		]
+	);
+}
+
+export function resolvePublicFieldDefinitionAccessor_static(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['static']
+): Admit<T.PublicFieldDefinitionAccessor['_static']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionAccessor_abstract(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['abstract']
+): Admit<T.PublicFieldDefinitionAccessor['_abstract']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionAccessor_override(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['override']
+): Admit<T.PublicFieldDefinitionAccessor['_override']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolvePublicFieldDefinitionAccessor_name(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['name']
+): Admit<T.PublicFieldDefinitionAccessor['_name']> {
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
+		value,
+		_K37,
+		_K38,
+		'string_double'
+	);
+}
+
+export function resolvePublicFieldDefinitionAccessor_type(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['type']
+): Admit<T.PublicFieldDefinitionAccessor['_type']> {
+	return _resolveOneBranch<T.TypeAnnotation>(value, 'type_annotation', undefined, true);
+}
+
+export function resolvePublicFieldDefinitionAccessor_value(
+	value: T.PublicFieldDefinitionAccessor.LooseConfig['value']
+): Admit<T.PublicFieldDefinitionAccessor['_value']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K6, _K14)),
+		[]
+	);
+}
+
+export function coerceToPublicFieldDefinitionAccessor(
+	input: T.PublicFieldDefinitionAccessor.Loose
+): ReturnType<typeof F.buildPublicFieldDefinitionAccessor> {
+	if (!_isLooseConfig<T.PublicFieldDefinitionAccessor.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildPublicFieldDefinitionAccessor>;
+	return F.buildPublicFieldDefinitionAccessor({
+		decorator: resolvePublicFieldDefinitionAccessor_decorators(input.decorator),
+		accessibilityModifier: resolvePublicFieldDefinitionAccessor_accessibilityModifier(input.accessibilityModifier),
+		static: resolvePublicFieldDefinitionAccessor_static(input.static),
+		abstract: resolvePublicFieldDefinitionAccessor_abstract(input.abstract),
+		override: resolvePublicFieldDefinitionAccessor_override(input.override),
+		name: resolvePublicFieldDefinitionAccessor_name(input.name),
+		type: resolvePublicFieldDefinitionAccessor_type(input.type),
+		value: resolvePublicFieldDefinitionAccessor_value(input.value)
 	});
 }
 

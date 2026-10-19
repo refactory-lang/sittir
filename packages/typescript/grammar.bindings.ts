@@ -3,16 +3,23 @@
 import sittir from './grammar.sittir.ts';
 import { enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "103dde0ada97dff25f5e42cf3918cbc9729228740c9505fc74d48ae5f3ee9292";
+export const hash = "5cca4878f8ab47fca8b6eb9af1d8671b01ed8594a5009114fab974177917ff44";
 
 export const renames = {
 	program: "file",
 	enum_assignment: "enum_member_declaration",
-	method_definition: "method_declaration",
-	method_signature: "signature_method_declaration",
-	abstract_method_signature: "abstract_signature_method_declaration",
+	method_definition_plain: "method_declaration",
+	method_definition_getter: "getter_property_declaration",
+	method_definition_setter: "setter_property_declaration",
+	method_signature_plain: "signature_method_declaration",
+	method_signature_getter: "getter_signature_property_declaration",
+	method_signature_setter: "setter_signature_property_declaration",
+	abstract_method_signature_plain: "abstract_signature_method_declaration",
+	abstract_method_signature_getter: "getter_abstract_signature_property_declaration",
+	abstract_method_signature_setter: "setter_abstract_signature_property_declaration",
 	property_signature: "signature_field_declaration",
-	public_field_definition: "field_declaration",
+	public_field_definition_plain: "field_declaration",
+	public_field_definition_accessor: "property_declaration",
 	lexical_declaration: "variable_declaration",
 	variable_declaration: "function_scoped_reassignable_variable_declaration",
 	required_parameter: "parameter_declaration",
@@ -117,10 +124,11 @@ export default grammar(
 	wire({
 		generated: true,
 		edits: {
+			_call_signature__get_accessor_signature: { "2": field("type") },
 			_number: { "1": field("value") },
 			_parameter_name: { "4": field("name") },
 			abstract_class_declaration: { "1": field("abstract") },
-			abstract_method_signature: { "3/0": field("generator") },
+			abstract_method_signature_plain: { "3/0": field("generator") },
 			as_expression: { "2": field("type") },
 			assignment_expression: { "0/0": field("disposable") },
 			call_expression_member: { "1": field("optional_chain") },
@@ -138,8 +146,8 @@ export default grammar(
 			import_statement: { "1": field("type_only") },
 			index_signature_mapped_type_clause: { "2": field("mapped_type_clause") },
 			member_expression: { "1": field("optional_chain"), "1/0/1": field("optional_chain") },
-			method_definition: { "5/0": field("generator") },
-			method_signature: { "5/0": field("generator") },
+			method_definition_plain: { "5/0": field("generator") },
+			method_signature_plain: { "5/0": field("generator") },
 			new_expression: { "1": field("function") },
 			optional_parameter: { "1": field("optional") },
 			parenthesized_expression_typed: { "1/0": field("expression") },

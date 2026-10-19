@@ -4034,7 +4034,11 @@ The file a grammar package evaluates: its top layer (`grammars.ts::topLayerPath`
 
 ### `packages/codegen/src/compiler/evaluate-package.ts::evaluatePackage`
 
-The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` (the top layer, layer 1 with `unbound`, or the upstream grammar with `base`) with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`).
+The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` (the top layer, layer 1 with `unbound`, or the upstream grammar with `base`) with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`). `evaluatePackageLayer` evaluates the same entry without canonicalizing it, for paths that address a layer's own rules.
+
+### `packages/codegen/src/compiler/evaluate-package.ts::evaluatePackageLayer`
+
+The entry `evaluatePackage` reads, evaluated by `evaluateDsl` and not canonicalized: the rules as the layer builds them, with every blank member and precedence wrapper in place. A layer's `edits:` paths index these rules (the patch stage counts raw members), so a derivation that writes paths for a layer above reads the layer here, not in `evaluatePackage`'s canonical rules, where a blank sequence member is dropped and a lone member is peeled. `bindingsModule` reads layer 1 this way for the grammar bindings' patch positions (`GrammarBindingsInput.layerRules`).
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
 

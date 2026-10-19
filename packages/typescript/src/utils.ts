@@ -24,11 +24,12 @@ export const triviaFacts = Object.freeze({
 	]),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
-		152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 382, 383, 385, 386, 388, 389, 390, 391, 392, 394, 399,
-		400, 401, 403, 405, 406, 407, 408, 409, 410, 411, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425,
-		426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 438, 439, 440, 441, 446, 473, 475, 476, 477, 478, 480
+		152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 382, 383, 385, 386, 388, 389, 390, 391, 392, 394, 401,
+		402, 403, 405, 407, 408, 409, 410, 411, 412, 413, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427,
+		428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 440, 441, 442, 443, 447, 451, 452, 453, 454, 455, 456, 457, 458,
+		459, 460, 461, 466, 493, 495, 496, 497, 498, 500
 	]),
-	listKinds: new Set<number>([382, 383, 385, 388, 389, 390, 391, 397]),
+	listKinds: new Set<number>([382, 383, 385, 388, 389, 390, 391, 399]),
 	layout: new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
@@ -334,20 +335,6 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', 1]
 	],
 	290: [['lhsExpression', 0]],
-	291: [
-		['accessibilityModifier', 0],
-		['static', 1, 'static'],
-		['override', 2, 'override'],
-		['readonly', 3, 'readonly'],
-		['async', 4, 'async'],
-		['generator', 5],
-		['name', 6],
-		['optional', 7, '?'],
-		['typeParameters', 8],
-		['parameters', 9],
-		['returnType', 10],
-		['body', 11]
-	],
 	292: [
 		['key', 0],
 		['value', 1]
@@ -357,44 +344,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['value', 1]
 	],
 	295: [['expression', 0]],
-	296: [
-		['decorators', 0],
-		['declare', 1, 'declare'],
-		['accessibilityModifier', 2],
-		['static', 3, 'static'],
-		['override', 4, 'override'],
-		['readonly', 5, 'readonly'],
-		['abstract', 6, 'abstract'],
-		['accessor', 7, 'accessor'],
-		['name', 8],
-		['optionality', 9],
-		['type', 10],
-		['value', 11]
-	],
 	298: [['expression', 0]],
-	299: [
-		['accessibilityModifier', 0],
-		['static', 1, 'static'],
-		['override', 2, 'override'],
-		['readonly', 3, 'readonly'],
-		['async', 4, 'async'],
-		['generator', 5],
-		['name', 6],
-		['optional', 7, '?'],
-		['typeParameters', 8],
-		['parameters', 9],
-		['returnType', 10]
-	],
-	300: [
-		['accessibilityModifier', 0],
-		['override', 1, 'override'],
-		['generator', 2],
-		['name', 3],
-		['optional', 4, '?'],
-		['typeParameters', 5],
-		['parameters', 6],
-		['returnType', 7]
-	],
 	301: [
 		['async', 0, 'async'],
 		['name', 1],
@@ -646,162 +596,275 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parameter', 0],
 		['type', 1]
 	],
-	395: [['body', 0]],
-	396: [
+	395: [['type', 0]],
+	397: [['body', 0]],
+	398: [
 		['name', 0],
 		['type', 1],
 		['terminator', 2]
 	],
-	397: [['items', 0]],
-	399: [
+	399: [['items', 0]],
+	401: [
 		['name', 0],
 		['terminator', 1]
 	],
-	400: [
+	402: [
 		['value', 0],
 		['terminator', 1]
 	],
-	401: [['value', 0]],
-	403: [
+	403: [['value', 0]],
+	405: [
 		['left', 0],
 		['right', 1]
 	],
-	405: [
+	407: [
 		['decorators', 0],
 		['methodDefinition', 1],
 		['terminator', 2]
 	],
-	406: [
+	408: [
 		['methodSignature', 0],
 		['terminator', 1]
 	],
-	407: [
+	409: [
 		['member', 0],
 		['terminator', 1]
 	],
-	408: [
+	410: [
 		['sign', 0],
 		['readonly', 1, 'readonly'],
 		['name', 2],
 		['indexType', 3],
 		['type', 4]
 	],
-	409: [
+	411: [
 		['sign', 0],
 		['readonly', 1, 'readonly'],
 		['mappedTypeClause', 2],
 		['type', 3]
 	],
-	410: [
+	412: [
 		['importClause', 0],
 		['source', 1]
 	],
-	411: [['expression', 0]],
-	413: [
+	413: [['expression', 0]],
+	415: [
 		['typeOnly', 0],
 		['name', 1]
 	],
-	414: [
+	416: [
 		['typeOnly', 0],
 		['name', 1],
 		['alias', 2]
 	],
-	415: [
+	417: [
 		['expression', 0],
 		['type', 1]
 	],
-	416: [['sequenceExpression', 0]],
-	417: [
-		['function', 0],
-		['typeArguments', 1],
-		['arguments', 2]
-	],
-	418: [
-		['function', 0],
-		['arguments', 1]
-	],
+	418: [['sequenceExpression', 0]],
 	419: [
 		['function', 0],
 		['typeArguments', 1],
 		['arguments', 2]
 	],
-	420: [['elements', 0]],
-	421: [['elements', 0]],
-	422: [
+	420: [
+		['function', 0],
+		['arguments', 1]
+	],
+	421: [
+		['function', 0],
+		['typeArguments', 1],
+		['arguments', 2]
+	],
+	422: [['elements', 0]],
+	423: [['elements', 0]],
+	424: [
 		['argument', 0],
 		['operator', 1]
 	],
-	423: [
+	425: [
 		['operator', 0],
 		['argument', 1]
 	],
-	424: [['parameter', 0]],
-	425: [
+	426: [['parameter', 0]],
+	427: [
 		['extendsClause', 0],
 		['implementsClause', 1]
 	],
-	426: [
+	428: [
 		['identifier', 0],
 		['importClauseGroup', 1]
 	],
-	427: [
+	429: [
 		['typeOnly', 0, 'type'],
 		['content', 1],
 		['terminator', 2]
 	],
-	428: [
+	430: [
 		['decorators', 0],
 		['content', 1]
 	],
-	429: [['source', 0]],
-	430: [
+	431: [['source', 0]],
+	432: [
 		['namespaceExport', 0],
 		['source', 1]
 	],
-	431: [
+	433: [
 		['exportClause', 0],
 		['source', 1]
 	],
-	432: [['content', 0]],
-	433: [
+	434: [['content', 0]],
+	435: [
 		['value', 0],
 		['automaticSemicolon', 1]
 	],
-	434: [
+	436: [
 		['name', 0],
 		['type', 1],
 		['value', 2]
 	],
-	435: [
+	437: [
 		['name', 0],
 		['type', 1]
 	],
-	438: [
+	440: [
 		['left', 0],
 		['operator', 1],
 		['right', 2]
 	],
-	439: [
+	441: [
 		['left', 0],
 		['value', 1],
 		['operator', 2],
 		['right', 3]
 	],
-	440: [
+	442: [
 		['kind', 0],
 		['left', 1],
 		['terminator', 2],
 		['operator', 3],
 		['right', 4]
 	],
-	441: [
+	443: [
 		['kind', 0],
 		['left', 1],
 		['terminator', 2, '\n'],
 		['operator', 3],
 		['right', 4]
 	],
-	443: [
+	446: [['elements', 0]],
+	447: [['item', 0]],
+	448: [
+		['decorators', 0],
+		['accessibilityModifier', 1],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['pattern', 4],
+		['type', 5]
+	],
+	451: [
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['async', 4, 'async'],
+		['generator', 5, '*'],
+		['name', 6],
+		['optional', 7, '?'],
+		['typeParameters', 8],
+		['parameters', 9],
+		['returnType', 10],
+		['body', 11]
+	],
+	452: [
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['name', 3],
+		['type', 4],
+		['body', 5]
+	],
+	453: [
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['name', 3],
+		['parameters', 4],
+		['body', 5]
+	],
+	454: [
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['async', 4, 'async'],
+		['generator', 5, '*'],
+		['name', 6],
+		['optional', 7, '?'],
+		['typeParameters', 8],
+		['parameters', 9],
+		['returnType', 10]
+	],
+	455: [
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['name', 3],
+		['type', 4]
+	],
+	456: [
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['name', 3],
+		['parameters', 4]
+	],
+	457: [
+		['accessibilityModifier', 0],
+		['override', 1, 'override'],
+		['generator', 2, '*'],
+		['name', 3],
+		['optional', 4, '?'],
+		['typeParameters', 5],
+		['parameters', 6],
+		['returnType', 7]
+	],
+	458: [
+		['accessibilityModifier', 0],
+		['override', 1, 'override'],
+		['name', 2],
+		['type', 3]
+	],
+	459: [
+		['accessibilityModifier', 0],
+		['override', 1, 'override'],
+		['name', 2],
+		['parameters', 3]
+	],
+	460: [
+		['decorators', 0],
+		['declare', 1, 'declare'],
+		['accessibilityModifier', 2],
+		['static', 3, 'static'],
+		['override', 4, 'override'],
+		['readonly', 5, 'readonly'],
+		['abstract', 6, 'abstract'],
+		['name', 7],
+		['optionality', 8],
+		['type', 9],
+		['value', 10]
+	],
+	461: [
+		['decorators', 0],
+		['accessibilityModifier', 1],
+		['static', 2, 'static'],
+		['abstract', 3, 'abstract'],
+		['override', 4, 'override'],
+		['name', 5],
+		['type', 6],
+		['value', 7]
+	],
+	463: [
 		['decorators', 0],
 		['accessibilityModifier', 1],
 		['override', 2, 'override'],
@@ -809,17 +872,17 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', 4],
 		['value', 5]
 	],
-	445: [
+	465: [
 		['receiver', 0],
 		['formalParametersElementsReceiverGroup', 1]
 	],
-	446: [['elements', 0]],
-	473: [['content', 0]],
-	475: [['content', 0]],
-	476: [['content', 0]],
-	477: [['content', 0]],
-	478: [['content', 0]],
-	480: [['content', 0]]
+	466: [['elements', 0]],
+	493: [['content', 0]],
+	495: [['content', 0]],
+	496: [['content', 0]],
+	497: [['content', 0]],
+	498: [['content', 0]],
+	500: [['content', 0]]
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -1446,36 +1509,6 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_lhs_expression', 'lhsExpression']],
 		nodeOnly: [['_lhs_expression', 'RestPattern.lhsExpression', 'buildIdentifier(…)']]
 	},
-	291: {
-		kind: 'method_definition',
-		required: [
-			['_name', 'name'],
-			['_parameters', 'parameters'],
-			['_body', 'body']
-		],
-		nodeOnly: [
-			['_accessibility_modifier', 'MethodDefinition.accessibilityModifier', 'a kind id'],
-			['_static', 'MethodDefinition.static', 'a boolean'],
-			['_override', 'MethodDefinition.override', 'a boolean'],
-			['_readonly', 'MethodDefinition.readonly', 'a boolean'],
-			['_async', 'MethodDefinition.async', 'a boolean'],
-			['_generator', 'MethodDefinition.generator', 'a kind id'],
-			[
-				'_name',
-				'MethodDefinition.name',
-				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
-			],
-			['_optional', 'MethodDefinition.optional', 'a boolean'],
-			['_type_parameters', 'MethodDefinition.typeParameters', 'a built TypeParameters'],
-			['_parameters', 'MethodDefinition.parameters', 'a built FormalParameters'],
-			[
-				'_return_type',
-				'MethodDefinition.returnType',
-				'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
-			],
-			['_body', 'MethodDefinition.body', 'a built StatementBlock']
-		]
-	},
 	292: {
 		kind: 'pair',
 		required: [
@@ -1511,85 +1544,10 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_expression', 'expression']],
 		nodeOnly: [['_expression', 'ComputedPropertyName.expression', 'a built Expression']]
 	},
-	296: {
-		kind: 'public_field_definition',
-		required: [['_name', 'name']],
-		nodeOnly: [
-			['_decorator', 'PublicFieldDefinition.decorator', 'a built Decorator'],
-			['_declare', 'PublicFieldDefinition.declare', 'a boolean'],
-			['_accessibility_modifier', 'PublicFieldDefinition.accessibilityModifier', 'a kind id'],
-			['_static', 'PublicFieldDefinition.static', 'a boolean'],
-			['_override', 'PublicFieldDefinition.override', 'a boolean'],
-			['_readonly', 'PublicFieldDefinition.readonly', 'a boolean'],
-			['_abstract', 'PublicFieldDefinition.abstract', 'a boolean'],
-			['_accessor', 'PublicFieldDefinition.accessor', 'a boolean'],
-			[
-				'_name',
-				'PublicFieldDefinition.name',
-				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
-			],
-			['_optionality', 'PublicFieldDefinition.optionality', 'a kind id'],
-			['_type', 'PublicFieldDefinition.type', 'a built TypeAnnotation'],
-			['_value', 'PublicFieldDefinition.value', 'a built Expression']
-		]
-	},
 	298: {
 		kind: 'non_null_expression',
 		required: [['_expression', 'expression']],
 		nodeOnly: [['_expression', 'NonNullExpression.expression', 'a built Expression']]
-	},
-	299: {
-		kind: 'method_signature',
-		required: [
-			['_name', 'name'],
-			['_parameters', 'parameters']
-		],
-		nodeOnly: [
-			['_accessibility_modifier', 'MethodSignature.accessibilityModifier', 'a kind id'],
-			['_static', 'MethodSignature.static', 'a boolean'],
-			['_override', 'MethodSignature.override', 'a boolean'],
-			['_readonly', 'MethodSignature.readonly', 'a boolean'],
-			['_async', 'MethodSignature.async', 'a boolean'],
-			['_generator', 'MethodSignature.generator', 'a kind id'],
-			[
-				'_name',
-				'MethodSignature.name',
-				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
-			],
-			['_optional', 'MethodSignature.optional', 'a boolean'],
-			['_type_parameters', 'MethodSignature.typeParameters', 'a built TypeParameters'],
-			['_parameters', 'MethodSignature.parameters', 'a built FormalParameters'],
-			[
-				'_return_type',
-				'MethodSignature.returnType',
-				'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
-			]
-		]
-	},
-	300: {
-		kind: 'abstract_method_signature',
-		required: [
-			['_name', 'name'],
-			['_parameters', 'parameters']
-		],
-		nodeOnly: [
-			['_accessibility_modifier', 'AbstractMethodSignature.accessibilityModifier', 'a kind id'],
-			['_override', 'AbstractMethodSignature.override', 'a boolean'],
-			['_generator', 'AbstractMethodSignature.generator', 'a kind id'],
-			[
-				'_name',
-				'AbstractMethodSignature.name',
-				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
-			],
-			['_optional', 'AbstractMethodSignature.optional', 'a boolean'],
-			['_type_parameters', 'AbstractMethodSignature.typeParameters', 'a built TypeParameters'],
-			['_parameters', 'AbstractMethodSignature.parameters', 'a built FormalParameters'],
-			[
-				'_return_type',
-				'AbstractMethodSignature.returnType',
-				'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
-			]
-		]
 	},
 	301: {
 		kind: 'function_signature',
@@ -2255,11 +2213,17 @@ export const structure: StructureTable = Object.freeze({
 		]
 	},
 	395: {
+		kind: '_get_accessor_signature',
+		nodeOnly: [
+			['_type', 'GetAccessorSignature.type', 'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation']
+		]
+	},
+	397: {
 		kind: 'ambient_declaration_global',
 		required: [['_body', 'body']],
 		nodeOnly: [['_body', 'AmbientDeclarationGlobal.body', 'a built StatementBlock']]
 	},
-	396: {
+	398: {
 		kind: 'ambient_declaration_module',
 		required: [
 			['_name', 'name'],
@@ -2270,23 +2234,23 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'AmbientDeclarationModule.type', 'a built Type']
 		]
 	},
-	397: { kind: 'object_type_content', nonEmpty: [['_item', 'object_type_content.elements']] },
-	399: {
+	399: { kind: 'object_type_content', nonEmpty: [['_item', 'object_type_content.elements']] },
+	401: {
 		kind: 'export_statement_namespace_export',
 		required: [['_name', 'name']],
 		nodeOnly: [['_name', 'ExportStatementNamespaceExport.name', 'buildIdentifier(…)']]
 	},
-	400: {
+	402: {
 		kind: 'export_statement_equals_export',
 		required: [['_value', 'value']],
 		nodeOnly: [['_value', 'ExportStatementEqualsExport.value', 'a built Expression']]
 	},
-	401: {
+	403: {
 		kind: 'literal_type_negative_number',
 		required: [['_value', 'value']],
 		nodeOnly: [['_value', 'LiteralTypeNegativeNumber.value', 'a built Number']]
 	},
-	403: {
+	405: {
 		kind: 'binary_expression_in',
 		required: [
 			['_left', 'left'],
@@ -2297,7 +2261,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'BinaryExpressionIn.right', 'a built Expression']
 		]
 	},
-	405: {
+	407: {
 		kind: 'class_body_member_method',
 		required: [['_method_definition', 'methodDefinition']],
 		nodeOnly: [
@@ -2305,7 +2269,7 @@ export const structure: StructureTable = Object.freeze({
 			['_method_definition', 'ClassBodyMemberMethod.methodDefinition', 'a built MethodDefinition']
 		]
 	},
-	406: {
+	408: {
 		kind: 'class_body_member_method_sig',
 		required: [
 			['_method_signature', 'methodSignature'],
@@ -2316,7 +2280,7 @@ export const structure: StructureTable = Object.freeze({
 			['_terminator', 'ClassBodyMemberMethodSig.terminator', 'a kind id']
 		]
 	},
-	407: {
+	409: {
 		kind: 'class_body_member_declaration',
 		required: [['_member', 'member']],
 		nodeOnly: [
@@ -2327,7 +2291,7 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	408: {
+	410: {
 		kind: 'index_signature_colon',
 		required: [
 			['_name', 'name'],
@@ -2346,7 +2310,7 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	409: {
+	411: {
 		kind: 'index_signature_mapped_type_clause',
 		required: [
 			['_mapped_type_clause', 'mappedTypeClause'],
@@ -2363,7 +2327,7 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	410: {
+	412: {
 		kind: 'import_statement_clause_from',
 		required: [
 			['_import_clause', 'importClause'],
@@ -2374,12 +2338,12 @@ export const structure: StructureTable = Object.freeze({
 			['_source', 'ImportStatementClauseFrom.source', 'a built String']
 		]
 	},
-	411: {
+	413: {
 		kind: 'yield_expression_delegate',
 		required: [['_expression', 'expression']],
 		nodeOnly: [['_expression', 'YieldExpressionDelegate.expression', 'a built Expression']]
 	},
-	413: {
+	415: {
 		kind: 'import_specifier_name',
 		required: [['_name', 'name']],
 		nodeOnly: [
@@ -2387,7 +2351,7 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'ImportSpecifierName.name', 'buildIdentifier(…)']
 		]
 	},
-	414: {
+	416: {
 		kind: 'import_specifier_as',
 		required: [
 			['_name', 'name'],
@@ -2399,7 +2363,7 @@ export const structure: StructureTable = Object.freeze({
 			['_alias', 'ImportSpecifierAs.alias', 'buildIdentifier(…)']
 		]
 	},
-	415: {
+	417: {
 		kind: 'parenthesized_expression_typed',
 		required: [['_expression', 'expression']],
 		nodeOnly: [
@@ -2407,14 +2371,14 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'ParenthesizedExpressionTyped.type', 'a built TypeAnnotation']
 		]
 	},
-	416: {
+	418: {
 		kind: 'parenthesized_expression_sequence',
 		required: [['_sequence_expression', 'sequenceExpression']],
 		nodeOnly: [
 			['_sequence_expression', 'ParenthesizedExpressionSequence.sequenceExpression', 'a built SequenceExpression']
 		]
 	},
-	417: {
+	419: {
 		kind: 'call_expression_call',
 		required: [
 			['_function', 'function'],
@@ -2426,7 +2390,7 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'CallExpressionCall.arguments', 'a built Arguments']
 		]
 	},
-	418: {
+	420: {
 		kind: 'call_expression_template_call',
 		required: [
 			['_function', 'function'],
@@ -2437,7 +2401,7 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'CallExpressionTemplateCall.arguments', 'a built TemplateString']
 		]
 	},
-	419: {
+	421: {
 		kind: 'call_expression_member',
 		required: [
 			['_function', 'function'],
@@ -2449,15 +2413,15 @@ export const structure: StructureTable = Object.freeze({
 			['_arguments', 'CallExpressionMember.arguments', 'a built Arguments']
 		]
 	},
-	420: {
+	422: {
 		kind: 'string_double',
 		nodeOnly: [['_elements', 'StringDouble.elements', 'buildUnescapedDoubleStringFragment(…)']]
 	},
-	421: {
+	423: {
 		kind: 'string_single',
 		nodeOnly: [['_elements', 'StringSingle.elements', 'buildUnescapedSingleStringFragment(…)']]
 	},
-	422: {
+	424: {
 		kind: 'update_expression_postfix',
 		required: [
 			['_argument', 'argument'],
@@ -2468,7 +2432,7 @@ export const structure: StructureTable = Object.freeze({
 			['_operator', 'UpdateExpressionPostfix.operator', 'a kind id']
 		]
 	},
-	423: {
+	425: {
 		kind: 'update_expression_prefix',
 		required: [
 			['_operator', 'operator'],
@@ -2479,12 +2443,12 @@ export const structure: StructureTable = Object.freeze({
 			['_argument', 'UpdateExpressionPrefix.argument', 'a built Expression']
 		]
 	},
-	424: {
+	426: {
 		kind: 'arrow_function_parameter',
 		required: [['_parameter', 'parameter']],
 		nodeOnly: [['_parameter', 'ArrowFunctionParameter.parameter', 'buildIdentifier(…)']]
 	},
-	425: {
+	427: {
 		kind: 'class_heritage_extends_clause',
 		required: [['_extends_clause', 'extendsClause']],
 		nodeOnly: [
@@ -2492,7 +2456,7 @@ export const structure: StructureTable = Object.freeze({
 			['_implements_clause', 'ClassHeritageExtendsClause.implementsClause', 'a built ImplementsClause']
 		]
 	},
-	426: {
+	428: {
 		kind: 'import_clause_default_import',
 		required: [['_identifier', 'identifier']],
 		nodeOnly: [
@@ -2500,7 +2464,7 @@ export const structure: StructureTable = Object.freeze({
 			['_import_clause_group', 'ImportClauseDefaultImport.importClauseGroup', 'a built ImportClauseGroup']
 		]
 	},
-	427: {
+	429: {
 		kind: 'export_statement_default_from',
 		required: [['_content', 'content']],
 		nodeOnly: [
@@ -2512,7 +2476,7 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	428: {
+	430: {
 		kind: 'export_statement_default_declaration',
 		required: [['_content', 'content']],
 		nodeOnly: [
@@ -2524,12 +2488,12 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	429: {
+	431: {
 		kind: 'export_statement_default_from_star_from',
 		required: [['_source', 'source']],
 		nodeOnly: [['_source', 'ExportStatementDefaultFromStarFrom.source', 'a built String']]
 	},
-	430: {
+	432: {
 		kind: 'export_statement_default_from_ns_from',
 		required: [
 			['_namespace_export', 'namespaceExport'],
@@ -2540,7 +2504,7 @@ export const structure: StructureTable = Object.freeze({
 			['_source', 'ExportStatementDefaultFromNsFrom.source', 'a built String']
 		]
 	},
-	431: {
+	433: {
 		kind: 'export_statement_default_from_clause_from',
 		required: [['_export_clause', 'exportClause']],
 		nodeOnly: [
@@ -2548,7 +2512,7 @@ export const structure: StructureTable = Object.freeze({
 			['_source', 'ExportStatementDefaultFromClauseFrom.source', 'a built String']
 		]
 	},
-	432: {
+	434: {
 		kind: 'export_statement_default_declaration_default_kw',
 		required: [['_content', 'content']],
 		nodeOnly: [
@@ -2559,12 +2523,12 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	433: {
+	435: {
 		kind: 'export_statement_default_declaration_default_kw_value',
 		required: [['_value', 'value']],
 		nodeOnly: [['_value', 'ExportStatementDefaultDeclarationDefaultKwValue.value', 'a built Expression']]
 	},
-	434: {
+	436: {
 		kind: 'variable_declarator_plain',
 		required: [['_name', 'name']],
 		nodeOnly: [
@@ -2573,7 +2537,7 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'VariableDeclaratorPlain.value', 'a built Expression']
 		]
 	},
-	435: {
+	437: {
 		kind: 'variable_declarator_definite',
 		required: [
 			['_name', 'name'],
@@ -2584,7 +2548,7 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'VariableDeclaratorDefinite.type', 'a built TypeAnnotation']
 		]
 	},
-	438: {
+	440: {
 		kind: 'for_header_lhs',
 		required: [
 			['_left', 'left'],
@@ -2597,7 +2561,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'ForHeaderLhs.right', 'a built Expression / SequenceExpression']
 		]
 	},
-	439: {
+	441: {
 		kind: 'for_header_var_kind',
 		required: [
 			['_left', 'left'],
@@ -2611,7 +2575,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'ForHeaderVarKind.right', 'a built Expression / SequenceExpression']
 		]
 	},
-	440: {
+	442: {
 		kind: 'for_header_let_const_kind',
 		required: [
 			['_kind', 'kind'],
@@ -2626,7 +2590,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'ForHeaderLetConstKind.right', 'a built Expression / SequenceExpression']
 		]
 	},
-	441: {
+	443: {
 		kind: 'for_header_using_kind',
 		required: [
 			['_kind', 'kind'],
@@ -2642,7 +2606,264 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'ForHeaderUsingKind.right', 'a built Expression / SequenceExpression']
 		]
 	},
-	443: {
+	446: {
+		kind: '_formal_parameters__set_accessor_signature',
+		required: [['_elements', 'elements']],
+		nodeOnly: [
+			[
+				'_elements',
+				'FormalParametersUSetAccessorSignature.elements',
+				'a built FormalParametersElementsUSetAccessorSignature'
+			]
+		]
+	},
+	447: {
+		kind: '_formal_parameters_elements__set_accessor_signature',
+		required: [['_item', 'item']],
+		nodeOnly: [['_item', 'FormalParametersElementsUSetAccessorSignature.item', 'a built SetterParameter']]
+	},
+	448: {
+		kind: 'setter_parameter',
+		required: [['_pattern', 'pattern']],
+		nodeOnly: [
+			['_decorator', 'SetterParameter.decorator', 'a built Decorator'],
+			['_accessibility_modifier', 'SetterParameter.accessibilityModifier', 'a kind id'],
+			['_override', 'SetterParameter.override', 'a boolean'],
+			['_readonly', 'SetterParameter.readonly', 'a boolean'],
+			['_pattern', 'SetterParameter.pattern', 'a built LhsExpression'],
+			['_type', 'SetterParameter.type', 'a built TypeAnnotation']
+		]
+	},
+	451: {
+		kind: 'method_definition_plain',
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters'],
+			['_body', 'body']
+		],
+		nodeOnly: [
+			['_accessibility_modifier', 'MethodDefinitionPlain.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodDefinitionPlain.static', 'a boolean'],
+			['_override', 'MethodDefinitionPlain.override', 'a boolean'],
+			['_readonly', 'MethodDefinitionPlain.readonly', 'a boolean'],
+			['_async', 'MethodDefinitionPlain.async', 'a boolean'],
+			['_generator', 'MethodDefinitionPlain.generator', 'a boolean'],
+			[
+				'_name',
+				'MethodDefinitionPlain.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_optional', 'MethodDefinitionPlain.optional', 'a boolean'],
+			['_type_parameters', 'MethodDefinitionPlain.typeParameters', 'a built TypeParameters'],
+			['_parameters', 'MethodDefinitionPlain.parameters', 'a built FormalParameters'],
+			[
+				'_return_type',
+				'MethodDefinitionPlain.returnType',
+				'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
+			],
+			['_body', 'MethodDefinitionPlain.body', 'a built StatementBlock']
+		]
+	},
+	452: {
+		kind: 'method_definition_getter',
+		required: [
+			['_name', 'name'],
+			['_body', 'body']
+		],
+		nodeOnly: [
+			['_accessibility_modifier', 'MethodDefinitionGetter.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodDefinitionGetter.static', 'a boolean'],
+			['_override', 'MethodDefinitionGetter.override', 'a boolean'],
+			[
+				'_name',
+				'MethodDefinitionGetter.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_type', 'MethodDefinitionGetter.type', 'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'],
+			['_body', 'MethodDefinitionGetter.body', 'a built StatementBlock']
+		]
+	},
+	453: {
+		kind: 'method_definition_setter',
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters'],
+			['_body', 'body']
+		],
+		nodeOnly: [
+			['_accessibility_modifier', 'MethodDefinitionSetter.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodDefinitionSetter.static', 'a boolean'],
+			['_override', 'MethodDefinitionSetter.override', 'a boolean'],
+			[
+				'_name',
+				'MethodDefinitionSetter.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_parameters', 'MethodDefinitionSetter.parameters', 'a built FormalParametersUSetAccessorSignature'],
+			['_body', 'MethodDefinitionSetter.body', 'a built StatementBlock']
+		]
+	},
+	454: {
+		kind: 'method_signature_plain',
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters']
+		],
+		nodeOnly: [
+			['_accessibility_modifier', 'MethodSignaturePlain.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodSignaturePlain.static', 'a boolean'],
+			['_override', 'MethodSignaturePlain.override', 'a boolean'],
+			['_readonly', 'MethodSignaturePlain.readonly', 'a boolean'],
+			['_async', 'MethodSignaturePlain.async', 'a boolean'],
+			['_generator', 'MethodSignaturePlain.generator', 'a boolean'],
+			[
+				'_name',
+				'MethodSignaturePlain.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_optional', 'MethodSignaturePlain.optional', 'a boolean'],
+			['_type_parameters', 'MethodSignaturePlain.typeParameters', 'a built TypeParameters'],
+			['_parameters', 'MethodSignaturePlain.parameters', 'a built FormalParameters'],
+			[
+				'_return_type',
+				'MethodSignaturePlain.returnType',
+				'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
+			]
+		]
+	},
+	455: {
+		kind: 'method_signature_getter',
+		required: [['_name', 'name']],
+		nodeOnly: [
+			['_accessibility_modifier', 'MethodSignatureGetter.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodSignatureGetter.static', 'a boolean'],
+			['_override', 'MethodSignatureGetter.override', 'a boolean'],
+			[
+				'_name',
+				'MethodSignatureGetter.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_type', 'MethodSignatureGetter.type', 'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation']
+		]
+	},
+	456: {
+		kind: 'method_signature_setter',
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters']
+		],
+		nodeOnly: [
+			['_accessibility_modifier', 'MethodSignatureSetter.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodSignatureSetter.static', 'a boolean'],
+			['_override', 'MethodSignatureSetter.override', 'a boolean'],
+			[
+				'_name',
+				'MethodSignatureSetter.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_parameters', 'MethodSignatureSetter.parameters', 'a built FormalParametersUSetAccessorSignature']
+		]
+	},
+	457: {
+		kind: 'abstract_method_signature_plain',
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters']
+		],
+		nodeOnly: [
+			['_accessibility_modifier', 'AbstractMethodSignaturePlain.accessibilityModifier', 'a kind id'],
+			['_override', 'AbstractMethodSignaturePlain.override', 'a boolean'],
+			['_generator', 'AbstractMethodSignaturePlain.generator', 'a boolean'],
+			[
+				'_name',
+				'AbstractMethodSignaturePlain.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_optional', 'AbstractMethodSignaturePlain.optional', 'a boolean'],
+			['_type_parameters', 'AbstractMethodSignaturePlain.typeParameters', 'a built TypeParameters'],
+			['_parameters', 'AbstractMethodSignaturePlain.parameters', 'a built FormalParameters'],
+			[
+				'_return_type',
+				'AbstractMethodSignaturePlain.returnType',
+				'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
+			]
+		]
+	},
+	458: {
+		kind: 'abstract_method_signature_getter',
+		required: [['_name', 'name']],
+		nodeOnly: [
+			['_accessibility_modifier', 'AbstractMethodSignatureGetter.accessibilityModifier', 'a kind id'],
+			['_override', 'AbstractMethodSignatureGetter.override', 'a boolean'],
+			[
+				'_name',
+				'AbstractMethodSignatureGetter.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			[
+				'_type',
+				'AbstractMethodSignatureGetter.type',
+				'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
+			]
+		]
+	},
+	459: {
+		kind: 'abstract_method_signature_setter',
+		required: [
+			['_name', 'name'],
+			['_parameters', 'parameters']
+		],
+		nodeOnly: [
+			['_accessibility_modifier', 'AbstractMethodSignatureSetter.accessibilityModifier', 'a kind id'],
+			['_override', 'AbstractMethodSignatureSetter.override', 'a boolean'],
+			[
+				'_name',
+				'AbstractMethodSignatureSetter.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_parameters', 'AbstractMethodSignatureSetter.parameters', 'a built FormalParametersUSetAccessorSignature']
+		]
+	},
+	460: {
+		kind: 'public_field_definition_plain',
+		required: [['_name', 'name']],
+		nodeOnly: [
+			['_decorator', 'PublicFieldDefinitionPlain.decorator', 'a built Decorator'],
+			['_declare', 'PublicFieldDefinitionPlain.declare', 'a boolean'],
+			['_accessibility_modifier', 'PublicFieldDefinitionPlain.accessibilityModifier', 'a kind id'],
+			['_static', 'PublicFieldDefinitionPlain.static', 'a boolean'],
+			['_override', 'PublicFieldDefinitionPlain.override', 'a boolean'],
+			['_readonly', 'PublicFieldDefinitionPlain.readonly', 'a boolean'],
+			['_abstract', 'PublicFieldDefinitionPlain.abstract', 'a boolean'],
+			[
+				'_name',
+				'PublicFieldDefinitionPlain.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_optionality', 'PublicFieldDefinitionPlain.optionality', 'a kind id'],
+			['_type', 'PublicFieldDefinitionPlain.type', 'a built TypeAnnotation'],
+			['_value', 'PublicFieldDefinitionPlain.value', 'a built Expression']
+		]
+	},
+	461: {
+		kind: 'public_field_definition_accessor',
+		required: [['_name', 'name']],
+		nodeOnly: [
+			['_decorator', 'PublicFieldDefinitionAccessor.decorator', 'a built Decorator'],
+			['_accessibility_modifier', 'PublicFieldDefinitionAccessor.accessibilityModifier', 'a kind id'],
+			['_static', 'PublicFieldDefinitionAccessor.static', 'a boolean'],
+			['_abstract', 'PublicFieldDefinitionAccessor.abstract', 'a boolean'],
+			['_override', 'PublicFieldDefinitionAccessor.override', 'a boolean'],
+			[
+				'_name',
+				'PublicFieldDefinitionAccessor.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			],
+			['_type', 'PublicFieldDefinitionAccessor.type', 'a built TypeAnnotation'],
+			['_value', 'PublicFieldDefinitionAccessor.value', 'a built Expression']
+		]
+	},
+	463: {
 		kind: 'receiver_parameter_declaration',
 		nodeOnly: [
 			['_decorator', 'ReceiverParameterDeclaration.decorator', 'a built Decorator'],
@@ -2653,7 +2874,7 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'ReceiverParameterDeclaration.value', 'a built Expression']
 		]
 	},
-	445: {
+	465: {
 		kind: 'formal_parameters_elements_receiver',
 		required: [['_receiver', 'receiver']],
 		nodeOnly: [
@@ -2665,36 +2886,36 @@ export const structure: StructureTable = Object.freeze({
 			]
 		]
 	},
-	446: {
+	466: {
 		kind: 'formal_parameters_elements_receiver_group',
 		nodeOnly: [['_elements', 'FormalParametersElementsReceiverGroup.elements', 'a built FormalParametersElements']]
 	},
-	473: {
+	493: {
 		kind: 'interface_body',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'InterfaceBody.content', 'a built ObjectType']]
 	},
-	475: {
+	495: {
 		kind: 'property_identifier',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'PropertyIdentifier.content', 'buildIdentifier(…)']]
 	},
-	476: {
+	496: {
 		kind: 'shorthand_property_identifier',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'ShorthandPropertyIdentifier.content', 'buildIdentifier(…)']]
 	},
-	477: {
+	497: {
 		kind: 'shorthand_property_identifier_pattern',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'ShorthandPropertyIdentifierPattern.content', 'buildIdentifier(…)']]
 	},
-	478: {
+	498: {
 		kind: 'statement_identifier',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'StatementIdentifier.content', 'buildIdentifier(…)']]
 	},
-	480: {
+	500: {
 		kind: 'type_identifier',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'TypeIdentifier.content', 'buildIdentifier(…)']]

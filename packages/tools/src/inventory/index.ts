@@ -86,6 +86,7 @@ export function vocabularyMembers(vocabulary: Vocabulary): ReadonlyMap<string, R
 
 export async function bindingsModule(grammar: GrammarName): Promise<BindingsModule> {
 	const base = await evaluateGrammar(grammar, { unbound: true });
+	const layer = await invoke('evaluatePackage', 'evaluatePackageLayer', await invoke('grammars', 'grammarPackage', grammar), { unbound: true });
 	const model = await invoke('nodeModel', 'buildNodeModel', await compileNodeMap(grammar, { unbound: true }));
 	const input = await grammarInput(grammar, base, model);
 	if (input === undefined) throw new Error(`bindings-inventory: ${grammar} has no bindings.scm`);
@@ -93,6 +94,7 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		file: relative(REPO_ROOT, bindingsPath(grammar)),
 		facts: input.bindings,
 		base,
+		layerRules: layer.rules,
 		vocabMembers: vocabularyMembers(await readVocabulary(VOCABULARY_DIR)),
 		routes: resolveRoutes(input),
 		model: input.model

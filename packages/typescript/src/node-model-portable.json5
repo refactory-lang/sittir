@@ -1,6 +1,24 @@
 {
   "grammar": "typescript",
   "kinds": {
+    "_formal_parameters__set_accessor_signature": {
+      "container": {
+        "kinds": [
+          "_formal_parameters_elements__set_accessor_signature"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "_formal_parameters_elements__set_accessor_signature": {
+      "container": {
+        "kinds": [
+          "setter_parameter"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
     "_lhs_expression": {
       "container": {
         "kinds": [
@@ -166,32 +184,15 @@
         }
       ]
     },
-    "abstract_method_signature": {
-      "vocab": "declaration.method.signature.abstract",
+    "abstract_method_signature_getter": {
+      "vocab": "declaration.property.signature.abstract.getter",
       "read": [
         {
           "vocab": "declaration.property.signature.abstract.getter.private",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "300": 2
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -204,7 +205,7 @@
                   36
                 ],
                 "slots": {
-                  "300": 0
+                  "458": 0
                 }
               }
             },
@@ -215,7 +216,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "300": 0
+                  "458": 0
                 }
               }
             }
@@ -225,25 +226,8 @@
           "vocab": "declaration.property.signature.abstract.getter.protected",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "300": 2
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -256,7 +240,7 @@
                   36
                 ],
                 "slots": {
-                  "300": 0
+                  "458": 0
                 }
               }
             },
@@ -267,7 +251,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "300": 0
+                  "458": 0
                 }
               }
             }
@@ -277,25 +261,8 @@
           "vocab": "declaration.property.signature.abstract.getter.public",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "300": 2
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -308,7 +275,7 @@
                   36
                 ],
                 "slots": {
-                  "300": 0
+                  "458": 0
                 }
               }
             },
@@ -319,168 +286,84 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "300": 0
+                  "458": 0
                 }
               }
             }
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.setter.private",
+          "vocab": "declaration.property.signature.abstract.getter",
           "toplevel": true,
           "within": [],
-          "pins": [
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
             {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
+              "owner": "abstract_method_signature_getter",
+              "slot": "override"
             }
           ],
-          "test": [
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
             {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "300": 2
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "300": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "private",
-                "slots": {
-                  "300": 0
-                }
-              }
+              "owner": "abstract_method_signature_getter",
+              "slot": "name"
             }
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.setter.protected",
-          "toplevel": true,
-          "within": [],
-          "pins": [
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
             {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "300": 2
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "300": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "protected",
-                "slots": {
-                  "300": 0
-                }
-              }
+              "owner": "abstract_method_signature_getter",
+              "slot": "type"
             }
           ]
         },
         {
-          "vocab": "declaration.property.signature.abstract.setter.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [
+          "name": "privateName",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
             {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
+              "owner": "abstract_method_signature_getter",
+              "slot": "name"
             }
           ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "300": 2
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "300": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "public",
-                "slots": {
-                  "300": 0
-                }
-              }
-            }
-          ]
+          "flag": true
         },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "abstract_method_signature_getter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
+    "abstract_method_signature_plain": {
+      "vocab": "declaration.method.signature.abstract",
+      "read": [
         {
           "vocab": "declaration.method.signature.abstract.private",
           "toplevel": true,
@@ -499,7 +382,7 @@
                   36
                 ],
                 "slots": {
-                  "300": 0
+                  "457": 0
                 }
               }
             },
@@ -510,7 +393,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "300": 0
+                  "457": 0
                 }
               }
             }
@@ -534,7 +417,7 @@
                   36
                 ],
                 "slots": {
-                  "300": 0
+                  "457": 0
                 }
               }
             },
@@ -545,7 +428,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "300": 0
+                  "457": 0
                 }
               }
             }
@@ -569,7 +452,7 @@
                   36
                 ],
                 "slots": {
-                  "300": 0
+                  "457": 0
                 }
               }
             },
@@ -580,57 +463,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "300": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.signature.abstract.getter",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "300": 2
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.signature.abstract.setter",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "300": 2
+                  "457": 0
                 }
               }
             }
@@ -651,7 +484,7 @@
           "slot": "override",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "override"
             }
           ],
@@ -663,7 +496,7 @@
           "slot": "name",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "name"
             }
           ]
@@ -674,7 +507,7 @@
           "slot": "optional",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "optional"
             }
           ],
@@ -686,7 +519,7 @@
           "slot": "type_parameters",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "type_parameters"
             }
           ]
@@ -697,7 +530,7 @@
           "slot": "return_type",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "return_type"
             }
           ]
@@ -709,7 +542,7 @@
           "token": "*",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "generator"
             }
           ],
@@ -721,7 +554,7 @@
           "kind": "private_property_identifier",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "name"
             }
           ],
@@ -733,7 +566,7 @@
           "kind": "computed_property_name",
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "name"
             }
           ],
@@ -761,7 +594,7 @@
           "multiple": true,
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "parameters"
             },
             {
@@ -808,7 +641,7 @@
           "multiple": true,
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "parameters"
             },
             {
@@ -851,7 +684,7 @@
           "multiple": false,
           "path": [
             {
-              "owner": "abstract_method_signature",
+              "owner": "abstract_method_signature_plain",
               "slot": "parameters"
             },
             {
@@ -861,6 +694,273 @@
             {
               "owner": "formal_parameters_elements_receiver",
               "slot": "receiver"
+            }
+          ]
+        }
+      ]
+    },
+    "abstract_method_signature_setter": {
+      "vocab": "declaration.property.signature.abstract.setter",
+      "read": [
+        {
+          "vocab": "declaration.property.signature.abstract.setter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "459": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "459": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.signature.abstract.setter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "459": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "459": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.signature.abstract.setter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "459": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "459": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.signature.abstract.setter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
+            {
+              "owner": "abstract_method_signature_setter",
+              "slot": "override"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "abstract_method_signature_setter",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "abstract_method_signature_setter",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "privateName",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "abstract_method_signature_setter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "abstract_method_signature_setter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "abstract_method_signature_setter",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "abstract_method_signature_setter",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
             }
           ]
         }
@@ -1791,7 +1891,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  403
+                  405
                 ],
                 "slots": {
                   "267": 3
@@ -2546,7 +2646,7 @@
                   257
                 ],
                 "slots": {
-                  "417": 0
+                  "419": 0
                 }
               }
             }
@@ -4329,10 +4429,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  432
+                  434
                 ],
                 "slots": {
-                  "428": 1
+                  "430": 1
                 }
               }
             }
@@ -4459,10 +4559,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  429
+                  431
                 ],
                 "slots": {
-                  "427": 1
+                  "429": 1
                 }
               }
             }
@@ -6517,7 +6617,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "slots": {
-                  "414": 0
+                  "416": 0
                 }
               }
             }
@@ -6591,7 +6691,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "slots": {
-                  "413": 0
+                  "415": 0
                 }
               }
             }
@@ -7537,7 +7637,207 @@
       ],
       "members": []
     },
-    "method_definition": {
+    "method_definition_getter": {
+      "vocab": "declaration.property.getter",
+      "read": [
+        {
+          "vocab": "declaration.property.getter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "452": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "452": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.getter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "452": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "452": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.getter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "452": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "452": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.getter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "static"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "override"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "privateName",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
+    "method_definition_plain": {
       "vocab": "declaration.method",
       "read": [
         {
@@ -7551,12 +7851,12 @@
               "via": [
                 {
                   "slots": {
-                    "291": 6
+                    "451": 6
                   }
                 },
                 {
                   "slots": {
-                    "475": 0
+                    "495": 0
                   }
                 }
               ],
@@ -7578,7 +7878,7 @@
                   36
                 ],
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -7589,7 +7889,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -7599,10 +7899,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  475
+                  495
                 ],
                 "slots": {
-                  "291": 6
+                  "451": 6
                 }
               }
             }
@@ -7619,12 +7919,12 @@
               "via": [
                 {
                   "slots": {
-                    "291": 6
+                    "451": 6
                   }
                 },
                 {
                   "slots": {
-                    "475": 0
+                    "495": 0
                   }
                 }
               ],
@@ -7646,7 +7946,7 @@
                   36
                 ],
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -7657,7 +7957,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -7667,10 +7967,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  475
+                  495
                 ],
                 "slots": {
-                  "291": 6
+                  "451": 6
                 }
               }
             }
@@ -7687,12 +7987,12 @@
               "via": [
                 {
                   "slots": {
-                    "291": 6
+                    "451": 6
                   }
                 },
                 {
                   "slots": {
-                    "475": 0
+                    "495": 0
                   }
                 }
               ],
@@ -7714,7 +8014,7 @@
                   36
                 ],
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -7725,7 +8025,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -7735,10 +8035,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  475
+                  495
                 ],
                 "slots": {
-                  "291": 6
+                  "451": 6
                 }
               }
             }
@@ -7755,12 +8055,12 @@
               "via": [
                 {
                   "slots": {
-                    "291": 6
+                    "451": 6
                   }
                 },
                 {
                   "slots": {
-                    "475": 0
+                    "495": 0
                   }
                 }
               ],
@@ -7776,322 +8076,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  475
+                  495
                 ],
                 "slots": {
-                  "291": 6
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.getter.private",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "291": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "291": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "private",
-                "slots": {
-                  "291": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.getter.protected",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "291": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "291": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "protected",
-                "slots": {
-                  "291": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.getter.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "291": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "291": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "public",
-                "slots": {
-                  "291": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.setter.private",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "291": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "291": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "private",
-                "slots": {
-                  "291": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.setter.protected",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "291": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "291": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "protected",
-                "slots": {
-                  "291": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.setter.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "291": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "291": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "public",
-                "slots": {
-                  "291": 0
+                  "451": 6
                 }
               }
             }
@@ -8115,7 +8103,7 @@
                   36
                 ],
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -8126,7 +8114,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             }
@@ -8150,7 +8138,7 @@
                   36
                 ],
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -8161,7 +8149,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             }
@@ -8185,7 +8173,7 @@
                   36
                 ],
                 "slots": {
-                  "291": 0
+                  "451": 0
                 }
               }
             },
@@ -8196,57 +8184,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "291": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.getter",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "291": 5
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.setter",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "291": 5
+                  "451": 0
                 }
               }
             }
@@ -8267,7 +8205,7 @@
           "slot": "static",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "static"
             }
           ],
@@ -8279,7 +8217,7 @@
           "slot": "override",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "override"
             }
           ],
@@ -8291,7 +8229,7 @@
           "slot": "readonly",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "readonly"
             }
           ],
@@ -8303,7 +8241,7 @@
           "slot": "async",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "async"
             }
           ],
@@ -8315,7 +8253,7 @@
           "slot": "name",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "name"
             }
           ]
@@ -8326,7 +8264,7 @@
           "slot": "optional",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "optional"
             }
           ],
@@ -8338,7 +8276,7 @@
           "slot": "type_parameters",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "type_parameters"
             }
           ]
@@ -8349,7 +8287,7 @@
           "slot": "return_type",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "return_type"
             }
           ]
@@ -8360,7 +8298,7 @@
           "slot": "body",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "body"
             }
           ]
@@ -8372,7 +8310,7 @@
           "token": "*",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "generator"
             }
           ],
@@ -8385,7 +8323,7 @@
           "token": "?",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "optional"
             }
           ],
@@ -8397,7 +8335,7 @@
           "kind": "private_property_identifier",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "name"
             }
           ],
@@ -8409,7 +8347,7 @@
           "kind": "computed_property_name",
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "name"
             }
           ],
@@ -8437,7 +8375,7 @@
           "multiple": true,
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "parameters"
             },
             {
@@ -8484,7 +8422,7 @@
           "multiple": true,
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "parameters"
             },
             {
@@ -8527,7 +8465,7 @@
           "multiple": false,
           "path": [
             {
-              "owner": "method_definition",
+              "owner": "method_definition_plain",
               "slot": "parameters"
             },
             {
@@ -8542,32 +8480,15 @@
         }
       ]
     },
-    "method_signature": {
-      "vocab": "declaration.method.signature",
+    "method_definition_setter": {
+      "vocab": "declaration.property.setter",
       "read": [
         {
-          "vocab": "declaration.property.signature.getter.private",
+          "vocab": "declaration.property.setter.private",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "299": 5
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -8580,7 +8501,7 @@
                   36
                 ],
                 "slots": {
-                  "299": 0
+                  "453": 0
                 }
               }
             },
@@ -8591,7 +8512,297 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "299": 0
+                  "453": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.setter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "453": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "453": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.setter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "453": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "453": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.setter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "static"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "override"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "privateName",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "method_signature_getter": {
+      "vocab": "declaration.property.signature.getter",
+      "read": [
+        {
+          "vocab": "declaration.property.signature.getter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "455": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "455": 0
                 }
               }
             }
@@ -8601,25 +8812,8 @@
           "vocab": "declaration.property.signature.getter.protected",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "299": 5
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -8632,7 +8826,7 @@
                   36
                 ],
                 "slots": {
-                  "299": 0
+                  "455": 0
                 }
               }
             },
@@ -8643,7 +8837,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "299": 0
+                  "455": 0
                 }
               }
             }
@@ -8653,25 +8847,8 @@
           "vocab": "declaration.property.signature.getter.public",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "299": 5
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -8684,7 +8861,7 @@
                   36
                 ],
                 "slots": {
-                  "299": 0
+                  "455": 0
                 }
               }
             },
@@ -8695,168 +8872,96 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "299": 0
+                  "455": 0
                 }
               }
             }
           ]
         },
         {
-          "vocab": "declaration.property.signature.setter.private",
+          "vocab": "declaration.property.signature.getter",
           "toplevel": true,
           "within": [],
-          "pins": [
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
             {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
+              "owner": "method_signature_getter",
+              "slot": "static"
             }
           ],
-          "test": [
+          "flag": true
+        },
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
             {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "299": 5
-                }
-              }
-            },
+              "owner": "method_signature_getter",
+              "slot": "override"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
             {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "299": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "private",
-                "slots": {
-                  "299": 0
-                }
-              }
+              "owner": "method_signature_getter",
+              "slot": "name"
             }
           ]
         },
         {
-          "vocab": "declaration.property.signature.setter.protected",
-          "toplevel": true,
-          "within": [],
-          "pins": [
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
             {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "299": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "299": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "protected",
-                "slots": {
-                  "299": 0
-                }
-              }
+              "owner": "method_signature_getter",
+              "slot": "type"
             }
           ]
         },
         {
-          "vocab": "declaration.property.signature.setter.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [
+          "name": "privateName",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
             {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
+              "owner": "method_signature_getter",
+              "slot": "name"
             }
           ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "299": 5
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "299": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "public",
-                "slots": {
-                  "299": 0
-                }
-              }
-            }
-          ]
+          "flag": true
         },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "method_signature_getter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
+    "method_signature_plain": {
+      "vocab": "declaration.method.signature",
+      "read": [
         {
           "vocab": "declaration.method.signature.private",
           "toplevel": true,
@@ -8875,7 +8980,7 @@
                   36
                 ],
                 "slots": {
-                  "299": 0
+                  "454": 0
                 }
               }
             },
@@ -8886,7 +8991,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "299": 0
+                  "454": 0
                 }
               }
             }
@@ -8910,7 +9015,7 @@
                   36
                 ],
                 "slots": {
-                  "299": 0
+                  "454": 0
                 }
               }
             },
@@ -8921,7 +9026,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "299": 0
+                  "454": 0
                 }
               }
             }
@@ -8945,7 +9050,7 @@
                   36
                 ],
                 "slots": {
-                  "299": 0
+                  "454": 0
                 }
               }
             },
@@ -8956,57 +9061,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "299": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.signature.getter",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "get"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "get",
-                "slots": {
-                  "299": 5
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property.signature.setter",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "generator",
-              "slot": "generator",
-              "text": "set"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "set",
-                "slots": {
-                  "299": 5
+                  "454": 0
                 }
               }
             }
@@ -9027,7 +9082,7 @@
           "slot": "static",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "static"
             }
           ],
@@ -9039,7 +9094,7 @@
           "slot": "override",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "override"
             }
           ],
@@ -9051,7 +9106,7 @@
           "slot": "readonly",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "readonly"
             }
           ],
@@ -9063,7 +9118,7 @@
           "slot": "async",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "async"
             }
           ],
@@ -9075,7 +9130,7 @@
           "slot": "name",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "name"
             }
           ]
@@ -9086,7 +9141,7 @@
           "slot": "optional",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "optional"
             }
           ],
@@ -9098,7 +9153,7 @@
           "slot": "type_parameters",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "type_parameters"
             }
           ]
@@ -9109,7 +9164,7 @@
           "slot": "return_type",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "return_type"
             }
           ]
@@ -9121,7 +9176,7 @@
           "token": "*",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "generator"
             }
           ],
@@ -9133,7 +9188,7 @@
           "kind": "private_property_identifier",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "name"
             }
           ],
@@ -9145,7 +9200,7 @@
           "kind": "computed_property_name",
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "name"
             }
           ],
@@ -9173,7 +9228,7 @@
           "multiple": true,
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "parameters"
             },
             {
@@ -9220,7 +9275,7 @@
           "multiple": true,
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "parameters"
             },
             {
@@ -9263,7 +9318,7 @@
           "multiple": false,
           "path": [
             {
-              "owner": "method_signature",
+              "owner": "method_signature_plain",
               "slot": "parameters"
             },
             {
@@ -9273,6 +9328,285 @@
             {
               "owner": "formal_parameters_elements_receiver",
               "slot": "receiver"
+            }
+          ]
+        }
+      ]
+    },
+    "method_signature_setter": {
+      "vocab": "declaration.property.signature.setter",
+      "read": [
+        {
+          "vocab": "declaration.property.signature.setter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "456": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "456": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.signature.setter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "456": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "456": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.signature.setter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "456": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "456": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.signature.setter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "static"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "override"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "privateName",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_signature_setter",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
             }
           ]
         }
@@ -11092,31 +11426,15 @@
       ],
       "members": []
     },
-    "public_field_definition": {
-      "vocab": "declaration.field",
+    "public_field_definition_accessor": {
+      "vocab": "declaration.property",
       "read": [
         {
           "vocab": "declaration.property.private",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "accessor",
-              "slot": "accessor",
-              "text": "accessor"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "present",
-                "slots": {
-                  "296": 7
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -11129,7 +11447,7 @@
                   36
                 ],
                 "slots": {
-                  "296": 2
+                  "461": 1
                 }
               }
             },
@@ -11140,7 +11458,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "296": 2
+                  "461": 1
                 }
               }
             }
@@ -11150,24 +11468,8 @@
           "vocab": "declaration.property.protected",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "accessor",
-              "slot": "accessor",
-              "text": "accessor"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "present",
-                "slots": {
-                  "296": 7
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -11180,7 +11482,7 @@
                   36
                 ],
                 "slots": {
-                  "296": 2
+                  "461": 1
                 }
               }
             },
@@ -11191,7 +11493,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "296": 2
+                  "461": 1
                 }
               }
             }
@@ -11201,24 +11503,8 @@
           "vocab": "declaration.property.public",
           "toplevel": true,
           "within": [],
-          "pins": [
-            {
-              "member": "accessor",
-              "slot": "accessor",
-              "text": "accessor"
-            }
-          ],
+          "pins": [],
           "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "present",
-                "slots": {
-                  "296": 7
-                }
-              }
-            },
             {
               "up": 0,
               "via": [],
@@ -11231,7 +11517,7 @@
                   36
                 ],
                 "slots": {
-                  "296": 2
+                  "461": 1
                 }
               }
             },
@@ -11242,12 +11528,142 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "296": 2
+                  "461": 1
                 }
               }
             }
           ]
         },
+        {
+          "vocab": "declaration.property.signature.abstract",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "abstract",
+              "slot": "abstract",
+              "text": "abstract"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "present",
+                "slots": {
+                  "461": 3
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "decorators",
+          "route": "slot",
+          "slot": "decorator",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "decorator"
+            }
+          ]
+        },
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "static"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "override"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "privateName",
+          "route": "kind",
+          "kind": "private_property_identifier",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "computed",
+          "route": "kind",
+          "kind": "computed_property_name",
+          "path": [
+            {
+              "owner": "public_field_definition_accessor",
+              "slot": "name"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
+    "public_field_definition_plain": {
+      "vocab": "declaration.field",
+      "read": [
         {
           "vocab": "declaration.field.private",
           "toplevel": true,
@@ -11266,7 +11682,7 @@
                   36
                 ],
                 "slots": {
-                  "296": 2
+                  "460": 2
                 }
               }
             },
@@ -11277,7 +11693,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "296": 2
+                  "460": 2
                 }
               }
             }
@@ -11301,7 +11717,7 @@
                   36
                 ],
                 "slots": {
-                  "296": 2
+                  "460": 2
                 }
               }
             },
@@ -11312,7 +11728,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "296": 2
+                  "460": 2
                 }
               }
             }
@@ -11336,7 +11752,7 @@
                   36
                 ],
                 "slots": {
-                  "296": 2
+                  "460": 2
                 }
               }
             },
@@ -11347,31 +11763,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "296": 2
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.property",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "accessor",
-              "slot": "accessor",
-              "text": "accessor"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "present",
-                "slots": {
-                  "296": 7
+                  "460": 2
                 }
               }
             }
@@ -11392,7 +11784,7 @@
           "slot": "decorator",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "decorator"
             }
           ]
@@ -11403,7 +11795,7 @@
           "slot": "declare",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "declare"
             }
           ],
@@ -11415,7 +11807,7 @@
           "slot": "static",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "static"
             }
           ],
@@ -11427,7 +11819,7 @@
           "slot": "override",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "override"
             }
           ],
@@ -11439,7 +11831,7 @@
           "slot": "readonly",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "readonly"
             }
           ],
@@ -11451,7 +11843,7 @@
           "slot": "abstract",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "abstract"
             }
           ],
@@ -11463,7 +11855,7 @@
           "slot": "name",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "name"
             }
           ]
@@ -11474,7 +11866,7 @@
           "slot": "optionality",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "optionality"
             }
           ]
@@ -11485,7 +11877,7 @@
           "slot": "type",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "type"
             }
           ]
@@ -11496,7 +11888,7 @@
           "slot": "value",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "value"
             }
           ]
@@ -11508,7 +11900,7 @@
           "token": "?",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "optionality"
             }
           ],
@@ -11521,7 +11913,7 @@
           "token": "!",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "optionality"
             }
           ],
@@ -11533,7 +11925,7 @@
           "kind": "private_property_identifier",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "name"
             }
           ],
@@ -11545,7 +11937,7 @@
           "kind": "computed_property_name",
           "path": [
             {
-              "owner": "public_field_definition",
+              "owner": "public_field_definition_plain",
               "slot": "name"
             }
           ],
@@ -11626,7 +12018,7 @@
                   36
                 ],
                 "slots": {
-                  "443": 1
+                  "463": 1
                 }
               }
             },
@@ -11637,7 +12029,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "443": 1
+                  "463": 1
                 }
               }
             }
@@ -11661,7 +12053,7 @@
                   36
                 ],
                 "slots": {
-                  "443": 1
+                  "463": 1
                 }
               }
             },
@@ -11672,7 +12064,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "443": 1
+                  "463": 1
                 }
               }
             }
@@ -11696,7 +12088,7 @@
                   36
                 ],
                 "slots": {
-                  "443": 1
+                  "463": 1
                 }
               }
             },
@@ -11707,7 +12099,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "443": 1
+                  "463": 1
                 }
               }
             }
@@ -12220,6 +12612,182 @@
         "terminals": [],
         "list": true
       }
+    },
+    "setter_parameter": {
+      "vocab": "declaration.parameter",
+      "read": [
+        {
+          "vocab": "declaration.parameter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "448": 1
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "448": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "448": 1
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "448": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  324,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "448": 1
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "448": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "decorators",
+          "route": "slot",
+          "slot": "decorator",
+          "path": [
+            {
+              "owner": "setter_parameter",
+              "slot": "decorator"
+            }
+          ]
+        },
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
+            {
+              "owner": "setter_parameter",
+              "slot": "override"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "readonly",
+          "route": "slot",
+          "slot": "readonly",
+          "path": [
+            {
+              "owner": "setter_parameter",
+              "slot": "readonly"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "pattern",
+          "path": [
+            {
+              "owner": "setter_parameter",
+              "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "setter_parameter",
+              "slot": "type"
+            }
+          ]
+        }
+      ]
     },
     "shorthand_property_identifier": {
       "vocab": "identifier.property.shorthand",
@@ -13630,7 +14198,7 @@
                 "op": "eq",
                 "text": "++",
                 "slots": {
-                  "422": 1
+                  "424": 1
                 }
               }
             }
@@ -13655,7 +14223,7 @@
                 "op": "eq",
                 "text": "--",
                 "slots": {
-                  "422": 1
+                  "424": 1
                 }
               }
             }
@@ -13705,7 +14273,7 @@
                 "op": "eq",
                 "text": "++",
                 "slots": {
-                  "423": 0
+                  "425": 0
                 }
               }
             }
@@ -13730,7 +14298,7 @@
                 "op": "eq",
                 "text": "--",
                 "slots": {
-                  "423": 0
+                  "425": 0
                 }
               }
             }
@@ -13847,7 +14415,7 @@
                   237
                 ],
                 "slots": {
-                  "434": 0
+                  "436": 0
                 }
               }
             }
@@ -14066,31 +14634,31 @@
       {
         "depth": 2,
         "paths": 112,
-        "kinds": 145,
+        "kinds": 147,
         "refinements": 6
       },
       {
         "depth": 3,
         "paths": 109,
-        "kinds": 90,
+        "kinds": 94,
         "refinements": 83
       },
       {
         "depth": 4,
         "paths": 68,
-        "kinds": 20,
+        "kinds": 24,
         "refinements": 40
       },
       {
         "depth": 5,
         "paths": 14,
-        "kinds": 5,
-        "refinements": 12
+        "kinds": 8,
+        "refinements": 14
       },
       {
         "depth": 6,
         "paths": 6,
-        "kinds": 1,
+        "kinds": 2,
         "refinements": 6
       }
     ]

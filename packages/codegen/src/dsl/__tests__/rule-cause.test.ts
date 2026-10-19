@@ -6,7 +6,7 @@ describe('rule-cause declarations', () => {
 		const body = ($: unknown) => $;
 		const tagged = reauthored('ambiguity', body);
 		expect(tagged).toBe(body);
-		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', cause: 'ambiguity' });
+		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', causes: [{ cause: 'ambiguity' }] });
 	});
 
 	it('reauthored records every witness it is given', () => {
@@ -15,7 +15,16 @@ describe('rule-cause declarations', () => {
 			{ text: 'set x()', form: ['set', { symbol: 'name' }, '(', ')'], kind: 'getter', production: 'q' }
 		] as const;
 		const tagged = reauthored('accepts-invalid-syntax', witnesses, () => 1);
-		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses });
+		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', causes: [{ cause: 'accepts-invalid-syntax', witnesses }] });
+	});
+
+	it('reauthored stamps every cause pair it is given, in order', () => {
+		const witness = { text: 'get x(a)', form: ['get', { symbol: 'name' }], kind: 'getter', production: 'p' } as const;
+		const tagged = reauthored([['ambiguity'], ['accepts-invalid-syntax', [witness]]], () => 1);
+		expect(ruleCauseOf(tagged)).toEqual({
+			kind: 'reauthored',
+			causes: [{ cause: 'ambiguity' }, { cause: 'accepts-invalid-syntax', witnesses: [witness] }]
+		});
 	});
 
 	it('vocabulary tags without a cause', () => {
