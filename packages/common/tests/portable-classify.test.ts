@@ -230,4 +230,8 @@ describe('classifierOf conditions through a list', () => {
 		expect(read(method())).toBe('method.static');
 		expect(read(method(PLAIN, SELF, PLAIN))).toBe('method');
 	});
+
+	it('reads a bare kind id past every entry that reads a slot, since an id shows none, so a negated slot test does not hold', () => {
+		expect(read(METHOD)).toBe('method');
+	});
 });

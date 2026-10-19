@@ -1,4 +1,4 @@
-import type { PortableCondition, PortableReadEntry, PortableRows, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableCondition, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { anchored, holds, slotItems } from '../query-holds.ts';
 import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
@@ -16,6 +16,26 @@ export const hasKind = (value: unknown): value is Node =>
 const unplaced = (entry: PortableReadEntry): boolean =>
 	entry.within.length === 0 && entry.test.every((condition) => condition.up === 0);
 
+const readsItself = (plan: QueryPlan<QuerySubject>): boolean => {
+	switch (plan.op) {
+		case 'eq':
+		case 'match':
+		case 'is':
+			return 'self' in plan;
+		case 'present':
+		case 'child':
+			return false;
+		case 'not':
+			return readsItself(plan.of);
+		case 'and':
+		case 'or':
+			return plan.of.every(readsItself);
+	}
+};
+
+const decidesKindId = (entry: PortableReadEntry): boolean =>
+	entry.test.every((condition) => condition.via.length === 0 && readsItself(condition.plan));
+
 const classifiers = new WeakMap<PortableRows, PortableClassifier>();
 
 /**
@@ -24,7 +44,8 @@ const classifiers = new WeakMap<PortableRows, PortableClassifier>();
  * @param rows - The rows a bound grammar's engine carries.
  * @returns A function reading a node, or a bare kind id, as the path of its kind's first read entry that holds. An entry that
  * depends on where the value sits (a placement, or a condition on an enclosing node) is skipped, so the value reads as its next
- * entry. A kind id reads its own text from the fixed texts and holds no slot.
+ * entry. A kind id reads its own text from the fixed texts; it shows no slot, so an entry whose test reads one is skipped for it
+ * the same way.
  */
 export function classifierOf(rows: PortableRows): PortableClassifier {
 	let classifier = classifiers.get(rows);
@@ -73,6 +94,9 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 	};
 	return (value) =>
 		table.entries[typeof value === 'number' ? value : value.$type]?.find(
-			(entry) => unplaced(entry) && entry.test.every((condition) => conditionHolds(condition, value))
+			(entry) =>
+				unplaced(entry) &&
+				(typeof value !== 'number' || decidesKindId(entry)) &&
+				entry.test.every((condition) => conditionHolds(condition, value))
 		)?.path;
 }
