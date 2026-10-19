@@ -61,7 +61,7 @@ import {
 import { listViewOwners } from './factories.ts';
 import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
-import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
+import { boxedPayloadsOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getNodeProjection } from './node-projection-cache.ts';
 import { RECORD_HEADER_WORDS, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import {
@@ -163,12 +163,11 @@ export interface RenderOptionsInputs {
 	readonly kindEntries?: readonly KindEnumEntry[];
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
-	readonly boxedPayloads?: readonly string[];
 	readonly envelopePins?: Readonly<Record<string, EnvelopePin>>;
 }
 
 export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
-	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [], envelopePins: ENVELOPE_PINS[grammar] ?? {} };
+	return { ...inputs, envelopePins: ENVELOPE_PINS[grammar] ?? {} };
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -195,8 +194,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 		options,
 		kindEntries,
 		sites,
-		addresses,
-		boxedPayloads
+		addresses
 	} = config;
 	return {
 		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
@@ -205,8 +203,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 			options,
 			kindEntries,
 			sites,
-			addresses,
-			boxedPayloads
+			addresses
 		})
 	};
 }
@@ -227,8 +224,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 			options: config.options,
 			kindEntries: config.kindEntries,
 			sites: config.sites,
-			addresses: config.addresses,
-			boxedPayloads: config.boxedPayloads
+			addresses: config.addresses
 		};
 	}
 
@@ -1140,7 +1136,8 @@ export function emitRenderModule(
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
-	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [], inputs.envelopePins);
+	const unboxed = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, [], inputs.envelopePins);
+	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins);
 
 	const nodeRs =
 		[
@@ -1302,7 +1299,7 @@ function renderNodeSupport(
 	plan: RenderPlan,
 	boxedPayloads: readonly string[],
 	envelopePins: Readonly<Record<string, EnvelopePin>> | undefined
-): { readonly text: string; readonly records: ReadonlyMap<string, RecordLayout> } {
+): { readonly text: string; readonly records: ReadonlyMap<string, RecordLayout>; readonly choicePayloads: ReadonlySet<string> } {
 	const projection = getNodeProjection(nodeMap);
 	const nodes = projection.nodes;
 
@@ -1394,7 +1391,7 @@ function renderNodeSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
-	return { text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'), records: read.records };
+	return { text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'), records: read.records, choicePayloads: read.choicePayloads };
 }
 
 function grammarTriviaStatement(nodes: ReadonlySet<string>): string {
@@ -1550,12 +1547,12 @@ function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
 
 export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
 	const stale = pinned.find((name) => !payloads.has(name));
-	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
+	if (stale !== undefined) throw new Error(`${stale} is boxed but no choice holds it`);
 	const n = PAYLOAD_CEILING_BYTES;
 	return [...payloads].sort().map((name) =>
 		pinned.includes(name)
-			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling: unpin it in boxed-payloads.ts");`
-			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling: pin it in boxed-payloads.ts");`
+			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");`
+			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");`
 	);
 }
 
