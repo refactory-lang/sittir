@@ -559,7 +559,6 @@ export default sittirGrammar(base, {
 		'unclassifiable-shape': ['_let_chain'],
 		'rule-reauthored-without-cause': [
 			'_non_special_token',
-			'_primitive_type',
 			'impl_item',
 			'reference_expression'
 		]
@@ -625,13 +624,6 @@ export default sittirGrammar(base, {
 				$._token_keywords
 			)
 		),
-
-		// Enrich mints `_primitive_type` as the storage of upstream's inline
-		// `alias(choice(...primitive types), $.primitive_type)`. As a rule of
-		// its own it is a reduction point, so a bare primitive-type keyword
-		// in a pattern (`fn f((u8))`) reaches it and `_pattern` alike;
-		// `_pattern` is the correct read, so this rule yields.
-		_primitive_type: reauthored('ambiguity', ($, original) => prec(-1, original)),
 
 		_token_keywords: vocabulary(($) =>
 			choice(
