@@ -4713,6 +4713,10 @@ It is the only authorship fact evaluate records. Who authored any other rule is 
 
 It is a different fact from link's `synthesizedKinds` (`link.ts`), the kinds link itself synthesizes later. The two sets answer "who synthesized this kind" for different phases and are not to be merged.
 
+### `packages/codegen/src/compiler/types.ts::RawGrammar.layerDiagnostics`
+
+Blocking diagnostics the DSL recorded while it evaluated the grammar. `diagnostics/grammar-diagnostics.ts::evaluateRecords` hands them to the compile gate beside evaluate's own records.
+
 ### `packages/codegen/src/compiler/types.ts::KindParserMetadata`
 
 ```text
@@ -8305,9 +8309,13 @@ alias envelopes the same way element and value derivation does.
 
 The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar.predictedKinds`), asked through `catalogSymbolSource`, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 
+### `packages/codegen/src/compiler/canonical-rules.ts::parserRulesOf`
+
+The evaluated rules tree-sitter also sees: every rule but those whose body evaluate supplied itself (`evaluateSynthesized`: render-only rules, visible externals, undeclared deposits and the body-pattern fallback). Kind prediction reads them.
+
 ### `packages/codegen/src/compiler/canonical-rules.ts::predictKinds`
 
-The kind catalog predicted from the faithful evaluated grammar, before canonicalization: `dsl/symbol-table.ts::predictedKindsOf` over its rules without the evaluate-synthesized ones. A grammar tree-sitter rejects yields the failure instead of rows, so evaluate never throws on it. `canonicalGrammar` stamps the result as `predictedKinds`, for the grammar and its upstream alike.
+The kind catalog predicted from the faithful evaluated grammar, before canonicalization: `dsl/symbol-table.ts::predictedKindsOf` over its parser rules (`parserRulesOf`). A grammar tree-sitter rejects yields the failure instead of rows, so evaluate never throws on it. `canonicalGrammar` stamps the result as `predictedKinds`, for the grammar and its upstream alike.
 
 ### `packages/codegen/src/compiler/link.ts::assertPredictedKinds`
 

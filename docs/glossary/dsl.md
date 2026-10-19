@@ -9253,3 +9253,11 @@ Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) 
 ### `packages/codegen/src/dsl/evaluate.ts::eof`
 
 tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`compiler/normalize.ts::blanksDropped`).
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeInfo`
+
+What a code in `ENRICH_SHAPES` records: the enrich pass that rewrites the shape (`pass`) and the shape it rewrites, in words (`shape`).
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES`
+
+The input shapes enrich rewrites, one code each, with the pass that rewrites it and the shape in words. A shape enrich rewrites never reaches the model as written, so no `expectDiagnostics` entry may name one of these codes (`compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`).

@@ -150,9 +150,10 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonl
 	};
 }
 
+export function parserRulesOf(evaluated: Pick<EvaluatedGrammar, 'rules' | 'evaluateSynthesized'>): EvaluatedGrammar['rules'] {
+	return Object.fromEntries(Object.entries(evaluated.rules).filter(([name]) => !evaluated.evaluateSynthesized.has(name)));
+}
+
 function predictKinds(evaluated: EvaluatedGrammar): PredictedKinds {
-	const rules = Object.fromEntries(
-		Object.entries(evaluated.rules).filter(([name]) => !evaluated.evaluateSynthesized.has(name))
-	);
-	return predictedKindsOf({ ...evaluated, rules });
+	return predictedKindsOf({ ...evaluated, rules: parserRulesOf(evaluated) });
 }
