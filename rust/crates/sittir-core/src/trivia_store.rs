@@ -22,10 +22,20 @@ pub enum Place {
     /// A built node or a built leaf, by its record.
     #[cfg(feature = "arena")]
     Record(crate::arena::Address),
-    /// A built unit, which has no record: its holder's record, the slot's
-    /// stamped word and the unit's item in that slot.
+    /// A built unit, which has no record: its site in its holder's record.
     #[cfg(feature = "arena")]
-    Unit { holder: crate::arena::Address, word: u32, item: crate::types::ItemIndex },
+    Unit(Site<crate::arena::Address>),
+}
+
+/// A position in a holder: the holder, the slot's stamped word and the
+/// item in that slot, 0 for a slot holding one value. A built unit's place
+/// is its site in a built record; a fact a holder writes about the child it
+/// holds there is keyed by its site in any holder's place.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Site<H> {
+    pub holder: H,
+    pub word: u32,
+    pub item: crate::types::ItemIndex,
 }
 
 type Sides<T> = BTreeMap<(Place, TriviaSide), Vec<TriviaEntry<T>>>;
@@ -174,7 +184,7 @@ mod tests {
         use crate::arena::Address;
         let store = TriviaStore::<TriviaText>::new();
         let record = Place::Record(Address(5));
-        let unit = Place::Unit { holder: Address(5), word: 2, item: crate::types::ItemIndex(0) };
+        let unit = Place::Unit(Site { holder: Address(5), word: 2, item: crate::types::ItemIndex(0) });
         store.write_side(record, TriviaSide::Leading, vec![entry("// r")]);
         store.write_side(unit, TriviaSide::Trailing, vec![entry("// u")]);
         store.write_side(row(1, 0), TriviaSide::Leading, Vec::new());

@@ -10,7 +10,7 @@ use crate::layout::{NodeLayout, UnitSides};
 use crate::record::HEADER_WORDS;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
 use crate::trivia::NodeTrivia;
-use crate::trivia_store::{Place, TriviaStore};
+use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex, Span, TreeId};
 use crate::verbatim::VerbatimNode;
@@ -108,7 +108,7 @@ impl<'a, T: Clone> RecordSink<'a, T> {
             keep(Place::Record(at), trivia);
         }
         for &(word, unit) in units {
-            keep(Place::Unit { holder: at, word, item: unit.item }, &unit.trivia);
+            keep(Place::Unit(Site { holder: at, word, item: unit.item }), &unit.trivia);
         }
     }
 }
@@ -379,11 +379,7 @@ impl SideRecord {
 
     /// The entry of the slot at `word`, added when the record has none.
     pub fn slot_mut(&mut self, word: u32) -> &mut SideSlot {
-        let at = self.slots.iter().position(|slot| slot.word == word).unwrap_or_else(|| {
-            self.slots.push(SideSlot { word, ..SideSlot::default() });
-            self.slots.len() - 1
-        });
-        &mut self.slots[at]
+        super::entry_by_word(&mut self.slots, word, |slot| slot.word, || SideSlot { word, ..SideSlot::default() })
     }
 }
 
@@ -625,7 +621,7 @@ mod tests {
         let Cell::Child { at: record, .. } = cell else { panic!("a record, not {cell:?}") };
         assert_eq!(store.side(Place::Record(record), TriviaSide::Leading), Some(vec![entry("// a")]));
         assert_eq!(store.side(Place::Record(record), TriviaSide::Trailing), None, "a side no write set stays unwritten");
-        assert_eq!(store.side(Place::Unit { holder: record, word: 8, item: crate::types::ItemIndex(1) }, TriviaSide::Inner), Some(Vec::new()));
+        assert_eq!(store.side(Place::Unit(Site { holder: record, word: 8, item: crate::types::ItemIndex(1) }), TriviaSide::Inner), Some(Vec::new()));
         let (_, side, _, left, items) = pair_record(&arena, cell);
         assert_eq!(side.slots, vec![SideSlot { word: 8, space_after: Some(KindId(2)), ..SideSlot::default() }], "the setting is in its slot's entry");
         let Cell::BuiltLeaf { kind: NAME, text, record: leaf } = left else { panic!("a built leaf, not {left:?}") };

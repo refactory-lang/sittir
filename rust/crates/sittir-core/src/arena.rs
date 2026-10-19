@@ -5,12 +5,14 @@
 //! record, and [`rows`] keeps a parsed tree's arena with its row index. The
 //! record writer (`write_record`) writes a native node's records, children
 //! before parents. A built record's trivia is outside the arena, in the
-//! engine's store of written sides (`trivia_store`).
+//! engine's store of written sides (`trivia_store`), and what a render's
+//! prepare fills is in its overlay (`Prepared`).
 //!
 //! An arena only appends: no record is freed or moved, so an address names
 //! one record for as long as the arena lives.
 
 pub mod cell;
+mod prepared;
 pub mod rows;
 pub mod side;
 mod write;
@@ -19,6 +21,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 pub use cell::{Cell, ListCell, ParsedLink};
+pub use prepared::{Prepared, PreparedNode, PreparedSlot};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record};
 pub use rows::TreeArena;
 pub use side::{SideRecord, SideSlot, Sides};
@@ -31,6 +34,16 @@ pub trait HasRecord {
     type Record<'a>
     where
         Self: 'a;
+}
+
+/// The entry of `entries` for the slot at `word`, by each entry's own word,
+/// added from `new` when none is.
+fn entry_by_word<S>(entries: &mut Vec<S>, word: u32, word_of: impl Fn(&S) -> u32, new: impl FnOnce() -> S) -> &mut S {
+    let at = entries.iter().position(|entry| word_of(entry) == word).unwrap_or_else(|| {
+        entries.push(new());
+        entries.len() - 1
+    });
+    &mut entries[at]
 }
 
 /// The words a shared chunk holds at most, and the bound on a word's index
