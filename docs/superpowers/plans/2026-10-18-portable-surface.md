@@ -61,17 +61,21 @@ On the portable surface, a fixed-literal leaf's identity is the vocabulary const
 
 The cost of keeping bare ids on grammar guards: a bare id carries no language, so `inLanguage` passes every number. Task 5 adds one sentence saying so to the `Language.is` JSDoc. Kind guards (`_g`) keep refusing ids, since `x === kinds.X` is the documented test for a fixed-literal leaf.
 
-**Q1 — placement-dependent read entries.** The emitted tables still hold 42 entries with a non-empty `within`, plus 1 condition with `up: 1`. Today these are reachable only through the guard's `context` parameter, which node-only removes:
+**Q1 — placement-dependent read entries.** The emitted tables still hold 42 entries with a non-empty `within`, plus 1 condition with `up: 1`. Today these are reachable only through the guard's `context` parameter, which node-only removes. They come from seven claims:
 
-| grammar | `within` entries | `up: 1` conditions | what they are |
+| grammar | claim | entries | form (ruled) |
 |---|---|---|---|
-| rust | 38 | 0 | all are `declaration.parameter` within `closure_parameters` |
-| python | 4 | 1 | `declaration.method` within a class body; `declaration.parameter` in parameters and lambda parameters; `identifier.type` within `type` |
-| typescript | 0 | 0 | |
+| rust | a pattern within `closure_parameters` reads as `declaration.parameter` | 35 | an envelope alias at the `closure_parameters` site, one claim on the envelope |
+| rust | `function_item` / `function_signature_item` within an impl or trait `declaration_list` reads as `declaration.method` (`.signature`) | 2 | the method alias (2026-10-10) |
+| rust | `crate` within `visibility_modifier` reads as `modifier.visibility.public.internal` | 1 | an alias, `internal_public_visibility_modifier` (2026-10-10, P2) |
+| python | `function_definition` in a class body reads as `declaration.method` | 1 | the method alias, five clones (2026-10-10, P1) |
+| python | `staticmethod` read through the enclosing `decorated_definition` (the `up: 1` condition) | 1 | the envelope sets its element's flag (2026-10-10, P4) |
+| python | an `identifier` within `parameters` / `lambda_parameters` reads as `declaration.parameter` | 2 | the claims are deleted: an identifier is slotless and reads through its parent's member |
+| python | an `identifier` within `type` reads as `identifier.type` | 1 | deleted, as above |
 
-The 2026-10-10 ruling says placed claims become aliases, parent members or envelope stamps, and recorded no residue at the time; these 43 are that residue.
+`grammar.bindings.ts` is generated from `bindings.scm` (`bindings-inventory --write`), so the restatement goes in `bindings.scm`, with the aliases in `grammar.sittir.ts`.
 
-Ruled: **the 43 are re-stated in bindings before Task 4** (an alias or envelope per claim), and the emitter refuses a `within` entry or an `up > 0` condition with a generator diagnostic, gated at 0. This is Task 3b, owned by coordinate. Its `grammar.bindings.ts` lines go to sittir-design for review, as `grammar.sittir.ts` lines do.
+Ruled: the residue is restated in its own PR (Task 3b), after the node-only guards and before `ofType`. Until it lands, node-only guards skip placed entries, as a guard given no context does today, so these classifications answer false; a ratchet pins the placed count at 43 (rust 38, python 4 plus 1 `up`), shrink-only. Task 3b ends with the emitter refusing a `within` entry or an `up > 0` condition with a generator diagnostic, gated at 0. Coordinate builds it from the rulings above; its `bindings.scm` and `grammar.sittir.ts` lines go to sittir-design for review, and a probe that moves rows or trees beyond what the 2026-10-10 measurements expected goes back to brainstorm.
 
 **Q2 — typing `rust.is.portable`.** Ruled: one runtime object, typed per language through an interface the codegen emits:
 - `PortableIsAt<RustIds>`: each guard is `<T extends RustNode>(node: T) => node is T & { $type: Ids }`.
@@ -98,9 +102,10 @@ Ruled: **the 43 are re-stated in bindings before Task 4** (an alias or envelope 
 
 ## Stack
 
-1. **PR 1 (Tasks 1–2):** the path list and the shared trees. Nothing reads them yet, and generated output moves only in `packages/types`.
-2. **PR 2 (Tasks 3, 3b, 4, 5):** rows on the engine, the placement residue restated in bindings, node-only guards, descriptor and engine wiring. This regenerates all five grammars.
-3. **PR 3 (Task 6):** `ofType` with a vocabulary kind.
+1. **PR 1 (Tasks 1–2):** the path list and the shared trees. Nothing reads them yet, and the only generated file is the path list in `packages/common`.
+2. **PR 2 (Tasks 3, 4, 5):** rows on the engine, node-only guards, descriptor and engine wiring. This regenerates all five grammars. Placement-dependent classifications answer false until PR 3.
+3. **PR 3 (Task 3b):** the placement residue restated as aliases, envelopes and deleted claims; the emitter refuses placement, gated at 0.
+4. **PR 4 (Task 6):** `ofType` with a vocabulary kind.
 
 ---
 
@@ -174,15 +179,15 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 ### Task 3b: Restate the placement residue in bindings
 
 **Files:**
-- Modify: `packages/rust/grammar.bindings.ts`, `packages/python/grammar.bindings.ts` (about 6 claims: rust's 38 `within closure_parameters` entries are one claim; python's 4 `within` entries and 1 `up: 1` condition are the rest), the bindings emitter that writes read entries (it refuses `within` and `up > 0` with a generator diagnostic)
+- Modify: `packages/rust/bindings.scm`, `packages/python/bindings.scm`, `packages/rust/grammar.sittir.ts`, `packages/python/grammar.sittir.ts` (the seven claims of Q1, in their ruled forms; `grammar.bindings.ts` regenerates from them), the bindings emitter that writes read entries (it refuses `within` and `up > 0` with a generator diagnostic)
 - Test: the emitter test for the new diagnostic; `packages/rust/tests/portable-guards.test.ts` and `packages/python/tests/portable-guards.test.ts` for the restated classifications
 
 - [ ] **Step 1:** Write the failing tests.
   - The emitter given a claim that needs placement reports the placement diagnostic and emits no `within` entry.
   - With rows read node-only, a rust closure parameter still reads as `declaration.parameter`.
-  - The python cases still read as before: a method in a class body, a parameter in parameters and in lambda parameters, and `identifier.type` within `type`.
+  - The python cases read as before: a method in a class body, and a static method. A parameter identifier and a type identifier read through their parent's member; each parent member exists first (one that doesn't is added here).
 - [ ] **Step 2:** Run the tests. Expected: FAIL.
-- [ ] **Step 3:** Restate each claim as an alias or envelope in `grammar.bindings.ts`. Send the lines to sittir-design for review before committing. Add the diagnostic to the emitter, gated at 0.
+- [ ] **Step 3:** Restate each claim in its ruled form (Q1). Send the `bindings.scm` and `grammar.sittir.ts` lines to sittir-design for review before committing. Add the diagnostic to the emitter, gated at 0, and delete the placed-entry ratchet.
 - [ ] **Step 4:** Exec regenerates. The emitted tables hold 0 `within` entries and 0 `up > 0` conditions, the classifications above are unchanged, and 0 validation rows move.
 - [ ] **Step 5:** Pathspec commit with the regenerated files.
 
@@ -195,7 +200,7 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 - Test: `packages/rust/tests/portable-guards.test.ts`
 
 **Interfaces:**
-- Consumes: `EngineIdentity.portable` (Task 3), the placement-free rows (Task 3b), `engineOf` (`engine-scope.ts`).
+- Consumes: `EngineIdentity.portable` (Task 3), `engineOf` (`engine-scope.ts`). Placed entries are skipped (Q1); a ratchet test pins their count at 43 per the tables (rust 38, python 4 plus 1 `up`), shrink-only, and `portable.is`'s JSDoc names the classifications that answer false until Task 3b.
 - Produces: `classifierOf(rows: PortableRows): (node: { $type: number }) => string | undefined`.
 
 - [ ] **Step 1:** Write the failing tests.

@@ -128,7 +128,8 @@ describe('emitPortableSurface', () => {
 			'\t\t[TSKindId.Call]: [{ path: "expression.call.nested", within: [TSKindId.Block], test: [] }, { path: "expression.call", within: [], test: [] }],'
 		);
 		expect(text).toContain('\tfixedText: { [TSKindId.Plus]: "+" },');
-		expect(text).toContain('export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);');
+		expect(text).toContain('export const rows: PortableRows = Object.freeze({ table, querySlots });');
+		expect(text).not.toContain('portableSurface');
 	});
 
 	it('decides a path by kind id when every entry a guard can reach is under it, though an entry after an unconditional one is not', async () => {

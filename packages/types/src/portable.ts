@@ -1,4 +1,4 @@
-import type { QueryPlan, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
+import type { QueryPlan, QuerySlots, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
 
 /** One step of a condition: a slot by its numbers, narrowed to its first or last node when `anchor` is set, or reaching its node only when it holds exactly one (`only`). */
 export interface PortableStep extends SlotSubject {
@@ -30,6 +30,12 @@ export interface PortableTable {
 	readonly paths: Readonly<Record<string, PortablePath>>;
 	readonly entries: Readonly<Record<number, readonly PortableReadEntry[]>>;
 	readonly fixedText: Readonly<Record<number, string>>;
+}
+
+/** What a bound grammar's engine reads portable classifications from: its {@link PortableTable} and the slots its conditions name. */
+export interface PortableRows {
+	readonly table: PortableTable;
+	readonly querySlots: QuerySlots;
 }
 
 /**

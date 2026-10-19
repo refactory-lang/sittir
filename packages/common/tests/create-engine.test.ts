@@ -179,15 +179,22 @@ describe('createEngine', () => {
 		);
 	});
 
-	it('makes a portable engine of the language\'s kinds and guards, and nothing it does not implement', async () => {
+	it('makes a portable engine of the language\'s rows, kinds and guards, and nothing it does not implement', async () => {
 		const f = fakeLanguage();
 		const hooks = await f.language.load();
-		const guard = Object.assign(() => true, { nested: () => true });
-		const portable = { kinds: { expression: { $ids: [1] } }, is: { expression: guard } };
-		Object.assign(hooks, { portable });
+		const rows = {
+			table: {
+				paths: { expression: { ids: [1], exact: true }, 'expression.nested': { ids: [1], exact: true } },
+				entries: {},
+				fixedText: {}
+			},
+			querySlots: {}
+		};
+		Object.assign(hooks, { portable: rows });
 		const e = (await createEngine(f.language as never, { api: 'portable' } as never)) as unknown as Record<string, never>;
-		expect(Object.keys(e).sort()).toEqual(['is', 'kinds', 'language', 'options', 'renderModuleHash', 'trivia']);
-		expect(e.kinds).toBe(portable.kinds);
+		expect(Object.keys(e).sort()).toEqual(['is', 'kinds', 'language', 'options', 'portable', 'renderModuleHash', 'trivia']);
+		expect(e.portable).toBe(rows);
+		expect((e.kinds as unknown as { expression: { $ids: readonly number[] } }).expression.$ids).toEqual([1]);
 		const is = e.is as unknown as { expression: ((node: unknown) => boolean) & { nested: (node: unknown) => boolean } };
 		expect(is.expression({ $type: 1 })).toBe(false);
 		expect(is.expression.nested({ $type: 1 })).toBe(false);

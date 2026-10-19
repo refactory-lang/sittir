@@ -15,6 +15,7 @@ import type {
 	PortableEngine,
 	PortableEngineOptions,
 	PortableLanguageAPI,
+	PortableRows,
 	Pending,
 	Rendered,
 	RenderArgument,
@@ -28,6 +29,7 @@ import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
+import { portableSurface } from './portable.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
@@ -170,7 +172,8 @@ function assembleEngine<API extends LanguageAPI>(
 		language,
 		renderModuleHash: hooks.renderModuleHash,
 		options: options?.render,
-		trivia: hooks.trivia
+		trivia: hooks.trivia,
+		portable: hooks.portable
 	});
 	const handle: TreeEngineHandle = {
 		current: identity,
@@ -285,10 +288,19 @@ function assembleEngine<API extends LanguageAPI>(
 	return frozen;
 }
 
+const surfaces = new WeakMap<PortableRows, { readonly kinds: object; readonly is: object }>();
+
+function surfaceOf(rows: PortableRows): { readonly kinds: object; readonly is: object } {
+	let surface = surfaces.get(rows);
+	if (surface === undefined) surfaces.set(rows, (surface = portableSurface<object, object>(rows.table, rows.querySlots)));
+	return surface;
+}
+
 function assemblePortableEngine<API extends PortableLanguageAPI>(language: Language<API>, hooks: LanguageHooks<API>): PortableEngine<API> {
-	const portable = hooks.portable;
-	if (portable === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
-	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia };
+	const rows = hooks.portable;
+	if (rows === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
+	const portable = surfaceOf(rows) as { readonly kinds: API['portable']['kinds']; readonly is: API['portable']['is'] };
+	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia, portable: rows };
 	return Object.freeze({ ...identity, kinds: portable.kinds, is: languageGuards(portable.is, language) });
 }
 

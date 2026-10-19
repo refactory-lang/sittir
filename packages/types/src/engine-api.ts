@@ -2,7 +2,7 @@ import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, Trivia
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
-import type { PortableSurface } from './portable.ts';
+import type { PortableRows, PortableSurface } from './portable.ts';
 
 export interface TriviaFacts {
 	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
@@ -68,6 +68,8 @@ export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
 	readonly trivia: TriviaFacts;
+	/** The rows the language's portable classifications are read from, when its grammar has bindings. */
+	readonly portable?: PortableRows;
 }
 
 export interface GrammarTypeMap {
@@ -183,7 +185,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate(node: unknown, tree: unknown): unknown;
-	readonly portable?: API['portable'];
+	readonly portable?: PortableRows;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {

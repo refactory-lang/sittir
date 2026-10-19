@@ -136,7 +136,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { isMember, membersOf, type is } from './is.js';
-${config.portable === true ? "import { portable, queryFlags, querySlotFlags } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
+${config.portable === true ? "import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarTypePrefix(grammar)}Node, ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
@@ -156,7 +156,7 @@ export interface ${api} extends LanguageAPI {
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: ${grammarTypeMapName(grammar)}['empty'];
-${config.portable === true ? '\treadonly portable: typeof portable;\n' : ''}}
+${config.portable === true ? '\treadonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };\n' : ''}}
 
 export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>({
 	name: '${grammar}',
@@ -168,7 +168,7 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ',\n\tportable,\n\tqueryFlags,\n\tquerySlotFlags' : ''}
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ',\n\tportable: rows,\n\tqueryFlags,\n\tquerySlotFlags' : ''}
 });
 `;
 }
