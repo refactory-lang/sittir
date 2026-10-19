@@ -200,7 +200,7 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 - Test: `packages/rust/tests/portable-guards.test.ts`
 
 **Interfaces:**
-- Consumes: `EngineIdentity.portable` (Task 3), `engineOf` (`engine-scope.ts`). Placed entries are skipped (Q1); a ratchet test pins their counts per the tables (rust 55; python 6 plus 1 `up`), shrink-only, and `portable.is`'s JSDoc names the classifications that answer false until Task 3b. Keyword leaves read as bare kind ids, which name no engine, so every claim on a fixed-text kind answers false too (ruled: guards stay node-only); the same ratchet test pins those claims per the tables' `fixedText` (rust 67, typescript 37, python 8), shrink-only, and the JSDoc names their classes. `packages/tools/tests/portable/is.test.ts` pins both gaps false.
+- Consumes: `EngineIdentity.portable` (Task 3), `engineOf` (`engine-scope.ts`). Placed entries are skipped (Q1); a ratchet test pins their counts per the tables (rust 55; python 6 plus 1 `up`), shrink-only, and `portable.is`'s JSDoc names the classifications that read by their next entry until Task 3b (an impl or class-body method reads as a function, not a method). Keyword leaves read as bare kind ids, which name no engine, so every claim on a fixed-text kind answers false too (ruled: guards stay node-only); the same ratchet test pins those claims per the tables' `fixedText` (rust 67, typescript 37, python 8), shrink-only, and the JSDoc names their classes. `packages/tools/tests/portable/is.test.ts` pins both gaps false.
 - Produces: `classifierOf(rows: PortableRows): (node: { $type: number }) => string | undefined`.
 
 - [ ] **Step 1:** Write the failing tests.

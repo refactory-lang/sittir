@@ -60,7 +60,7 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, fla
 		'}',
 		'',
 		'export interface PortableIsAt {',
-		...nodes.map((n) => `\t${q(n.path)}: PortableGuard<PortableIds[${q(n.path)}]> & ${braces(members(n.path, 'PortableIsAt'))};`),
+		...nodes.map((n) => `\t${q(n.path)}: PortableGuard<PortableIds[${q(n.path)}], TSKindId> & ${braces(members(n.path, 'PortableIsAt'))};`),
 		'}',
 		'',
 		`export interface PortableKinds ${braces(members('', 'PortableKindsAt'))}`,

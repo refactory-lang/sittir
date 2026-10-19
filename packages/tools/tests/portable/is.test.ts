@@ -273,10 +273,11 @@ describe('portable is: rust', async () => {
 		expect(at('identifier.type')(option)).toBe(false);
 	});
 
-	it('reads no method in an impl yet: a placement-dependent reading answers false until it is restated as a kind of its own', () => {
+	it('reads a method in an impl as a function yet: a placement-dependent reading answers false until it is restated as a kind of its own, and the node reads by its next entry', () => {
 		const SOURCE = 'struct S;\nimpl S {\n    fn a(x: u8) {}\n    fn m(&self) {}\n    fn z() {}\n    fn n(&mut self, x: u8) {}\n}\n';
 		const [m, n] = [1, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
 		for (const fn of [m!, n!]) expect(at('declaration.method')(fn)).toBe(false);
+		for (const fn of [m!, n!]) expect(at('declaration.function')(fn)).toBe(true);
 	});
 
 	it.skip('tells a method with a receiver from an associated function, whatever order the impl lists them in (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {

@@ -37,7 +37,8 @@ const guardOf =
  * `this`, `super`, `null`, `undefined` and the visibility keywords; python's `True`, `False`, `None`, `...`, `pass`, `break` and
  * `continue`; and macro fragment specifiers and `;` as an empty statement.
  *
- * Until placement-dependent readings are restated as kinds of their own, a reading that depends on where the node sits also
- * answers false: a method in an impl, trait or class body, a closure parameter, `crate` visibility, and a python static method.
+ * Until placement-dependent readings are restated as kinds of their own, a node reads by its first entry that does not depend
+ * on where it sits. So a method in an impl, trait or class body reads as a function, not a method; a closure parameter reads as
+ * no parameter; `crate` visibility reads as no visibility; and a python static method reads as a function.
  */
 export const portable = portableTrees(vocabularyPaths, guardOf);

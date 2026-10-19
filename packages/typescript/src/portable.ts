@@ -1465,20 +1465,20 @@ export interface PortableKindsAt {
 }
 
 export interface PortableIsAt {
-	attribute: PortableGuard<PortableIds['attribute']> & {
+	attribute: PortableGuard<PortableIds['attribute'], TSKindId> & {
 		readonly content: PortableIsAt['attribute.content'];
 		readonly decorator: PortableIsAt['attribute.decorator'];
 	};
-	'attribute.content': PortableGuard<PortableIds['attribute.content']> & {
+	'attribute.content': PortableGuard<PortableIds['attribute.content'], TSKindId> & {
 		readonly call: PortableIsAt['attribute.content.call'];
 		readonly member: PortableIsAt['attribute.content.member'];
 		readonly parenthesized: PortableIsAt['attribute.content.parenthesized'];
 	};
-	'attribute.content.call': PortableGuard<PortableIds['attribute.content.call']> & {};
-	'attribute.content.member': PortableGuard<PortableIds['attribute.content.member']> & {};
-	'attribute.content.parenthesized': PortableGuard<PortableIds['attribute.content.parenthesized']> & {};
-	'attribute.decorator': PortableGuard<PortableIds['attribute.decorator']> & {};
-	clause: PortableGuard<PortableIds['clause']> & {
+	'attribute.content.call': PortableGuard<PortableIds['attribute.content.call'], TSKindId> & {};
+	'attribute.content.member': PortableGuard<PortableIds['attribute.content.member'], TSKindId> & {};
+	'attribute.content.parenthesized': PortableGuard<PortableIds['attribute.content.parenthesized'], TSKindId> & {};
+	'attribute.decorator': PortableGuard<PortableIds['attribute.decorator'], TSKindId> & {};
+	clause: PortableGuard<PortableIds['clause'], TSKindId> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
 		readonly case: PortableIsAt['clause.case'];
 		readonly catch: PortableIsAt['clause.catch'];
@@ -1491,57 +1491,59 @@ export interface PortableIsAt {
 		readonly import: PortableIsAt['clause.import'];
 		readonly mapped_type: PortableIsAt['clause.mapped_type'];
 	};
-	'clause.bounds': PortableGuard<PortableIds['clause.bounds']> & {};
-	'clause.case': PortableGuard<PortableIds['clause.case']> & {
+	'clause.bounds': PortableGuard<PortableIds['clause.bounds'], TSKindId> & {};
+	'clause.case': PortableGuard<PortableIds['clause.case'], TSKindId> & {
 		readonly default: PortableIsAt['clause.case.default'];
 		readonly switch: PortableIsAt['clause.case.switch'];
 	};
-	'clause.case.default': PortableGuard<PortableIds['clause.case.default']> & {};
-	'clause.case.switch': PortableGuard<PortableIds['clause.case.switch']> & {};
-	'clause.catch': PortableGuard<PortableIds['clause.catch']> & {};
-	'clause.default': PortableGuard<PortableIds['clause.default']> & {};
-	'clause.else': PortableGuard<PortableIds['clause.else']> & {};
-	'clause.export': PortableGuard<PortableIds['clause.export']> & {
+	'clause.case.default': PortableGuard<PortableIds['clause.case.default'], TSKindId> & {};
+	'clause.case.switch': PortableGuard<PortableIds['clause.case.switch'], TSKindId> & {};
+	'clause.catch': PortableGuard<PortableIds['clause.catch'], TSKindId> & {};
+	'clause.default': PortableGuard<PortableIds['clause.default'], TSKindId> & {};
+	'clause.else': PortableGuard<PortableIds['clause.else'], TSKindId> & {};
+	'clause.export': PortableGuard<PortableIds['clause.export'], TSKindId> & {
 		readonly namespace: PortableIsAt['clause.export.namespace'];
 		readonly specifier: PortableIsAt['clause.export.specifier'];
 	};
-	'clause.export.namespace': PortableGuard<PortableIds['clause.export.namespace']> & {};
-	'clause.export.specifier': PortableGuard<PortableIds['clause.export.specifier']> & {
+	'clause.export.namespace': PortableGuard<PortableIds['clause.export.namespace'], TSKindId> & {};
+	'clause.export.specifier': PortableGuard<PortableIds['clause.export.specifier'], TSKindId> & {
 		readonly typeof: PortableIsAt['clause.export.specifier.typeof'];
 	};
-	'clause.export.specifier.typeof': PortableGuard<PortableIds['clause.export.specifier.typeof']> & {};
-	'clause.extends': PortableGuard<PortableIds['clause.extends']> & {
+	'clause.export.specifier.typeof': PortableGuard<PortableIds['clause.export.specifier.typeof'], TSKindId> & {};
+	'clause.extends': PortableGuard<PortableIds['clause.extends'], TSKindId> & {
 		readonly type: PortableIsAt['clause.extends.type'];
 	};
-	'clause.extends.type': PortableGuard<PortableIds['clause.extends.type']> & {};
-	'clause.finally': PortableGuard<PortableIds['clause.finally']> & {};
-	'clause.implements': PortableGuard<PortableIds['clause.implements']> & {};
-	'clause.import': PortableGuard<PortableIds['clause.import']> & {
+	'clause.extends.type': PortableGuard<PortableIds['clause.extends.type'], TSKindId> & {};
+	'clause.finally': PortableGuard<PortableIds['clause.finally'], TSKindId> & {};
+	'clause.implements': PortableGuard<PortableIds['clause.implements'], TSKindId> & {};
+	'clause.import': PortableGuard<PortableIds['clause.import'], TSKindId> & {
 		readonly attribute: PortableIsAt['clause.import.attribute'];
 		readonly names: PortableIsAt['clause.import.names'];
 		readonly namespace: PortableIsAt['clause.import.namespace'];
 		readonly require: PortableIsAt['clause.import.require'];
 		readonly specifier: PortableIsAt['clause.import.specifier'];
 	};
-	'clause.import.attribute': PortableGuard<PortableIds['clause.import.attribute']> & {};
-	'clause.import.names': PortableGuard<PortableIds['clause.import.names']> & {};
-	'clause.import.namespace': PortableGuard<PortableIds['clause.import.namespace']> & {};
-	'clause.import.require': PortableGuard<PortableIds['clause.import.require']> & {};
-	'clause.import.specifier': PortableGuard<PortableIds['clause.import.specifier']> & {
+	'clause.import.attribute': PortableGuard<PortableIds['clause.import.attribute'], TSKindId> & {};
+	'clause.import.names': PortableGuard<PortableIds['clause.import.names'], TSKindId> & {};
+	'clause.import.namespace': PortableGuard<PortableIds['clause.import.namespace'], TSKindId> & {};
+	'clause.import.require': PortableGuard<PortableIds['clause.import.require'], TSKindId> & {};
+	'clause.import.specifier': PortableGuard<PortableIds['clause.import.specifier'], TSKindId> & {
 		readonly typeof: PortableIsAt['clause.import.specifier.typeof'];
 	};
-	'clause.import.specifier.typeof': PortableGuard<PortableIds['clause.import.specifier.typeof']> & {};
-	'clause.mapped_type': PortableGuard<PortableIds['clause.mapped_type']> & {};
-	comment: PortableGuard<PortableIds['comment']> & {
+	'clause.import.specifier.typeof': PortableGuard<PortableIds['clause.import.specifier.typeof'], TSKindId> & {};
+	'clause.mapped_type': PortableGuard<PortableIds['clause.mapped_type'], TSKindId> & {};
+	comment: PortableGuard<PortableIds['comment'], TSKindId> & {
 		readonly block: PortableIsAt['comment.block'];
 		readonly html: PortableIsAt['comment.html'];
 		readonly line: PortableIsAt['comment.line'];
 	};
-	'comment.block': PortableGuard<PortableIds['comment.block']> & { readonly doc: PortableIsAt['comment.block.doc'] };
-	'comment.block.doc': PortableGuard<PortableIds['comment.block.doc']> & {};
-	'comment.html': PortableGuard<PortableIds['comment.html']> & {};
-	'comment.line': PortableGuard<PortableIds['comment.line']> & {};
-	declaration: PortableGuard<PortableIds['declaration']> & {
+	'comment.block': PortableGuard<PortableIds['comment.block'], TSKindId> & {
+		readonly doc: PortableIsAt['comment.block.doc'];
+	};
+	'comment.block.doc': PortableGuard<PortableIds['comment.block.doc'], TSKindId> & {};
+	'comment.html': PortableGuard<PortableIds['comment.html'], TSKindId> & {};
+	'comment.line': PortableGuard<PortableIds['comment.line'], TSKindId> & {};
+	declaration: PortableGuard<PortableIds['declaration'], TSKindId> & {
 		readonly ambient: PortableIsAt['declaration.ambient'];
 		readonly class: PortableIsAt['declaration.class'];
 		readonly constructor: PortableIsAt['declaration.constructor'];
@@ -1560,86 +1562,107 @@ export interface PortableIsAt {
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
-	'declaration.ambient': PortableGuard<PortableIds['declaration.ambient']> & {};
-	'declaration.class': PortableGuard<PortableIds['declaration.class']> & {};
-	'declaration.constructor': PortableGuard<PortableIds['declaration.constructor']> & {
+	'declaration.ambient': PortableGuard<PortableIds['declaration.ambient'], TSKindId> & {};
+	'declaration.class': PortableGuard<PortableIds['declaration.class'], TSKindId> & {};
+	'declaration.constructor': PortableGuard<PortableIds['declaration.constructor'], TSKindId> & {
 		readonly private: PortableIsAt['declaration.constructor.private'];
 		readonly protected: PortableIsAt['declaration.constructor.protected'];
 		readonly public: PortableIsAt['declaration.constructor.public'];
 	};
-	'declaration.constructor.private': PortableGuard<PortableIds['declaration.constructor.private']> & {};
-	'declaration.constructor.protected': PortableGuard<PortableIds['declaration.constructor.protected']> & {};
-	'declaration.constructor.public': PortableGuard<PortableIds['declaration.constructor.public']> & {};
-	'declaration.enum': PortableGuard<PortableIds['declaration.enum']> & {};
-	'declaration.enum_member': PortableGuard<PortableIds['declaration.enum_member']> & {};
-	'declaration.field': PortableGuard<PortableIds['declaration.field']> & {
+	'declaration.constructor.private': PortableGuard<PortableIds['declaration.constructor.private'], TSKindId> & {};
+	'declaration.constructor.protected': PortableGuard<PortableIds['declaration.constructor.protected'], TSKindId> & {};
+	'declaration.constructor.public': PortableGuard<PortableIds['declaration.constructor.public'], TSKindId> & {};
+	'declaration.enum': PortableGuard<PortableIds['declaration.enum'], TSKindId> & {};
+	'declaration.enum_member': PortableGuard<PortableIds['declaration.enum_member'], TSKindId> & {};
+	'declaration.field': PortableGuard<PortableIds['declaration.field'], TSKindId> & {
 		readonly private: PortableIsAt['declaration.field.private'];
 		readonly protected: PortableIsAt['declaration.field.protected'];
 		readonly public: PortableIsAt['declaration.field.public'];
 		readonly signature: PortableIsAt['declaration.field.signature'];
 	};
-	'declaration.field.private': PortableGuard<PortableIds['declaration.field.private']> & {};
-	'declaration.field.protected': PortableGuard<PortableIds['declaration.field.protected']> & {};
-	'declaration.field.public': PortableGuard<PortableIds['declaration.field.public']> & {};
-	'declaration.field.signature': PortableGuard<PortableIds['declaration.field.signature']> & {
+	'declaration.field.private': PortableGuard<PortableIds['declaration.field.private'], TSKindId> & {};
+	'declaration.field.protected': PortableGuard<PortableIds['declaration.field.protected'], TSKindId> & {};
+	'declaration.field.public': PortableGuard<PortableIds['declaration.field.public'], TSKindId> & {};
+	'declaration.field.signature': PortableGuard<PortableIds['declaration.field.signature'], TSKindId> & {
 		readonly private: PortableIsAt['declaration.field.signature.private'];
 		readonly protected: PortableIsAt['declaration.field.signature.protected'];
 		readonly public: PortableIsAt['declaration.field.signature.public'];
 	};
-	'declaration.field.signature.private': PortableGuard<PortableIds['declaration.field.signature.private']> & {};
-	'declaration.field.signature.protected': PortableGuard<PortableIds['declaration.field.signature.protected']> & {};
-	'declaration.field.signature.public': PortableGuard<PortableIds['declaration.field.signature.public']> & {};
-	'declaration.function': PortableGuard<PortableIds['declaration.function']> & {
+	'declaration.field.signature.private': PortableGuard<
+		PortableIds['declaration.field.signature.private'],
+		TSKindId
+	> & {};
+	'declaration.field.signature.protected': PortableGuard<
+		PortableIds['declaration.field.signature.protected'],
+		TSKindId
+	> & {};
+	'declaration.field.signature.public': PortableGuard<PortableIds['declaration.field.signature.public'], TSKindId> & {};
+	'declaration.function': PortableGuard<PortableIds['declaration.function'], TSKindId> & {
 		readonly signature: PortableIsAt['declaration.function.signature'];
 	};
-	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature']> & {};
-	'declaration.interface': PortableGuard<PortableIds['declaration.interface']> & {};
-	'declaration.method': PortableGuard<PortableIds['declaration.method']> & {
+	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature'], TSKindId> & {};
+	'declaration.interface': PortableGuard<PortableIds['declaration.interface'], TSKindId> & {};
+	'declaration.method': PortableGuard<PortableIds['declaration.method'], TSKindId> & {
 		readonly private: PortableIsAt['declaration.method.private'];
 		readonly protected: PortableIsAt['declaration.method.protected'];
 		readonly public: PortableIsAt['declaration.method.public'];
 		readonly signature: PortableIsAt['declaration.method.signature'];
 	};
-	'declaration.method.private': PortableGuard<PortableIds['declaration.method.private']> & {};
-	'declaration.method.protected': PortableGuard<PortableIds['declaration.method.protected']> & {};
-	'declaration.method.public': PortableGuard<PortableIds['declaration.method.public']> & {};
-	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature']> & {
+	'declaration.method.private': PortableGuard<PortableIds['declaration.method.private'], TSKindId> & {};
+	'declaration.method.protected': PortableGuard<PortableIds['declaration.method.protected'], TSKindId> & {};
+	'declaration.method.public': PortableGuard<PortableIds['declaration.method.public'], TSKindId> & {};
+	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature'], TSKindId> & {
 		readonly abstract: PortableIsAt['declaration.method.signature.abstract'];
 		readonly private: PortableIsAt['declaration.method.signature.private'];
 		readonly protected: PortableIsAt['declaration.method.signature.protected'];
 		readonly public: PortableIsAt['declaration.method.signature.public'];
 	};
-	'declaration.method.signature.abstract': PortableGuard<PortableIds['declaration.method.signature.abstract']> & {
+	'declaration.method.signature.abstract': PortableGuard<
+		PortableIds['declaration.method.signature.abstract'],
+		TSKindId
+	> & {
 		readonly private: PortableIsAt['declaration.method.signature.abstract.private'];
 		readonly protected: PortableIsAt['declaration.method.signature.abstract.protected'];
 		readonly public: PortableIsAt['declaration.method.signature.abstract.public'];
 	};
 	'declaration.method.signature.abstract.private': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.private']
+		PortableIds['declaration.method.signature.abstract.private'],
+		TSKindId
 	> & {};
 	'declaration.method.signature.abstract.protected': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.protected']
+		PortableIds['declaration.method.signature.abstract.protected'],
+		TSKindId
 	> & {};
 	'declaration.method.signature.abstract.public': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.public']
+		PortableIds['declaration.method.signature.abstract.public'],
+		TSKindId
 	> & {};
-	'declaration.method.signature.private': PortableGuard<PortableIds['declaration.method.signature.private']> & {};
-	'declaration.method.signature.protected': PortableGuard<PortableIds['declaration.method.signature.protected']> & {};
-	'declaration.method.signature.public': PortableGuard<PortableIds['declaration.method.signature.public']> & {};
-	'declaration.module': PortableGuard<PortableIds['declaration.module']> & {
+	'declaration.method.signature.private': PortableGuard<
+		PortableIds['declaration.method.signature.private'],
+		TSKindId
+	> & {};
+	'declaration.method.signature.protected': PortableGuard<
+		PortableIds['declaration.method.signature.protected'],
+		TSKindId
+	> & {};
+	'declaration.method.signature.public': PortableGuard<
+		PortableIds['declaration.method.signature.public'],
+		TSKindId
+	> & {};
+	'declaration.module': PortableGuard<PortableIds['declaration.module'], TSKindId> & {
 		readonly external: PortableIsAt['declaration.module.external'];
 	};
-	'declaration.module.external': PortableGuard<PortableIds['declaration.module.external']> & {};
-	'declaration.module_property': PortableGuard<PortableIds['declaration.module_property']> & {};
-	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
+	'declaration.module.external': PortableGuard<PortableIds['declaration.module.external'], TSKindId> & {};
+	'declaration.module_property': PortableGuard<PortableIds['declaration.module_property'], TSKindId> & {};
+	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter'], TSKindId> & {
 		readonly private: PortableIsAt['declaration.parameter.private'];
 		readonly protected: PortableIsAt['declaration.parameter.protected'];
 		readonly public: PortableIsAt['declaration.parameter.public'];
 	};
-	'declaration.parameter.private': PortableGuard<PortableIds['declaration.parameter.private']> & {};
-	'declaration.parameter.protected': PortableGuard<PortableIds['declaration.parameter.protected']> & {};
-	'declaration.parameter.public': PortableGuard<PortableIds['declaration.parameter.public']> & {};
-	'declaration.property': PortableGuard<PortableIds['declaration.property']> & {
+	'declaration.parameter.private': PortableGuard<PortableIds['declaration.parameter.private'], TSKindId> & {};
+	'declaration.parameter.protected': PortableGuard<PortableIds['declaration.parameter.protected'], TSKindId> & {};
+	'declaration.parameter.public': PortableGuard<PortableIds['declaration.parameter.public'], TSKindId> & {};
+	'declaration.property': PortableGuard<PortableIds['declaration.property'], TSKindId> & {
 		readonly getter: PortableIsAt['declaration.property.getter'];
 		readonly private: PortableIsAt['declaration.property.private'];
 		readonly protected: PortableIsAt['declaration.property.protected'];
@@ -1647,140 +1670,176 @@ export interface PortableIsAt {
 		readonly setter: PortableIsAt['declaration.property.setter'];
 		readonly signature: PortableIsAt['declaration.property.signature'];
 	};
-	'declaration.property.getter': PortableGuard<PortableIds['declaration.property.getter']> & {
+	'declaration.property.getter': PortableGuard<PortableIds['declaration.property.getter'], TSKindId> & {
 		readonly private: PortableIsAt['declaration.property.getter.private'];
 		readonly protected: PortableIsAt['declaration.property.getter.protected'];
 		readonly public: PortableIsAt['declaration.property.getter.public'];
 	};
-	'declaration.property.getter.private': PortableGuard<PortableIds['declaration.property.getter.private']> & {};
-	'declaration.property.getter.protected': PortableGuard<PortableIds['declaration.property.getter.protected']> & {};
-	'declaration.property.getter.public': PortableGuard<PortableIds['declaration.property.getter.public']> & {};
-	'declaration.property.private': PortableGuard<PortableIds['declaration.property.private']> & {};
-	'declaration.property.protected': PortableGuard<PortableIds['declaration.property.protected']> & {};
-	'declaration.property.public': PortableGuard<PortableIds['declaration.property.public']> & {};
-	'declaration.property.setter': PortableGuard<PortableIds['declaration.property.setter']> & {
+	'declaration.property.getter.private': PortableGuard<
+		PortableIds['declaration.property.getter.private'],
+		TSKindId
+	> & {};
+	'declaration.property.getter.protected': PortableGuard<
+		PortableIds['declaration.property.getter.protected'],
+		TSKindId
+	> & {};
+	'declaration.property.getter.public': PortableGuard<PortableIds['declaration.property.getter.public'], TSKindId> & {};
+	'declaration.property.private': PortableGuard<PortableIds['declaration.property.private'], TSKindId> & {};
+	'declaration.property.protected': PortableGuard<PortableIds['declaration.property.protected'], TSKindId> & {};
+	'declaration.property.public': PortableGuard<PortableIds['declaration.property.public'], TSKindId> & {};
+	'declaration.property.setter': PortableGuard<PortableIds['declaration.property.setter'], TSKindId> & {
 		readonly private: PortableIsAt['declaration.property.setter.private'];
 		readonly protected: PortableIsAt['declaration.property.setter.protected'];
 		readonly public: PortableIsAt['declaration.property.setter.public'];
 	};
-	'declaration.property.setter.private': PortableGuard<PortableIds['declaration.property.setter.private']> & {};
-	'declaration.property.setter.protected': PortableGuard<PortableIds['declaration.property.setter.protected']> & {};
-	'declaration.property.setter.public': PortableGuard<PortableIds['declaration.property.setter.public']> & {};
-	'declaration.property.signature': PortableGuard<PortableIds['declaration.property.signature']> & {
+	'declaration.property.setter.private': PortableGuard<
+		PortableIds['declaration.property.setter.private'],
+		TSKindId
+	> & {};
+	'declaration.property.setter.protected': PortableGuard<
+		PortableIds['declaration.property.setter.protected'],
+		TSKindId
+	> & {};
+	'declaration.property.setter.public': PortableGuard<PortableIds['declaration.property.setter.public'], TSKindId> & {};
+	'declaration.property.signature': PortableGuard<PortableIds['declaration.property.signature'], TSKindId> & {
 		readonly abstract: PortableIsAt['declaration.property.signature.abstract'];
 		readonly getter: PortableIsAt['declaration.property.signature.getter'];
 		readonly setter: PortableIsAt['declaration.property.signature.setter'];
 	};
-	'declaration.property.signature.abstract': PortableGuard<PortableIds['declaration.property.signature.abstract']> & {
+	'declaration.property.signature.abstract': PortableGuard<
+		PortableIds['declaration.property.signature.abstract'],
+		TSKindId
+	> & {
 		readonly getter: PortableIsAt['declaration.property.signature.abstract.getter'];
 		readonly setter: PortableIsAt['declaration.property.signature.abstract.setter'];
 	};
 	'declaration.property.signature.abstract.getter': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.getter']
+		PortableIds['declaration.property.signature.abstract.getter'],
+		TSKindId
 	> & {
 		readonly private: PortableIsAt['declaration.property.signature.abstract.getter.private'];
 		readonly protected: PortableIsAt['declaration.property.signature.abstract.getter.protected'];
 		readonly public: PortableIsAt['declaration.property.signature.abstract.getter.public'];
 	};
 	'declaration.property.signature.abstract.getter.private': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.getter.private']
+		PortableIds['declaration.property.signature.abstract.getter.private'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.abstract.getter.protected': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.getter.protected']
+		PortableIds['declaration.property.signature.abstract.getter.protected'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.abstract.getter.public': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.getter.public']
+		PortableIds['declaration.property.signature.abstract.getter.public'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.abstract.setter': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.setter']
+		PortableIds['declaration.property.signature.abstract.setter'],
+		TSKindId
 	> & {
 		readonly private: PortableIsAt['declaration.property.signature.abstract.setter.private'];
 		readonly protected: PortableIsAt['declaration.property.signature.abstract.setter.protected'];
 		readonly public: PortableIsAt['declaration.property.signature.abstract.setter.public'];
 	};
 	'declaration.property.signature.abstract.setter.private': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.setter.private']
+		PortableIds['declaration.property.signature.abstract.setter.private'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.abstract.setter.protected': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.setter.protected']
+		PortableIds['declaration.property.signature.abstract.setter.protected'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.abstract.setter.public': PortableGuard<
-		PortableIds['declaration.property.signature.abstract.setter.public']
+		PortableIds['declaration.property.signature.abstract.setter.public'],
+		TSKindId
 	> & {};
-	'declaration.property.signature.getter': PortableGuard<PortableIds['declaration.property.signature.getter']> & {
+	'declaration.property.signature.getter': PortableGuard<
+		PortableIds['declaration.property.signature.getter'],
+		TSKindId
+	> & {
 		readonly private: PortableIsAt['declaration.property.signature.getter.private'];
 		readonly protected: PortableIsAt['declaration.property.signature.getter.protected'];
 		readonly public: PortableIsAt['declaration.property.signature.getter.public'];
 	};
 	'declaration.property.signature.getter.private': PortableGuard<
-		PortableIds['declaration.property.signature.getter.private']
+		PortableIds['declaration.property.signature.getter.private'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.getter.protected': PortableGuard<
-		PortableIds['declaration.property.signature.getter.protected']
+		PortableIds['declaration.property.signature.getter.protected'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.getter.public': PortableGuard<
-		PortableIds['declaration.property.signature.getter.public']
+		PortableIds['declaration.property.signature.getter.public'],
+		TSKindId
 	> & {};
-	'declaration.property.signature.setter': PortableGuard<PortableIds['declaration.property.signature.setter']> & {
+	'declaration.property.signature.setter': PortableGuard<
+		PortableIds['declaration.property.signature.setter'],
+		TSKindId
+	> & {
 		readonly private: PortableIsAt['declaration.property.signature.setter.private'];
 		readonly protected: PortableIsAt['declaration.property.signature.setter.protected'];
 		readonly public: PortableIsAt['declaration.property.signature.setter.public'];
 	};
 	'declaration.property.signature.setter.private': PortableGuard<
-		PortableIds['declaration.property.signature.setter.private']
+		PortableIds['declaration.property.signature.setter.private'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.setter.protected': PortableGuard<
-		PortableIds['declaration.property.signature.setter.protected']
+		PortableIds['declaration.property.signature.setter.protected'],
+		TSKindId
 	> & {};
 	'declaration.property.signature.setter.public': PortableGuard<
-		PortableIds['declaration.property.signature.setter.public']
+		PortableIds['declaration.property.signature.setter.public'],
+		TSKindId
 	> & {};
-	'declaration.signature': PortableGuard<PortableIds['declaration.signature']> & {
+	'declaration.signature': PortableGuard<PortableIds['declaration.signature'], TSKindId> & {
 		readonly call: PortableIsAt['declaration.signature.call'];
 		readonly construct: PortableIsAt['declaration.signature.construct'];
 		readonly index: PortableIsAt['declaration.signature.index'];
 	};
-	'declaration.signature.call': PortableGuard<PortableIds['declaration.signature.call']> & {};
-	'declaration.signature.construct': PortableGuard<PortableIds['declaration.signature.construct']> & {};
-	'declaration.signature.index': PortableGuard<PortableIds['declaration.signature.index']> & {
+	'declaration.signature.call': PortableGuard<PortableIds['declaration.signature.call'], TSKindId> & {};
+	'declaration.signature.construct': PortableGuard<PortableIds['declaration.signature.construct'], TSKindId> & {};
+	'declaration.signature.index': PortableGuard<PortableIds['declaration.signature.index'], TSKindId> & {
 		readonly mapped: PortableIsAt['declaration.signature.index.mapped'];
 	};
-	'declaration.signature.index.mapped': PortableGuard<PortableIds['declaration.signature.index.mapped']> & {};
-	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias']> & {};
-	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter']> & {};
-	'declaration.variable': PortableGuard<PortableIds['declaration.variable']> & {
+	'declaration.signature.index.mapped': PortableGuard<PortableIds['declaration.signature.index.mapped'], TSKindId> & {};
+	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias'], TSKindId> & {};
+	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter'], TSKindId> & {};
+	'declaration.variable': PortableGuard<PortableIds['declaration.variable'], TSKindId> & {
 		readonly constant: PortableIsAt['declaration.variable.constant'];
 		readonly pattern: PortableIsAt['declaration.variable.pattern'];
 		readonly reassignable: PortableIsAt['declaration.variable.reassignable'];
 	};
-	'declaration.variable.constant': PortableGuard<PortableIds['declaration.variable.constant']> & {};
-	'declaration.variable.pattern': PortableGuard<PortableIds['declaration.variable.pattern']> & {};
-	'declaration.variable.reassignable': PortableGuard<PortableIds['declaration.variable.reassignable']> & {
+	'declaration.variable.constant': PortableGuard<PortableIds['declaration.variable.constant'], TSKindId> & {};
+	'declaration.variable.pattern': PortableGuard<PortableIds['declaration.variable.pattern'], TSKindId> & {};
+	'declaration.variable.reassignable': PortableGuard<PortableIds['declaration.variable.reassignable'], TSKindId> & {
 		readonly function_scoped: PortableIsAt['declaration.variable.reassignable.function_scoped'];
 	};
 	'declaration.variable.reassignable.function_scoped': PortableGuard<
-		PortableIds['declaration.variable.reassignable.function_scoped']
+		PortableIds['declaration.variable.reassignable.function_scoped'],
+		TSKindId
 	> & {};
-	element: PortableGuard<PortableIds['element']> & {
+	element: PortableGuard<PortableIds['element'], TSKindId> & {
 		readonly pair: PortableIsAt['element.pair'];
 		readonly spread: PortableIsAt['element.spread'];
 		readonly template: PortableIsAt['element.template'];
 		readonly tuple: PortableIsAt['element.tuple'];
 	};
-	'element.pair': PortableGuard<PortableIds['element.pair']> & {};
-	'element.spread': PortableGuard<PortableIds['element.spread']> & {};
-	'element.template': PortableGuard<PortableIds['element.template']> & {
+	'element.pair': PortableGuard<PortableIds['element.pair'], TSKindId> & {};
+	'element.spread': PortableGuard<PortableIds['element.spread'], TSKindId> & {};
+	'element.template': PortableGuard<PortableIds['element.template'], TSKindId> & {
 		readonly substitution: PortableIsAt['element.template.substitution'];
 	};
-	'element.template.substitution': PortableGuard<PortableIds['element.template.substitution']> & {};
-	'element.tuple': PortableGuard<PortableIds['element.tuple']> & {
+	'element.template.substitution': PortableGuard<PortableIds['element.template.substitution'], TSKindId> & {};
+	'element.tuple': PortableGuard<PortableIds['element.tuple'], TSKindId> & {
 		readonly member: PortableIsAt['element.tuple.member'];
 	};
-	'element.tuple.member': PortableGuard<PortableIds['element.tuple.member']> & {
+	'element.tuple.member': PortableGuard<PortableIds['element.tuple.member'], TSKindId> & {
 		readonly optional: PortableIsAt['element.tuple.member.optional'];
 	};
-	'element.tuple.member.optional': PortableGuard<PortableIds['element.tuple.member.optional']> & {};
-	expression: PortableGuard<PortableIds['expression']> & {
+	'element.tuple.member.optional': PortableGuard<PortableIds['element.tuple.member.optional'], TSKindId> & {};
+	expression: PortableGuard<PortableIds['expression'], TSKindId> & {
 		readonly assignment: PortableIsAt['expression.assignment'];
 		readonly await: PortableIsAt['expression.await'];
 		readonly binary: PortableIsAt['expression.binary'];
@@ -1802,10 +1861,10 @@ export interface PortableIsAt {
 		readonly update: PortableIsAt['expression.update'];
 		readonly yield: PortableIsAt['expression.yield'];
 	};
-	'expression.assignment': PortableGuard<PortableIds['expression.assignment']> & {
+	'expression.assignment': PortableGuard<PortableIds['expression.assignment'], TSKindId> & {
 		readonly compound: PortableIsAt['expression.assignment.compound'];
 	};
-	'expression.assignment.compound': PortableGuard<PortableIds['expression.assignment.compound']> & {
+	'expression.assignment.compound': PortableGuard<PortableIds['expression.assignment.compound'], TSKindId> & {
 		readonly add: PortableIsAt['expression.assignment.compound.add'];
 		readonly and: PortableIsAt['expression.assignment.compound.and'];
 		readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
@@ -1822,35 +1881,59 @@ export interface PortableIsAt {
 		readonly shift_right_unsigned: PortableIsAt['expression.assignment.compound.shift_right_unsigned'];
 		readonly subtract: PortableIsAt['expression.assignment.compound.subtract'];
 	};
-	'expression.assignment.compound.add': PortableGuard<PortableIds['expression.assignment.compound.add']> & {};
-	'expression.assignment.compound.and': PortableGuard<PortableIds['expression.assignment.compound.and']> & {};
+	'expression.assignment.compound.add': PortableGuard<PortableIds['expression.assignment.compound.add'], TSKindId> & {};
+	'expression.assignment.compound.and': PortableGuard<PortableIds['expression.assignment.compound.and'], TSKindId> & {};
 	'expression.assignment.compound.bitwise_and': PortableGuard<
-		PortableIds['expression.assignment.compound.bitwise_and']
+		PortableIds['expression.assignment.compound.bitwise_and'],
+		TSKindId
 	> & {};
 	'expression.assignment.compound.bitwise_or': PortableGuard<
-		PortableIds['expression.assignment.compound.bitwise_or']
+		PortableIds['expression.assignment.compound.bitwise_or'],
+		TSKindId
 	> & {};
 	'expression.assignment.compound.bitwise_xor': PortableGuard<
-		PortableIds['expression.assignment.compound.bitwise_xor']
+		PortableIds['expression.assignment.compound.bitwise_xor'],
+		TSKindId
 	> & {};
-	'expression.assignment.compound.coalesce': PortableGuard<PortableIds['expression.assignment.compound.coalesce']> & {};
-	'expression.assignment.compound.divide': PortableGuard<PortableIds['expression.assignment.compound.divide']> & {};
-	'expression.assignment.compound.exponent': PortableGuard<PortableIds['expression.assignment.compound.exponent']> & {};
-	'expression.assignment.compound.modulo': PortableGuard<PortableIds['expression.assignment.compound.modulo']> & {};
-	'expression.assignment.compound.multiply': PortableGuard<PortableIds['expression.assignment.compound.multiply']> & {};
-	'expression.assignment.compound.or': PortableGuard<PortableIds['expression.assignment.compound.or']> & {};
+	'expression.assignment.compound.coalesce': PortableGuard<
+		PortableIds['expression.assignment.compound.coalesce'],
+		TSKindId
+	> & {};
+	'expression.assignment.compound.divide': PortableGuard<
+		PortableIds['expression.assignment.compound.divide'],
+		TSKindId
+	> & {};
+	'expression.assignment.compound.exponent': PortableGuard<
+		PortableIds['expression.assignment.compound.exponent'],
+		TSKindId
+	> & {};
+	'expression.assignment.compound.modulo': PortableGuard<
+		PortableIds['expression.assignment.compound.modulo'],
+		TSKindId
+	> & {};
+	'expression.assignment.compound.multiply': PortableGuard<
+		PortableIds['expression.assignment.compound.multiply'],
+		TSKindId
+	> & {};
+	'expression.assignment.compound.or': PortableGuard<PortableIds['expression.assignment.compound.or'], TSKindId> & {};
 	'expression.assignment.compound.shift_left': PortableGuard<
-		PortableIds['expression.assignment.compound.shift_left']
+		PortableIds['expression.assignment.compound.shift_left'],
+		TSKindId
 	> & {};
 	'expression.assignment.compound.shift_right': PortableGuard<
-		PortableIds['expression.assignment.compound.shift_right']
+		PortableIds['expression.assignment.compound.shift_right'],
+		TSKindId
 	> & {};
 	'expression.assignment.compound.shift_right_unsigned': PortableGuard<
-		PortableIds['expression.assignment.compound.shift_right_unsigned']
+		PortableIds['expression.assignment.compound.shift_right_unsigned'],
+		TSKindId
 	> & {};
-	'expression.assignment.compound.subtract': PortableGuard<PortableIds['expression.assignment.compound.subtract']> & {};
-	'expression.await': PortableGuard<PortableIds['expression.await']> & {};
-	'expression.binary': PortableGuard<PortableIds['expression.binary']> & {
+	'expression.assignment.compound.subtract': PortableGuard<
+		PortableIds['expression.assignment.compound.subtract'],
+		TSKindId
+	> & {};
+	'expression.await': PortableGuard<PortableIds['expression.await'], TSKindId> & {};
+	'expression.binary': PortableGuard<PortableIds['expression.binary'], TSKindId> & {
 		readonly arithmetic: PortableIsAt['expression.binary.arithmetic'];
 		readonly bitwise: PortableIsAt['expression.binary.bitwise'];
 		readonly coalesce: PortableIsAt['expression.binary.coalesce'];
@@ -1859,7 +1942,7 @@ export interface PortableIsAt {
 		readonly membership: PortableIsAt['expression.binary.membership'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
 	};
-	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic']> & {
+	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic'], TSKindId> & {
 		readonly add: PortableIsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableIsAt['expression.binary.arithmetic.divide'];
 		readonly exponent: PortableIsAt['expression.binary.arithmetic.exponent'];
@@ -1867,22 +1950,37 @@ export interface PortableIsAt {
 		readonly multiply: PortableIsAt['expression.binary.arithmetic.multiply'];
 		readonly subtract: PortableIsAt['expression.binary.arithmetic.subtract'];
 	};
-	'expression.binary.arithmetic.add': PortableGuard<PortableIds['expression.binary.arithmetic.add']> & {};
-	'expression.binary.arithmetic.divide': PortableGuard<PortableIds['expression.binary.arithmetic.divide']> & {};
-	'expression.binary.arithmetic.exponent': PortableGuard<PortableIds['expression.binary.arithmetic.exponent']> & {};
-	'expression.binary.arithmetic.modulo': PortableGuard<PortableIds['expression.binary.arithmetic.modulo']> & {};
-	'expression.binary.arithmetic.multiply': PortableGuard<PortableIds['expression.binary.arithmetic.multiply']> & {};
-	'expression.binary.arithmetic.subtract': PortableGuard<PortableIds['expression.binary.arithmetic.subtract']> & {};
-	'expression.binary.bitwise': PortableGuard<PortableIds['expression.binary.bitwise']> & {
+	'expression.binary.arithmetic.add': PortableGuard<PortableIds['expression.binary.arithmetic.add'], TSKindId> & {};
+	'expression.binary.arithmetic.divide': PortableGuard<
+		PortableIds['expression.binary.arithmetic.divide'],
+		TSKindId
+	> & {};
+	'expression.binary.arithmetic.exponent': PortableGuard<
+		PortableIds['expression.binary.arithmetic.exponent'],
+		TSKindId
+	> & {};
+	'expression.binary.arithmetic.modulo': PortableGuard<
+		PortableIds['expression.binary.arithmetic.modulo'],
+		TSKindId
+	> & {};
+	'expression.binary.arithmetic.multiply': PortableGuard<
+		PortableIds['expression.binary.arithmetic.multiply'],
+		TSKindId
+	> & {};
+	'expression.binary.arithmetic.subtract': PortableGuard<
+		PortableIds['expression.binary.arithmetic.subtract'],
+		TSKindId
+	> & {};
+	'expression.binary.bitwise': PortableGuard<PortableIds['expression.binary.bitwise'], TSKindId> & {
 		readonly and: PortableIsAt['expression.binary.bitwise.and'];
 		readonly or: PortableIsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
 	};
-	'expression.binary.bitwise.and': PortableGuard<PortableIds['expression.binary.bitwise.and']> & {};
-	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or']> & {};
-	'expression.binary.bitwise.xor': PortableGuard<PortableIds['expression.binary.bitwise.xor']> & {};
-	'expression.binary.coalesce': PortableGuard<PortableIds['expression.binary.coalesce']> & {};
-	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison']> & {
+	'expression.binary.bitwise.and': PortableGuard<PortableIds['expression.binary.bitwise.and'], TSKindId> & {};
+	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or'], TSKindId> & {};
+	'expression.binary.bitwise.xor': PortableGuard<PortableIds['expression.binary.bitwise.xor'], TSKindId> & {};
+	'expression.binary.coalesce': PortableGuard<PortableIds['expression.binary.coalesce'], TSKindId> & {};
+	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison'], TSKindId> & {
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
@@ -1892,79 +1990,100 @@ export interface PortableIsAt {
 		readonly loose_not_equal: PortableIsAt['expression.binary.comparison.loose_not_equal'];
 		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
 	};
-	'expression.binary.comparison.equal': PortableGuard<PortableIds['expression.binary.comparison.equal']> & {};
-	'expression.binary.comparison.greater': PortableGuard<PortableIds['expression.binary.comparison.greater']> & {};
-	'expression.binary.comparison.greater_equal': PortableGuard<
-		PortableIds['expression.binary.comparison.greater_equal']
+	'expression.binary.comparison.equal': PortableGuard<PortableIds['expression.binary.comparison.equal'], TSKindId> & {};
+	'expression.binary.comparison.greater': PortableGuard<
+		PortableIds['expression.binary.comparison.greater'],
+		TSKindId
 	> & {};
-	'expression.binary.comparison.less': PortableGuard<PortableIds['expression.binary.comparison.less']> & {};
-	'expression.binary.comparison.less_equal': PortableGuard<PortableIds['expression.binary.comparison.less_equal']> & {};
+	'expression.binary.comparison.greater_equal': PortableGuard<
+		PortableIds['expression.binary.comparison.greater_equal'],
+		TSKindId
+	> & {};
+	'expression.binary.comparison.less': PortableGuard<PortableIds['expression.binary.comparison.less'], TSKindId> & {};
+	'expression.binary.comparison.less_equal': PortableGuard<
+		PortableIds['expression.binary.comparison.less_equal'],
+		TSKindId
+	> & {};
 	'expression.binary.comparison.loose_equal': PortableGuard<
-		PortableIds['expression.binary.comparison.loose_equal']
+		PortableIds['expression.binary.comparison.loose_equal'],
+		TSKindId
 	> & {};
 	'expression.binary.comparison.loose_not_equal': PortableGuard<
-		PortableIds['expression.binary.comparison.loose_not_equal']
+		PortableIds['expression.binary.comparison.loose_not_equal'],
+		TSKindId
 	> & {};
-	'expression.binary.comparison.not_equal': PortableGuard<PortableIds['expression.binary.comparison.not_equal']> & {};
-	'expression.binary.logical': PortableGuard<PortableIds['expression.binary.logical']> & {
+	'expression.binary.comparison.not_equal': PortableGuard<
+		PortableIds['expression.binary.comparison.not_equal'],
+		TSKindId
+	> & {};
+	'expression.binary.logical': PortableGuard<PortableIds['expression.binary.logical'], TSKindId> & {
 		readonly and: PortableIsAt['expression.binary.logical.and'];
 		readonly or: PortableIsAt['expression.binary.logical.or'];
 	};
-	'expression.binary.logical.and': PortableGuard<PortableIds['expression.binary.logical.and']> & {};
-	'expression.binary.logical.or': PortableGuard<PortableIds['expression.binary.logical.or']> & {};
-	'expression.binary.membership': PortableGuard<PortableIds['expression.binary.membership']> & {
+	'expression.binary.logical.and': PortableGuard<PortableIds['expression.binary.logical.and'], TSKindId> & {};
+	'expression.binary.logical.or': PortableGuard<PortableIds['expression.binary.logical.or'], TSKindId> & {};
+	'expression.binary.membership': PortableGuard<PortableIds['expression.binary.membership'], TSKindId> & {
 		readonly in: PortableIsAt['expression.binary.membership.in'];
 		readonly instanceof: PortableIsAt['expression.binary.membership.instanceof'];
 	};
-	'expression.binary.membership.in': PortableGuard<PortableIds['expression.binary.membership.in']> & {};
-	'expression.binary.membership.instanceof': PortableGuard<PortableIds['expression.binary.membership.instanceof']> & {};
-	'expression.binary.shift': PortableGuard<PortableIds['expression.binary.shift']> & {
+	'expression.binary.membership.in': PortableGuard<PortableIds['expression.binary.membership.in'], TSKindId> & {};
+	'expression.binary.membership.instanceof': PortableGuard<
+		PortableIds['expression.binary.membership.instanceof'],
+		TSKindId
+	> & {};
+	'expression.binary.shift': PortableGuard<PortableIds['expression.binary.shift'], TSKindId> & {
 		readonly left: PortableIsAt['expression.binary.shift.left'];
 		readonly right: PortableIsAt['expression.binary.shift.right'];
 		readonly right_unsigned: PortableIsAt['expression.binary.shift.right_unsigned'];
 	};
-	'expression.binary.shift.left': PortableGuard<PortableIds['expression.binary.shift.left']> & {};
-	'expression.binary.shift.right': PortableGuard<PortableIds['expression.binary.shift.right']> & {};
-	'expression.binary.shift.right_unsigned': PortableGuard<PortableIds['expression.binary.shift.right_unsigned']> & {};
-	'expression.call': PortableGuard<PortableIds['expression.call']> & {
+	'expression.binary.shift.left': PortableGuard<PortableIds['expression.binary.shift.left'], TSKindId> & {};
+	'expression.binary.shift.right': PortableGuard<PortableIds['expression.binary.shift.right'], TSKindId> & {};
+	'expression.binary.shift.right_unsigned': PortableGuard<
+		PortableIds['expression.binary.shift.right_unsigned'],
+		TSKindId
+	> & {};
+	'expression.call': PortableGuard<PortableIds['expression.call'], TSKindId> & {
 		readonly construct: PortableIsAt['expression.call.construct'];
 		readonly import: PortableIsAt['expression.call.import'];
 		readonly member: PortableIsAt['expression.call.member'];
 		readonly template: PortableIsAt['expression.call.template'];
 	};
-	'expression.call.construct': PortableGuard<PortableIds['expression.call.construct']> & {};
-	'expression.call.import': PortableGuard<PortableIds['expression.call.import']> & {};
-	'expression.call.member': PortableGuard<PortableIds['expression.call.member']> & {};
-	'expression.call.template': PortableGuard<PortableIds['expression.call.template']> & {};
-	'expression.cast': PortableGuard<PortableIds['expression.cast']> & {
+	'expression.call.construct': PortableGuard<PortableIds['expression.call.construct'], TSKindId> & {};
+	'expression.call.import': PortableGuard<PortableIds['expression.call.import'], TSKindId> & {};
+	'expression.call.member': PortableGuard<PortableIds['expression.call.member'], TSKindId> & {};
+	'expression.call.template': PortableGuard<PortableIds['expression.call.template'], TSKindId> & {};
+	'expression.cast': PortableGuard<PortableIds['expression.cast'], TSKindId> & {
 		readonly assertion: PortableIsAt['expression.cast.assertion'];
 		readonly non_null: PortableIsAt['expression.cast.non_null'];
 		readonly satisfies: PortableIsAt['expression.cast.satisfies'];
 	};
-	'expression.cast.assertion': PortableGuard<PortableIds['expression.cast.assertion']> & {
+	'expression.cast.assertion': PortableGuard<PortableIds['expression.cast.assertion'], TSKindId> & {
 		readonly angle_bracket: PortableIsAt['expression.cast.assertion.angle_bracket'];
 	};
-	'expression.cast.assertion.angle_bracket': PortableGuard<PortableIds['expression.cast.assertion.angle_bracket']> & {};
-	'expression.cast.non_null': PortableGuard<PortableIds['expression.cast.non_null']> & {};
-	'expression.cast.satisfies': PortableGuard<PortableIds['expression.cast.satisfies']> & {};
-	'expression.class': PortableGuard<PortableIds['expression.class']> & {};
-	'expression.collection': PortableGuard<PortableIds['expression.collection']> & {
+	'expression.cast.assertion.angle_bracket': PortableGuard<
+		PortableIds['expression.cast.assertion.angle_bracket'],
+		TSKindId
+	> & {};
+	'expression.cast.non_null': PortableGuard<PortableIds['expression.cast.non_null'], TSKindId> & {};
+	'expression.cast.satisfies': PortableGuard<PortableIds['expression.cast.satisfies'], TSKindId> & {};
+	'expression.class': PortableGuard<PortableIds['expression.class'], TSKindId> & {};
+	'expression.collection': PortableGuard<PortableIds['expression.collection'], TSKindId> & {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly object: PortableIsAt['expression.collection.object'];
 	};
-	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list']> & {};
-	'expression.collection.object': PortableGuard<PortableIds['expression.collection.object']> & {};
-	'expression.conditional': PortableGuard<PortableIds['expression.conditional']> & {};
-	'expression.function': PortableGuard<PortableIds['expression.function']> & {};
-	'expression.instantiation': PortableGuard<PortableIds['expression.instantiation']> & {};
-	'expression.interpolation': PortableGuard<PortableIds['expression.interpolation']> & {};
-	'expression.lambda': PortableGuard<PortableIds['expression.lambda']> & {};
-	'expression.member': PortableGuard<PortableIds['expression.member']> & {};
-	'expression.meta': PortableGuard<PortableIds['expression.meta']> & {};
-	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized']> & {};
-	'expression.sequence': PortableGuard<PortableIds['expression.sequence']> & {};
-	'expression.subscript': PortableGuard<PortableIds['expression.subscript']> & {};
-	'expression.unary': PortableGuard<PortableIds['expression.unary']> & {
+	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list'], TSKindId> & {};
+	'expression.collection.object': PortableGuard<PortableIds['expression.collection.object'], TSKindId> & {};
+	'expression.conditional': PortableGuard<PortableIds['expression.conditional'], TSKindId> & {};
+	'expression.function': PortableGuard<PortableIds['expression.function'], TSKindId> & {};
+	'expression.instantiation': PortableGuard<PortableIds['expression.instantiation'], TSKindId> & {};
+	'expression.interpolation': PortableGuard<PortableIds['expression.interpolation'], TSKindId> & {};
+	'expression.lambda': PortableGuard<PortableIds['expression.lambda'], TSKindId> & {};
+	'expression.member': PortableGuard<PortableIds['expression.member'], TSKindId> & {};
+	'expression.meta': PortableGuard<PortableIds['expression.meta'], TSKindId> & {};
+	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized'], TSKindId> & {};
+	'expression.sequence': PortableGuard<PortableIds['expression.sequence'], TSKindId> & {};
+	'expression.subscript': PortableGuard<PortableIds['expression.subscript'], TSKindId> & {};
+	'expression.unary': PortableGuard<PortableIds['expression.unary'], TSKindId> & {
 		readonly bitwise_not: PortableIsAt['expression.unary.bitwise_not'];
 		readonly delete: PortableIsAt['expression.unary.delete'];
 		readonly negation: PortableIsAt['expression.unary.negation'];
@@ -1973,25 +2092,25 @@ export interface PortableIsAt {
 		readonly typeof: PortableIsAt['expression.unary.typeof'];
 		readonly void: PortableIsAt['expression.unary.void'];
 	};
-	'expression.unary.bitwise_not': PortableGuard<PortableIds['expression.unary.bitwise_not']> & {};
-	'expression.unary.delete': PortableGuard<PortableIds['expression.unary.delete']> & {};
-	'expression.unary.negation': PortableGuard<PortableIds['expression.unary.negation']> & {};
-	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not']> & {};
-	'expression.unary.plus': PortableGuard<PortableIds['expression.unary.plus']> & {};
-	'expression.unary.typeof': PortableGuard<PortableIds['expression.unary.typeof']> & {};
-	'expression.unary.void': PortableGuard<PortableIds['expression.unary.void']> & {};
-	'expression.update': PortableGuard<PortableIds['expression.update']> & {
+	'expression.unary.bitwise_not': PortableGuard<PortableIds['expression.unary.bitwise_not'], TSKindId> & {};
+	'expression.unary.delete': PortableGuard<PortableIds['expression.unary.delete'], TSKindId> & {};
+	'expression.unary.negation': PortableGuard<PortableIds['expression.unary.negation'], TSKindId> & {};
+	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not'], TSKindId> & {};
+	'expression.unary.plus': PortableGuard<PortableIds['expression.unary.plus'], TSKindId> & {};
+	'expression.unary.typeof': PortableGuard<PortableIds['expression.unary.typeof'], TSKindId> & {};
+	'expression.unary.void': PortableGuard<PortableIds['expression.unary.void'], TSKindId> & {};
+	'expression.update': PortableGuard<PortableIds['expression.update'], TSKindId> & {
 		readonly decrement: PortableIsAt['expression.update.decrement'];
 		readonly increment: PortableIsAt['expression.update.increment'];
 	};
-	'expression.update.decrement': PortableGuard<PortableIds['expression.update.decrement']> & {};
-	'expression.update.increment': PortableGuard<PortableIds['expression.update.increment']> & {};
-	'expression.yield': PortableGuard<PortableIds['expression.yield']> & {
+	'expression.update.decrement': PortableGuard<PortableIds['expression.update.decrement'], TSKindId> & {};
+	'expression.update.increment': PortableGuard<PortableIds['expression.update.increment'], TSKindId> & {};
+	'expression.yield': PortableGuard<PortableIds['expression.yield'], TSKindId> & {
 		readonly delegate: PortableIsAt['expression.yield.delegate'];
 	};
-	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate']> & {};
-	file: PortableGuard<PortableIds['file']> & {};
-	identifier: PortableGuard<PortableIds['identifier']> & {
+	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate'], TSKindId> & {};
+	file: PortableGuard<PortableIds['file'], TSKindId> & {};
+	identifier: PortableGuard<PortableIds['identifier'], TSKindId> & {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly nested: PortableIsAt['identifier.nested'];
 		readonly property: PortableIsAt['identifier.property'];
@@ -1999,100 +2118,102 @@ export interface PortableIsAt {
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
 	};
-	'identifier.label': PortableGuard<PortableIds['identifier.label']> & {};
-	'identifier.nested': PortableGuard<PortableIds['identifier.nested']> & {};
-	'identifier.property': PortableGuard<PortableIds['identifier.property']> & {
+	'identifier.label': PortableGuard<PortableIds['identifier.label'], TSKindId> & {};
+	'identifier.nested': PortableGuard<PortableIds['identifier.nested'], TSKindId> & {};
+	'identifier.property': PortableGuard<PortableIds['identifier.property'], TSKindId> & {
 		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
-	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand']> & {};
-	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver']> & {};
-	'identifier.super': PortableGuard<PortableIds['identifier.super']> & {};
-	'identifier.type': PortableGuard<PortableIds['identifier.type']> & {};
-	literal: PortableGuard<PortableIds['literal']> & {
+	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand'], TSKindId> & {};
+	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver'], TSKindId> & {};
+	'identifier.super': PortableGuard<PortableIds['identifier.super'], TSKindId> & {};
+	'identifier.type': PortableGuard<PortableIds['identifier.type'], TSKindId> & {};
+	literal: PortableGuard<PortableIds['literal'], TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly null: PortableIsAt['literal.null'];
 		readonly number: PortableIsAt['literal.number'];
 		readonly regex: PortableIsAt['literal.regex'];
 		readonly string: PortableIsAt['literal.string'];
 	};
-	'literal.boolean': PortableGuard<PortableIds['literal.boolean']> & {
+	'literal.boolean': PortableGuard<PortableIds['literal.boolean'], TSKindId> & {
 		readonly false: PortableIsAt['literal.boolean.false'];
 		readonly true: PortableIsAt['literal.boolean.true'];
 	};
-	'literal.boolean.false': PortableGuard<PortableIds['literal.boolean.false']> & {};
-	'literal.boolean.true': PortableGuard<PortableIds['literal.boolean.true']> & {};
-	'literal.null': PortableGuard<PortableIds['literal.null']> & {
+	'literal.boolean.false': PortableGuard<PortableIds['literal.boolean.false'], TSKindId> & {};
+	'literal.boolean.true': PortableGuard<PortableIds['literal.boolean.true'], TSKindId> & {};
+	'literal.null': PortableGuard<PortableIds['literal.null'], TSKindId> & {
 		readonly undefined: PortableIsAt['literal.null.undefined'];
 	};
-	'literal.null.undefined': PortableGuard<PortableIds['literal.null.undefined']> & {};
-	'literal.number': PortableGuard<PortableIds['literal.number']> & {
+	'literal.null.undefined': PortableGuard<PortableIds['literal.null.undefined'], TSKindId> & {};
+	'literal.number': PortableGuard<PortableIds['literal.number'], TSKindId> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
 		readonly negative: PortableIsAt['literal.number.negative'];
 	};
-	'literal.number.float': PortableGuard<PortableIds['literal.number.float']> & {
+	'literal.number.float': PortableGuard<PortableIds['literal.number.float'], TSKindId> & {
 		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
 		readonly scientific: PortableIsAt['literal.number.float.scientific'];
 	};
-	'literal.number.float.leading_point': PortableGuard<PortableIds['literal.number.float.leading_point']> & {};
-	'literal.number.float.scientific': PortableGuard<PortableIds['literal.number.float.scientific']> & {};
-	'literal.number.integer': PortableGuard<PortableIds['literal.number.integer']> & {
+	'literal.number.float.leading_point': PortableGuard<PortableIds['literal.number.float.leading_point'], TSKindId> & {};
+	'literal.number.float.scientific': PortableGuard<PortableIds['literal.number.float.scientific'], TSKindId> & {};
+	'literal.number.integer': PortableGuard<PortableIds['literal.number.integer'], TSKindId> & {
 		readonly big: PortableIsAt['literal.number.integer.big'];
 		readonly binary: PortableIsAt['literal.number.integer.binary'];
 		readonly hex: PortableIsAt['literal.number.integer.hex'];
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 	};
-	'literal.number.integer.big': PortableGuard<PortableIds['literal.number.integer.big']> & {
+	'literal.number.integer.big': PortableGuard<PortableIds['literal.number.integer.big'], TSKindId> & {
 		readonly binary: PortableIsAt['literal.number.integer.big.binary'];
 		readonly hex: PortableIsAt['literal.number.integer.big.hex'];
 		readonly octal: PortableIsAt['literal.number.integer.big.octal'];
 	};
-	'literal.number.integer.big.binary': PortableGuard<PortableIds['literal.number.integer.big.binary']> & {};
-	'literal.number.integer.big.hex': PortableGuard<PortableIds['literal.number.integer.big.hex']> & {};
-	'literal.number.integer.big.octal': PortableGuard<PortableIds['literal.number.integer.big.octal']> & {};
-	'literal.number.integer.binary': PortableGuard<PortableIds['literal.number.integer.binary']> & {};
-	'literal.number.integer.hex': PortableGuard<PortableIds['literal.number.integer.hex']> & {};
-	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal']> & {};
-	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative']> & {};
-	'literal.regex': PortableGuard<PortableIds['literal.regex']> & {
+	'literal.number.integer.big.binary': PortableGuard<PortableIds['literal.number.integer.big.binary'], TSKindId> & {};
+	'literal.number.integer.big.hex': PortableGuard<PortableIds['literal.number.integer.big.hex'], TSKindId> & {};
+	'literal.number.integer.big.octal': PortableGuard<PortableIds['literal.number.integer.big.octal'], TSKindId> & {};
+	'literal.number.integer.binary': PortableGuard<PortableIds['literal.number.integer.binary'], TSKindId> & {};
+	'literal.number.integer.hex': PortableGuard<PortableIds['literal.number.integer.hex'], TSKindId> & {};
+	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal'], TSKindId> & {};
+	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative'], TSKindId> & {};
+	'literal.regex': PortableGuard<PortableIds['literal.regex'], TSKindId> & {
 		readonly flags: PortableIsAt['literal.regex.flags'];
 		readonly pattern: PortableIsAt['literal.regex.pattern'];
 	};
-	'literal.regex.flags': PortableGuard<PortableIds['literal.regex.flags']> & {};
-	'literal.regex.pattern': PortableGuard<PortableIds['literal.regex.pattern']> & {};
-	'literal.string': PortableGuard<PortableIds['literal.string']> & {
+	'literal.regex.flags': PortableGuard<PortableIds['literal.regex.flags'], TSKindId> & {};
+	'literal.regex.pattern': PortableGuard<PortableIds['literal.regex.pattern'], TSKindId> & {};
+	'literal.string': PortableGuard<PortableIds['literal.string'], TSKindId> & {
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly interpolated: PortableIsAt['literal.string.interpolated'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
-	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
-	'literal.string.interpolated': PortableGuard<PortableIds['literal.string.interpolated']> & {};
-	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
-	modifier: PortableGuard<PortableIds['modifier']> & { readonly visibility: PortableIsAt['modifier.visibility'] };
-	'modifier.visibility': PortableGuard<PortableIds['modifier.visibility']> & {
+	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape'], TSKindId> & {};
+	'literal.string.interpolated': PortableGuard<PortableIds['literal.string.interpolated'], TSKindId> & {};
+	'literal.string.text': PortableGuard<PortableIds['literal.string.text'], TSKindId> & {};
+	modifier: PortableGuard<PortableIds['modifier'], TSKindId> & {
+		readonly visibility: PortableIsAt['modifier.visibility'];
+	};
+	'modifier.visibility': PortableGuard<PortableIds['modifier.visibility'], TSKindId> & {
 		readonly private: PortableIsAt['modifier.visibility.private'];
 		readonly protected: PortableIsAt['modifier.visibility.protected'];
 		readonly public: PortableIsAt['modifier.visibility.public'];
 	};
-	'modifier.visibility.private': PortableGuard<PortableIds['modifier.visibility.private']> & {};
-	'modifier.visibility.protected': PortableGuard<PortableIds['modifier.visibility.protected']> & {};
-	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public']> & {};
-	pattern: PortableGuard<PortableIds['pattern']> & {
+	'modifier.visibility.private': PortableGuard<PortableIds['modifier.visibility.private'], TSKindId> & {};
+	'modifier.visibility.protected': PortableGuard<PortableIds['modifier.visibility.protected'], TSKindId> & {};
+	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public'], TSKindId> & {};
+	pattern: PortableGuard<PortableIds['pattern'], TSKindId> & {
 		readonly assignment: PortableIsAt['pattern.assignment'];
 		readonly list: PortableIsAt['pattern.list'];
 		readonly object: PortableIsAt['pattern.object'];
 		readonly rest: PortableIsAt['pattern.rest'];
 	};
-	'pattern.assignment': PortableGuard<PortableIds['pattern.assignment']> & {};
-	'pattern.list': PortableGuard<PortableIds['pattern.list']> & {};
-	'pattern.object': PortableGuard<PortableIds['pattern.object']> & {
+	'pattern.assignment': PortableGuard<PortableIds['pattern.assignment'], TSKindId> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list'], TSKindId> & {};
+	'pattern.object': PortableGuard<PortableIds['pattern.object'], TSKindId> & {
 		readonly assignment: PortableIsAt['pattern.object.assignment'];
 		readonly pair: PortableIsAt['pattern.object.pair'];
 	};
-	'pattern.object.assignment': PortableGuard<PortableIds['pattern.object.assignment']> & {};
-	'pattern.object.pair': PortableGuard<PortableIds['pattern.object.pair']> & {};
-	'pattern.rest': PortableGuard<PortableIds['pattern.rest']> & {};
-	statement: PortableGuard<PortableIds['statement']> & {
+	'pattern.object.assignment': PortableGuard<PortableIds['pattern.object.assignment'], TSKindId> & {};
+	'pattern.object.pair': PortableGuard<PortableIds['pattern.object.pair'], TSKindId> & {};
+	'pattern.rest': PortableGuard<PortableIds['pattern.rest'], TSKindId> & {};
+	statement: PortableGuard<PortableIds['statement'], TSKindId> & {
 		readonly block: PortableIsAt['statement.block'];
 		readonly break: PortableIsAt['statement.break'];
 		readonly continue: PortableIsAt['statement.continue'];
@@ -2110,45 +2231,45 @@ export interface PortableIsAt {
 		readonly throw: PortableIsAt['statement.throw'];
 		readonly try: PortableIsAt['statement.try'];
 	};
-	'statement.block': PortableGuard<PortableIds['statement.block']> & {
+	'statement.block': PortableGuard<PortableIds['statement.block'], TSKindId> & {
 		readonly static: PortableIsAt['statement.block.static'];
 	};
-	'statement.block.static': PortableGuard<PortableIds['statement.block.static']> & {};
-	'statement.break': PortableGuard<PortableIds['statement.break']> & {};
-	'statement.continue': PortableGuard<PortableIds['statement.continue']> & {};
-	'statement.debugger': PortableGuard<PortableIds['statement.debugger']> & {};
-	'statement.empty': PortableGuard<PortableIds['statement.empty']> & {};
-	'statement.export': PortableGuard<PortableIds['statement.export']> & {
+	'statement.block.static': PortableGuard<PortableIds['statement.block.static'], TSKindId> & {};
+	'statement.break': PortableGuard<PortableIds['statement.break'], TSKindId> & {};
+	'statement.continue': PortableGuard<PortableIds['statement.continue'], TSKindId> & {};
+	'statement.debugger': PortableGuard<PortableIds['statement.debugger'], TSKindId> & {};
+	'statement.empty': PortableGuard<PortableIds['statement.empty'], TSKindId> & {};
+	'statement.export': PortableGuard<PortableIds['statement.export'], TSKindId> & {
 		readonly all: PortableIsAt['statement.export.all'];
 		readonly default: PortableIsAt['statement.export.default'];
 	};
-	'statement.export.all': PortableGuard<PortableIds['statement.export.all']> & {};
-	'statement.export.default': PortableGuard<PortableIds['statement.export.default']> & {};
-	'statement.expression': PortableGuard<PortableIds['statement.expression']> & {};
-	'statement.if': PortableGuard<PortableIds['statement.if']> & {};
-	'statement.import': PortableGuard<PortableIds['statement.import']> & {
+	'statement.export.all': PortableGuard<PortableIds['statement.export.all'], TSKindId> & {};
+	'statement.export.default': PortableGuard<PortableIds['statement.export.default'], TSKindId> & {};
+	'statement.expression': PortableGuard<PortableIds['statement.expression'], TSKindId> & {};
+	'statement.if': PortableGuard<PortableIds['statement.if'], TSKindId> & {};
+	'statement.import': PortableGuard<PortableIds['statement.import'], TSKindId> & {
 		readonly alias: PortableIsAt['statement.import.alias'];
 		readonly typeof: PortableIsAt['statement.import.typeof'];
 	};
-	'statement.import.alias': PortableGuard<PortableIds['statement.import.alias']> & {};
-	'statement.import.typeof': PortableGuard<PortableIds['statement.import.typeof']> & {};
-	'statement.labeled': PortableGuard<PortableIds['statement.labeled']> & {};
-	'statement.loop': PortableGuard<PortableIds['statement.loop']> & {
+	'statement.import.alias': PortableGuard<PortableIds['statement.import.alias'], TSKindId> & {};
+	'statement.import.typeof': PortableGuard<PortableIds['statement.import.typeof'], TSKindId> & {};
+	'statement.labeled': PortableGuard<PortableIds['statement.labeled'], TSKindId> & {};
+	'statement.loop': PortableGuard<PortableIds['statement.loop'], TSKindId> & {
 		readonly counted: PortableIsAt['statement.loop.counted'];
 		readonly do_while: PortableIsAt['statement.loop.do_while'];
 		readonly for_each: PortableIsAt['statement.loop.for_each'];
 		readonly while: PortableIsAt['statement.loop.while'];
 	};
-	'statement.loop.counted': PortableGuard<PortableIds['statement.loop.counted']> & {};
-	'statement.loop.do_while': PortableGuard<PortableIds['statement.loop.do_while']> & {};
-	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each']> & {};
-	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while']> & {};
-	'statement.return': PortableGuard<PortableIds['statement.return']> & {};
-	'statement.scope': PortableGuard<PortableIds['statement.scope']> & {};
-	'statement.switch': PortableGuard<PortableIds['statement.switch']> & {};
-	'statement.throw': PortableGuard<PortableIds['statement.throw']> & {};
-	'statement.try': PortableGuard<PortableIds['statement.try']> & {};
-	type: PortableGuard<PortableIds['type']> & {
+	'statement.loop.counted': PortableGuard<PortableIds['statement.loop.counted'], TSKindId> & {};
+	'statement.loop.do_while': PortableGuard<PortableIds['statement.loop.do_while'], TSKindId> & {};
+	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each'], TSKindId> & {};
+	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while'], TSKindId> & {};
+	'statement.return': PortableGuard<PortableIds['statement.return'], TSKindId> & {};
+	'statement.scope': PortableGuard<PortableIds['statement.scope'], TSKindId> & {};
+	'statement.switch': PortableGuard<PortableIds['statement.switch'], TSKindId> & {};
+	'statement.throw': PortableGuard<PortableIds['statement.throw'], TSKindId> & {};
+	'statement.try': PortableGuard<PortableIds['statement.try'], TSKindId> & {};
+	type: PortableGuard<PortableIds['type'], TSKindId> & {
 		readonly array: PortableIsAt['type.array'];
 		readonly conditional: PortableIsAt['type.conditional'];
 		readonly existential: PortableIsAt['type.existential'];
@@ -2173,29 +2294,29 @@ export interface PortableIsAt {
 		readonly tuple: PortableIsAt['type.tuple'];
 		readonly union: PortableIsAt['type.union'];
 	};
-	'type.array': PortableGuard<PortableIds['type.array']> & {};
-	'type.conditional': PortableGuard<PortableIds['type.conditional']> & {};
-	'type.existential': PortableGuard<PortableIds['type.existential']> & {};
-	'type.function': PortableGuard<PortableIds['type.function']> & {
+	'type.array': PortableGuard<PortableIds['type.array'], TSKindId> & {};
+	'type.conditional': PortableGuard<PortableIds['type.conditional'], TSKindId> & {};
+	'type.existential': PortableGuard<PortableIds['type.existential'], TSKindId> & {};
+	'type.function': PortableGuard<PortableIds['type.function'], TSKindId> & {
 		readonly constructor: PortableIsAt['type.function.constructor'];
 	};
-	'type.function.constructor': PortableGuard<PortableIds['type.function.constructor']> & {};
-	'type.generic': PortableGuard<PortableIds['type.generic']> & {};
-	'type.index_query': PortableGuard<PortableIds['type.index_query']> & {};
-	'type.infer': PortableGuard<PortableIds['type.infer']> & {};
-	'type.intersection': PortableGuard<PortableIds['type.intersection']> & {};
-	'type.literal': PortableGuard<PortableIds['type.literal']> & {};
-	'type.lookup': PortableGuard<PortableIds['type.lookup']> & {};
-	'type.nullable': PortableGuard<PortableIds['type.nullable']> & {};
-	'type.object': PortableGuard<PortableIds['type.object']> & {};
-	'type.optional': PortableGuard<PortableIds['type.optional']> & {};
-	'type.parenthesized': PortableGuard<PortableIds['type.parenthesized']> & {};
-	'type.path': PortableGuard<PortableIds['type.path']> & {};
-	'type.predicate': PortableGuard<PortableIds['type.predicate']> & {
+	'type.function.constructor': PortableGuard<PortableIds['type.function.constructor'], TSKindId> & {};
+	'type.generic': PortableGuard<PortableIds['type.generic'], TSKindId> & {};
+	'type.index_query': PortableGuard<PortableIds['type.index_query'], TSKindId> & {};
+	'type.infer': PortableGuard<PortableIds['type.infer'], TSKindId> & {};
+	'type.intersection': PortableGuard<PortableIds['type.intersection'], TSKindId> & {};
+	'type.literal': PortableGuard<PortableIds['type.literal'], TSKindId> & {};
+	'type.lookup': PortableGuard<PortableIds['type.lookup'], TSKindId> & {};
+	'type.nullable': PortableGuard<PortableIds['type.nullable'], TSKindId> & {};
+	'type.object': PortableGuard<PortableIds['type.object'], TSKindId> & {};
+	'type.optional': PortableGuard<PortableIds['type.optional'], TSKindId> & {};
+	'type.parenthesized': PortableGuard<PortableIds['type.parenthesized'], TSKindId> & {};
+	'type.path': PortableGuard<PortableIds['type.path'], TSKindId> & {};
+	'type.predicate': PortableGuard<PortableIds['type.predicate'], TSKindId> & {
 		readonly asserts: PortableIsAt['type.predicate.asserts'];
 	};
-	'type.predicate.asserts': PortableGuard<PortableIds['type.predicate.asserts']> & {};
-	'type.primitive': PortableGuard<PortableIds['type.primitive']> & {
+	'type.predicate.asserts': PortableGuard<PortableIds['type.predicate.asserts'], TSKindId> & {};
+	'type.primitive': PortableGuard<PortableIds['type.primitive'], TSKindId> & {
 		readonly boolean: PortableIsAt['type.primitive.boolean'];
 		readonly floating: PortableIsAt['type.primitive.floating'];
 		readonly never: PortableIsAt['type.primitive.never'];
@@ -2206,24 +2327,24 @@ export interface PortableIsAt {
 		readonly unknown: PortableIsAt['type.primitive.unknown'];
 		readonly void: PortableIsAt['type.primitive.void'];
 	};
-	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean']> & {};
-	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating']> & {
+	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean'], TSKindId> & {};
+	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating'], TSKindId> & {
 		readonly float64: PortableIsAt['type.primitive.floating.float64'];
 	};
-	'type.primitive.floating.float64': PortableGuard<PortableIds['type.primitive.floating.float64']> & {};
-	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never']> & {};
-	'type.primitive.object': PortableGuard<PortableIds['type.primitive.object']> & {};
-	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string']> & {};
-	'type.primitive.symbol': PortableGuard<PortableIds['type.primitive.symbol']> & {};
-	'type.primitive.unchecked': PortableGuard<PortableIds['type.primitive.unchecked']> & {};
-	'type.primitive.unknown': PortableGuard<PortableIds['type.primitive.unknown']> & {};
-	'type.primitive.void': PortableGuard<PortableIds['type.primitive.void']> & {};
-	'type.query': PortableGuard<PortableIds['type.query']> & {};
-	'type.readonly': PortableGuard<PortableIds['type.readonly']> & {};
-	'type.rest': PortableGuard<PortableIds['type.rest']> & {};
-	'type.template': PortableGuard<PortableIds['type.template']> & {};
-	'type.tuple': PortableGuard<PortableIds['type.tuple']> & {};
-	'type.union': PortableGuard<PortableIds['type.union']> & {};
+	'type.primitive.floating.float64': PortableGuard<PortableIds['type.primitive.floating.float64'], TSKindId> & {};
+	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never'], TSKindId> & {};
+	'type.primitive.object': PortableGuard<PortableIds['type.primitive.object'], TSKindId> & {};
+	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string'], TSKindId> & {};
+	'type.primitive.symbol': PortableGuard<PortableIds['type.primitive.symbol'], TSKindId> & {};
+	'type.primitive.unchecked': PortableGuard<PortableIds['type.primitive.unchecked'], TSKindId> & {};
+	'type.primitive.unknown': PortableGuard<PortableIds['type.primitive.unknown'], TSKindId> & {};
+	'type.primitive.void': PortableGuard<PortableIds['type.primitive.void'], TSKindId> & {};
+	'type.query': PortableGuard<PortableIds['type.query'], TSKindId> & {};
+	'type.readonly': PortableGuard<PortableIds['type.readonly'], TSKindId> & {};
+	'type.rest': PortableGuard<PortableIds['type.rest'], TSKindId> & {};
+	'type.template': PortableGuard<PortableIds['type.template'], TSKindId> & {};
+	'type.tuple': PortableGuard<PortableIds['type.tuple'], TSKindId> & {};
+	'type.union': PortableGuard<PortableIds['type.union'], TSKindId> & {};
 }
 
 export interface PortableKinds {

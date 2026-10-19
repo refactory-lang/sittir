@@ -41,9 +41,11 @@ export interface PortableRows {
 /**
  * Whether `node` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
  *
+ * @typeParam Ids - The grammar kinds read at or under the path.
+ * @typeParam Kind - The grammar's kind-id type; a node of another language is refused.
  * @param node - A node of the language, parsed or built, read by the rows of the engine that stamped it.
  */
-export type PortableGuard<Ids extends number> = <T extends { readonly $type: number }>(node: T) => node is T & { readonly $type: Ids };
+export type PortableGuard<Ids extends Kind, Kind extends number = number> = <T extends { readonly $type: Kind }>(node: T) => node is T & { readonly $type: Ids };
 
 /** What a bound grammar adds for the portable engine: its vocabulary namespaces of kind ids and of guards. */
 export interface PortableSurface {
