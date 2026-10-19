@@ -77,13 +77,13 @@ describe('emitApi', () => {
 		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
 	});
 
-	it('declares and hands over the portable surface and the flag table only for a grammar with bindings', () => {
+	it('declares the portable views and hands over the portable rows and the flag table only for a grammar with bindings', () => {
 		expect(output).not.toContain('portable');
 		expect(output).not.toContain('queryFlags');
 		const bound = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', portable: true });
-		expect(bound).toContain("import { portable, queryFlags, querySlotFlags } from './portable.js';");
-		expect(bound).toContain('readonly portable: typeof portable;');
-		expect(bound).toContain('\tportable,\n\tqueryFlags,\n\tquerySlotFlags\n});');
+		expect(bound).toContain("import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';");
+		expect(bound).toContain('readonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };');
+		expect(bound).toContain('\tportable: rows,\n\tqueryFlags,\n\tquerySlotFlags\n});');
 	});
 
 	it("hands the engine the package's render module hash", () => {

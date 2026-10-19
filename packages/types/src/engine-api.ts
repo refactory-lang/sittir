@@ -2,7 +2,7 @@ import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, Trivia
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
-import type { PortableSurface } from './portable.ts';
+import type { PortableRows, PortableSurface } from './portable.ts';
 
 export interface TriviaFacts {
 	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
@@ -68,6 +68,8 @@ export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
 	readonly trivia: TriviaFacts;
+	/** The rows the language's portable classifications are read from, when its grammar has bindings. */
+	readonly portable?: PortableRows;
 }
 
 export interface GrammarTypeMap {
@@ -133,10 +135,12 @@ export interface Language<API extends LanguageAPI> {
 	 * The language's guards, the same object as every engine's `is` (an engine of a descriptor copied from another binds the guards
 	 * to the copy instead). Each narrows a node of this language by its kind, and refuses
 	 * a node of another language or a value no engine stamped. A supertype or member guard also takes a bare kind id, and passes
-	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine.
+	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine. On a grammar with bindings,
+	 * `is.portable` holds the shared portable guards, the same object for every language: each takes a node alone and refuses a
+	 * bare kind id, since a bare id carries no language.
 	 */
 	readonly is: API['is'];
-	/** The language's kind ids by name, the same object as every engine's `kinds`. */
+	/** The language's kind ids by name, the same object as every engine's `kinds`. On a grammar with bindings, `kinds.portable` holds the shared portable kinds. */
 	readonly kinds: API['kinds'];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;
@@ -183,7 +187,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate(node: unknown, tree: unknown): unknown;
-	readonly portable?: API['portable'];
+	readonly portable?: PortableRows;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {

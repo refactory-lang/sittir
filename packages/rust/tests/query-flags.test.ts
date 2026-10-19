@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { queryFlags } from '../src/portable.ts';
 import { TSKindId } from '../src/types.ts';
 import { hooks } from '../src/api.ts';
-import { slotItems } from '../../common/src/query.ts';
+import { slotItems } from '../../common/src/query-holds.ts';
 
 /** Every kind-id leaf the reader gives a slot of a node the walk reaches: the stamped id an enum kind's member is read as. */
 const leavesRead = (nodes: Iterable<{ readonly $type: number }>): number[] =>

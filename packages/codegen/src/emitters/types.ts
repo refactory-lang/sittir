@@ -20,7 +20,7 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
-import { grammarTypePrefix } from '../grammars.ts';
+import { grammarNodeTypeName } from '../grammars.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { buildTriviaNodeType, resolveTriviaTypeNames } from './client-utils.ts';
 export {
@@ -142,7 +142,6 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	const { generatedIdTables } = config;
 	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
-	const grammarPrefix = grammarTypePrefix(grammar);
 
 	const nodeKinds = structNodes.map((n) => n.kind);
 	const allKinds = [...nodeKinds, ...leafKinds];
@@ -258,7 +257,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 
 	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, kindEntries);
 
-	lines.push(`export type ${grammarPrefix}Node = NodeOfNamespaces<NamespaceMap>;`);
+	lines.push(`export type ${grammarNodeTypeName(grammar)} = NodeOfNamespaces<NamespaceMap>;`);
 	lines.push('');
 
 	emitOptionsHints(lines, internalLines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints, nodeMap);

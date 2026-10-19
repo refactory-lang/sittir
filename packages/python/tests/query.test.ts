@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { holds } from '../../common/src/query.ts';
+import { holds } from '../../common/src/query-holds.ts';
 import python from '../src/index.ts';
 import { hooks } from '../src/api.ts';
 import { createEngine } from '@sittir/common';

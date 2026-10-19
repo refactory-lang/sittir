@@ -32,6 +32,7 @@ export type {
 	PortableGuard,
 	PortablePath,
 	PortableReadEntry,
+	PortableRows,
 	PortableStep,
 	PortableSurface,
 	PortableTable
