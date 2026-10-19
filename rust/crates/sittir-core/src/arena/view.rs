@@ -10,6 +10,7 @@ use crate::options::Edges;
 use crate::render::{Render, RenderError, RenderResult, RenderSink, SourceTable};
 use crate::slot::{ChangedEdges, NodeCoordinate};
 use crate::trivia::TriviaSeam;
+use super::PrepPlace;
 use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::types::{ItemIndex, KindId, NodeIndex, Span, TreeId};
 use crate::view::{KindOf, KindTest, Slot};
@@ -194,8 +195,8 @@ impl<'a, T> RecordCtx<'a, T> {
                     return Ok(None);
                 }
                 let (_, side) = record_of(ctx, at, crate::record::HEADER_WORDS, kind)?;
-                match place_of(ctx, at, &side)? {
-                    Place::Row { tree, row } => Some(ParsedRow { tree, row, kind, changed }),
+                match row_of(ctx, at, &side)? {
+                    Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
                     _ => None,
                 }
             }
@@ -261,7 +262,7 @@ impl<'a, T> RecordLayout<'a, T> {
     /// The layout of the node at `place`, held at `site`: `stored` is the
     /// edges its record stores, and `changed` the edges its site marks.
     #[must_use]
-    pub fn new(prepared: &'a Prepared<T>, place: Place, site: Option<Site<Place>>, stored: Edges, changed: ChangedEdges) -> Self {
+    pub fn new(prepared: &'a Prepared<T>, place: PrepPlace, site: Option<Site<PrepPlace>>, stored: Edges, changed: ChangedEdges) -> Self {
         let layout = prepared.node(place).and_then(|node| node.layout.as_deref());
         Self { layout, edges: prepared.edges(stored, site, place), changed }
     }
@@ -327,7 +328,7 @@ pub trait RecordView<'a, T>: Sized {
     ///
     /// `ArenaError` for a cell this view's type is never written as, or a
     /// record of it that no writer writes.
-    fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, site: Option<Site<Place>>) -> Result<Self, ArenaError>;
+    fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, site: Option<Site<PrepPlace>>) -> Result<Self, ArenaError>;
 }
 
 /// What a node's view reads first from its record: its words, checked to
@@ -346,18 +347,38 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     Ok((words, side))
 }
 
-/// The place of the record at `at` whose side record is `side`: a parsed
-/// record's row in its tree, or, for an envelope's content, which shares its
-/// envelope's row and is not the record the row's index names, its record
-/// there; a built record's address.
+/// The row of the parsed record at `at` whose side record is `side`, when
+/// the row's index names it; none for a built record and for an envelope's
+/// content, which shares its envelope's row.
 ///
 /// # Errors
 ///
 /// `ArenaError::Malformed` for a parsed record whose side record names no row.
-pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Place, ArenaError> {
-    let Some(tree) = ctx.tree else { return Ok(Place::Record(at)) };
+pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Option<Place>, ArenaError> {
+    let Some(tree) = ctx.tree else { return Ok(None) };
     let (row, _) = side.at.ok_or(malformed("parsed record row", at.0))?;
-    Ok(if ctx.row_record(row) == Some(at) { Place::Row { tree, row } } else { Place::Content { tree, record: at } })
+    Ok((ctx.row_record(row) == Some(at)).then_some(Place::Row { tree, row }))
+}
+
+/// The place of the record at `at` whose side record is `side`, held at
+/// `site`: a parsed record's row (`row_of`), a built record's address, or,
+/// for an envelope's content, its cell's site in its envelope.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for a parsed record whose side record names no
+/// row, or a content held by no envelope with a place in the store.
+pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord, site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
+    if ctx.tree.is_none() {
+        return Ok(Place::Record(at).into());
+    }
+    if let Some(row) = row_of(ctx, at, side)? {
+        return Ok(row.into());
+    }
+    match site {
+        Some(Site { holder: PrepPlace::Stored(holder), word, item }) => Ok(PrepPlace::Content(Site { holder, word, item })),
+        _ => Err(malformed("enveloped content with no envelope", at.0)),
+    }
 }
 
 /// Text that is a slot's content with no kind of its own, or an `ERROR`
@@ -373,7 +394,7 @@ impl<'a, T> RecordView<'a, T> for VerbatimRecord<'a> {
         kind == KindId::BLANK || kind == KindId::ERROR
     }
 
-    fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, _: Option<Site<Place>>) -> Result<Self, ArenaError> {
+    fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, _: Option<Site<PrepPlace>>) -> Result<Self, ArenaError> {
         match cell {
             Cell::BuiltText { text } => Ok(Self { text: ctx.string(text)?, kind: KindId::BLANK }),
             Cell::BuiltLeaf { kind: KindId::ERROR, text, .. } => Ok(Self { text: ctx.string(text)?, kind: KindId::ERROR }),
@@ -402,7 +423,7 @@ enum SlotCell<V> {
 /// decoded when it is read. `ADJACENT` is the slot's own, as on `SlotValue`.
 pub struct RecordSlot<'a, T, V, const ADJACENT: bool = false> {
     ctx: RecordCtx<'a, T>,
-    site: Site<Place>,
+    site: Site<PrepPlace>,
     cell: SlotCell<V>,
 }
 
@@ -410,7 +431,7 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     /// The slot at `site` whose cell is `words`. An unset single slot holds
     /// the unit its prepare defaulted it to, when it took one.
     #[must_use]
-    pub fn of(ctx: RecordCtx<'a, T>, site: Site<Place>, words: &[u32]) -> Self {
+    pub fn of(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, words: &[u32]) -> Self {
         let cell = match Cell::decode(words) {
             Ok(Cell::Absent) => match ctx.prepared.node(site.holder).and_then(|node| node.slot(site.word)).and_then(|slot| slot.unit) {
                 Some(kind) => Self::cell(ctx, site, Cell::Unit { kind, row: None }),
@@ -423,7 +444,7 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
         Self { ctx, site, cell }
     }
 
-    fn cell(ctx: RecordCtx<'a, T>, site: Site<Place>, cell: Cell) -> SlotCell<V> {
+    fn cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, cell: Cell) -> SlotCell<V> {
         match ctx.parsed_row(cell) {
             Ok(Some(row)) => SlotCell::Parsed(row, cell),
             Ok(None) => V::from_cell(ctx, cell, Some(site)).map_or_else(SlotCell::Refused, SlotCell::View),
@@ -497,7 +518,7 @@ impl<T, V: KindOf, const ADJACENT: bool> KindTest for RecordSlot<'_, T, V, ADJAC
 /// lies inside the arena when it was built.
 pub struct RecordItems<'a, T, V, const ADJACENT: bool = false> {
     ctx: RecordCtx<'a, T>,
-    holder: Place,
+    holder: PrepPlace,
     word: u32,
     run: u32,
     list: ListCell,
@@ -519,7 +540,7 @@ impl<'a, T, V, const ADJACENT: bool> RecordItems<'a, T, V, ADJACENT> {
     /// # Errors
     ///
     /// What decoding the list's cell or reaching its run refuses.
-    pub fn of(ctx: RecordCtx<'a, T>, holder: Place, word: u32, run: u32, words: &[u32]) -> Result<Self, ArenaError> {
+    pub fn of(ctx: RecordCtx<'a, T>, holder: PrepPlace, word: u32, run: u32, words: &[u32]) -> Result<Self, ArenaError> {
         let list = ListCell::decode(words)?;
         let _run = list.items(ctx.arena, run)?;
         Ok(Self { ctx, holder, word, run, list, view: std::marker::PhantomData })
@@ -565,7 +586,7 @@ mod tests {
             kind == WORD
         }
 
-        fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, _: Option<Site<Place>>) -> Result<Self, ArenaError> {
+        fn from_cell(ctx: RecordCtx<'a, T>, cell: Cell, _: Option<Site<PrepPlace>>) -> Result<Self, ArenaError> {
             ctx.cell_text(cell).map(Word)
         }
     }
@@ -605,8 +626,8 @@ mod tests {
         render_to_string(value, WordMatcher::default_ident(), &TABLE, "    ")
     }
 
-    fn site(item: u32) -> Site<Place> {
-        Site { holder: Place::Record(Address(1)), word: 2, item: ItemIndex(item) }
+    fn site(item: u32) -> Site<PrepPlace> {
+        Site { holder: Place::Record(Address(1)).into(), word: 2, item: ItemIndex(item) }
     }
 
     fn cell(cell: Cell) -> [u32; 5] {
@@ -672,7 +693,7 @@ mod tests {
         let list = ListCell::write(&mut fixture.arena, 5, &cells).expect("written");
         let mut words = [0; 2];
         list.encode(&mut words).expect("it fits");
-        let items = RecordItems::<TriviaText, Word<'_>>::of(fixture.ctx(), Place::Record(Address(1)), 2, 5, &words).expect("a list");
+        let items = RecordItems::<TriviaText, Word<'_>>::of(fixture.ctx(), Place::Record(Address(1)).into(), 2, 5, &words).expect("a list");
         assert_eq!(items.count(), 2);
         assert_eq!(rendered(&items.item(1).expect("an item")).expect("rendered"), "b");
         assert_eq!(items.item(1).expect("an item").site, site(1));
@@ -683,7 +704,7 @@ mod tests {
     fn a_list_whose_run_the_arena_never_wrote_is_refused_with_its_holder() {
         let fixture = Fixture::new();
         let words = [Address::new(3, 0).expect("in range").0, 2];
-        assert!(matches!(RecordItems::<TriviaText, Word<'_>>::of(fixture.ctx(), Place::Record(Address(1)), 2, 5, &words), Err(ArenaError::OutOfBounds { .. })));
+        assert!(matches!(RecordItems::<TriviaText, Word<'_>>::of(fixture.ctx(), Place::Record(Address(1)).into(), 2, 5, &words), Err(ArenaError::OutOfBounds { .. })));
     }
 
     #[test]

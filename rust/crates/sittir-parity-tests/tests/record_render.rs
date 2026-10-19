@@ -256,8 +256,8 @@ fn an_envelope_and_its_content_a_write_lies_in_prepare_apart_and_render_from_the
 /// which share one row, each prepare at a place of its own with its own
 /// kind's edges.
 fn assert_apart(tree: &ParsedTree<sittir_typescript::TypeScriptGrammar>, options: &ResolvedOptions) {
-    use sittir_core::arena::Prepared;
-    use sittir_core::trivia_store::Place;
+    use sittir_core::arena::{PrepPlace, Prepared};
+    use sittir_core::trivia_store::{Place, Site};
     use sittir_typescript::render::kind_ids as ts;
     let row = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
         .map(NodeIndex::new)
@@ -282,9 +282,11 @@ fn assert_apart(tree: &ParsedTree<sittir_typescript::TypeScriptGrammar>, options
         edges
     };
     let edges = |place| prepared.node(place).map(|node| node.edges);
-    let (envelope_place, content_place) = (Place::Row { tree: tree.tree_id(), row }, Place::Content { tree: tree.tree_id(), record: content });
+    let envelope_place = Place::Row { tree: tree.tree_id(), row };
+    let content_place = PrepPlace::Content(Site { holder: envelope_place, word: 2, item: sittir_core::types::ItemIndex(0) });
     assert_ne!(envelope, content);
     assert_ne!(own(ts::_INTERFACE_BODY), own(ts::OBJECT_TYPE), "the two kinds' edges differ, so a shared place would lose one");
-    assert_eq!(edges(envelope_place), Some(own(ts::_INTERFACE_BODY)));
+    assert_eq!(edges(envelope_place.into()), Some(own(ts::_INTERFACE_BODY)));
     assert_eq!(edges(content_place), Some(own(ts::OBJECT_TYPE)));
+    assert_eq!(edges(Place::Record(content).into()), None, "the content's record address keys no built record");
 }

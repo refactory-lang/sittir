@@ -62,7 +62,7 @@ fn implementation(ty: &Ident, trivia: &TokenStream, generics: &TokenStream, boun
                 at: #at,
                 table: &[::core::option::Option<::sittir_core::types::SiteId>],
                 ctx: #ctx,
-            ) -> ::core::option::Option<(::sittir_core::trivia_store::Site<::sittir_core::trivia_store::Place>, ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+            ) -> ::core::option::Option<(::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>, ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
                 #seat
             }
             #[allow(unused_variables, reason = "a unit has no separator of its own")]

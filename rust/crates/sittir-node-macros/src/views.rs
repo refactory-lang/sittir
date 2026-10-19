@@ -205,8 +205,8 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let doc = format!("A record of `{ident}`, read in place.");
     let common = quote! {
         __ctx: ::sittir_core::arena::RecordCtx<'a, #trivia>,
-        __place: ::sittir_core::trivia_store::Place,
-        __site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::trivia_store::Place>>,
+        __place: ::sittir_core::arena::PrepPlace,
+        __site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>>,
         __edges: ::sittir_core::options::Edges,
         __changed: ::sittir_core::slot::ChangedEdges,
     };
@@ -221,7 +221,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                         let tree = ctx.tree().ok_or(#refused)?;
                         ::core::result::Result::Ok(Self {
                             __ctx: ctx,
-                            __place: ::sittir_core::trivia_store::Place::Row { tree, row },
+                            __place: ::sittir_core::arena::PrepPlace::Stored(::sittir_core::trivia_store::Place::Row { tree, row }),
                             __site: site,
                             __edges: ::sittir_core::options::Edges::default(),
                             __changed: ::sittir_core::slot::ChangedEdges::default(),
@@ -232,7 +232,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                         let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, #kind)?;
                         ::core::result::Result::Ok(Self {
                             __ctx: ctx,
-                            __place: ::sittir_core::arena::place_of(ctx, record, &side)?,
+                            __place: ::sittir_core::arena::place_of(ctx, record, &side, site)?,
                             __site: site,
                             __edges: side.edges.unwrap_or_default(),
                             __changed: side.changed,
@@ -261,7 +261,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     _ => return ::core::result::Result::Err(#refused),
                 };
                 let (words, side) = ::sittir_core::arena::record_of(ctx, at, #words, #kind)?;
-                let place = ::sittir_core::arena::place_of(ctx, at, &side)?;
+                let place = ::sittir_core::arena::place_of(ctx, at, &side, site)?;
                 ::core::result::Result::Ok(Self {
                     __ctx: ctx,
                     __place: place,
@@ -291,7 +291,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             fn from_cell(
                 ctx: ::sittir_core::arena::RecordCtx<'a, #trivia>,
                 cell: ::sittir_core::arena::Cell,
-                site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::trivia_store::Place>>,
+                site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>>,
             ) -> ::core::result::Result<Self, ::sittir_core::arena::ArenaError> {
                 #from_cell
             }
@@ -387,7 +387,7 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
             fn from_cell(
                 ctx: ::sittir_core::arena::RecordCtx<'a, __T>,
                 cell: ::sittir_core::arena::Cell,
-                site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::trivia_store::Place>>,
+                site: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>>,
             ) -> ::core::result::Result<Self, ::sittir_core::arena::ArenaError> {
                 let kind = cell.kind().ok_or(#refused)?;
                 if let ::sittir_core::arena::Cell::Unit { .. } = cell {
@@ -414,7 +414,7 @@ pub fn members(ident: &Ident) -> TokenStream {
             fn from_cell(
                 _: ::sittir_core::arena::RecordCtx<'a, __T>,
                 cell: ::sittir_core::arena::Cell,
-                _: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::trivia_store::Place>>,
+                _: ::core::option::Option<::sittir_core::trivia_store::Site<::sittir_core::arena::PrepPlace>>,
             ) -> ::core::result::Result<Self, ::sittir_core::arena::ArenaError> {
                 match cell {
                     ::sittir_core::arena::Cell::Unit { kind, .. } => __member(kind, kind).ok_or(#refused),
@@ -521,7 +521,7 @@ mod tests {
         })
         .expect("expands");
         assert!(has(&out, "::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if kind == kind::IDENTIFIER =>"));
-        assert!(has(&out, "__place: ::sittir_core::trivia_store::Place::Row { tree, row },"));
+        assert!(has(&out, "__place: ::sittir_core::arena::PrepPlace::Stored(::sittir_core::trivia_store::Place::Row { tree, row }),"));
         assert!(has(&out, "text: ctx.source_text(span)?,"));
         assert!(has(&out, "let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind::IDENTIFIER)?;"));
         assert!(has(&out, "text: ctx.string(text)?,"));

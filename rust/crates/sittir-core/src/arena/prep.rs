@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use super::view::ParsedRow;
-use super::{place_of, record_of, Address, Arena, ArenaError, Cell, ListCell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
+use super::{place_of, record_of, Address, PrepPlace, Arena, ArenaError, Cell, ListCell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
 use crate::layout::{slot_entry, Layout, NodeLayout, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::prepare::{
@@ -112,7 +112,7 @@ impl<'r, T> RecordPrep<'r, T> {
 pub struct CellAt {
     pub cell: Cell,
     pub tree: Option<TreeId>,
-    pub site: Option<Site<Place>>,
+    pub site: Option<Site<PrepPlace>>,
 }
 
 /// A native node type's prepare over its records, beside its `Prepare`: one
@@ -133,7 +133,7 @@ pub trait PrepareRecord<T>: Sized {
     fn takes_gaps(cell: Cell) -> bool;
     /// `SeatTarget::seat_target`: the site whose edges the seat fills, the
     /// edges stored for the value there, and the seat.
-    fn seat_record(prep: &RecordPrep<'_, T>, at: CellAt, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<Place>, Edges, SiteId)>;
+    fn seat_record(prep: &RecordPrep<'_, T>, at: CellAt, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)>;
     /// `Prepare::source_separator`.
     fn source_separator(prep: &RecordPrep<'_, T>, at: CellAt, ctx: &RenderContext<'_>) -> Option<KindId>;
     /// `Prepare::snapshot_edge`.
@@ -155,7 +155,7 @@ impl<T, N: PrepareRecord<T>> PrepareRecord<T> for Box<N> {
         N::takes_gaps(cell)
     }
 
-    fn seat_record(prep: &RecordPrep<'_, T>, at: CellAt, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<Place>, Edges, SiteId)> {
+    fn seat_record(prep: &RecordPrep<'_, T>, at: CellAt, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
         N::seat_record(prep, at, table, ctx)
     }
 
@@ -187,7 +187,7 @@ impl<T> PrepareRecord<T> for crate::verbatim::VerbatimNode {
         false
     }
 
-    fn seat_record(_: &RecordPrep<'_, T>, _: CellAt, _: &[Option<SiteId>], _: &RenderContext<'_>) -> Option<(Site<Place>, Edges, SiteId)> {
+    fn seat_record(_: &RecordPrep<'_, T>, _: CellAt, _: &[Option<SiteId>], _: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
         None
     }
 
@@ -211,7 +211,7 @@ struct RecordKey {
     tree: Option<TreeId>,
     /// The record; none for a parsed leaf, which has none.
     at: Option<Address>,
-    place: Place,
+    place: PrepPlace,
     /// The edges whose neighbour the record's holder changed: its site's, or
     /// a root's own.
     changed: ChangedEdges,
@@ -231,16 +231,16 @@ impl RecordKey {
                     None => view,
                 };
                 let (_, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                let place = place_of(view, record, &side)?;
+                let place = place_of(view, record, &side, at.site)?;
                 Ok(Self { tree: view.tree(), at: Some(record), place, changed: if at.site.is_some() { changed } else { side.changed }, row })
             }
             Cell::BuiltLeaf { kind: named, record, .. } if named == kind => {
                 let (_, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                Ok(Self { tree: None, at: Some(record), place: Place::Record(record), changed: side.changed, row: None })
+                Ok(Self { tree: None, at: Some(record), place: Place::Record(record).into(), changed: side.changed, row: None })
             }
             Cell::ParsedLeaf { kind: named, row: leaf, .. } if named == kind => {
                 let tree = view.tree().ok_or(malformed("parsed leaf in a built record", leaf.0))?;
-                Ok(Self { tree: Some(tree), at: None, place: Place::Row { tree, row: leaf }, changed: ChangedEdges::default(), row })
+                Ok(Self { tree: Some(tree), at: None, place: Place::Row { tree, row: leaf }.into(), changed: ChangedEdges::default(), row })
             }
             _ => Err(malformed("prepared cell", u32::from(kind.0))),
         }
@@ -326,8 +326,7 @@ pub struct LayoutAt<'r, T> {
 fn rebuild<T: Clone + 'static>(prep: &RecordPrep<'_, T>, key: &RecordKey, keys: fn(u32) -> Option<&'static str>) -> Result<NodeLayout<T>, ArenaError> {
     let side = key.side(prep)?;
     let sides = side.sides.map(|from| NodeCoordinate::new(from.tree, from.index, from.end, from.span));
-    if let Place::Content { tree, .. } = key.place {
-        let (row, _) = side.at.ok_or(malformed("parsed record row", 0))?;
+    if let PrepPlace::Content(Site { holder: Place::Row { tree, row }, .. }) = key.place {
         return Ok(NodeLayout { at: Some(prep.view(key.tree)?.row_node(tree, row)?), ..NodeLayout::default() });
     }
     if let Some(row) = key.row {
@@ -342,7 +341,7 @@ fn rebuild<T: Clone + 'static>(prep: &RecordPrep<'_, T>, key: &RecordKey, keys: 
             ..NodeLayout::default()
         });
     }
-    let (Place::Record(record), Some(_)) = (key.place, key.at) else { return Err(malformed("record place", 0)) };
+    let (PrepPlace::Stored(Place::Record(record)), Some(_)) = (key.place, key.at) else { return Err(malformed("record place", 0)) };
     let key_of = |word: u32| keys(word).ok_or(malformed("slot word", word));
     let units = prep.store.units(record).into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
     let slots = side
@@ -351,7 +350,7 @@ fn rebuild<T: Clone + 'static>(prep: &RecordPrep<'_, T>, key: &RecordKey, keys: 
         .filter(|slot| slot.before.is_some() || slot.after.is_some() || slot.separator.is_some() || !slot.tokens.is_empty())
         .map(|slot| Ok(SlotLayout { slot: key_of(slot.word)?.to_owned(), before: slot.before, after: slot.after, separator: slot.separator, tokens: slot.tokens.clone() }))
         .collect::<Result<_, ArenaError>>()?;
-    Ok(NodeLayout { trivia: prep.store.sides(key.place), span: side.span, sides, units, slots, separator: side.separator, ..NodeLayout::default() })
+    Ok(NodeLayout { trivia: prep.store.sides(Place::Record(record)), span: side.span, sides, units, slots, separator: side.separator, ..NodeLayout::default() })
 }
 
 impl<T> LayoutAt<'_, T> {
@@ -409,7 +408,7 @@ pub struct SlotAt<'r, T, N> {
 #[derive(Debug, Clone, Copy)]
 struct Item {
     at: CellAt,
-    site: Site<Place>,
+    site: Site<PrepPlace>,
     row: Option<ParsedRow>,
 }
 
@@ -617,7 +616,7 @@ pub enum SettingOf {
 /// One print setting of a record: the overlay's fill, below what the record
 /// stores.
 pub struct SettingAt<'r, T, V> {
-    place: Place,
+    place: PrepPlace,
     setting: SettingOf,
     overlay: Marker<'r, (T, V)>,
 }
@@ -643,7 +642,7 @@ impl<'r, T> Setting<KindId, RecordPrep<'r, T>> for SettingAt<'r, T, KindId> {
 /// A record's seat by its own kind: the site in `table` of `kind`, the
 /// record `at` names held at its site, and the edges it stores there.
 #[must_use]
-pub fn own_seat<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, table: &[Option<SiteId>]) -> Option<(Site<Place>, Edges, SiteId)> {
+pub fn own_seat<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, table: &[Option<SiteId>]) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
     let seat = seat_site(table, kind)?;
     Some((at.site?, stored_edges(prep, at), seat))
 }
@@ -653,7 +652,7 @@ pub fn own_seat<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, table: &[
 /// content's seat (`coord_seat`) fills the wrapper's own edges; a built
 /// one's is its type's.
 #[must_use]
-pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, word: u32, width: u32, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<Place>, Edges, SiteId)> {
+pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, word: u32, width: u32, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
     let key = RecordKey::of(prep, at, kind).ok()?;
     let slot = SlotAt::<T, C> { key, word, width, run: None, node: PhantomData };
     let content = *slot.present(prep).first()?;
@@ -688,7 +687,7 @@ pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: Ki
 pub fn record_snapshot_edge<T: Prepare + TriviaSeam + Clone + 'static>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId) -> Option<SnapshotEdge> {
     let key = RecordKey::of(prep, at, kind).ok()?;
     let side = key.side(prep).ok()?;
-    let layout = Some(Box::new(NodeLayout { span: side.span, trivia: prep.store.sides(key.place), ..NodeLayout::default() }));
+    let layout = Some(Box::new(NodeLayout { span: side.span, trivia: key.place.stored().and_then(|place| prep.store.sides(place)), ..NodeLayout::default() }));
     Layout::snapshot_edge(&layout)
 }
 
