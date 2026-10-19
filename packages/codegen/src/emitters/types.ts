@@ -54,11 +54,14 @@ function kindDiscriminantOrLiteral(
 	if (!hasEntry) return JSON.stringify(kind);
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
-import type {
-	AssembledNode,
-	AssembledNonterminal
+import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import {
+	AssembledAlias,
+	AssembledList,
+	AssembledEnum,
+	fixedTextOfKind,
+	snakeToCamel
 } from '../compiler/model/node-map.ts';
-import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
 import {
 	DELIMITER_IMPORT,
 	isRequired,
@@ -734,23 +737,38 @@ function emitOptionsHints(
 	nodeMap: NodeMap
 ): void {
 	const kindRoots = new Map((hints?.roots ?? []).filter((root) => !root.label).map((root) => [root.name, root]));
-	const homes = new Map<string, { kind: string; typeName: string; root: HintRoot; internal: boolean }>();
+	const homes = new Map<string, { kind: string; typeName: string; root: HintRoot; internal: boolean }[]>();
 	for (const { kind, typeName, internal } of kinds) {
 		const root = kindRoots.get(displayNameOf(kind, nodeMap));
 		if (root === undefined || typeName === undefined || !generatedTypes.has(typeName)) continue;
-		const prior = homes.get(root.name);
+		const previous = homes.get(root.name) ?? [];
+		const prior = previous[0];
+		const family = nodeMap.displayUnions?.get(root.name);
+		const declaredMember = (name: string): boolean =>
+			family?.some((member) => !member.literal && member.storage === name) === true;
+		if (
+			prior !== undefined &&
+			!ownsItsDisplay(prior.kind, nodeMap) &&
+			!ownsItsDisplay(kind, nodeMap) &&
+			[...previous.map((home) => home.kind), kind].every(declaredMember)
+		) {
+			previous.push({ kind, typeName, root, internal: internal === true });
+			continue;
+		}
 		if (prior !== undefined && ownsItsDisplay(prior.kind, nodeMap) === ownsItsDisplay(kind, nodeMap)) {
 			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'`);
 		}
-		if (prior === undefined || ownsItsDisplay(kind, nodeMap)) homes.set(root.name, { kind, typeName, root, internal: internal === true });
+		if (prior === undefined || ownsItsDisplay(kind, nodeMap))
+			homes.set(root.name, [{ kind, typeName, root, internal: internal === true }]);
 	}
 	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
 	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);
 	lines.push('export interface OptionsHintMap {');
-	for (const { typeName, root } of homes.values()) lines.push(`  ${root.key}: ${typeName}.Hints;`);
+	for (const entries of homes.values())
+		lines.push(`  ${entries[0]!.root.key}: ${entries.map(({ typeName }) => `${typeName}.Hints`).join(' | ')};`);
 	lines.push('}');
 	lines.push('');
-	for (const { typeName, root, internal } of homes.values()) {
+	for (const { typeName, root, internal } of [...homes.values()].flat()) {
 		(internal ? internalLines : lines).push(
 			`export namespace ${typeName} {`,
 			'  export interface Hints {',

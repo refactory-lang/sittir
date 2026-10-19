@@ -7216,8 +7216,8 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
 
 ```text
 // Recursively stamp members; a choice that gained a blank arm becomes
-// `optional` over its other arms (`optionalContentOf`), or blank when
-// none remain.
+// `optional` over its other arms (`optionalContentOf`, as the compile
+// boundary folds an authored one), or blank when none remain.
 // Re-applied here because stamping may have synthesized new blank
 // members the boundary didn't see.
 ```
@@ -8207,6 +8207,12 @@ literal member (a STRING arm, or a SYMBOL's `.literal`) carries its text and
 never share a key, so a keyword arm `'type'` and a rule `type` stay distinct
 members, and no reader has to guess which a string was.
 
+An existing display family also admits its canonical catalog default storage:
+a named, visible, non-alias rule whose parser `symbolName` is that display.
+Tree-sitter can fold that default alias out of the rule reference, so the
+catalog supplies its identity beside the explicit aliases. This preserves both
+physical option sites instead of choosing one parser identity for the family.
+
 #### body
 
 ```text
@@ -8369,8 +8375,8 @@ The raw symbols a parser folds onto another public symbol: the entries of `ts_sy
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalChoiceRule`
 
-Canonicalizes a choice. A choice of nothing but blanks is blank, the empty choice (`dsl/rule-patterns.ts::withoutBlankMembers`); a singleton is peeled; and common fields are factored when safe.
+Canonicalizes a choice. A choice with a blank arm becomes `OPTIONAL` over its other arms, carrying the choice's own facts (`dsl/rule-patterns.ts::optionalContentOf`, which takes every blank arm wherever it sits), so `choice(a, b, blank())` canonicalizes as `optional(choice(a, b))`; a choice of nothing but blanks is blank, the empty choice (`dsl/rule-patterns.ts::withoutBlankMembers`); a singleton is peeled; and common fields are factored when safe. A tree-sitter `CHOICE` with `BLANK` is accepted at the compiler boundary without adding blank to the compiler Rule union.
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalRule`
 
-One node's canonical form at the compile boundary, applied bottom-up by `canonicalRuleTree`. A prec or `RESERVED` wrapper is peeled, its facts carried onto the content (`peelWrapper`; a reserved word set goes to the metadata). `OPTIONAL`, `REPEAT` and `REPEAT1` lose the wrappers that add nothing (an optional repeat is a repeat). A choice of nothing but blanks is blank (`canonicalChoiceRule`), a choice of one member is that member, and a choice of fields all named alike becomes one field over a choice. A sequence drops its blank members (`dsl/rule-patterns.ts::withoutBlankMembers`) and a sequence of one member is that member, so `seq($.x, blank())` canonicalizes as `seq($.x)`, wrapper facts carried. A bare `BLANK` becomes the empty choice the compile phases read as blank. Tokens carry `immediate` explicitly. Everything else is unchanged.
+One node's canonical form at the compile boundary, applied bottom-up by `canonicalRuleTree`. A prec or `RESERVED` wrapper is peeled, its facts carried onto the content (`peelWrapper`; a reserved word set goes to the metadata). `OPTIONAL`, `REPEAT` and `REPEAT1` lose the wrappers that add nothing (an optional repeat is a repeat). A choice with a blank arm becomes `OPTIONAL` over its other arms and a choice of nothing but blanks is blank (`canonicalChoiceRule`), a choice of one member is that member, and a choice of fields all named alike becomes one field over a choice. A sequence drops its blank members (`dsl/rule-patterns.ts::withoutBlankMembers`) and a sequence of one member is that member, so `seq($.x, blank())` canonicalizes as `seq($.x)`, wrapper facts carried. A bare `BLANK` becomes the empty choice the compile phases read as blank. Tokens carry `immediate` explicitly. Everything else is unchanged.

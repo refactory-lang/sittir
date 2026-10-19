@@ -15095,6 +15095,12 @@ The text of `node-model.json5`, one node per line (`printRecordLines`). `generat
 
 An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::isAliasSiteFamily`
+
+Recognizes distinct parser identities merged under one explicit display alias, either at their own edge or as seated children of the same owner slot, with the same admitted/default spacing. Their common option address reaches every physical site. Unrelated duplicate canonical paths remain errors.
+
+`emitOptionsHints` accepts multiple non-owning carriers only when the canonical `NodeMap.displayUnions` explicitly lists them under the option root. Every such type gets the root hint; its map entry names their hint union. Coincidental display collisions retain the refusal. `RenderOptionsPlan` retains that same canonical display-union map for physical site address projection.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamOf`
 
 A spacing row's seam address, for a row that must be a seam: a kind's edge

@@ -1070,7 +1070,7 @@ export function reportSkippedParserSymbol(
 }
 
 function isHiddenStructuralFactoryKind(kind: string, node: AssembledNode): boolean {
-	return node.surfaceHidden && !(node instanceof AssembledPunctuation);
+	return node.surfaceHidden && (!(node instanceof AssembledPunctuation) || isBuilderTextLeaf(node));
 }
 
 export interface FactoryDispatchContext extends ParserSymbolDispatchContext {

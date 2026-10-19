@@ -6979,9 +6979,12 @@ and the node for `seated`, so all three read the same fact.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::supertypeArmsOf`
 
-The kinds a parser-declared supertype's rule names directly: a `SUPERTYPE`
+The kinds a supertype's rule names directly: a `SUPERTYPE`
 rule's subtypes, or a `CHOICE` rule's members, kept where they are symbols.
-Assemble derives it once from the normalized rules and hands it to every node
+Assemble passes every supertype the model has, those the grammar declares and
+the hidden choices link stamps `SUPERTYPE` (the stamp `classifyNode` reads), so
+an arm of either kind of supertype is treated alike. It derives the set once
+from the normalized rules and hands it to every node
 construction (`KindFacts.supertypeArms`), where it decides `ownSurface`. Seating
 does not read it: an arm seats on its parent like any hoisted kind.
 
