@@ -3356,6 +3356,10 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 // Only stamp when non-default (single → undefined per combineMultiplicity).
 ```
 
+### `packages/codegen/src/compiler/normalize.ts::blanksDropped`
+
+The first normalization pass: every `EOF` becomes blank, and a `SEQ` drops every blank member (`dsl/rule-patterns.ts::withoutBlankMembers`). The compile boundary already dropped the blanks the DSL built (`canonical-rules.ts::canonicalRule`); this pass drops the ones made after it: an `EOF` it lowers, an empty choice link leaves for a symbol stamped blank, and a sequence that emptied below. So `seq(a, eof())` normalizes as `seq(a)`, and a sequence of nothing but blanks is itself blank to its parent. A blank takes no slot, has no child and renders no text, so the model sees exactly what the sequence without it gives: a rule whose body is only `eof()` assembles as one whose body is `blank()`. It runs before any pass that reads a sequence's members as structure; distributing a sequence over its one choice member (`fanOutSeqChoices`) would otherwise read an empty choice as zero arms and leave the rule nothing. Everything before the compile boundary (the evaluated grammar, grammar.json, the symbol-table prediction) keeps `EOF` and `BLANK` as tree-sitter does.
+
 ### `packages/codegen/src/compiler/opaque-facts.ts::opaqueFacts`
 
 ```text
@@ -3544,16 +3548,6 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
  * WrapperPhase-only (types/rule.ts) and collapse to `never` under the
  * RenderRule/SimplifiedRule values this function actually receives (always
  * post-`flattenRules`) — `default: false` already covers them.
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::isEmptyMatchMember`
-
-```text
-/**
- * Test whether a choice member matches the empty string — the canonical
- * signal for "this branch contributes nothing" so the enclosing choice
- * can be simplified to `optional(non-empty-branches)`.
  */
 ```
 
@@ -3935,9 +3929,9 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
  * `nonterminal: false` (`flatten.ts::stampTerminality`: a literal, a layout
  * token, a reference to a literal) and an all-text SEQ member are stripped, and empty
  * seqs are dropped; a spliceable bare seq member is spliced into this
- * seq's own member list. A single surviving member carries the seq's own
- * attrs (`withAttrsFrom`) and combines multiplicity with its own via the
- * lattice (a survivor `optional` inside an `array` seq combines to
+ * seq's own member list. A single surviving member absorbs the seq
+ * (`collapsedInto`: the seq's attrs, and its multiplicity composed with the
+ * survivor's, so a survivor `optional` inside an `array` seq combines to
  * `array`); more than one survivor keeps the SEQ shape.
  */
 ```
@@ -3970,17 +3964,10 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 
 ```text
 // A spliceable bare seq (no own attrs — shared predicate with
-// flatten.ts's SEQ case, see isSpliceableBareSeq's doc) is inlined into
+// flatten.ts's SEQ case, see isSpliceableBareMember's doc) is inlined into
 // this seq's member list; a seq that carries its own cardinality
 // survives as one member instead, so splicing never drops a
 // multiplicity/separator stamp.
-```
-
-#### body
-
-```text
-// Multiplicity combines via the lattice; stamped only when the combined
-// value is non-default (absent stays absent).
 ```
 
 The fixed-literal join reads the word matcher off the context's grammar, so
@@ -5762,17 +5749,19 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
 // wrapper cases below, which are consumed into their content) — the
 // original node's own stamped facts (id, metadata, …) must ride
 // along, so spread it under attributeBuilder's freshly-built shape.
-// For SEQ the built node may be a collapsed singleton survivor with
-// no `members` of its own — `carrySeqFacts` drops the stale array.
+// The built node may be a survivor with no `members` of its own (a
+// collapsed singleton seq, or a choice's one non-blank arm made
+// optional): `carryNodeFacts` drops the stale array.
 ```
 
 #### body
 
 ```text
 // `buildOptional`, not `attributeBuilder.optional`: the empty-match
-// fold (`foldOptionalEmptyMatch`) belongs to simplify's own later
-// construction, not RenderRule production — a raw OPTIONAL over a
-// bare literal here stays a leaf with `multiplicity: 'optional'`.
+// fold (`foldOptionalEmptyMatch`) would strip a bare literal — a raw
+// OPTIONAL over a bare literal here stays a leaf with
+// `multiplicity: 'optional'`, as `choice(x, blank())` does through
+// `attributeChoice`.
 ```
 
 #### body
@@ -7222,10 +7211,11 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
 #### body
 
 ```text
-// Recursively stamp members, then re-apply the blank-collapse that
-// evaluate.ts's choice() applies at DSL time. `choice(X, blank)` →
-// `optional(X)`. Re-applied here because stamping may have
-// synthesized new blank members the DSL-time pass didn't see.
+// Recursively stamp members; a choice that gained a blank arm becomes
+// `optional` over its other arms (`optionalContentOf`), or blank when
+// none remain.
+// Re-applied here because stamping may have synthesized new blank
+// members the boundary didn't see.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::RefinePathResolution`
@@ -7487,6 +7477,8 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 
 ### `packages/codegen/src/compiler/simplify.ts::collapseSingleMemberSeq`
 
+A sequence of one member collapses into it (`dsl/builders.ts::collapsedInto`); `canonicalizeSeqOfLeaves` applies it bottom-up.
+
 #### body
 
 ```text
@@ -7518,29 +7510,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 
 ### `packages/codegen/src/compiler/simplify.ts::simplifyChoiceRule`
 
-```text
-/**
- * CHOICE: first splice any directly-nested CHOICE member into the parent's
- * member list (choice associativity) — each spliced arm carries the nested
- * node's own attributes (`fieldName`, `multiplicity`, `inlinedFrom`, …,
- * already flattened to attributes by this phase) via `withAttrsFrom` onto
- * that arm, not the nested CHOICE node itself, and the parent absorbs the
- * spliced-away nested choices' ids (`absorbIds`). Then: fold an empty-match
- * member (`pattern("")`, empty seq) into `optional`, where a single
- * surviving non-empty member absorbs the wrapper choice's id; collapse a
- * single member the same way; merge structurally-equivalent branches
- * (`mergeBranchesForChoice`). Variant wrappers are preserved for polymorph
- * detection.
- *
- * Constructs through `ctx.builder` (`RuleBuilder<'normalize'>` — always
- * `attributeBuilder`), so `b.optional` / `b.choice` push attributes rather
- * than mint wrapper nodes; the empty-match fold is `b.optional`'s own
- * semantics. simplify's helpers are typed `RenderRule` in and out — the
- * builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP
- * has no dedicated handler — recursion into its `.content`
- * happens once, via simplifyRule's ctx.walker.map call.)
- */
-```
+CHOICE. First every directly nested non-blank choice member splices into the parent's member list (choice associativity, `isSplicedChoice`): each spliced arm carries the nested node's own attributes (`fieldName`, `multiplicity`, `inlinedFrom`, …, already flattened to attributes by this phase) via `withAttrsFrom`, and the parent absorbs the spliced-away nested choices' ids (`absorbIds`). An empty choice is blank, not a choice of no arms, so it stays a member. A single member then absorbs the choice (`withAttrsFrom`). Otherwise the choice is rebuilt through `ctx.builder.choice` (`dsl/builders.ts::attributeChoice`), which folds blank arms, with one of three results. When the builder kept every member, structurally equivalent branches merge (`mergeBranchesForChoice`) under the choice's own facts. When one arm survived, made optional, the choice collapses into it (`dsl/builders.ts::collapsedInto`). When several survived as an optional choice, the choice's own facts carry onto it and its multiplicity composes with the optional one (`dsl/builders.ts::withWrapperMultiplicity`); merging is skipped there, since a merged sequence would drop the optional multiplicity. Variant wrappers are preserved for polymorph detection. Members arrive already simplified (simplifyRule's `ctx.walker.map` recursion), so this does not recurse into its own children. simplify's helpers are typed `RenderRule` in and out; the builder is phase-typed, so a wrapper-phase value cannot reach them. (GROUP has no dedicated handler: recursion into its `.content` happens once, via simplifyRule's `ctx.walker.map` call.)
 
 #### body
 
@@ -7548,6 +7518,10 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 // Members already simplified by simplifyRule's ctx.walker.map recursion —
 // this function does not recurse into its own children.
 ```
+
+### `packages/codegen/src/compiler/simplify.ts::isSplicedChoice`
+
+A choice member that splices into its parent choice: a non-empty `CHOICE`. The empty choice is blank (`dsl/rule-patterns.ts::isBlank`); splicing its zero arms would lose the empty alternative it stands for, so it stays a member for the builder to fold (`dsl/builders.ts::attributeChoice`).
 
 ### `packages/codegen/src/compiler/trace.ts::module`
 
@@ -7924,8 +7898,8 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
  *
  * Variant tagging lives in Link — that is classification, not simplification.
  * Pipeline order is fixed in
- * `normalizeGrammar()` below: collapse → fan-out → factor → dedupe → inline →
- * re-collapse.
+ * `normalizeGrammar()` below: drop blanks → collapse → fan-out → factor →
+ * dedupe → inline → re-collapse.
  */
 ```
 
@@ -8384,3 +8358,11 @@ A literal that is itself the slot (a STRING stamped `nonterminal: true` with `al
 ### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
 
 The raw symbols a parser folds onto another public symbol: the entries of `ts_symbol_map` whose two sides differ. A token the grammar writes twice gets a second raw symbol that the parser reports under the first one's id. The fold census test pins each grammar's count.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::canonicalChoiceRule`
+
+Canonicalizes a choice. A choice of nothing but blanks is blank, the empty choice (`dsl/rule-patterns.ts::withoutBlankMembers`); a singleton is peeled; and common fields are factored when safe.
+
+### `packages/codegen/src/compiler/canonical-rules.ts::canonicalRule`
+
+One node's canonical form at the compile boundary, applied bottom-up by `canonicalRuleTree`. A prec or `RESERVED` wrapper is peeled, its facts carried onto the content (`peelWrapper`; a reserved word set goes to the metadata). `OPTIONAL`, `REPEAT` and `REPEAT1` lose the wrappers that add nothing (an optional repeat is a repeat). A choice of nothing but blanks is blank (`canonicalChoiceRule`), a choice of one member is that member, and a choice of fields all named alike becomes one field over a choice. A sequence drops its blank members (`dsl/rule-patterns.ts::withoutBlankMembers`) and a sequence of one member is that member, so `seq($.x, blank())` canonicalizes as `seq($.x)`, wrapper facts carried. A bare `BLANK` becomes the empty choice the compile phases read as blank. Tokens carry `immediate` explicitly. Everything else is unchanged.

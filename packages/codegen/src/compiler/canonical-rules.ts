@@ -3,6 +3,7 @@ import type { FieldRule, Rule } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { makeRuleMetadata, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { withoutBlankMembers } from '../dsl/rule-patterns.ts';
 import { grammarRootNames, pruneOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import type { EvaluatedGrammar, EvaluationStages, RawGrammar, StageEvaluation } from './types.ts';
@@ -51,6 +52,8 @@ function canonicalRepeat1Rule(rule: EvalRule & { type: typeof REPEAT1 }): EvalRu
 }
 
 function canonicalChoiceRule(rule: EvalRule & { type: typeof CHOICE }): EvalRule {
+	const arms = withoutBlankMembers(rule);
+	if (arms.members.length === 0) return arms;
 	const members = rule.members;
 	if (members.length === 1) return peelWrapper(rule);
 	if (members.length < 2 || !members.every((m) => m.type === FIELD)) return rule;
@@ -91,8 +94,12 @@ function canonicalRule(rule: EvalRule): EvalRule {
 			return canonicalRepeat1Rule(rule);
 		case CHOICE:
 			return canonicalChoiceRule(rule);
-		case SEQ:
-			return rule.members.length === 1 ? peelWrapper(rule) : rule;
+		case SEQ: {
+			const seq = withoutBlankMembers(rule);
+			return seq.members.length === 1 ? peelWrapper(seq) : seq;
+		}
+		case 'BLANK':
+			return { type: CHOICE, members: [] };
 		case TOKEN:
 		case IMMEDIATE_TOKEN:
 			return canonicalTokenRule(rule);

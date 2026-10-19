@@ -398,6 +398,18 @@ The external roles that mark a zero-width layout sentinel (`indent`, `dedent`), 
 
 One blocking `hidden-terminal-nonliteral` record per `hiddenTerminalNonliteralSites` site, naming the owner and the hidden terminal (`details.target`). It runs on every stage's grammar. The override layer claims each enriched-stage record: a `visibleExternals:` entry that gives the external a visible node (rust `_block_comment_content`, typescript `_automatic_semicolon`), a rewrite that removes the bare reference, or a layout role. The final grammar must have none.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics`
+
+One blocking `eof-in-token` record per rule that holds `eof()` anywhere under a `token()` or `token.immediate()`, naming the rule as `ownerKind`. A lexical token cannot match the end of input. tree-sitter's DSL forbids the shape, and the record refuses it at evaluate (`evaluateRecords`) instead of leaving it to the parser generator.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastDiagnostics`
+
+One blocking `eof-not-last` record per site the prediction stamps (`dsl/symbol-table.ts::EofNotLast`), naming the authored rule as `ownerKind`. A production that continues past the end of the input is one tree-sitter drops, while the model, which reads `eof()` as blank, would still build it, so its nodes would never reparse. The details carry the site's `kind`, `ending` and `repetition`.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastMessage`
+
+The message of an `eof-not-last` record: the followed rule that always ends input, the repetition whose item ends at `eof()`, or the production that continues after `eof()`.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
 
 One blocking `field-optional-delimiter` record per authored-compound slot
@@ -491,7 +503,7 @@ throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is 
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::evaluateRecords`
 
-The records answerable from the evaluated grammar alone, before link: the prediction records, the
+The records answerable from the evaluated grammar alone, before link: the prediction records, `eof-in-token` and `eof-not-last`, the
 `expect-diagnostics-invalid` entries, and evaluate's own events (`body-pattern-zero-match`,
 `desugar-divergence-*`).
 
@@ -582,7 +594,7 @@ Whether a rule can produce a sequence of literal tokens and symbols. A string
 matches its literal; a symbol matches an item naming it, and a symbol the caller
 expands is also followed into its own body. By default only hidden symbols
 (leading underscore) expand, since they leave no node of its own. Sequences, choices, optionals and repeats are followed; fields,
-aliases and tokens are transparent. Recursion is solved as a least fixed
+aliases and tokens are transparent; `EOF` and `BLANK` match nothing and end where they start. Recursion is solved as a least fixed
 point. A rule re-entered at the same position yields what it has reached so
 far, and passes repeat until no rule reaches a new end. So a left-recursive rule
 is recognised in full, and the answer is exact in both directions. That matters

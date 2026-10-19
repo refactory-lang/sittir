@@ -223,6 +223,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+`BLANK` is not one: it is a leaf with no content, so a path that reaches one cannot descend and is a skip (`dsl/transform/transform-path.ts::ApplyPathSkip`).
+
 ### `packages/codegen/src/types/runtime-shapes.ts::isPrecWrapper`
 
 ```text
@@ -751,6 +753,10 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 // token/optional/field/repeat/repeat1 are consumed by Normalize's
 // flattenRules. None appear in the wrapper-free views.
 ```
+
+### `packages/codegen/src/types/rule.ts::EofRule`
+
+tree-sitter's end-of-input rule, in every phase's union. It matches no text, takes no slot and has no child. Normalize lowers it to blank (`compiler/normalize.ts::blanksDropped`), so a simplified rule never holds one, and the render template gives it no text.
 
 ### `packages/codegen/src/types/rule.ts::RenderRule`
 
@@ -1645,3 +1651,7 @@ The display name a ref carries (`aliasedTo`), or `undefined` when it has none.
 ### `packages/codegen/src/types/rule.ts::storageNameOf`
 
 The ref's own storage identity: the rule, or literal symbol, that parsed it.
+
+### `packages/codegen/src/types/rule.ts::BlankRule`
+
+tree-sitter's empty rule, as `blank()` builds it (`dsl/builders.ts::structuralBuilder`). Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`), and a choice with a blank arm becomes `OPTIONAL` there.

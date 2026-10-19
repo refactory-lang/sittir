@@ -18,13 +18,15 @@ import {
 	predictedEntriesOf,
 	renameAwareSymbolSource,
 	reservedWordset,
+	type EofNotLast,
 	type GeneratedIdTables,
 	type KindEntryLike
 } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
-import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
+import { ALIAS, EOF, SYMBOL } from '../../types/rule-types.ts';
+import { isLexedBoundary, RuleWalker } from '../../dsl/rule-walker.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
@@ -504,9 +506,53 @@ export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds
 	}));
 }
 
+export function eofInTokenDiagnostics(grammar: Pick<RawGrammar, 'name' | 'rules'>): GrammarDiagnostic[] {
+	const walker = new RuleWalker<Rule<'evaluate'>>();
+	const eofInside = (rule: Rule<'evaluate'>): boolean => walker.find(rule, (inner) => inner.type === EOF) !== undefined;
+	return Object.entries(grammar.rules)
+		.filter(([, rule]) => walker.find(rule, (inner) => isLexedBoundary(inner) && eofInside(inner)) !== undefined)
+		.map(([ownerKind]) => ({
+			scope: 'grammar' as const,
+			code: 'eof-in-token',
+			severity: 'fail' as const,
+			grammar: grammar.name,
+			ownerKind,
+			message: `kind '${ownerKind}' puts eof() inside a token; a lexical token cannot match the end of input.`,
+			proposal: `Move eof() out of the token, to the end of the production that holds it.`,
+			canProceed: false
+		}));
+}
+
+function eofNotLastMessage({ kind, ending, repetition }: EofNotLast): string {
+	if (ending !== undefined) return `'${ending}' always ends input, so nothing can follow it in '${kind}'; the parser can never produce what follows.`;
+	if (repetition) return `the repetition in '${kind}' ends at eof(), so it can never repeat; the parser can never produce a second item.`;
+	return `kind '${kind}' has a production that continues after eof(); the parser can never produce it.`;
+}
+
+export function eofNotLastDiagnostics(raw: Pick<RawGrammar, 'name' | 'predictedKinds'>): GrammarDiagnostic[] {
+	const kinds = raw.predictedKinds;
+	if (kinds === undefined || !('entries' in kinds)) return [];
+	return kinds.eofNotLast.map(({ kind, ending, repetition }) => ({
+		scope: 'grammar' as const,
+		code: 'eof-not-last',
+		severity: 'fail' as const,
+		grammar: raw.name,
+		ownerKind: kind,
+		message: eofNotLastMessage({ kind, ending, repetition }),
+		proposal:
+			ending === undefined
+				? `End the production at eof(), or move what follows eof() before it.`
+				: `Let '${ending}' end without eof() where something follows it, or make it the last thing '${kind}' matches.`,
+		canProceed: false,
+		details: { kind, ending, repetition }
+	}));
+}
+
 export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 	return withoutOrphanedGroups(raw, [
 		...predictionRecords(raw),
+		...eofInTokenDiagnostics(raw),
+		...eofNotLastDiagnostics(raw),
 		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
 		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
 		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event))

@@ -309,18 +309,14 @@ A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isBlank`
 
-True for every spelling of an empty rule: tree-sitter's `BLANK`, and the empty
-`CHOICE` or `SEQ` sittir's `blank()` builds. The one blank test; nothing else
+True for every spelling of an empty rule: `BLANK`, which `blank()` builds under both runtimes, and the empty
+`CHOICE` or `SEQ` the compile phases use (the boundary lowers a bare `BLANK` to the empty `CHOICE`, and normalize lowers `EOF` to it). The one blank test; nothing else
 compares a rule type against `'BLANK'` or checks for zero members to mean
 "empty".
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::optionalContentOf`
 
-The content of an optional rule in either representation: `OPTIONAL(x)`, or a
-two-member `CHOICE` of `x` and a blank (either order). Returns `undefined` for
-anything else, including a choice whose two members are both blank. Every
-site that treats a rule as "optional x" reads through it, so an OPTIONAL and a
-CHOICE-with-blank always take the same path.
+The content of an optional rule in either representation: `OPTIONAL(x)`, or a `CHOICE` with at least one blank member (`isBlank`) and at least one other, whose content is the one non-blank member or a fresh `CHOICE` of the non-blank members in their order. Returns `undefined` for anything else, including a choice with no blank member and one whose members are all blank. Every site that treats a rule as "optional x" reads through it, so an `OPTIONAL` and a choice with blank arms, wherever they sit, always take the same path: the compile boundary (`compiler/canonical-rules.ts::canonicalChoiceRule`) and link's stamping (`compiler/link.ts::rewriteRuleForStamp`) build their `OPTIONAL` from it. The fresh choice carries none of the original's facts; they stay on the wrapper the caller builds.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isArmChoice`
 
@@ -331,10 +327,7 @@ sittir's builder produces, never as a two-arm choice.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::withOptionalContent`
 
-Rebuilds an optional rule around new content in the representation it
-already has: `OPTIONAL` gets a new `content`; a CHOICE-with-blank keeps its
-blank member and replaces the other. The rebuild paired with
-`optionalContentOf`.
+Rebuilds an optional rule around new content in the representation it already has: `OPTIONAL` gets a new `content`; a choice with blank arms keeps its blank members where they were and puts the content in place of its first non-blank member, dropping the others, which the content stands for (`optionalContentOf` read them as one). The rebuild paired with `optionalContentOf`.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::optionalSeqBodyOf`
 
@@ -386,7 +379,8 @@ not immediate.
 
 ```text
 // Shape 3: optional(seq(SYMBOL, <anon…>)) — exactly one SYMBOL,
-// all other seq members anonymous (STRING / PATTERN).
+// all other seq members anonymous (STRING / PATTERN) or blank
+// (isBlank), which takes no slot.
 ```
 
 ```text
@@ -1395,6 +1389,36 @@ It reads rules through `realizesEmpty` (`types/runtime-shapes.ts`), the same emp
 ```text
 /** plain repeat (not repeat1). Duplicates `isPlainRepeatType` in
  *  runtime-shapes but keeps this module self-contained. */
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::collectSlots`
+
+```text
+/**
+ * Collects the "slot" members of a seq body after dropping pure
+ * literals/punctuation and `blank`. Descends transparently through `prec`
+ * wrappers and `field` wrappers to find the underlying slot type.
+ *
+ * A "slot" is a member that contributes structured content — `field`,
+ * `symbol`, `choice`, `repeat`, `repeat1`, `seq` (nested), or any non-literal
+ * non-blank rule. Pure literals (`string`, `token`) and `blank` are dropped.
+ */
+```
+
+`eof()` is dropped too: it matches no text and holds no slot, so `seq($.x, eof())` is one slot, as `seq($.x)` is, and a group it is in lifts as the same hidden rule.
+
+#### body
+
+```text
+/* Drop a SYMBOL slot that resolves to no rule body in `rulesBag` — a
+		   structural/external scanner token (indent/dedent/newline-role and
+		   similar), not content. Without this, e.g. python's `_suite` middle
+		   arm `seq($._indent, $.block)` counts as TWO slots (`_indent`,
+		   `block`) instead of one, wrongly classifying it inline-UNSAFE and
+		   minting a group that fragments `_suite`'s otherwise-uniform `block`
+		   output across its three choice arms. `rulesBag` is optional
+		   (existing test-only call sites pass none) — omitting it preserves
+		   the permissive counting that ignores this distinction. */
 ```
 
 ### `packages/codegen/src/dsl/group-classify.ts::collectSlots`
@@ -3067,26 +3091,6 @@ registered but later unused still counts as a sibling.
 // derives the inline list from its keys) — rename there too.
 ```
 
-### `packages/codegen/src/dsl/builders.ts::collapseSingletonSeq`
-
-```text
-/**
- * A seq with exactly one member IS that member — the seq's own attributes
- * merge onto it by the same composition rules every collapse site in this
- * codebase uses: `withAttrsFrom`'s absent-only transfer for the identity
- * and flag attributes, `combineMultiplicity` for the composing one. This is
- * `collapseSingleMemberSeq` + `withAttrsFrom` (simplify's own later pass
- * over the whole tree), applied here at construction instead.
- */
-```
-
-#### body
-
-```text
-// The seq is the current rule: its identity wins over the survivor's,
-// the same `id: rule.id ?? input.id` every builder stamps.
-```
-
 ### `packages/codegen/src/dsl/annotations.ts::withAnnotations`
 
 Merge annotations onto a runtime rule. An ALIAS is transparent: the
@@ -3119,46 +3123,17 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
-### `packages/codegen/src/dsl/builders.ts::carrySeqFacts`
+### `packages/codegen/src/dsl/builders.ts::carryNodeFacts`
 
-```text
-/**
- * A seq's own stamped facts (metadata, …) ride along under `built`'s
- * freshly-computed shape — `buildSeq` constructs a new node and has no
- * access to the original's identity. `built` may be a collapsed singleton
- * survivor (buildSeq's own singleton collapse), so its own `type`/`members`
- * must win outright, not merely its stamped attrs: a plain
- * `{...content, ...built}` spread would leave `content`'s stale `members`
- * array on a survivor that has none. Shared by `buildOptional`,
- * `buildRepeatLike` and `flatten`'s SEQ case.
- */
-```
+A rebuilt sequence's or choice's own stamped facts (metadata, …) ride along under `built`'s freshly computed shape: the builder constructs a new node and has no access to the original's identity. `built` may be a survivor of another kind: a singleton sequence collapses to its member (`buildSeq`), and a choice of one arm beside blanks is built as that arm made optional (`attributeChoice`). So `built`'s own `type`/`members` win outright, not merely its stamped attrs: a plain `{...content, ...built}` spread would leave `content`'s stale `members` array on a survivor that has none. Shared by `buildOptional`, `buildRepeatLike` and `flatten`'s SEQ and CHOICE cases.
 
 ### `packages/codegen/src/dsl/builders.ts::buildOptional`
 
-```text
-/**
- * optional(x) — the core formula, with no empty-match folding. This is what
- * `flatten` (compiler/flatten.ts) calls directly for every
- * OPTIONAL node in a raw rule tree: RenderRule production never strips a
- * bare literal to an empty seq (only `simplifyRules`'s own construction, via
- * `foldOptionalEmptyMatch` below, does that later).
- */
-```
-
+optional(x): the core formula, with no empty-match folding. `flatten` (`compiler/flatten.ts::construct`) calls it for every `OPTIONAL` node in a raw rule tree, and `attributeChoice` for a choice with a blank arm, so an optional bare literal stays a leaf with `multiplicity: 'optional'` in the render rules under either spelling. Only `attributeBuilder.optional` (`foldOptionalEmptyMatch`) strips one to the empty seq.
 
 ### `packages/codegen/src/dsl/builders.ts::foldOptionalEmptyMatch`
 
-```text
-/**
- * simplify's OWN `optional` construction (empty-match choice folding, see
- * `simplifyChoiceRule`) additionally strips an empty-seq or bare
- * (non-slot-promoted) string body to the empty-seq sentinel — a delimiter
- * that can't individually carry `multiplicity: 'optional'` collapses to
- * "renders nothing" instead. `attributeBuilder.optional` is this fold;
- * `flatten` never reaches it (it calls `buildOptional` directly).
- */
-```
+`attributeBuilder.optional`: `buildOptional`, except that an empty-seq or bare (non-slot-promoted) string body becomes the empty-seq sentinel, so a delimiter that can't individually carry `multiplicity: 'optional'` collapses to "renders nothing" instead. Its caller is flatten's permutation fold (`compiler/flatten.ts::foldPermutationArms`). A choice with a blank arm goes through `buildOptional` (`attributeChoice`) and never reaches this fold.
 
 ### `packages/codegen/src/dsl/builders.ts::repeatCombine`
 
@@ -3177,8 +3152,8 @@ unwraps `prec` and a stamp on the wrapper is lost.
 ```text
 /**
  * seq(members, mult?) — receives already-rebuilt members. Splices a bare
- * nested seq (`isSpliceableBareSeq`: no fieldName/separator/multiplicity of
- * its own) into the member list first, at THIS level — since members arrive
+ * nested seq (`isSpliceableBareMember`: no fieldName/separator/multiplicity of
+ * its own) into the member list first, and drops a bare blank the same way, at THIS level — since members arrive
  * bottom-up, a member that is itself a multi-level chain of bare seqs has
  * already flattened its own nested bare seqs one level down by the time its
  * own `buildSeq` call returned, so splicing here reaches every level: a
@@ -3346,8 +3321,8 @@ unwraps `prec` and a stamp on the wrapper is lost.
  *  cannot be checked against the implementation's literals and would force
  *  casts back into the builders): `optional`/`repeat`/`repeat1` re-enter
  *  `buildSeq` for a SEQ (→ `Rule`) and `optional` folds a bare literal to
- *  the empty seq (→ `Rule`), otherwise `R`; `choice` is always a
- *  ChoiceRule (no FIELD exists on this view). A catch-all `(Rule) → Rule`
+ *  the empty seq (→ `Rule`), otherwise `R`; `choice` is a `Rule`, since a
+ *  blank arm makes it optional over its other arms (`attributeChoice`). A catch-all `(Rule) → Rule`
  *  overload closes each set so a wide argument stays honest. */
 ```
 
@@ -3363,6 +3338,8 @@ unwraps `prec` and a stamp on the wrapper is lost.
  *   pattern / symbol / supertype       → true
  *   choice                             → true, always: the choice node is the
  *                                        slot; its arms keep their own stamps
+ *                                        (a blank arm makes it `optional` over
+ *                                        the others: `attributeChoice`)
  *   seq                                → true iff any member is true
  *   repeat / repeat1                   → true
  *   optional                           → its content's (`buildOptional`), one
@@ -3404,7 +3381,7 @@ Each method builds the node tree-sitter's own DSL builds for the same call:
 `seq` and `choice` keep every member, a single one included; `optional`,
 `repeat`, `repeat1` and `field` wrap their content as given; `token` carries
 no `immediate` flag and `token.immediate` builds its own `IMMEDIATE_TOKEN`
-node. Nothing collapses at construction, so enrich and wire — which run
+node; `blank` builds `BLANK`, not an empty choice. Nothing collapses at construction, so enrich and wire — which run
 under both runtimes — read the same shape tree-sitter reads. The canonical
 shape the compiler phases read is produced once, at the compile boundary,
 by `compiler/canonical-rules.ts::canonicalRuleTree`. Evaluate's DSL wrappers
@@ -3444,6 +3421,10 @@ one representation difference `rulesEqual` treats as equal).
 // mints `aliasedTo`/`aliasedToId` here; those are wrapper-deletion facts
 // (`attributeAlias`), stamped once the ALIAS wrapper itself is consumed.
 ```
+
+### `packages/codegen/src/dsl/builders.ts::attributeChoice`
+
+`attributeBuilder.choice`. A choice with no blank member (`rule-patterns.ts::isBlank`) is built as it is, nonterminal. A blank arm makes the choice optional over its other arms (`rule-patterns.ts::withoutBlankMembers`): one arm is that arm made optional, several are their choice made optional, and none is blank (the empty choice). It goes through `buildOptional`, not the empty-match fold of `attributeBuilder.optional`, so `choice(',', blank())` keeps its `','` as `optional(',')` does in the render rules `flatten` builds through it. Every compile-side choice is built here (`compiler/flatten.ts::construct`, `compiler/simplify.ts::simplifyChoiceRule`), so a blank made after the compile boundary (an `eof()` that normalize lowers, a sequence that emptied) folds as the boundary folds an authored one (`compiler/canonical-rules.ts::canonicalChoiceRule`).
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::module`
 
@@ -3524,6 +3505,10 @@ one representation difference `rulesEqual` treats as equal).
 // would declare a type, not the global value, and a generic param on the
 // container would make bare `token(...)` uninstantiable).
 ```
+
+### `packages/codegen/src/dsl/authoring-globals.d.ts::eof`
+
+The global `eof()` a grammar file calls. Under tree-sitter's CLI it is tree-sitter's own builder; under sittir's evaluate it is `evaluate.ts::eof`. Both give `{ type: 'EOF' }`.
 
 ### `packages/codegen/src/dsl/rule-walker.ts::module`
 
@@ -4017,8 +4002,8 @@ The whole-text regex source of a token, composed from its interior rule: a strin
 #### body
 
 ```text
-/* Genuinely childless: SYMBOL/PATTERN/STRING/INDENT/DEDENT/NEWLINE are
-			   leaves; SUPERTYPE's `subtypes` are kind-name strings, not
+/* Genuinely childless: SYMBOL/PATTERN/STRING/INDENT/DEDENT/NEWLINE/
+			   EOF/BLANK are leaves; SUPERTYPE's `subtypes` are kind-name strings, not
 			   Rule<Phase> nodes. */
 ```
 
@@ -4039,18 +4024,9 @@ The whole-text regex source of a token, composed from its interior rule: a strin
 // serves both shapes uniformly downstream.
 ```
 
-### `packages/codegen/src/dsl/rule-patterns.ts::isSpliceableBareSeq`
+### `packages/codegen/src/dsl/rule-patterns.ts::isSpliceableBareMember`
 
-```text
-/**
- * A nested `seq` member carrying none of its own `fieldName`/`separator`/
- * `multiplicity` is structurally redundant — its members are siblings of
- * whatever else shares the parent seq, not a cardinality-carrying unit — and
- * splices (flattens) into the parent rather than surviving as its own
- * nesting level. `seq` applies it at construction (simplify's `buildSeq`), so
- * every derivation of "does this nested seq need to stay nested" agrees.
- */
-```
+A nested `seq` member, or a blank (`isBlank`), carrying none of its own `fieldName`/`separator`/`multiplicity` is structurally redundant. A bare seq's members are siblings of whatever else shares the parent seq, not a cardinality-carrying unit, so it splices (flattens) into the parent rather than surviving as its own nesting level; a bare blank has no members, so it splices away, as the compile boundary drops a blank member of a sequence (`withoutBlankMembers`). A blank that carries a field or a multiplicity stays, as a `FIELD` over a blank does at the boundary. `seq` applies it at construction (`builders.ts::buildSeq`) and simplify over a seq's simplified members (`compiler/simplify.ts::simplifySeqRule`), so every derivation of "does this member stay nested" agrees.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatorOf`
 
@@ -6510,6 +6486,14 @@ model see the same kinds.
 The content under a chain of named aliases.
 ```
 
+### `packages/codegen/src/dsl/builders.ts::collapsedInto`
+
+A wrapper that collapses into its one survivor: a sequence of one member, or a choice whose one non-blank arm became optional. The wrapper's attributes merge onto the survivor by the composition rules every collapse uses: `rule-attrs.ts::withAttrsFrom`'s absent-only transfer for the identity and flag attributes, and the multiplicity lattice for the composing one (`withWrapperMultiplicity`), so a survivor `optional` inside an `array` sequence is `array`. The one collapse for `buildSeq` and simplify's sequence and choice collapses (`compiler/simplify.ts::collapseSingleMemberSeq`, `simplifySeqRule`, `simplifyChoiceRule`).
+
+### `packages/codegen/src/dsl/builders.ts::withWrapperMultiplicity`
+
+`result` with the wrapper's multiplicity composed onto the inner rule's (`combineMultiplicity`), when the wrapper carries one; otherwise `result` unchanged, so a wrapper with no multiplicity of its own never stamps one. A composition that comes out single leaves `result` as it is. `collapsedInto` uses it for a survivor, and `compiler/simplify.ts::simplifyChoiceRule` for a choice that survives with its blank arms folded.
+
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichMintKind`
 
 What kind of rule enrich added:
@@ -7082,7 +7066,7 @@ A symbol's kind in tree-sitter's variable tables: `named`, `hidden` (underscore-
 
 ### `packages/codegen/src/dsl/symbol-table.ts::Variable`
 
-One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place.
+One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place. A `_repeatN` that repeat expansion mints carries its `owner`, the rule it was expanded from, so a fact about it is reported on that rule (`eofNotLastSites`).
 
 ### `packages/codegen/src/dsl/symbol-table.ts::ProductionStep`
 
@@ -7091,6 +7075,10 @@ One step of a flattened production: the symbol key and, when one applies, the al
 ### `packages/codegen/src/dsl/symbol-table.ts::BLANK_RULE`
 
 The interned empty rule.
+
+### `packages/codegen/src/dsl/symbol-table.ts::END_STEP_KEY`
+
+The step key `productionsOf` gives an `EOF`: tree-sitter's built-in end symbol, which no rule or token owns.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::sameShape`
 
@@ -7114,7 +7102,23 @@ Rewrites every `SYM` key in an interned rule.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::productionsOf`
 
-Flattens an interned rule into its productions: a `CHOICE` contributes each member's productions (deduped), a `SEQ` the cartesian product of its members', and the innermost alias applies to every step under it.
+Flattens an interned rule into its productions: a `CHOICE` contributes each member's productions (deduped), a `SEQ` the cartesian product of its members', an `EOF` one end step (`END_STEP_KEY`), and the innermost alias applies to every step under it.
+
+### `packages/codegen/src/dsl/symbol-table.ts::completedProductions`
+
+A variable's productions as tree-sitter keeps them after `eof()`: a production with an end step anywhere but last is dropped, since it can never complete, and a trailing end step is removed (the production then needs end-of-input lookahead). It runs once per variable, on the whole rule, so an `EOF` that a later `SEQ` member follows is caught.
+
+### `packages/codegen/src/dsl/symbol-table.ts::alwaysEndingInput`
+
+The nonterminals every derivation of which ends the input: each of whose productions ends in an end step or in such a nonterminal. It is the greatest fixpoint, so a repetition of an input-ending item counts, while `choice('\n', eof())`, which can end without the input ending, does not.
+
+### `packages/codegen/src/dsl/symbol-table.ts::EofNotLast`
+
+A rule with a production the parser can never produce, because something follows the end of the input in it: `kind` is the authored rule holding the production. `ending` is the rule that always ends input and is followed, or none when an `eof()` itself is. `repetition` marks a repetition in `kind` whose item ends at `eof()`, so it can never repeat.
+
+### `packages/codegen/src/dsl/symbol-table.ts::eofNotLastSites`
+
+Every `EofNotLast` of a grammar's flattened productions, before `completedProductions` drops any: a step that is an end step, or a nonterminal in `alwaysEndingInput`, anywhere but last. A repeat helper is reported on its owner. A helper that ends input is explained by the authored rule its productions end in, or as a repetition ending at `eof()` when they end in the end step itself.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
 
@@ -7154,11 +7158,11 @@ Predicts the parser's symbol table from the evaluated grammar by porting tree-si
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
-A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported.
+A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported. `eofNotLast` lists the rules with a production that continues past the end of the input (`eofNotLastSites`).
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions and `eofNotLast` sites, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
 
@@ -7178,7 +7182,7 @@ Compares the predicted kind catalog with the parser's row by row on `PREDICTED_K
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
-The rows `predictKindCatalog` predicts, with the grammar's undefined names and key collisions beside them.
+The rows `predictKindCatalog` predicts, with the grammar's undefined names, key collisions and `eofNotLast` sites beside them.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
 
@@ -7687,6 +7691,10 @@ The authored patches with each grammar-bindings kind's sets appended after the k
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 
 The symbols a set of rule bodies references under a named alias and never by name. An authored hidden rule in that set is not a pattern candidate: its owner gave it a visible name at every reference, and the parser makes that alias the rule's own name only while every reference carries it. Folding an unrelated inline body of the same shape into a plain reference would add an unaliased reference, and the kind would stop being the aliased one. Evaluate's `applyPatternReplacement` and wire's `applyWirePatternReplacement` both ask it; a candidate that folds into an alias site (a declared group) is not subject to it.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::withoutBlankMembers`
+
+A sequence or choice without its blank members (`isBlank`), or the node itself when it has none. In a sequence a blank takes no slot, has no child and renders no text, so the sequence matches what it matched before: the compile boundary drops them (`compiler/canonical-rules.ts::canonicalRule`) before peeling a single remaining member, and normalize drops the ones made after it (`compiler/normalize.ts::blanksDropped`). In a choice the blank arms are what make it optional, so dropping them is half of the fold: `optionalContentOf` and `builders.ts::attributeChoice` make the remaining arms optional.
 
 ### `packages/codegen/src/dsl/bind.ts::LeadWithin`
 
@@ -9241,3 +9249,7 @@ Imports a grammar entry with `sittir-grammar.ts::UNBOUND_ENV` set (the prior val
 ### `packages/codegen/src/dsl/evaluate.ts::withDslGlobals`
 
 Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar entry inside it; `bindings/module.ts::loadBindingsModule` imports a `grammar.bindings.ts`, whose authoring helpers call the globals.
+
+### `packages/codegen/src/dsl/evaluate.ts::eof`
+
+tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`compiler/normalize.ts::blanksDropped`).

@@ -3,6 +3,7 @@ import type { OptionsConfig } from './wire/options-block.ts';
 import {
 	ALIAS,
 	CHOICE,
+	EOF,
 	FIELD,
 	OPTIONAL,
 	PATTERN,
@@ -155,7 +156,11 @@ function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evalua
 }
 
 function blank(): Rule<'evaluate'> {
-	return { type: CHOICE, members: [] };
+	return structuralBuilder.blank();
+}
+
+function eof(): Rule<'evaluate'> {
+	return { type: EOF };
 }
 
 function string(value: string): StringRule<'evaluate'> {
@@ -962,6 +967,7 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 		reserved: (contextName: string, content: Input) => structuralBuilder.reserved(contextName, coerceToRule(content)),
 		alias,
 		blank,
+		eof,
 		indent: () => structuralBuilder.indent(),
 		dedent: () => structuralBuilder.dedent()
 	};

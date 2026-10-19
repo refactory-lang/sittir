@@ -17,7 +17,8 @@ import type {
 	PrecDynamicRule,
 	ReservedRule,
 	ImmediateTokenRule,
-	BlankRule
+	BlankRule,
+	EofRule
 } from '../grammar-shapes/grammar-json.ts';
 
 declare global {
@@ -56,6 +57,7 @@ declare global {
 	function dedent(): StringRule<string>;
 
 	function blank(): BlankRule;
+	function eof(): EofRule;
 }
 
 export {};
