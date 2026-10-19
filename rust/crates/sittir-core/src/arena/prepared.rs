@@ -3,17 +3,16 @@
 //! never rewritten. One overlay is built for one render and dropped after it.
 //!
 //! A fact of a node itself is keyed by the node's place: its own kind's
-//! edges, its print settings, its slots' per-item separators, its defaulted
-//! units and its merged trivia. A fact a holder writes about the child it
+//! edges, its print settings, its defaulted units and its prepared layout. A fact a holder writes about the child it
 //! holds at one site (a gap fill, a seat) is keyed by that site, so a node
 //! placed at two sites gets each site's facts, as each native copy does.
 
 use std::collections::HashMap;
 
 use super::entry_by_word;
+use crate::layout::NodeLayout;
 use crate::options::Edges;
 use crate::slot::CoordinateEdges;
-use crate::trivia::NodeTrivia;
 use crate::trivia_store::{Place, Site};
 use crate::types::{Delimiter, KindId};
 
@@ -25,30 +24,31 @@ pub struct PreparedNode<T> {
     pub edges: Edges,
     pub delimiter: Option<Delimiter>,
     pub separator_kind: Option<KindId>,
-    /// Its slots' prepared facts, by stamped word, for the slots that have any.
+    /// Its slots' print settings and defaulted units, by stamped word, for
+    /// the slots that have any.
     pub slots: Vec<PreparedSlot>,
-    /// Its trivia merged with the trivia of the node it was rebuilt from,
-    /// untrimmed: changed edges are a site's fact, so the render drops the
-    /// layout runs at the edges its site marks changed.
-    pub trivia: Option<NodeTrivia<T>>,
+    /// Its layout as a native node's reads after prepare: its sides merged
+    /// with the sides of the node it was rebuilt from, its units' sides, its
+    /// slots' stored layouts and per-item separators, and where it came
+    /// from. Its trivia is untrimmed: changed edges are a site's fact, so the
+    /// render drops the layout runs at the edges its site marks changed. Its
+    /// edges are the overlay's (`Prepared::edges`).
+    pub layout: Option<NodeLayout<T>>,
 }
 
 impl<T> Default for PreparedNode<T> {
     fn default() -> Self {
-        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), trivia: None }
+        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), layout: None }
     }
 }
 
 /// What prepare fills for one slot of a node: a list's separator spacing,
-/// its items' own separators, and an optional slot's defaulted unit.
+/// and an optional slot's defaulted unit.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct PreparedSlot {
     pub word: u32,
     pub space_before: Option<KindId>,
     pub space_after: Option<KindId>,
-    /// The separator before each item, by its place in the slot, where its
-    /// source spells another than the slot's.
-    pub tokens: Vec<Option<KindId>>,
     /// The unit an unset optional slot takes from its option site.
     pub unit: Option<KindId>,
 }
@@ -188,8 +188,8 @@ mod tests {
         let node = prepared.node_mut(child());
         node.slot_mut(2).space_after = Some(KindId(1));
         node.slot_mut(4).unit = Some(KindId(3));
-        node.slot_mut(2).tokens = vec![None, Some(KindId(8))];
-        assert_eq!(node.slot(2), Some(&PreparedSlot { word: 2, space_after: Some(KindId(1)), tokens: vec![None, Some(KindId(8))], ..PreparedSlot::default() }));
+        node.slot_mut(2).space_before = Some(KindId(8));
+        assert_eq!(node.slot(2), Some(&PreparedSlot { word: 2, space_before: Some(KindId(8)), space_after: Some(KindId(1)), ..PreparedSlot::default() }));
         assert_eq!(node.slot(4).and_then(|slot| slot.unit), Some(KindId(3)));
         assert_eq!(node.slot(6), None);
         assert_eq!(prepared.node(Place::Record(Address(9))), None);

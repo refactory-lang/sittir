@@ -5,8 +5,11 @@
 //! writer writes renders as a record refusal (`RenderError::Record`).
 
 use super::{Address, Arena, ArenaError, Cell, ListCell, Prepared, StringRef, TreeArena};
+use crate::layout::{render_framed, BodyLayout, NodeLayout, TriviaRole};
+use crate::options::Edges;
 use crate::render::{Render, RenderError, RenderResult, RenderSink, SourceTable};
-use crate::slot::NodeCoordinate;
+use crate::slot::{ChangedEdges, NodeCoordinate};
+use crate::trivia::TriviaSeam;
 use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::types::{ItemIndex, KindId, NodeIndex, Span, TreeId};
 use crate::view::{KindOf, KindTest, Slot};
@@ -155,6 +158,81 @@ impl<'a, T> RecordCtx<'a, T> {
     #[must_use]
     pub fn row_record(self, row: NodeIndex) -> Option<Address> {
         self.arenas.tree(self.tree?)?.record(row)
+    }
+}
+
+/// A record's layout as its render body reads it (`BodyLayout`): the layout
+/// its prepare left in the overlay, the edges the overlay gives it at its
+/// site (`Prepared::edges`), and the edges its site marks changed, where its
+/// sides render without their layout runs.
+pub struct RecordLayout<'a, T> {
+    layout: Option<&'a NodeLayout<T>>,
+    edges: Edges,
+    changed: ChangedEdges,
+}
+
+impl<T> Clone for RecordLayout<'_, T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<T> Copy for RecordLayout<'_, T> {}
+
+impl<'a, T> RecordLayout<'a, T> {
+    /// The layout of the node at `place`, held at `site`: `stored` is the
+    /// edges its record stores, and `changed` the edges its site marks.
+    #[must_use]
+    pub fn new(prepared: &'a Prepared<T>, place: Place, site: Option<Site<Place>>, stored: Edges, changed: ChangedEdges) -> Self {
+        let layout = prepared.node(place).and_then(|node| node.layout.as_ref());
+        Self { layout, edges: prepared.edges(stored, site, place), changed }
+    }
+}
+
+impl<T: Render + TriviaSeam + Clone> RecordLayout<'_, T> {
+    /// Writes a node of `kind` between its layout, as `NodeLayout::render`
+    /// writes a native node.
+    ///
+    /// # Errors
+    ///
+    /// What `body`, or a trivia entry, refuses.
+    pub fn render(self, kind: Option<KindId>, role: TriviaRole, w: &mut dyn RenderSink, body: impl FnOnce(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
+        let origin = self.layout.and_then(|layout| layout.at.as_ref().or(layout.sides.as_ref()));
+        let trivia = self.layout.and_then(|layout| layout.trivia.as_ref());
+        match trivia {
+            Some(trivia) if self.changed.leading || self.changed.trailing => {
+                let mut trimmed = trivia.clone();
+                trimmed.trim_changed(self.changed);
+                render_framed(Some(&trimmed), self.edges, kind, origin, role, w, body)
+            }
+            _ => render_framed(trivia, self.edges, kind, origin, role, w, body),
+        }
+    }
+}
+
+impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for RecordLayout<'a, T> {
+    fn edges(self) -> Edges {
+        self.edges
+    }
+
+    fn render_unit(self, slot: &str, item: ItemIndex, w: &mut dyn RenderSink, body: impl FnOnce(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
+        self.layout.render_unit(slot, item, w, body)
+    }
+
+    fn slot_tokens(self, slot: &str) -> &'a [Option<KindId>] {
+        self.layout.slot_tokens(slot)
+    }
+
+    fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
+        self.layout.list_units(slot)
+    }
+
+    fn render_inner(self, w: &mut dyn RenderSink) -> RenderResult {
+        self.layout.render_inner(w)
+    }
+
+    fn has_inner(self) -> bool {
+        self.layout.has_inner()
     }
 }
 

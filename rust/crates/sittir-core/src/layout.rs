@@ -513,17 +513,7 @@ impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
         }
         let changed = std::mem::take(&mut self.changed);
         if let Some(trivia) = self.trivia.as_mut() {
-            use crate::trivia_table::TriviaSide;
-            for (side, entries) in [(TriviaSide::Leading, &mut trivia.leading), (TriviaSide::Trailing, &mut trivia.trailing)] {
-                if let Some(list) = entries.as_mut().filter(|_| changed.on(side)) {
-                    crate::trivia::on_changed_edge(list, side, crate::trivia::TriviaEntry::is_layout, crate::trivia::TriviaEntry::depth, |delta| {
-                        T::depth_member(delta).map(|member| crate::trivia::TriviaEntry::new(crate::slot::SlotValue::Node(member)))
-                    });
-                    if list.is_empty() {
-                        *entries = None;
-                    }
-                }
-            }
+            trivia.trim_changed(changed);
         }
         for unit in &mut self.units {
             unit.trivia.prepare(ctx)?;

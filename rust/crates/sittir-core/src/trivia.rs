@@ -490,6 +490,23 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
     }
 }
 
+impl<T: TriviaSeam> NodeTrivia<T> {
+    /// The node's sides once its neighbour changed on `changed`'s edges:
+    /// each such side without its edge runs (`on_changed_edge`), and none
+    /// where nothing is left.
+    pub fn trim_changed(&mut self, changed: crate::slot::ChangedEdges) {
+        use crate::trivia_table::TriviaSide;
+        for (side, entries) in [(TriviaSide::Leading, &mut self.leading), (TriviaSide::Trailing, &mut self.trailing)] {
+            if let Some(list) = entries.as_mut().filter(|_| changed.on(side)) {
+                on_changed_edge(list, side, TriviaEntry::is_layout, TriviaEntry::depth, |delta| T::depth_member(delta).map(|member| TriviaEntry::new(SlotValue::Node(member))));
+                if list.is_empty() {
+                    *entries = None;
+                }
+            }
+        }
+    }
+}
+
 /// Whether a node's trivia holds inner entries.
 #[must_use]
 pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> bool {
