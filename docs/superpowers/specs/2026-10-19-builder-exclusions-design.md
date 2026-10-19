@@ -137,7 +137,7 @@ Rust: `const` with `async` on `function_modifiers`, and `ref` on `static_item`. 
 **Holes.** The parser refuses four combinations that a kind's model can still hold:
 - `static` with `abstract` on the plain field: TS1243, declared with the accessor field's group.
 - `-` or `+` with no `readonly`, on both index-signature forms: TS1131. Both forms take `seq(optional(sign), 'readonly')`, but the model keeps `sign` and `readonly` as separate slots, so a builder can set the sign alone. `[present('sign'), absent('readonly')]` on the mapped form closes it; on the colon form the sign ban already does.
-- `abstract` with `override` on the field: `abstract override x` is valid TypeScript, and both sittir's parser and upstream's refuse it. That is a grammar defect, not an exclusion (§9).
+- `abstract` with `override` on the field: `abstract override x` is valid TypeScript, and both sittir's parser and upstream's refuse it. That is a grammar defect, not an exclusion (§9), and is [filed as an issue](https://github.com/refactory-lang/sittir/issues/904) for the acceptance plan's valid-syntax-rejected stage.
 
 ## 4. Model stamps
 

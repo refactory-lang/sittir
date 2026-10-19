@@ -145,6 +145,14 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	slotLayouts(treeId: number, index: number): unknown[];
 	/**
+	 * The separator the list at descendant `index` of tree `treeId` writes between its items, as a
+	 * grammar id: the one its source spells where its slot stores one, else the one the read-time
+	 * options render; `null` for a node that is no list.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	slotSeparator(treeId: number, index: number): number | null;
+	/**
 	 * The separator before the node at descendant `index` of tree `treeId` as an item of its parent's
 	 * list slot, as a grammar id, where its source spells another than the one the slot renders.
 	 *
@@ -454,6 +462,7 @@ export function createNativeEngine<
 								return units;
 							},
 							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
+							slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
 							separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,
 							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 							isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
