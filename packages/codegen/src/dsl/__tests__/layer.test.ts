@@ -730,6 +730,34 @@ describe('a generated layer checks its fixpoint where it is produced', () => {
 		}
 	}, 120_000);
 
+	it('an enrich shape in a generated top layer is returned by generatedLayerDiagnostics, which the compile adds under checkGeneratedLayers, and is absent from evaluateDsl', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'generated-shape-'));
+		try {
+			writeFileSync(join(dir, 'base.js'), "module.exports = grammar({ name: 'demo', extras: ($) => [], rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, program: ($) => repeat(choice($.item, $.a, $.b)), a: ($) => seq('(', $.item), b: ($) => seq('[', $.item), item: ($) => $.word } });\n");
+			writeSittirGrammarPackage(dir, join(dir, 'base.js'), 'demo', '', undefined, { bindings: "generated: true, rules: { wrap: ($) => alias(choice($.a, $.b), $.shown) }" } as never);
+			const bindings = join(dir, 'grammar.bindings.ts');
+			const evaluated = await evaluateDsl(bindings);
+			expect(evaluated.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-over-choice' }));
+			expect(await generatedLayerDiagnostics(bindings)).toContainEqual(expect.objectContaining({ code: 'alias-over-choice', ownerKind: 'wrap', severity: 'error', canProceed: false }));
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 120_000);
+
+	it('the same shape in an authored top layer is reported by the evaluation, and generatedLayerDiagnostics returns nothing for it', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'authored-shape-'));
+		try {
+			writeFileSync(join(dir, 'base.js'), "module.exports = grammar({ name: 'demo', extras: ($) => [], rules: { source: ($) => repeat($.word), word: () => /[a-z]+/, program: ($) => repeat(choice($.item, $.a, $.b)), a: ($) => seq('(', $.item), b: ($) => seq('[', $.item), item: ($) => $.word } });\n");
+			writeSittirGrammarPackage(dir, join(dir, 'base.js'), 'demo', '', undefined, { bindings: "rules: { wrap: ($) => alias(choice($.a, $.b), $.shown) }" } as never);
+			const bindings = join(dir, 'grammar.bindings.ts');
+			const evaluated = await evaluateDsl(bindings);
+			expect((evaluated.layerDiagnostics ?? []).filter((d) => d.code === 'alias-over-choice')).toHaveLength(1);
+			expect(await generatedLayerDiagnostics(bindings)).toEqual([]);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 120_000);
+
 	it('an authored top layer is reported once by the evaluation, and generatedLayerDiagnostics returns nothing for it', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'authored-fixpoint-'));
 		try {

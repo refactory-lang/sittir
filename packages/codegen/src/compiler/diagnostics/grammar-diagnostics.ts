@@ -30,6 +30,7 @@ import { isLexedBoundary, RuleWalker } from '../../dsl/rule-walker.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
+import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 
 export type { GrammarDiagnostic };
 
@@ -332,6 +333,7 @@ export function collectGrammarDiagnostics(input: {
 const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['refine-config-invalid', 'token-interior-unstructurable']);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
+	...Object.keys(ENRICH_SHAPES),
 	'dangling-internal-ref',
 	'unpredictable-symbol-table',
 	'kind-key-collision',

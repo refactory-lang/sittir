@@ -1,3 +1,4 @@
+import { enrichShapeDiagnostics, enrichShapesOf } from './enrich-shapes.ts';
 import type { GrammarJson, SymbolRule } from '../grammar-shapes/grammar-json.ts';
 import type { Rule } from '../types/rule.ts';
 import { FIELD } from '../types/rule-types.ts'; // @rule-type-consts
@@ -264,11 +265,13 @@ function enrichFixpoint(result: GrammarResult, ctx: LayerCtx, displayFamilies: D
 	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])]
 		.filter((name) => JSON.stringify(before[name]) !== JSON.stringify(after[name]))
 		.sort();
-	if (changed.length === 0) return { checked, diagnostics: [] };
+	const shapeDiagnostics = enrichShapeDiagnostics(ctx.name, enrichShapesOf(checked));
+	if (changed.length === 0) return { checked, diagnostics: shapeDiagnostics };
 	const addedFields = changed.flatMap((rule) => fieldsAddedTo(before[rule], after[rule]).map((field) => ({ rule, field })));
 	return {
 		checked,
 		diagnostics: [
+			...shapeDiagnostics,
 			{
 				scope: 'grammar',
 				code: 'layer-not-enrich-fixpoint',
