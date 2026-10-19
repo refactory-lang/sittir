@@ -200,7 +200,7 @@ fn split_template(template: &str) -> (&str, &str) {
 
 /// Writes template text with `{{` and `}}` unescaped. Any other brace is a
 /// malformed template, which only the emitter can produce.
-fn write_literal(text: &str, w: &mut dyn RenderSink) -> RenderResult {
+pub(crate) fn write_literal(text: &str, w: &mut dyn RenderSink) -> RenderResult {
     let mut rest = text;
     while let Some(at) = rest.find(['{', '}']) {
         w.text(&rest[..at])?;

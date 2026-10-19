@@ -12,6 +12,7 @@ use std::collections::HashMap;
 
 use super::entry_by_word;
 use crate::options::Edges;
+use crate::slot::CoordinateEdges;
 use crate::trivia::NodeTrivia;
 use crate::trivia_store::{Place, Site};
 use crate::types::{Delimiter, KindId};
@@ -70,11 +71,14 @@ impl<T> PreparedNode<T> {
 pub struct Prepared<T> {
     nodes: HashMap<Place, PreparedNode<T>>,
     sites: HashMap<Site<Place>, Edges>,
+    /// The seams of the kind an untouched coordinate child names, by its site:
+    /// a coordinate renders its slice between them.
+    coordinates: HashMap<Site<Place>, CoordinateEdges>,
 }
 
 impl<T> Default for Prepared<T> {
     fn default() -> Self {
-        Self { nodes: HashMap::new(), sites: HashMap::new() }
+        Self { nodes: HashMap::new(), sites: HashMap::new(), coordinates: HashMap::new() }
     }
 }
 
@@ -100,6 +104,17 @@ impl<T> Prepared<T> {
     /// an unset side leaves a stored side alone, as it does on a native child.
     pub fn site_edges_mut(&mut self, site: Site<Place>, stored: Edges) -> &mut Edges {
         self.sites.entry(site).or_insert(stored)
+    }
+
+    /// The seams prepare resolved for the coordinate child at `site`.
+    #[must_use]
+    pub fn coordinate_edges(&self, site: Site<Place>) -> Option<CoordinateEdges> {
+        self.coordinates.get(&site).copied()
+    }
+
+    /// The seams of the coordinate child at `site`, for prepare to resolve.
+    pub fn set_coordinate_edges(&mut self, site: Site<Place>, edges: CoordinateEdges) {
+        self.coordinates.insert(site, edges);
     }
 
     /// The edges the node at `place` renders with, at `site` when a holder

@@ -17,6 +17,9 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
+    /// A record's cell or word that no record writer writes, met by a view.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
 }
 
 impl fmt::Display for RenderError {
@@ -25,6 +28,8 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
         }
     }
 }

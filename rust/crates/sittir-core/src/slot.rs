@@ -233,7 +233,7 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 /// sides as a rendered owner is (`render_framed`), unless its node's frame
 /// is already open (`RenderSink::in_frame_of`); its kind's edges are the
 /// coordinate's own (`write_between_edges`).
-fn write_coordinate(
+pub(crate) fn write_coordinate(
     coord: &NodeCoordinate,
     adjacent: bool,
     w: &mut dyn crate::render::RenderSink,

@@ -14,6 +14,7 @@
 pub mod cell;
 mod prepared;
 pub mod rows;
+mod view;
 pub mod side;
 mod write;
 
@@ -22,6 +23,7 @@ use std::fmt;
 
 pub use cell::{Cell, ListCell, ParsedLink};
 pub use prepared::{Prepared, PreparedNode, PreparedSlot};
+pub use view::{RecordArenas, RecordCtx, RecordItems, RecordSlot, RecordView};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record};
 pub use rows::TreeArena;
 pub use side::{SideRecord, SideSlot, Sides};
