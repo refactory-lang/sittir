@@ -280,6 +280,18 @@ The vocabulary as the bindings consult it, assembled from `readVocabularySource`
 
 Every kind is keyed by its `$kind` and carries its own members (each optional or required, and a flag when `Member.flag` says so), its parent, and the value it is refined by, when it is an owner's refinement. `members(path)` adds the inherited members, nearest first: at each kind on the line its own, then those of the value it is refined by, along the value's own line. So `declaration.function.public.restricted` has the `scope` that `scoped-visibility` gives `modifier.visibility.public.restricted`. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` and no kind of the same name is not a vocabulary kind.
 
+### `packages/codegen/src/bindings/vocabulary-paths.ts::VOCABULARY_PATHS_FILE`
+
+Where the vocabulary path list is written: `packages/common/src/portable/vocabulary-paths.ts`. It sits beside the portable trees that read it, in the runtime package, because `@sittir/types` holds no runtime values and every top-level file in the vocabulary folder is read as a vocabulary source (`isVocabularySource`).
+
+### `packages/codegen/src/bindings/vocabulary-paths.ts::emitVocabularyPaths`
+
+The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array. The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
+
+### `packages/codegen/src/bindings/vocabulary-paths.ts::writeVocabularyPaths`
+
+Reads the vocabulary and writes `emitVocabularyPaths`'s output to `VOCABULARY_PATHS_FILE`, leaving the file untouched when it already holds that text. The path list belongs to no grammar, so it has one writer, `regenerateGrammars`, which calls this once per run before any grammar generates; the per-grammar generations run in parallel and would otherwise race on the file.
+
 ### `packages/codegen/src/bindings/vocabulary.ts::Declared`
 
 One interface as declared, plain JSON so it crosses the pinned child:

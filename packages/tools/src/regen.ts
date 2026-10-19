@@ -144,6 +144,7 @@ async function inPool<T, R>(items: readonly T[], limit: number, run: (item: T) =
 
 export async function regenerateGrammars(grammars: readonly string[], cwd: string, opts: RegenerateOptions = {}): Promise<number> {
 	(await load('treeSitterCli')).ensureWasmToolchain();
+	await (await load('vocabularyPaths')).writeVocabularyPaths();
 	const verbose = opts.verbose === true;
 	const { regenerate: stale, reextract, outcomes } =
 		opts.force === true

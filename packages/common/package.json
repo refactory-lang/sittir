@@ -43,6 +43,11 @@
 			"import": "./dist/language.js",
 			"default": "./dist/language.js"
 		},
+		"./portable": {
+			"types": "./dist/portable/index.d.ts",
+			"import": "./dist/portable/index.js",
+			"default": "./dist/portable/index.js"
+		},
 		"./utils": {
 			"types": "./dist/utils.d.ts",
 			"import": "./dist/utils.js",
