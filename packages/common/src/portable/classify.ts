@@ -6,8 +6,8 @@ import { spanOf } from '../node-data.ts';
 
 type Node = { readonly $type: number; readonly $text?: string };
 
-/** Reads a node of a bound grammar as the vocabulary path of its kind's first read entry that holds, if any. */
-export type PortableClassifier = <T extends Node>(node: T) => string | undefined;
+/** Reads a node or a bare kind id of a bound grammar as the vocabulary path of its kind's first read entry that holds, if any. */
+export type PortableClassifier = <T extends Node>(value: T | number) => string | undefined;
 
 /** Whether a value is an object with a numeric kind id, the shape a classifier reads. */
 export const hasKind = (value: unknown): value is Node =>
@@ -22,8 +22,9 @@ const classifiers = new WeakMap<PortableRows, PortableClassifier>();
  * The classifier of a bound grammar's portable rows, built once per rows object.
  *
  * @param rows - The rows a bound grammar's engine carries.
- * @returns A function reading a node as the path of its kind's first read entry that holds. An entry that depends on where the
- * node sits (a placement, or a condition on an enclosing node) is skipped, so the node reads as its next entry.
+ * @returns A function reading a node, or a bare kind id, as the path of its kind's first read entry that holds. An entry that
+ * depends on where the value sits (a placement, or a condition on an enclosing node) is skipped, so the value reads as its next
+ * entry. A kind id reads its own text from the fixed texts and holds no slot.
  */
 export function classifierOf(rows: PortableRows): PortableClassifier {
 	let classifier = classifiers.get(rows);
@@ -59,8 +60,8 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 					: undefined;
 	const typeOf = (item: unknown): readonly number[] =>
 		typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];
-	const conditionHolds = (condition: PortableCondition, node: Node): boolean => {
-		let reached: readonly unknown[] = [node];
+	const conditionHolds = (condition: PortableCondition, value: Node | number): boolean => {
+		let reached: readonly unknown[] = [value];
 		for (const step of condition.via)
 			reached = reached.filter(hasKind).flatMap((n) => anchored(itemsIn(n, step), step.anchor));
 		const subjects = (subject: QuerySubject): readonly unknown[] =>
@@ -70,8 +71,8 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 			types: (subject) => subjects(subject).flatMap(typeOf)
 		});
 	};
-	return (node) =>
-		table.entries[node.$type]?.find(
-			(entry) => unplaced(entry) && entry.test.every((condition) => conditionHolds(condition, node))
+	return (value) =>
+		table.entries[typeof value === 'number' ? value : value.$type]?.find(
+			(entry) => unplaced(entry) && entry.test.every((condition) => conditionHolds(condition, value))
 		)?.path;
 }

@@ -194,12 +194,13 @@ describe('portable is: python', async () => {
 describe('portable is: rust', async () => {
 	const { engine, at, find } = await surfaces('rust');
 
-	it('reads no boolean literal yet: a keyword leaf reads as a bare kind id, which names no engine until parsed units carry identity', () => {
+	it('reads a boolean literal, a kind id, by its own text', () => {
 		const t = find('fn f() { let a = true; let b = false; }\n', 'true_keyword');
 		const f = find('fn f() { let a = true; let b = false; }\n', 'false_keyword');
 		expect(typeof t).toBe('number');
-		expect(at('literal.boolean.true')(t)).toBe(false);
-		expect(at('literal.boolean.false')(f)).toBe(false);
+		expect(at('literal.boolean.true')(t)).toBe(true);
+		expect(at('literal.boolean.false')(t)).toBe(false);
+		expect(at('literal.boolean.false')(f)).toBe(true);
 	});
 
 	it('reads a string literal\'s content as its text', () => {
@@ -217,12 +218,12 @@ describe('portable is: rust', async () => {
 		expect(strings.map((node) => at('literal.string')(node))).toEqual([true, true, true]);
 	});
 
-	it('reads a self parameter by the receiver kind, and the self it names not yet: a keyword leaf reads as a bare kind id, which names no engine until parsed units carry identity', () => {
+	it('reads a self parameter and the self it names by the receiver kinds', () => {
 		const SOURCE = 'impl A { fn f(&self) -> u8 { self.x } }\n';
 		const parameter = find(SOURCE, 'self_parameter');
 		const receiver = find(SOURCE, 'self', undefined, 1);
 		expect(at('declaration.parameter.receiver')(parameter)).toBe(true);
-		expect(at('identifier.receiver')(receiver)).toBe(false);
+		expect(at('identifier.receiver')(receiver)).toBe(true);
 	});
 
 	it('reads a captured pattern as the as-pattern and a slice pattern as the list pattern', () => {
@@ -372,7 +373,7 @@ describe('portable is: rust', async () => {
 			expect(at('expression.range.inclusive')(range), kind).toBe(false);
 		}
 	});
-	it('reads no primitive type yet: a keyword leaf reads as a bare kind id, which names no engine until parsed units carry identity', () => {
+	it('reads each primitive type, a kind id, by its keyword, an unsigned width as its signed width', () => {
 		const SOURCE = 'fn f(a: i8, b: u8, c: i128, d: isize, e: usize, g: f32, h: f64, i: bool, j: char, k: &str) -> ! { loop {} }\n';
 		for (const [keyword, path] of [
 			['i8_keyword', 'type.primitive.integral.int8'],
@@ -389,9 +390,14 @@ describe('portable is: rust', async () => {
 		] as const) {
 			const node = find(SOURCE, keyword);
 			expect(typeof node, keyword).toBe('number');
-			expect(at(path)(node), keyword).toBe(false);
-			expect(at('type.primitive')(node), keyword).toBe(false);
+			expect(at(path)(node), keyword).toBe(true);
+			expect(at('type.primitive')(node), keyword).toBe(true);
 		}
+		const f32 = find(SOURCE, 'f32_keyword');
+		const i8 = find(SOURCE, 'i8_keyword');
+		expect(at('type.primitive.integral')(f32)).toBe(false);
+		expect(at('type.primitive.floating')(i8)).toBe(false);
+		expect(at('type.primitive.integral.int16')(i8)).toBe(false);
 	});
 
 	it.skip('reads an unsigned width by its flag (pending: `unsigned` is a flag of type.primitive.integral, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
@@ -477,9 +483,9 @@ describe('portable is: typescript', async () => {
 		expect(at('clause.bounds')(bounds)).toBe(true);
 	});
 
-	it('reads no this yet: a keyword leaf reads as a bare kind id, which names no engine until parsed units carry identity', () => {
+	it('reads this, a kind id, as the receiver', () => {
 		const receiver = find('class A { f() { return this; } }\n', 'this');
-		expect(at('identifier.receiver')(receiver)).toBe(false);
+		expect(at('identifier.receiver')(receiver)).toBe(true);
 	});
 
 	it('keeps each path whose last segment a function owns', () => {
@@ -657,7 +663,7 @@ describe('portable is: typescript', async () => {
 		expect(at('identifier.property')(declared)).toBe(true);
 		expect(at('identifier.property')(read)).toBe(true);
 	});
-	it('reads no predefined type yet: a keyword leaf reads as a bare kind id, which names no engine until parsed units carry identity', () => {
+	it('reads each predefined type, a kind id, by its keyword', () => {
 		const SOURCE = 'let a: any; let b: number; let c: boolean; let d: string; let e: symbol; let g: void; let h: unknown; let i: never; let j: object;\n';
 		for (const [keyword, path] of [
 			['any_keyword', 'type.primitive.unchecked'],
@@ -672,14 +678,16 @@ describe('portable is: typescript', async () => {
 		] as const) {
 			const node = find(SOURCE, keyword);
 			expect(typeof node, keyword).toBe('number');
-			expect(at(path)(node), keyword).toBe(false);
-			expect(at('type.primitive')(node), keyword).toBe(false);
+			expect(at(path)(node), keyword).toBe(true);
+			expect(at('type.primitive')(node), keyword).toBe(true);
 		}
+		const unknown = find(SOURCE, 'unknown_keyword');
+		expect(at('type.primitive.unchecked')(unknown)).toBe(false);
 	});
 
-	it('reads no unique symbol yet: a keyword leaf reads as a bare kind id, which names no engine until parsed units carry identity', () => {
+	it('reads a unique symbol, a kind id, as a symbol', () => {
 		const unique = find('declare const s: unique symbol;\n', 'unique');
-		expect(at('type.primitive.symbol')(unique)).toBe(false);
+		expect(at('type.primitive.symbol')(unique)).toBe(true);
 	});
 
 	it.skip('reads a unique symbol by its flag (pending: `unique` is a flag of type.primitive.symbol, and the runtime flag is-guards come with the runtime-bindings stage)', () => {

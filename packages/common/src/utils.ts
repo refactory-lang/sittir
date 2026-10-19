@@ -67,14 +67,14 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	markRebuilt(result);
 	carryRead(node, result);
 	carrySource(node, result);
-	const facts = handle?.current.trivia;
+	const facts: TriviaFacts | undefined = handle?.current.trivia;
 	if (facts !== undefined) {
 		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
 		carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, stands);
 	}
 	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
 	if (inner.some((entry) => typeof entry !== 'number')) {
-		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
+		const kind = facts?.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
 	const trivia = triviaOf(node);

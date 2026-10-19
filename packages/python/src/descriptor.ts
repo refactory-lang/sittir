@@ -6,7 +6,7 @@ import { languageGuards } from '@sittir/common/language';
 import * as python from './descriptor.js';
 import { TSKindId } from './kinds.js';
 import { is as guards } from './is.js';
-import { portable } from '@sittir/common/portable';
+import { portable, portableGuardsOf } from '@sittir/common/portable';
 import type { PortableIs, PortableKinds } from './portable.js';
 
 export type * from './types.js';
@@ -22,7 +22,9 @@ export const kinds: typeof TSKindId & { readonly portable: PortableKinds } = Obj
 	...TSKindId,
 	portable: portable.kinds as PortableKinds
 });
-export const is = languageGuards(guards, python, { portable: portable.is as PortableIs });
+export const is = languageGuards(guards, python, (language) => ({
+	portable: portableGuardsOf(language) as PortableIs
+}));
 export const load: Language<PythonAPI>['load'] = () => import('./api.js').then((m) => m.hooks);
 export const createEngine: Language<PythonAPI>['createEngine'] = (options) =>
 	import('@sittir/common').then((m) => m.createEngine(python, options));
