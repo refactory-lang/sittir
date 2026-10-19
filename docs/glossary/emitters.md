@@ -289,7 +289,9 @@ computed once per render plan (`seatReachOf`).
 
 The one slot a polymorph wrapper holds its content in, or `undefined` for a
 node that is not a polymorph wrapper (supertypes are excluded: they reach a
-seat through their subtypes, not a slot).
+seat through their subtypes, not a slot). A multiple slot is not a wrapper
+either: a wrapper holds one node, and a repeated slot holds a list whose
+elements are reached through the list's own seats.
 
 ### `packages/codegen/src/emitters/render-module.ts::seatWrappersOf`
 
@@ -3044,7 +3046,10 @@ template, `templateOf(struct.flanks.get(name))`:
   no placeholder, so it is written whole when the flag is set; a presence
   that names its kind is `View::new(Presence::new(node.x, <Kind>Node::<Variant>), "{}")`
   instead, so the keyword renders through its kind's render function (a
-  named kind seats held trivia, a line-terminated one ends its line);
+  named kind seats held trivia, a line-terminated one ends its line); a kind
+  a list seats is an edged variant carrying `Edges`, so the view builds
+  `<Kind>Node::<Variant>(Edges::default())`, the presence flag having no edges
+  of its own to carry;
 - text: a plain reference when required, a view when optional;
 - list: a `ListView` literal with `items` borrowed from the node
   (`&node.x`, a list field being never optional, or `NO_ITEMS` when
