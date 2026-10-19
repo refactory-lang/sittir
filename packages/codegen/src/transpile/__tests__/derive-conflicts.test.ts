@@ -3,6 +3,7 @@ import { sourceChain, type DerivedResolution, type ResolutionSection } from '../
 import {
 	chooseResolution,
 	deriveConflictResolutions,
+	pruneUnnecessary,
 	reuseOrDeriveConflictResolutions,
 	type UpstreamContext
 } from '../derive-conflicts.ts';
@@ -115,7 +116,7 @@ describe('deriveConflictResolutions', () => {
 			generate: async (resolutions): Promise<GenerateOutcome> => {
 				seen.push(symbolsOf(resolutions));
 				const next = queue[resolutions.length];
-				return next ? { kind: 'conflict', report: next } : { kind: 'clean' };
+				return next ? { kind: 'conflict', report: next } : { kind: 'clean', unnecessary: [] };
 			}
 		});
 		expect(result).toMatchObject({ kind: 'converged', iterations: 3 });
@@ -124,7 +125,7 @@ describe('deriveConflictResolutions', () => {
 	});
 
 	it('converges in one generate when nothing conflicts', async () => {
-		expect(await deriveConflictResolutions({ ruleCount: 1, upstream: identity, generate: async () => ({ kind: 'clean' }) })).toEqual({
+		expect(await deriveConflictResolutions({ ruleCount: 1, upstream: identity, generate: async () => ({ kind: 'clean', unnecessary: [] }) })).toEqual({
 			kind: 'converged',
 			resolutions: [],
 			iterations: 1
@@ -175,7 +176,7 @@ describe('reuseOrDeriveConflictResolutions', () => {
 		const generate = async (resolutions: readonly DerivedResolution[]): Promise<GenerateOutcome> => {
 			calls.push(resolutions.map((entry) => entry.resolution.symbols));
 			const next = conflicts[resolutions.length];
-			return next ? { kind: 'conflict', report: next } : { kind: 'clean' };
+			return next ? { kind: 'conflict', report: next } : { kind: 'clean', unnecessary: [] };
 		};
 		return { calls, generate };
 	}
@@ -215,5 +216,87 @@ describe('reuseOrDeriveConflictResolutions', () => {
 			generateSaved: async () => ({ kind: 'error', summary })
 		});
 		expect(result).toEqual({ kind: 'stale', outcome: { kind: 'error', summary }, resolutions: saved.resolutions });
+	});
+});
+
+describe('pruning the sets tree-sitter calls unnecessary', () => {
+	const symbolsOf = (resolutions: readonly DerivedResolution[]) => resolutions.map((r) => r.resolution.symbols);
+	const chosenFor = (a: string, b: string): DerivedResolution => {
+		const choice = chooseResolution(reportFor(a, b), { upstreamConflicts: [], sourceEdges: {}, baseNames: {} });
+		if (choice.kind !== 'chosen') throw new Error('no offer');
+		return choice.resolution;
+	};
+	const converged = (resolutions: readonly DerivedResolution[]) => ({ kind: 'converged' as const, resolutions, iterations: resolutions.length + 1 });
+	const clean = (...unnecessary: string[][]): GenerateOutcome => ({ kind: 'clean', unnecessary });
+
+	it('drops a derived set the clean run calls unnecessary, regenerates, and counts the extra run', async () => {
+		const seen: (readonly (readonly string[])[])[] = [];
+		const result = await pruneUnnecessary(
+			{ ruleCount: 10, upstream: identity, generate: async (resolutions) => (seen.push(symbolsOf(resolutions)), clean()) },
+			converged([chosenFor('a', 'b'), chosenFor('c', 'd')]),
+			[['a', 'b']]
+		);
+		expect(result).toMatchObject({ kind: 'converged', iterations: 4 });
+		expect(symbolsOf((result as { resolutions: readonly DerivedResolution[] }).resolutions)).toEqual([['c', 'd']]);
+		expect(seen).toEqual([[['c', 'd']]]);
+	});
+
+	it('repeats until a clean run reports nothing, since dropping one set can leave another unnecessary', async () => {
+		const reports = [clean(['c', 'd']), clean()];
+		const result = await pruneUnnecessary(
+			{ ruleCount: 10, upstream: identity, generate: async () => reports.shift()! },
+			converged([chosenFor('a', 'b'), chosenFor('c', 'd'), chosenFor('e', 'f')]),
+			[['a', 'b']]
+		);
+		expect(symbolsOf((result as { resolutions: readonly DerivedResolution[] }).resolutions)).toEqual([['e', 'f']]);
+		expect(result).toMatchObject({ kind: 'converged', iterations: 6 });
+	});
+
+	it('leaves a set it did not derive alone, and does not regenerate for it', async () => {
+		let runs = 0;
+		const result = await pruneUnnecessary(
+			{ ruleCount: 10, upstream: identity, generate: async () => (runs++, clean()) },
+			converged([chosenFor('a', 'b')]),
+			[['x', 'y']]
+		);
+		expect(runs).toBe(0);
+		expect(result).toMatchObject({ kind: 'converged', iterations: 2 });
+		expect(symbolsOf((result as { resolutions: readonly DerivedResolution[] }).resolutions)).toEqual([['a', 'b']]);
+	});
+
+	it('fails when a dropped set comes back as a conflict', async () => {
+		const result = await pruneUnnecessary(
+			{ ruleCount: 10, upstream: identity, generate: async () => ({ kind: 'conflict', report: reportFor('a', 'b') }) },
+			converged([chosenFor('a', 'b')]),
+			[['a', 'b']]
+		);
+		expect(result).toMatchObject({ kind: 'unresolvable', reason: 'dropped-set-returned', resolutions: [] });
+	});
+
+	it('is a no-op through deriveConflictResolutions when tree-sitter reports nothing unnecessary', async () => {
+		const queue = [reportFor('a', 'b')];
+		const result = await deriveConflictResolutions({
+			ruleCount: 10,
+			upstream: identity,
+			generate: async (resolutions): Promise<GenerateOutcome> => {
+				const next = queue[resolutions.length];
+				return next ? { kind: 'conflict', report: next } : clean();
+			}
+		});
+		expect(result).toMatchObject({ kind: 'converged', iterations: 2 });
+	});
+
+	it('prunes through deriveConflictResolutions when the converging run calls a derived set unnecessary', async () => {
+		const queue = [reportFor('a', 'b'), reportFor('a', 'c')];
+		const result = await deriveConflictResolutions({
+			ruleCount: 10,
+			upstream: identity,
+			generate: async (resolutions): Promise<GenerateOutcome> => {
+				const next = queue[resolutions.length];
+				if (next) return { kind: 'conflict', report: next };
+				return symbolsOf(resolutions).some((symbols) => symbols.join() === 'a,b') ? clean(['a', 'b']) : clean();
+			}
+		});
+		expect(symbolsOf((result as { resolutions: readonly DerivedResolution[] }).resolutions)).toEqual([['a', 'c']]);
 	});
 });

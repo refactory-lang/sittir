@@ -77,13 +77,17 @@ describe('emitApi', () => {
 		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
 	});
 
-	it('declares and hands over the portable surface and the flag table only for a grammar with bindings', () => {
+	it('types the language API\'s kind ids by the grammar\'s kind enum', () => {
+		expect(output).toContain('\treadonly kindId: TSKindId;');
+	});
+
+	it('declares the portable views and hands over the portable rows and the flag table only for a grammar with bindings', () => {
 		expect(output).not.toContain('portable');
 		expect(output).not.toContain('queryFlags');
 		const bound = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', portable: true });
-		expect(bound).toContain("import { portable, queryFlags, querySlotFlags } from './portable.js';");
-		expect(bound).toContain('readonly portable: typeof portable;');
-		expect(bound).toContain('\tportable,\n\tqueryFlags,\n\tquerySlotFlags\n});');
+		expect(bound).toContain("import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';");
+		expect(bound).toContain('readonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };');
+		expect(bound).toContain('\tportable: rows,\n\tqueryFlags,\n\tquerySlotFlags\n});');
 	});
 
 	it("hands the engine the package's render module hash", () => {
@@ -107,6 +111,12 @@ describe('emitDescriptor', () => {
 		expect(output).toContain("export const load: Language<RustAPI>['load'] = () => import('./api.js').then((m) => m.hooks);");
 		expect(output).toContain("export const createEngine: Language<RustAPI>['createEngine'] = (options) => import('@sittir/common').then((m) => m.createEngine(rust, options));");
 		expect(output).toContain('void (rust satisfies Language<RustAPI>);');
+	});
+
+	it('builds a bound grammar\'s portable guards as a view for the language it composes against', () => {
+		const bound = emitDescriptor({ grammar: 'rust', nodeMap: { fileTypes: ['rs'] } as never, portable: true });
+		expect(bound).toContain("import { portable, portableGuardsOf } from '@sittir/common/portable';");
+		expect(bound).toContain('export const is = languageGuards(guards, rust, (language) => ({ portable: portableGuardsOf(language) as PortableIs }));');
 	});
 
 	it('loads at import only the kind ids, the guards, the language check and itself', () => {

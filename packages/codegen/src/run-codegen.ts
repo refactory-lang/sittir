@@ -13,6 +13,7 @@ import {
 	GrammarDiagnosticError,
 	blockedRecords,
 	formatGrammarDiagnostics,
+	writeDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromDroppedTokens,
 	fromHelperSlotRead,
@@ -123,10 +124,10 @@ export async function runGrammarDiagnosticsPreflight(input: {
 					};
 		const blockedSet = new Set(gated.blocked);
 		const nonBlocking = gated.records.filter((d) => !blockedSet.has(d));
-		if (nonBlocking.length > 0) process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+		writeDiagnostics(nonBlocking, formatGrammarDiagnostics);
 		if (gated.blocked.length === 0) return { allowDiagnostics, compilation: gated.compilation };
 
-		process.stderr.write(formatGrammarDiagnostics(gated.blocked) + '\n');
+		writeDiagnostics(gated.blocked, formatGrammarDiagnostics);
 		if (!input.isTTY || !(await (input.confirm ?? confirmProceed)(gated.blocked))) {
 			throw new GrammarDiagnosticError(gated.blocked, gated.records);
 		}
@@ -209,7 +210,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDiagnostics: ReadonlySet<string>): void {
 	if (diagnostics.length === 0) return;
-	process.stderr.write(formatGrammarDiagnostics(diagnostics) + '\n');
+	writeDiagnostics(diagnostics, formatGrammarDiagnostics);
 	const blocked = diagnostics.filter((d) => !allowDiagnostics.has(d.code));
 	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
 }
@@ -238,7 +239,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 
 	if (result.slotGroupingDiagnostics.length > 0) {
 		const mapped = result.slotGroupingDiagnostics.map((d) => fromSlotGrouping(grammar, d));
-		process.stderr.write(formatGrammarDiagnostics(mapped) + '\n');
+		writeDiagnostics(mapped, formatGrammarDiagnostics);
 	}
 
 	refuseUnlessAllowed(

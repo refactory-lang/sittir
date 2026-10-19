@@ -9,14 +9,15 @@ type Guard = (...args: unknown[]) => boolean;
 interface Bound {
 	readonly guards: object;
 	readonly language: object;
+	readonly shared: ((language: never) => object) | undefined;
 }
 
 const boundGuards = new WeakMap<object, Bound>();
 const reboundGuards = new WeakMap<object, object>();
 
-export function languageGuards<G extends object>(guards: G, language: object): Readonly<G> {
-	const checked = composed(guards, inLanguage(language), new Map());
-	boundGuards.set(checked, { guards, language });
+export function languageGuards<G extends object, L extends object, S extends object = {}>(guards: G, language: L, shared?: (language: L) => S): Readonly<G & S> {
+	const checked = Object.freeze({ ...composed(guards, inLanguage(language), new Map()), ...shared?.(language) }) as Readonly<G & S>;
+	boundGuards.set(checked, { guards, language, shared });
 	return checked;
 }
 
@@ -25,7 +26,7 @@ export function guardsOf<G extends object>(language: { readonly is: G }): Readon
 	if (bound?.language === language) return language.is;
 	const known = reboundGuards.get(language);
 	if (known !== undefined) return known as Readonly<G>;
-	const rebound = languageGuards((bound?.guards ?? language.is) as G, language);
+	const rebound = languageGuards((bound?.guards ?? language.is) as G, language, bound?.shared as ((language: object) => object) | undefined) as Readonly<G>;
 	reboundGuards.set(language, rebound);
 	return rebound;
 }

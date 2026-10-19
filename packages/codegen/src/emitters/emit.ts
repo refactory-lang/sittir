@@ -32,7 +32,7 @@ import {
 	classifyFromEmission,
 	classifyTemplateEmission,
 	classifyWrapEmission,
-	warnSkippedParserSymbol
+	reportSkippedParserSymbol
 } from './shared.ts';
 import {
 	emitBundleModule,
@@ -281,7 +281,7 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			factoryEmission === 'skip-synthesized-kind' ||
 			factoryEmission === 'skip-missing-parser-symbol'
 		) {
-			warnSkippedParserSymbol(kind, 'factory', factoryEmission);
+			reportSkippedParserSymbol(kind, 'factory', factoryEmission);
 		}
 
 		const fromEmission = classifyFromEmission(kind, node, {
@@ -298,7 +298,7 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			wrapEmission === 'skip-synthesized-kind' ||
 			wrapEmission === 'skip-missing-parser-symbol'
 		) {
-			warnSkippedParserSymbol(kind, 'wrap', wrapEmission);
+			reportSkippedParserSymbol(kind, 'wrap', wrapEmission);
 		}
 		const templateEmission = classifyTemplateEmission(node);
 

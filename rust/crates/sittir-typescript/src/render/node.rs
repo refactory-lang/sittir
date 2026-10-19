@@ -34405,13 +34405,14 @@ fn prepare_object_type_content<N: ObjectTypeContentPrepare + ?Sized>(node: &mut 
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_OBJECT_TYPE_CONTENT_ITEM, ctx);
     let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(397), &[::sittir_core::types::KindId(15), ::sittir_core::types::KindId(22)], ctx.options.delimiter_at(options::DELIM_OBJECT_TYPE_CONTENT_ITEM), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
+    let chosen = ::sittir_core::prepare::Setting::chosen(&parts.separator_kind, overlay);
+    if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.item, overlay, ObjectTypeContentNode::separator_kind_of, ctx).filter(|_| !chosen) {
+        ::sittir_core::prepare::LayoutTarget::set_slot_tokens(&mut parts.layout, overlay, "_item", tokens);
+    }
     if let Some(kind) = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item").and_then(|slot| slot.separator).and_then(ObjectTypeContentNode::separator_kind_of) {
         ::sittir_core::prepare::Setting::fill(&mut parts.separator_kind, overlay, kind);
     }
     ::sittir_core::prepare::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR).arm);
-    if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.item, overlay, ObjectTypeContentNode::separator_kind_of, ctx) {
-        ::sittir_core::prepare::LayoutTarget::set_slot_tokens(&mut parts.layout, overlay, "_item", tokens);
-    }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }

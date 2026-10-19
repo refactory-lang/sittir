@@ -1,120 +1,117 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import type { PortableRows } from '@sittir/types';
 import python from '../../../python/src/index.ts';
+import { rows as pythonRows } from '../../../python/src/portable.ts';
 import rust from '../../../rust/src/index.ts';
+import { rows as rustRows } from '../../../rust/src/portable.ts';
 import typescript from '../../../typescript/src/index.ts';
+import { rows as typescriptRows } from '../../../typescript/src/portable.ts';
 
 type Node = { readonly $type: number; readonly $text?: string; readonly $render?: () => string };
 type Item = Node | number;
-type Guard = ((node: unknown, context?: readonly Node[]) => boolean) & Record<string, unknown>;
-type Located = readonly [node: Item, context: readonly Node[]];
+type Guard = ((node: unknown) => boolean) & Record<string, unknown>;
 
 const kindOf = (item: Item): number => (typeof item === 'number' ? item : item.$type);
 
-const languages = { python, rust, typescript } as const;
+const languages = {
+	python: [python, pythonRows],
+	rust: [rust, rustRows],
+	typescript: [typescript, typescriptRows]
+} as const satisfies Record<string, readonly [unknown, PortableRows]>;
 
 async function surfaces(name: keyof typeof languages) {
-	const language = languages[name] as typeof rust;
+	const [descriptor, rows] = languages[name];
+	const language = descriptor as typeof rust;
 	const engine = await createEngine(language);
-	const portable = (await createEngine(language, { api: 'portable' })) as unknown as { kinds: Record<string, unknown>; is: Record<string, unknown> };
+	const portable = (await createEngine(language, { api: 'portable' })) as unknown as { is: Record<string, unknown> };
 	const kindName = (item: Item) => engine.trivia.kindName(kindOf(item));
-	const located = (source: string): Located[] => {
-		const out: Located[] = [];
-		const walk = (node: Node, context: readonly Node[]): void => {
-			out.push([node, context]);
+	const located = (source: string): Item[] => {
+		const out: Item[] = [];
+		const walk = (node: Node): void => {
+			out.push(node);
 			const facet = (engine.query as unknown as (n: Node) => { readonly $children: Iterable<Item> })(node);
 			for (const child of facet.$children) {
-				if (typeof child === 'number') out.push([child, [...context, node]]);
-				else walk(child, [...context, node]);
+				if (typeof child === 'number') out.push(child);
+				else walk(child);
 			}
 		};
-		walk(engine.parse(source) as unknown as Node, []);
+		walk(engine.parse(source) as unknown as Node);
 		return out;
 	};
 	const at = (path: string): Guard => path.split('.').reduce<unknown>((g, s) => (g as Record<string, unknown>)[s], portable.is) as Guard;
-	const kindsAt = (path: string) => path.split('.').reduce<unknown>((k, s) => (k as Record<string, unknown>)[s], portable.kinds) as { $ids: readonly number[] };
-	const paths = (node: unknown = portable.kinds, under = ''): string[] =>
-		Object.keys(node as object)
-			.filter((key) => key !== '$ids')
-			.flatMap((key) => {
-				const path = under === '' ? key : `${under}.${key}`;
-				return [path, ...paths((node as Record<string, unknown>)[key], path)];
-			});
-	const find = (source: string, kind: string, text?: string, nth = 0): Located => {
-		const hit = located(source).filter(([n]) => kindName(n) === kind && (text === undefined || (typeof n !== 'number' && (n.$text ?? n.$render?.()) === text)))[nth];
+	const idsAt = (path: string): readonly number[] => rows.table.paths[path]?.ids ?? [];
+	const paths = (): string[] => Object.keys(rows.table.paths);
+	const find = (source: string, kind: string, text?: string, nth = 0): Item => {
+		const hit = located(source).filter((n) => kindName(n) === kind && (text === undefined || (typeof n !== 'number' && (n.$text ?? n.$render?.()) === text)))[nth];
 		if (hit === undefined) throw new Error(`no ${kind}${text === undefined ? '' : ` '${text}'`} in ${JSON.stringify(source)}`);
 		return hit;
 	};
-	return { engine, portable, located, at, kindsAt, paths, find, kindName };
+	return { engine, located, at, idsAt, paths, find, kindName };
 }
 
 describe('portable is: python', async () => {
 	const { at, find } = await surfaces('python');
 	const SOURCE = 'class A:\n    @staticmethod\n    def s(): pass\n    @classmethod\n    def c(cls): pass\n    def __init__(self): pass\n    def m(self): pass\n';
 
-	it('reads a method in its enclosing class, given the context', () => {
-		const [c, classContext] = find(SOURCE, 'function_definition', undefined, 1);
-		expect(at('declaration.method')(c, classContext)).toBe(true);
+	it('reads no method in a class body yet: a placement-dependent reading answers false until it is restated as a kind of its own', () => {
+		const c = find(SOURCE, 'function_definition', undefined, 1);
+		expect(at('declaration.method')(c)).toBe(false);
 	});
 
-	it.skip('reads a decorated method as static by the decorator in its enclosing node, given the context (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
-		const [s, context] = find(SOURCE, 'function_definition');
-		const [c, classContext] = find(SOURCE, 'function_definition', undefined, 1);
-		expect(at('declaration.method.static')(s, context)).toBe(true);
-		expect(at('declaration.method.static')(c, classContext)).toBe(false);
+	it.skip('reads a decorated method as static by its decorator (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const s = find(SOURCE, 'function_definition');
+		const c = find(SOURCE, 'function_definition', undefined, 1);
+		expect(at('declaration.method.static')(s)).toBe(true);
+		expect(at('declaration.method.static')(c)).toBe(false);
 	});
 
-	it('falls to the next entry without the context', () => {
-		const [s] = find(SOURCE, 'function_definition');
+	it('reads a decorated method in a class body as a function, the reading that needs no placement', () => {
+		const s = find(SOURCE, 'function_definition');
 		expect(at('declaration.function')(s)).toBe(true);
 	});
 
-	it.skip('reads no static method without the context (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
-		const [s] = find(SOURCE, 'function_definition');
-		expect(at('declaration.method.static')(s)).toBe(false);
-	});
-
 	it('tests a string prefix through the hidden string_start capture', () => {
-		const [f, fc] = find('f"x"\n', 'string');
-		const [b, bc] = find('b"x"\n', 'string');
-		expect(at('literal.string.interpolated')(f, fc)).toBe(true);
-		expect(at('literal.string.bytes')(f, fc)).toBe(false);
-		expect(at('literal.string.bytes')(b, bc)).toBe(true);
+		const f = find('f"x"\n', 'string');
+		const b = find('b"x"\n', 'string');
+		expect(at('literal.string.interpolated')(f)).toBe(true);
+		expect(at('literal.string.bytes')(f)).toBe(false);
+		expect(at('literal.string.bytes')(b)).toBe(true);
 	});
 
 	it('reads an except clause as the one catch kind, and its finally as finally', () => {
 		const SOURCE = 'try:\n    pass\nexcept E as e:\n    pass\nfinally:\n    pass\n';
-		const [handler, hc] = find(SOURCE, 'except_clause');
-		const [finalizer, fc] = find(SOURCE, 'finally_clause');
-		expect(at('clause.catch')(handler, hc)).toBe(true);
-		expect(at('clause.finally')(finalizer, fc)).toBe(true);
+		const handler = find(SOURCE, 'except_clause');
+		const finalizer = find(SOURCE, 'finally_clause');
+		expect(at('clause.catch')(handler)).toBe(true);
+		expect(at('clause.finally')(finalizer)).toBe(true);
 	});
 
 	it('reads each text piece of a string as its text, an f-string\'s included', () => {
 		const SOURCE = 'x = "a\\nb"\ny = f"c{x}"\n';
 		for (const text of ['a', 'b', 'c']) {
-			const [fragment, context] = find(SOURCE, 'string_fragment', text);
-			expect(at('literal.string.text')(fragment, context), text).toBe(true);
+			const fragment = find(SOURCE, 'string_fragment', text);
+			expect(at('literal.string.text')(fragment), text).toBe(true);
 		}
-		const [escape, escapeContext] = find(SOURCE, 'escape_sequence_simple');
-		expect(at('literal.string.text')(escape, escapeContext)).toBe(false);
+		const escape = find(SOURCE, 'escape_sequence_simple');
+		expect(at('literal.string.text')(escape)).toBe(false);
 	});
 
 	it('keeps the constructor and call paths though a function owns those names', () => {
-		const [init, context] = find(SOURCE, 'function_definition', undefined, 2);
+		const init = find(SOURCE, 'function_definition', undefined, 2);
 		expect(at('declaration.constructor')).not.toBe(Function.prototype.constructor);
-		expect(at('declaration.constructor')(init, context)).toBe(true);
+		expect(at('declaration.constructor')(init)).toBe(true);
 		expect(at('expression.call')).not.toBe(Function.prototype.call);
 	});
 
 	it('reads a prefix letter wherever it stands, and a template string as interpolated', () => {
 		const STRINGS = 'a = rf"{x}"\nb = Fr"{x}"\nc = t"{x}"\nd = Rb"x"\ne = R"x"\n';
 		const strings = [0, 1, 2, 3, 4].map((nth) => find(STRINGS, 'string', undefined, nth));
-		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, true, false, false]);
-		const [rb, rbContext] = find(STRINGS, 'string', undefined, 3);
-		const [r, rContext] = find(STRINGS, 'string', undefined, 4);
-		expect(at('literal.string.bytes')(rb, rbContext)).toBe(true);
-		expect(at('literal.string.raw')(r, rContext)).toBe(true);
+		expect(strings.map((node) => at('literal.string.interpolated')(node))).toEqual([true, true, true, false, false]);
+		const rb = find(STRINGS, 'string', undefined, 3);
+		const r = find(STRINGS, 'string', undefined, 4);
+		expect(at('literal.string.bytes')(rb)).toBe(true);
+		expect(at('literal.string.raw')(r)).toBe(true);
 	});
 
 	it('reads a string whose prefix and quotes state several facts by their crossing', () => {
@@ -129,11 +126,11 @@ describe('portable is: python', async () => {
 			'literal.string.bytes.multiline'
 		];
 		crossings.forEach((path, nth) => {
-			const [node, context] = find(STRINGS, 'string', undefined, nth);
-			expect(at(path)(node, context), path).toBe(true);
+			const node = find(STRINGS, 'string', undefined, nth);
+			expect(at(path)(node), path).toBe(true);
 		});
-		const [rf, rfContext] = find(STRINGS, 'string');
-		expect(at('literal.string.interpolated')(rf, rfContext)).toBe(true);
+		const rf = find(STRINGS, 'string');
+		expect(at('literal.string.interpolated')(rf)).toBe(true);
 	});
 
 	it('reads each fact of a crossing by its own guard', () => {
@@ -148,45 +145,45 @@ describe('portable is: python', async () => {
 			['"x"', []]
 		];
 		for (const [text, facts] of cases) {
-			const [node, context] = find(`a = ${text}\n`, 'string');
+			const node = find(`a = ${text}\n`, 'string');
 			for (const fact of ['interpolated', 'bytes', 'raw', 'multiline'])
-				expect(at(`literal.string.${fact}`)(node, context), `${text}: ${fact}`).toBe(facts.includes(fact));
-			expect(at('literal.number')(node, context), text).toBe(false);
+				expect(at(`literal.string.${fact}`)(node), `${text}: ${fact}`).toBe(facts.includes(fact));
+			expect(at('literal.number')(node), text).toBe(false);
 		}
 	});
 
 	it('reads a splat as a rest pattern or type, and a double splat as its map refinement', () => {
 		const SOURCE = 'def f(*a, **k): pass\ndef g(a: *Ts, b: **P): pass\n';
-		const [rest, restContext] = find(SOURCE, 'list_splat_pattern');
-		const [map, mapContext] = find(SOURCE, 'dictionary_splat_pattern');
-		const [restType, restTypeContext] = find(SOURCE, 'splat_type');
-		const [mapType, mapTypeContext] = find(SOURCE, 'splat_type', undefined, 1);
-		expect(at('pattern.rest')(rest, restContext)).toBe(true);
-		expect(at('pattern.rest.map')(rest, restContext)).toBe(false);
-		expect(at('pattern.rest.map')(map, mapContext)).toBe(true);
-		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
-		expect(at('type.rest.map')(restType, restTypeContext)).toBe(false);
-		expect(at('type.rest.map')(mapType, mapTypeContext)).toBe(true);
+		const rest = find(SOURCE, 'list_splat_pattern');
+		const map = find(SOURCE, 'dictionary_splat_pattern');
+		const restType = find(SOURCE, 'splat_type');
+		const mapType = find(SOURCE, 'splat_type', undefined, 1);
+		expect(at('pattern.rest')(rest)).toBe(true);
+		expect(at('pattern.rest.map')(rest)).toBe(false);
+		expect(at('pattern.rest.map')(map)).toBe(true);
+		expect(at('type.rest')(restType)).toBe(true);
+		expect(at('type.rest.map')(restType)).toBe(false);
+		expect(at('type.rest.map')(mapType)).toBe(true);
 	});
 
 	it('reads a renamed import as the import alias', () => {
-		const [alias, context] = find('import a.b as c\n', 'aliased_import');
-		expect(at('clause.import.alias')(alias, context)).toBe(true);
+		const alias = find('import a.b as c\n', 'aliased_import');
+		expect(at('clause.import.alias')(alias)).toBe(true);
 	});
 
 	it('reads a case as-pattern as the as-pattern, and a with item\'s as as no pattern', () => {
 		const SOURCE = 'match x:\n    case [1] as y: pass\nwith open(p) as h: pass\n';
-		const [caseAs, caseContext] = find(SOURCE, 'case_as_pattern');
-		const [withAs, withContext] = find(SOURCE, 'as_pattern');
-		expect(at('pattern.as')(caseAs, caseContext)).toBe(true);
-		expect(at('pattern')(withAs, withContext)).toBe(false);
+		const caseAs = find(SOURCE, 'case_as_pattern');
+		const withAs = find(SOURCE, 'as_pattern');
+		expect(at('pattern.as')(caseAs)).toBe(true);
+		expect(at('pattern')(withAs)).toBe(false);
 	});
 
 	it('reads a comparison of one comparator by its operator, and of two or more as a chain, as tree-sitter matches the claims', () => {
 		const COMPARISONS = 'a < b\na < b == c\na in b\n';
-		const [less] = find(COMPARISONS, 'comparison_operator', 'a < b');
-		const [chain] = find(COMPARISONS, 'comparison_operator', 'a < b == c');
-		const [membership] = find(COMPARISONS, 'comparison_operator', 'a in b');
+		const less = find(COMPARISONS, 'comparison_operator', 'a < b');
+		const chain = find(COMPARISONS, 'comparison_operator', 'a < b == c');
+		const membership = find(COMPARISONS, 'comparison_operator', 'a in b');
 		expect([less, chain, membership].map((n) => at('expression.binary.comparison.less')(n))).toEqual([true, false, false]);
 		expect([less, chain, membership].map((n) => at('expression.binary.comparison.equal')(n))).toEqual([false, false, false]);
 		expect([less, chain, membership].map((n) => at('expression.binary.comparison.chain')(n))).toEqual([false, true, false]);
@@ -197,68 +194,69 @@ describe('portable is: python', async () => {
 describe('portable is: rust', async () => {
 	const { engine, at, find } = await surfaces('rust');
 
-	it('compares a boolean literal\'s own text', () => {
-		const [t, tc] = find('fn f() { let a = true; let b = false; }\n', 'true_keyword');
-		const [f, fc] = find('fn f() { let a = true; let b = false; }\n', 'false_keyword');
-		expect(at('literal.boolean.true')(t, tc)).toBe(true);
-		expect(at('literal.boolean.false')(t, tc)).toBe(false);
-		expect(at('literal.boolean.false')(f, fc)).toBe(true);
+	it('reads a boolean literal, a kind id, by its own text', () => {
+		const t = find('fn f() { let a = true; let b = false; }\n', 'true_keyword');
+		const f = find('fn f() { let a = true; let b = false; }\n', 'false_keyword');
+		expect(typeof t).toBe('number');
+		expect(at('literal.boolean.true')(t)).toBe(true);
+		expect(at('literal.boolean.false')(t)).toBe(false);
+		expect(at('literal.boolean.false')(f)).toBe(true);
 	});
 
 	it('reads a string literal\'s content as its text', () => {
 		const SOURCE = 'fn f() { let a = "x\\ny"; }\n';
 		for (const text of ['x', 'y']) {
-			const [content, context] = find(SOURCE, 'string_content', text);
-			expect(at('literal.string.text')(content, context), text).toBe(true);
+			const content = find(SOURCE, 'string_content', text);
+			expect(at('literal.string.text')(content), text).toBe(true);
 		}
 	});
 
 	it('reads a string literal opening with b" as a byte string, and a plain or C string as none', () => {
 		const SOURCE = 'fn f() { let a = b"ab"; let b = "cd"; let c = c"ef"; }\n';
 		const strings = [0, 1, 2].map((nth) => find(SOURCE, 'string_literal', undefined, nth));
-		expect(strings.map(([node, context]) => at('literal.string.bytes')(node, context))).toEqual([true, false, false]);
-		expect(strings.map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+		expect(strings.map((node) => at('literal.string.bytes')(node))).toEqual([true, false, false]);
+		expect(strings.map((node) => at('literal.string')(node))).toEqual([true, true, true]);
 	});
 
 	it('reads a self parameter and the self it names by the receiver kinds', () => {
 		const SOURCE = 'impl A { fn f(&self) -> u8 { self.x } }\n';
-		const [parameter, parameterContext] = find(SOURCE, 'self_parameter');
-		const [receiver, receiverContext] = find(SOURCE, 'self', undefined, 1);
-		expect(at('declaration.parameter.receiver')(parameter, parameterContext)).toBe(true);
-		expect(at('identifier.receiver')(receiver, receiverContext)).toBe(true);
+		const parameter = find(SOURCE, 'self_parameter');
+		const receiver = find(SOURCE, 'self', undefined, 1);
+		expect(at('declaration.parameter.receiver')(parameter)).toBe(true);
+		expect(at('identifier.receiver')(receiver)).toBe(true);
 	});
 
 	it('reads a captured pattern as the as-pattern and a slice pattern as the list pattern', () => {
 		const SOURCE = 'fn f(x: [u8; 2]) { match x { [n @ 1, _] => 1, _ => 0 }; }\n';
-		const [captured, capturedContext] = find(SOURCE, 'captured_pattern');
-		const [slice, sliceContext] = find(SOURCE, 'slice_pattern');
-		expect(at('pattern.as')(captured, capturedContext)).toBe(true);
-		expect(at('pattern.list')(slice, sliceContext)).toBe(true);
+		const captured = find(SOURCE, 'captured_pattern');
+		const slice = find(SOURCE, 'slice_pattern');
+		expect(at('pattern.as')(captured)).toBe(true);
+		expect(at('pattern.list')(slice)).toBe(true);
 	});
 
 	it('reads a numeric cast as the conversion and a renamed use as the import alias', () => {
 		const SOURCE = 'use a::b as c;\nfn f() -> u8 { 1 as u8 }\n';
-		const [alias, aliasContext] = find(SOURCE, 'use_as_clause');
-		const [cast, castContext] = find(SOURCE, 'type_cast_expression');
-		expect(at('clause.import.alias')(alias, aliasContext)).toBe(true);
-		expect(at('expression.cast.conversion')(cast, castContext)).toBe(true);
+		const alias = find(SOURCE, 'use_as_clause');
+		const cast = find(SOURCE, 'type_cast_expression');
+		expect(at('clause.import.alias')(alias)).toBe(true);
+		expect(at('expression.cast.conversion')(cast)).toBe(true);
 	});
 
 	it('reads trait bounds as the bounds clause', () => {
-		const [bounds, context] = find('fn f<T: A + B>() {}\n', 'trait_bounds');
-		expect(at('clause.bounds')(bounds, context)).toBe(true);
+		const bounds = find('fn f<T: A + B>() {}\n', 'trait_bounds');
+		expect(at('clause.bounds')(bounds)).toBe(true);
 	});
 
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
-		const [wildcard] = find('fn f(x: u8) { match x { _ => 1 } }\n', 'wildcard_pattern');
+		const wildcard = find('fn f(x: u8) { match x { _ => 1 } }\n', 'wildcard_pattern');
 		expect(typeof wildcard).toBe('number');
 		expect((engine.is as unknown as Record<string, (v: unknown) => boolean>).pattern!(wildcard)).toBe(true);
 	});
 
 	it('pins an operator on a parsed node and on a built one alike', () => {
-		const [add, context] = find('fn f() { a + b; }\n', 'binary_expression');
-		expect(at('expression.binary.arithmetic.add')(add, context)).toBe(true);
-		expect(at('expression.binary.arithmetic.subtract')(add, context)).toBe(false);
+		const add = find('fn f() { a + b; }\n', 'binary_expression');
+		expect(at('expression.binary.arithmetic.add')(add)).toBe(true);
+		expect(at('expression.binary.arithmetic.subtract')(add)).toBe(false);
 		const b = engine.build as unknown as Record<string, (...args: unknown[]) => Node>;
 		const built = b.binaryExpression!({ left: b.identifier!('a'), operator: '-', right: b.identifier!('b') });
 		expect(at('expression.binary.arithmetic.subtract')(built)).toBe(true);
@@ -267,101 +265,102 @@ describe('portable is: rust', async () => {
 
 	it('tells identifier from type_identifier, and a prelude type from another', () => {
 		const SOURCE = 'fn f() { let x: Foo = y; let o: Option<u8> = z; }\n';
-		const [x, xc] = find(SOURCE, 'identifier', 'x');
-		const [foo, fooc] = find(SOURCE, 'type_identifier', 'Foo');
-		const [option, optionc] = find(SOURCE, 'type_identifier', 'Option');
-		expect(at('identifier.type')(foo, fooc)).toBe(true);
-		expect(at('identifier.type')(x, xc)).toBe(false);
-		expect(at('type.named.prelude')(option, optionc)).toBe(true);
-		expect(at('identifier.type')(option, optionc)).toBe(false);
+		const x = find(SOURCE, 'identifier', 'x');
+		const foo = find(SOURCE, 'type_identifier', 'Foo');
+		const option = find(SOURCE, 'type_identifier', 'Option');
+		expect(at('identifier.type')(foo)).toBe(true);
+		expect(at('identifier.type')(x)).toBe(false);
+		expect(at('type.named.prelude')(option)).toBe(true);
+		expect(at('identifier.type')(option)).toBe(false);
 	});
 
-	it('reads a method with a receiver as a method, whatever order the impl lists them in', () => {
+	it('reads a method in an impl as a function yet: a placement-dependent reading answers false until it is restated as a kind of its own, and the node reads by its next entry', () => {
 		const SOURCE = 'struct S;\nimpl S {\n    fn a(x: u8) {}\n    fn m(&self) {}\n    fn z() {}\n    fn n(&mut self, x: u8) {}\n}\n';
 		const [m, n] = [1, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
-		for (const [fn, context] of [m!, n!]) expect(at('declaration.method')(fn, context)).toBe(true);
+		for (const fn of [m!, n!]) expect(at('declaration.method')(fn)).toBe(false);
+		for (const fn of [m!, n!]) expect(at('declaration.function')(fn)).toBe(true);
 	});
 
 	it.skip('tells a method with a receiver from an associated function, whatever order the impl lists them in (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'struct S;\nimpl S {\n    fn a(x: u8) {}\n    fn m(&self) {}\n    fn z() {}\n    fn n(&mut self, x: u8) {}\n}\n';
 		const [a, m, z, n] = [0, 1, 2, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
-		for (const [fn, context] of [m!, n!]) expect(at('declaration.method.static')(fn, context)).toBe(false);
-		for (const [fn, context] of [a!, z!]) expect(at('declaration.method.static')(fn, context)).toBe(true);
+		for (const fn of [m!, n!]) expect(at('declaration.method.static')(fn)).toBe(false);
+		for (const fn of [a!, z!]) expect(at('declaration.method.static')(fn)).toBe(true);
 	});
 
 	it('reads a static item as a variable, and a visible one by its crossing', () => {
 		const SOURCE = 'static A: u8 = 1;\npub static B: u8 = 2;\npub(crate) static C: u8 = 3;\nfn f() { let d = 4; }\n';
 		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
-		const [local, lc] = find(SOURCE, 'let_declaration');
-		expect(statics.map(([n, c]) => at('declaration.variable')(n, c))).toEqual([true, true, true]);
-		expect(statics.map(([n, c]) => at('declaration.variable.public')(n, c))).toEqual([false, true, true]);
-		expect(statics.map(([n, c]) => at('declaration.variable.public.internal')(n, c))).toEqual([false, false, true]);
-		expect(at('declaration.variable')(local, lc)).toBe(true);
-		expect(at('declaration.variable.public')(local, lc)).toBe(false);
+		const local = find(SOURCE, 'let_declaration');
+		expect(statics.map((n) => at('declaration.variable')(n))).toEqual([true, true, true]);
+		expect(statics.map((n) => at('declaration.variable.public')(n))).toEqual([false, true, true]);
+		expect(statics.map((n) => at('declaration.variable.public.internal')(n))).toEqual([false, false, true]);
+		expect(at('declaration.variable')(local)).toBe(true);
+		expect(at('declaration.variable.public')(local)).toBe(false);
 	});
 
 	it.skip('reads a static item\'s `mut` and `ref` as its flags (pending: `mutable` and `byReference` are flags of declaration.variable, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'static A: u8 = 1;\nstatic mut B: u8 = 2;\nstatic ref C: u8 = 3;\n';
 		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
-		expect(statics.map(([n, c]) => at('declaration.variable.mutable')(n, c))).toEqual([false, true, false]);
-		expect(statics.map(([n, c]) => at('declaration.variable.byReference')(n, c))).toEqual([false, false, true]);
+		expect(statics.map((n) => at('declaration.variable.mutable')(n))).toEqual([false, true, false]);
+		expect(statics.map((n) => at('declaration.variable.byReference')(n))).toEqual([false, false, true]);
 	});
 
-	it('reads every kind a closure\'s parameters admit as a parameter, through the wildcard claim', () => {
+	it('reads no closure parameter yet: a placement-dependent reading answers false until it is restated as a kind of its own', () => {
 		const SOURCE = 'fn f() { let g = |a, mut b| a; }\n';
-		const [a, ac] = find(SOURCE, 'identifier', 'a');
-		const [b, bc] = find(SOURCE, 'mut_pattern');
-		expect(at('declaration.parameter')(a, ac)).toBe(true);
-		expect(at('declaration.parameter')(b, bc)).toBe(true);
+		const a = find(SOURCE, 'identifier', 'a');
+		const b = find(SOURCE, 'mut_pattern');
+		expect(at('declaration.parameter')(a)).toBe(false);
+		expect(at('declaration.parameter')(b)).toBe(false);
 	});
 
 	it('reads a tuple struct and a unit struct by their forms, and a tuple struct\'s fields as fields', () => {
 		const SOURCE = 'struct T(u8, pub u16);\nstruct U;\n';
-		const [tuple, tc] = find(SOURCE, 'struct_item_tuple');
-		const [unit, uc] = find(SOURCE, 'struct_item_unit');
-		expect(at('declaration.struct.tuple')(tuple, tc)).toBe(true);
-		expect(at('declaration.struct.unit')(tuple, tc)).toBe(false);
-		expect(at('declaration.struct.unit')(unit, uc)).toBe(true);
-		expect(at('declaration.struct')(unit, uc)).toBe(true);
-		const [field, fc] = find(SOURCE, 'attributed_ordered_field', 'pub u16');
-		expect(at('declaration.field')(field, fc)).toBe(true);
+		const tuple = find(SOURCE, 'struct_item_tuple');
+		const unit = find(SOURCE, 'struct_item_unit');
+		expect(at('declaration.struct.tuple')(tuple)).toBe(true);
+		expect(at('declaration.struct.unit')(tuple)).toBe(false);
+		expect(at('declaration.struct.unit')(unit)).toBe(true);
+		expect(at('declaration.struct')(unit)).toBe(true);
+		const field = find(SOURCE, 'attributed_ordered_field', 'pub u16');
+		expect(at('declaration.field')(field)).toBe(true);
 	});
 
 	it('reads an array repeat expression by its form', () => {
 		const SOURCE = 'fn f() { let a = [0; 3]; let b = [1, 2]; }\n';
-		const [repeat, rc] = find(SOURCE, 'array_expression_semi');
-		const [list, lc] = find(SOURCE, 'array_expression_list');
-		expect(at('expression.collection.list.repeat')(repeat, rc)).toBe(true);
-		expect(at('expression.collection.list.repeat')(list, lc)).toBe(false);
+		const repeat = find(SOURCE, 'array_expression_semi');
+		const list = find(SOURCE, 'array_expression_list');
+		expect(at('expression.collection.list.repeat')(repeat)).toBe(true);
+		expect(at('expression.collection.list.repeat')(list)).toBe(false);
 	});
 
 	it('pins a prefix range pattern by its operator, and never reads a range with a left bound as exclusive by default', () => {
 		const SOURCE = 'fn f(x: u8) { match x { ..=5 => 0, ..9 => 1, 1..=5 => 2, _ => 3 } }\n';
-		const [inclusive, ic] = find(SOURCE, 'range_pattern_prefix', '..=5');
-		const [exclusive, ec] = find(SOURCE, 'range_pattern_prefix', '..9');
-		const [left, lc] = find(SOURCE, 'range_pattern_with_left', '1..=5');
-		expect(at('pattern.range.inclusive')(inclusive, ic)).toBe(true);
-		expect(at('pattern.range.exclusive')(inclusive, ic)).toBe(false);
-		expect(at('pattern.range.exclusive')(exclusive, ec)).toBe(true);
-		expect(at('pattern.range.inclusive')(exclusive, ec)).toBe(false);
-		expect(at('pattern.range')(left, lc)).toBe(true);
-		expect(at('pattern.range.exclusive')(left, lc)).toBe(false);
+		const inclusive = find(SOURCE, 'range_pattern_prefix', '..=5');
+		const exclusive = find(SOURCE, 'range_pattern_prefix', '..9');
+		const left = find(SOURCE, 'range_pattern_with_left', '1..=5');
+		expect(at('pattern.range.inclusive')(inclusive)).toBe(true);
+		expect(at('pattern.range.exclusive')(inclusive)).toBe(false);
+		expect(at('pattern.range.exclusive')(exclusive)).toBe(true);
+		expect(at('pattern.range.inclusive')(exclusive)).toBe(false);
+		expect(at('pattern.range')(left)).toBe(true);
+		expect(at('pattern.range.exclusive')(left)).toBe(false);
 	});
 
 	it('reads a range with a left bound by its operator, as tree-sitter matches the claims', () => {
 		const SOURCE = 'fn f() { match x { 1..=5 => {}, 1...5 => {}, 1..5 => {}, 1.. => {}, _ => {} } }\n';
 		const ranges = ['1..=5', '1...5', '1..5', '1..'].map((text) => find(SOURCE, 'range_pattern_with_left', text));
-		expect(ranges.map(([n, c]) => at('pattern.range.inclusive')(n, c))).toEqual([true, true, false, false]);
-		expect(ranges.map(([n, c]) => at('pattern.range.exclusive')(n, c))).toEqual([false, false, true, true]);
-		expect(ranges.map(([n, c]) => at('pattern.range')(n, c))).toEqual([true, true, true, true]);
+		expect(ranges.map((n) => at('pattern.range.inclusive')(n))).toEqual([true, true, false, false]);
+		expect(ranges.map((n) => at('pattern.range.exclusive')(n))).toEqual([false, false, true, true]);
+		expect(ranges.map((n) => at('pattern.range')(n))).toEqual([true, true, true, true]);
 	});
 
 	it('pins a range expression by its operator, and reads a range open at either end as exclusive', () => {
 		const SOURCE = 'fn f() { let a = 1..=2; let b = 1...2; let c = 1..2; let d = 1..; let e = ..2; let g = ..; }\n';
 		for (const text of ['1..=2', '1...2']) {
-			const [range, context] = find(SOURCE, 'range_expression_binary', text);
-			expect(at('expression.range.inclusive')(range, context), text).toBe(true);
-			expect(at('expression.range.exclusive')(range, context), text).toBe(false);
+			const range = find(SOURCE, 'range_expression_binary', text);
+			expect(at('expression.range.inclusive')(range), text).toBe(true);
+			expect(at('expression.range.exclusive')(range), text).toBe(false);
 		}
 		for (const [kind, text] of [
 			['range_expression_binary', '1..2'],
@@ -369,12 +368,12 @@ describe('portable is: rust', async () => {
 			['range_expression_prefix', '..2'],
 			['range_expression_bare', undefined]
 		] as const) {
-			const [range, context] = find(SOURCE, kind, text);
-			expect(at('expression.range.exclusive')(range, context), kind).toBe(true);
-			expect(at('expression.range.inclusive')(range, context), kind).toBe(false);
+			const range = find(SOURCE, kind, text);
+			expect(at('expression.range.exclusive')(range), kind).toBe(true);
+			expect(at('expression.range.inclusive')(range), kind).toBe(false);
 		}
 	});
-	it('reads each primitive type by its keyword, an unsigned width as its signed width', () => {
+	it('reads each primitive type, a kind id, by its keyword, an unsigned width as its signed width', () => {
 		const SOURCE = 'fn f(a: i8, b: u8, c: i128, d: isize, e: usize, g: f32, h: f64, i: bool, j: char, k: &str) -> ! { loop {} }\n';
 		for (const [keyword, path] of [
 			['i8_keyword', 'type.primitive.integral.int8'],
@@ -389,23 +388,24 @@ describe('portable is: rust', async () => {
 			['str_keyword', 'type.primitive.string'],
 			['never_type', 'type.primitive.never']
 		] as const) {
-			const [node, context] = find(SOURCE, keyword);
-			expect(at(path)(node, context), keyword).toBe(true);
-			expect(at('type.primitive')(node, context), keyword).toBe(true);
+			const node = find(SOURCE, keyword);
+			expect(typeof node, keyword).toBe('number');
+			expect(at(path)(node), keyword).toBe(true);
+			expect(at('type.primitive')(node), keyword).toBe(true);
 		}
-		const [f32, fc] = find(SOURCE, 'f32_keyword');
-		const [i8, ic] = find(SOURCE, 'i8_keyword');
-		expect(at('type.primitive.integral')(f32, fc)).toBe(false);
-		expect(at('type.primitive.floating')(i8, ic)).toBe(false);
-		expect(at('type.primitive.integral.int16')(i8, ic)).toBe(false);
+		const f32 = find(SOURCE, 'f32_keyword');
+		const i8 = find(SOURCE, 'i8_keyword');
+		expect(at('type.primitive.integral')(f32)).toBe(false);
+		expect(at('type.primitive.floating')(i8)).toBe(false);
+		expect(at('type.primitive.integral.int16')(i8)).toBe(false);
 	});
 
 	it.skip('reads an unsigned width by its flag (pending: `unsigned` is a flag of type.primitive.integral, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'fn f(a: i8, b: u8) {}\n';
-		const [signed, sc] = find(SOURCE, 'i8_keyword');
-		const [unsigned, uc] = find(SOURCE, 'u8_keyword');
-		expect(at('type.primitive.integral.int8.unsigned')(unsigned, uc)).toBe(true);
-		expect(at('type.primitive.integral.int8.unsigned')(signed, sc)).toBe(false);
+		const signed = find(SOURCE, 'i8_keyword');
+		const unsigned = find(SOURCE, 'u8_keyword');
+		expect(at('type.primitive.integral.int8.unsigned')(unsigned)).toBe(true);
+		expect(at('type.primitive.integral.int8.unsigned')(signed)).toBe(false);
 	});
 });
 
@@ -439,53 +439,53 @@ describe('portable is: typescript', async () => {
 	});
 
 	it('reads a double-quoted string\'s fragment as its text', () => {
-		const [fragment, context] = find('let a = "x";\n', 'unescaped_double_string_fragment');
-		expect(at('literal.string.text')(fragment, context)).toBe(true);
+		const fragment = find('let a = "x";\n', 'unescaped_double_string_fragment');
+		expect(at('literal.string.text')(fragment)).toBe(true);
 	});
 
 	it('reads a template string as an interpolated string, whether or not it substitutes', () => {
 		const SOURCE = 'let a = `x${y}`;\nlet b = `z`;\nlet c = "w";\n';
 		const strings = [find(SOURCE, 'template_string'), find(SOURCE, 'template_string', undefined, 1), find(SOURCE, 'string_double')];
-		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, false]);
-		expect(strings.map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+		expect(strings.map((node) => at('literal.string.interpolated')(node))).toEqual([true, true, false]);
+		expect(strings.map((node) => at('literal.string')(node))).toEqual([true, true, true]);
 	});
 
 	it('reads a maybe type as a nullable type', () => {
-		const [maybe, context] = find('let a: ?string;\n', 'flow_maybe_type');
-		expect(at('type.nullable')(maybe, context)).toBe(true);
+		const maybe = find('let a: ?string;\n', 'flow_maybe_type');
+		expect(at('type.nullable')(maybe)).toBe(true);
 	});
 
 	it('reads an array pattern as the list pattern, and its rest as the rest pattern', () => {
 		const SOURCE = 'const [a, ...b] = c;\ntype T = [...U];\n';
-		const [list, listContext] = find(SOURCE, 'array_pattern');
-		const [rest, restContext] = find(SOURCE, 'rest_pattern');
-		const [restType, restTypeContext] = find(SOURCE, 'rest_type');
-		expect(at('pattern.list')(list, listContext)).toBe(true);
-		expect(at('pattern.rest')(rest, restContext)).toBe(true);
-		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
+		const list = find(SOURCE, 'array_pattern');
+		const rest = find(SOURCE, 'rest_pattern');
+		const restType = find(SOURCE, 'rest_type');
+		expect(at('pattern.list')(list)).toBe(true);
+		expect(at('pattern.rest')(rest)).toBe(true);
+		expect(at('type.rest')(restType)).toBe(true);
 	});
 
 	it('reads both assertions as the assertion, the angle-bracket one by its refinement, and import-equals as the import alias statement', () => {
 		const SOURCE = 'let a = x as T;\nlet b = <T>x;\nlet c = x satisfies T;\nimport A = N.B;\n';
-		const [as, asContext] = find(SOURCE, 'as_expression');
-		const [angle, angleContext] = find(SOURCE, 'type_assertion');
-		const [satisfies, satisfiesContext] = find(SOURCE, 'satisfies_expression');
-		const [alias, aliasContext] = find(SOURCE, 'import_alias');
-		expect(at('expression.cast.assertion')(as, asContext)).toBe(true);
-		expect(at('expression.cast.assertion.angle_bracket')(as, asContext)).toBe(false);
-		expect(at('expression.cast.assertion.angle_bracket')(angle, angleContext)).toBe(true);
-		expect(at('expression.cast.satisfies')(satisfies, satisfiesContext)).toBe(true);
-		expect(at('statement.import.alias')(alias, aliasContext)).toBe(true);
+		const as = find(SOURCE, 'as_expression');
+		const angle = find(SOURCE, 'type_assertion');
+		const satisfies = find(SOURCE, 'satisfies_expression');
+		const alias = find(SOURCE, 'import_alias');
+		expect(at('expression.cast.assertion')(as)).toBe(true);
+		expect(at('expression.cast.assertion.angle_bracket')(as)).toBe(false);
+		expect(at('expression.cast.assertion.angle_bracket')(angle)).toBe(true);
+		expect(at('expression.cast.satisfies')(satisfies)).toBe(true);
+		expect(at('statement.import.alias')(alias)).toBe(true);
 	});
 
 	it('reads a type parameter\'s constraint as the bounds clause', () => {
-		const [bounds, context] = find('function f<T extends U>() {}\n', 'constraint');
-		expect(at('clause.bounds')(bounds, context)).toBe(true);
+		const bounds = find('function f<T extends U>() {}\n', 'constraint');
+		expect(at('clause.bounds')(bounds)).toBe(true);
 	});
 
-	it('reads this as the receiver', () => {
-		const [receiver, context] = find('class A { f() { return this; } }\n', 'this');
-		expect(at('identifier.receiver')(receiver, context)).toBe(true);
+	it('reads this, a kind id, as the receiver', () => {
+		const receiver = find('class A { f() { return this; } }\n', 'this');
+		expect(at('identifier.receiver')(receiver)).toBe(true);
 	});
 
 	it('keeps each path whose last segment a function owns', () => {
@@ -503,167 +503,167 @@ describe('portable is: typescript', async () => {
 
 	it('reads a catch clause as the one catch kind, with or without its binding', () => {
 		const SOURCE = 'try { a(); } catch (e: unknown) { b(); }\ntry { c(); } catch { d(); }\n';
-		const [bound, bc] = find(SOURCE, 'catch_clause');
-		const [bare, nc] = find(SOURCE, 'catch_clause', undefined, 1);
-		expect(at('clause.catch')(bound, bc)).toBe(true);
-		expect(at('clause.catch')(bare, nc)).toBe(true);
+		const bound = find(SOURCE, 'catch_clause');
+		const bare = find(SOURCE, 'catch_clause', undefined, 1);
+		expect(at('clause.catch')(bound)).toBe(true);
+		expect(at('clause.catch')(bare)).toBe(true);
 	});
 
 	it('reads an enum member through the wildcard claim under the enum body\'s elements', () => {
-		const [member, context] = find('enum E { A, B = 1 }\n', 'enum_assignment');
-		expect(at('declaration.enum_member')(member, context)).toBe(true);
+		const member = find('enum E { A, B = 1 }\n', 'enum_assignment');
+		expect(at('declaration.enum_member')(member)).toBe(true);
 	});
 
 	it('holds a supertype\'s path for a variant that reads by a claim of its own', () => {
-		const [hex, context] = find('let x = 0x1F;\n', 'number_hex');
-		expect(at('literal.number.integer.hex')(hex, context)).toBe(true);
-		expect(at('literal.number')(hex, context)).toBe(true);
+		const hex = find('let x = 0x1F;\n', 'number_hex');
+		expect(at('literal.number.integer.hex')(hex)).toBe(true);
+		expect(at('literal.number')(hex)).toBe(true);
 	});
 
 	it('reads a method by its visibility keyword, which the reader holds as the modifier\'s member kind', () => {
 		const SOURCE = 'class C { private a() {} protected b() {} public c() {} d() {} }\n';
 		const methods = [0, 1, 2, 3].map((n) => find(SOURCE, 'method_definition', undefined, n));
-		expect(methods.map(([n, c]) => at('declaration.method.private')(n, c))).toEqual([true, false, false, false]);
-		expect(methods.map(([n, c]) => at('declaration.method.protected')(n, c))).toEqual([false, true, false, false]);
-		expect(methods.map(([n, c]) => at('declaration.method.public')(n, c))).toEqual([false, false, true, false]);
-		expect(methods.map(([n, c]) => at('declaration.method')(n, c))).toEqual([true, true, true, true]);
+		expect(methods.map((n) => at('declaration.method.private')(n))).toEqual([true, false, false, false]);
+		expect(methods.map((n) => at('declaration.method.protected')(n))).toEqual([false, true, false, false]);
+		expect(methods.map((n) => at('declaration.method.public')(n))).toEqual([false, false, true, false]);
+		expect(methods.map((n) => at('declaration.method')(n))).toEqual([true, true, true, true]);
 	});
 
 	it('reads a mapped index signature by its form', () => {
 		const SOURCE = 'type M = { [K in keyof T]: T[K] };\ninterface I { [k: string]: number }\n';
-		const [mapped, mc] = find(SOURCE, 'index_signature_mapped_type_clause');
-		const [colon, cc] = find(SOURCE, 'index_signature_colon');
-		expect(at('declaration.signature.index.mapped')(mapped, mc)).toBe(true);
-		expect(at('declaration.signature.index.mapped')(colon, cc)).toBe(false);
+		const mapped = find(SOURCE, 'index_signature_mapped_type_clause');
+		const colon = find(SOURCE, 'index_signature_colon');
+		expect(at('declaration.signature.index.mapped')(mapped)).toBe(true);
+		expect(at('declaration.signature.index.mapped')(colon)).toBe(false);
 	});
 
 	it('pins a typeof import by its keyword, and reads a type-only import as an import', () => {
 		const SOURCE = 'import type { A } from "a";\nimport typeof B from "b";\nimport { C } from "c";\n';
-		const [type, tc] = find(SOURCE, 'import_statement');
-		const [typeOf, oc] = find(SOURCE, 'import_statement', undefined, 1);
-		const [plain, pc] = find(SOURCE, 'import_statement', undefined, 2);
-		expect(at('statement.import.typeof')(type, tc)).toBe(false);
-		expect(at('statement.import.typeof')(typeOf, oc)).toBe(true);
-		expect(at('statement.import')(type, tc)).toBe(true);
-		expect(at('statement.import')(plain, pc)).toBe(true);
+		const type = find(SOURCE, 'import_statement');
+		const typeOf = find(SOURCE, 'import_statement', undefined, 1);
+		const plain = find(SOURCE, 'import_statement', undefined, 2);
+		expect(at('statement.import.typeof')(type)).toBe(false);
+		expect(at('statement.import.typeof')(typeOf)).toBe(true);
+		expect(at('statement.import')(type)).toBe(true);
+		expect(at('statement.import')(plain)).toBe(true);
 	});
 
 	it.skip('reads a type-only import by its keyword (pending: `typeOnly` is a flag of statement.import, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'import type { A } from "a";\nimport { C } from "c";\n';
-		const [type, tc] = find(SOURCE, 'import_statement');
-		const [plain, pc] = find(SOURCE, 'import_statement', undefined, 1);
-		expect(at('statement.import.typeOnly')(type, tc)).toBe(true);
-		expect(at('statement.import.typeOnly')(plain, pc)).toBe(false);
+		const type = find(SOURCE, 'import_statement');
+		const plain = find(SOURCE, 'import_statement', undefined, 1);
+		expect(at('statement.import.typeOnly')(type)).toBe(true);
+		expect(at('statement.import.typeOnly')(plain)).toBe(false);
 	});
 
 	it('reads a type-only export as an export, an export of all one included', () => {
 		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
 		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
-		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
-		expect(froms.map(([n, c]) => at('statement.export.all')(n, c))).toEqual([false, true, false]);
+		expect(froms.map((n) => at('statement.export')(n))).toEqual([true, true, true]);
+		expect(froms.map((n) => at('statement.export.all')(n))).toEqual([false, true, false]);
 	});
 
 	it.skip('reads a type-only export by its keyword (pending: `typeOnly` is a flag of statement.export, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
 		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
-		expect(froms.map(([n, c]) => at('statement.export.typeOnly')(n, c))).toEqual([true, true, false]);
+		expect(froms.map((n) => at('statement.export.typeOnly')(n))).toEqual([true, true, false]);
 	});
 
 	it('pins a typeof specifier by its keyword, and reads a type-only specifier as a specifier', () => {
 		const SOURCE = 'import { type A, typeof B, C, type D as E, typeof F as G, H as I } from "a";\nexport { type J, typeof K, L } from "b";\n';
 		for (const form of ['import_specifier_name', 'import_specifier_as']) {
-			const [type, tc] = find(SOURCE, form);
-			const [typeOf, oc] = find(SOURCE, form, undefined, 1);
-			const [plain, pc] = find(SOURCE, form, undefined, 2);
-			expect(at('clause.import.specifier.typeof')(type, tc), form).toBe(false);
-			expect(at('clause.import.specifier.typeof')(typeOf, oc), form).toBe(true);
-			expect(at('clause.import.specifier')(type, tc), form).toBe(true);
-			expect(at('clause.import.specifier')(plain, pc), form).toBe(true);
+			const type = find(SOURCE, form);
+			const typeOf = find(SOURCE, form, undefined, 1);
+			const plain = find(SOURCE, form, undefined, 2);
+			expect(at('clause.import.specifier.typeof')(type), form).toBe(false);
+			expect(at('clause.import.specifier.typeof')(typeOf), form).toBe(true);
+			expect(at('clause.import.specifier')(type), form).toBe(true);
+			expect(at('clause.import.specifier')(plain), form).toBe(true);
 		}
-		const [typeExport, te] = find(SOURCE, 'export_specifier');
-		const [typeofExport, oe] = find(SOURCE, 'export_specifier', undefined, 1);
-		const [plainExport, pe] = find(SOURCE, 'export_specifier', undefined, 2);
-		expect(at('clause.export.specifier.typeof')(typeExport, te)).toBe(false);
-		expect(at('clause.export.specifier.typeof')(typeofExport, oe)).toBe(true);
-		expect(at('clause.export.specifier')(typeExport, te)).toBe(true);
-		expect(at('clause.export.specifier')(plainExport, pe)).toBe(true);
+		const typeExport = find(SOURCE, 'export_specifier');
+		const typeofExport = find(SOURCE, 'export_specifier', undefined, 1);
+		const plainExport = find(SOURCE, 'export_specifier', undefined, 2);
+		expect(at('clause.export.specifier.typeof')(typeExport)).toBe(false);
+		expect(at('clause.export.specifier.typeof')(typeofExport)).toBe(true);
+		expect(at('clause.export.specifier')(typeExport)).toBe(true);
+		expect(at('clause.export.specifier')(plainExport)).toBe(true);
 	});
 
 	it.skip('reads a type-only specifier by its keyword (pending: `typeOnly` is a flag of the specifiers, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'import { type A, C, type D as E, H as I } from "a";\nexport { type J, L } from "b";\n';
 		for (const form of ['import_specifier_name', 'import_specifier_as']) {
-			const [type, tc] = find(SOURCE, form);
-			const [plain, pc] = find(SOURCE, form, undefined, 1);
-			expect(at('clause.import.specifier.typeOnly')(type, tc), form).toBe(true);
-			expect(at('clause.import.specifier.typeOnly')(plain, pc), form).toBe(false);
+			const type = find(SOURCE, form);
+			const plain = find(SOURCE, form, undefined, 1);
+			expect(at('clause.import.specifier.typeOnly')(type), form).toBe(true);
+			expect(at('clause.import.specifier.typeOnly')(plain), form).toBe(false);
 		}
-		const [typeExport, te] = find(SOURCE, 'export_specifier');
-		const [plainExport, pe] = find(SOURCE, 'export_specifier', undefined, 1);
-		expect(at('clause.export.specifier.typeOnly')(typeExport, te)).toBe(true);
-		expect(at('clause.export.specifier.typeOnly')(plainExport, pe)).toBe(false);
+		const typeExport = find(SOURCE, 'export_specifier');
+		const plainExport = find(SOURCE, 'export_specifier', undefined, 1);
+		expect(at('clause.export.specifier.typeOnly')(typeExport)).toBe(true);
+		expect(at('clause.export.specifier.typeOnly')(plainExport)).toBe(false);
 	});
 
 	it('reads a default export and an export of all by their forms, as tree-sitter matches the claims', () => {
 		const SOURCE = "export default x;\nexport * from 's';\nexport { a } from 's';\nexport * as n from 's';\nexport default function f() {}\nexport const c = 1;\n";
 		const declarations = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_declaration', undefined, nth));
 		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
-		expect(declarations.map(([n, c]) => at('statement.export.default')(n, c))).toEqual([true, true, false]);
-		expect(declarations.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
-		expect(froms.map(([n, c]) => at('statement.export.all')(n, c))).toEqual([true, false, false]);
-		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
+		expect(declarations.map((n) => at('statement.export.default')(n))).toEqual([true, true, false]);
+		expect(declarations.map((n) => at('statement.export')(n))).toEqual([true, true, true]);
+		expect(froms.map((n) => at('statement.export.all')(n))).toEqual([true, false, false]);
+		expect(froms.map((n) => at('statement.export')(n))).toEqual([true, true, true]);
 	});
 
 	it('reads a getter, a setter and an auto-accessor as properties, and a plain method or field as neither', () => {
 		const SOURCE = 'class C { get g() { return 1; } set s(v) {} private get p() { return 2; } m() {} accessor a = 1; f = 2; }\n';
-		const [getter, gc] = find(SOURCE, 'method_definition');
-		const [setter, sc] = find(SOURCE, 'method_definition', undefined, 1);
-		const [privateGetter, pc] = find(SOURCE, 'method_definition', undefined, 2);
-		const [method, mc] = find(SOURCE, 'method_definition', undefined, 3);
-		const [auto, ac] = find(SOURCE, 'public_field_definition');
-		const [field, fc] = find(SOURCE, 'public_field_definition', undefined, 1);
-		expect(at('declaration.property.getter')(getter, gc)).toBe(true);
-		expect(at('declaration.property')(getter, gc)).toBe(true);
-		expect(at('declaration.method')(getter, gc)).toBe(false);
-		expect(at('declaration.property.setter')(setter, sc)).toBe(true);
-		expect(at('declaration.property.getter')(setter, sc)).toBe(false);
-		expect(at('declaration.property.getter.private')(privateGetter, pc)).toBe(true);
-		expect(at('declaration.method.private')(privateGetter, pc)).toBe(false);
-		expect(at('declaration.method')(method, mc)).toBe(true);
-		expect(at('declaration.property')(method, mc)).toBe(false);
-		expect(at('declaration.property')(auto, ac)).toBe(true);
-		expect(at('declaration.field')(auto, ac)).toBe(false);
-		expect(at('declaration.field')(field, fc)).toBe(true);
-		expect(at('declaration.property')(field, fc)).toBe(false);
+		const getter = find(SOURCE, 'method_definition');
+		const setter = find(SOURCE, 'method_definition', undefined, 1);
+		const privateGetter = find(SOURCE, 'method_definition', undefined, 2);
+		const method = find(SOURCE, 'method_definition', undefined, 3);
+		const auto = find(SOURCE, 'public_field_definition');
+		const field = find(SOURCE, 'public_field_definition', undefined, 1);
+		expect(at('declaration.property.getter')(getter)).toBe(true);
+		expect(at('declaration.property')(getter)).toBe(true);
+		expect(at('declaration.method')(getter)).toBe(false);
+		expect(at('declaration.property.setter')(setter)).toBe(true);
+		expect(at('declaration.property.getter')(setter)).toBe(false);
+		expect(at('declaration.property.getter.private')(privateGetter)).toBe(true);
+		expect(at('declaration.method.private')(privateGetter)).toBe(false);
+		expect(at('declaration.method')(method)).toBe(true);
+		expect(at('declaration.property')(method)).toBe(false);
+		expect(at('declaration.property')(auto)).toBe(true);
+		expect(at('declaration.field')(auto)).toBe(false);
+		expect(at('declaration.field')(field)).toBe(true);
+		expect(at('declaration.property')(field)).toBe(false);
 	});
 
 	it('reads an accessor signature as a property signature, abstract or not', () => {
 		const SOURCE = 'interface I { get x(): number; m(): void; }\nabstract class A { abstract set y(v: number); abstract n(): void; }\n';
-		const [getter, gc] = find(SOURCE, 'method_signature');
-		const [method, mc] = find(SOURCE, 'method_signature', undefined, 1);
-		const [setter, sc] = find(SOURCE, 'abstract_method_signature');
-		const [abstractMethod, ac] = find(SOURCE, 'abstract_method_signature', undefined, 1);
-		expect(at('declaration.property.signature.getter')(getter, gc)).toBe(true);
-		expect(at('declaration.method.signature')(getter, gc)).toBe(false);
-		expect(at('declaration.method.signature')(method, mc)).toBe(true);
-		expect(at('declaration.property.signature.abstract.setter')(setter, sc)).toBe(true);
-		expect(at('declaration.property.signature')(setter, sc)).toBe(true);
-		expect(at('declaration.method.signature.abstract')(setter, sc)).toBe(false);
-		expect(at('declaration.method.signature.abstract')(abstractMethod, ac)).toBe(true);
+		const getter = find(SOURCE, 'method_signature');
+		const method = find(SOURCE, 'method_signature', undefined, 1);
+		const setter = find(SOURCE, 'abstract_method_signature');
+		const abstractMethod = find(SOURCE, 'abstract_method_signature', undefined, 1);
+		expect(at('declaration.property.signature.getter')(getter)).toBe(true);
+		expect(at('declaration.method.signature')(getter)).toBe(false);
+		expect(at('declaration.method.signature')(method)).toBe(true);
+		expect(at('declaration.property.signature.abstract.setter')(setter)).toBe(true);
+		expect(at('declaration.property.signature')(setter)).toBe(true);
+		expect(at('declaration.method.signature.abstract')(setter)).toBe(false);
+		expect(at('declaration.method.signature.abstract')(abstractMethod)).toBe(true);
 	});
 
 	it('reads a negative literal type as a negative number', () => {
-		const [negative, context] = find('let x: -1;\n', 'literal_type_negative_number');
-		expect(at('literal.number.negative')(negative, context)).toBe(true);
+		const negative = find('let x: -1;\n', 'literal_type_negative_number');
+		expect(at('literal.number.negative')(negative)).toBe(true);
 	});
 
 	it('reads a private name as a property identifier, where it is declared and where it is read', () => {
 		const SOURCE = 'class C { #x = 1; m() { return this.#x; } }\n';
-		const [declared, dc] = find(SOURCE, 'private_property_identifier');
-		const [read, rc] = find(SOURCE, 'private_property_identifier', undefined, 1);
-		expect(at('identifier.property')(declared, dc)).toBe(true);
-		expect(at('identifier.property')(read, rc)).toBe(true);
+		const declared = find(SOURCE, 'private_property_identifier');
+		const read = find(SOURCE, 'private_property_identifier', undefined, 1);
+		expect(at('identifier.property')(declared)).toBe(true);
+		expect(at('identifier.property')(read)).toBe(true);
 	});
-	it('reads each predefined type by its keyword', () => {
+	it('reads each predefined type, a kind id, by its keyword', () => {
 		const SOURCE = 'let a: any; let b: number; let c: boolean; let d: string; let e: symbol; let g: void; let h: unknown; let i: never; let j: object;\n';
 		for (const [keyword, path] of [
 			['any_keyword', 'type.primitive.unchecked'],
@@ -676,24 +676,25 @@ describe('portable is: typescript', async () => {
 			['never_keyword', 'type.primitive.never'],
 			['object_keyword', 'type.primitive.object']
 		] as const) {
-			const [node, context] = find(SOURCE, keyword);
-			expect(at(path)(node, context), keyword).toBe(true);
-			expect(at('type.primitive')(node, context), keyword).toBe(true);
+			const node = find(SOURCE, keyword);
+			expect(typeof node, keyword).toBe('number');
+			expect(at(path)(node), keyword).toBe(true);
+			expect(at('type.primitive')(node), keyword).toBe(true);
 		}
-		const [unknown, uc] = find(SOURCE, 'unknown_keyword');
-		expect(at('type.primitive.unchecked')(unknown, uc)).toBe(false);
+		const unknown = find(SOURCE, 'unknown_keyword');
+		expect(at('type.primitive.unchecked')(unknown)).toBe(false);
 	});
 
-	it('reads a unique symbol as a symbol', () => {
-		const [unique, context] = find('declare const s: unique symbol;\n', 'unique');
-		expect(at('type.primitive.symbol')(unique, context)).toBe(true);
+	it('reads a unique symbol, a kind id, as a symbol', () => {
+		const unique = find('declare const s: unique symbol;\n', 'unique');
+		expect(at('type.primitive.symbol')(unique)).toBe(true);
 	});
 
 	it.skip('reads a unique symbol by its flag (pending: `unique` is a flag of type.primitive.symbol, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
-		const [unique, uc] = find('declare const s: unique symbol;\n', 'unique');
-		const [plain, pc] = find('let s: symbol;\n', 'symbol_keyword');
-		expect(at('type.primitive.symbol.unique')(unique, uc)).toBe(true);
-		expect(at('type.primitive.symbol.unique')(plain, pc)).toBe(false);
+		const unique = find('declare const s: unique symbol;\n', 'unique');
+		const plain = find('let s: symbol;\n', 'symbol_keyword');
+		expect(at('type.primitive.symbol.unique')(unique)).toBe(true);
+		expect(at('type.primitive.symbol.unique')(plain)).toBe(false);
 	});
 });
 
@@ -705,7 +706,7 @@ describe('portable is: the root of a file', () => {
 	] as const) {
 		it(`${name}: reads the root as a file`, async () => {
 			const { at, find } = await surfaces(name);
-			const [file] = find(source, root);
+			const file = find(source, root);
 			expect(at('file')(file)).toBe(true);
 		});
 	}
@@ -715,10 +716,10 @@ describe('portable is: the root of a file', () => {
 	] as const) {
 		it(`${name}: tells a module declared in a file from the file`, async () => {
 			const { at, find } = await surfaces(name);
-			const [module, context] = find(source, declared);
-			const [file] = find(source, root);
-			expect(at('declaration.module')(module, context)).toBe(true);
-			expect(at('file')(module, context)).toBe(false);
+			const module = find(source, declared);
+			const file = find(source, root);
+			expect(at('declaration.module')(module)).toBe(true);
+			expect(at('file')(module)).toBe(false);
 			expect(at('declaration.module')(file)).toBe(false);
 		});
 	}
@@ -732,19 +733,19 @@ describe('portable is agrees with one classification', () => {
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
 		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {
-			const { located, at, kindsAt, paths } = await surfaces(name);
+			const { located, at, idsAt, paths } = await surfaces(name);
 			const canonical = new Map<Guard, string>();
 			for (const path of paths()) {
 				const known = canonical.get(at(path));
 				if (known === undefined || path.split('.').length > known.split('.').length) canonical.set(at(path), path);
 			}
-			for (const [node, context] of located(SOURCES[name])) {
-				const held = [...canonical].filter(([guard]) => guard(node, context)).map(([, path]) => path);
+			for (const node of located(SOURCES[name])) {
+				const held = [...canonical].filter(([guard]) => guard(node)).map(([, path]) => path);
 				const deepest = held.reduce((a, b) => (b.split('.').length > a.split('.').length ? b : a), held[0] ?? '');
 				for (const path of held) {
 					const facts = path.split('.').map((fact) => fact.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:\\.[^.]+)*\\.');
 					expect(deepest, path).toMatch(new RegExp(`^${facts}(?:\\.[^.]+)*$`));
-					expect(kindsAt(path).$ids).toContain(kindOf(node));
+					expect(idsAt(path)).toContain(kindOf(node));
 				}
 			}
 		});
@@ -789,8 +790,8 @@ describe('portable is: each kind under its neutral name', () => {
 		it(`${name}: reads each renamed kind by its neutral path`, async () => {
 			const { at, find } = await surfaces(name);
 			for (const [source, kind, path] of NEUTRAL[name]) {
-				const [node, context] = find(source, kind);
-				expect(at(path)(node, context), `${kind} as ${path}`).toBe(true);
+				const node = find(source, kind);
+				expect(at(path)(node), `${kind} as ${path}`).toBe(true);
 			}
 		});
 	}

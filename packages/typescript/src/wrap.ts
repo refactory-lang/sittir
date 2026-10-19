@@ -26,6 +26,7 @@ import {
 	ownerElements,
 	listOption,
 	defineListIndices,
+	defineListSeparator,
 	rebuilt,
 	renderText,
 	queryOf,
@@ -37,6 +38,7 @@ import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
+import type { EmptyProgram } from './types.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
 
@@ -7608,7 +7610,6 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		separator: (data as { readonly _separator?: unknown })._separator ?? TSKindId.Semi,
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7621,6 +7622,7 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
+	defineListSeparator(node);
 	return node as unknown as T.ObjectTypeContent.Parsed;
 }
 
@@ -10369,9 +10371,13 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
-export type ProgramTree = T.ParsedByKindId[TSKindId.Program] & ParsedRoot;
+export type ProgramTree = EmptyProgram.Parsed & ParsedRoot;
 
 /** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */
+export function wrapNode(
+	data: _UntypedNode & { readonly $type: TSKindId.Program } & ParsedRoot,
+	tree: TreeHandle
+): ProgramTree;
 export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle

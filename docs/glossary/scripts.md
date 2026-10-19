@@ -641,7 +641,7 @@ Shared leaf module, consumed by `generated-manifest.ts` (manifest verification),
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::ManifestSource`
 
-Where a verification reads from: `root`, the directory holding the grammar packages; `visible`, the repo-relative paths git would track there; and `checkout`, the git checkout that git is asked about and whose local manifest is read. For the working tree the two directories are the same (`checkoutSource`). A snapshot of the index passes its scratch directory as `root` and the real checkout as `checkout`; that difference is also what turns off the host-binary check and the recording of pairs.
+Where a verification reads from: `root`, the directory holding the grammar packages; `visible`, the repo-relative paths git would track there; and `checkout`, the git checkout that git is asked about and whose local manifest is read. For the working tree the two directories are the same (`checkoutSource`). A snapshot of the index passes its scratch directory as `root` and the real checkout as `checkout`; that difference is also what turns off the host-binary check and the recording of pairs. A source is a snapshot: its visible paths are read once, and the codegen hash and each grammar's upstream digest are kept for its life, so a long-lived process takes a fresh source (`checkoutSource`) to see later edits.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::checkoutSource`
 
@@ -681,7 +681,7 @@ Whether a grammar ships a `bindings.scm` in the source being verified, which mak
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::upstreamDigest`
 
-What the grammar's upstream package contributes to generation, as one digest: the upstream grammar package (`upstreamPackage`) and, transitively, every `tree-sitter-*` grammar it depends on (tree-sitter-typescript builds on tree-sitter-javascript), each by its upstream sources (`isUpstreamSource`). It is read from the checkout's installed packages, so a dependency bump that has not been regenerated fails verification, as a source edit does.
+What the grammar's upstream package contributes to generation, as one digest: the upstream grammar package (`upstreamPackage`) and, transitively, every `tree-sitter-*` grammar it depends on (tree-sitter-typescript builds on tree-sitter-javascript), each by its upstream sources (`isUpstreamSource`). It is read from the checkout's installed packages, so a dependency bump that has not been regenerated fails verification, as a source edit does. The digest is computed once per grammar for a manifest source (`ManifestSource`) and kept for the source's life, as the codegen hash is, because one verification asks for it twice (the recorded pair's `upstream`, and inside `computeSourceHash`) and each ask walks the upstream package and its `tree-sitter-*` dependencies. Two sources never share a digest, so an upstream package that changes between two sources is read again.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::LOCKFILE`
 

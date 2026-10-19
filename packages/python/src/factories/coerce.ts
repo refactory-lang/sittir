@@ -275,21 +275,21 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: interiorPattern(TOKEN_INTERIORS['float_point']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_point'], 'float_point');
-			return F.buildFloatPoint(cfg as never);
+			return F.buildFloatPoint(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	float_leading_point: {
 		pattern: interiorPattern(TOKEN_INTERIORS['float_leading_point']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point');
-			return F.buildFloatLeadingPoint(cfg as never);
+			return F.buildFloatLeadingPoint(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	float_scientific: {
 		pattern: interiorPattern(TOKEN_INTERIORS['float_scientific']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_scientific'], 'float_scientific');
-			return F.buildFloatScientific(cfg as never);
+			return F.buildFloatScientific(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	escape_sequence_unicode_fixed: {
@@ -4778,19 +4778,20 @@ export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['righ
 	) as Admit<T.ForInClause['_right']>;
 }
 
-export function resolveForInClause_comma(value: T.ForInClause.LooseConfig['comma']): Admit<T.ForInClause['_comma']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<typeof F.buildForInClause> {
+export function coerceToForInClause(
+	input: T.ForInClause.Loose,
+	options?: T.ForInClause.Options
+): ReturnType<typeof F.buildForInClause> {
 	if (!_isLooseConfig<T.ForInClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForInClause>;
-	return F.buildForInClause({
-		async: resolveForInClause_async(input.async),
-		left: resolveForInClause_left(input.left),
-		right: resolveForInClause_rights(input.right),
-		comma: resolveForInClause_comma(input.comma)
-	});
+	return F.buildForInClause(
+		{
+			async: resolveForInClause_async(input.async),
+			left: resolveForInClause_left(input.left),
+			right: resolveForInClause_rights(input.right)
+		},
+		options
+	);
 }
 
 export function resolveIfClause_condition(value: T.IfClause.LooseConfig['condition']): Admit<T.IfClause['_condition']> {
@@ -6138,8 +6139,8 @@ export function resolveFloatPoint_fraction(
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatPoint_marker(value: T.FloatPoint.LooseConfig['marker']): Admit<T.FloatPoint['_marker']> {
-	return _resolveOne<string>(value, _K0, _K0);
+export function resolveFloatPoint_sign(value: T.FloatPoint.LooseConfig['sign']): Admit<T.FloatPoint['_sign']> {
+	return _resolveOne<'-' | '+'>(value, _K0, _K0);
 }
 
 export function resolveFloatPoint_exponent(
@@ -6157,9 +6158,13 @@ export function resolveFloatPoint_imaginary(
 }
 
 export function coerceToFloatPoint<const I extends T.FloatPoint.Loose>(
-	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }, T.FloatPoint.Loose>
+	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }, T.FloatPoint.Loose>,
+	options?: T.FloatPoint.Options
 ): ReturnType<typeof F.buildFloatPoint>;
-export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof F.buildFloatPoint> {
+export function coerceToFloatPoint(
+	input: T.FloatPoint.Loose,
+	options?: T.FloatPoint.Options
+): ReturnType<typeof F.buildFloatPoint> {
 	if (!_isLooseConfig<T.FloatPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatPoint>;
 	const _cfg = (
@@ -6167,13 +6172,16 @@ export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof
 			? lexedConfig(numberText('float', '.0', input), TOKEN_INTERIORS['float_point'], 'float_point')
 			: input
 	) as T.FloatPoint.LooseConfig;
-	return F.buildFloatPoint({
-		integer: resolveFloatPoint_integer(_cfg.integer),
-		fraction: resolveFloatPoint_fraction(_cfg.fraction),
-		marker: resolveFloatPoint_marker(_cfg.marker),
-		exponent: resolveFloatPoint_exponent(_cfg.exponent),
-		imaginary: resolveFloatPoint_imaginary(_cfg.imaginary)
-	});
+	return F.buildFloatPoint(
+		{
+			integer: resolveFloatPoint_integer(_cfg.integer),
+			fraction: resolveFloatPoint_fraction(_cfg.fraction),
+			sign: resolveFloatPoint_sign(_cfg.sign),
+			exponent: resolveFloatPoint_exponent(_cfg.exponent),
+			imaginary: resolveFloatPoint_imaginary(_cfg.imaginary)
+		},
+		options
+	);
 }
 
 export function resolveFloatLeadingPoint_integer(
@@ -6192,10 +6200,10 @@ export function resolveFloatLeadingPoint_fraction(
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatLeadingPoint_marker(
-	value: T.FloatLeadingPoint.LooseConfig['marker']
-): Admit<T.FloatLeadingPoint['_marker']> {
-	return _resolveOne<string>(value, _K0, _K0);
+export function resolveFloatLeadingPoint_sign(
+	value: T.FloatLeadingPoint.LooseConfig['sign']
+): Admit<T.FloatLeadingPoint['_sign']> {
+	return _resolveOne<'-' | '+'>(value, _K0, _K0);
 }
 
 export function resolveFloatLeadingPoint_exponent(
@@ -6213,10 +6221,12 @@ export function resolveFloatLeadingPoint_imaginary(
 }
 
 export function coerceToFloatLeadingPoint<const I extends T.FloatLeadingPoint.Loose>(
-	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }, T.FloatLeadingPoint.Loose>
+	input: I & NumericInput<I, false, { integer: true; fraction: true; exponent: true }, T.FloatLeadingPoint.Loose>,
+	options?: T.FloatLeadingPoint.Options
 ): ReturnType<typeof F.buildFloatLeadingPoint>;
 export function coerceToFloatLeadingPoint(
-	input: T.FloatLeadingPoint.Loose
+	input: T.FloatLeadingPoint.Loose,
+	options?: T.FloatLeadingPoint.Options
 ): ReturnType<typeof F.buildFloatLeadingPoint> {
 	if (!_isLooseConfig<T.FloatLeadingPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatLeadingPoint>;
@@ -6225,13 +6235,16 @@ export function coerceToFloatLeadingPoint(
 			? lexedConfig(numberText('float', '.0', input), TOKEN_INTERIORS['float_leading_point'], 'float_leading_point')
 			: input
 	) as T.FloatLeadingPoint.LooseConfig;
-	return F.buildFloatLeadingPoint({
-		integer: resolveFloatLeadingPoint_integer(_cfg.integer),
-		fraction: resolveFloatLeadingPoint_fraction(_cfg.fraction),
-		marker: resolveFloatLeadingPoint_marker(_cfg.marker),
-		exponent: resolveFloatLeadingPoint_exponent(_cfg.exponent),
-		imaginary: resolveFloatLeadingPoint_imaginary(_cfg.imaginary)
-	});
+	return F.buildFloatLeadingPoint(
+		{
+			integer: resolveFloatLeadingPoint_integer(_cfg.integer),
+			fraction: resolveFloatLeadingPoint_fraction(_cfg.fraction),
+			sign: resolveFloatLeadingPoint_sign(_cfg.sign),
+			exponent: resolveFloatLeadingPoint_exponent(_cfg.exponent),
+			imaginary: resolveFloatLeadingPoint_imaginary(_cfg.imaginary)
+		},
+		options
+	);
 }
 
 export function resolveFloatScientific_integer(
@@ -6242,10 +6255,10 @@ export function resolveFloatScientific_integer(
 		: _resolveOne<string>(value, _K0, _K0);
 }
 
-export function resolveFloatScientific_marker(
-	value: T.FloatScientific.LooseConfig['marker']
-): Admit<T.FloatScientific['_marker']> {
-	return _resolveOne<string>(value, _K0, _K0);
+export function resolveFloatScientific_sign(
+	value: T.FloatScientific.LooseConfig['sign']
+): Admit<T.FloatScientific['_sign']> {
+	return _resolveOne<'-' | '+'>(value, _K0, _K0);
 }
 
 export function resolveFloatScientific_exponent(
@@ -6263,9 +6276,13 @@ export function resolveFloatScientific_imaginary(
 }
 
 export function coerceToFloatScientific<const I extends T.FloatScientific.Loose>(
-	input: I & NumericInput<I, false, { integer: true; exponent: true }, T.FloatScientific.Loose>
+	input: I & NumericInput<I, false, { integer: true; exponent: true }, T.FloatScientific.Loose>,
+	options?: T.FloatScientific.Options
 ): ReturnType<typeof F.buildFloatScientific>;
-export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnType<typeof F.buildFloatScientific> {
+export function coerceToFloatScientific(
+	input: T.FloatScientific.Loose,
+	options?: T.FloatScientific.Options
+): ReturnType<typeof F.buildFloatScientific> {
 	if (!_isLooseConfig<T.FloatScientific.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatScientific>;
 	const _cfg = (
@@ -6273,12 +6290,15 @@ export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnT
 			? lexedConfig(numberText('float', 'e0', input), TOKEN_INTERIORS['float_scientific'], 'float_scientific')
 			: input
 	) as T.FloatScientific.LooseConfig;
-	return F.buildFloatScientific({
-		integer: resolveFloatScientific_integer(_cfg.integer),
-		marker: resolveFloatScientific_marker(_cfg.marker),
-		exponent: resolveFloatScientific_exponent(_cfg.exponent),
-		imaginary: resolveFloatScientific_imaginary(_cfg.imaginary)
-	});
+	return F.buildFloatScientific(
+		{
+			integer: resolveFloatScientific_integer(_cfg.integer),
+			sign: resolveFloatScientific_sign(_cfg.sign),
+			exponent: resolveFloatScientific_exponent(_cfg.exponent),
+			imaginary: resolveFloatScientific_imaginary(_cfg.imaginary)
+		},
+		options
+	);
 }
 
 export function resolveEscapeSequenceUnicodeFixed_content(

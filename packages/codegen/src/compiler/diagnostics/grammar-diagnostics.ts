@@ -555,6 +555,13 @@ export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic
 		.join('\n');
 }
 
+export function writeDiagnostics<D extends { readonly severity: string }>(diagnostics: readonly D[], format: (diagnostics: readonly D[]) => string): void {
+	const info = diagnostics.filter((d) => d.severity === 'info');
+	const rest = diagnostics.filter((d) => d.severity !== 'info');
+	if (info.length > 0) process.stdout.write(format(info) + '\n');
+	if (rest.length > 0) process.stderr.write(format(rest) + '\n');
+}
+
 export function formatNamingEvents(events: readonly NamingEvent[]): string {
 	return events.map((e) => `[naming] ${e.kind}: type name '${e.from}' → '${e.to}' (${e.message})`).join('\n');
 }

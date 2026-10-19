@@ -4,6 +4,7 @@ import type { AnyUntypedNode, QuerySlots, StructureTable, TriviaFacts } from '@s
 import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type PythonTypeMap } from './types.js';
 import { INNER_SITES } from './consts.js';
+import type { TSKindId } from './kinds.js';
 
 export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
@@ -35,7 +36,7 @@ export const triviaFacts = Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 122, ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })
 	})
-} satisfies TriviaFacts);
+} satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
 	73: [['content', 0]],
@@ -55,21 +56,24 @@ export const querySlots: QuerySlots = Object.freeze({
 		['integer', 0],
 		['fraction', 1],
 		['marker', 2],
-		['exponent', 3],
-		['imaginary', 4]
+		['sign', 3],
+		['exponent', 4],
+		['imaginary', 5]
 	],
 	97: [
 		['integer', 0],
 		['fraction', 1],
 		['marker', 2],
-		['exponent', 3],
-		['imaginary', 4]
+		['sign', 3],
+		['exponent', 4],
+		['imaginary', 5]
 	],
 	98: [
 		['integer', 0],
 		['marker', 1],
-		['exponent', 2],
-		['imaginary', 3]
+		['sign', 2],
+		['exponent', 3],
+		['imaginary', 4]
 	],
 	99: [['content', 0]],
 	100: [['content', 0]],
@@ -358,7 +362,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['async', 0, 'async'],
 		['left', 1],
 		['rights', 2],
-		['comma', 3, ',']
+		['trailingComma', 3]
 	],
 	244: [['condition', 0]],
 	245: [
@@ -457,7 +461,6 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'float_scientific',
 		required: [
 			['_integer', 'integer'],
-			['_marker', 'marker'],
 			['_exponent', 'exponent']
 		]
 	},
@@ -1248,8 +1251,7 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_async', 'ForInClause.async', 'a boolean'],
 			['_left', 'ForInClause.left', 'a built Pattern / PatternList'],
-			['_right', 'ForInClause.right', 'a built Expression / LambdaWithinForInClause'],
-			['_comma', 'ForInClause.comma', 'a boolean']
+			['_right', 'ForInClause.right', 'a built Expression / LambdaWithinForInClause']
 		]
 	},
 	244: {

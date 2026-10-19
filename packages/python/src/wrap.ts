@@ -38,6 +38,7 @@ import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
+import type { EmptyModule } from './types.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
 
@@ -3924,8 +3925,8 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 		rights() {
 			return hydrateSlots<T.Expression | T.LambdaWithinForInClause>(this, '_right', tree);
 		},
-		comma() {
-			return this._comma;
+		trailingComma() {
+			return this._trailing_comma;
 		},
 		$with: {
 			async: (v: NonNullable<T.ForInClause['_async']>) =>
@@ -3943,9 +3944,15 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 						tree
 					)
 				),
-			comma: (v: NonNullable<T.ForInClause['_comma']>) =>
+			trailingComma: (v: NonNullable<T.ForInClause['_trailing_comma']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapForInClause({ ...$edited(data), _comma: admitSlot(handle, 'for_in_clause', 'comma', v) }, tree)
+					wrapForInClause(
+						{
+							...$edited(data),
+							_trailing_comma: admitSlot(handle, 'for_in_clause', 'trailingComma', v === null ? 0 : v)
+						},
+						tree
+					)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -5214,7 +5221,10 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 			return hydrateSlot<string | undefined>(this, '_fraction', tree);
 		},
 		marker() {
-			return hydrateSlot<string | undefined>(this, '_marker', tree);
+			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
+		},
+		sign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -5234,6 +5244,10 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 			marker: (v: NonNullable<T.FloatPoint['_marker']>) =>
 				rebuilt(node, handle, () =>
 					wrapFloatPoint({ ...$edited(data), _marker: admitSlot(handle, 'float_point', 'marker', v) }, tree)
+				),
+			sign: (v: NonNullable<T.FloatPoint['_sign']>) =>
+				rebuilt(node, handle, () =>
+					wrapFloatPoint({ ...$edited(data), _sign: admitSlot(handle, 'float_point', 'sign', v) }, tree)
 				),
 			exponent: (v: NonNullable<T.FloatPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
@@ -5269,7 +5283,10 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 			return hydrateSlot<string>(this, '_fraction', tree);
 		},
 		marker() {
-			return hydrateSlot<string | undefined>(this, '_marker', tree);
+			return hydrateSlot<'e' | 'E' | undefined>(this, '_marker', tree);
+		},
+		sign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string | undefined>(this, '_exponent', tree);
@@ -5298,6 +5315,10 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 						{ ...$edited(data), _marker: admitSlot(handle, 'float_leading_point', 'marker', v) },
 						tree
 					)
+				),
+			sign: (v: NonNullable<T.FloatLeadingPoint['_sign']>) =>
+				rebuilt(node, handle, () =>
+					wrapFloatLeadingPoint({ ...$edited(data), _sign: admitSlot(handle, 'float_leading_point', 'sign', v) }, tree)
 				),
 			exponent: (v: NonNullable<T.FloatLeadingPoint['_exponent']>) =>
 				rebuilt(node, handle, () =>
@@ -5336,7 +5357,10 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 			return hydrateSlot<string>(this, '_integer', tree);
 		},
 		marker() {
-			return hydrateSlot<string>(this, '_marker', tree);
+			return hydrateSlot<'e' | 'E'>(this, '_marker', tree);
+		},
+		sign() {
+			return hydrateSlot<'-' | '+' | undefined>(this, '_sign', tree);
 		},
 		exponent() {
 			return hydrateSlot<string>(this, '_exponent', tree);
@@ -5352,6 +5376,10 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 			marker: (v: NonNullable<T.FloatScientific['_marker']>) =>
 				rebuilt(node, handle, () =>
 					wrapFloatScientific({ ...$edited(data), _marker: admitSlot(handle, 'float_scientific', 'marker', v) }, tree)
+				),
+			sign: (v: NonNullable<T.FloatScientific['_sign']>) =>
+				rebuilt(node, handle, () =>
+					wrapFloatScientific({ ...$edited(data), _sign: admitSlot(handle, 'float_scientific', 'sign', v) }, tree)
 				),
 			exponent: (v: NonNullable<T.FloatScientific['_exponent']>) =>
 				rebuilt(node, handle, () =>
@@ -6482,9 +6510,13 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
-export type ModuleTree = T.ParsedByKindId[TSKindId.Module] & ParsedRoot;
+export type ModuleTree = EmptyModule.Parsed & ParsedRoot;
 
 /** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */
+export function wrapNode(
+	data: _UntypedNode & { readonly $type: TSKindId.Module } & ParsedRoot,
+	tree: TreeHandle
+): ModuleTree;
 export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle

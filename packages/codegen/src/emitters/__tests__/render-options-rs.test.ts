@@ -89,7 +89,7 @@ describe('planRenderOptions', () => {
 	});
 
 	it('a separator site rides the spacing table under its kind and fills separator_kind', () => {
-		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }];
+		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }, { kind: 'object_type_content', member: 'ObjectTypeContent', id: 400 }];
 		const site: SitePreference = {
 			kind: 'object_type_content',
 			slot: 'content',
@@ -102,7 +102,7 @@ describe('planRenderOptions', () => {
 			defaultArm: 'semi',
 			source: 'separator'
 		};
-		const plan = planRenderOptions([...sites, site], entries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust');
+		const plan = planRenderOptions([...sites, site], entries, makeSiteKindsNodeMap([...sites, site], entries as never), whitespaceText, undefined, 'rust');
 		const row = plan.spacingSites.find((s) => s.role === 'separator')!;
 		expect([row.constName, row.fieldIdent, row.wireKey, row.defaultId, row.allowedIds, row.side, row.defaultText]).toEqual([
 			'SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR',
@@ -113,8 +113,11 @@ describe('planRenderOptions', () => {
 			undefined,
 			';'
 		]);
-		const addresses = deriveAddressTables([...sites, site], entries, makeSiteKindsNodeMap([...sites, site]), kindIdArmType(entries as never), (() => []) as never);
-		expect(renderOptionsRs(plan, addresses, entries)).toContain('("object_type_content", "content_separator", "separator", &[KindId(14), KindId(20)]),');
+		const addresses = deriveAddressTables([...sites, site], entries, makeSiteKindsNodeMap([...sites, site], entries as never), kindIdArmType(entries as never), (() => []) as never);
+		const emitted = renderOptionsRs(plan, addresses, entries);
+		expect(emitted).toContain('("object_type_content", "content_separator", "separator", &[KindId(14), KindId(20)]),');
+		expect(emitted).toMatch(/pub static SEPARATOR_SITES: &\[Option<SiteId>\] = &\[[^\]]*Some\(SiteId\(\d+\)\)/);
+		expect(emitted).toContain('separator_sites: SEPARATOR_SITES,');
 	});
 
 	it('an arm without a kind id fails loudly', () => {

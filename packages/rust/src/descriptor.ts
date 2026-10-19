@@ -6,6 +6,8 @@ import { languageGuards } from '@sittir/common/language';
 import * as rust from './descriptor.js';
 import { TSKindId } from './kinds.js';
 import { is as guards } from './is.js';
+import { portable, portableGuardsOf } from '@sittir/common/portable';
+import type { PortableIs, PortableKinds } from './portable.js';
 
 export type * from './types.js';
 export type * from './options.js';
@@ -16,8 +18,11 @@ export type Engine<M extends ApiSurface = 'default'> = EngineOf<RustAPI, M>;
 
 export const name = 'rust';
 export const fileTypes: readonly string[] = Object.freeze(['rs']);
-export const kinds = TSKindId;
-export const is = languageGuards(guards, rust);
+export const kinds: typeof TSKindId & { readonly portable: PortableKinds } = Object.freeze({
+	...TSKindId,
+	portable: portable.kinds as PortableKinds
+});
+export const is = languageGuards(guards, rust, (language) => ({ portable: portableGuardsOf(language) as PortableIs }));
 export const load: Language<RustAPI>['load'] = () => import('./api.js').then((m) => m.hooks);
 export const createEngine: Language<RustAPI>['createEngine'] = (options) =>
 	import('@sittir/common').then((m) => m.createEngine(rust, options));

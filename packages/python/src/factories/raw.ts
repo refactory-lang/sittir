@@ -35,6 +35,7 @@ import {
 	describeValue,
 	restItems,
 	admitAliasContent,
+	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -102,16 +103,19 @@ export const _slotRe_buildIntegerBinary_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildIntegerBinary_content = /^(?:(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$/u;
 export const _slotRe_buildFloatPoint_integer = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_fraction = _leafRe_buildIntegerDecimalPlain;
-export const _slotRe_buildFloatPoint_marker = /^(?:(?:[eE][+-]?))$/u;
+export const _slotRe_buildFloatPoint_marker = /^(?:e|E)$/u;
+export const _slotRe_buildFloatPoint_sign = /^(?:-|\+)$/u;
 export const _slotRe_buildFloatPoint_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_imaginary = /^(?:(?:[jJ]))$/u;
 export const _slotRe_buildFloatLeadingPoint_integer = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatLeadingPoint_fraction = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatLeadingPoint_marker = _slotRe_buildFloatPoint_marker;
+export const _slotRe_buildFloatLeadingPoint_sign = _slotRe_buildFloatPoint_sign;
 export const _slotRe_buildFloatLeadingPoint_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatLeadingPoint_imaginary = _slotRe_buildFloatPoint_imaginary;
 export const _slotRe_buildFloatScientific_integer = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatScientific_marker = _slotRe_buildFloatPoint_marker;
+export const _slotRe_buildFloatScientific_sign = _slotRe_buildFloatPoint_sign;
 export const _slotRe_buildFloatScientific_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatScientific_imaginary = _slotRe_buildFloatPoint_imaginary;
 export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F\d]{4}))$/u;
@@ -3999,14 +4003,22 @@ function _buildCollectionElements(
 	return node as unknown as T.CollectionElements.Bound;
 }
 
-export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bound {
+export function buildForInClause(config: T.ForInClause.Config, options?: T.ForInClause.Options): T.ForInClause.Bound {
 	const _async = strictBooleanStorage(config.async);
 	const _left = config.left;
 	const _right = listStorage<NonNullable<T.ForInClause['_right']>>(config.right, kindIdStorage);
-	const _comma = strictBooleanStorage(config.comma);
+	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.ForInClause['_trailing_comma']>>(
+		options?.trailingComma === null ? 0 : options?.trailingComma,
+		[[',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'for_in_clause', { async: _async, left: _left, right: _right, comma: _comma });
+		admitChildren(handle, 'for_in_clause', {
+			async: _async,
+			left: _left,
+			right: _right,
+			trailingComma: _trailing_comma
+		});
 	const node = {
 		$type: TSKindId.ForInClause as const,
 		$source: 2 as const,
@@ -4014,21 +4026,21 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 		_async,
 		_left,
 		_right,
-		_comma,
+		_trailing_comma,
 		$with: {
 			async: (value?: Admit<NonNullable<T.ForInClause.Config>['async']>) =>
-				rebuilt(node, handle, () => buildForInClause({ ...config, async: value })),
+				rebuilt(node, handle, () => buildForInClause({ ...config, async: value }, options)),
 			left: (value: Admit<T.Pattern | T.PatternList>) =>
-				rebuilt(node, handle, () => buildForInClause({ ...config, left: value })),
+				rebuilt(node, handle, () => buildForInClause({ ...config, left: value }, options)),
 			rights: (...values: Admit<NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>>) =>
-				rebuilt(node, handle, () => buildForInClause({ ...config, right: restItems('rights', values) })),
-			comma: (value?: Admit<NonNullable<T.ForInClause.Config>['comma']>) =>
-				rebuilt(node, handle, () => buildForInClause({ ...config, comma: value }))
+				rebuilt(node, handle, () => buildForInClause({ ...config, right: restItems('rights', values) }, options)),
+			trailingComma: (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () => buildForInClause(config, { ...options, trailingComma: spelling }))
 		},
 		async: () => _async,
 		left: () => hydrateStoredSlot(node, '_left'),
 		rights: () => hydrateStoredSlots(node, '_right'),
-		comma: () => _comma,
+		trailingComma: () => _trailing_comma,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -5889,13 +5901,15 @@ export function buildFloatPoint<
 				T.FloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
-		>
+		>,
+	options?: T.FloatPoint.Options
 ): T.FloatPoint.Bound;
 export function buildFloatPoint(
 	config: WidenNumeric<
 		T.FloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-	>
+	>,
+	options?: T.FloatPoint.Options
 ): T.FloatPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
 	if (typeof _integer !== 'string' || !_slotRe_buildFloatPoint_integer.test(_integer))
@@ -5903,9 +5917,12 @@ export function buildFloatPoint(
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && (typeof _fraction !== 'string' || !_slotRe_buildFloatPoint_fraction.test(_fraction)))
 		throw new Error(`float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.marker;
+	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatPoint_marker.test(_marker)))
 		throw new Error(`float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const _sign = config.sign;
+	if (_sign !== undefined && (typeof _sign !== 'string' || !_slotRe_buildFloatPoint_sign.test(_sign)))
+		throw new Error(`float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && (typeof _exponent !== 'string' || !_slotRe_buildFloatPoint_exponent.test(_exponent)))
 		throw new Error(`float_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
@@ -5921,6 +5938,7 @@ export function buildFloatPoint(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
+			sign: _sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
@@ -5931,22 +5949,27 @@ export function buildFloatPoint(
 		_integer,
 		_fraction,
 		_marker,
+		_sign,
 		_exponent,
 		_imaginary,
 		$with: {
 			integer: (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatPoint({ ...config, integer: value })),
+				rebuilt(node, handle, () => buildFloatPoint({ ...config, integer: value }, options)),
 			fraction: (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatPoint({ ...config, fraction: value })),
-			marker: (value?: Admit<string>) => rebuilt(node, handle, () => buildFloatPoint({ ...config, marker: value })),
+				rebuilt(node, handle, () => buildFloatPoint({ ...config, fraction: value }, options)),
+			sign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildFloatPoint({ ...config, sign: value }, options)),
 			exponent: (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatPoint({ ...config, exponent: value })),
+				rebuilt(node, handle, () => buildFloatPoint({ ...config, exponent: value }, options)),
 			imaginary: (value?: Admit<string>) =>
-				rebuilt(node, handle, () => buildFloatPoint({ ...config, imaginary: value }))
+				rebuilt(node, handle, () => buildFloatPoint({ ...config, imaginary: value }, options)),
+			marker: (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildFloatPoint(config, { ...options, marker: spelling }))
 		},
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		fraction: () => hydrateStoredSlot(node, '_fraction'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
+		sign: () => hydrateStoredSlot(node, '_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
@@ -5974,13 +5997,15 @@ export function buildFloatLeadingPoint<
 				T.FloatLeadingPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
-		>
+		>,
+	options?: T.FloatLeadingPoint.Options
 ): T.FloatLeadingPoint.Bound;
 export function buildFloatLeadingPoint(
 	config: WidenNumeric<
 		T.FloatLeadingPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-	>
+	>,
+	options?: T.FloatLeadingPoint.Options
 ): T.FloatLeadingPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
 	if (
@@ -5991,9 +6016,12 @@ export function buildFloatLeadingPoint(
 	const _fraction = numberText(10, '', config.fraction);
 	if (typeof _fraction !== 'string' || !_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
-	const _marker = config.marker;
+	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatLeadingPoint_marker.test(_marker)))
 		throw new Error(`float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const _sign = config.sign;
+	if (_sign !== undefined && (typeof _sign !== 'string' || !_slotRe_buildFloatLeadingPoint_sign.test(_sign)))
+		throw new Error(`float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (
 		_exponent !== undefined &&
@@ -6012,6 +6040,7 @@ export function buildFloatLeadingPoint(
 			integer: _integer,
 			fraction: _fraction,
 			marker: _marker,
+			sign: _sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
@@ -6022,23 +6051,27 @@ export function buildFloatLeadingPoint(
 		_integer,
 		_fraction,
 		_marker,
+		_sign,
 		_exponent,
 		_imaginary,
 		$with: {
 			integer: (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, integer: value })),
+				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, integer: value }, options)),
 			fraction: (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, fraction: value })),
-			marker: (value?: Admit<string>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, marker: value })),
+				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, fraction: value }, options)),
+			sign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, sign: value }, options)),
 			exponent: (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponent: value })),
+				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, exponent: value }, options)),
 			imaginary: (value?: Admit<string>) =>
-				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, imaginary: value }))
+				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, imaginary: value }, options)),
+			marker: (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildFloatLeadingPoint(config, { ...options, marker: spelling }))
 		},
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		fraction: () => hydrateStoredSlot(node, '_fraction'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
+		sign: () => hydrateStoredSlot(node, '_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
@@ -6060,17 +6093,22 @@ export function buildFloatScientific<
 			C,
 			{ integer: true; exponent: true },
 			WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
-		>
+		>,
+	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound;
 export function buildFloatScientific(
-	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound {
 	const _integer = numberText(10, '', config.integer);
 	if (typeof _integer !== 'string' || !_slotRe_buildFloatScientific_integer.test(_integer))
 		throw new Error(`float_scientific.integer: text does not match pattern: ${describeValue(_integer)}`);
-	const _marker = config.marker;
-	if (typeof _marker !== 'string' || !_slotRe_buildFloatScientific_marker.test(_marker))
+	const _marker = options?.marker ?? 'e';
+	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatScientific_marker.test(_marker)))
 		throw new Error(`float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
+	const _sign = config.sign;
+	if (_sign !== undefined && (typeof _sign !== 'string' || !_slotRe_buildFloatScientific_sign.test(_sign)))
+		throw new Error(`float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (typeof _exponent !== 'string' || !_slotRe_buildFloatScientific_exponent.test(_exponent))
 		throw new Error(`float_scientific.exponent: text does not match pattern: ${describeValue(_exponent)}`);
@@ -6085,6 +6123,7 @@ export function buildFloatScientific(
 		admitChildren(handle, 'float_scientific', {
 			integer: _integer,
 			marker: _marker,
+			sign: _sign,
 			exponent: _exponent,
 			imaginary: _imaginary
 		});
@@ -6094,19 +6133,24 @@ export function buildFloatScientific(
 		$named: true as const,
 		_integer,
 		_marker,
+		_sign,
 		_exponent,
 		_imaginary,
 		$with: {
 			integer: (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatScientific({ ...config, integer: value })),
-			marker: (value: Admit<string>) => rebuilt(node, handle, () => buildFloatScientific({ ...config, marker: value })),
+				rebuilt(node, handle, () => buildFloatScientific({ ...config, integer: value }, options)),
+			sign: (value?: Admit<'-' | '+'>) =>
+				rebuilt(node, handle, () => buildFloatScientific({ ...config, sign: value }, options)),
 			exponent: (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildFloatScientific({ ...config, exponent: value })),
+				rebuilt(node, handle, () => buildFloatScientific({ ...config, exponent: value }, options)),
 			imaginary: (value?: Admit<string>) =>
-				rebuilt(node, handle, () => buildFloatScientific({ ...config, imaginary: value }))
+				rebuilt(node, handle, () => buildFloatScientific({ ...config, imaginary: value }, options)),
+			marker: (spelling: 'e' | 'E') =>
+				rebuilt(node, handle, () => buildFloatScientific(config, { ...options, marker: spelling }))
 		},
 		integer: () => hydrateStoredSlot(node, '_integer'),
 		marker: () => hydrateStoredSlot(node, '_marker'),
+		sign: () => hydrateStoredSlot(node, '_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
 		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),

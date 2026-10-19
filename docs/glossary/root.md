@@ -97,7 +97,7 @@ It first refuses a `node` on `PATH` below the floor (`transpile/tree-sitter-cli.
 ```text
 Compiles the grammar through the gate (`compile.ts::compileGrammar`) and persists every record the gate saw to
 `.sittir/grammar-diagnostics.json`, whether or not it passed. Records the gate lets through are printed as
-non-fatal output. A blocked compile throws in a non-interactive run. In an interactive run a confirmation adds
+non-fatal output by `writeDiagnostics`: info on stdout, every other severity on stderr. A blocked compile throws in a non-interactive run. In an interactive run a confirmation adds
 the blocked codes to the allow set and compiles again, until the compile passes or the user declines; the
 returned `PreflightOutcome` carries the allow set and the passing compilation for `generate()` to reuse.
 `injectedDiagnostics` replaces the compile with a fixed record list (test seam) and `confirm` replaces the stdin
@@ -838,3 +838,6 @@ The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `Typescript
 
 The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.
 
+### `packages/codegen/src/grammars.ts::grammarNodeTypeName`
+
+The name of a grammar's node union, `<Prefix>Node` (`RustNode`, `TypescriptNode`). The types emitter declares it, the engine emitter types the language API's `node` with it, and the portable surface types each guard's node by it, all through this one name.

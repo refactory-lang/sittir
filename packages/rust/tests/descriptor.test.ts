@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { portable } from '@sittir/common/portable';
 import python from '@sittir/python';
 import rust from '../src/index.ts';
 
@@ -57,9 +58,8 @@ describe('the rust descriptor shares is and kinds with its engines', () => {
 		expect(engine.is).toBe((await createEngine(copy)).is);
 	});
 
-	it('keeps a portable engine own is', async () => {
-		expect(rust.is).toBeDefined();
-		const engine = await createEngine(rust, { api: 'portable' });
-		expect(engine.is).not.toBe(rust.is);
+	it('serves the shared portable kinds on the descriptor and on the portable engine', async () => {
+		expect(rust.kinds.portable).toBe(portable.kinds);
+		expect((await createEngine(rust, { api: 'portable' })).kinds).toBe(rust.kinds.portable);
 	});
 });

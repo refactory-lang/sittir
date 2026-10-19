@@ -1304,6 +1304,10 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 export type PatternTree = T.ParsedByKindId[TSKindId.Pattern] & ParsedRoot;
 
 /** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */
+export function wrapNode(
+	data: _UntypedNode & { readonly $type: TSKindId.Pattern } & ParsedRoot,
+	tree: TreeHandle
+): PatternTree;
 export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle

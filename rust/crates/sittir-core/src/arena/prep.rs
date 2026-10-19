@@ -301,7 +301,7 @@ impl<'r, T> RecordAt<'r, T> {
     /// The handle of one of the record's print settings.
     #[must_use]
     pub fn setting<V>(&self, setting: SettingOf) -> SettingAt<'r, T, V> {
-        SettingAt { place: self.key.place, setting, overlay: PhantomData }
+        SettingAt { key: self.key, setting, overlay: PhantomData }
     }
 }
 
@@ -671,26 +671,40 @@ pub enum SettingOf {
 /// One print setting of a record: the overlay's fill, below what the record
 /// stores.
 pub struct SettingAt<'r, T, V> {
-    place: PrepPlace,
+    key: RecordKey,
     setting: SettingOf,
     overlay: Marker<'r, (T, V)>,
 }
 
 impl<'r, T> Setting<Delimiter, RecordPrep<'r, T>> for SettingAt<'r, T, Delimiter> {
     fn fill(&mut self, prep: &mut RecordPrep<'r, T>, value: Delimiter) {
-        prep.prepared.node_mut(self.place).delimiter.get_or_insert(value);
+        prep.prepared.node_mut(self.key.place).delimiter.get_or_insert(value);
+    }
+
+    /// The setting the record stores.
+    fn chosen(&self, prep: &RecordPrep<'r, T>) -> bool {
+        self.key.side(prep).is_ok_and(|side| side.delimiter.is_some())
     }
 }
 
 impl<'r, T> Setting<KindId, RecordPrep<'r, T>> for SettingAt<'r, T, KindId> {
     fn fill(&mut self, prep: &mut RecordPrep<'r, T>, value: KindId) {
-        let node = prep.prepared.node_mut(self.place);
+        let node = prep.prepared.node_mut(self.key.place);
         match self.setting {
             SettingOf::SeparatorKind => node.separator_kind.get_or_insert(value),
             SettingOf::Space { word, before: true } => node.slot_mut(word).space_before.get_or_insert(value),
             SettingOf::Space { word, before: false } => node.slot_mut(word).space_after.get_or_insert(value),
             SettingOf::Delimiter => return,
         };
+    }
+
+    /// The setting the record stores.
+    fn chosen(&self, prep: &RecordPrep<'r, T>) -> bool {
+        self.key.side(prep).is_ok_and(|side| match self.setting {
+            SettingOf::SeparatorKind => side.separator_kind.is_some(),
+            SettingOf::Space { word, before } => side.slots.iter().any(|slot| slot.word == word && if before { slot.space_before.is_some() } else { slot.space_after.is_some() }),
+            SettingOf::Delimiter => false,
+        })
     }
 }
 

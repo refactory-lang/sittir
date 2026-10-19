@@ -10,7 +10,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 			{
 				kind: 'binary',
 				slots: [
-					{ name: 'operator', propertyName: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
+					{ name: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
 				]
 			},
 			{ kind: 'call', slots: [] },
@@ -24,6 +24,7 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 
 const emit = async (scm: string) =>
 	emitPortableSurface({
+		nodeType: 'TestNode',
 		routes: resolveRoutes(await input(scm)),
 		readTest: (entry) =>
 			entry.pins.length === 0
@@ -82,7 +83,7 @@ describe('emitPortableSurface', () => {
 					{
 						kind: 'holder',
 						slots: [
-							{ name: 'item', propertyName: 'item', values: [{ kind: 'node-ref', name: '_call', parseKind: 'call' }] }
+							{ name: 'item', values: [{ kind: 'node-ref', name: '_call', parseKind: 'call' }] }
 						]
 					}
 				]
@@ -90,7 +91,7 @@ describe('emitPortableSurface', () => {
 			textTokens: new Set(),
 			layoutSlots: []
 		});
-		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
+		const text = emitPortableSurface({ nodeType: 'TestNode', routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(text).toContain('\t"expression.call": TSKindId.Call;');
 		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
 		expect(text.match(/\[TSKindId\.Call\]: \[/g)).toHaveLength(1);
@@ -106,12 +107,13 @@ describe('emitPortableSurface', () => {
 	it('types a kinds node and a guard per path, each holding only its child segments', async () => {
 		const text = await emit(SCM);
 		expect(text).toContain(
-			'\t"expression": { readonly $ids: readonly PortableIds["expression"][]; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
+			'\t"expression": { readonly $path: "expression"; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
 		);
 		expect(text).toContain(
-			'\t"expression.call": PortableGuard<PortableIds["expression.call"]> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
+			'\t"expression.call": PortableGuard<PortableIds["expression.call"], TestNode, TSKindId> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
 		);
 		expect(text).toContain('export interface PortableIs { readonly "expression": PortableIsAt["expression"] }');
+		expect(text).toContain("import type { TestNode } from './types.js';");
 	});
 
 	it('writes the table: paths, entries in read order with placements nearest first, and fixed texts', async () => {
@@ -128,7 +130,8 @@ describe('emitPortableSurface', () => {
 			'\t\t[TSKindId.Call]: [{ path: "expression.call.nested", within: [TSKindId.Block], test: [] }, { path: "expression.call", within: [], test: [] }],'
 		);
 		expect(text).toContain('\tfixedText: { [TSKindId.Plus]: "+" },');
-		expect(text).toContain('export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);');
+		expect(text).toContain('export const rows: PortableRows = Object.freeze({ table, querySlots });');
+		expect(text).not.toContain('portableSurface');
 	});
 
 	it('decides a path by kind id when every entry a guard can reach is under it, though an entry after an unconditional one is not', async () => {
@@ -139,6 +142,7 @@ describe('emitPortableSurface', () => {
 
 	it('declares each kind\'s flags on its node interface, so a where condition\'s is takes only them', async () => {
 		const text = emitPortableSurface({
+			nodeType: 'TestNode',
 			routes: resolveRoutes(await input(SCM)),
 			readTest: () => [],
 			kindIdOf: () => 'TSKindId.Call',
@@ -149,7 +153,7 @@ describe('emitPortableSurface', () => {
 			slotFlagTypes: []
 		});
 		expect(text).toContain(["declare module './types.js' {", '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
-		const none = emitPortableSurface({ routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
+		const none = emitPortableSurface({ nodeType: 'TestNode', routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(none).not.toContain('declare module');
 	});
 });

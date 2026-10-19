@@ -138,6 +138,9 @@ pub trait UnitSlot<O> {
 /// resolves.
 pub trait Setting<V, O> {
     fn fill(&mut self, overlay: &mut O, value: V);
+    /// Whether a builder set it: the value the node holds before prepare
+    /// fills it.
+    fn chosen(&self, overlay: &O) -> bool;
 }
 
 /// A choice of units, each built from the kind id it claims.
@@ -220,10 +223,18 @@ impl<V> Setting<V, ()> for Option<V> {
     fn fill(&mut self, (): &mut (), value: V) {
         self.get_or_insert(value);
     }
+
+    fn chosen(&self, (): &()) -> bool {
+        self.is_some()
+    }
 }
 
 impl<V, O, S: Setting<V, O> + ?Sized> Setting<V, O> for &mut S {
     fn fill(&mut self, overlay: &mut O, value: V) {
         (**self).fill(overlay, value);
+    }
+
+    fn chosen(&self, overlay: &O) -> bool {
+        (**self).chosen(overlay)
     }
 }

@@ -74,7 +74,7 @@ import {
 	ownTextLeaf,
 	type OwnTextLeaf,
 	resolveDirectFactorySlot,
-	warnSkippedParserSymbol,
+	reportSkippedParserSymbol,
 	soleSlotFacts,
 	type SoleSlotFacts,
 	needsNonEmptyHoist,
@@ -1078,7 +1078,7 @@ export function fieldElementType(
 	const literals = slotLiteralValues(f);
 	const kindNames = slotKindNames(f);
 
-	if (literals.length > 0 && kindNames.length === 0) {
+	if (literals.length > 0 && kindNames.length === 0 && f.registeredOption !== 'choice') {
 		return literals.map((v) => JSON.stringify(v)).join(' | ');
 	}
 	if (kindNames.length === 0 && literals.length === 0) return 'string';
@@ -2707,7 +2707,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			emission === 'skip-synthesized-kind' ||
 			emission === 'skip-missing-parser-symbol'
 		) {
-			warnSkippedParserSymbol(kind, 'factory', emission);
+			reportSkippedParserSymbol(kind, 'factory', emission);
 		}
 		if (emission !== 'emit') return;
 

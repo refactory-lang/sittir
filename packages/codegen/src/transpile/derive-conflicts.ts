@@ -27,7 +27,7 @@ export type DerivationResult =
 	| { readonly kind: 'converged'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: number }
 	| {
 			readonly kind: 'unresolvable';
-			readonly reason: 'repeated' | 'no-usable-offer' | 'cap';
+			readonly reason: 'repeated' | 'no-usable-offer' | 'cap' | 'dropped-set-returned';
 			readonly report: ConflictReport;
 			readonly resolutions: readonly DerivedResolution[];
 	  };
@@ -71,12 +71,31 @@ function conflictReportOf(outcome: FailedGenerate): ConflictReport {
 	return outcome.report;
 }
 
+export type Converged = Extract<DerivationResult, { readonly kind: 'converged' }>;
+
+export async function pruneUnnecessary(input: DerivationInput, converged: Converged, unnecessary: readonly (readonly string[])[]): Promise<DerivationResult> {
+	let { resolutions, iterations } = converged;
+	let pending = unnecessary;
+	for (;;) {
+		const drop = resolutions.filter((entry) => pending.some((set) => sameConflictSet(set, entry.resolution.symbols)));
+		if (drop.length === 0) return { kind: 'converged', resolutions, iterations };
+		resolutions = resolutions.filter((entry) => !drop.includes(entry));
+		iterations++;
+		const outcome = await input.generate(resolutions);
+		if (outcome.kind === 'clean') {
+			pending = outcome.unnecessary;
+			continue;
+		}
+		return { kind: 'unresolvable', reason: 'dropped-set-returned', report: conflictReportOf(outcome), resolutions };
+	}
+}
+
 export async function deriveConflictResolutions(input: DerivationInput): Promise<DerivationResult> {
 	const resolutions: DerivedResolution[] = [];
 	const reported = new Set<string>();
 	for (let iterations = 1; ; iterations++) {
 		const outcome = await input.generate(resolutions);
-		if (outcome.kind === 'clean') return { kind: 'converged', resolutions, iterations };
+		if (outcome.kind === 'clean') return pruneUnnecessary(input, { kind: 'converged', resolutions, iterations }, outcome.unnecessary);
 		const report = conflictReportOf(outcome);
 		const key = conflictKey(report);
 		if (reported.has(key)) return { kind: 'unresolvable', reason: 'repeated', report, resolutions };

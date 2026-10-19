@@ -17,7 +17,8 @@ import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNo
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
-import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -114,9 +115,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 		options: raw.options,
 		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
 	};
-	const spacedRules = spaceRenderRules(rulesConfig);
-	stampStaticSpacing(nodeMap, grammar, spacedRules);
-	const renderRules = seamRenderRules(spacedRules, rulesConfig);
+	const prepass = spaceRenderRules(rulesConfig);
+	stampStaticSpacing(nodeMap, grammar, prepass);
+	collectSitePreferences({ nodeMap, kindEntries, renderRules: seamRenderRules(prepass, rulesConfig), options: raw.options });
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced)).seamed;
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }

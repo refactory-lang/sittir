@@ -16,18 +16,6 @@
     "grammar": "rust",
     "code": "rule-reauthored-without-cause",
     "severity": "error",
-    "ownerKind": "_primitive_type",
-    "message": "rules: '_primitive_type' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
-    "canProceed": false,
-    "details": {
-      "cause": "ambiguity"
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "rule-reauthored-without-cause",
-    "severity": "error",
     "ownerKind": "reference_expression",
     "message": "rules: 'reference_expression' replaces the upstream rule, but no diagnostic provokes the enriched shape (declared cause 'ambiguity'). Delete the entry so the upstream rule compiles as is",
     "canProceed": false,
@@ -45,49 +33,6 @@
     "canProceed": false,
     "details": {
       "cause": "ambiguity"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "rust",
-    "message": "conflict between function_modifiers, foreign_mod_item_semi, foreign_mod_item_body on 'extern' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "function_modifiers",
-          "foreign_mod_item_semi",
-          "foreign_mod_item_body"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "function_modifiers"
-        ],
-        [
-          "foreign_mod_item_semi",
-          "foreign_mod_item"
-        ],
-        [
-          "foreign_mod_item_body",
-          "foreign_mod_item"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'unsafe'"
-        ],
-        "lookahead": "'extern'",
-        "interpretations": [
-          "foreign_mod_item_semi",
-          "foreign_mod_item_body",
-          "function_modifiers_repeat1"
-        ]
-      }
     }
   },
   {
@@ -120,6 +65,47 @@
         "interpretations": [
           "_attributed_argument",
           "_attributed_argument"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "rust",
+    "message": "conflict between _pattern, _primitive_type on ')' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_pattern",
+          "_primitive_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_pattern"
+        ],
+        [
+          "_primitive_type",
+          "_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'fn'",
+          "identifier",
+          "'('",
+          "'('",
+          "'u8'"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "_pattern",
+          "_primitive_type"
         ]
       }
     }
@@ -167,87 +153,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "rust",
-    "message": "conflict between visibility_modifier, scoped_identifier, scoped_type_identifier on '::' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "visibility_modifier",
-          "scoped_identifier",
-          "scoped_type_identifier"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "visibility_modifier"
-        ],
-        [
-          "scoped_identifier"
-        ],
-        [
-          "scoped_type_identifier"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'struct'",
-          "identifier",
-          "'('",
-          "crate"
-        ],
-        "lookahead": "'::'",
-        "interpretations": [
-          "visibility_modifier",
-          "scoped_identifier",
-          "scoped_identifier",
-          "scoped_type_identifier"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "rust",
-    "message": "conflict between visibility_modifier_pub on '(' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "visibility_modifier_pub"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "visibility_modifier_pub",
-          "visibility_modifier"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'struct'",
-          "identifier",
-          "'('",
-          "'pub'"
-        ],
-        "lookahead": "'('",
-        "interpretations": [
-          "visibility_modifier_pub",
-          "visibility_modifier_pub"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "rust",
     "message": "conflict between _type, _pattern on ')' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -279,6 +184,49 @@
         "interpretations": [
           "_type",
           "_pattern"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "rust",
+    "message": "conflict between function_modifiers, foreign_mod_item_semi, foreign_mod_item_body on 'extern' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "function_modifiers",
+          "foreign_mod_item_semi",
+          "foreign_mod_item_body"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "function_modifiers"
+        ],
+        [
+          "foreign_mod_item_semi",
+          "foreign_mod_item"
+        ],
+        [
+          "foreign_mod_item_body",
+          "foreign_mod_item"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'unsafe'"
+        ],
+        "lookahead": "'extern'",
+        "interpretations": [
+          "foreign_mod_item_semi",
+          "foreign_mod_item_body",
+          "function_modifiers_repeat1"
         ]
       }
     }
@@ -360,6 +308,87 @@
         "interpretations": [
           "unit_type",
           "tuple_pattern"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "rust",
+    "message": "conflict between visibility_modifier, scoped_identifier, scoped_type_identifier on '::' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "visibility_modifier",
+          "scoped_identifier",
+          "scoped_type_identifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "visibility_modifier"
+        ],
+        [
+          "scoped_identifier"
+        ],
+        [
+          "scoped_type_identifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'struct'",
+          "identifier",
+          "'('",
+          "crate"
+        ],
+        "lookahead": "'::'",
+        "interpretations": [
+          "visibility_modifier",
+          "scoped_identifier",
+          "scoped_identifier",
+          "scoped_type_identifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "rust",
+    "message": "conflict between visibility_modifier_pub on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "visibility_modifier_pub"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "visibility_modifier_pub",
+          "visibility_modifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'struct'",
+          "identifier",
+          "'('",
+          "'pub'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "visibility_modifier_pub",
+          "visibility_modifier_pub"
         ]
       }
     }

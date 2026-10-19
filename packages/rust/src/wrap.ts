@@ -37,6 +37,7 @@ import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
+import type { EmptySourceFile } from './types.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
 
@@ -4607,8 +4608,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
 		},
-		comma() {
-			return this._comma;
+		trailingComma() {
+			return this._trailing_comma;
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
@@ -4625,9 +4626,15 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 				rebuilt(node, handle, () =>
 					wrapLastMatchArm({ ...$edited(data), _value: admitSlot(handle, 'last_match_arm', 'value', v) }, tree)
 				),
-			comma: (v: NonNullable<T.LastMatchArm['_comma']>) =>
+			trailingComma: (v: NonNullable<T.LastMatchArm['_trailing_comma']> | null) =>
 				rebuilt(node, handle, () =>
-					wrapLastMatchArm({ ...$edited(data), _comma: admitSlot(handle, 'last_match_arm', 'comma', v) }, tree)
+					wrapLastMatchArm(
+						{
+							...$edited(data),
+							_trailing_comma: admitSlot(handle, 'last_match_arm', 'trailingComma', v === null ? 0 : v)
+						},
+						tree
+					)
 				),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -10464,9 +10471,13 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
-export type SourceFileTree = T.ParsedByKindId[TSKindId.SourceFile] & ParsedRoot;
+export type SourceFileTree = EmptySourceFile.Parsed & ParsedRoot;
 
 /** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */
+export function wrapNode(
+	data: _UntypedNode & { readonly $type: TSKindId.SourceFile } & ParsedRoot,
+	tree: TreeHandle
+): SourceFileTree;
 export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle

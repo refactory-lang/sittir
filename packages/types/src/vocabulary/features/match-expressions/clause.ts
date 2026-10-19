@@ -39,7 +39,7 @@ export namespace Clause {
 			export interface Last<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Match.Arm<G>> {
 				// claimed by r
 				readonly $kind: 'clause.match.arm.last';
-				readonly comma?: boolean;
+				readonly trailingComma?: boolean;
 				readonly pattern: V.Pattern.Match<G>;
 				readonly value: G['slots']['clause.match.arm.last']['value'];
 			}

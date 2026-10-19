@@ -1,6 +1,6 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { carryRead, carrySource, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -67,14 +67,14 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	markRebuilt(result);
 	carryRead(node, result);
 	carrySource(node, result);
-	const facts = handle?.current.trivia;
+	const facts: TriviaFacts | undefined = handle?.current.trivia;
 	if (facts !== undefined) {
 		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
 		carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, stands);
 	}
 	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
 	if (inner.some((entry) => typeof entry !== 'number')) {
-		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
+		const kind = facts?.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
 	const trivia = triviaOf(node);
@@ -368,6 +368,25 @@ export function listOption(list: unknown, key: string, fallback: unknown): unkno
 
 const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
 
+const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
+
+/**
+ * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
+ * own `_separator` when its data stores one, else the one its tree answers (`slotSeparatorOf`).
+ * An owner names the accessor that returns its list and answers that list's `separator`.
+ */
+export function defineListSeparator(node: object, accessor?: string): void {
+	let getter = SEPARATOR_GETTERS.get(accessor);
+	if (getter === undefined) {
+		getter = function (this: Record<string, unknown>) {
+			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
+			return this._separator ?? slotSeparatorOf(this);
+		};
+		SEPARATOR_GETTERS.set(accessor, getter);
+	}
+	Object.defineProperty(node, 'separator', { get: getter, enumerable: false, configurable: true });
+}
+
 /** One getter per index position, shared by every wrapped list: an index reads the item the list hydrates on first use. */
 export function defineListIndices(node: object, count: number): void {
 	for (let index = 0; index < count; index++) {
@@ -553,14 +572,6 @@ export function isFactoryNode(v: unknown): v is AnyUntypedNode {
 	return isNode(v) && !isParsedNode(v);
 }
 
-/**
- * The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node surface, and the range belongs to the version of the tree the node was read from, so it says nothing about the node after an edit.
- */
-export function spanOf(node: object): ByteSpan | undefined {
-	const span = coordinateOf(node)?.$span;
-	return span === undefined ? undefined : { start: span.start, end: span.end };
-}
-
 export function isErrorNode(v: unknown): v is ErrorNode {
 	return isParsedNode(v) && v.$type === ERROR_KIND_ID;
 }
@@ -668,7 +679,7 @@ export { admitChildren, admitSlot, currentHandle, inEngine, hydrateStored, type 
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {

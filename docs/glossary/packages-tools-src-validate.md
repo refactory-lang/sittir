@@ -727,15 +727,11 @@ builder: the parent takes the group's value whole under the slot key.
 
 ### `packages/tools/src/validate/common.ts::ParsedNodeModel`
 
-```text
-/** Minimal shape of the parsed node-model.json5 — only the fields the
- * validators consume. `factoryShape`/`factoryFields` are per-node;
- * `factorySlots`/`fieldAliasMap`/`polymorphVariants` are top-level. */
-```
+The shape of a parsed `node-model.json5`, only the fields the validators read. Each slot carries its own factory flags (`registered`, `optionDefault`); the record has no top-level factory-slot table.
 
 ### `packages/tools/src/validate/common.ts::parseNodeModel`
 
-Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind.
+Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape.
 
 ### `packages/tools/src/validate/common.ts::loadBoundNameOf`
 
@@ -1330,6 +1326,11 @@ The same rule serves the `elements`, `tuple` and `flatten` shapes; the container
 
 ### `packages/tools/src/validate/common.ts::splitRegisteredSlots`
 
+A config key is the camelCase of its slot name (a kind-origin slot keeps its
+name), while the factory slot metadata is keyed by the slot name. A key is
+registered when it equals a metadata name or the camelCase of one, so a
+multi-word registered slot keeps its option instead of falling into the config.
+
 ```text
 /**
  * Pulls a kind's registered (spelling/choice) slots out of a projected
@@ -1814,3 +1815,15 @@ How much of its layout the source's tree stores apart from its read-time options
 ### `packages/tools/src/validate/layout-runs.ts::runLayoutRuns`
 
 The layout rows of a grammar's corpus: how many runs, which no region's record reaches, which entries' region render was refused, and what the corpus stores (`stored`, summed over `storedLayoutOf`). The stored counts are small against the runs because the baseline is the read-time options, the tree's inferred layer over the engine's: a source's own conventions are inferred once and store nothing per gap.
+
+### `packages/tools/src/validate/grammar-diagnostics-file.ts::readGrammarDiagnostics`
+
+Reads `packages/<grammar>/.sittir/grammar-diagnostics.json` (written by codegen's `writeGrammarDiagnosticsJson`) as report entries. Every on-disk field is kept; `location` is added from `ownerKind` (and `.slotName` when present). A missing file reads as no entries, since a grammar may not have been generated yet. A file that exists but does not parse reads as one `grammar-diagnostics-read-error` entry naming the path, so a corrupt file is reported rather than counted as clean. The validation report (`writeMergedValidationReport`) and the regen status lines (`regenerateGrammars`) both read through it.
+
+### `packages/tools/src/validate/grammar-diagnostics-file.ts::severitySummary`
+
+One phrase counting diagnostics by severity, most severe first (`SEVERITY_ORDER`), skipping severities with none: `1 error, 2 info`, or `none`.
+
+### `packages/tools/src/validate/grammar-diagnostics-file.ts::SEVERITY_ORDER`
+
+Severities from most to least severe: `fail`, `error`, `warning`, `info`. The order `severitySummary` lists counts in.

@@ -37,7 +37,7 @@ function savedFile(file: Partial<ConflictResolutionsFile>): ConflictResolutionsF
 }
 
 function oneConflictThenClean(store: ConflictResolutionsStore): () => Promise<GenerateOutcome> {
-	return async () => (store.read().resolutions.length === 0 ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean' });
+	return async () => (store.read().resolutions.length === 0 ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean', unnecessary: [] });
 }
 
 const bogus: DerivedResolution = {
@@ -77,7 +77,7 @@ describe('settleConflictResolutions', () => {
 	it('leaves a reused file untouched: no write for its one generate', async () => {
 		const saved = savedFile({ grammarHash: 'h1', bound: { grammarHash: 'b1', resolutions: [] } });
 		const store = memoryStore(saved);
-		const result = await settleConflictResolutions({ store, inputs, runGenerate: async () => ({ kind: 'clean' }) });
+		const result = await settleConflictResolutions({ store, inputs, runGenerate: async () => ({ kind: 'clean', unnecessary: [] }) });
 		expect(result).toMatchObject({ kind: 'settled', base: { kind: 'reused' }, bound: { kind: 'reused' } });
 		expect(store.writes).toEqual([]);
 		expect(store.read()).toBe(saved);
@@ -103,7 +103,7 @@ describe('settleConflictResolutions', () => {
 		const derive = oneConflictThenClean(store);
 		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> => {
 			grammars.push(grammar);
-			return grammar === 'bound' ? { kind: 'clean' } : derive();
+			return grammar === 'bound' ? { kind: 'clean', unnecessary: [] } : derive();
 		};
 		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({
 			kind: 'settled',
@@ -117,7 +117,7 @@ describe('settleConflictResolutions', () => {
 	it('derives a conflict only the bound grammar reports into the bound section, stamped after its clean run', async () => {
 		const store = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
 		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> =>
-			grammar === 'base' || store.read().bound.resolutions.length > 0 ? { kind: 'clean' } : { kind: 'conflict', report: reportFor('this_parameter', 'identifier') };
+			grammar === 'base' || store.read().bound.resolutions.length > 0 ? { kind: 'clean', unnecessary: [] } : { kind: 'conflict', report: reportFor('this_parameter', 'identifier') };
 		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({
 			kind: 'settled',
 			base: { kind: 'converged', iterations: 1 },
@@ -132,7 +132,7 @@ describe('settleConflictResolutions', () => {
 		const store = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
 		const bound = { ...inputs.bound, upstreamConflicts: [['parameter', 'identifier']], baseNames: { this_parameter: 'parameter' } };
 		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> =>
-			grammar === 'base' || store.read().bound.resolutions.length > 0 ? { kind: 'clean' } : { kind: 'conflict', report: reportFor('this_parameter', 'identifier') };
+			grammar === 'base' || store.read().bound.resolutions.length > 0 ? { kind: 'clean', unnecessary: [] } : { kind: 'conflict', report: reportFor('this_parameter', 'identifier') };
 		await settleConflictResolutions({ store, inputs: { ...inputs, bound }, runGenerate });
 		expect(store.read().bound.resolutions.map((entry) => [entry.step, entry.sourceChains])).toEqual([
 			['upstream-declared', [['this_parameter', 'parameter'], ['identifier']]]
@@ -143,7 +143,7 @@ describe('settleConflictResolutions', () => {
 		const base = [{ ...bogus, resolution: { kind: 'AddConflict' as const, symbols: ['a', 'b'] } }];
 		const store = memoryStore(savedFile({ grammarHash: 'h1', resolutions: base, bound: { grammarHash: 'b0', resolutions: [bogus] } }));
 		const grammars: string[] = [];
-		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> => (grammars.push(grammar), { kind: 'clean' });
+		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> => (grammars.push(grammar), { kind: 'clean', unnecessary: [] });
 		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({
 			kind: 'settled',
 			base: { kind: 'reused' },
@@ -158,7 +158,7 @@ describe('settleConflictResolutions', () => {
 		const store = memoryStore(savedFile({ grammarHash: 'h1', bound: { grammarHash: 'b0', resolutions: [] } }));
 		const grammars: string[] = [];
 		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> =>
-			(grammars.push(grammar), grammar === 'base' ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean' });
+			(grammars.push(grammar), grammar === 'base' ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean', unnecessary: [] });
 		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({
 			kind: 'failed',
 			grammar: 'base',
@@ -185,7 +185,7 @@ describe('settleConflictResolutions', () => {
 	it('leaves a failed bound derivation unverified, with the base sets stamped', async () => {
 		const store = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
 		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> =>
-			grammar === 'base' ? { kind: 'clean' } : { kind: 'conflict', report: reportFor('c', 'd') };
+			grammar === 'base' ? { kind: 'clean', unnecessary: [] } : { kind: 'conflict', report: reportFor('c', 'd') };
 		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({
 			kind: 'failed',
 			grammar: 'bound',
@@ -198,7 +198,7 @@ describe('settleConflictResolutions', () => {
 	it('generates only the bound parser when it reuses both sections', async () => {
 		const store = memoryStore(savedFile({ grammarHash: 'h1', bound: { grammarHash: 'b1', resolutions: [] } }));
 		const grammars: string[] = [];
-		await settleConflictResolutions({ store, inputs, runGenerate: async (grammar: GeneratedGrammar) => (grammars.push(grammar), { kind: 'clean' }) });
+		await settleConflictResolutions({ store, inputs, runGenerate: async (grammar: GeneratedGrammar) => (grammars.push(grammar), { kind: 'clean', unnecessary: [] }) });
 		expect(grammars).toEqual(['bound']);
 	});
 });

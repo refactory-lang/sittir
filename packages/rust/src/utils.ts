@@ -4,6 +4,7 @@ import type { AnyUntypedNode, QuerySlots, StructureTable, TriviaFacts } from '@s
 import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type RustTypeMap } from './types.js';
 import { INNER_SITES } from './consts.js';
+import type { TSKindId } from './kinds.js';
 
 export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
@@ -37,7 +38,7 @@ export const triviaFacts = Object.freeze({
 		run: /^(?:(?:(?:\s))+)$/u,
 		kindIdByText: Object.freeze({ '': 168, ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })
 	})
-} satisfies TriviaFacts);
+} satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
 	124: [['content', 0]],
@@ -407,7 +408,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['attributes', 0],
 		['pattern', 1],
 		['value', 2],
-		['comma', 3, ',']
+		['trailingComma', 3]
 	],
 	296: [
 		['pattern', 0],
@@ -1549,8 +1550,7 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_attributes', 'LastMatchArm.attributes', 'a built AttributeItem / InnerAttributeItem'],
 			['_pattern', 'LastMatchArm.pattern', 'a built MatchPattern'],
-			['_value', 'LastMatchArm.value', 'a built Expression'],
-			['_comma', 'LastMatchArm.comma', 'a boolean']
+			['_value', 'LastMatchArm.value', 'a built Expression']
 		]
 	},
 	296: {

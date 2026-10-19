@@ -1038,6 +1038,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.node_slots(parent).separators.get(&index).copied()
     }
 
+    /// The separator the list at `index` writes between its items: the one
+    /// its slot stores where its source's gaps differ from what the read-time
+    /// options render, else the one those options render, which is also the
+    /// answer for a list of no gap. None for a node that is no list.
+    pub fn slot_separator(&self, index: crate::types::NodeIndex) -> Option<KindId> {
+        let stored = self.node_slots(index).layouts.iter().find_map(|layout| layout.separator);
+        stored.or_else(|| self.read_options.separator_of(crate::read::grammar_id(&node_at_index(&self.tree, index)?)))
+    }
+
     /// The stored layout of each list slot of the node at `index` that
     /// stores any (`node_slots`).
     pub fn slot_layouts(&self, index: crate::types::NodeIndex) -> Vec<crate::layout::SlotLayout> {

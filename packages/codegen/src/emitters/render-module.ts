@@ -566,9 +566,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 					}
 				}
 			}
-			if (sep === undefined && node instanceof AbstractAssembledCompound) {
-				sep = node.separator ?? undefined;
-			}
+			if (sep === undefined && node instanceof AssembledList) sep = node.separator;
 			if (sep !== undefined) separators.set(kind, sep);
 		}
 	}
@@ -844,7 +842,8 @@ function buildTypedTemplateBody(
 		const shape = shapeByName.get(f.name);
 		if (shape?.tag === 'presence') {
 			if (shape.kind !== undefined) {
-				const unit = `${rustNodeStructName(shape.kind)}::${rustNodeVariantName(shape.kind)}`;
+				const variant = `${rustNodeStructName(shape.kind)}::${rustNodeVariantName(shape.kind)}`;
+				const unit = seatedKindsOf(plan).has(shape.kind.display.name) ? `${variant}(::sittir_core::options::Edges::default())` : variant;
 				bind(ident, `View::new(::sittir_core::view::Presence::new(node.${rIdent}(), ${unit}), ${template})`);
 				continue;
 			}
@@ -2798,7 +2797,7 @@ function wrapperSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
 	if (!(node instanceof AssembledPolymorph) || node instanceof AssembledSupertype) return undefined;
 	const model = renderSlotModelOf(node);
 	const slot = model.named[0] ?? model.unnamed[0];
-	return slot?.name === undefined ? undefined : slot;
+	return slot?.name === undefined || isMultiple(slot) ? undefined : slot;
 }
 
 function seatWrappersOf(nodeMap: NodeMap, tables: GeneratedIdTables): SeatWrapper[] {
@@ -3135,13 +3134,14 @@ function prepareStructImpl(
 			const key = JSON.stringify(listItemWireKey(node));
 			const items = rustFieldIdent(listItemField(node).storageName);
 			body.push(
+				`    let chosen = ${PREPARE_MOD}::Setting::chosen(&parts.separator_kind, overlay);`,
+				`    if let Some(tokens) = ${PREPARE_MOD}::SlotTarget::separators(&parts.${items}, overlay, ${structName}::separator_kind_of, ctx).filter(|_| !chosen) {`,
+				`        ${PREPARE_MOD}::LayoutTarget::set_slot_tokens(&mut parts.layout, overlay, ${key}, tokens);`,
+				'    }',
 				`    if let Some(kind) = ${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, overlay, ${key}).and_then(|slot| slot.separator).and_then(${structName}::separator_kind_of) {`,
 				`        ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, overlay, kind);`,
 				'    }',
-				`    ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::${sep.constName}).arm);`,
-				`    if let Some(tokens) = ${PREPARE_MOD}::SlotTarget::separators(&parts.${items}, overlay, ${structName}::separator_kind_of, ctx) {`,
-				`        ${PREPARE_MOD}::LayoutTarget::set_slot_tokens(&mut parts.layout, overlay, ${key}, tokens);`,
-				'    }'
+				`    ${PREPARE_MOD}::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::${sep.constName}).arm);`
 			);
 		}
 		body.push(...optionDefaultFills(defaulted));

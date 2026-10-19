@@ -45,6 +45,9 @@ pub struct ResolvedOptions {
     /// Per kind id of a wrapper, the way its seat passes through to the node
     /// it holds; none for any other kind (`prepare::SeatSlot`).
     pub seat_wrappers: &'static [Option<SeatPath>],
+    /// Per kind id of a list, the site its items' separator reads; none for
+    /// any other kind.
+    pub separator_sites: &'static [Option<SiteId>],
 }
 
 /// How a wrapper's seat reaches the node it holds.
@@ -155,6 +158,7 @@ impl Default for ResolvedOptions {
             sites: &[],
             kind_flags: &[],
             seat_wrappers: &[],
+            separator_sites: &[],
         }
     }
 }
@@ -174,6 +178,14 @@ impl ResolvedOptions {
             before: row.before.map(|site| self.edge_seam(site, None)),
             after: row.after.map(|site| self.edge_seam(site, None)),
         })
+    }
+
+    /// The separator kind the options write between the items of a list of
+    /// `kind`, or none for a kind that holds no separator site.
+    #[must_use]
+    pub fn separator_of(&self, kind: KindId) -> Option<KindId> {
+        let site = (*self.separator_sites.get(kind.index())?)?;
+        Some(self.site_arm(site).arm)
     }
 
     #[must_use]
