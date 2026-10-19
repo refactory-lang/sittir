@@ -37,7 +37,7 @@ The context names are vocabulary terms, declared once, beside the kinds, in `pac
 - an ordered tuple;
 - `BuilderContext`, its element type. The name keeps it apart from `GrammarContext<G>`.
 
-A term's position is its bit in every mask, in every grammar. A test holds the tuple at 31 terms or fewer, since bit 31 is `Unproven` (§6). A grammar's table names only these terms, and a grammar that needs a new one adds it to the vocabulary first, as a feature adds a kind.
+A term's position is its bit in every mask, in every grammar. A test holds the tuple at 30 terms or fewer, since bits 30 and 31 are `Excluded` and `Unproven` (§6). A grammar's table names only these terms, and a grammar that needs a new one adds it to the vocabulary first, as a feature adds a kind.
 
 | term | required by | permitted inside |
 | --- | --- | --- |
@@ -162,7 +162,8 @@ This is reported, not gated. The declarations' growth, a type parameter per reac
 
 ## 6. The runtime mask
 
-- `$needs` is a 32-bit mask: bits 0–30 are the vocabulary's terms in tuple order, and bit 31 is `Unproven`.
+- `$needs` is a 32-bit mask: bits 0–29 are the vocabulary's terms in tuple order, bit 30 is `Excluded`, and bit 31 is `Unproven`.
+- `Excluded` marks a parsed node that holds atoms its kind excludes. It is a need no slot provides and every bounding slot bounds ([builder exclusions](2026-10-19-builder-exclusions-design.md) §7).
 - A built node holds it as an own data property. A parsed node reads it from its arena row.
 
 Every builder computes it at construction, in both modes. For each slot, `contribution` is the OR of the child masks with the slot's provided bits cleared. The node's own mask is:
