@@ -71,7 +71,7 @@ export class Printed {
 	readonly $named = true as const;
 	$_layout?: { trivia?: ReadTrivia };
 	constructor(
-		readonly $type: number | undefined,
+		readonly $type: number,
 		readonly source: string,
 		readonly kind?: string,
 		readonly argsSource?: string,
@@ -80,6 +80,12 @@ export class Printed {
 }
 
 const INDENT = '\t';
+
+function kindIdOf(kind: string, kindIdOfName: (kind: string) => number | undefined): number {
+	const id = kindIdOfName(kind);
+	if (id === undefined) throw new Error(`emit-factory-source: ${kind} has no parser id`);
+	return id;
+}
 
 function isLoose(ctx: PrintContext): boolean {
 	return ctx.surface === 'loose';
@@ -229,13 +235,13 @@ function printVerbatimText(
 	slotKinds: readonly string[] = [],
 	storage?: string
 ): unknown {
-	if (leaf !== undefined) return new Printed(ctx.facts.kindIdOfName(leaf), `${builderOf(leaf, ctx)}(${JSON.stringify(text)})`, leaf);
+	if (leaf !== undefined) return new Printed(kindIdOf(leaf, ctx.facts.kindIdOfName), `${builderOf(leaf, ctx)}(${JSON.stringify(text)})`, leaf);
 	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
 	if (slotKinds.length === 0 && storage === 'verbatim') return text;
 	const id = storesKindId(storage) ? ctx.memberIdOfText?.(text) : undefined;
 	if (id !== undefined) return id;
 	if (ctx.textLeafKinds?.has('identifier')) {
-		return new Printed(ctx.facts.kindIdOfName('identifier'), `${builderOf('identifier', ctx)}(${JSON.stringify(text)})`, 'identifier');
+		return new Printed(kindIdOf('identifier', ctx.facts.kindIdOfName), `${builderOf('identifier', ctx)}(${JSON.stringify(text)})`, 'identifier');
 	}
 	return text;
 }
@@ -381,11 +387,9 @@ function wrapSeatElement(item: unknown, ctx: PrintContext): unknown {
 	const seatKind = seatKindOf(item);
 	if (seatKind === undefined || !isPlainObject(item) || '$type' in item) return item;
 	const wrapped = wrapTextLeaves(seatKind, item, ctx);
-	const id = ctx.facts.kindIdOfName(seatKind);
-	const tagged = id !== undefined && isLoose(ctx) && seatHoistedSlot(seatKind, ctx.facts) !== undefined;
-	return tagged && isPlainObject(wrapped)
-		? { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped }
-		: wrapped;
+	if (!isLoose(ctx) || seatHoistedSlot(seatKind, ctx.facts) === undefined || !isPlainObject(wrapped)) return wrapped;
+	const id = kindIdOf(seatKind, ctx.facts.kindIdOfName);
+	return { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped };
 }
 
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
@@ -506,7 +510,7 @@ function loosenValue(
 	const config = value.facts?.config;
 	if (config !== undefined && ctx.nested === 'configs' && isFlatKind(value.kind, ctx)) {
 		if (branch.length === 1 && branch[0] === value.kind) return new Printed(value.$type, config, value.kind);
-		if (typeof value.$type === 'number' && ctx.memberNameOfId(value.$type) !== undefined) {
+		if (ctx.memberNameOfId(value.$type) !== undefined) {
 			const tag = kindTagSource(value.$type, ctx);
 			const keyed = config === '{}' ? `{ $type: ${tag} }` : config.replace(/^\{\n/, `{\n\t$type: ${tag},\n`);
 			return new Printed(value.$type, keyed, value.kind);
@@ -587,12 +591,14 @@ function ownedListArgs(owner: string, value: unknown, ctx: PrintContext): string
 	return value.argsSource;
 }
 
+export type PrintingEntry = ((...args: unknown[]) => Printed | string) & { readonly kindId: number };
+
 export function printingFactoryMap(
 	realShapes: Record<string, FactoryShape>,
 	kindIdOfName: (kind: string) => number | undefined,
 	ctx: PrintContext
-): Record<string, (...args: unknown[]) => Printed | string> {
-	const map: Record<string, (...args: unknown[]) => Printed | string> = {};
+): Record<string, PrintingEntry> {
+	const map: Record<string, PrintingEntry> = {};
 	const kinds = Object.keys(realShapes);
 	for (const kind of kinds) {
 		const shape: FactoryShape = realShapes[kind]!;
@@ -604,7 +610,7 @@ export function printingFactoryMap(
 			}
 			return spelling;
 		};
-		const id = kindIdOfName(kind);
+		const id = kindIdOf(kind, kindIdOfName);
 		const publicName = kind.replace(/^_+/, '');
 		const entry = (...args: unknown[]): Printed | string => {
 			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
@@ -618,7 +624,7 @@ export function printingFactoryMap(
 						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
 					}
 					if (kind.startsWith('_')) return text;
-					if (typeof id === 'number' && ctx.keywordKinds?.has(kind))
+					if (ctx.keywordKinds?.has(kind))
 						return new Printed(id, printValue(id, ctx, 0), kind);
 					return new Printed(id, `${spelled().path}(${JSON.stringify(text)})`, kind, undefined, { text });
 				}
@@ -688,14 +694,15 @@ export function printingFactoryMap(
 				}
 			}
 		};
-		map[kind] = entry;
-		if (!(publicName in map) && !kinds.includes(publicName)) map[publicName] = entry;
+		const printing: PrintingEntry = Object.assign(entry, { kindId: id });
+		map[kind] = printing;
+		if (!(publicName in map) && !kinds.includes(publicName)) map[publicName] = printing;
 	}
 	return map;
 }
 
 function constantsAsValues(
-	map: Record<string, (...args: unknown[]) => Printed | string>,
+	map: Record<string, PrintingEntry>,
 	shapes: Record<string, FactoryShape>,
 	ctx: PrintContext
 ): Record<string, FactoryEntry> {
@@ -708,8 +715,7 @@ function constantsAsValues(
 }
 
 export function printingIrSurface(
-	map: Record<string, (...args: unknown[]) => Printed | string>,
-	kindIdOfName: (kind: string) => number | undefined,
+	map: Record<string, PrintingEntry>,
 	modelTypes: Record<string, string>,
 	ctx: PrintContext
 ): IrSurface {
@@ -718,7 +724,7 @@ export function printingIrSurface(
 		const path = ctx.irPathOfKind(kind);
 		if (path === undefined) continue;
 		const entry: Record<string, unknown> = { strict };
-		mountArmPrinters(entry, path, kind, kind, kindIdOfName(kind), ctx, new Set([kind]));
+		mountArmPrinters(entry, path, kind, kind, strict.kindId, ctx, new Set([kind]));
 		entries[kind] = entry as IrEntry;
 	}
 	return { entries, seats: ctx.seats ?? {}, modelTypes };
@@ -729,7 +735,7 @@ function mountArmPrinters(
 	path: string,
 	hostKind: string,
 	builtKind: string,
-	id: number | undefined,
+	id: number,
 	ctx: PrintContext,
 	visiting: ReadonlySet<string>
 ): void {
@@ -758,7 +764,7 @@ function mountPrinter(
 	seat: Seat,
 	hostKind: string,
 	builtKind: string,
-	id: number | undefined,
+	id: number,
 	ctx: PrintContext
 ): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
@@ -1103,7 +1109,7 @@ export async function emitFactorySourceText(
 	const factoryMap = printingFactoryMap(model.factoryShapes, (kind) => idOfName.get(kind), ctx);
 	const artifacts: FactoryDispatchArtifacts = {
 		factoryMap: constantsAsValues(factoryMap, model.factoryShapes, ctx),
-		surface: printingIrSurface(factoryMap, (kind) => idOfName.get(kind), model.modelTypes, ctx),
+		surface: printingIrSurface(factoryMap, model.modelTypes, ctx),
 		factoryShapes,
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),
 		factoryFields: withPublicNames(model.factoryFields),

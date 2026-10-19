@@ -457,6 +457,8 @@ A slot's kinds as the loose surface sees them: supertypes expand to their subtyp
 
 ### `packages/tools/src/emit/factory-source.ts::printingFactoryMap`
 
+Each entry is a `PrintingEntry`: the printer, stamped with its kind's parser id (`kindId`, resolved once by `kindIdOf`). A hidden kind's entry is also registered under its public name, and carries the hidden kind's id there, the one the parser issues.
+
 An alias kind's entry returns its argument unchanged: the printed source is the content, which the parent's builder wraps.
 
 A `constant`-shaped kind, a keyword or punctuation kind with a build entry, prints as that entry (`build.passStatement`): the entry is the kind id, so there is no call to spell. A text-shaped keyword or punctuation kind (`PrintContext.keywordKinds`), one with no build entry, prints as its kind id (`kinds.Semi`). Every other text kind prints its text as the one argument.
@@ -496,17 +498,7 @@ A spread builder given a leading options object (a plain object, never a printed
 
 ### `packages/tools/src/emit/factory-source.ts::printingIrSurface`
 
-```text
-/**
- * The printing counterpart of a grammar's `ir` bindings: every kind's
- * `strict`, plus one entry per mount name its seats declare, and under
- * each the mounted kind's own arm mounts (`mountArmPrinters`), printing
- * `ir.<parent>.<mount>….strict(…)`. Handing this to
- * `buildFactoryNodeFromReference` as the surface makes the printer take the
- * same seat projection the validators take, so the emitted spelling is the
- * one `ir-storage` builds rather than a second derivation of it.
- */
-```
+The printing counterpart of a grammar's `ir` bindings: every kind's `strict`, plus one entry per mount name its seats declare, and under each the mounted kind's own arm mounts (`mountArmPrinters`), printing `ir.<parent>.<mount>….strict(…)`. A mount prints the built kind with the id stamped on the kind's printing entry (`PrintingEntry.kindId`), never one looked up by the map key, which may be a hidden kind's public name. Handing this to `buildFactoryNodeFromReference` as the surface makes the printer take the same seat projection the validators take, so the emitted spelling is the one `ir-storage` builds rather than a second derivation of it.
 
 ### `packages/tools/src/emit/factory-source.ts::absorbedKindsOf`
 
@@ -637,4 +629,8 @@ The names a generated file uses for its engine and for the language descriptor i
 
 ### `packages/tools/src/emit/factory-source.ts::Printed`
 
-A printed builder call standing in for the node it builds: its `source` text, the model `kind` it builds and, as `$type`, that kind's parser id (`ModelFacts.kindIdOfName`), or none for a kind the parser never issues. Everything that reads `$type` here tests for a number first, so a call without an id is never matched by kind id; `kind` names it either way.
+A printed builder call standing in for the node it builds: its `source` text, the model `kind` it builds and, as `$type`, that kind's parser id. Every kind the printer builds has one; `kindIdOf` resolves it and throws, naming the kind, when the id is missing, so a broken id table stops the emit instead of printing a node no reader recognizes.
+
+### `packages/tools/src/emit/factory-source.ts::kindIdOf`
+
+A kind's parser id through `ModelFacts.kindIdOfName`, throwing `emit-factory-source: <kind> has no parser id` when it has none. Every kind the printer builds is one the parser issues, so a missing id is a broken table, reported where it is found rather than printed as an untyped node.
