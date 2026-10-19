@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { carryRead, carrySource, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -367,6 +367,25 @@ export function listOption(list: unknown, key: string, fallback: unknown): unkno
 }
 
 const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
+
+const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
+
+/**
+ * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
+ * own `_separator` when its data stores one, else the one its tree answers (`slotSeparatorOf`).
+ * An owner names the accessor that returns its list and answers that list's `separator`.
+ */
+export function defineListSeparator(node: object, accessor?: string): void {
+	let getter = SEPARATOR_GETTERS.get(accessor);
+	if (getter === undefined) {
+		getter = function (this: Record<string, unknown>) {
+			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
+			return this._separator ?? slotSeparatorOf(this);
+		};
+		SEPARATOR_GETTERS.set(accessor, getter);
+	}
+	Object.defineProperty(node, 'separator', { get: getter, enumerable: false, configurable: true });
+}
 
 /** One getter per index position, shared by every wrapped list: an index reads the item the list hydrates on first use. */
 export function defineListIndices(node: object, count: number): void {

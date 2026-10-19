@@ -25,6 +25,7 @@ import {
 	ownerElements,
 	listOption,
 	defineListIndices,
+	defineListSeparator,
 	rebuilt,
 	renderText,
 	queryOf,
@@ -6142,7 +6143,6 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		separator: (data as { readonly _separator?: unknown })._separator ?? TSKindId.Semi,
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6155,6 +6155,7 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
+	defineListSeparator(node);
 	return node as unknown as T.ObjectTypeContent.Parsed;
 }
 

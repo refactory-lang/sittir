@@ -4134,6 +4134,10 @@ pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content),
 ];
 
+/// Per kind id of a list, the site its items' separator reads.
+pub static SEPARATOR_SITES: &[Option<SiteId>] = &[
+];
+
 #[must_use]
 pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {
@@ -4143,6 +4147,7 @@ pub fn defaults() -> ResolvedOptions {
         edge_rows: EDGE_ROWS,
         kind_flags: KIND_FLAGS,
         seat_wrappers: SEAT_WRAPPERS,
+        separator_sites: SEPARATOR_SITES,
         sites: SITE_SPECS,
         newline: "\n".to_string(),
         indent: "    ".to_string(),
