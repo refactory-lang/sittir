@@ -179,6 +179,8 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 
 ### Task 3b: Restate the placement residue in bindings
 
+Ruled (2026-10-19): two parts. **3b-1**, from master: the `crate` alias, the closure-parameter envelope, and the python identifier claims deleted after their parent members are added; the ratchet tightens to rust 19, python 3 plus 1 `up`. **3b-2** waits for the authoring-DSL PR to merge: the method aliases and the static flag as path edits (they need ancestor copies, which the DSL rewrite derives), the emitter diagnostic gated at 0, and the ratchet deleted.
+
 **Files:**
 - Modify: `packages/rust/bindings.scm`, `packages/python/bindings.scm`, `packages/rust/grammar.sittir.ts`, `packages/python/grammar.sittir.ts` (the seven claims of Q1, in their ruled forms; `grammar.bindings.ts` regenerates from them), the bindings emitter that writes read entries (it refuses `within` and `up > 0` with a generator diagnostic)
 - Test: the emitter test for the new diagnostic; `packages/rust/tests/portable-guards.test.ts` and `packages/python/tests/portable-guards.test.ts` for the restated classifications
