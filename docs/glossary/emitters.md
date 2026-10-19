@@ -12314,7 +12314,11 @@ normalization; a node that already carries slot storage (built or edited) is lef
 	 *  whole-source parse's root carries the parse's error regions
 	 *  (`$errors`), and `wrapNode`'s typed overload keeps whichever of those
 	 *  members its input declares — the wrap spreads the data it is given — so
-	 *  `engine.parse()` reaches this alias without a cast. */
+	 *  `engine.parse()` reaches this alias without a cast. A root kind that has an
+	 *  inner site is typed as its empty form's `Parsed` (`Empty<Root>.Parsed`) instead
+	 *  of the plain row, so `$trivia.inner` is offered on it: a file with no item holds
+	 *  its trivia on the root's inner side, and reading the side always works; a write
+	 *  is refused when the file has items, as `inner()` refuses it on any node. */
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::finalize`

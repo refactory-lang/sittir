@@ -282,7 +282,19 @@ function grammarDependencies(dir: string): string[] {
 		.sort();
 }
 
+const upstreamDigestBySource = new WeakMap<ManifestSource, Map<GrammarName, string>>();
+
 export function upstreamDigest(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
+	const digests = upstreamDigestBySource.get(src) ?? new Map<GrammarName, string>();
+	upstreamDigestBySource.set(src, digests);
+	const cached = digests.get(grammar);
+	if (cached !== undefined) return cached;
+	const digest = walkUpstream(grammar, src);
+	digests.set(grammar, digest);
+	return digest;
+}
+
+function walkUpstream(grammar: GrammarName, src: ManifestSource): string {
 	const hash = createHash('sha256');
 	const grammarDir = join(src.checkout, relative(REPO_ROOT, grammarPackageDir(grammar)));
 	const pending: Array<[string, string]> = [[grammarDir, upstreamPackage(grammar)]];

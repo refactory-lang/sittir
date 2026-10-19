@@ -170,6 +170,8 @@ The `layout` half of `RenderOptionsCheck`: every key inside a caller's `layout` 
 
 The compile-time check on a render options literal `R`, inferred `const` so its values keep their literal types: the `layout.indent` unit must be made only of the language's indent characters, every top-level key must be one the language's render options declare, or one of `Extra` (the per-call keys, for a single render), and every key inside `layout` must be `indent` or `newline`. A generic parameter is exempt from the excess-property check an object literal gets against a fixed type, so the rest restores it: a misspelled key, `layout` for a language with no layout setting, or `indent` at the top level, is a type error where it is written.
 
+A grammar-independent engine (`Engine<LanguageAPI>`) declares the options every language shares, because `LanguageAPI['options']` is `object & CommonRenderOptions`: `layout`, with `indent` and `newline` strings inside it. The check needs no case for it. The intersection with `object` is what lets every language's own options still extend `LanguageAPI`: a bare `CommonRenderOptions` is a weak type, and a language whose options carry no `layout` has no property in common with it. The generic engine cannot know which languages admit an indent unit, so a call that is typed here can still be refused when it renders: a language with no indent characters (regex) refuses `layout.indent` with an unknown-key error, and the types only promise what every language's options share. A language's own `layout` still narrows to its indent characters; the generic one takes any string unit.
+
 When `R` is exactly the language's declared options type, the check is `unknown`: such a value has no undeclared key and its indent unit is the declared one, so there is nothing to add. That identity is what lets a caller generic over the language forward options typed as `API['options']`, where the full check would stay deferred and reject the very type its parameter declares. It also leaves a value with only undeclared keys to the options type's own weak-type check, which the full check's intersection would defeat. An explicit `API` type argument disables inference, so `R` takes its default, the declared options type, and the check is skipped.
 
 ### `packages/types/src/engine-api.ts::IsExactly`
@@ -203,6 +205,10 @@ The kind-to-node-type map of an engine, for generic code over any engine.
 ### `packages/types/src/engine-api.ts::ApiOf`
 
 The `LanguageAPI` a descriptor carries.
+
+### `packages/types/src/engine-api.ts::CommonRenderOptions`
+
+The render options every language shares, under the `layout` group (`indent` and `newline`, both strings): what a caller holding an `Engine<LanguageAPI>` can pass to `render`. `LanguageAPI['options']` is `object & CommonRenderOptions`, so the generic engine declares them and `RenderOptionsCheck` needs no generic case; a language's own options add its kinds' option sites and narrow `layout` to the units it admits. The `object &` keeps the declared type from being a weak type, which would reject every language whose options carry no `layout`.
 
 ### `packages/types/src/index.ts::ArgsOf`
 
@@ -321,6 +327,10 @@ The single computed namespace of a kind. `Bound`, `Parsed` and `Empty` are the k
 ### `packages/types/src/node-surface.ts::SupertypeSurface`
 
 The union over a declared supertype's members of the node each id-keyed map holds for it: a member with a `$type` resolves through the map, and a stored kind id passes through. It is the one derivation behind both `S.Bound` (the `.Bound` map) and `S.Parsed` (the `.Parsed` map), so the two unions can never disagree about which members a supertype has.
+
+### `packages/types/src/node-surface.ts::FormsHolding`
+
+The members of a supertype union whose `$with` setter for a slot admits a given value. A union's `$with` is the intersection of its members' setters, which is the sound type for a call that must work on every member, so a slot whose members disagree on its value type refuses all values at the union. The helper distributes over the union and keeps a member when one overload of its own `$with` setter takes the value as first argument, so it is derived from the same slot types the setters are and cannot drift from them. Overloads are read through `SetterParameters`, since inferring from an overloaded type sees only its last signature: an optional slot's nullary clearing overload and a list slot's rest overload would otherwise hide the overload that takes the node. The nullary overload admits nothing. Comparison is `[Value] extends Params`, not distributive over `Value`, so a union-valued `Value` must fit whole. A member without that setter, or whose setter does not admit the value, drops out; if none admits it the result is `never`.
 
 ### `packages/types/src/node-surface.ts::BoundWithNode`
 

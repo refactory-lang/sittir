@@ -23,11 +23,12 @@ export interface ConflictReport {
 }
 
 export type GenerateOutcome =
-	| { readonly kind: 'clean' }
+	| { readonly kind: 'clean'; readonly unnecessary: readonly (readonly string[])[] }
 	| { readonly kind: 'conflict'; readonly report: ConflictReport }
 	| { readonly kind: 'error'; readonly summary: unknown };
 
 interface GenerateSummary {
+	readonly diagnostics?: readonly { readonly UnnecessaryConflicts?: readonly (readonly string[])[] }[];
 	readonly error?: { readonly BuildTables?: { readonly Conflict?: ConflictReport } };
 }
 
@@ -42,8 +43,13 @@ function lastSummary(stderr: string): unknown {
 	}
 }
 
+export function unnecessaryConflictsOf(stderr: string): readonly (readonly string[])[] {
+	const diagnostics = (lastSummary(stderr) as GenerateSummary | undefined)?.diagnostics ?? [];
+	return diagnostics.flatMap((diagnostic) => diagnostic.UnnecessaryConflicts ?? []);
+}
+
 export function parseGenerateOutcome(status: number | null, stderr: string): GenerateOutcome {
-	if (status === 0) return { kind: 'clean' };
+	if (status === 0) return { kind: 'clean', unnecessary: unnecessaryConflictsOf(stderr) };
 	const summary = lastSummary(stderr);
 	if (summary === undefined) return { kind: 'error', summary: stderr };
 	const conflict = (summary as GenerateSummary).error?.BuildTables?.Conflict;

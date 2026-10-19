@@ -225,7 +225,7 @@ reports at most one.
 
 ```text
 What one `generate` run means to the conflict loop: `clean` (exit 0, tables
-built), `conflict` (a report to resolve), or `error` (anything else — a grammar
+built, with the conflict sets the run called unnecessary, `unnecessaryConflictsOf`), `conflict` (a report to resolve), or `error` (anything else — a grammar
 that fails to load or a table error that is not a conflict). An `error` is a
 broken grammar, never something the loop resolves.
 ```
@@ -262,6 +262,10 @@ sequence, the lookahead, and each interpretation's rule, production and step.
 The offered resolutions are excluded — the same conflict can list its offers
 in any order.
 ```
+
+### `packages/codegen/src/transpile/conflict-summary.ts::unnecessaryConflictsOf`
+
+The conflict sets a clean run called unnecessary, read from the `UnnecessaryConflicts` diagnostics of the `--json-summary` the CLI prints (the same summary `lastSummary` finds for a failed run). A clean run with no such diagnostic gives `[]`; no summary at all (text only) also gives `[]`.
 
 ### `packages/codegen/src/transpile/derive-conflicts.ts::UpstreamContext`
 
@@ -310,7 +314,7 @@ conflict to resolve, so it throws: the grammar is broken.
 How a derivation ended: `reused` when the saved resolutions generated cleanly
 in one run, `stale` with the failed outcome when saved resolutions carrying the
 current hash did not generate cleanly, `converged` with the resolutions and the number of `generate`
-runs, or `unresolvable` with the reason, the report that stopped it,
+runs, or `unresolvable` with the reason (`repeated`, `no-usable-offer`, `cap`, or `dropped-set-returned` when the prune dropped a set and the grammar conflicts again), the report that stopped it,
 and the resolutions gathered so far.
 ```
 
@@ -339,7 +343,7 @@ reported conflict add the policy's resolution and run again, until `generate`
 is clean. It stops unresolvable when a conflict is reported a second time
 (the resolution did not resolve it), when no usable resolution is offered, or
 when the resolutions already number the grammar's rules (the cap: each
-resolution names at least one rule). A `generate` error throws — a grammar
+resolution names at least one rule). When it converges, `pruneUnnecessary` runs on the converging run's report. A `generate` error throws — a grammar
 that fails to build for any other reason is broken, not conflicted.
 ```
 
@@ -363,6 +367,10 @@ saved file was edited by hand or the hash misses an input, and either has to
 be seen. A changed hash derives again from an empty list, so no stale entry
 survives.
 ```
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::pruneUnnecessary`
+
+After the derivation loop converges, drops every derived resolution whose symbols tree-sitter's clean run called unnecessary (`sameConflictSet`), regenerates, and repeats on the new run's report until none is left. Each pass can free another: a later, wider set can make an earlier, narrower one unnecessary, and a set only becomes unnecessary once the one it duplicated is gone. A set the grammar declares itself (upstream, not in `resolutions`) is never dropped, and is not regenerated for. If the run after a drop reports a conflict, the dropped set was needed after all: it stops `unresolvable` with `dropped-set-returned`, carrying the report and the resolutions without the dropped sets. Each regeneration counts in `iterations`. A synthetic grammar over one state pins it against the real CLI. The case where a later, wider set makes an earlier derived set unnecessary is pinned only by a fake generator: no grammar we have produces it, and none of the real-CLI cases reaches it.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DerivationInputs`
 

@@ -275,13 +275,20 @@ pub fn fill_slot_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
 /// kind `kind_of` maps it to (the list's `separator_kind_of`), on the slot's
 /// entry by the item's place (`layout::SlotLayout::tokens`). The first item
 /// has no separator before it; nothing is stored when no item has one.
+/// `chosen` is whether the list's separator was chosen (the factory's
+/// `separator` option or setter): a chosen separator replaces every item's
+/// source separator, so nothing is stored and every gap renders the list's.
 pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
     layout: &mut Option<Box<crate::layout::NodeLayout<L>>>,
     slot: &str,
     items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,
+    chosen: bool,
     kind_of: fn(KindId) -> Option<KindId>,
     ctx: &RenderContext<'_>,
 ) {
+    if chosen {
+        return;
+    }
     let tokens: Vec<Option<KindId>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0)?.source_separator(ctx).and_then(kind_of)).collect();
     if tokens.iter().any(Option::is_some) {
         crate::layout::slot_entry(layout, slot).tokens = tokens;

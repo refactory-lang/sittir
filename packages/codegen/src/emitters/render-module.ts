@@ -3077,11 +3077,11 @@ function prepareStructImpl(
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {
 			body.push(
+				`        ::sittir_core::prepare::fill_slot_separators(&mut self.layout, ${JSON.stringify(listItemWireKey(node))}, ${listItemsExpr(node)}, self.separator_kind.is_some(), Self::separator_kind_of, ctx);`,
 				`        if let Some(kind) = ::sittir_core::layout::Layout::slot(&self.layout, ${JSON.stringify(listItemWireKey(node))}).and_then(|slot| slot.separator).and_then(Self::separator_kind_of) {`,
 				'            self.separator_kind.get_or_insert(kind);',
 				'        }',
-				`        self.separator_kind.get_or_insert(ctx.options.site_arm(options::${sep.constName}).arm);`,
-				`        ::sittir_core::prepare::fill_slot_separators(&mut self.layout, ${JSON.stringify(listItemWireKey(node))}, ${listItemsExpr(node)}, Self::separator_kind_of, ctx);`
+				`        self.separator_kind.get_or_insert(ctx.options.site_arm(options::${sep.constName}).arm);`
 			);
 		}
 		body.push(...optionDefaultFills(plan, node, choices));
