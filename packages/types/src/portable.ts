@@ -39,13 +39,21 @@ export interface PortableRows {
 }
 
 /**
- * Whether `node` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
+ * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
  *
  * @typeParam Ids - The grammar kinds read at or under the path.
  * @typeParam Node - The grammar's node union; a node of another language, or one whose language is unknown, is refused.
- * @param node - A node of the language, parsed or built, read by the rows of the engine that stamped it.
+ * @typeParam Kind - The grammar's kind-id enum: a bare kind id of the language is read by its kind and fixed text. A value typed as
+ * a plain `number` is still admitted by the type, since a numeric enum accepts one.
+ * @param value - A node of the language, parsed or built, read by the rows of the engine that stamped it, or a kind id of the
+ * language, read by the rows its engine loaded.
+ * @throws When given a kind id before an engine of the language has loaded.
  */
-export type PortableGuard<Ids extends number, Node extends { readonly $type: number } = { readonly $type: number }> = <T extends Node>(node: T) => node is T & { readonly $type: Ids };
+export type PortableGuard<Ids extends number, Node extends { readonly $type: number } = { readonly $type: number }, Kind extends number = never> = <
+	T extends Node | Kind
+>(
+	value: T
+) => value is T extends number ? T & Ids : T & { readonly $type: Ids };
 
 /** What a bound grammar adds for the portable engine: its vocabulary namespaces of kind ids and of guards. */
 export interface PortableSurface {

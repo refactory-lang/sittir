@@ -4,6 +4,7 @@ import type { AnyUntypedNode, QuerySlots, StructureTable, TriviaFacts } from '@s
 import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type RegexTypeMap } from './types.js';
 import { INNER_SITES } from './consts.js';
+import type { TSKindId } from './kinds.js';
 
 export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
@@ -16,7 +17,7 @@ export const triviaFacts = Object.freeze({
 		run: /^(?:(?:(?:\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 47, '\n': 48, '\n\n': 49, '\n\n\n': 50 })
 	})
-} satisfies TriviaFacts);
+} satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
 	37: [['content', 0]],

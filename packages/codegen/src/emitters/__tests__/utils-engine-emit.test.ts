@@ -11,7 +11,8 @@ describe('utils runtime binding emission', () => {
 
 		expect(contents).toContain("import { bindRuntime } from '@sittir/common/utils';");
 		expect(contents).toContain('export const triviaFacts = Object.freeze({');
-		expect(contents).toContain('} satisfies TriviaFacts);');
+		expect(contents).toContain('} satisfies TriviaFacts<TSKindId>);');
+		expect(contents).toContain("import type { TSKindId } from './kinds.js';");
 		expect(contents).toContain(
 			`export const { isNode } = bindRuntime<${grammarTypeMapName('synth')}>();`
 		);

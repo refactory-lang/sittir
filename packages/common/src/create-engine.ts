@@ -19,7 +19,8 @@ import type {
 	Rendered,
 	RenderArgument,
 	CreateEngineOptions,
-	StructureTable
+	StructureTable,
+	TriviaFacts
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf } from './language.ts';
@@ -28,7 +29,7 @@ import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
-import { portable } from './portable/index.ts';
+import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
@@ -52,10 +53,16 @@ const loaded = new WeakMap<LanguageIdentity<LanguageAPI>, Promise<LanguageHooks<
 function loadLanguage<API extends LanguageAPI>(language: LanguageIdentity<API>): Promise<LanguageHooks<API>> {
 	const cached = loaded.get(language);
 	if (cached !== undefined) return cached as Promise<LanguageHooks<API>>;
-	const loading = language.load().catch((cause: unknown) => {
-		loaded.delete(language);
-		throw new Error(`failed to load language "${language.name}"`, { cause });
-	});
+	const loading = language.load().then(
+		(hooks) => {
+			if (hooks.portable !== undefined) registerPortableRows(language.load, hooks.portable);
+			return hooks;
+		},
+		(cause: unknown) => {
+			loaded.delete(language);
+			throw new Error(`failed to load language "${language.name}"`, { cause });
+		}
+	);
 	loaded.set(language, loading);
 	return loading;
 }
@@ -167,6 +174,7 @@ function assembleEngine<API extends LanguageAPI>(
 	options: EngineOptions<API> | undefined
 ): Engine<API> {
 	const native = hooks.createNative(nativeEngineOptions(options));
+	const trivia: TriviaFacts = hooks.trivia;
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
 		renderModuleHash: hooks.renderModuleHash,
@@ -187,7 +195,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const materializeNative = (target: Parameters<typeof native.render>[0], rendered: Rendered): string => {
 		if (!metricsEnabled) return rendered.toString();
 		const kind =
-			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
+			typeof target === 'number' ? String(target) : (trivia.kindName(target.$type) ?? String(target.$type));
 		const before = performance.now();
 		const text = rendered.toString();
 		recordFfi(language.name, kind, JSON.stringify(target).length, performance.now() - before, text.length);
@@ -204,7 +212,7 @@ function assembleEngine<API extends LanguageAPI>(
 		queryFlags: hooks.queryFlags ?? {},
 		querySlotFlags: hooks.querySlotFlags ?? {},
 		membership: hooks.membership,
-		kindName: (kind) => hooks.trivia.kindName(kind),
+		kindName: (kind) => trivia.kindName(kind),
 		wrap: hooks.wrap
 	};
 	const engine: Engine<API> = {
@@ -222,7 +230,7 @@ function assembleEngine<API extends LanguageAPI>(
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
 		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
-			const kind = hooks.trivia.kindName(node.$type);
+			const kind = trivia.kindName(node.$type);
 			return (
 				engine.isNode(node) &&
 				kind !== undefined &&
@@ -291,7 +299,7 @@ function assemblePortableEngine<API extends PortableLanguageAPI>(language: Langu
 	const rows = hooks.portable;
 	if (rows === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
 	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia, portable: rows };
-	return Object.freeze({ ...identity, kinds: portable.kinds as API['portable']['kinds'], is: portable.is as API['portable']['is'] });
+	return Object.freeze({ ...identity, kinds: portable.kinds as API['portable']['kinds'], is: portableGuardsOf(language) as API['portable']['is'] });
 }
 
 function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {

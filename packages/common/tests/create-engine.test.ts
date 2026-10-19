@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createEngine } from '../src/create-engine.ts';
-import { portable } from '../src/portable/index.ts';
+import { portable, portableGuardsOf } from '../src/portable/index.ts';
 import { createRenderHandle } from '../src/engine.ts';
 
 interface FakeRenderOptions {
@@ -180,7 +180,7 @@ describe('createEngine', () => {
 		);
 	});
 
-	it('makes a portable engine of the language\'s rows and the shared kinds and guards, and nothing it does not implement', async () => {
+	it('makes a portable engine of the language\'s rows, the shared kinds and the language\'s portable guards, and nothing it does not implement', async () => {
 		const f = fakeLanguage();
 		const hooks = await f.language.load();
 		const rows = { table: { paths: { expression: { ids: [1], exact: true } }, entries: {}, fixedText: {} }, querySlots: {} };
@@ -189,8 +189,9 @@ describe('createEngine', () => {
 		expect(Object.keys(e).sort()).toEqual(['is', 'kinds', 'language', 'options', 'portable', 'renderModuleHash', 'trivia']);
 		expect(e.portable).toBe(rows);
 		expect(e.kinds).toBe(portable.kinds);
-		expect(e.is).toBe(portable.is);
+		expect(e.is).toBe(portableGuardsOf(f.language as never));
 		expect((e.is as unknown as { expression: (node: unknown) => boolean }).expression({ $type: 1 })).toBe(false);
+		expect((e.is as unknown as { expression: (id: number) => boolean }).expression(1)).toBe(true);
 	});
 
 	it('rejects the file verbs it does not implement', async () => {

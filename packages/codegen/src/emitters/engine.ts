@@ -153,6 +153,7 @@ export interface ${api} extends LanguageAPI {
 	readonly root: ${rootTreeTypeName};
 	readonly node: ${grammarNodeTypeName(grammar)};
 	readonly fixedTextKindId: FixedTextKindId;
+	readonly kindId: TSKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: ${grammarTypeMapName(grammar)}['empty'];
