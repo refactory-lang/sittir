@@ -253,11 +253,11 @@ export const records = {
 	MatchExpressionNode: { words: 12, value: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	MatchBlockNode: { words: 7, match_block_arms: { word: 2, width: 5 } },
 	LastMatchArmNode: {
-		words: 15,
-		attributes: { word: 3, width: 2, run: 5 },
-		pattern: { word: 5, width: 5 },
-		value: { word: 10, width: 5 },
-		comma: { word: 2, bit: 0 }
+		words: 19,
+		attributes: { word: 2, width: 2, run: 5 },
+		pattern: { word: 4, width: 5 },
+		value: { word: 9, width: 5 },
+		trailing_comma: { word: 14, width: 5 }
 	},
 	MatchPatternNode: { words: 12, pattern: { word: 2, width: 5 }, condition: { word: 7, width: 5 } },
 	WhileExpressionNode: {

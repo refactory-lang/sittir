@@ -2494,7 +2494,7 @@ export const float: {
 	readonly leadingPoint: typeof B.floatLeadingPoint;
 	readonly scientific: typeof B.floatScientific;
 } = Object.freeze({
-	...bundle(B.floatPoint.strict, B.floatPoint.coerce, { key: 'float', max: 1 }),
+	...bundle(B.floatPoint.strict, B.floatPoint.coerce, { key: 'float', max: 2 }),
 	point: B.floatPoint,
 	leadingPoint: B.floatLeadingPoint,
 	scientific: B.floatScientific
@@ -3086,7 +3086,7 @@ const yieldFromClause: {
 		}),
 		float: bundle(yieldFromClause$primary$float$strict, yieldFromClause$primary$float$coerce, {
 			key: 'yieldFromClause.primary.float',
-			max: 1
+			max: 2
 		}),
 		unary: bundle(yieldFromClause$primary$unary$strict, yieldFromClause$primary$unary$coerce, {
 			key: 'yieldFromClause.primary.unary',
@@ -3518,7 +3518,7 @@ export const yield_ = Object.freeze({
 			}),
 			float: bundle(yield_$fromClause$primary$float$strict, yield_$fromClause$primary$float$coerce, {
 				key: 'yield_.fromClause.primary.float',
-				max: 1
+				max: 2
 			}),
 			unary: bundle(yield_$fromClause$primary$unary$strict, yield_$fromClause$primary$unary$coerce, {
 				key: 'yield_.fromClause.primary.unary',
@@ -4539,7 +4539,7 @@ export const expressionStatement = Object.freeze({
 		}),
 		float: bundle(expressionStatement$primary$float$strict, expressionStatement$primary$float$coerce, {
 			key: 'expressionStatement.primary.float',
-			max: 1
+			max: 2
 		}),
 		unary: bundle(expressionStatement$primary$unary$strict, expressionStatement$primary$unary$coerce, {
 			key: 'expressionStatement.primary.unary',
@@ -4682,7 +4682,7 @@ export const expressionStatement = Object.freeze({
 				float: bundle(
 					expressionStatement$yield$fromClause$primary$float$strict,
 					expressionStatement$yield$fromClause$primary$float$coerce,
-					{ key: 'expressionStatement.yield.fromClause.primary.float', max: 1 }
+					{ key: 'expressionStatement.yield.fromClause.primary.float', max: 2 }
 				),
 				unary: bundle(
 					expressionStatement$yield$fromClause$primary$unary$strict,
@@ -5457,7 +5457,7 @@ export const type = Object.freeze({
 		string: bundle(type$primary$string$strict, type$primary$string$coerce, { key: 'type.primary.string', max: 1 }),
 		concatenatedString: bundle(type$primary$concatenatedString$strict, type$primary$concatenatedString$coerce),
 		integer: bundle(type$primary$integer$strict, type$primary$integer$coerce, { key: 'type.primary.integer', max: 1 }),
-		float: bundle(type$primary$float$strict, type$primary$float$coerce, { key: 'type.primary.float', max: 1 }),
+		float: bundle(type$primary$float$strict, type$primary$float$coerce, { key: 'type.primary.float', max: 2 }),
 		unary: bundle(type$primary$unary$strict, type$primary$unary$coerce, { key: 'type.primary.unary', max: 1 }),
 		attribute: bundle(type$primary$attribute$strict, type$primary$attribute$coerce, {
 			key: 'type.primary.attribute',

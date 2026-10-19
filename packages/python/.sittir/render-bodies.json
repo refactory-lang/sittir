@@ -1698,6 +1698,23 @@
 							"kind": "if",
 							"arms": [
 								{
+									"test": "sign",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "sign"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
 									"test": "exponent",
 									"body": [
 										{
@@ -1789,6 +1806,23 @@
 							"kind": "if",
 							"arms": [
 								{
+									"test": "sign",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "sign"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
 									"test": "exponent",
 									"body": [
 										{
@@ -1835,6 +1869,23 @@
 		{
 			"kind": "slot",
 			"name": "marker"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "sign",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "sign"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "adjacent"
@@ -1920,15 +1971,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "comma",
+					"test": "trailing_comma",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "comma_before"
-						},
-						{
 							"kind": "slot",
-							"name": "comma"
+							"name": "trailing_comma"
 						}
 					]
 				}

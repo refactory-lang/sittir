@@ -6481,10 +6481,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "comma",
+              "name": "trailing_comma",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_comma"
+                "name": "_kw_trailing_comma"
               },
               "metadata": {
                 "fieldSource": "override"
@@ -11755,7 +11755,7 @@
         "value": ".."
       }
     },
-    "_kw_comma": {
+    "_kw_trailing_comma": {
       "type": "STRING",
       "value": ","
     },
@@ -15094,7 +15094,7 @@
     "_kw_move",
     "_kw_default",
     "_kw_const",
-    "_kw_comma",
+    "_kw_trailing_comma",
     "_kw_in",
     "_kw_operator",
     "_kw_reference"

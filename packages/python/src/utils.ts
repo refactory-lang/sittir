@@ -55,21 +55,24 @@ export const querySlots: QuerySlots = Object.freeze({
 		['integer', 0],
 		['fraction', 1],
 		['marker', 2],
-		['exponent', 3],
-		['imaginary', 4]
+		['sign', 3],
+		['exponent', 4],
+		['imaginary', 5]
 	],
 	97: [
 		['integer', 0],
 		['fraction', 1],
 		['marker', 2],
-		['exponent', 3],
-		['imaginary', 4]
+		['sign', 3],
+		['exponent', 4],
+		['imaginary', 5]
 	],
 	98: [
 		['integer', 0],
 		['marker', 1],
-		['exponent', 2],
-		['imaginary', 3]
+		['sign', 2],
+		['exponent', 3],
+		['imaginary', 4]
 	],
 	99: [['content', 0]],
 	100: [['content', 0]],
@@ -358,7 +361,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['async', 0, 'async'],
 		['left', 1],
 		['rights', 2],
-		['comma', 3, ',']
+		['trailingComma', 3]
 	],
 	244: [['condition', 0]],
 	245: [
@@ -457,7 +460,6 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'float_scientific',
 		required: [
 			['_integer', 'integer'],
-			['_marker', 'marker'],
 			['_exponent', 'exponent']
 		]
 	},
@@ -1248,8 +1250,7 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_async', 'ForInClause.async', 'a boolean'],
 			['_left', 'ForInClause.left', 'a built Pattern / PatternList'],
-			['_right', 'ForInClause.right', 'a built Expression / LambdaWithinForInClause'],
-			['_comma', 'ForInClause.comma', 'a boolean']
+			['_right', 'ForInClause.right', 'a built Expression / LambdaWithinForInClause']
 		]
 	},
 	244: {

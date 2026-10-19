@@ -2096,16 +2096,6 @@
           }
         ]
       },
-      "comma": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          }
-        ]
-      },
       "left": {
         "multiple": false,
         "required": true,
@@ -2135,6 +2125,16 @@
           {
             "type": "lambda_within_for_in_clause",
             "named": true
+          }
+        ]
+      },
+      "trailing_comma": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
           }
         ]
       }
