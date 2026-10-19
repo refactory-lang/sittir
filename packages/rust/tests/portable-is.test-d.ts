@@ -28,9 +28,9 @@ describe('a portable guard', () => {
 		is.declaration.function({ $type: TSKindId.FunctionItem } as { readonly $type: number });
 	});
 
-	it('tests a node, not a bare kind id', () => {
-		// @ts-expect-error a guard takes a node
-		is.declaration.function(TSKindId.FunctionItem);
+	it('tests a kind id of rust, narrowing it to the path\'s kinds', () => {
+		const id = TSKindId.FunctionItem as TSKindId;
+		if (is.declaration.function(id)) expectTypeOf(id).toEqualTypeOf<PortableIds['declaration.function']>();
 	});
 
 	it('takes the node alone', () => {

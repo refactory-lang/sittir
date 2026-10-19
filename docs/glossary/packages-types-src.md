@@ -50,6 +50,8 @@ The grammar facts `$trivia` checks against: each kind's name, the gaps an empty 
 
 Every member is `readonly`, `comment` included: the facts belong to the language and are frozen where the language module builds them, so an engine cannot change them for the others. The comment coercer is a per-language fact fixed when `hooks` is built; nothing per engine sets it.
 
+`Kind` types `kindName`'s argument by the language's kind ids. A language's hooks and engine identity carry `TriviaFacts<API['kindId']>`, so a generated language's `kindName` takes only its own `TSKindId`: another language's kind id, an unlisted literal or a kind name is a compile error, while a value typed as a plain `number` still compiles. `kindName` is a method, so a language's facts stay assignable to the widest `TriviaFacts`, the view the engine's language-agnostic plumbing reads through.
+
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
 Read depth is a performance parameter and never a semantic one. Under the default, a child with substructure comes back as a stub, and each hydration is one more crossing into the native reader. `deep` makes one crossing for the whole subtree, and the generated wrap types every slot-holding node of it as it wraps the parent (`storeExpanded`), so the typing a lazy read spreads over first accesses is paid inside the parse. The two modes agree on every result because each node a read hands back names its tree, whichever depth produced it (`canFold`).
@@ -96,7 +98,7 @@ The inner trivia of a node that realizes empty: `inner()` reads its inner entrie
 
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
-The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, `empty` (the grammar's map from each kind that can be empty to its empty form), and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
+The type-level shape of one language: its name, builder table, guards, kind ids (`kinds`, and `kindId`, the grammar's kind-id enum, which types its trivia facts' `kindName`), the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, `empty` (the grammar's map from each kind that can be empty to its empty form), and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
 
 ### `packages/types/src/engine-api.ts::Language`
 

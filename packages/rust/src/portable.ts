@@ -1689,13 +1689,13 @@ export interface PortableKindsAt {
 }
 
 export interface PortableIsAt {
-	attribute: PortableGuard<PortableIds['attribute'], RustNode> & {
+	attribute: PortableGuard<PortableIds['attribute'], RustNode, TSKindId> & {
 		readonly content: PortableIsAt['attribute.content'];
 		readonly inner: PortableIsAt['attribute.inner'];
 	};
-	'attribute.content': PortableGuard<PortableIds['attribute.content'], RustNode> & {};
-	'attribute.inner': PortableGuard<PortableIds['attribute.inner'], RustNode> & {};
-	clause: PortableGuard<PortableIds['clause'], RustNode> & {
+	'attribute.content': PortableGuard<PortableIds['attribute.content'], RustNode, TSKindId> & {};
+	'attribute.inner': PortableGuard<PortableIds['attribute.inner'], RustNode, TSKindId> & {};
+	clause: PortableGuard<PortableIds['clause'], RustNode, TSKindId> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
 		readonly else: PortableIsAt['clause.else'];
 		readonly import: PortableIsAt['clause.import'];
@@ -1705,67 +1705,67 @@ export interface PortableIsAt {
 		readonly match: PortableIsAt['clause.match'];
 		readonly where: PortableIsAt['clause.where'];
 	};
-	'clause.bounds': PortableGuard<PortableIds['clause.bounds'], RustNode> & {
+	'clause.bounds': PortableGuard<PortableIds['clause.bounds'], RustNode, TSKindId> & {
 		readonly higher_ranked: PortableIsAt['clause.bounds.higher_ranked'];
 		readonly removed: PortableIsAt['clause.bounds.removed'];
 		readonly use: PortableIsAt['clause.bounds.use'];
 	};
-	'clause.bounds.higher_ranked': PortableGuard<PortableIds['clause.bounds.higher_ranked'], RustNode> & {};
-	'clause.bounds.removed': PortableGuard<PortableIds['clause.bounds.removed'], RustNode> & {};
-	'clause.bounds.use': PortableGuard<PortableIds['clause.bounds.use'], RustNode> & {};
-	'clause.else': PortableGuard<PortableIds['clause.else'], RustNode> & {};
-	'clause.import': PortableGuard<PortableIds['clause.import'], RustNode> & {
+	'clause.bounds.higher_ranked': PortableGuard<PortableIds['clause.bounds.higher_ranked'], RustNode, TSKindId> & {};
+	'clause.bounds.removed': PortableGuard<PortableIds['clause.bounds.removed'], RustNode, TSKindId> & {};
+	'clause.bounds.use': PortableGuard<PortableIds['clause.bounds.use'], RustNode, TSKindId> & {};
+	'clause.else': PortableGuard<PortableIds['clause.else'], RustNode, TSKindId> & {};
+	'clause.import': PortableGuard<PortableIds['clause.import'], RustNode, TSKindId> & {
 		readonly alias: PortableIsAt['clause.import.alias'];
 		readonly list: PortableIsAt['clause.import.list'];
 		readonly wildcard: PortableIsAt['clause.import.wildcard'];
 	};
-	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias'], RustNode> & {};
-	'clause.import.list': PortableGuard<PortableIds['clause.import.list'], RustNode> & {
+	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias'], RustNode, TSKindId> & {};
+	'clause.import.list': PortableGuard<PortableIds['clause.import.list'], RustNode, TSKindId> & {
 		readonly scoped: PortableIsAt['clause.import.list.scoped'];
 	};
-	'clause.import.list.scoped': PortableGuard<PortableIds['clause.import.list.scoped'], RustNode> & {};
-	'clause.import.wildcard': PortableGuard<PortableIds['clause.import.wildcard'], RustNode> & {};
-	'clause.let': PortableGuard<PortableIds['clause.let'], RustNode> & {
+	'clause.import.list.scoped': PortableGuard<PortableIds['clause.import.list.scoped'], RustNode, TSKindId> & {};
+	'clause.import.wildcard': PortableGuard<PortableIds['clause.import.wildcard'], RustNode, TSKindId> & {};
+	'clause.let': PortableGuard<PortableIds['clause.let'], RustNode, TSKindId> & {
 		readonly chain: PortableIsAt['clause.let.chain'];
 	};
-	'clause.let.chain': PortableGuard<PortableIds['clause.let.chain'], RustNode> & {};
-	'clause.lifetimes': PortableGuard<PortableIds['clause.lifetimes'], RustNode> & {};
-	'clause.macro': PortableGuard<PortableIds['clause.macro'], RustNode> & {
+	'clause.let.chain': PortableGuard<PortableIds['clause.let.chain'], RustNode, TSKindId> & {};
+	'clause.lifetimes': PortableGuard<PortableIds['clause.lifetimes'], RustNode, TSKindId> & {};
+	'clause.macro': PortableGuard<PortableIds['clause.macro'], RustNode, TSKindId> & {
 		readonly rule: PortableIsAt['clause.macro.rule'];
 	};
-	'clause.macro.rule': PortableGuard<PortableIds['clause.macro.rule'], RustNode> & {};
-	'clause.match': PortableGuard<PortableIds['clause.match'], RustNode> & {
+	'clause.macro.rule': PortableGuard<PortableIds['clause.macro.rule'], RustNode, TSKindId> & {};
+	'clause.match': PortableGuard<PortableIds['clause.match'], RustNode, TSKindId> & {
 		readonly arm: PortableIsAt['clause.match.arm'];
 	};
-	'clause.match.arm': PortableGuard<PortableIds['clause.match.arm'], RustNode> & {
+	'clause.match.arm': PortableGuard<PortableIds['clause.match.arm'], RustNode, TSKindId> & {
 		readonly last: PortableIsAt['clause.match.arm.last'];
 	};
-	'clause.match.arm.last': PortableGuard<PortableIds['clause.match.arm.last'], RustNode> & {};
-	'clause.where': PortableGuard<PortableIds['clause.where'], RustNode> & {
+	'clause.match.arm.last': PortableGuard<PortableIds['clause.match.arm.last'], RustNode, TSKindId> & {};
+	'clause.where': PortableGuard<PortableIds['clause.where'], RustNode, TSKindId> & {
 		readonly predicate: PortableIsAt['clause.where.predicate'];
 	};
-	'clause.where.predicate': PortableGuard<PortableIds['clause.where.predicate'], RustNode> & {};
-	comment: PortableGuard<PortableIds['comment'], RustNode> & {
+	'clause.where.predicate': PortableGuard<PortableIds['clause.where.predicate'], RustNode, TSKindId> & {};
+	comment: PortableGuard<PortableIds['comment'], RustNode, TSKindId> & {
 		readonly block: PortableIsAt['comment.block'];
 		readonly line: PortableIsAt['comment.line'];
 		readonly text: PortableIsAt['comment.text'];
 	};
-	'comment.block': PortableGuard<PortableIds['comment.block'], RustNode> & {
+	'comment.block': PortableGuard<PortableIds['comment.block'], RustNode, TSKindId> & {
 		readonly doc: PortableIsAt['comment.block.doc'];
 	};
-	'comment.block.doc': PortableGuard<PortableIds['comment.block.doc'], RustNode> & {
+	'comment.block.doc': PortableGuard<PortableIds['comment.block.doc'], RustNode, TSKindId> & {
 		readonly inner: PortableIsAt['comment.block.doc.inner'];
 	};
-	'comment.block.doc.inner': PortableGuard<PortableIds['comment.block.doc.inner'], RustNode> & {};
-	'comment.line': PortableGuard<PortableIds['comment.line'], RustNode> & {
+	'comment.block.doc.inner': PortableGuard<PortableIds['comment.block.doc.inner'], RustNode, TSKindId> & {};
+	'comment.line': PortableGuard<PortableIds['comment.line'], RustNode, TSKindId> & {
 		readonly doc: PortableIsAt['comment.line.doc'];
 	};
-	'comment.line.doc': PortableGuard<PortableIds['comment.line.doc'], RustNode> & {
+	'comment.line.doc': PortableGuard<PortableIds['comment.line.doc'], RustNode, TSKindId> & {
 		readonly inner: PortableIsAt['comment.line.doc.inner'];
 	};
-	'comment.line.doc.inner': PortableGuard<PortableIds['comment.line.doc.inner'], RustNode> & {};
-	'comment.text': PortableGuard<PortableIds['comment.text'], RustNode> & {};
-	declaration: PortableGuard<PortableIds['declaration'], RustNode> & {
+	'comment.line.doc.inner': PortableGuard<PortableIds['comment.line.doc.inner'], RustNode, TSKindId> & {};
+	'comment.text': PortableGuard<PortableIds['comment.text'], RustNode, TSKindId> & {};
+	declaration: PortableGuard<PortableIds['declaration'], RustNode, TSKindId> & {
 		readonly constant: PortableIsAt['declaration.constant'];
 		readonly enum: PortableIsAt['declaration.enum'];
 		readonly enum_member: PortableIsAt['declaration.enum_member'];
@@ -1783,384 +1783,507 @@ export interface PortableIsAt {
 		readonly union: PortableIsAt['declaration.union'];
 		readonly variable: PortableIsAt['declaration.variable'];
 	};
-	'declaration.constant': PortableGuard<PortableIds['declaration.constant'], RustNode> & {
+	'declaration.constant': PortableGuard<PortableIds['declaration.constant'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.constant.private'];
 		readonly public: PortableIsAt['declaration.constant.public'];
 	};
-	'declaration.constant.private': PortableGuard<PortableIds['declaration.constant.private'], RustNode> & {};
-	'declaration.constant.public': PortableGuard<PortableIds['declaration.constant.public'], RustNode> & {
+	'declaration.constant.private': PortableGuard<PortableIds['declaration.constant.private'], RustNode, TSKindId> & {};
+	'declaration.constant.public': PortableGuard<PortableIds['declaration.constant.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.constant.public.internal'];
 		readonly restricted: PortableIsAt['declaration.constant.public.restricted'];
 	};
 	'declaration.constant.public.internal': PortableGuard<
 		PortableIds['declaration.constant.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.constant.public.restricted': PortableGuard<
 		PortableIds['declaration.constant.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.enum': PortableGuard<PortableIds['declaration.enum'], RustNode> & {
+	'declaration.enum': PortableGuard<PortableIds['declaration.enum'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.enum.private'];
 		readonly public: PortableIsAt['declaration.enum.public'];
 	};
-	'declaration.enum.private': PortableGuard<PortableIds['declaration.enum.private'], RustNode> & {};
-	'declaration.enum.public': PortableGuard<PortableIds['declaration.enum.public'], RustNode> & {
+	'declaration.enum.private': PortableGuard<PortableIds['declaration.enum.private'], RustNode, TSKindId> & {};
+	'declaration.enum.public': PortableGuard<PortableIds['declaration.enum.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.enum.public.internal'];
 		readonly restricted: PortableIsAt['declaration.enum.public.restricted'];
 	};
-	'declaration.enum.public.internal': PortableGuard<PortableIds['declaration.enum.public.internal'], RustNode> & {};
-	'declaration.enum.public.restricted': PortableGuard<PortableIds['declaration.enum.public.restricted'], RustNode> & {};
-	'declaration.enum_member': PortableGuard<PortableIds['declaration.enum_member'], RustNode> & {
+	'declaration.enum.public.internal': PortableGuard<
+		PortableIds['declaration.enum.public.internal'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.enum.public.restricted': PortableGuard<
+		PortableIds['declaration.enum.public.restricted'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.enum_member': PortableGuard<PortableIds['declaration.enum_member'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.enum_member.private'];
 		readonly public: PortableIsAt['declaration.enum_member.public'];
 		readonly struct: PortableIsAt['declaration.enum_member.struct'];
 		readonly tuple: PortableIsAt['declaration.enum_member.tuple'];
 	};
-	'declaration.enum_member.private': PortableGuard<PortableIds['declaration.enum_member.private'], RustNode> & {};
-	'declaration.enum_member.public': PortableGuard<PortableIds['declaration.enum_member.public'], RustNode> & {
+	'declaration.enum_member.private': PortableGuard<
+		PortableIds['declaration.enum_member.private'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.enum_member.public': PortableGuard<PortableIds['declaration.enum_member.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.enum_member.public.internal'];
 		readonly restricted: PortableIsAt['declaration.enum_member.public.restricted'];
 	};
 	'declaration.enum_member.public.internal': PortableGuard<
 		PortableIds['declaration.enum_member.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.enum_member.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.enum_member.struct': PortableGuard<PortableIds['declaration.enum_member.struct'], RustNode> & {
+	'declaration.enum_member.struct': PortableGuard<PortableIds['declaration.enum_member.struct'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.enum_member.struct.private'];
 		readonly public: PortableIsAt['declaration.enum_member.struct.public'];
 	};
 	'declaration.enum_member.struct.private': PortableGuard<
 		PortableIds['declaration.enum_member.struct.private'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.enum_member.struct.public': PortableGuard<
 		PortableIds['declaration.enum_member.struct.public'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.struct.public.internal'];
 		readonly restricted: PortableIsAt['declaration.enum_member.struct.public.restricted'];
 	};
 	'declaration.enum_member.struct.public.internal': PortableGuard<
 		PortableIds['declaration.enum_member.struct.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.enum_member.struct.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.struct.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.enum_member.tuple': PortableGuard<PortableIds['declaration.enum_member.tuple'], RustNode> & {
+	'declaration.enum_member.tuple': PortableGuard<PortableIds['declaration.enum_member.tuple'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.enum_member.tuple.private'];
 		readonly public: PortableIsAt['declaration.enum_member.tuple.public'];
 	};
 	'declaration.enum_member.tuple.private': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.private'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.enum_member.tuple.public': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.public'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {
 		readonly internal: PortableIsAt['declaration.enum_member.tuple.public.internal'];
 		readonly restricted: PortableIsAt['declaration.enum_member.tuple.public.restricted'];
 	};
 	'declaration.enum_member.tuple.public.internal': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.enum_member.tuple.public.restricted': PortableGuard<
 		PortableIds['declaration.enum_member.tuple.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.extension': PortableGuard<PortableIds['declaration.extension'], RustNode> & {
+	'declaration.extension': PortableGuard<PortableIds['declaration.extension'], RustNode, TSKindId> & {
 		readonly conformance: PortableIsAt['declaration.extension.conformance'];
 	};
-	'declaration.extension.conformance': PortableGuard<PortableIds['declaration.extension.conformance'], RustNode> & {};
-	'declaration.field': PortableGuard<PortableIds['declaration.field'], RustNode> & {
+	'declaration.extension.conformance': PortableGuard<
+		PortableIds['declaration.extension.conformance'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.field': PortableGuard<PortableIds['declaration.field'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.field.private'];
 		readonly public: PortableIsAt['declaration.field.public'];
 	};
-	'declaration.field.private': PortableGuard<PortableIds['declaration.field.private'], RustNode> & {};
-	'declaration.field.public': PortableGuard<PortableIds['declaration.field.public'], RustNode> & {
+	'declaration.field.private': PortableGuard<PortableIds['declaration.field.private'], RustNode, TSKindId> & {};
+	'declaration.field.public': PortableGuard<PortableIds['declaration.field.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.field.public.internal'];
 		readonly restricted: PortableIsAt['declaration.field.public.restricted'];
 	};
-	'declaration.field.public.internal': PortableGuard<PortableIds['declaration.field.public.internal'], RustNode> & {};
+	'declaration.field.public.internal': PortableGuard<
+		PortableIds['declaration.field.public.internal'],
+		RustNode,
+		TSKindId
+	> & {};
 	'declaration.field.public.restricted': PortableGuard<
 		PortableIds['declaration.field.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.function': PortableGuard<PortableIds['declaration.function'], RustNode> & {
+	'declaration.function': PortableGuard<PortableIds['declaration.function'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.function.private'];
 		readonly public: PortableIsAt['declaration.function.public'];
 		readonly signature: PortableIsAt['declaration.function.signature'];
 	};
-	'declaration.function.private': PortableGuard<PortableIds['declaration.function.private'], RustNode> & {};
-	'declaration.function.public': PortableGuard<PortableIds['declaration.function.public'], RustNode> & {
+	'declaration.function.private': PortableGuard<PortableIds['declaration.function.private'], RustNode, TSKindId> & {};
+	'declaration.function.public': PortableGuard<PortableIds['declaration.function.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.function.public.internal'];
 		readonly restricted: PortableIsAt['declaration.function.public.restricted'];
 	};
 	'declaration.function.public.internal': PortableGuard<
 		PortableIds['declaration.function.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.function.public.restricted': PortableGuard<
 		PortableIds['declaration.function.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature'], RustNode> & {
+	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.function.signature.private'];
 		readonly public: PortableIsAt['declaration.function.signature.public'];
 	};
 	'declaration.function.signature.private': PortableGuard<
 		PortableIds['declaration.function.signature.private'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.function.signature.public': PortableGuard<
 		PortableIds['declaration.function.signature.public'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {
 		readonly internal: PortableIsAt['declaration.function.signature.public.internal'];
 		readonly restricted: PortableIsAt['declaration.function.signature.public.restricted'];
 	};
 	'declaration.function.signature.public.internal': PortableGuard<
 		PortableIds['declaration.function.signature.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.function.signature.public.restricted': PortableGuard<
 		PortableIds['declaration.function.signature.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.interface': PortableGuard<PortableIds['declaration.interface'], RustNode> & {
+	'declaration.interface': PortableGuard<PortableIds['declaration.interface'], RustNode, TSKindId> & {
 		readonly trait: PortableIsAt['declaration.interface.trait'];
 	};
-	'declaration.interface.trait': PortableGuard<PortableIds['declaration.interface.trait'], RustNode> & {
+	'declaration.interface.trait': PortableGuard<PortableIds['declaration.interface.trait'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.interface.trait.private'];
 		readonly public: PortableIsAt['declaration.interface.trait.public'];
 	};
 	'declaration.interface.trait.private': PortableGuard<
 		PortableIds['declaration.interface.trait.private'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.interface.trait.public': PortableGuard<PortableIds['declaration.interface.trait.public'], RustNode> & {
+	'declaration.interface.trait.public': PortableGuard<
+		PortableIds['declaration.interface.trait.public'],
+		RustNode,
+		TSKindId
+	> & {
 		readonly internal: PortableIsAt['declaration.interface.trait.public.internal'];
 		readonly restricted: PortableIsAt['declaration.interface.trait.public.restricted'];
 	};
 	'declaration.interface.trait.public.internal': PortableGuard<
 		PortableIds['declaration.interface.trait.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.interface.trait.public.restricted': PortableGuard<
 		PortableIds['declaration.interface.trait.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.macro': PortableGuard<PortableIds['declaration.macro'], RustNode> & {};
-	'declaration.method': PortableGuard<PortableIds['declaration.method'], RustNode> & {
+	'declaration.macro': PortableGuard<PortableIds['declaration.macro'], RustNode, TSKindId> & {};
+	'declaration.method': PortableGuard<PortableIds['declaration.method'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.method.private'];
 		readonly public: PortableIsAt['declaration.method.public'];
 		readonly signature: PortableIsAt['declaration.method.signature'];
 	};
-	'declaration.method.private': PortableGuard<PortableIds['declaration.method.private'], RustNode> & {};
-	'declaration.method.public': PortableGuard<PortableIds['declaration.method.public'], RustNode> & {
+	'declaration.method.private': PortableGuard<PortableIds['declaration.method.private'], RustNode, TSKindId> & {};
+	'declaration.method.public': PortableGuard<PortableIds['declaration.method.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.method.public.internal'];
 		readonly restricted: PortableIsAt['declaration.method.public.restricted'];
 	};
-	'declaration.method.public.internal': PortableGuard<PortableIds['declaration.method.public.internal'], RustNode> & {};
+	'declaration.method.public.internal': PortableGuard<
+		PortableIds['declaration.method.public.internal'],
+		RustNode,
+		TSKindId
+	> & {};
 	'declaration.method.public.restricted': PortableGuard<
 		PortableIds['declaration.method.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature'], RustNode> & {
+	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.method.signature.private'];
 		readonly public: PortableIsAt['declaration.method.signature.public'];
 	};
 	'declaration.method.signature.private': PortableGuard<
 		PortableIds['declaration.method.signature.private'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.method.signature.public': PortableGuard<PortableIds['declaration.method.signature.public'], RustNode> & {
+	'declaration.method.signature.public': PortableGuard<
+		PortableIds['declaration.method.signature.public'],
+		RustNode,
+		TSKindId
+	> & {
 		readonly internal: PortableIsAt['declaration.method.signature.public.internal'];
 		readonly restricted: PortableIsAt['declaration.method.signature.public.restricted'];
 	};
 	'declaration.method.signature.public.internal': PortableGuard<
 		PortableIds['declaration.method.signature.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.method.signature.public.restricted': PortableGuard<
 		PortableIds['declaration.method.signature.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.module': PortableGuard<PortableIds['declaration.module'], RustNode> & {
+	'declaration.module': PortableGuard<PortableIds['declaration.module'], RustNode, TSKindId> & {
 		readonly foreign: PortableIsAt['declaration.module.foreign'];
 		readonly private: PortableIsAt['declaration.module.private'];
 		readonly public: PortableIsAt['declaration.module.public'];
 	};
-	'declaration.module.foreign': PortableGuard<PortableIds['declaration.module.foreign'], RustNode> & {};
-	'declaration.module.private': PortableGuard<PortableIds['declaration.module.private'], RustNode> & {};
-	'declaration.module.public': PortableGuard<PortableIds['declaration.module.public'], RustNode> & {
+	'declaration.module.foreign': PortableGuard<PortableIds['declaration.module.foreign'], RustNode, TSKindId> & {};
+	'declaration.module.private': PortableGuard<PortableIds['declaration.module.private'], RustNode, TSKindId> & {};
+	'declaration.module.public': PortableGuard<PortableIds['declaration.module.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.module.public.internal'];
 		readonly restricted: PortableIsAt['declaration.module.public.restricted'];
 	};
-	'declaration.module.public.internal': PortableGuard<PortableIds['declaration.module.public.internal'], RustNode> & {};
+	'declaration.module.public.internal': PortableGuard<
+		PortableIds['declaration.module.public.internal'],
+		RustNode,
+		TSKindId
+	> & {};
 	'declaration.module.public.restricted': PortableGuard<
 		PortableIds['declaration.module.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter'], RustNode> & {
+	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter'], RustNode, TSKindId> & {
 		readonly receiver: PortableIsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
-	'declaration.parameter.receiver': PortableGuard<PortableIds['declaration.parameter.receiver'], RustNode> & {};
-	'declaration.parameter.variadic': PortableGuard<PortableIds['declaration.parameter.variadic'], RustNode> & {};
-	'declaration.struct': PortableGuard<PortableIds['declaration.struct'], RustNode> & {
+	'declaration.parameter.receiver': PortableGuard<
+		PortableIds['declaration.parameter.receiver'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.parameter.variadic': PortableGuard<
+		PortableIds['declaration.parameter.variadic'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.struct': PortableGuard<PortableIds['declaration.struct'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.struct.private'];
 		readonly public: PortableIsAt['declaration.struct.public'];
 		readonly tuple: PortableIsAt['declaration.struct.tuple'];
 		readonly unit: PortableIsAt['declaration.struct.unit'];
 	};
-	'declaration.struct.private': PortableGuard<PortableIds['declaration.struct.private'], RustNode> & {};
-	'declaration.struct.public': PortableGuard<PortableIds['declaration.struct.public'], RustNode> & {
+	'declaration.struct.private': PortableGuard<PortableIds['declaration.struct.private'], RustNode, TSKindId> & {};
+	'declaration.struct.public': PortableGuard<PortableIds['declaration.struct.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.struct.public.internal'];
 		readonly restricted: PortableIsAt['declaration.struct.public.restricted'];
 	};
-	'declaration.struct.public.internal': PortableGuard<PortableIds['declaration.struct.public.internal'], RustNode> & {};
+	'declaration.struct.public.internal': PortableGuard<
+		PortableIds['declaration.struct.public.internal'],
+		RustNode,
+		TSKindId
+	> & {};
 	'declaration.struct.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.struct.tuple': PortableGuard<PortableIds['declaration.struct.tuple'], RustNode> & {
+	'declaration.struct.tuple': PortableGuard<PortableIds['declaration.struct.tuple'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.struct.tuple.private'];
 		readonly public: PortableIsAt['declaration.struct.tuple.public'];
 	};
-	'declaration.struct.tuple.private': PortableGuard<PortableIds['declaration.struct.tuple.private'], RustNode> & {};
-	'declaration.struct.tuple.public': PortableGuard<PortableIds['declaration.struct.tuple.public'], RustNode> & {
+	'declaration.struct.tuple.private': PortableGuard<
+		PortableIds['declaration.struct.tuple.private'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.struct.tuple.public': PortableGuard<
+		PortableIds['declaration.struct.tuple.public'],
+		RustNode,
+		TSKindId
+	> & {
 		readonly internal: PortableIsAt['declaration.struct.tuple.public.internal'];
 		readonly restricted: PortableIsAt['declaration.struct.tuple.public.restricted'];
 	};
 	'declaration.struct.tuple.public.internal': PortableGuard<
 		PortableIds['declaration.struct.tuple.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.struct.tuple.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.tuple.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.struct.unit': PortableGuard<PortableIds['declaration.struct.unit'], RustNode> & {
+	'declaration.struct.unit': PortableGuard<PortableIds['declaration.struct.unit'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.struct.unit.private'];
 		readonly public: PortableIsAt['declaration.struct.unit.public'];
 	};
-	'declaration.struct.unit.private': PortableGuard<PortableIds['declaration.struct.unit.private'], RustNode> & {};
-	'declaration.struct.unit.public': PortableGuard<PortableIds['declaration.struct.unit.public'], RustNode> & {
+	'declaration.struct.unit.private': PortableGuard<
+		PortableIds['declaration.struct.unit.private'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.struct.unit.public': PortableGuard<PortableIds['declaration.struct.unit.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.struct.unit.public.internal'];
 		readonly restricted: PortableIsAt['declaration.struct.unit.public.restricted'];
 	};
 	'declaration.struct.unit.public.internal': PortableGuard<
 		PortableIds['declaration.struct.unit.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.struct.unit.public.restricted': PortableGuard<
 		PortableIds['declaration.struct.unit.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias'], RustNode> & {
+	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias'], RustNode, TSKindId> & {
 		readonly associated: PortableIsAt['declaration.type_alias.associated'];
 		readonly private: PortableIsAt['declaration.type_alias.private'];
 		readonly public: PortableIsAt['declaration.type_alias.public'];
 	};
-	'declaration.type_alias.associated': PortableGuard<PortableIds['declaration.type_alias.associated'], RustNode> & {};
-	'declaration.type_alias.private': PortableGuard<PortableIds['declaration.type_alias.private'], RustNode> & {};
-	'declaration.type_alias.public': PortableGuard<PortableIds['declaration.type_alias.public'], RustNode> & {
+	'declaration.type_alias.associated': PortableGuard<
+		PortableIds['declaration.type_alias.associated'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.type_alias.private': PortableGuard<
+		PortableIds['declaration.type_alias.private'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.type_alias.public': PortableGuard<PortableIds['declaration.type_alias.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.type_alias.public.internal'];
 		readonly restricted: PortableIsAt['declaration.type_alias.public.restricted'];
 	};
 	'declaration.type_alias.public.internal': PortableGuard<
 		PortableIds['declaration.type_alias.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.type_alias.public.restricted': PortableGuard<
 		PortableIds['declaration.type_alias.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter'], RustNode> & {
+	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter'], RustNode, TSKindId> & {
 		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
 		readonly value: PortableIsAt['declaration.type_parameter.value'];
 	};
 	'declaration.type_parameter.lifetime': PortableGuard<
 		PortableIds['declaration.type_parameter.lifetime'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.type_parameter.value': PortableGuard<PortableIds['declaration.type_parameter.value'], RustNode> & {};
-	'declaration.union': PortableGuard<PortableIds['declaration.union'], RustNode> & {
+	'declaration.type_parameter.value': PortableGuard<
+		PortableIds['declaration.type_parameter.value'],
+		RustNode,
+		TSKindId
+	> & {};
+	'declaration.union': PortableGuard<PortableIds['declaration.union'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.union.private'];
 		readonly public: PortableIsAt['declaration.union.public'];
 	};
-	'declaration.union.private': PortableGuard<PortableIds['declaration.union.private'], RustNode> & {};
-	'declaration.union.public': PortableGuard<PortableIds['declaration.union.public'], RustNode> & {
+	'declaration.union.private': PortableGuard<PortableIds['declaration.union.private'], RustNode, TSKindId> & {};
+	'declaration.union.public': PortableGuard<PortableIds['declaration.union.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.union.public.internal'];
 		readonly restricted: PortableIsAt['declaration.union.public.restricted'];
 	};
-	'declaration.union.public.internal': PortableGuard<PortableIds['declaration.union.public.internal'], RustNode> & {};
+	'declaration.union.public.internal': PortableGuard<
+		PortableIds['declaration.union.public.internal'],
+		RustNode,
+		TSKindId
+	> & {};
 	'declaration.union.public.restricted': PortableGuard<
 		PortableIds['declaration.union.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'declaration.variable': PortableGuard<PortableIds['declaration.variable'], RustNode> & {
+	'declaration.variable': PortableGuard<PortableIds['declaration.variable'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['declaration.variable.private'];
 		readonly public: PortableIsAt['declaration.variable.public'];
 	};
-	'declaration.variable.private': PortableGuard<PortableIds['declaration.variable.private'], RustNode> & {};
-	'declaration.variable.public': PortableGuard<PortableIds['declaration.variable.public'], RustNode> & {
+	'declaration.variable.private': PortableGuard<PortableIds['declaration.variable.private'], RustNode, TSKindId> & {};
+	'declaration.variable.public': PortableGuard<PortableIds['declaration.variable.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['declaration.variable.public.internal'];
 		readonly restricted: PortableIsAt['declaration.variable.public.restricted'];
 	};
 	'declaration.variable.public.internal': PortableGuard<
 		PortableIds['declaration.variable.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'declaration.variable.public.restricted': PortableGuard<
 		PortableIds['declaration.variable.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	element: PortableGuard<PortableIds['element'], RustNode> & {
+	element: PortableGuard<PortableIds['element'], RustNode, TSKindId> & {
 		readonly macro: PortableIsAt['element.macro'];
 		readonly struct: PortableIsAt['element.struct'];
 		readonly type_argument: PortableIsAt['element.type_argument'];
 		readonly type_binding: PortableIsAt['element.type_binding'];
 	};
-	'element.macro': PortableGuard<PortableIds['element.macro'], RustNode> & {
+	'element.macro': PortableGuard<PortableIds['element.macro'], RustNode, TSKindId> & {
 		readonly fragment: PortableIsAt['element.macro.fragment'];
 		readonly token_binding: PortableIsAt['element.macro.token_binding'];
 		readonly token_repetition: PortableIsAt['element.macro.token_repetition'];
 		readonly token_tree: PortableIsAt['element.macro.token_tree'];
 	};
-	'element.macro.fragment': PortableGuard<PortableIds['element.macro.fragment'], RustNode> & {};
-	'element.macro.token_binding': PortableGuard<PortableIds['element.macro.token_binding'], RustNode> & {};
-	'element.macro.token_repetition': PortableGuard<PortableIds['element.macro.token_repetition'], RustNode> & {
+	'element.macro.fragment': PortableGuard<PortableIds['element.macro.fragment'], RustNode, TSKindId> & {};
+	'element.macro.token_binding': PortableGuard<PortableIds['element.macro.token_binding'], RustNode, TSKindId> & {};
+	'element.macro.token_repetition': PortableGuard<PortableIds['element.macro.token_repetition'], RustNode, TSKindId> & {
 		readonly pattern: PortableIsAt['element.macro.token_repetition.pattern'];
 	};
 	'element.macro.token_repetition.pattern': PortableGuard<
 		PortableIds['element.macro.token_repetition.pattern'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'element.macro.token_tree': PortableGuard<PortableIds['element.macro.token_tree'], RustNode> & {
+	'element.macro.token_tree': PortableGuard<PortableIds['element.macro.token_tree'], RustNode, TSKindId> & {
 		readonly delimited: PortableIsAt['element.macro.token_tree.delimited'];
 		readonly pattern: PortableIsAt['element.macro.token_tree.pattern'];
 	};
-	'element.macro.token_tree.delimited': PortableGuard<PortableIds['element.macro.token_tree.delimited'], RustNode> & {};
-	'element.macro.token_tree.pattern': PortableGuard<PortableIds['element.macro.token_tree.pattern'], RustNode> & {};
-	'element.struct': PortableGuard<PortableIds['element.struct'], RustNode> & {
+	'element.macro.token_tree.delimited': PortableGuard<
+		PortableIds['element.macro.token_tree.delimited'],
+		RustNode,
+		TSKindId
+	> & {};
+	'element.macro.token_tree.pattern': PortableGuard<
+		PortableIds['element.macro.token_tree.pattern'],
+		RustNode,
+		TSKindId
+	> & {};
+	'element.struct': PortableGuard<PortableIds['element.struct'], RustNode, TSKindId> & {
 		readonly base: PortableIsAt['element.struct.base'];
 		readonly field: PortableIsAt['element.struct.field'];
 	};
-	'element.struct.base': PortableGuard<PortableIds['element.struct.base'], RustNode> & {};
-	'element.struct.field': PortableGuard<PortableIds['element.struct.field'], RustNode> & {};
-	'element.type_argument': PortableGuard<PortableIds['element.type_argument'], RustNode> & {};
-	'element.type_binding': PortableGuard<PortableIds['element.type_binding'], RustNode> & {};
-	expression: PortableGuard<PortableIds['expression'], RustNode> & {
+	'element.struct.base': PortableGuard<PortableIds['element.struct.base'], RustNode, TSKindId> & {};
+	'element.struct.field': PortableGuard<PortableIds['element.struct.field'], RustNode, TSKindId> & {};
+	'element.type_argument': PortableGuard<PortableIds['element.type_argument'], RustNode, TSKindId> & {};
+	'element.type_binding': PortableGuard<PortableIds['element.type_binding'], RustNode, TSKindId> & {};
+	expression: PortableGuard<PortableIds['expression'], RustNode, TSKindId> & {
 		readonly assignment: PortableIsAt['expression.assignment'];
 		readonly await: PortableIsAt['expression.await'];
 		readonly binary: PortableIsAt['expression.binary'];
@@ -2180,10 +2303,10 @@ export interface PortableIsAt {
 		readonly unit: PortableIsAt['expression.unit'];
 		readonly yield: PortableIsAt['expression.yield'];
 	};
-	'expression.assignment': PortableGuard<PortableIds['expression.assignment'], RustNode> & {
+	'expression.assignment': PortableGuard<PortableIds['expression.assignment'], RustNode, TSKindId> & {
 		readonly compound: PortableIsAt['expression.assignment.compound'];
 	};
-	'expression.assignment.compound': PortableGuard<PortableIds['expression.assignment.compound'], RustNode> & {
+	'expression.assignment.compound': PortableGuard<PortableIds['expression.assignment.compound'], RustNode, TSKindId> & {
 		readonly add: PortableIsAt['expression.assignment.compound.add'];
 		readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
 		readonly bitwise_or: PortableIsAt['expression.assignment.compound.bitwise_or'];
@@ -2195,84 +2318,105 @@ export interface PortableIsAt {
 		readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
 		readonly subtract: PortableIsAt['expression.assignment.compound.subtract'];
 	};
-	'expression.assignment.compound.add': PortableGuard<PortableIds['expression.assignment.compound.add'], RustNode> & {};
+	'expression.assignment.compound.add': PortableGuard<
+		PortableIds['expression.assignment.compound.add'],
+		RustNode,
+		TSKindId
+	> & {};
 	'expression.assignment.compound.bitwise_and': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_and'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.bitwise_or': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_or'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.bitwise_xor': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_xor'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.divide': PortableGuard<
 		PortableIds['expression.assignment.compound.divide'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.modulo': PortableGuard<
 		PortableIds['expression.assignment.compound.modulo'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.multiply': PortableGuard<
 		PortableIds['expression.assignment.compound.multiply'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.shift_left': PortableGuard<
 		PortableIds['expression.assignment.compound.shift_left'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.shift_right': PortableGuard<
 		PortableIds['expression.assignment.compound.shift_right'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.assignment.compound.subtract': PortableGuard<
 		PortableIds['expression.assignment.compound.subtract'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'expression.await': PortableGuard<PortableIds['expression.await'], RustNode> & {};
-	'expression.binary': PortableGuard<PortableIds['expression.binary'], RustNode> & {
+	'expression.await': PortableGuard<PortableIds['expression.await'], RustNode, TSKindId> & {};
+	'expression.binary': PortableGuard<PortableIds['expression.binary'], RustNode, TSKindId> & {
 		readonly arithmetic: PortableIsAt['expression.binary.arithmetic'];
 		readonly bitwise: PortableIsAt['expression.binary.bitwise'];
 		readonly comparison: PortableIsAt['expression.binary.comparison'];
 		readonly logical: PortableIsAt['expression.binary.logical'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
 	};
-	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic'], RustNode> & {
+	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic'], RustNode, TSKindId> & {
 		readonly add: PortableIsAt['expression.binary.arithmetic.add'];
 		readonly divide: PortableIsAt['expression.binary.arithmetic.divide'];
 		readonly modulo: PortableIsAt['expression.binary.arithmetic.modulo'];
 		readonly multiply: PortableIsAt['expression.binary.arithmetic.multiply'];
 		readonly subtract: PortableIsAt['expression.binary.arithmetic.subtract'];
 	};
-	'expression.binary.arithmetic.add': PortableGuard<PortableIds['expression.binary.arithmetic.add'], RustNode> & {};
+	'expression.binary.arithmetic.add': PortableGuard<
+		PortableIds['expression.binary.arithmetic.add'],
+		RustNode,
+		TSKindId
+	> & {};
 	'expression.binary.arithmetic.divide': PortableGuard<
 		PortableIds['expression.binary.arithmetic.divide'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.binary.arithmetic.modulo': PortableGuard<
 		PortableIds['expression.binary.arithmetic.modulo'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.binary.arithmetic.multiply': PortableGuard<
 		PortableIds['expression.binary.arithmetic.multiply'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.binary.arithmetic.subtract': PortableGuard<
 		PortableIds['expression.binary.arithmetic.subtract'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'expression.binary.bitwise': PortableGuard<PortableIds['expression.binary.bitwise'], RustNode> & {
+	'expression.binary.bitwise': PortableGuard<PortableIds['expression.binary.bitwise'], RustNode, TSKindId> & {
 		readonly and: PortableIsAt['expression.binary.bitwise.and'];
 		readonly or: PortableIsAt['expression.binary.bitwise.or'];
 		readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
 	};
-	'expression.binary.bitwise.and': PortableGuard<PortableIds['expression.binary.bitwise.and'], RustNode> & {};
-	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or'], RustNode> & {};
-	'expression.binary.bitwise.xor': PortableGuard<PortableIds['expression.binary.bitwise.xor'], RustNode> & {};
-	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison'], RustNode> & {
+	'expression.binary.bitwise.and': PortableGuard<PortableIds['expression.binary.bitwise.and'], RustNode, TSKindId> & {};
+	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or'], RustNode, TSKindId> & {};
+	'expression.binary.bitwise.xor': PortableGuard<PortableIds['expression.binary.bitwise.xor'], RustNode, TSKindId> & {};
+	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison'], RustNode, TSKindId> & {
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
@@ -2280,96 +2424,112 @@ export interface PortableIsAt {
 		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
 		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
 	};
-	'expression.binary.comparison.equal': PortableGuard<PortableIds['expression.binary.comparison.equal'], RustNode> & {};
+	'expression.binary.comparison.equal': PortableGuard<
+		PortableIds['expression.binary.comparison.equal'],
+		RustNode,
+		TSKindId
+	> & {};
 	'expression.binary.comparison.greater': PortableGuard<
 		PortableIds['expression.binary.comparison.greater'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.binary.comparison.greater_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.greater_equal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'expression.binary.comparison.less': PortableGuard<PortableIds['expression.binary.comparison.less'], RustNode> & {};
+	'expression.binary.comparison.less': PortableGuard<
+		PortableIds['expression.binary.comparison.less'],
+		RustNode,
+		TSKindId
+	> & {};
 	'expression.binary.comparison.less_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.less_equal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'expression.binary.comparison.not_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.not_equal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'expression.binary.logical': PortableGuard<PortableIds['expression.binary.logical'], RustNode> & {
+	'expression.binary.logical': PortableGuard<PortableIds['expression.binary.logical'], RustNode, TSKindId> & {
 		readonly and: PortableIsAt['expression.binary.logical.and'];
 		readonly or: PortableIsAt['expression.binary.logical.or'];
 	};
-	'expression.binary.logical.and': PortableGuard<PortableIds['expression.binary.logical.and'], RustNode> & {};
-	'expression.binary.logical.or': PortableGuard<PortableIds['expression.binary.logical.or'], RustNode> & {};
-	'expression.binary.shift': PortableGuard<PortableIds['expression.binary.shift'], RustNode> & {
+	'expression.binary.logical.and': PortableGuard<PortableIds['expression.binary.logical.and'], RustNode, TSKindId> & {};
+	'expression.binary.logical.or': PortableGuard<PortableIds['expression.binary.logical.or'], RustNode, TSKindId> & {};
+	'expression.binary.shift': PortableGuard<PortableIds['expression.binary.shift'], RustNode, TSKindId> & {
 		readonly left: PortableIsAt['expression.binary.shift.left'];
 		readonly right: PortableIsAt['expression.binary.shift.right'];
 	};
-	'expression.binary.shift.left': PortableGuard<PortableIds['expression.binary.shift.left'], RustNode> & {};
-	'expression.binary.shift.right': PortableGuard<PortableIds['expression.binary.shift.right'], RustNode> & {};
-	'expression.block': PortableGuard<PortableIds['expression.block'], RustNode> & {
+	'expression.binary.shift.left': PortableGuard<PortableIds['expression.binary.shift.left'], RustNode, TSKindId> & {};
+	'expression.binary.shift.right': PortableGuard<PortableIds['expression.binary.shift.right'], RustNode, TSKindId> & {};
+	'expression.block': PortableGuard<PortableIds['expression.block'], RustNode, TSKindId> & {
 		readonly async: PortableIsAt['expression.block.async'];
 		readonly const: PortableIsAt['expression.block.const'];
 		readonly generator: PortableIsAt['expression.block.generator'];
 		readonly try: PortableIsAt['expression.block.try'];
 		readonly unsafe: PortableIsAt['expression.block.unsafe'];
 	};
-	'expression.block.async': PortableGuard<PortableIds['expression.block.async'], RustNode> & {};
-	'expression.block.const': PortableGuard<PortableIds['expression.block.const'], RustNode> & {};
-	'expression.block.generator': PortableGuard<PortableIds['expression.block.generator'], RustNode> & {};
-	'expression.block.try': PortableGuard<PortableIds['expression.block.try'], RustNode> & {};
-	'expression.block.unsafe': PortableGuard<PortableIds['expression.block.unsafe'], RustNode> & {};
-	'expression.call': PortableGuard<PortableIds['expression.call'], RustNode> & {
+	'expression.block.async': PortableGuard<PortableIds['expression.block.async'], RustNode, TSKindId> & {};
+	'expression.block.const': PortableGuard<PortableIds['expression.block.const'], RustNode, TSKindId> & {};
+	'expression.block.generator': PortableGuard<PortableIds['expression.block.generator'], RustNode, TSKindId> & {};
+	'expression.block.try': PortableGuard<PortableIds['expression.block.try'], RustNode, TSKindId> & {};
+	'expression.block.unsafe': PortableGuard<PortableIds['expression.block.unsafe'], RustNode, TSKindId> & {};
+	'expression.call': PortableGuard<PortableIds['expression.call'], RustNode, TSKindId> & {
 		readonly macro: PortableIsAt['expression.call.macro'];
 		readonly member: PortableIsAt['expression.call.member'];
 		readonly qualified: PortableIsAt['expression.call.qualified'];
 	};
-	'expression.call.macro': PortableGuard<PortableIds['expression.call.macro'], RustNode> & {};
-	'expression.call.member': PortableGuard<PortableIds['expression.call.member'], RustNode> & {};
-	'expression.call.qualified': PortableGuard<PortableIds['expression.call.qualified'], RustNode> & {};
-	'expression.cast': PortableGuard<PortableIds['expression.cast'], RustNode> & {
+	'expression.call.macro': PortableGuard<PortableIds['expression.call.macro'], RustNode, TSKindId> & {};
+	'expression.call.member': PortableGuard<PortableIds['expression.call.member'], RustNode, TSKindId> & {};
+	'expression.call.qualified': PortableGuard<PortableIds['expression.call.qualified'], RustNode, TSKindId> & {};
+	'expression.cast': PortableGuard<PortableIds['expression.cast'], RustNode, TSKindId> & {
 		readonly conversion: PortableIsAt['expression.cast.conversion'];
 	};
-	'expression.cast.conversion': PortableGuard<PortableIds['expression.cast.conversion'], RustNode> & {};
-	'expression.collection': PortableGuard<PortableIds['expression.collection'], RustNode> & {
+	'expression.cast.conversion': PortableGuard<PortableIds['expression.cast.conversion'], RustNode, TSKindId> & {};
+	'expression.collection': PortableGuard<PortableIds['expression.collection'], RustNode, TSKindId> & {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly struct: PortableIsAt['expression.collection.struct'];
 		readonly tuple: PortableIsAt['expression.collection.tuple'];
 	};
-	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list'], RustNode> & {
+	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list'], RustNode, TSKindId> & {
 		readonly repeat: PortableIsAt['expression.collection.list.repeat'];
 	};
-	'expression.collection.list.repeat': PortableGuard<PortableIds['expression.collection.list.repeat'], RustNode> & {};
-	'expression.collection.struct': PortableGuard<PortableIds['expression.collection.struct'], RustNode> & {};
-	'expression.collection.tuple': PortableGuard<PortableIds['expression.collection.tuple'], RustNode> & {};
-	'expression.instantiation': PortableGuard<PortableIds['expression.instantiation'], RustNode> & {};
-	'expression.lambda': PortableGuard<PortableIds['expression.lambda'], RustNode> & {};
-	'expression.member': PortableGuard<PortableIds['expression.member'], RustNode> & {};
-	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized'], RustNode> & {};
-	'expression.propagate': PortableGuard<PortableIds['expression.propagate'], RustNode> & {};
-	'expression.range': PortableGuard<PortableIds['expression.range'], RustNode> & {
+	'expression.collection.list.repeat': PortableGuard<
+		PortableIds['expression.collection.list.repeat'],
+		RustNode,
+		TSKindId
+	> & {};
+	'expression.collection.struct': PortableGuard<PortableIds['expression.collection.struct'], RustNode, TSKindId> & {};
+	'expression.collection.tuple': PortableGuard<PortableIds['expression.collection.tuple'], RustNode, TSKindId> & {};
+	'expression.instantiation': PortableGuard<PortableIds['expression.instantiation'], RustNode, TSKindId> & {};
+	'expression.lambda': PortableGuard<PortableIds['expression.lambda'], RustNode, TSKindId> & {};
+	'expression.member': PortableGuard<PortableIds['expression.member'], RustNode, TSKindId> & {};
+	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized'], RustNode, TSKindId> & {};
+	'expression.propagate': PortableGuard<PortableIds['expression.propagate'], RustNode, TSKindId> & {};
+	'expression.range': PortableGuard<PortableIds['expression.range'], RustNode, TSKindId> & {
 		readonly exclusive: PortableIsAt['expression.range.exclusive'];
 		readonly inclusive: PortableIsAt['expression.range.inclusive'];
 	};
-	'expression.range.exclusive': PortableGuard<PortableIds['expression.range.exclusive'], RustNode> & {};
-	'expression.range.inclusive': PortableGuard<PortableIds['expression.range.inclusive'], RustNode> & {};
-	'expression.reference': PortableGuard<PortableIds['expression.reference'], RustNode> & {};
-	'expression.subscript': PortableGuard<PortableIds['expression.subscript'], RustNode> & {};
-	'expression.unary': PortableGuard<PortableIds['expression.unary'], RustNode> & {
+	'expression.range.exclusive': PortableGuard<PortableIds['expression.range.exclusive'], RustNode, TSKindId> & {};
+	'expression.range.inclusive': PortableGuard<PortableIds['expression.range.inclusive'], RustNode, TSKindId> & {};
+	'expression.reference': PortableGuard<PortableIds['expression.reference'], RustNode, TSKindId> & {};
+	'expression.subscript': PortableGuard<PortableIds['expression.subscript'], RustNode, TSKindId> & {};
+	'expression.unary': PortableGuard<PortableIds['expression.unary'], RustNode, TSKindId> & {
 		readonly deref: PortableIsAt['expression.unary.deref'];
 		readonly negation: PortableIsAt['expression.unary.negation'];
 		readonly not: PortableIsAt['expression.unary.not'];
 	};
-	'expression.unary.deref': PortableGuard<PortableIds['expression.unary.deref'], RustNode> & {};
-	'expression.unary.negation': PortableGuard<PortableIds['expression.unary.negation'], RustNode> & {};
-	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not'], RustNode> & {};
-	'expression.unit': PortableGuard<PortableIds['expression.unit'], RustNode> & {};
-	'expression.yield': PortableGuard<PortableIds['expression.yield'], RustNode> & {};
-	file: PortableGuard<PortableIds['file'], RustNode> & {};
-	identifier: PortableGuard<PortableIds['identifier'], RustNode> & {
+	'expression.unary.deref': PortableGuard<PortableIds['expression.unary.deref'], RustNode, TSKindId> & {};
+	'expression.unary.negation': PortableGuard<PortableIds['expression.unary.negation'], RustNode, TSKindId> & {};
+	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not'], RustNode, TSKindId> & {};
+	'expression.unit': PortableGuard<PortableIds['expression.unit'], RustNode, TSKindId> & {};
+	'expression.yield': PortableGuard<PortableIds['expression.yield'], RustNode, TSKindId> & {};
+	file: PortableGuard<PortableIds['file'], RustNode, TSKindId> & {};
+	identifier: PortableGuard<PortableIds['identifier'], RustNode, TSKindId> & {
 		readonly crate: PortableIsAt['identifier.crate'];
 		readonly field: PortableIsAt['identifier.field'];
 		readonly label: PortableIsAt['identifier.label'];
@@ -2381,80 +2541,82 @@ export interface PortableIsAt {
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
 	};
-	'identifier.crate': PortableGuard<PortableIds['identifier.crate'], RustNode> & {};
-	'identifier.field': PortableGuard<PortableIds['identifier.field'], RustNode> & {};
-	'identifier.label': PortableGuard<PortableIds['identifier.label'], RustNode> & {};
-	'identifier.lifetime': PortableGuard<PortableIds['identifier.lifetime'], RustNode> & {};
-	'identifier.metavariable': PortableGuard<PortableIds['identifier.metavariable'], RustNode> & {};
-	'identifier.property': PortableGuard<PortableIds['identifier.property'], RustNode> & {
+	'identifier.crate': PortableGuard<PortableIds['identifier.crate'], RustNode, TSKindId> & {};
+	'identifier.field': PortableGuard<PortableIds['identifier.field'], RustNode, TSKindId> & {};
+	'identifier.label': PortableGuard<PortableIds['identifier.label'], RustNode, TSKindId> & {};
+	'identifier.lifetime': PortableGuard<PortableIds['identifier.lifetime'], RustNode, TSKindId> & {};
+	'identifier.metavariable': PortableGuard<PortableIds['identifier.metavariable'], RustNode, TSKindId> & {};
+	'identifier.property': PortableGuard<PortableIds['identifier.property'], RustNode, TSKindId> & {
 		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
-	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand'], RustNode> & {};
-	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver'], RustNode> & {};
-	'identifier.scoped': PortableGuard<PortableIds['identifier.scoped'], RustNode> & {};
-	'identifier.super': PortableGuard<PortableIds['identifier.super'], RustNode> & {};
-	'identifier.type': PortableGuard<PortableIds['identifier.type'], RustNode> & {};
-	literal: PortableGuard<PortableIds['literal'], RustNode> & {
+	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand'], RustNode, TSKindId> & {};
+	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver'], RustNode, TSKindId> & {};
+	'identifier.scoped': PortableGuard<PortableIds['identifier.scoped'], RustNode, TSKindId> & {};
+	'identifier.super': PortableGuard<PortableIds['identifier.super'], RustNode, TSKindId> & {};
+	'identifier.type': PortableGuard<PortableIds['identifier.type'], RustNode, TSKindId> & {};
+	literal: PortableGuard<PortableIds['literal'], RustNode, TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly character: PortableIsAt['literal.character'];
 		readonly number: PortableIsAt['literal.number'];
 		readonly string: PortableIsAt['literal.string'];
 	};
-	'literal.boolean': PortableGuard<PortableIds['literal.boolean'], RustNode> & {
+	'literal.boolean': PortableGuard<PortableIds['literal.boolean'], RustNode, TSKindId> & {
 		readonly false: PortableIsAt['literal.boolean.false'];
 		readonly true: PortableIsAt['literal.boolean.true'];
 	};
-	'literal.boolean.false': PortableGuard<PortableIds['literal.boolean.false'], RustNode> & {};
-	'literal.boolean.true': PortableGuard<PortableIds['literal.boolean.true'], RustNode> & {};
-	'literal.character': PortableGuard<PortableIds['literal.character'], RustNode> & {};
-	'literal.number': PortableGuard<PortableIds['literal.number'], RustNode> & {
+	'literal.boolean.false': PortableGuard<PortableIds['literal.boolean.false'], RustNode, TSKindId> & {};
+	'literal.boolean.true': PortableGuard<PortableIds['literal.boolean.true'], RustNode, TSKindId> & {};
+	'literal.character': PortableGuard<PortableIds['literal.character'], RustNode, TSKindId> & {};
+	'literal.number': PortableGuard<PortableIds['literal.number'], RustNode, TSKindId> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
 		readonly negative: PortableIsAt['literal.number.negative'];
 	};
-	'literal.number.float': PortableGuard<PortableIds['literal.number.float'], RustNode> & {};
-	'literal.number.integer': PortableGuard<PortableIds['literal.number.integer'], RustNode> & {
+	'literal.number.float': PortableGuard<PortableIds['literal.number.float'], RustNode, TSKindId> & {};
+	'literal.number.integer': PortableGuard<PortableIds['literal.number.integer'], RustNode, TSKindId> & {
 		readonly binary: PortableIsAt['literal.number.integer.binary'];
 		readonly hex: PortableIsAt['literal.number.integer.hex'];
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 	};
-	'literal.number.integer.binary': PortableGuard<PortableIds['literal.number.integer.binary'], RustNode> & {};
-	'literal.number.integer.hex': PortableGuard<PortableIds['literal.number.integer.hex'], RustNode> & {};
-	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal'], RustNode> & {};
-	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative'], RustNode> & {};
-	'literal.string': PortableGuard<PortableIds['literal.string'], RustNode> & {
+	'literal.number.integer.binary': PortableGuard<PortableIds['literal.number.integer.binary'], RustNode, TSKindId> & {};
+	'literal.number.integer.hex': PortableGuard<PortableIds['literal.number.integer.hex'], RustNode, TSKindId> & {};
+	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal'], RustNode, TSKindId> & {};
+	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative'], RustNode, TSKindId> & {};
+	'literal.string': PortableGuard<PortableIds['literal.string'], RustNode, TSKindId> & {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
-	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes'], RustNode> & {};
-	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape'], RustNode> & {};
-	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw'], RustNode> & {};
-	'literal.string.text': PortableGuard<PortableIds['literal.string.text'], RustNode> & {};
-	modifier: PortableGuard<PortableIds['modifier'], RustNode> & {
+	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes'], RustNode, TSKindId> & {};
+	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape'], RustNode, TSKindId> & {};
+	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw'], RustNode, TSKindId> & {};
+	'literal.string.text': PortableGuard<PortableIds['literal.string.text'], RustNode, TSKindId> & {};
+	modifier: PortableGuard<PortableIds['modifier'], RustNode, TSKindId> & {
 		readonly extern: PortableIsAt['modifier.extern'];
 		readonly visibility: PortableIsAt['modifier.visibility'];
 	};
-	'modifier.extern': PortableGuard<PortableIds['modifier.extern'], RustNode> & {};
-	'modifier.visibility': PortableGuard<PortableIds['modifier.visibility'], RustNode> & {
+	'modifier.extern': PortableGuard<PortableIds['modifier.extern'], RustNode, TSKindId> & {};
+	'modifier.visibility': PortableGuard<PortableIds['modifier.visibility'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['modifier.visibility.private'];
 		readonly public: PortableIsAt['modifier.visibility.public'];
 	};
-	'modifier.visibility.private': PortableGuard<PortableIds['modifier.visibility.private'], RustNode> & {};
-	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public'], RustNode> & {
+	'modifier.visibility.private': PortableGuard<PortableIds['modifier.visibility.private'], RustNode, TSKindId> & {};
+	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['modifier.visibility.public.internal'];
 		readonly restricted: PortableIsAt['modifier.visibility.public.restricted'];
 	};
 	'modifier.visibility.public.internal': PortableGuard<
 		PortableIds['modifier.visibility.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'modifier.visibility.public.restricted': PortableGuard<
 		PortableIds['modifier.visibility.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	pattern: PortableGuard<PortableIds['pattern'], RustNode> & {
+	pattern: PortableGuard<PortableIds['pattern'], RustNode, TSKindId> & {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly generic: PortableIsAt['pattern.generic'];
 		readonly list: PortableIsAt['pattern.list'];
@@ -2467,34 +2629,34 @@ export interface PortableIsAt {
 		readonly tuple: PortableIsAt['pattern.tuple'];
 		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
-	'pattern.as': PortableGuard<PortableIds['pattern.as'], RustNode> & {};
-	'pattern.generic': PortableGuard<PortableIds['pattern.generic'], RustNode> & {};
-	'pattern.list': PortableGuard<PortableIds['pattern.list'], RustNode> & {};
-	'pattern.match': PortableGuard<PortableIds['pattern.match'], RustNode> & {};
-	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable'], RustNode> & {};
-	'pattern.or': PortableGuard<PortableIds['pattern.or'], RustNode> & {};
-	'pattern.range': PortableGuard<PortableIds['pattern.range'], RustNode> & {
+	'pattern.as': PortableGuard<PortableIds['pattern.as'], RustNode, TSKindId> & {};
+	'pattern.generic': PortableGuard<PortableIds['pattern.generic'], RustNode, TSKindId> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list'], RustNode, TSKindId> & {};
+	'pattern.match': PortableGuard<PortableIds['pattern.match'], RustNode, TSKindId> & {};
+	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable'], RustNode, TSKindId> & {};
+	'pattern.or': PortableGuard<PortableIds['pattern.or'], RustNode, TSKindId> & {};
+	'pattern.range': PortableGuard<PortableIds['pattern.range'], RustNode, TSKindId> & {
 		readonly exclusive: PortableIsAt['pattern.range.exclusive'];
 		readonly inclusive: PortableIsAt['pattern.range.inclusive'];
 	};
-	'pattern.range.exclusive': PortableGuard<PortableIds['pattern.range.exclusive'], RustNode> & {};
-	'pattern.range.inclusive': PortableGuard<PortableIds['pattern.range.inclusive'], RustNode> & {};
-	'pattern.reference': PortableGuard<PortableIds['pattern.reference'], RustNode> & {
+	'pattern.range.exclusive': PortableGuard<PortableIds['pattern.range.exclusive'], RustNode, TSKindId> & {};
+	'pattern.range.inclusive': PortableGuard<PortableIds['pattern.range.inclusive'], RustNode, TSKindId> & {};
+	'pattern.reference': PortableGuard<PortableIds['pattern.reference'], RustNode, TSKindId> & {
 		readonly value: PortableIsAt['pattern.reference.value'];
 	};
-	'pattern.reference.value': PortableGuard<PortableIds['pattern.reference.value'], RustNode> & {};
-	'pattern.struct': PortableGuard<PortableIds['pattern.struct'], RustNode> & {
+	'pattern.reference.value': PortableGuard<PortableIds['pattern.reference.value'], RustNode, TSKindId> & {};
+	'pattern.struct': PortableGuard<PortableIds['pattern.struct'], RustNode, TSKindId> & {
 		readonly field: PortableIsAt['pattern.struct.field'];
 		readonly rest: PortableIsAt['pattern.struct.rest'];
 	};
-	'pattern.struct.field': PortableGuard<PortableIds['pattern.struct.field'], RustNode> & {};
-	'pattern.struct.rest': PortableGuard<PortableIds['pattern.struct.rest'], RustNode> & {};
-	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode> & {
+	'pattern.struct.field': PortableGuard<PortableIds['pattern.struct.field'], RustNode, TSKindId> & {};
+	'pattern.struct.rest': PortableGuard<PortableIds['pattern.struct.rest'], RustNode, TSKindId> & {};
+	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode, TSKindId> & {
 		readonly struct: PortableIsAt['pattern.tuple.struct'];
 	};
-	'pattern.tuple.struct': PortableGuard<PortableIds['pattern.tuple.struct'], RustNode> & {};
-	'pattern.wildcard': PortableGuard<PortableIds['pattern.wildcard'], RustNode> & {};
-	statement: PortableGuard<PortableIds['statement'], RustNode> & {
+	'pattern.tuple.struct': PortableGuard<PortableIds['pattern.tuple.struct'], RustNode, TSKindId> & {};
+	'pattern.wildcard': PortableGuard<PortableIds['pattern.wildcard'], RustNode, TSKindId> & {};
+	statement: PortableGuard<PortableIds['statement'], RustNode, TSKindId> & {
 		readonly block: PortableIsAt['statement.block'];
 		readonly break: PortableIsAt['statement.break'];
 		readonly continue: PortableIsAt['statement.continue'];
@@ -2506,50 +2668,68 @@ export interface PortableIsAt {
 		readonly match: PortableIsAt['statement.match'];
 		readonly return: PortableIsAt['statement.return'];
 	};
-	'statement.block': PortableGuard<PortableIds['statement.block'], RustNode> & {};
-	'statement.break': PortableGuard<PortableIds['statement.break'], RustNode> & {};
-	'statement.continue': PortableGuard<PortableIds['statement.continue'], RustNode> & {};
-	'statement.empty': PortableGuard<PortableIds['statement.empty'], RustNode> & {};
-	'statement.expression': PortableGuard<PortableIds['statement.expression'], RustNode> & {};
-	'statement.if': PortableGuard<PortableIds['statement.if'], RustNode> & {};
-	'statement.import': PortableGuard<PortableIds['statement.import'], RustNode> & {
+	'statement.block': PortableGuard<PortableIds['statement.block'], RustNode, TSKindId> & {};
+	'statement.break': PortableGuard<PortableIds['statement.break'], RustNode, TSKindId> & {};
+	'statement.continue': PortableGuard<PortableIds['statement.continue'], RustNode, TSKindId> & {};
+	'statement.empty': PortableGuard<PortableIds['statement.empty'], RustNode, TSKindId> & {};
+	'statement.expression': PortableGuard<PortableIds['statement.expression'], RustNode, TSKindId> & {};
+	'statement.if': PortableGuard<PortableIds['statement.if'], RustNode, TSKindId> & {};
+	'statement.import': PortableGuard<PortableIds['statement.import'], RustNode, TSKindId> & {
 		readonly package: PortableIsAt['statement.import.package'];
 		readonly private: PortableIsAt['statement.import.private'];
 		readonly public: PortableIsAt['statement.import.public'];
 	};
-	'statement.import.package': PortableGuard<PortableIds['statement.import.package'], RustNode> & {
+	'statement.import.package': PortableGuard<PortableIds['statement.import.package'], RustNode, TSKindId> & {
 		readonly private: PortableIsAt['statement.import.package.private'];
 		readonly public: PortableIsAt['statement.import.package.public'];
 	};
-	'statement.import.package.private': PortableGuard<PortableIds['statement.import.package.private'], RustNode> & {};
-	'statement.import.package.public': PortableGuard<PortableIds['statement.import.package.public'], RustNode> & {
+	'statement.import.package.private': PortableGuard<
+		PortableIds['statement.import.package.private'],
+		RustNode,
+		TSKindId
+	> & {};
+	'statement.import.package.public': PortableGuard<
+		PortableIds['statement.import.package.public'],
+		RustNode,
+		TSKindId
+	> & {
 		readonly internal: PortableIsAt['statement.import.package.public.internal'];
 		readonly restricted: PortableIsAt['statement.import.package.public.restricted'];
 	};
 	'statement.import.package.public.internal': PortableGuard<
 		PortableIds['statement.import.package.public.internal'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
 	'statement.import.package.public.restricted': PortableGuard<
 		PortableIds['statement.import.package.public.restricted'],
-		RustNode
+		RustNode,
+		TSKindId
 	> & {};
-	'statement.import.private': PortableGuard<PortableIds['statement.import.private'], RustNode> & {};
-	'statement.import.public': PortableGuard<PortableIds['statement.import.public'], RustNode> & {
+	'statement.import.private': PortableGuard<PortableIds['statement.import.private'], RustNode, TSKindId> & {};
+	'statement.import.public': PortableGuard<PortableIds['statement.import.public'], RustNode, TSKindId> & {
 		readonly internal: PortableIsAt['statement.import.public.internal'];
 		readonly restricted: PortableIsAt['statement.import.public.restricted'];
 	};
-	'statement.import.public.internal': PortableGuard<PortableIds['statement.import.public.internal'], RustNode> & {};
-	'statement.import.public.restricted': PortableGuard<PortableIds['statement.import.public.restricted'], RustNode> & {};
-	'statement.loop': PortableGuard<PortableIds['statement.loop'], RustNode> & {
+	'statement.import.public.internal': PortableGuard<
+		PortableIds['statement.import.public.internal'],
+		RustNode,
+		TSKindId
+	> & {};
+	'statement.import.public.restricted': PortableGuard<
+		PortableIds['statement.import.public.restricted'],
+		RustNode,
+		TSKindId
+	> & {};
+	'statement.loop': PortableGuard<PortableIds['statement.loop'], RustNode, TSKindId> & {
 		readonly for_each: PortableIsAt['statement.loop.for_each'];
 		readonly while: PortableIsAt['statement.loop.while'];
 	};
-	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each'], RustNode> & {};
-	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while'], RustNode> & {};
-	'statement.match': PortableGuard<PortableIds['statement.match'], RustNode> & {};
-	'statement.return': PortableGuard<PortableIds['statement.return'], RustNode> & {};
-	type: PortableGuard<PortableIds['type'], RustNode> & {
+	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each'], RustNode, TSKindId> & {};
+	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while'], RustNode, TSKindId> & {};
+	'statement.match': PortableGuard<PortableIds['statement.match'], RustNode, TSKindId> & {};
+	'statement.return': PortableGuard<PortableIds['statement.return'], RustNode, TSKindId> & {};
+	type: PortableGuard<PortableIds['type'], RustNode, TSKindId> & {
 		readonly abstract: PortableIsAt['type.abstract'];
 		readonly array: PortableIsAt['type.array'];
 		readonly bounded: PortableIsAt['type.bounded'];
@@ -2566,26 +2746,26 @@ export interface PortableIsAt {
 		readonly tuple: PortableIsAt['type.tuple'];
 		readonly unit: PortableIsAt['type.unit'];
 	};
-	'type.abstract': PortableGuard<PortableIds['type.abstract'], RustNode> & {};
-	'type.array': PortableGuard<PortableIds['type.array'], RustNode> & {};
-	'type.bounded': PortableGuard<PortableIds['type.bounded'], RustNode> & {};
-	'type.bracketed': PortableGuard<PortableIds['type.bracketed'], RustNode> & {};
-	'type.dynamic': PortableGuard<PortableIds['type.dynamic'], RustNode> & {};
-	'type.function': PortableGuard<PortableIds['type.function'], RustNode> & {};
-	'type.generic': PortableGuard<PortableIds['type.generic'], RustNode> & {
+	'type.abstract': PortableGuard<PortableIds['type.abstract'], RustNode, TSKindId> & {};
+	'type.array': PortableGuard<PortableIds['type.array'], RustNode, TSKindId> & {};
+	'type.bounded': PortableGuard<PortableIds['type.bounded'], RustNode, TSKindId> & {};
+	'type.bracketed': PortableGuard<PortableIds['type.bracketed'], RustNode, TSKindId> & {};
+	'type.dynamic': PortableGuard<PortableIds['type.dynamic'], RustNode, TSKindId> & {};
+	'type.function': PortableGuard<PortableIds['type.function'], RustNode, TSKindId> & {};
+	'type.generic': PortableGuard<PortableIds['type.generic'], RustNode, TSKindId> & {
 		readonly turbofish: PortableIsAt['type.generic.turbofish'];
 	};
-	'type.generic.turbofish': PortableGuard<PortableIds['type.generic.turbofish'], RustNode> & {};
-	'type.named': PortableGuard<PortableIds['type.named'], RustNode> & {
+	'type.generic.turbofish': PortableGuard<PortableIds['type.generic.turbofish'], RustNode, TSKindId> & {};
+	'type.named': PortableGuard<PortableIds['type.named'], RustNode, TSKindId> & {
 		readonly prelude: PortableIsAt['type.named.prelude'];
 	};
-	'type.named.prelude': PortableGuard<PortableIds['type.named.prelude'], RustNode> & {};
-	'type.path': PortableGuard<PortableIds['type.path'], RustNode> & {
+	'type.named.prelude': PortableGuard<PortableIds['type.named.prelude'], RustNode, TSKindId> & {};
+	'type.path': PortableGuard<PortableIds['type.path'], RustNode, TSKindId> & {
 		readonly expression: PortableIsAt['type.path.expression'];
 	};
-	'type.path.expression': PortableGuard<PortableIds['type.path.expression'], RustNode> & {};
-	'type.pointer': PortableGuard<PortableIds['type.pointer'], RustNode> & {};
-	'type.primitive': PortableGuard<PortableIds['type.primitive'], RustNode> & {
+	'type.path.expression': PortableGuard<PortableIds['type.path.expression'], RustNode, TSKindId> & {};
+	'type.pointer': PortableGuard<PortableIds['type.pointer'], RustNode, TSKindId> & {};
+	'type.primitive': PortableGuard<PortableIds['type.primitive'], RustNode, TSKindId> & {
 		readonly boolean: PortableIsAt['type.primitive.boolean'];
 		readonly character: PortableIsAt['type.primitive.character'];
 		readonly floating: PortableIsAt['type.primitive.floating'];
@@ -2593,15 +2773,23 @@ export interface PortableIsAt {
 		readonly never: PortableIsAt['type.primitive.never'];
 		readonly string: PortableIsAt['type.primitive.string'];
 	};
-	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean'], RustNode> & {};
-	'type.primitive.character': PortableGuard<PortableIds['type.primitive.character'], RustNode> & {};
-	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating'], RustNode> & {
+	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean'], RustNode, TSKindId> & {};
+	'type.primitive.character': PortableGuard<PortableIds['type.primitive.character'], RustNode, TSKindId> & {};
+	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating'], RustNode, TSKindId> & {
 		readonly float32: PortableIsAt['type.primitive.floating.float32'];
 		readonly float64: PortableIsAt['type.primitive.floating.float64'];
 	};
-	'type.primitive.floating.float32': PortableGuard<PortableIds['type.primitive.floating.float32'], RustNode> & {};
-	'type.primitive.floating.float64': PortableGuard<PortableIds['type.primitive.floating.float64'], RustNode> & {};
-	'type.primitive.integral': PortableGuard<PortableIds['type.primitive.integral'], RustNode> & {
+	'type.primitive.floating.float32': PortableGuard<
+		PortableIds['type.primitive.floating.float32'],
+		RustNode,
+		TSKindId
+	> & {};
+	'type.primitive.floating.float64': PortableGuard<
+		PortableIds['type.primitive.floating.float64'],
+		RustNode,
+		TSKindId
+	> & {};
+	'type.primitive.integral': PortableGuard<PortableIds['type.primitive.integral'], RustNode, TSKindId> & {
 		readonly int128: PortableIsAt['type.primitive.integral.int128'];
 		readonly int16: PortableIsAt['type.primitive.integral.int16'];
 		readonly int32: PortableIsAt['type.primitive.integral.int32'];
@@ -2609,18 +2797,22 @@ export interface PortableIsAt {
 		readonly int8: PortableIsAt['type.primitive.integral.int8'];
 		readonly size: PortableIsAt['type.primitive.integral.size'];
 	};
-	'type.primitive.integral.int128': PortableGuard<PortableIds['type.primitive.integral.int128'], RustNode> & {};
-	'type.primitive.integral.int16': PortableGuard<PortableIds['type.primitive.integral.int16'], RustNode> & {};
-	'type.primitive.integral.int32': PortableGuard<PortableIds['type.primitive.integral.int32'], RustNode> & {};
-	'type.primitive.integral.int64': PortableGuard<PortableIds['type.primitive.integral.int64'], RustNode> & {};
-	'type.primitive.integral.int8': PortableGuard<PortableIds['type.primitive.integral.int8'], RustNode> & {};
-	'type.primitive.integral.size': PortableGuard<PortableIds['type.primitive.integral.size'], RustNode> & {};
-	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never'], RustNode> & {};
-	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string'], RustNode> & {};
-	'type.qualified': PortableGuard<PortableIds['type.qualified'], RustNode> & {};
-	'type.reference': PortableGuard<PortableIds['type.reference'], RustNode> & {};
-	'type.tuple': PortableGuard<PortableIds['type.tuple'], RustNode> & {};
-	'type.unit': PortableGuard<PortableIds['type.unit'], RustNode> & {};
+	'type.primitive.integral.int128': PortableGuard<
+		PortableIds['type.primitive.integral.int128'],
+		RustNode,
+		TSKindId
+	> & {};
+	'type.primitive.integral.int16': PortableGuard<PortableIds['type.primitive.integral.int16'], RustNode, TSKindId> & {};
+	'type.primitive.integral.int32': PortableGuard<PortableIds['type.primitive.integral.int32'], RustNode, TSKindId> & {};
+	'type.primitive.integral.int64': PortableGuard<PortableIds['type.primitive.integral.int64'], RustNode, TSKindId> & {};
+	'type.primitive.integral.int8': PortableGuard<PortableIds['type.primitive.integral.int8'], RustNode, TSKindId> & {};
+	'type.primitive.integral.size': PortableGuard<PortableIds['type.primitive.integral.size'], RustNode, TSKindId> & {};
+	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never'], RustNode, TSKindId> & {};
+	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string'], RustNode, TSKindId> & {};
+	'type.qualified': PortableGuard<PortableIds['type.qualified'], RustNode, TSKindId> & {};
+	'type.reference': PortableGuard<PortableIds['type.reference'], RustNode, TSKindId> & {};
+	'type.tuple': PortableGuard<PortableIds['type.tuple'], RustNode, TSKindId> & {};
+	'type.unit': PortableGuard<PortableIds['type.unit'], RustNode, TSKindId> & {};
 }
 
 export interface PortableKinds {
