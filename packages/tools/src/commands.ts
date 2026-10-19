@@ -7,7 +7,7 @@
 
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
 import { combineBuiltRender, type BuiltRenderResult } from './validate/built-render.ts';
@@ -27,7 +27,6 @@ import {
 	readCodeCeilings,
 	readValidationReport,
 	writeValidationReport,
-	type CodeCeilings,
 	type ValidatorDiagnostic,
 	type ValidationReport
 } from './validate/validation-report.ts';
