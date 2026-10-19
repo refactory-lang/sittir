@@ -548,6 +548,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.tree_id
     }
 
+    /// The grammar the tree was parsed with.
+    pub fn grammar(&self) -> G {
+        self.grammar
+    }
+
     /// The tree's records and their row index, held while the guard lives:
     /// every route that reads a node reaches or writes its record here.
     #[cfg(feature = "arena")]

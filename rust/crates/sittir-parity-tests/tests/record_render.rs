@@ -8,7 +8,7 @@
 //! source.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Arena, Cell, CellAt, HeldArenas, Linked, RecordSink, RecordTrees, WriteCell};
+use sittir_core::arena::{Address, Arena, Cell, CellAt, HeldArenas, Linked, RecordGrammar, RecordSink, RecordTrees, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
@@ -44,7 +44,7 @@ struct Renders<G: EngineGrammar, N> {
     record: RecordRender<G::Trivia>,
 }
 
-impl<G: EngineGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
+impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
     fn engine(&self) -> Engine<G> {
         Engine::new(self.grammar, (self.options)()).expect("an engine")
     }
@@ -61,24 +61,26 @@ impl<G: EngineGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
         Some((self.native)(SlotValue::Node(root), &ctx, None).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
     }
 
-    /// The record of `cell`, in `tree`'s arena or the built arena `built`,
-    /// rendered twice: both renders, which must agree.
+    /// The built record `root` of the arena `built`, its parsed children in
+    /// `tree`'s, rendered twice: both renders, which must agree.
     fn record(&self, tree: &ParsedTree<G>, built: &Arena, root: CellAt, options: &ResolvedOptions) -> Result<String, String> {
         let ctx = RenderContext { options, sources: tree };
-        let render = || {
+        twice(|| {
             let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
             (self.record)(root, &mut arenas, built, tree.written(), &ctx).map_err(|e| format!("record: {e}"))
-        };
-        let first = render()?;
-        let second = render()?;
-        if first == second { Ok(first) } else { Err(format!("a second render differs:\n{first:?}\n{second:?}")) }
+        })
     }
 
-    /// The cell `tree`'s root's first read `depth` levels down writes.
-    fn first_read(tree: &ParsedTree<G>, depth: Depth) -> Result<CellAt, String> {
-        let root: N = tree.read(NodeIndex::ROOT, depth).map_err(|e| format!("read: {e:?}"))?;
-        let cell = root.write_cell(&mut RecordSink::parsed(tree.tree_id(), &mut tree.tree_arena())).map_err(|e| format!("write: {e}"))?;
-        Ok(CellAt { cell, tree: Some(tree.tree_id()), site: None })
+    /// The record at `at` of `tree`'s arena rendered twice by its entry point
+    /// (`ParsedTree::render_record`): both renders, which must agree.
+    fn parsed(tree: &ParsedTree<G>, at: Address, options: &ResolvedOptions) -> Result<String, String> {
+        twice(|| tree.render_record(at, options).map_err(|e| format!("record: {e}")))
+    }
+
+    /// The record of `tree`'s root, its first read `depth` levels down
+    /// written by its entry point (`ParsedTree::read_record`).
+    fn first_read(tree: &ParsedTree<G>, depth: Depth) -> Result<Address, String> {
+        tree.read_record::<N>(NodeIndex::ROOT, depth)?.ok_or_else(|| "the root has no record".to_owned())
     }
 
     /// Whether `source` renders alike from its records, read to each depth:
@@ -91,7 +93,7 @@ impl<G: EngineGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
         for depth in [Depth::ONE, Depth::All] {
             let tree = Self::parse(&mut engine, source);
             let native = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.native(&tree, &options)));
-            let record = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| Self::first_read(&tree, depth).and_then(|root| self.record(&tree, &Arena::new(), root, &options))));
+            let record = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| Self::first_read(&tree, depth).and_then(|root| Self::parsed(&tree, root, &options))));
             let (native, record) = match (native, record) {
                 (Ok(None), _) => return Ok(Alike::Unread),
                 (Err(_), Err(_)) => {
@@ -110,6 +112,13 @@ impl<G: EngineGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
     }
 }
 
+/// What `render` answers, twice: the text, when both answers agree.
+fn twice(render: impl Fn() -> Result<String, String>) -> Result<String, String> {
+    let first = render()?;
+    let second = render()?;
+    if first == second { Ok(first) } else { Err(format!("a second render differs:\n{first:?}\n{second:?}")) }
+}
+
 fn sources(grammar: &str) -> Vec<String> {
     load_fixtures(grammar)
         .into_iter()
@@ -120,7 +129,7 @@ fn sources(grammar: &str) -> Vec<String> {
         .collect()
 }
 
-fn corpus<G: EngineGrammar, N: ReadNode + WriteCell<G::Trivia>>(grammar: &str, renders: &Renders<G, N>) {
+fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>>(grammar: &str, renders: &Renders<G, N>) {
     let sources = sources(grammar);
     assert!(!sources.is_empty(), "{grammar} has round-trip fixtures");
     let mut differ = Vec::new();
@@ -187,7 +196,7 @@ fn an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_com
         let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 1);
         tree.write_trivia_side(statement, sittir_core::trivia_table::TriviaSide::Leading, line_comment("// written"));
         let native = renders.native(&tree, &options).expect("a root").expect("a native render");
-        let record = renders.record(&tree, &Arena::new(), RustRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
+        let record = RustRenders::parsed(&tree, RustRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
         assert_eq!(record, native, "read {depth:?}");
         assert!(record.contains("g(/* inside */)") && record.contains("// written"), "{record:?}");
     }
@@ -298,7 +307,7 @@ fn an_envelope_and_its_content_a_write_lies_in_prepare_apart_and_render_from_the
         let entries = [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(entry))).collect();
         tree.write_trivia_side(property, sittir_core::trivia_table::TriviaSide::Leading, entries);
         let native = renders.native(&tree, &options).expect("a root").expect("a native render");
-        let record = renders.record(&tree, &Arena::new(), TypeScriptRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
+        let record = TypeScriptRenders::parsed(&tree, TypeScriptRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
         assert_eq!(record, native, "read {depth:?}");
         assert!(record.contains("// written"), "{record:?}");
         assert_apart(&tree, &options);
@@ -342,4 +351,60 @@ fn assert_apart(tree: &ParsedTree<sittir_typescript::TypeScriptGrammar>, options
     assert_eq!(edges(envelope_place.into()), Some(own(ts::_INTERFACE_BODY)));
     assert_eq!(edges(content_place), Some(own(ts::OBJECT_TYPE)));
     assert_eq!(edges(Place::Record(content).into()), None, "the content's record address keys no built record");
+}
+
+#[test]
+fn a_node_s_record_is_written_on_its_first_read_and_answered_by_every_later_one() {
+    let mut engine = rust().engine();
+    let tree = RustRenders::parse(&mut engine, EDITED);
+    let root = RustRenders::first_read(&tree, Depth::ONE).expect("the root's record");
+    assert_eq!(RustRenders::first_read(&tree, Depth::All), Ok(root), "a later read, to any depth, answers the record the first wrote");
+    let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 0);
+    let child = tree.read_record::<sittir_rust::render::AnyNode>(statement, Depth::ONE).expect("a read").expect("a record");
+    assert_ne!(child, root);
+    assert_eq!(tree.tree_arena().record(statement), Some(child), "the row index holds it");
+    let leaf = index_of(&tree, rust_kinds::IDENTIFIER, 0);
+    assert_eq!(tree.read_record::<sittir_rust::render::AnyNode>(leaf, Depth::ONE), Ok(None), "a parsed leaf has no record: its holder's cell holds it whole");
+}
+
+#[test]
+fn an_error_node_has_no_record() {
+    let mut engine = rust().engine();
+    let tree = RustRenders::parse(&mut engine, "fn f( {\n");
+    let error = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+        .map(NodeIndex::new)
+        .find(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| node.is_error()))
+        .expect("an ERROR node");
+    assert!(tree.read_error(error).is_some());
+    assert_eq!(tree.read_record::<sittir_rust::render::AnyNode>(error, Depth::ONE), Ok(None));
+}
+
+#[test]
+fn an_address_that_names_no_record_of_the_arena_is_refused() {
+    use sittir_core::arena::ArenaError;
+    let mut engine = rust().engine();
+    let options = engine.options().clone();
+    let tree = RustRenders::parse(&mut engine, &EDITED.repeat(40));
+    RustRenders::first_read(&tree, Depth::All).expect("every record written");
+    assert!(matches!(tree.render_record(Address::NONE, &options), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
+    let past = Address::new(sittir_core::arena::MAX_CHUNKS - 1, 0).expect("an address");
+    assert!(matches!(tree.render_record(past, &options), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
+    let chunk = tree.record_chunk(1).expect("a source this long fills a second chunk");
+    let word = chunk.iter().take(chunk.len() - 1).position(|&word| word > u32::from(u16::MAX)).expect("a word past every kind id");
+    let at = Address::new(1, u32::try_from(word).expect("a chunk's word")).expect("an address");
+    assert!(matches!(tree.render_record(at, &options), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
+}
+
+#[test]
+fn a_chunk_is_copied_out_as_its_records_fill_it() {
+    let mut engine = rust().engine();
+    let tree = RustRenders::parse(&mut engine, EDITED);
+    let root = RustRenders::first_read(&tree, Depth::ONE).expect("the root's record");
+    let before = tree.record_chunk(root.chunk()).expect("the root's chunk");
+    assert_eq!(&before[root.word() as usize..][..2], tree.tree_arena().arena().words(root, 2).expect("its header"));
+    let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 1);
+    tree.read_record::<sittir_rust::render::AnyNode>(statement, Depth::All).expect("a read").expect("a record");
+    let after = tree.record_chunk(root.chunk()).expect("the root's chunk");
+    assert!(after.len() > before.len() && after.starts_with(&before), "a later read appends; the words before it stay");
+    assert_eq!(tree.record_chunk(sittir_core::arena::MAX_CHUNKS), None);
 }

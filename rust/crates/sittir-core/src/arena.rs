@@ -12,6 +12,7 @@
 //! one record for as long as the arena lives.
 
 pub mod cell;
+mod parsed;
 mod prep;
 mod prepared;
 pub mod rows;
@@ -23,6 +24,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 pub use cell::{Cell, ListCell};
+pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{place_of, record_of, row_of, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};

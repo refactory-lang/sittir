@@ -252,6 +252,21 @@ impl EngineGrammar for ${v.Name}Grammar {
     }
 }
 
+sittir_core::records_codec! {
+    impl sittir_core::arena::RecordGrammar for ${v.Name}Grammar {
+        fn render_record(
+            self,
+            root: sittir_core::arena::CellAt,
+            trees: &mut dyn sittir_core::arena::RecordTrees,
+            built: &sittir_core::arena::Arena,
+            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
+            ctx: &sittir_core::prepare::RenderContext<'_>,
+        ) -> std::result::Result<String, sittir_core::render::RenderError> {
+            render::node::render_record(root, trees, built, store, ctx)
+        }
+    }
+}
+
 // The engine class itself — parse, read, render, edits, and the live-tree
 // table — is defined once in \`sittir_core::napi_engine\`.
 #[cfg(feature = "napi-bindings")]
