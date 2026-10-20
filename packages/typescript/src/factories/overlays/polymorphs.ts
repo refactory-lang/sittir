@@ -2188,20 +2188,6 @@ const exportStatementDefaultDeclarationDefaultKw$ambient$using$semi$coerce =
 		F.buildExportStatementDefaultDeclarationDefaultKw,
 		ambientDeclaration.using.semi.coerce
 	);
-const exportStatementDefaultDeclarationDefaultKw$ambient$module =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exportStatementDefaultDeclarationDefaultKw$ambient$module$strict =
-	exportStatementDefaultDeclarationDefaultKw$ambient$module(
-		F.buildExportStatementDefaultDeclarationDefaultKw,
-		ambientDeclaration.module.strict
-	);
-const exportStatementDefaultDeclarationDefaultKw$ambient$module$coerce =
-	exportStatementDefaultDeclarationDefaultKw$ambient$module(
-		F.buildExportStatementDefaultDeclarationDefaultKw,
-		ambientDeclaration.module.coerce
-	);
 const exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -2502,14 +2488,6 @@ const exportStatementDefaultDeclarationDefaultKw: {
 				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.global.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
-		module: {
-			strict: <const A extends ArgsOf<typeof ambientDeclaration.module.strict>>(
-				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.module.strict>>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: <const A extends ArgsOf<typeof ambientDeclaration.module.coerce>>(
-				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.module.coerce>>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		};
 	};
 	value: {
 		strict: <const A extends ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>>(
@@ -2713,11 +2691,6 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		global: bundle(
 			exportStatementDefaultDeclarationDefaultKw$ambient$global$strict,
 			exportStatementDefaultDeclarationDefaultKw$ambient$global$coerce
-		),
-		module: bundle(
-			exportStatementDefaultDeclarationDefaultKw$ambient$module$strict,
-			exportStatementDefaultDeclarationDefaultKw$ambient$module$coerce,
-			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.module', max: 2 }
 		)
 	},
 	value: {
@@ -3339,20 +3312,6 @@ const exportStatementDefaultDeclaration$ambient$using$semi$coerce =
 		C.coerceToExportStatementDefaultDeclaration,
 		ambientDeclaration.using.semi.coerce
 	);
-const exportStatementDefaultDeclaration$ambient$module =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$ambient$module$strict = exportStatementDefaultDeclaration$ambient$module(
-	F.buildExportStatementDefaultDeclaration,
-	ambientDeclaration.module.strict
-);
-const exportStatementDefaultDeclaration$ambient$module$coerce = exportStatementDefaultDeclaration$ambient$module(
-	C.coerceToExportStatementDefaultDeclaration,
-	ambientDeclaration.module.coerce
-);
 const exportStatementDefaultDeclaration$defaultKw$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -3899,22 +3858,6 @@ const exportStatementDefaultDeclaration$defaultKw$ambient$using$semi$coerce =
 		C.coerceToExportStatementDefaultDeclaration,
 		exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.coerce
 	);
-const exportStatementDefaultDeclaration$defaultKw$ambient$module =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const exportStatementDefaultDeclaration$defaultKw$ambient$module$strict =
-	exportStatementDefaultDeclaration$defaultKw$ambient$module(
-		F.buildExportStatementDefaultDeclaration,
-		exportStatementDefaultDeclarationDefaultKw.ambient.module.strict
-	);
-const exportStatementDefaultDeclaration$defaultKw$ambient$module$coerce =
-	exportStatementDefaultDeclaration$defaultKw$ambient$module(
-		C.coerceToExportStatementDefaultDeclaration,
-		exportStatementDefaultDeclarationDefaultKw.ambient.module.coerce
-	);
 const exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4117,11 +4060,6 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 			exportStatementDefaultDeclaration$ambient$global$strict,
 			exportStatementDefaultDeclaration$ambient$global$coerce,
 			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
-		),
-		module: bundle(
-			exportStatementDefaultDeclaration$ambient$module$strict,
-			exportStatementDefaultDeclaration$ambient$module$coerce,
-			{ key: 'exportStatementDefaultDeclaration.ambient.module', max: 2 }
 		)
 	},
 	defaultKw: {
@@ -4303,11 +4241,6 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 				exportStatementDefaultDeclaration$defaultKw$ambient$global$strict,
 				exportStatementDefaultDeclaration$defaultKw$ambient$global$coerce,
 				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.global', max: 2 }
-			),
-			module: bundle(
-				exportStatementDefaultDeclaration$defaultKw$ambient$module$strict,
-				exportStatementDefaultDeclaration$defaultKw$ambient$module$coerce,
-				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.module', max: 2 }
 			)
 		},
 		value: {
@@ -5299,36 +5232,6 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 						V,
 						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 							content: ArgsOf<typeof ambientDeclaration.global.coerce>;
-						}
-					>,
-				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-		};
-		module: {
-			strict: <
-				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.module.strict>;
-				}
-			>(
-				config: V &
-					RefuseUndeclared<
-						V,
-						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-							content: ArgsOf<typeof ambientDeclaration.module.strict>;
-						}
-					>,
-				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: <
-				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-					content: ArgsOf<typeof ambientDeclaration.module.coerce>;
-				}
-			>(
-				config: V &
-					RefuseUndeclared<
-						V,
-						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-							content: ArgsOf<typeof ambientDeclaration.module.coerce>;
 						}
 					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
@@ -6386,36 +6289,6 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 							V,
 							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.global.coerce>;
-							}
-						>,
-					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
-				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
-			};
-			module: {
-				strict: <
-					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.module.strict>;
-					}
-				>(
-					config: V &
-						RefuseUndeclared<
-							V,
-							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
-								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.module.strict>;
-							}
-						>,
-					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
-				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: <
-					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.module.coerce>;
-					}
-				>(
-					config: V &
-						RefuseUndeclared<
-							V,
-							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
-								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.module.coerce>;
 							}
 						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>

@@ -22,7 +22,7 @@ import { collectCatalogKinds, collectKindEntries, hasCatalogEntry, type KindEnum
 import { lowerCamelCase } from './casing.ts';
 import { supertypeMemberName } from '../../dsl/arm-names.ts';
 import { classifyFactoryEmission, classifyFromEmission, isDeclaredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
-import { subFactoriesOf, variantAliasWires, variantArmsOf, type AliasWire, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
+import { subFactoriesOf, variantArmsOf, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
 
 type KindEntries = ReturnType<typeof collectKindEntries> | undefined;
 
@@ -189,6 +189,33 @@ export function isHoistedCompound(node: AssembledNode): boolean {
 	);
 }
 
+export interface AliasWire {
+	readonly name: string;
+	readonly child: AssembledNode;
+}
+
+export function variantAliasWires(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	isEmitted: (kind: string) => boolean,
+	subs: readonly SubFactory[]
+): readonly AliasWire[] {
+	if (!(node instanceof AbstractAssembledCompound)) return [];
+	const claimedNames = new Set(subs.map((s) => s.name));
+	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
+	const aliases: AliasWire[] = [];
+	for (const variantChild of node.variantChildKinds) {
+		const visible = variantChild.kind;
+		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
+		if (child === undefined || child.rawFactoryName === undefined) continue;
+		if (!isEmitted(child.kind) || claimedKinds.has(child.kind)) continue;
+		const name = lowerCamelCase(variantChild.name);
+		if (claimedNames.has(name)) continue;
+		aliases.push({ name, child });
+	}
+	return aliases;
+}
+
 export function isNamespaceArm(sub: SubFactory): boolean {
 	return sub.arm.via === 'node' && sub.arm.path.length === 0 && sub.arm.child instanceof AssembledSupertype && sub.arm.child.defaultVariantSubtype === undefined;
 }
@@ -197,6 +224,10 @@ export interface FormRoute {
 	readonly name: string;
 	readonly child: AssembledNode;
 	readonly seat?: string;
+}
+
+export function buildsHost(route: FormRoute): boolean {
+	return route.seat !== undefined;
 }
 
 interface HostRoute extends FormRoute {
@@ -250,7 +281,7 @@ export function seatedFormKinds(nodeMap: NodeMap): ReadonlySet<string> {
 		const variant = flattenedByKind.get(host.kind)?.variants.find((route) => route.name === name);
 		if (variant !== undefined) return { child: variant.nestedParentKey === undefined ? variant.child : flattenedByKey.get(variant.nestedParentKey)!.node, seated: false };
 		const route = surface.formRoutes.get(host.kind)?.find((candidate) => candidate.name === name);
-		return route === undefined ? undefined : { child: route.child, seated: route.seat !== undefined };
+		return route === undefined ? undefined : { child: route.child, seated: buildsHost(route) };
 	};
 	const seated = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {

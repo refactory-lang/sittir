@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import { AssembledEnum } from '../../codegen/src/compiler/model/node-map.ts';
-import { armIsForm, armRoutesOf, flattenedVariantParents, formRoutesOf, seatedFormKinds } from '../../codegen/src/compiler/model/ir-surface.ts';
+import { armIsForm, armRoutesOf, buildsHost, flattenedVariantParents, formRoutesOf, seatedFormKinds } from '../../codegen/src/compiler/model/ir-surface.ts';
 import { findOwnKindEntry } from '../../codegen/src/dsl/symbol-table.ts';
 import { collectCatalogKinds, collectKindEntries } from '../../codegen/src/emitters/kind-discriminant.ts';
 import { isDeclaredSupertype } from '../../codegen/src/emitters/shared.ts';
@@ -106,15 +106,21 @@ async function censusOf(grammar: string): Promise<Census> {
 	const flat = flattenedVariantParents(nodeMap) as any[];
 	const flatByKind = new Map(flat.map((p) => [p.node.kind, p]));
 	const flatByKey = new Map(flat.map((p) => [p.key, p]));
-	const hops = (kind: string): Array<[string, string]> => {
+	interface Hop {
+		readonly name: string;
+		readonly child: string;
+		readonly seated: boolean;
+	}
+	const hops = (kind: string): Hop[] => {
 		const parent = flatByKind.get(kind);
 		if (parent) {
-			return parent.variants.map((v: any) => [
-				v.name,
-				v.nestedParentKey !== undefined ? (flatByKey.get(v.nestedParentKey) as any).node.kind : v.child.kind
-			]);
+			return parent.variants.map((v: any) => ({
+				name: v.name,
+				child: v.nestedParentKey !== undefined ? (flatByKey.get(v.nestedParentKey) as any).node.kind : v.child.kind,
+				seated: false
+			}));
 		}
-		return ((forms.get(kind) ?? []) as any[]).map((r) => [r.name, r.child.kind]);
+		return ((forms.get(kind) ?? []) as any[]).map((r) => ({ name: r.name, child: r.child.kind, seated: buildsHost(r) }));
 	};
 	const starts = new Map<string, string>();
 	for (const p of flat) starts.set(p.key, p.node.kind);
@@ -123,15 +129,16 @@ async function censusOf(grammar: string): Promise<Census> {
 		if (bp !== undefined) starts.set(bp.join('.'), kind);
 	}
 	const closure = new Set<string>();
-	const visit = (kind: string, path: string[]) => {
+	const visit = (kind: string, path: string[], afterSeat: boolean) => {
 		if (path.length > 8) return;
-		for (const [name, child] of hops(kind)) {
-			const next = [...path, name];
+		for (const hop of hops(kind)) {
+			if (afterSeat && !hop.seated) continue;
+			const next = [...path, hop.name];
 			closure.add(next.join('.'));
-			visit(child, next);
+			visit(hop.child, next, hop.seated);
 		}
 	};
-	for (const [key, kind] of starts) visit(kind, key.split('.'));
+	for (const [key, kind] of starts) visit(kind, key.split('.'), false);
 
 	const irMissing = [...closure].filter((p) => get(ir, p.split('.')) === undefined).sort();
 	const isMissing = [...closure].filter((p) => typeof get(is, p.split('.')) !== 'function').sort();

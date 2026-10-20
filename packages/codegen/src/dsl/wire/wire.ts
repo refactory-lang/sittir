@@ -22,7 +22,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { isComplexBody, onlyAliasedSymbols, rulesEqual, unwrapPrec, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -1072,8 +1072,10 @@ export function dropFlattenedParentAliases(grammar: { rules: Record<string, AnyR
 	if (parents.size === 0) return;
 	const walker = new RuleWalker<AnyRule>();
 	const unaliased = (node: AnyRule): AnyRule => {
-		const alias = node as { type?: string; content?: { type?: string; name?: unknown } };
-		return alias.type === 'ALIAS' && alias.content?.type === 'SYMBOL' && typeof alias.content.name === 'string' && parents.has(alias.content.name) ? (alias.content as AnyRule) : node;
+		const alias = node as { type?: string; content?: AnyRule };
+		if (alias.type !== 'ALIAS' || alias.content === undefined) return node;
+		const target = unwrapPrec(alias.content) as { type?: string; name?: unknown } | undefined;
+		return target?.type === 'SYMBOL' && typeof target.name === 'string' && parents.has(target.name) ? alias.content : node;
 	};
 	for (const [name, rule] of Object.entries(grammar.rules)) grammar.rules[name] = unaliased(walker.map(rule, unaliased));
 }

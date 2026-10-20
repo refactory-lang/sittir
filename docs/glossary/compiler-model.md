@@ -5598,14 +5598,6 @@ excluded whatever its annotation says — a group-lifted list carries
 `hoisted` but is bundled and bound on `ir` like any list, so its wiring
 const must be the export `ir` reaches (its elements seat lives there).
 
-### `packages/codegen/src/compiler/model/sub-factories.ts::AliasWire`
-
-A form wire with no seat: the child kind is a complete alternative of the parent's rule, so the wire is the child's own factory pair exposed under the parent, not a transformation method.
-
-### `packages/codegen/src/compiler/model/sub-factories.ts::variantAliasWires`
-
-Whole-rule alternative arms. A parent's `variantChildKinds` can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `derive`'s per-slot walk (`armValuesOf`) never sees those, because they are not in a slot at all, so there is nothing to label. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair: the form is its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them. `deriveArmRoutes` settles a parent's wires against its routed sub-factories and `innerArmsOf` against the child's own entries; both claim the same names and kinds, since routing drops only nested arms, whose names carry `$` and whose child a direct arm already claims.
-
 ### `packages/codegen/src/compiler/model/sub-factories.ts::ValueArm`
 
 A sub-factory arm that seats a value directly into the parent's choice slot instead of composing a child factory. Two shapes reach it: a literal branch of the slot (`op: choice('and', 'or')` yields one per string), and a reference to a factoryless value kind, an `AssembledKeyword` or `AssembledPunctuation` whose whole body is a fixed literal, which owns a kind identity but has no factory to call. The arm carries the value's stamped `storage`: its text and, for a value that resolved to a kind, that kind and its id. What the emitter seats is read from the stamp by `valueStorageExpr`; the arm never re-derives it. `variantOf` is the owner the labelled value names, as on `NodeArm`, so a value arm is a form of its host exactly when it names the host.
@@ -5614,12 +5606,10 @@ A sub-factory arm that seats a value directly into the parent's choice slot inst
 
 A sub-factory arm backed by a child kind reachable through one of the
 parent's own non-multiple slots. `child` is always the *direct* child under
-that slot, even for a nested entry reached through the child's own arms.
-`path` is empty for a direct arm. Otherwise its first name is the child's own
-sub-factory entry or alias wire the arm forwards to (`nestedArmsOf`), and
-each later name is an entry of the kind the step before reaches; an entry
-name is itself nested when the arm reaches more than one hop down through
-the child's arms.
+that slot, even for a nested entry reached through the child's own arms;
+`path` is empty for a direct arm and otherwise holds exactly one name — the
+child's own sub-factory entry the arm forwards to (`nestedArmsOf`), itself
+nested when the arm reaches more than one hop down.
 `leaf` is the deepest kind the entry ultimately builds (undefined when
 `child` is the leaf); outer levels name their nested entries from it, so
 `visibility_modifier` calls the in-path form `inPath` even though the arm's
@@ -5741,11 +5731,11 @@ Paired with `DIRECT` (0), the depth a directly-reached arm carries.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::nestedArmsOf`
 
-The arms a direct node arm's child contributes under it (`innerArmsOf`), renamed `<host>$<inner>` and nested under the host's own `slot`/`residual`, with `path` the inner arm's path from the child and `depth` one more than the inner entry's. A compound child's nested entries carry its own children's arms, so nesting reaches every depth with no cap. The only stop is the kind-keyed cycle guard: a child already on the derivation path contributes nothing, which cuts a kind arming itself (`ambient_declaration`, `parenthesized_list_splat`). `leaf` is the deepest kind the entry builds (`leafOf`). `settle` keeps a host's nested arms only when the host itself made it into the parent's final entries.
+The arms a direct node arm's child contributes under it (`innerArmsOf`), renamed `<host>$<inner>` and nested under the host's own `slot`/`residual`, with `path` naming the child's entry and `depth` one more than the inner entry's. A compound child's nested entries carry its own children's arms, so nesting reaches every depth with no cap. The only stop is the kind-keyed cycle guard: a child already on the derivation path contributes nothing, which cuts a kind arming itself (`ambient_declaration`, `parenthesized_list_splat`). `leaf` is the deepest kind the entry builds (`leafOf`). `settle` keeps a host's nested arms only when the host itself made it into the parent's final entries.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::innerArmsOf`
 
-The inner arms of a node arm's child: a compound's own sub-factory set (`subFactoriesInternal`), direct and nested alike, then its alias wires (`variantAliasWires`), each followed by the alias child's own inner arms one step deeper; or a variant-bearing supertype's variants (`variantArmsOf`), each with that variant's kind as its leaf. A host route therefore reaches an alias-wired form of its child the way it reaches an arm form (`ir.pattern.term.group.patternCharacter`). The walk through an alias puts the child on the cycle guard, so an alias wire that leads back to a kind already being walked adds nothing.
+The inner arms of a node arm's child: a compound's own sub-factory set (`subFactoriesInternal`), direct and nested alike, or a variant-bearing supertype's variants (`variantArmsOf`), each with that variant's kind as its leaf.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::variantArmsOf`
 
@@ -6009,10 +5999,6 @@ The elements seats of a kind (`elementsSeatOf`) whose group has an emitted facto
  */
 ```
 
-### `packages/codegen/src/compiler/model/sub-factories.ts::InnerArm`
-
-One arm under a child, as `innerArmsOf` lists it: its name, its path from the child (`[name]` for the child's own entry, `[alias, …]` through one of the child's alias wires), its depth and the kind it builds (`leaf`).
-
 ### `packages/codegen/src/compiler/model/ir-surface.ts::KindEntries`
 
 The catalog's kind entries as the derivations read them: absent when the grammar has no generated id tables, in which case no kind is filtered by catalog entry.
@@ -6145,7 +6131,7 @@ One entry of `hostRoutesOf`: a `FormRoute`, what reaches it (`via`: a direct nod
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::hostRoutesOf`
 
-A host's direct routes, in sub-factory order and then its alias wires: its direct node arms (no path, not a namespace arm) and the value arms that are forms of it. Whether an arm is a form is `armIsForm`. The child's own `variantOf` need not name the host: an unseated child keeps its own (python's `class_pattern` under `_simple_pattern`). A value arm that names another kind was inlined from that kind and is no form of where it sits (python `keyword_pattern.true`, which names `_simple_pattern`). A value form's child is the node of the kind its storage holds (`valueKindOf`). Node and value arms carry the property name of the slot they sit in (`seat`). An alias wire is a whole-rule alternative of its host, so it is always a form, and it has no seat. `ownerRoutesOf` declares the seated forms, and `deriveFormRoutes` keeps every form, so the routes `ir` declares and the guards `is` nests are read from one list.
+A host's direct routes, in sub-factory order and then its alias wires: its direct node arms (no path, not a namespace arm) and the value arms that are forms of it. Whether an arm is a form is `armIsForm`. The child's own `variantOf` need not name the host: an unseated child keeps its own (python's `class_pattern` under `_simple_pattern`). A value arm that names another kind was inlined from that kind and is no form of where it sits (python `keyword_pattern.true`, which names `_simple_pattern`). A value form's child is the node of the kind its storage holds (`valueKindOf`). Node and value arms carry the property name of the slot they sit in (`seat`). An alias wire is a variant child of its host that no slot arm claims (`variantAliasWires`), so it is always a form; it builds its own node and has no seat. `ownerRoutesOf` declares the seated forms, and `deriveFormRoutes` keeps every form, so the routes `ir` declares and the guards `is` nests are read from one list.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::deriveFormRoutes`
 
@@ -6166,3 +6152,15 @@ Whether a host's arm is one of its forms: its stamped `variantOf` names the host
 ### `packages/codegen/src/compiler/model/ir-surface.ts::seatedFormKinds`
 
 The kinds whose builder path passes through a seat. Walking a kind's path from its root, each hop is a flattened parent's variant, an alias wire, or a form route that seats its child in one of the host's arms (`FormRoute.seat`). The first two build the child's own node; a seated hop builds the host. When some hop is seated, what the route at the kind's builder path builds is a host, and its guard tests that host, so the `is` emitter gives the kind its one self-test flat at its type key instead. A path no route reaches, or one that ends at another kind, throws.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::AliasWire`
+
+A form wire with no seat: the child is a variant of the parent that no slot arm claims (`variantAliasWires`), so the wire is the child's own factory pair exposed under the parent, not a transformation method. It builds the child's node, not the parent's.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::variantAliasWires`
+
+A parent's variant children that no slot arm claims. A parent's `variantChildKinds` can name a kind that `derive`'s per-slot walk (`armValuesOf`) never labels: regex `term_group` and scm `escape_sequence` are the elements `term` and `string_content` repeat, and a multiple slot carries no arms; typescript `ambient_declaration_module` is the content after `declare`. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair. The route builds the child's own node, not the parent, so it has no seat, and no route that seats the parent chains through it (`innerArmsOf` reads the child's own sub-factories only). Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::buildsHost`
+
+Whether a form route builds its host rather than the form's own node: a route with a seat builds the host with the form in that seat, and one without (an alias wire) builds the form's node. Under a seat only routes that build the seat's kind continue a chain, since the seat holds the host's kind, not the form's. `is` lifts those alone under `_at`, and `seatedFormKinds` reads it to tell a seated hop on a builder path. `ir` agrees by construction: a child's nested arms are its own sub-factories, which all sit in a seat.

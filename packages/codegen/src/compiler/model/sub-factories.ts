@@ -132,58 +132,18 @@ function isCallableArm(child: AssembledNode, isEmitted: IsEmittedPredicate): boo
 
 interface InnerArm {
 	readonly name: string;
-	readonly path: readonly string[];
 	readonly depth: number;
 	readonly leaf?: AssembledNode;
-}
-
-export interface AliasWire {
-	readonly name: string;
-	readonly child: AssembledNode;
-}
-
-export function variantAliasWires(
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	isEmitted: (kind: string) => boolean,
-	subs: readonly SubFactory[]
-): readonly AliasWire[] {
-	if (!(node instanceof AbstractAssembledCompound)) return [];
-	const claimedNames = new Set(subs.map((s) => s.name));
-	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
-	const aliases: AliasWire[] = [];
-	for (const variantChild of node.variantChildKinds) {
-		const visible = variantChild.kind;
-		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
-		if (child === undefined || child.rawFactoryName === undefined) continue;
-		if (!isEmitted(child.kind) || claimedKinds.has(child.kind)) continue;
-		const name = lowerCamelCase(variantChild.name);
-		if (claimedNames.has(name)) continue;
-		aliases.push({ name, child });
-	}
-	return aliases;
 }
 
 function innerArmsOf(child: AssembledNode, nodeMap: NodeMap, isEmitted: IsEmittedPredicate, visiting: ReadonlySet<string>): readonly InnerArm[] {
 	if (child instanceof AssembledSupertype) {
 		return variantArmsOf(child).flatMap(({ name, ref }) => {
 			const leaf = nodeMap.nodes.get(storageKindOfRef(ref.node));
-			return leaf === undefined ? [] : [{ name, path: [name], depth: DIRECT, leaf }];
+			return leaf === undefined ? [] : [{ name, depth: DIRECT, leaf }];
 		});
 	}
-	const entries = subFactoriesInternal(child, nodeMap, isEmitted, visiting).entries;
-	const own = entries.map((inner) => ({ name: inner.name, path: [inner.name], depth: inner.depth, ...leafOf(inner) }));
-	const throughVisiting = new Set([...visiting, child.kind]);
-	const aliased = variantAliasWires(child, nodeMap, isEmitted, entries).flatMap((alias) => [
-		{ name: alias.name, path: [alias.name], depth: DIRECT, leaf: alias.child },
-		...(throughVisiting.has(alias.child.kind) ? [] : innerArmsOf(alias.child, nodeMap, isEmitted, throughVisiting)).map((inner) => ({
-			...inner,
-			name: `${alias.name}$${inner.name}`,
-			path: [alias.name, ...inner.path],
-			depth: inner.depth + NESTED
-		}))
-	]);
-	return [...own, ...aliased];
+	return subFactoriesInternal(child, nodeMap, isEmitted, visiting).entries.map((inner) => ({ name: inner.name, depth: inner.depth, ...leafOf(inner) }));
 }
 
 function nestedArmsOf(
@@ -198,7 +158,7 @@ function nestedArmsOf(
 		name: `${host.name}$${inner.name}`,
 		slot: host.slot,
 		residual: host.residual,
-		arm: { via: 'node', child, path: inner.path, ...(inner.leaf === undefined ? {} : { leaf: inner.leaf }) },
+		arm: { via: 'node', child, path: [inner.name], ...(inner.leaf === undefined ? {} : { leaf: inner.leaf }) },
 		depth: inner.depth + NESTED,
 		merges: false
 	}));

@@ -5,7 +5,7 @@ import { AssembledEnum, isFixedTextLeaf, isPatternLeaf, type AssembledNode } fro
 import { isDeclaredSupertype } from './shared.ts';
 import { membershipKindsOf } from './membership.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
-import { flattenedVariantParents, formRoutesOf, seatedFormKinds, type FlattenedVariantRoute, type FormRoute } from '../compiler/model/ir-surface.ts';
+import { buildsHost, flattenedVariantParents, formRoutesOf, seatedFormKinds, type FlattenedVariantRoute, type FormRoute } from '../compiler/model/ir-surface.ts';
 
 export interface EmitIsConfig {
 	grammar: string;
@@ -159,15 +159,14 @@ export function emitIs(config: EmitIsConfig): string {
 	const kindGuard = (kind: string): string => (formsOf(kind) !== undefined ? formGuard(kind) : kindTest(kind));
 	const selfTest = (kind: string): string => (seated.has(kind) ? kindTest(kind) : kindGuard(kind));
 	let seatsRead = false;
-	const formGuardNames = new Set<string>();
-	const formGuard = (kind: string): string => {
-		const name = formGuardConst(kind);
-		if (formGuardNames.has(kind)) return name;
-		formGuardNames.add(kind);
-		const members = formsOf(kind)!
+	const guardTreeNames = new Set<string>();
+	const guardTree = (name: string, kind: string, routes: readonly FormRoute[]): string => {
+		if (guardTreeNames.has(name)) return name;
+		guardTreeNames.add(name);
+		const members = routes
 			.map((route) => {
-				const child = kindGuard(route.child.kind);
-				if (route.seat === undefined) return `${route.name}: ${child}`;
+				if (route.seat === undefined) return `${route.name}: ${kindGuard(route.child.kind)}`;
+				const child = seatGuard(route.child.kind);
 				seatsRead = true;
 				return `${route.name}: _at(${kindTest(kind)}, ${JSON.stringify(route.seat)}, ${child})`;
 			})
@@ -175,12 +174,19 @@ export function emitIs(config: EmitIsConfig): string {
 		formConsts.push(`    const ${name} = _vg(${baseGuard(kind)}, { ${members} });`);
 		return name;
 	};
+	const formGuard = (kind: string): string => guardTree(formGuardConst(kind), kind, formsOf(kind)!);
+	const hostBuildingForms = (kind: string): readonly FormRoute[] => (formsOf(kind) ?? []).filter(buildsHost);
+	const seatGuard = (kind: string): string => {
+		const lifted = hostBuildingForms(kind);
+		if (lifted.length === 0) return kindTest(kind);
+		return lifted.length === formsOf(kind)!.length ? formGuard(kind) : guardTree(`_seat_${nodeMap.nodes.get(kind)!.typeName}_guard`, kind, lifted);
+	};
 	const seatedPredicate = (host: string): string =>
 		`<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${kindDiscriminantExpr(host, nodeMap, kindEntries)} }`;
 	const seatedMemberType = (host: string, route: FormRoute): string => {
-		const routes = formsOf(route.child.kind);
-		if (routes === undefined) return `${route.name}${seatedPredicate(host)}`;
-		return `readonly ${route.name}: { ${seatedPredicate(host)}; ${routes.map((inner) => seatedMemberType(host, inner)).join('; ')} }`;
+		const lifted = hostBuildingForms(route.child.kind);
+		if (lifted.length === 0) return `${route.name}${seatedPredicate(host)}`;
+		return `readonly ${route.name}: { ${seatedPredicate(host)}; ${lifted.map((inner) => seatedMemberType(host, inner)).join('; ')} }`;
 	};
 	const formMemberType = (host: string, route: FormRoute): string => {
 		if (route.seat !== undefined) return seatedMemberType(host, route);

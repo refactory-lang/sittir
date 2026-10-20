@@ -22,44 +22,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Pattern };
 		alternation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-		readonly term: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-			readonly group: {
-				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				startAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				endAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				boundaryAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				nonBoundaryAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				readonly lookaroundAssertion: {
-					<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-					lookaheadAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-					lookbehindAssertion<T extends { readonly $type: number }>(
-						v: T
-					): v is T & { readonly $type: TSKindId.Pattern };
-				};
-				patternCharacter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				characterClass<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				posixCharacterClass<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				anyCharacter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				decimalEscape<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				readonly characterClassEscape: {
-					<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-					arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-					unicodeCharacterEscape<T extends { readonly $type: number }>(
-						v: T
-					): v is T & { readonly $type: TSKindId.Pattern };
-				};
-				backreferenceEscape<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				namedGroupBackreference<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.Pattern };
-				anonymousCapturingGroup<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.Pattern };
-				namedCapturingGroup<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-				nonCapturingGroup<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
-			};
-		};
+		term<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
 	};
 	alternation<T extends { readonly $type: number } | number>(
 		v: T
@@ -321,6 +284,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_InlineFlagsGroupDisable_guard = _g(TSKindId.InlineFlagsGroupDisable);
 	const _kind_Alternation_guard = _g(TSKindId.Alternation);
 	const _kind_Pattern_guard = _g(TSKindId.Pattern);
+	const _kind_Term_guard = _g(TSKindId.Term);
 	const _kind_StartAssertion_guard = _mg(TSKindId.StartAssertion);
 	const _kind_TermGroup_guard = _g(TSKindId.TermGroup);
 	const _kind_EndAssertion_guard = _mg(TSKindId.EndAssertion);
@@ -365,6 +329,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CharacterClassEscapeText1_guard = _g(TSKindId.CharacterClassEscapeText1);
 	const _kind_CharacterClassEscapeText2_guard = _g(TSKindId.CharacterClassEscapeText2);
 	const _kind_Negation_guard = _mg(TSKindId.Negation);
+	const _form_Pattern_guard = _vg(_g(TSKindId.Pattern), {
+		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard),
+		term: _at(_kind_Pattern_guard, 'content', _kind_Term_guard)
+	});
 	const _form_LookaroundAssertion_guard = _vg(_g(TSKindId.LookaroundAssertion), {
 		lookaheadAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookaheadAssertion_guard),
 		lookbehindAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookbehindAssertion_guard)
@@ -392,10 +360,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		nonCapturingGroup: _at(_kind_TermGroup_guard, 'content', _kind_NonCapturingGroup_guard)
 	});
 	const _form_Term_guard = _vg(_g(TSKindId.Term), { group: _form_TermGroup_guard });
-	const _form_Pattern_guard = _vg(_g(TSKindId.Pattern), {
-		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard),
-		term: _at(_kind_Pattern_guard, 'content', _form_Term_guard)
-	});
 	const _form_CountQuantifier_guard = _vg(_g(TSKindId.CountQuantifier), {
 		arm: _at(_kind_CountQuantifier_guard, 'content', _kind_CountQuantifierArm_guard)
 	});
