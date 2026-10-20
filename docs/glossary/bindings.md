@@ -1219,7 +1219,7 @@ The part of a node-model record the bindings read: each node's kind, model type,
 
 ### `packages/codegen/src/bindings/input.ts::slotModelOf`
 
-The slot model of a node-model record: per kind its slots, with each slot's kinds from its values (`slotKindsOf`) and its property name from the model's own naming (`slotPropertyName`), a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`), and each kind's `shownAs` from `shownNames`.
+The slot model of a node-model record: per kind its slots, with each slot's kinds from its values (`slotKindsOf`) and its property name as the record stamps it (`accessor`), a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`), and each kind's `shownAs` from `shownNames`.
 
 ### `packages/codegen/src/bindings/input.ts::shownNames`
 
@@ -1243,7 +1243,7 @@ One admitted value of a serialized slot: its kind (`terminal` for literal text) 
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelSlot`
 
-A slot as `node-model.json5` serializes it, every fact but its name optional. The record writes no kind list or property name; `slotModelOf` derives both.
+A slot as `node-model.json5` serializes it: its name and its accessor, the name the wrap emits its accessor under, and every other fact optional. The record writes no kind list; `slotModelOf` derives it.
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelNode`
 

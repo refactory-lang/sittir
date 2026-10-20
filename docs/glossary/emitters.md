@@ -10357,7 +10357,7 @@ Every node carries `seated` when it seats on its parent, and its provenance (`re
 
 ### `packages/codegen/src/emitters/node-model.ts::serializeSlot`
 
-Takes the parent and the polymorph wires so each value can carry its `seat` (`seatOf` on the parent's wire set). Writes no kind list and no property or parameter name: readers derive them (`slotKindsOf`, `slotPropertyName`). A slot of a kind with a factory carries the factory map's `registered` and `optionDefault`; its arity flags already equal the factory map's, so readers rebuild the factory slot from it (`factorySlotMetaOf`).
+Takes the parent and the polymorph wires so each value can carry its `seat` (`seatOf` on the parent's wire set). Writes the slot's `accessor`, its `propertyName`: the one name the wrap emits its accessor under, which readers call rather than re-derive. Writes no kind list and no parameter name: readers derive the kinds (`slotKindsOf`). A slot of a kind with a factory carries the factory map's `registered` and `optionDefault`; its arity flags already equal the factory map's, so readers rebuild the factory slot from it (`factorySlotMetaOf`).
 
 ### `packages/codegen/src/emitters/node-model.ts::seatsOfList`
 

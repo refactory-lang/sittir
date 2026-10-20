@@ -7,15 +7,15 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 	bindings: await readBindings(scm),
 	model: slotModelOf({
 		nodes: [
-			{ kind: 'zeta', slots: [{ name: 'value', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'alpha' }] }] },
+			{ kind: 'zeta', slots: [{ name: 'value', accessor: 'value', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'alpha' }] }] },
 			{
 				kind: 'alpha',
 				slots: [
-					{ name: 'left', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'zeta' }] },
-					{ name: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
+					{ name: 'left', accessor: 'left', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'zeta' }] },
+					{ name: 'operator', accessor: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
 				]
 			},
-			{ kind: 'wrapper', modelType: 'envelope', slots: [{ name: 'inner', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'alpha' }] }] }
+			{ kind: 'wrapper', modelType: 'envelope', slots: [{ name: 'inner', accessor: 'inner', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'alpha' }] }] }
 		]
 	}),
 	textTokens: new Set(),
