@@ -573,6 +573,29 @@ macro_rules! napi_engine {
         }
 
         $crate::records_codec! {
+            /// The tag word of an absent cell (`arena::cell::tag`).
+            #[::napi_derive::napi]
+            pub const CELL_TAG_ABSENT: u32 = $crate::arena::cell::tag::ABSENT;
+            /// The tag word of a coordinate cell.
+            #[::napi_derive::napi]
+            pub const CELL_TAG_COORDINATE: u32 = $crate::arena::cell::tag::COORDINATE;
+            /// The tag word of a parsed leaf's cell, and of a parsed captured string's.
+            #[::napi_derive::napi]
+            pub const CELL_TAG_PARSED_LEAF: u32 = $crate::arena::cell::tag::PARSED_LEAF;
+            /// The tag word of a cell naming a child's record.
+            #[::napi_derive::napi]
+            pub const CELL_TAG_CHILD: u32 = $crate::arena::cell::tag::CHILD;
+            /// The tag word of a unit's cell.
+            #[::napi_derive::napi]
+            pub const CELL_TAG_UNIT: u32 = $crate::arena::cell::tag::UNIT;
+            /// The tag word of a built leaf's cell, and of a built captured string's.
+            #[::napi_derive::napi]
+            pub const CELL_TAG_BUILT_LEAF: u32 = $crate::arena::cell::tag::BUILT_LEAF;
+            /// The bits of a packed record address or string offset below its
+            /// chunk (`arena::CHUNK_SHIFT`).
+            #[::napi_derive::napi]
+            pub const ARENA_CHUNK_SHIFT: u32 = $crate::arena::CHUNK_SHIFT;
+
             /// The address of the record of the node at `index` of `parsed`
             /// (`ParsedTree::read_record`), `None` for a node with no record.
             fn record_of(

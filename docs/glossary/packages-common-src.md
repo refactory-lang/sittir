@@ -933,3 +933,11 @@ The child segments of a path among a union of vocabulary paths: each path one se
 ### `packages/common/src/portable/tree.ts::KindAt`
 
 The type of one node of the shared kind tree: its `$path` as a literal, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards: each node is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
+
+### `packages/common/src/record-cell.ts::cellFormatOf`
+
+The cell tags and the address packing a record's words are read with, taken from the constants the addon exports (`CELL_TAG_*` and `ARENA_CHUNK_SHIFT`, napi consts over `arena::cell::tag` and `arena::CHUNK_SHIFT`). The Rust codec is the one source of each value. JavaScript reads them from the binary it talks to and names none itself, so a tag the codec renumbers can't drift on the JavaScript side. An addon built without the `arena` feature exports none of them, and the answer is `undefined`: that is how the engine learns the addon has no record codec. The decoder's logic is pinned against the codec by the shared fixture `rust/crates/sittir-core/src/arena/cell-forms.json`, which a Rust test encodes and decodes and a TypeScript test decodes.
+
+### `packages/common/src/record-cell.ts::decodeCell`
+
+One slot's cell read from a record's words, as `arena::cell::Cell::decode` reads it. Kind 0 under the parsed-leaf tag is a captured string's span (`parsedText`), and under the built-leaf tag its string-table text (`builtText`). A child's tree word is the tree plus one, 0 for the cell's own arena. A unit's row word is the row plus one, 0 for a built unit or a blank arm. A child's last word is its site's changed edges, leading in bit 0 and trailing in bit 1. The words come from a chunk copy native wrote, so the decoder refuses only what it can't read (an unknown tag, a cell running past the words) and leaves bounds and kind checks to the native codec, which never writes a malformed cell.

@@ -307,6 +307,70 @@ mod tests {
         ]
     }
 
+    /// `cell-forms.json`, the fixture the TypeScript cell decoder is pinned
+    /// to: each entry's cell, as its fields name it.
+    fn fixture_cell(entry: &serde_json::Value) -> Cell {
+        let n = |key: &str| fixture_number(entry, key);
+        let kind = || KindId(u16::try_from(n("kind")).expect("a kind"));
+        let span = || Span { start: n("start"), end: n("end") };
+        let row = || entry["row"].as_u64().map(|row| NodeIndex(u32::try_from(row).expect("a row")));
+        let text = || StringRef::from_offset(n("offset"), n("len"));
+        match entry["form"].as_str().expect("a form") {
+            "absent" => Cell::Absent,
+            "coordinate" => Cell::Coordinate { kind: kind(), index: NodeIndex(n("index")), span: span() },
+            "parsedLeaf" => Cell::ParsedLeaf { kind: kind(), span: span(), row: NodeIndex(n("row")) },
+            "parsedText" => Cell::ParsedText { span: span() },
+            "child" => Cell::Child {
+                kind: kind(),
+                at: Address(n("at")),
+                link: entry["link"].as_u64().map(|tree| TreeId(u32::try_from(tree).expect("a tree"))),
+                changed: ChangedEdges { leading: entry["leading"].as_bool().expect("leading"), trailing: entry["trailing"].as_bool().expect("trailing") },
+            },
+            "unit" => Cell::Unit { kind: kind(), row: row() },
+            "builtLeaf" => Cell::BuiltLeaf { kind: kind(), text: text(), record: Address(n("record")) },
+            "builtText" => Cell::BuiltText { text: text() },
+            other => panic!("no cell form {other}"),
+        }
+    }
+
+    fn fixture_words(entry: &serde_json::Value) -> Vec<u32> {
+        entry["words"].as_array().expect("words").iter().map(|word| u32::try_from(word.as_u64().expect("a word")).expect("a word")).collect()
+    }
+
+    #[test]
+    fn every_form_is_written_as_the_shared_fixture_holds_it() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!("cell-forms.json")).expect("the fixture parses");
+        let cells = fixture["cells"].as_array().expect("cells");
+        let mut forms = std::collections::HashSet::new();
+        for entry in cells {
+            let cell = fixture_cell(entry);
+            let words = fixture_words(entry);
+            let mut written = vec![9; cell.width() as usize];
+            cell.encode(&mut written).expect("it fits");
+            assert_eq!(written, words, "{entry}");
+            assert_eq!(Cell::decode(&words), Ok(cell), "{entry}");
+            forms.insert(std::mem::discriminant(&cell));
+        }
+        let mut arena = Arena::new();
+        let every: std::collections::HashSet<_> = every_form(&mut arena).iter().map(std::mem::discriminant).collect();
+        assert_eq!(forms.len(), every.len(), "the fixture holds every form");
+        for entry in fixture["lists"].as_array().expect("lists") {
+            let list = ListCell { run: Address(fixture_number(entry, "run")), len: fixture_number(entry, "len") };
+            let mut written = [9; 2];
+            list.encode(&mut written).expect("it fits");
+            assert_eq!(written.to_vec(), fixture_words(entry), "{entry}");
+            assert_eq!(ListCell::decode(&written), Ok(list), "{entry}");
+        }
+        for entry in fixture["addresses"].as_array().expect("addresses") {
+            let address = Address::new(fixture_number(entry, "chunk"), fixture_number(entry, "word")).expect("in range");
+            assert_eq!(address.0, fixture_number(entry, "address"), "{entry}");
+        }
+    }
+
+    fn fixture_number(entry: &serde_json::Value, key: &str) -> u32 {
+        u32::try_from(entry[key].as_u64().unwrap_or_else(|| panic!("{key} in {entry}"))).expect("a word")
+    }
+
     #[test]
     fn every_form_reads_back_as_written() {
         let mut arena = Arena::new();

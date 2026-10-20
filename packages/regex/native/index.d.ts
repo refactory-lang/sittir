@@ -189,7 +189,64 @@ renderToFile(node: object, path: string, treeId?: number | undefined | null, opt
  * they belong to whoever still names them.
  */
 dispose(): void
+/**
+ * r" The address of the record of the node at `index` of the live
+ * r" tree `treeId`: the one a read wrote, else the one its read
+ * r" `depth` levels down (one when absent, `Infinity` for all)
+ * r" writes now. Null for a node with no record: a parsed leaf, or
+ * r" an `ERROR` node. Refuses as `read` does.
+ */
+readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+/**
+ * r" The nodes at `indexes` of the live tree `treeId`, in order:
+ * r" each read as `read` reads it when `wire` is `object`, and,
+ * r" when it is `record`, each record's address as `readRecord`
+ * r" answers it, 0 for a node with no record, in one
+ * r" `Uint32Array`. Refuses as `read` does at the first index it
+ * r" refuses, and any other wire.
+ */
+readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
+/**
+ * r" The record at `address` of the live tree `treeId` rendered, as
+ * r" `render` renders a node read from the tree: under `options`
+ * r" over the tree's layer over the engine's. Refuses a tree that
+ * r" is not live, an address naming no record of its arena, and a
+ * r" record whose render refuses.
+ */
+renderRecord(treeId: number, address: number, options?: object | undefined | null): string
+/**
+ * r" The words records fill in chunk `n` of the live tree
+ * r" `treeId`'s arena, copied into a buffer JavaScript owns: a
+ * r" later read that appends to the chunk leaves the copy as it
+ * r" was. Refuses a tree that is not live and a chunk its arena
+ * r" does not hold.
+ */
+chunk(treeId: TreeId, n: number): Uint32Array
 }
+
+/**
+ * r" The bits of a packed record address or string offset below its
+ * r" chunk (`arena::CHUNK_SHIFT`).
+ */
+export const ARENA_CHUNK_SHIFT: number
+
+/** r" The tag word of an absent cell (`arena::cell::tag`). */
+export const CELL_TAG_ABSENT: number
+
+/** r" The tag word of a built leaf's cell, and of a built captured string's. */
+export const CELL_TAG_BUILT_LEAF: number
+
+/** r" The tag word of a cell naming a child's record. */
+export const CELL_TAG_CHILD: number
+
+/** r" The tag word of a coordinate cell. */
+export const CELL_TAG_COORDINATE: number
+
+/** r" The tag word of a parsed leaf's cell, and of a parsed captured string's. */
+export const CELL_TAG_PARSED_LEAF: number
+
+/** r" The tag word of a unit's cell. */
+export const CELL_TAG_UNIT: number
 
 /** A child's position under its parent as JavaScript holds it: a whole number. */
 export type ChildPosition =

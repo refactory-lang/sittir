@@ -1,6 +1,8 @@
 export { createNativeEngine, createRenderHandle, nativeLanguageEngine } from './engine.ts';
 export { scopeBuilders } from './create-engine.ts';
 export { hostPlatform, nativeLoadFailure, platformSuffix, targetSuffix } from './native-binding.ts';
+export { addressOf, cellFormatOf, chunkOf, decodeCell, decodeListCell, wordOf } from './record-cell.ts';
+export type { CellFormat, RecordCell, RecordCodecConstants, RecordListCell } from './record-cell.ts';
 export type { HostPlatform, NativeBindingSpec } from './native-binding.ts';
 export type {
 	BaselineRun,

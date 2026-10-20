@@ -77,7 +77,7 @@ const FIRST_CHUNK_WORDS: u32 = 1 << 10;
 /// The bytes a shared string chunk holds; a longer string gets its own.
 pub const STRING_CHUNK_BYTES: u32 = 1 << 16;
 /// The bits of a packed address or string offset below its chunk.
-const CHUNK_SHIFT: u32 = 20;
+pub const CHUNK_SHIFT: u32 = 20;
 
 /// A record's or run's place in an arena: its chunk and its first word,
 /// packed as `chunk << 20 | word`. Address 0 is no record.
