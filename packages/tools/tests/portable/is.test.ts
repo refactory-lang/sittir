@@ -314,13 +314,6 @@ describe('portable is: rust', async () => {
 		expect(at('declaration.parameter')(b)).toBe(false);
 	});
 
-	it('reads a bare `crate` visibility as internal by its own kind, and the item it marks as internal, as `pub(crate)` is', () => {
-		const SOURCE = 'crate fn f() {}\npub(crate) fn g() {}\n';
-		const items = [0, 1].map((nth) => find(SOURCE, 'function_item', undefined, nth));
-		expect(at('modifier.visibility.public.internal')(find(SOURCE, 'crate_visibility_modifier'))).toBe(true);
-		expect(items.map((n) => at('declaration.function.public.internal')(n))).toEqual([true, true]);
-	});
-
 	it('reads a tuple struct and a unit struct by their forms, and a tuple struct\'s fields as fields', () => {
 		const SOURCE = 'struct T(u8, pub u16);\nstruct U;\n';
 		const tuple = find(SOURCE, 'struct_item_tuple');

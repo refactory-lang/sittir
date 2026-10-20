@@ -3169,20 +3169,15 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "crate",
-            "annotations": {
-              "variant": "crate",
-              "variantOf": "visibility_modifier"
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
+          "type": "SYMBOL",
+          "name": "crate",
+          "annotations": {
+            "variant": "crate",
+            "variantOf": "visibility_modifier"
           },
-          "named": true,
-          "value": "crate_visibility_modifier"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "SYMBOL",
