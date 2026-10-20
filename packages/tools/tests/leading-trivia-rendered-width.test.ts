@@ -33,13 +33,13 @@ describe('leadingTriviaRenderedWidth on a detached alias envelope', () => {
 	it('is zero when only a line gap comes before it', () => {
 		const data = secondTypeArgument('type T = A<\n  X,\n  Y,\n>;\n');
 		expect(render(data)).toBe('Y');
-		expect(leadingTriviaRenderedWidth(data, render, triviaOf)).toBe(0);
+		expect(leadingTriviaRenderedWidth(data, render, triviaOf, readers)).toBe(0);
 	});
 
 	it('is the owned comment and its line break', () => {
 		const data = secondTypeArgument('type T = A<\n  X,\n  // c\n  Y,\n>;\n');
 		expect(render(data)).toBe('// c\nY');
-		expect(leadingTriviaRenderedWidth(data, render, triviaOf)).toBe('// c\n'.length);
+		expect(leadingTriviaRenderedWidth(data, render, triviaOf, readers)).toBe('// c\n'.length);
 	});
 });
 
@@ -58,8 +58,9 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
 		const suite = statement.consequence();
 		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
-		const block = materializeDetached(suite.block(), await loadSlotReaders('python'));
+		const pyReaders = await loadSlotReaders('python');
+		const block = materializeDetached(suite.block(), pyReaders);
 		expect(renderPy(block).startsWith('# one\n# two\n  # three\nb')).toBe(true);
-		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy)).toBe('# one\n# two\n  # three\n'.length);
+		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy, pyReaders)).toBe('# one\n# two\n  # three\n'.length);
 	});
 });

@@ -20,11 +20,10 @@ import {
 	isStorageKey,
 	mapTriviaEntries,
 	markEdited,
-	readNode as readUntyped,
+	hydrateStored,
 	sidesOf,
 	spanOf,
 	toDetachedNodeData,
-	treeOf,
 	type KindView,
 	type NodeDataLayout
 } from '@sittir/common/utils';
@@ -45,6 +44,8 @@ import {
 	readNodeOf,
 	walkWrappedTree,
 	materializeDetached,
+	materializeShallow,
+	type SlotReaders,
 	loadSlotReaders,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -432,18 +433,20 @@ export interface ReadRenderParseResult {
  * is an edit of its node (`markEdited`) holding every side it renders, the
  * stripped one an empty `leading`, so both renders print the node from its
  * storage and differ only by the leading trivia; a coordinate, which holds
- * no storage, is read into its node first (`storageOf`). A copy keeps
+ * no storage, is hydrated and read one level down through the slot readers
+ * first (`storageOf`, `materializeShallow`). A copy keeps
  * the node's source identity. Both are measured without trailing whitespace,
  * which only the outer edge contributes.
  */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
 	render: (node: AnyUntypedNode) => string,
-	triviaOf: (node: object) => NodeTrivia | undefined
+	triviaOf: (node: object) => NodeTrivia | undefined,
+	readers: SlotReaders
 ): number {
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
-		const copy = markEdited({ ...storageOf(data), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
+		const copy = markEdited({ ...storageOf(data, readers), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
 		carrySource(node, copy);
 		return copy;
 	};
@@ -494,11 +497,8 @@ export function leadingTriviaRenderedWidth(
 	return measured.length - current.length;
 }
 
-/** A node with its storage: a coordinate read one level into its native node through the tree it holds, anything else as it is. */
-function storageOf(node: AnyUntypedNode): AnyUntypedNode {
-	if (!isCoordinate(node)) return node;
-	const tree = treeOf(node);
-	return tree === undefined ? node : (readUntyped(tree, node) as AnyUntypedNode);
+function storageOf(node: AnyUntypedNode, readers: SlotReaders): AnyUntypedNode {
+	return isCoordinate(node) ? materializeShallow(hydrateStored(node), readers) : node;
 }
 
 function commonPrefixLength(a: string, b: string): number {
@@ -732,6 +732,7 @@ export interface RenderReparseContext {
 	readonly visibleKinds: ReadonlySet<string>;
 	readonly readIdentity: ReadIdentity;
 	readonly placements: ReadonlyMap<string, Placement>;
+	readonly readers: SlotReaders;
 }
 
 /** Where a split kind sits: the nearest ancestor that is no split rule, and the source around the kind inside it. */
@@ -830,7 +831,7 @@ export function renderReparse(
 	if (tree2.rootNode.hasError) {
 		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`, rendered };
 	}
-	const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf);
+	const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.readers);
 	const reparsed = treeRoot
 		? tree2.rootNode
 		: source !== null
@@ -947,6 +948,7 @@ export async function loadRenderReparseContext(
 		root: model.root,
 		variantChildKinds: await loadVariantChildKindsByOwner(grammar),
 		readIdentity: readIdentityOf(model.relaxes),
+		readers: await loadSlotReaders(grammar),
 		placements: placementsOf(grammar, parser, model.splitFrom)
 	};
 }
@@ -1126,8 +1128,8 @@ export async function validateReadRenderParse(
 					// kind. renderedKind (source) drives the render template; targetKind
 					// (display) drives the post-reparse node lookup.
 					//
-					// Shallow mode (`recursive !== true`): read the node one level down
-					// through its coordinate instead — its children stay coordinates.
+					// Shallow mode (`recursive !== true`): the node with each child as
+					// its coordinate (`materializeShallow`), holding its tree.
 					// This preserves the read-render-parse-shallow metric's meaning
 					// (render() fed coordinate-bearing data, the shape lazy callers
 					// send) as distinct from the deep run's full materialization.
@@ -1138,8 +1140,8 @@ export async function validateReadRenderParse(
 					try {
 						const at = (cand.node as AnyUntypedNode).$_layout?.at;
 						data =
-							recursive !== true && at !== undefined && handle.read
-								? (readUntyped(handle, at) as AnyUntypedNode)
+							recursive !== true && at !== undefined
+								? materializeShallow(cand.node, readers, onAccessorThrow)
 								: (materializeDetached(cand.node, readers, onAccessorThrow) as AnyUntypedNode);
 					} catch (e) {
 						reportThrown({

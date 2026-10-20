@@ -12,7 +12,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { hydrateTriviaEntry } from '@sittir/common/utils';
+import { coordinateOf, hydrateTriviaEntry } from '@sittir/common/utils';
 import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
@@ -772,6 +772,21 @@ export function materializeDetached(
 	return holdingTreeOf(root, detachCoordinates(materialize(root, readers, onAccessorThrow)));
 }
 
+export function materializeShallow(
+	root: unknown,
+	readers: SlotReaders,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyUntypedNode {
+	const ownRow = typeof root === 'object' && root !== null ? coordinateOf(root)?.$treeHandle : undefined;
+	const asCoordinate = (value: unknown): unknown => {
+		if (Array.isArray(value)) return value.map(asCoordinate);
+		if (!hasNumericType(value)) return value;
+		const at = coordinateOf(value);
+		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, readers, onAccessorThrow);
+	};
+	return holdingTreeOf(root, materializeValue(root, readers, onAccessorThrow, asCoordinate) as AnyUntypedNode);
+}
+
 /**
  * Make `copy` hold the tree `original` holds, and return it. A copy made by
  * string keys, by JSON or by `detachCoordinates` holds no tree, and its
@@ -809,9 +824,14 @@ export interface ValidatorSkip {
 	readonly input?: string;
 }
 
-function materializeValue(value: unknown, readers: SlotReaders, onAccessorThrow?: (rec: AccessorThrowRecord) => void): unknown {
+function materializeValue(
+	value: unknown,
+	readers: SlotReaders,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void,
+	slotValue: (value: unknown) => unknown = (inner) => materializeValue(inner, readers, onAccessorThrow)
+): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeValue(entry, readers, onAccessorThrow));
+		return value.map((entry) => materializeValue(entry, readers, onAccessorThrow, slotValue));
 	}
 	if (!hasNumericType(value)) return value;
 	const materialized: Record<string, unknown> = {};
@@ -840,7 +860,7 @@ function materializeValue(value: unknown, readers: SlotReaders, onAccessorThrow?
 		materialized[key] = materializeValue(raw, readers, onAccessorThrow);
 	}
 	for (const [storageKey, resolved] of slotValuesOf(value, readers, onAccessorThrow)) {
-		if (resolved !== undefined) materialized[storageKey] = materializeValue(resolved, readers, onAccessorThrow);
+		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
 	}
 	carrySource(value, materialized);
 	return carryRead(value, materialized);

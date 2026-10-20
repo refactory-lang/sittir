@@ -1732,7 +1732,7 @@ A wrapped tree as plain node data (`materializeValue`): each node's stored value
 
 ### `packages/tools/src/validate/common.ts::materializeValue`
 
-One value of `materialize`. An array maps entry by entry, and anything without a numeric `$type` passes through. A node keeps its non-`_` data keys: `$text` as `nodeText` gives it, and `$_layout` with its trivia entries materialized too. It drops its methods and its `_` keys, and its stored values come from `slotValuesOf` instead. The copy keeps the node's source identity (`carrySource`) and its read (`carryRead`).
+One value of `materialize`. An array maps entry by entry, and anything without a numeric `$type` passes through. A node keeps its non-`_` data keys: `$text` as `nodeText` gives it, and `$_layout` with its trivia entries materialized too. It drops its methods and its `_` keys, and its stored values come from `slotValuesOf` instead, each through `slotValue`: materialized whole by default, or as `materializeShallow` maps them. The copy keeps the node's source identity (`carrySource`) and its read (`carryRead`).
 
 ### `packages/tools/src/validate/common.ts::wrappedNodesOfKind`
 
@@ -1745,6 +1745,10 @@ The first wrapped node of a kind (`wrappedNodesOfKind`), at `span` when the call
 ### `packages/tools/src/validate/common.ts::WrappedCandidate`
 
 A wrapped node a search found, with its byte span, or `undefined` for a node with none (a built node).
+
+### `packages/tools/src/validate/common.ts::materializeShallow`
+
+A wrapped node one level down: its own data as `materialize` gives it, with each node its slots hold as that node's coordinate (`coordinateOf`), holding its tree, so the render reads the child from the tree. This is the input read-render-parse's shallow lane renders: data whose children are coordinates, the shape a lazy caller sends. A child with no coordinate of its own (a built child, or an alias envelope's content, which shares its envelope's row) is materialized whole instead, since that coordinate would name its holder. The copy holds the root's tree (`holdingTreeOf`). It reads through the slot readers, so it gives the same data on either wire.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
