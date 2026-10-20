@@ -49,6 +49,8 @@ export interface RecordReader {
 	object(index: number, depth?: number): unknown;
 	/** The words of the chunk `address` lies in, holding at least `length` words from it: a copy JavaScript owns, fetched again when the words sought lie past the copy held. */
 	words(address: number, length: number): Uint32Array;
+	/** The kind the coordinate of the node at descendant `index` names, held in a cell of kind `kind`: the row's stamped kind where it differs from the cell's (an alias envelope's content), else `kind`. */
+	coordinateKind(index: number, kind: number): number;
 	/** The record at `address` rendered as the native render renders the node read into it, a render root whose `changed` edges have no neighbour. */
 	render(address: number, changed: { readonly leading: boolean; readonly trailing: boolean }, options?: object): string;
 }

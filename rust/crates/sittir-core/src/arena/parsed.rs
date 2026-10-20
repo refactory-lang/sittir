@@ -53,6 +53,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
         })
     }
 
+    /// The kind the read stamped on the coordinate of the node at `index`,
+    /// when the cell holding the node names another kind
+    /// (`TreeArena::stamped_kind`): an alias envelope's content, written once
+    /// its holder's record is.
+    #[must_use]
+    pub fn stamped_coordinate_kind(&self, index: NodeIndex) -> Option<KindId> {
+        self.tree_arena().stamped_kind(index)
+    }
+
     /// The words of chunk `n` of the tree's arena that records fill, copied:
     /// a later read that appends to the chunk leaves the copy as it was.
     #[must_use]

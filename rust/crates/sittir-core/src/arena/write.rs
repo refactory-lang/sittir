@@ -240,10 +240,26 @@ pub fn leaf_cell<T: Clone>(sink: &mut RecordSink<'_, T>, kind: KindId, text: &st
         return Ok(Cell::BuiltLeaf { kind, text: sink.arena().intern(text)?, record });
     };
     let row = RecordSink::row(tree, layout, "a parsed leaf with no row")?;
-    match layout.and_then(|layout| bare_past_at(layout).then_some(layout.at.as_ref()).flatten()) {
-        Some(at) => Ok(Cell::ParsedLeaf { kind, span: at.span, row }),
-        None => Err(ArenaError::Unwritable("a parsed leaf's layout past its row")),
-    }
+    let span = match layout.and_then(|layout| bare_past_at(layout).then_some(layout.at.as_ref()).flatten()) {
+        Some(at) => at.span,
+        None => return Err(ArenaError::Unwritable("a parsed leaf's layout past its row")),
+    };
+    stamp_coordinate(sink, kind, layout)?;
+    Ok(Cell::ParsedLeaf { kind, span, row })
+}
+
+/// Stamps the kind a parsed node's read coordinate names on its row, where it
+/// differs from `kind`, the kind of the cell written for the node
+/// (`TreeArena::stamp`): a leaf's and a record's alike.
+///
+/// # Errors
+///
+/// `ArenaError::Unwritable` for a read coordinate with no stamped kind, or
+/// one naming another kind than its row's first stamp.
+fn stamp_coordinate<T>(sink: &mut RecordSink<'_, T>, kind: KindId, layout: Option<&NodeLayout<T>>) -> Result<(), ArenaError> {
+    let (Target::Parsed { arena, .. }, Some(at)) = (&mut sink.to, layout.and_then(|layout| layout.at.as_ref())) else { return Ok(()) };
+    let coordinate = at.kind.ok_or(ArenaError::Unwritable("a read coordinate with no stamped kind"))?;
+    arena.stamp(at.index, coordinate, kind)
 }
 
 /// Writes a node's record and answers the cell its holder names it by: its
@@ -323,6 +339,9 @@ fn write_words<T: Clone>(
         None if layout.is_some_and(|layout| layout.at.is_some()) => return Err(ArenaError::Unwritable("a node read from a tree in a built record")),
         None => None,
     };
+    if row.is_some() {
+        stamp_coordinate(sink, kind, layout)?;
+    }
     let mut side = SideRecord::of(layout, &slot_word)?;
     let site_changed = if sink.nested && changed == Changed::Site { std::mem::take(&mut side.changed) } else { ChangedEdges::default() };
     let units = layout
@@ -624,6 +643,18 @@ mod tests {
         for leaf in [2, 3, 4] {
             assert_eq!(tree.record(NodeIndex(leaf)), None, "row {leaf} has no record of its own");
         }
+    }
+
+    #[test]
+    fn a_node_whose_read_coordinate_names_another_kind_stamps_its_row() {
+        const ENVELOPE: KindId = KindId(9);
+        let shared = |index, end| Box::new(NodeLayout { at: Some(NodeCoordinate { kind: Some(ENVELOPE), ..at(index, end) }), ..NodeLayout::default() });
+        let mut tree = TreeArena::new();
+        let node = pair(Some(shared(1, 6)), name("a", Some(shared(2, 3))), vec![name("b", Some(read_at(4, 5)))]);
+        node.write_cell(&mut RecordSink::parsed(TREE, &mut tree)).expect("written");
+        assert_eq!(tree.stamped_kind(NodeIndex(1)), Some(ENVELOPE), "a record's row");
+        assert_eq!(tree.stamped_kind(NodeIndex(2)), Some(ENVELOPE), "a leaf's row");
+        assert_eq!(tree.stamped_kind(NodeIndex(4)), None, "a leaf whose coordinate names its own kind");
     }
 
     #[test]

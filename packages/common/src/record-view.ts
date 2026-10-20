@@ -53,13 +53,13 @@ function sideOf(records: RecordReader, at: number): number {
 	return words[start + 1]!;
 }
 
-/** The coordinate a parsed record's side record stamps: its row, its subtree's end and its byte span. */
+/** The coordinate a parsed record's side record stamps: its row, its subtree's end and its byte span, naming the kind its row's coordinate names (`RecordReader.coordinateKind`). */
 function rowCoordinate(tree: TreeHandle, records: RecordReader, side: number, kind: number): NodeCoordinate {
 	if (side === 0) throw new Error(`a parsed record of kind ${kind} names no side record, so no row`);
 	const { words, start } = sideWordsAt(records, side);
 	const row = decodeSideRow(words, start, records.format);
 	if (row === undefined) throw new Error(`the side record of a parsed record of kind ${kind} holds no row`);
-	return { $treeHandle: encodeHandle(idOf(tree), row.index), $end: row.end, $span: row.span, $type: kind };
+	return { $treeHandle: encodeHandle(idOf(tree), row.index), $end: row.end, $span: row.span, $type: records.coordinateKind(row.index, kind) };
 }
 
 /** The record at `at` of `tree` as a stub: its kind and its coordinate, read from its own words. */
@@ -117,11 +117,12 @@ export function rowTrivia(node: object, tree: TreeHandle, wrap: (data: object, t
 	return (rowOf(node, tree, wrap).$trivia as Members)[side]!(...items);
 }
 
-/** A parsed leaf as read data: its kind, its coordinate and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
+/** A parsed leaf as read data: its kind, its coordinate, naming the kind its row's coordinate names (`RecordReader.coordinateKind`), and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
 function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): object {
 	const text = tree.text;
 	if (text === undefined) throw new Error('a record view needs a tree that answers its text');
-	return { $type: kind, $text: () => text(span), $_layout: { at: { $treeHandle: encodeHandle(idOf(tree), row), $end: row + 1, $span: span, $type: kind } } };
+	const at = { $treeHandle: encodeHandle(idOf(tree), row), $end: row + 1, $span: span, $type: recordsOf(tree).coordinateKind(row, kind) };
+	return { $type: kind, $text: () => text(span), $_layout: { at } };
 }
 
 /** The value a cell holds, as read data: what `hydrate` turns into the node an accessor returns. */

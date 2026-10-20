@@ -2118,7 +2118,8 @@ mod tests {
         let (one, _) = parsed("fn f() {}");
         let (two, _) = parsed("fn g() {}");
         let row = NodeIndex::new(1);
-        let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 })), ..NodeLayout::default() };
+        let at = NodeCoordinate { kind: Some(KindId(3)), ..NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 }) };
+        let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(at), ..NodeLayout::default() };
         let cell = write_record(&mut RecordSink::parsed(one.tree_id(), &mut one.tree_arena()), KindId(3), 2, Some(&layout), |_| None, |_, _, _| Ok(())).expect("written");
         let crate::arena::Cell::Child { at, .. } = cell else { panic!("a record, not {cell:?}") };
         assert_eq!(one.tree_arena().record(row), Some(at), "a later read reaches the record");

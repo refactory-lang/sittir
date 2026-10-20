@@ -217,6 +217,15 @@ readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | 
  */
 renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 /**
+ * r" The kind the read stamped on the coordinate of the node at
+ * r" `index` of the live tree `treeId`, where the cell holding the
+ * r" node names another kind: an alias envelope's content. Null
+ * r" where the cell's own kind is the coordinate's. A record view
+ * r" asks it of a row whose cell it read, which its holder's
+ * r" record write stamped. Refuses a tree that is not live.
+ */
+coordinateKind(treeId: TreeId, index: NodeIndex): number | null
+/**
  * r" The words records fill in chunk `n` of the live tree
  * r" `treeId`'s arena, copied into a buffer JavaScript owns: a
  * r" later read that appends to the chunk leaves the copy as it

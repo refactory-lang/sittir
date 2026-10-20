@@ -186,6 +186,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	readRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** The words records fill in chunk `n` of the tree's arena, copied. Present when the addon carries the record codec. */
 	chunk?(treeId: number, n: number): Uint32Array;
+	/** The kind the read stamped on the coordinate of the node at `index`, where the cell holding it names another kind; `null` where the cell's own kind is the coordinate's. Present when the addon carries the record codec. */
+	coordinateKind?(treeId: number, index: number): number | null;
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
 	/**
@@ -356,11 +358,12 @@ const treeDisposalRegistry = new FinalizationRegistry<{
  * sought lies past it: a read that appends to a chunk leaves the copy JavaScript holds as it was.
  */
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
-	const { readRecord, chunk, renderRecord } = engine;
-	if (readRecord === undefined || chunk === undefined || renderRecord === undefined) {
+	const { readRecord, chunk, renderRecord, coordinateKind } = engine;
+	if (readRecord === undefined || chunk === undefined || renderRecord === undefined || coordinateKind === undefined) {
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	}
 	const copies = new Map<number, Uint32Array>();
+	const stamps = new Map<number, number | null>();
 	return {
 		format,
 		record: (index, depth) => readRecord.call(engine, treeId, index, depth) ?? undefined,
@@ -375,6 +378,14 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 			}
 			if (copy.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${copy.length} words, short of a record that ends at word ${end}`);
 			return copy;
+		},
+		coordinateKind(index, kind) {
+			let stamp = stamps.get(index);
+			if (stamp === undefined) {
+				stamp = coordinateKind.call(engine, treeId, index);
+				stamps.set(index, stamp);
+			}
+			return stamp ?? kind;
 		},
 		render: (address, changed, options) => renderRecord.call(engine, treeId, address, changed.leading, changed.trailing, options)
 	};

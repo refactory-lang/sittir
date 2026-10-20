@@ -705,6 +705,21 @@ macro_rules! napi_engine {
                     })
                 }
 
+                /// The kind the read stamped on the coordinate of the node at
+                /// `index` of the live tree `treeId`, where the cell holding the
+                /// node names another kind: an alias envelope's content. Null
+                /// where the cell's own kind is the coordinate's. A record view
+                /// asks it of a row whose cell it read, which its holder's
+                /// record write stamped. Refuses a tree that is not live.
+                #[::napi_derive::napi]
+                pub fn coordinate_kind(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Option<u32>> {
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        Ok(parsed.stamped_coordinate_kind(index).map(|kind| u32::from(kind.0)))
+                    })
+                }
+
                 /// The words records fill in chunk `n` of the live tree
                 /// `treeId`'s arena, copied into a buffer JavaScript owns: a
                 /// later read that appends to the chunk leaves the copy as it

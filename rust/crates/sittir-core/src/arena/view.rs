@@ -191,6 +191,13 @@ impl<'a, T> RecordCtx<'a, T> {
         self.arenas.tree(self.tree?)?.record(row)
     }
 
+    /// The kind the coordinate of the parsed node a cell of kind `kind`
+    /// names at `row` names (`TreeArena::coordinate_kind`).
+    #[must_use]
+    pub fn coordinate_kind(self, row: NodeIndex, kind: KindId) -> KindId {
+        self.tree.and_then(|tree| self.arenas.tree(tree)).map_or(kind, |arena| arena.coordinate_kind(row, kind))
+    }
+
     /// The parsed node `cell` names, whatever cell names it: the row of a
     /// coordinate, a parsed leaf or a parsed unit of this arena's tree, or
     /// the row of a parsed record, in this arena or in the tree a link names,
@@ -200,14 +207,14 @@ impl<'a, T> RecordCtx<'a, T> {
     ///
     /// What reading a child's record or reaching a linked arena refuses.
     pub fn parsed_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
-        let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind, changed: ChangedEdges::default() });
+        let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind: self.coordinate_kind(row, kind), changed: ChangedEdges::default() });
         Ok(match cell {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
             Cell::Child { kind, at, link, changed } => {
                 let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
                 match row_of(ctx, at, &side)? {
-                    Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
+                    Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind: ctx.coordinate_kind(row, kind), changed }),
                     _ => None,
                 }
             }
@@ -228,7 +235,7 @@ impl<'a, T> RecordCtx<'a, T> {
         let Cell::Child { kind, at, link, changed } = cell else { return self.parsed_row(cell) };
         let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
         let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
-        Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind, changed }))
+        Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind: ctx.coordinate_kind(row, kind), changed }))
     }
 
     /// The context a child cell's record is read in, its own arena or the
@@ -247,7 +254,7 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 
     /// The coordinate of the parsed node `row` names, as a read of its tree
-    /// names it (`row_node`), of the kind its cell names it as and with the
+    /// names it (`row_node`), of the kind its coordinate names and with the
     /// edges it marks changed.
     ///
     /// # Errors
@@ -272,8 +279,9 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 }
 
-/// A parsed node as a cell names it: its tree, its row there, the kind the
-/// cell names it as, and the edges whose neighbour its holder changed.
+/// A parsed node as a cell names it: its tree, its row there, the kind its
+/// coordinate names (`RecordCtx::coordinate_kind`), and the edges whose
+/// neighbour its holder changed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ParsedRow {
     pub tree: TreeId,
