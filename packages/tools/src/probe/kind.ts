@@ -88,11 +88,12 @@ import {
 	type SlotReaders,
 	readNodeOf,
 	findWrappedNode,
+	walkWrappedTree,
+	type TypedNode,
 	buildKindToSupertypes,
 	loadReparseHosts,
 	wrapForReparse,
 	upstreamWasmPath,
-	nativeNodeIsKind,
 	type TSNode,
 	type TSTree,
 	type AccessorThrowRecord,
@@ -567,8 +568,11 @@ export async function probe(
 			: await readNodeOf(grammar);
 	const root = readNode ? readNode(handle, undefined, Infinity) : handle.read?.(0, Infinity);
 	let untypedNode: unknown = root;
-	if (opts.range) untypedNode = findInUntypedNodeByRange(root, opts.range.start, opts.range.end);
-	else if (opts.kind) untypedNode = findInUntypedNode(root, opts.kind, await loadKindNameFromId(grammar));
+	if ((opts.range || opts.kind) && !readNode) {
+		throw new Error('probe-kind: --no-wrap reads the raw root only; finding a node by kind or range walks the wrapped tree through its slot readers');
+	}
+	if (opts.range) untypedNode = smallestNodeCovering(root, await loadSlotReaders(grammar), opts.range) ?? null;
+	else if (opts.kind) untypedNode = findWrappedNode(root, await loadSlotReaders(grammar), opts.kind, await loadKindNameFromId(grammar)) ?? null;
 	if (!isRoot && !untypedNode) throw new Error(`probe-kind: no node match in the read tree`);
 
 	let rendered: string | undefined;
@@ -1046,60 +1050,17 @@ function shapeOf(node: CstNode): string {
 	return `${node.named ? node.type : `"${node.type}"`}(${node.children.map(shapeOf).join(',')})`;
 }
 
-/** @internal — depth-first walk an UntypedNode tree, returning the first
- *  subtree whose `$type` matches `kind`. Used by the native-engine
- *  path to find a kind-specific subtree once `parse_and_read` has
- *  returned the whole-tree UntypedNode. */
-export function findInUntypedNode(
-	node: unknown,
-	kind: string,
-	kindNameFromId: ((id: number) => string | undefined) | undefined
-): unknown | null {
-	if (!node || typeof node !== 'object') return null;
-	if (nativeNodeIsKind(node as AnyUntypedNode, kind, kindNameFromId)) return node;
-	const n = node as Record<string, unknown>;
-	for (const key of Object.keys(n)) {
-		if (!key.startsWith('_')) continue;
-		const v = n[key];
-		if (Array.isArray(v)) {
-			for (const item of v) {
-				const found = findInUntypedNode(item, kind, kindNameFromId);
-				if (found) return found;
-			}
-		} else {
-			const found = findInUntypedNode(v, kind, kindNameFromId);
-			if (found) return found;
-		}
-	}
-	return null;
-}
-
-/** @internal — locate the smallest UntypedNode subtree whose `$span`
- *  exactly covers `[start, end)`. Pre-order with narrowing — descend
- *  whenever a child's span contains the target, fall back to the
- *  smallest containing node when no child does. Used by the native
- *  engine `--range` path where the wasm `targetNode.id` doesn't apply. */
-function findInUntypedNodeByRange(node: unknown, start: number, end: number): unknown | null {
-	if (!node || typeof node !== 'object') return null;
-	const n = node as Record<string, unknown>;
-	const span = spanOf(n);
-	if (!span) return null;
-	if (span.start > start || span.end < end) return null;
-	const recurseInto = (child: unknown): unknown | null => findInUntypedNodeByRange(child, start, end);
-	for (const key of Object.keys(n)) {
-		if (!key.startsWith('_')) continue;
-		const v = n[key];
-		if (Array.isArray(v)) {
-			for (const item of v) {
-				const f = recurseInto(item);
-				if (f) return f;
-			}
-		} else {
-			const f = recurseInto(v);
-			if (f) return f;
-		}
-	}
-	return node;
+/** The smallest node of the wrapped tree, read through its slot readers, whose span covers `range`; of two the same width, the inner one. */
+function smallestNodeCovering(root: unknown, readers: SlotReaders, range: { readonly start: number; readonly end: number }): TypedNode | undefined {
+	let best: TypedNode | undefined;
+	let width = Infinity;
+	walkWrappedTree(root, readers, (node) => {
+		const span = spanOf(node);
+		if (span === undefined || span.start > range.start || span.end < range.end || span.end - span.start > width) return;
+		best = node;
+		width = span.end - span.start;
+	});
+	return best;
 }
 
 /** @internal — engine-vs-engine compare summary for `--engine both`.

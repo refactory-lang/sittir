@@ -743,6 +743,12 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	};
 }
 
+export function wrappedNodesOf(root: unknown, readers: SlotReaders): TypedNode[] {
+	const nodes: TypedNode[] = [];
+	walkWrappedTree(root, readers, (node) => nodes.push(node));
+	return nodes;
+}
+
 export function walkWrappedTree(
 	root: unknown,
 	readers: SlotReaders,
