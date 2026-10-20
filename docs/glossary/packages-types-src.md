@@ -176,9 +176,9 @@ A grammar-independent engine (`Engine<LanguageAPI>`) declares the options every 
 
 When `R` is exactly the language's declared options type, the check is `unknown`: such a value has no undeclared key and its indent unit is the declared one, so there is nothing to add. That identity is what lets a caller generic over the language forward options typed as `API['options']`, where the full check would stay deferred and reject the very type its parameter declares. It also leaves a value with only undeclared keys to the options type's own weak-type check, which the full check's intersection would defeat. An explicit `API` type argument disables inference, so `R` takes its default, the declared options type, and the check is skipped.
 
-### `packages/types/src/engine-api.ts::IsExactly`
+### `packages/types/src/type-utils.ts::IsExactly`
 
-Whether two types are identical, by comparing two generic signatures that differ only in `A` and `B`. The comparison is between function types, which are not generic objects, so it resolves even while `A` and `B` are still deferred type parameters.
+Whether two types are identical, by comparing two generic signatures that differ only in `A` and `B`. The comparison is between function types, which are not generic objects, so it resolves even while `A` and `B` are still deferred type parameters. It is the one identity test of `@sittir/types`: `RenderOptionsCheck` skips its check on it, and the refusal walk stops on it (`Refusals`). It lives in a module the package does not re-export, so it is not public. type-fest's `IsEqual` is not used in its place: it first tests assignability both ways, which does not resolve while `A` and `B` are deferred type parameters, so a caller generic over the language could no longer forward options typed `API['options']`, and across the refusal walk it costs about nine percent more instantiations.
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
@@ -296,15 +296,15 @@ The surface of a tree-bound node: the same computation as `BoundOf` with childre
 
 ### `packages/types/src/node-surface.ts::Admit`
 
-What an input admits where it names a node: each member with a numeric `$type` becomes the object `{ readonly $type: Id } & ({ readonly $render } | HoldsTree)` of that kind, written out in place so a hover shows it flat. Both arms are facts of the object at run time: a built node and a draft carry `$render`, and every object read from a parse holds its tree's token, a parsed leaf included, which is plain data with no methods. `Renderable`, what `engine.render` takes, is defined as `Admit` of a bare `$type`, so the two cannot drift apart. Arrays and tuples are mapped element by element, and everything else (leaf text, kind ids, brands, config objects) is unchanged. It distributes over unions. A built node, a parsed node and an edited node (a draft) all pass by kind with no structural comparison, so nesting a draft into a builder or a parent's slot cannot exceed the checker's depth. A storage-shaped object is refused, because the storage interfaces are internal and hold neither arm; so is a structured clone or a JSON copy of a parsed node, which leaves its tree behind. Builder parameters, strict config fields, setters and the generated coercers' internals all admit through it. By itself it cannot refuse an untyped node, since TypeScript admits a plain `number` into any numeric enum; a function that admits a node adds `RefuseUntyped` over the value it infers. The loose surface applies it to each node arm where that arm enters the widening (the passthrough of `TagEachArm`, `LooseOrConfigBag` and the depth and cycle cut-offs, a leaf's node arm, a kind enum's node arm), never to a widened value as a whole: a kind-tagged config (`{ $type: Name } & <config>`) also carries a numeric `$type`, and for a kind without fields it is the same type as that kind's storage, so only the place a node arm is introduced can tell the two apart.
+What an input admits where it names a node: each member with a numeric `$type` becomes the object `{ readonly $type: Id } & NodeMarker` of that kind, written out in place so a hover shows it flat. Both arms are facts of the object at run time: a built node and a draft carry `$render`, and every object read from a parse holds its tree's token, a parsed leaf included, which is plain data with no methods. `Renderable`, what `engine.render` takes, is defined as `Admit` of a bare `$type`, so the two cannot drift apart. Arrays and tuples are mapped element by element, and everything else (leaf text, kind ids, brands, config objects) is unchanged. It distributes over unions. A built node, a parsed node and an edited node (a draft) all pass by kind with no structural comparison, so nesting a draft into a builder or a parent's slot cannot exceed the checker's depth. A storage-shaped object is refused, because the storage interfaces are internal and hold neither arm; so is a structured clone or a JSON copy of a parsed node, which leaves its tree behind. Builder parameters, strict config fields, setters and the generated coercers' internals all admit through it. By itself it cannot refuse an untyped node, since TypeScript admits a plain `number` into any numeric enum; a function that admits a node adds `RefuseUndeclared` over the value it infers. The loose surface applies it to each node arm where that arm enters the widening (the passthrough of `TagEachArm`, `LooseOrConfigBag` and the depth and cycle cut-offs, a leaf's node arm, a kind enum's node arm), never to a widened value as a whole: a kind-tagged config (`{ $type: Name } & <config>`) also carries a numeric `$type`, and for a kind without fields it is the same type as that kind's storage, so only the place a node arm is introduced can tell the two apart.
 
 ### `packages/types/src/node-surface.ts::ValueSetter`
 
-A slot setter: one value admitted through `Admit` (rest arguments for a repeated slot, each admitted the same way), and no argument to clear an optional slot. It is generic over the value (`AdmitsOne`, `AdmitsEach`), so it refuses an untyped node (`RefuseUntyped`). Otherwise `$with.<slot>` takes what the builder's matching input takes. The generated builders admit through `Admit` without that check, so a builder's input still takes an untyped node at compile time, and refuses it at run time.
+A slot setter: one value admitted through `Admit` (rest arguments for a repeated slot, each admitted the same way), and no argument to clear an optional slot. It is generic over the value (`AdmitsOne`, `AdmitsEach`), so it refuses an untyped node (`RefuseUndeclared`). Otherwise `$with.<slot>` takes what the builder's matching input takes, and the generated builders refuse an untyped node the same way.
 
 ### `packages/types/src/node-surface.ts::ListItems`
 
-A list slot's items form, with and without its options, each item admitted through `Admit`; the options come first as `ListOptions`. Both are generic over the items, and refuse the call when any item is untyped (`RefuseUntyped`).
+A list slot's items form, with and without its options, each item admitted through `Admit`; the options come first as `ListOptions`. Both are generic over the items, and refuse the call when any item is untyped (`RefuseUndeclared`).
 
 ### `packages/types/src/node-surface.ts::ListOptions`
 
@@ -332,7 +332,7 @@ The union over a declared supertype's members of the node each id-keyed map hold
 
 ### `packages/types/src/node-surface.ts::FormsHolding`
 
-The members of a supertype union whose `$with` setter for a slot admits a given value. A union's `$with` is the intersection of its members' setters, which is the sound type for a call that must work on every member, so a slot whose members disagree on its value type refuses all values at the union. The helper distributes over the union and keeps a member when one overload of its own `$with` setter takes the value as first argument, so it is derived from the same slot types the setters are and cannot drift from them. Overloads are read through `SetterParameters`, since inferring from an overloaded type sees only its last signature: an optional slot's nullary clearing overload and a list slot's rest overload would otherwise hide the overload that takes the node. The nullary overload admits nothing. Comparison is `[Value] extends Params`, not distributive over `Value`, so a union-valued `Value` must fit whole. A member without that setter, or whose setter does not admit the value, drops out; if none admits it the result is `never`. An untyped `Value` (any member whose `$type` is a plain `number`) gives `never` before the comparison: `SetterParameters` reads a generic setter's parameters with its type parameter at the constraint, which drops the `RefuseUntyped` check the setter applies to the value it infers, and TypeScript admits `number` into any numeric enum, so the comparison alone would keep forms whose setters refuse the value. The check is the same `UntypedKind` the setters use.
+The members of a supertype union whose `$with` setter for a slot admits a given value. A union's `$with` is the intersection of its members' setters, which is the sound type for a call that must work on every member, so a slot whose members disagree on its value type refuses all values at the union. The helper distributes over the union and keeps a member when one overload of its own `$with` setter takes the value as first argument, so it is derived from the same slot types the setters are and cannot drift from them. Overloads are read through `SetterParameters`, since inferring from an overloaded type sees only its last signature: an optional slot's nullary clearing overload and a list slot's rest overload would otherwise hide the overload that takes the node. The nullary overload admits nothing. Comparison is `[Value] extends Params`, not distributive over `Value`, so a union-valued `Value` must fit whole. A member without that setter, or whose setter does not admit the value, drops out; if none admits it the result is `never`. An untyped `Value` (any member whose `$type` is a plain `number`) gives `never` before the comparison: `SetterParameters` reads a generic setter's parameters with its type parameter at the constraint, which drops the `RefuseUndeclared` check the setter applies to the value it infers, and TypeScript admits `number` into any numeric enum, so the comparison alone would keep forms whose setters refuse the value. The check is the setters' own walk (`Refusals`), with no declared input.
 
 ### `packages/types/src/node-surface.ts::BoundWithNode`
 
@@ -354,6 +354,10 @@ A strict builder with no coercer beside it, as one pair (a refine form); `bundle
 
 `undefined` for a key the node declares optional, `never` for a required one. `ConfigOf` appends it to the three keyword-presence arms (boolean keyword, bitflag, kind enum), so an explicit `undefined` is accepted exactly where the key itself may be omitted. The optional key keeps it spelled out because the types are published, and a consumer compiling with `exactOptionalPropertyTypes` must still be able to pass `{ key: undefined }` for an optional slot.
 
+### `packages/types/src/index.ts::PlainBuilders`
+
+A builder's own public overloads are generic, and a generic parameter gives no contextual type to its argument, so a coercer's inner helper whose result is inferred from the parameter it fills (`coerceMixedEnumStorage`, `_keywordOr`) would infer `unknown`. The first signature takes any overload's arguments, so a call with none, or a forwarding builder's first form, still resolves; the last is the builder's own last overload, so `Parameters<typeof F.buildX>` and `ReturnType<typeof F.buildX>` read what they read on the builder itself.
+
 ### `packages/types/src/vocabulary/utils.ts::Flag`
 
 The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker to write the flag's bit in `Flags`, and the generator to emit its guard and step.
@@ -374,26 +378,105 @@ The plan language one condition compiles to, which the native walk and `holds` b
 
 The vocabulary flags a slot test can read on each of a node type's slots, by slot accessor, read from its `__slotFlags__`, which a bound grammar's `portable.ts` declares on the node interface beside `__flags__` and the parsed surface carries (`SurfaceOf`); `never` for a type with none. It is what types a flag carried by a kind read as a kind-id leaf, which has no node interface of its own.
 
-### `packages/types/src/node-surface.ts::RefuseUntyped`
+### `packages/types/src/node-surface.ts::RefuseUndeclared`
 
 Why the refusal needs a generic check. TypeScript admits a plain `number` into a numeric enum, into one of its members, into a union of members and into an object property typed by one, so `{ $type: number, $render }` fits `Admit` of every kind. No non-generic shape separates `number` from an enum member:
 - Mapping the member to its numeric literal refuses `number`, but it admits another language's member of the same value, and the per-language enums are what refuse a foreign node.
 - Intersecting the member with its literal reduces to `never`.
 - Giving untyped nodes an enum of their own breaks `AnyUntypedNode` as the type every typed node flows into: a member of one enum is not assignable to another, and the only type every member flows into is `number`, which flows back into every enum.
 
-So the admitting function is generic over the value, and the check reads the type it infers (`UntypedKind`). It distributes over a union, so one untyped item among a rest argument's items refuses the call. A value typed `any` passes, as it does everywhere. The setters of the node surface are built on it (`AdmitsOne`, `AdmitsEach`). The generated builders admit through `Admit` without it, so they take an untyped node at compile time and refuse it only at run time.
+So the admitting function is generic over the value, and the check reads the type it infers. A generic parameter also loses TypeScript's excess-property check, which applies only to a target that is not generic, so given the parameter's declared input the check refuses a key that input does not declare as well. One walk finds both (`Refusals`), reading the value beside its declared shape. A value typed `any` passes, as it does everywhere. The setters of the node surface are built on it (`AdmitsOne`, `AdmitsEach`, `ListItems`), and so is every generated builder: a strict builder per node-valued slot (`RefusingConfig`, a positional value, a rest of items), and a loose builder, or a strict one whose whole config is generic, over its whole input with that input as `Declared`.
 
-### `packages/types/src/node-surface.ts::UntypedKind`
+The refusal is one fixed key, `refused`, whose value names the reasons. A key per reason fails both ways it can be written. Keyed by the walk directly, the mapped type makes TypeScript check at the declaration that the generic key is a property key, which chases the walk while its value is still a type parameter, where nothing ends it, until the instantiation depth overflows. Keyed by the walk through `infer`, the mapped type becomes a place TypeScript infers the value's type parameter from, and that pulls the parameter back to its constraint, the declared input, which the walk admits unwalked. A fixed key is neither. The alias stays a conditional on the walk, so while the value is a type parameter TypeScript keeps the name `RefuseUndeclared<…>` in hovers and declaration emit instead of expanding the walk, which the declaration of an exported setter could not serialize.
 
-Whether a value's `$type` is a plain `number`. `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself: the template of an enum member or a numeric literal is one numeral. A conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. It distributes over a union, and a value with no `$type` (leaf text, a kind id, `undefined`) is `false`.
+From type-fest, the walk takes `KeysOfUnion` for a union's keys (`KeyRefusals`). The rest of what it offers here does not fit. `IsEqual` is not the identity test (`IsExactly`). `IsAny` wraps its argument in `NoInfer`, which costs about eleven percent more instantiations at every step of the walk, so the walk tests `any` inline. `Exact` refuses keys alone, so it would be a second walk beside the one that finds untyped nodes; it recurses along the declared shape, which the named loose configs make recursive; and it is written as an F-bounded constraint.
 
 ### `packages/types/src/node-surface.ts::AdmitsOne`
 
-A function that admits one value: generic over it, so `RefuseUntyped` can read what the caller passed. Every single-value setter of the node surface (a slot, a flat key, a seat) is one; when its parameters are inferred from outside, as `FormsHolding` does, the value takes its constraint and the check is `unknown`.
+A function that admits one value: generic over it, so `RefuseUndeclared` can read what the caller passed. Every single-value setter of the node surface (a slot, a flat key, a seat) is one; when its parameters are inferred from outside, as `FormsHolding` does, the value takes its constraint and the check is `unknown`.
 
 ### `packages/types/src/node-surface.ts::AdmitsEach`
 
 The rest form of `AdmitsOne`: generic over the argument tuple, checked over the union of its items, so a repeated slot or a flat key's rest refuses the call when any item is untyped.
+
+### `packages/types/src/node-surface.ts::RefusingConfig`
+
+The refusal sits on the config rather than on each field because of how TypeScript infers a field's parameter. An optional field typed `S & RefuseUndeclared<S>` reads as the union `(S & RefuseUndeclared<S>) | undefined`, and against a union target TypeScript infers `S` from each member of a union value separately and keeps the first. A value that may be a built or a parsed node, `{ $type } & (HoldsTree | { $render })`, then infers as its held-tree member alone and fails. A field typed by the bare parameter infers whole. The mapped config also keeps TypeScript's excess-property check, which an intersection with the config, or one parameter over the whole config, loses.
+
+### `packages/types/src/node-surface.ts::Refusals`
+
+What `RefuseUndeclared` refuses in a value, as a union of reasons: `an untyped node has no language`, `an unknown key: <path>`, or `an input nested too deep to check: <path>`, the path being the keys and tuple indices from the parameter down, dotted (`Step`). It walks the value beside `Declared`, the declared shape at the same place, so a nested config's keys are checked against the configs its field declares; with no declared shape only untyped nodes are found. A value typed `any` proves nothing. A value identical to its declared shape, or to one of its members (`IsOneOf`), holds nothing undeclared by construction, and a builder's type parameter read at its constraint (`ArgsOf`, `Parameters`) is exactly that value, so reading a signature from outside costs no walk; a nested value typed by a generated loose config stops there too, one level below where it enters. Otherwise it distributes over a union value.
+
+The walk has one termination rule: it opens at most `WalkDepth` lists and configs on a path (`Depth`), and refuses what lies deeper by name rather than admitting it unread. Loose configs nest without a bound, since a kind's named loose config restarts the widening's own depth, so a cut-off that admitted would admit an untyped node or a misspelled key below it. The walk does not stop at a type it has already opened. That test would rest on TypeScript's identity relation, which stops comparing after about three nested levels of one tuple or array target and calls the two types identical, so a literal would match one of its own ancestors and leave its subtree unread; a finite literal never contains itself, so any such match is false. A user-declared recursive type, and a type that expands as it recurses, are refused at the bound instead.
+
+### `packages/types/src/node-surface.ts::MemberRefusals`
+
+One member of a union value. A `$type` that is a plain `number` is an untyped node: `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself, the template of an enum member or a numeric literal being one numeral, while a conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. A node (`NodeMarker`: the render method, or a held tree) ends the walk, since its fields are typed storage; a config that only names a `$render` is no node, and is opened. Any other object with a key is opened (`OpenedRefusals`): a list, a config, a config tagged with a kind, and a function carrying config fields, which the coercer reads as a config. An object with no key, a bare function included, and anything that is no object (leaf text, a kind id, `undefined`) holds nothing.
+
+### `packages/types/src/node-surface.ts::OpenedRefusals`
+
+A list's or a config's refusals. It stops at a value identical to a member of its declared shape, and refuses one with `WalkDepth` values already opened above it on its path as too deep to check. Otherwise a list (`ListOf`) walks its items (`ItemRefusals`), and anything else is a config, an object a list was spread into included, which refuses the keys none of its declared configs names (`KeyRefusals`) and walks each field beside the same field of those configs (`FieldRefusals`), each one level deeper.
+
+### `packages/types/src/node-surface.ts::ConfigShapes`
+
+The declared configs a config can be: the config members of its declared shape (`Configs`), narrowed by its `$type` when it carries one (`Tagged`), as TypeScript narrows a union by its discriminant.
+
+### `packages/types/src/node-surface.ts::Configs`
+
+The members of a declared shape that a config is checked against: its objects that are neither a list, a function nor a node (`NodeMarker`).
+
+### `packages/types/src/node-surface.ts::Tagged`
+
+The declared configs whose `$type` admits a tag. A config that declares no `$type` is kept.
+
+### `packages/types/src/node-surface.ts::KeyRefusals`
+
+The keys of a config that none of its declared configs names, each as `an unknown key: <path><key>`, a numeric or symbol key included (`KeyText`). `$type` is the tag, which the declared configs narrow by, not a key to check. A config with no declared config at its place, as on a strict builder's value, has no key check. With several declared configs a key is checked against the keys of all of them together (type-fest's `KeysOfUnion`), as TypeScript's own excess-property check does against a union: an untagged config whose place declares both the kind's own config and its bare slot's config can name a key of either.
+
+### `packages/types/src/node-surface.ts::FieldRefusals`
+
+Each field of a config walked beside the same field of its declared configs (`FieldOf`), its key appended to the path as `KeyText` spells it. `$type` is the tag, not a field.
+
+### `packages/types/src/node-surface.ts::FieldOf`
+
+A field's declared shape: the field's type in each declared config that names it, without `undefined`.
+
+### `packages/types/src/node-surface.ts::ItemRefusals`
+
+A list's items walked beside its declared list's items (`ItemOf`). A tuple, which a `const` parameter infers for a list literal and a rest parameter for its arguments, walks each item beside the declared item at its index, the index appended to the path; a list of unknown length walks its item type. A tuple's optional items are walked as required ones: an absent item holds nothing, and its `undefined` must not reach the reasons.
+
+### `packages/types/src/node-surface.ts::ItemOf`
+
+The declared item at an index: a declared tuple's element there, or a declared list's item type.
+
+### `packages/types/src/node-surface.ts::IsOneOf`
+
+Whether a type is identical to some member of a union (`IsExactly`), not merely assignable to it: an untyped node is assignable to a declared shape, which is why the walk exists.
+
+### `packages/types/src/node-surface.ts::WalkDepth`
+
+How many lists and configs the refusal walk opens on one path before it refuses the next as too deep to check. Twenty is set by probe, with margin below where the checker itself gives up, so every input ends in a named refusal, never in the checker's own depth error: a type that expands as it recurses exhausts the checker's instantiation depth at a bound of 24, and a chain of tagged block configs at 30 configs deep. At twenty, a chain of block configs nineteen levels below the input is read whole, one value opened per level, and a statements → expression statement → block chain six levels below, three values opened per level. A statements chain fifteen or more levels deep fails in the checker regardless: comparing a generic input that deep against its declared loose shape exceeds the checker's stack, with or without the refusal.
+
+### `packages/types/src/node-surface.ts::Step`
+
+A refusal's path one key or tuple index deeper, dotted, with no leading dot at the top.
+
+### `packages/types/src/node-surface.ts::NodeMarker`
+
+What makes an object a node, for admission and for the refusal walk alike: a `$render` that is the node's render method (`NodeMethods['$render']`), or a held tree (`HoldsTree`). `Admit` requires it of a member with a numeric `$type`, the walk stops at a value that carries it (`MemberRefusals`), and a declared shape's members that carry it are nodes, not configs to check keys against (`Configs`). One definition serves all three, so a config cannot pass as a node by naming `$render`: with `$render: undefined`, or any value that is no render method, it is opened, and both `$render` and anything undeclared inside it are refused.
+
+### `packages/types/src/node-surface.ts::ListOf`
+
+A value when it is a list, `never` otherwise: an array or tuple type, which carries a numeric index signature, with no key that an array does not have. Anything else that is assignable to `readonly unknown[]` is a config, checked key by key, because the coercer reads it as one:
+
+- an object literal with a list spread into it has the list's own keys (its indices, `length`, its methods) and no numeric index, yet inferred from a literal it is assignable to `readonly unknown[]`; walked as a list, its keys would go unchecked and the spread items be lost without a word;
+- an array carrying config fields (`Object.assign([], { statements })`) has the numeric index, but its fields are what the coercer reads; walked as a list, only its items would be checked.
+
+Checked as a config, each such value has its array keys refused as unknown.
+
+### `packages/types/src/node-surface.ts::KeyText`
+
+A key as a refusal spells it: a string key as it is, a numeric key as its numeral, and a symbol key as `[symbol]`, which a template literal cannot spell. A key intersected with `string` instead would be `never` for a numeric or symbol key, and a template literal over `never` is `never`, so the refusal would vanish and the key pass unchecked.
 
 ### `packages/types/src/query.ts::SlotFlagOf`
 

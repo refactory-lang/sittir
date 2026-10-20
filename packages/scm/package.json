@@ -48,8 +48,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^25.6.0",
-		"tree-sitter-scm": "github:tree-sitter-grammars/tree-sitter-query#v0.8.0",
-		"type-fest": "^5.6.0"
+		"tree-sitter-scm": "github:tree-sitter-grammars/tree-sitter-query#v0.8.0"
 	},
 	"//native": "Native artifacts are grammar-local implementation details for @sittir/scm, shipped in native/ and built from rust/crates/sittir-scm.",
 	"sittir": {

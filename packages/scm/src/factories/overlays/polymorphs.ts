@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -51,12 +51,18 @@ const grouping$groupingGroup = <PF extends (config: never) => unknown, CF extend
 		);
 	};
 };
-const grouping$seated: (...args: T.Grouping.BuildArgs) => ReturnType<typeof F.buildGrouping> = grouping$groupingGroup(
-	F.buildGrouping,
-	F.buildGroupingGroup
-);
-const grouping$seatedCoerce: (...args: T.Grouping.LooseArgs) => ReturnType<typeof C.coerceToGrouping> =
-	grouping$groupingGroup(C.coerceToGrouping, C.coerceToGroupingGroup);
+function grouping$seated<A extends T.Grouping.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildGrouping>;
+function grouping$seated(...args: T.Grouping.BuildArgs): ReturnType<typeof F.buildGrouping> {
+	return grouping$groupingGroup(F.buildGrouping, F.buildGroupingGroup)(...args);
+}
+function grouping$seatedCoerce<const A extends T.Grouping.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.Grouping.LooseArgs>
+): ReturnType<typeof C.coerceToGrouping>;
+function grouping$seatedCoerce(...args: T.Grouping.LooseArgs): ReturnType<typeof C.coerceToGrouping> {
+	return grouping$groupingGroup(C.coerceToGrouping, C.coerceToGroupingGroup)(...args);
+}
 export const grouping = Object.freeze({
 	...B.grouping,
 	...bundle(grouping$seated, grouping$seatedCoerce, { key: 'grouping', max: 1 })
@@ -106,12 +112,14 @@ const namedNodePlain$anchoredLast$coerce = namedNodePlain$anchoredLast(
 	C.coerceToNamedNodePlain,
 	C.coerceToNamedNodeGroupAnchoredLast
 );
-const namedNodePlain$underscore$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>,
+const namedNodePlain$underscore$applied: <const V extends OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>>(
+	config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>>,
 	options?: OptionsArg<typeof F.buildNamedNodePlain>
 ) => ReturnType<typeof F.buildNamedNodePlain> = namedNodePlain$underscore(F.buildNamedNodePlain, TSKindId.Underscore);
-const namedNodePlain$underscore$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>,
+const namedNodePlain$underscore$appliedCoerce: <
+	const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>
+>(
+	config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>>,
 	options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 ) => ReturnType<typeof C.coerceToNamedNodePlain> = namedNodePlain$underscore(
 	C.coerceToNamedNodePlain,
@@ -181,60 +189,116 @@ export const namedNodePlain = Object.freeze({
 	})
 }) as unknown as typeof B.namedNodePlain & {
 	underscore: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>>,
 			options?: OptionsArg<typeof F.buildNamedNodePlain>
 		) => ReturnType<typeof F.buildNamedNodePlain>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'name'>>,
 			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 		children: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof F.buildNamedNodeGroupChildren>[0],
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
+					ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
+							ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$applied>
 			) => ReturnType<typeof namedNodePlain$underscore$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0],
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
+					ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
+							ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$appliedCoerce>
 			) => ReturnType<typeof namedNodePlain$underscore$appliedCoerce>;
 		};
 		anchoredLast: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0],
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
+					ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
+							ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$applied>
 			) => ReturnType<typeof namedNodePlain$underscore$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0],
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
+					ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
+							ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$appliedCoerce>
 			) => ReturnType<typeof namedNodePlain$underscore$appliedCoerce>;
 		};
 	};
 	children: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupChildren>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+				>,
 			options?: OptionsArg<typeof F.buildNamedNodePlain>
 		) => ReturnType<typeof F.buildNamedNodePlain>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 	};
 	anchoredLast: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+				>,
 			options?: OptionsArg<typeof F.buildNamedNodePlain>
 		) => ReturnType<typeof F.buildNamedNodePlain>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 		) => ReturnType<typeof C.coerceToNamedNodePlain>;
 	};
@@ -290,26 +354,54 @@ export const namedNodeSupertyped = Object.freeze({
 	})
 }) as unknown as typeof B.namedNodeSupertyped & {
 	children: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupChildren>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+				>,
 			options?: OptionsArg<typeof F.buildNamedNodeSupertyped>
 		) => ReturnType<typeof F.buildNamedNodeSupertyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
 		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
 	};
 	anchoredLast: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+				>,
 			options?: OptionsArg<typeof F.buildNamedNodeSupertyped>
 		) => ReturnType<typeof F.buildNamedNodeSupertyped>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
+						ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
 		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
 	};
