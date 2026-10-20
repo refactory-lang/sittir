@@ -17,7 +17,7 @@ describe('an identity escape takes its input', () => {
 	it('enforces the content guard, and shows what it rejected', () => {
 		expect(() => re.build.identityEscape('k')).toThrow('identity_escape.content: text does not match pattern: k');
 		expect(() => re.build.identityEscape('\\.')).toThrow('identity_escape.content: text does not match pattern: \\.');
-		expect(() => re.build.identityEscape({ a: 1 } as never)).toThrow('text does not match pattern: {"a":1}');
+		expect(() => re.build.identityEscape({ a: 1 } as never)).toThrow('text must be a string: {"a":1}');
 	});
 
 	it('refuses text given as spelled in full that lacks the affix', () => {

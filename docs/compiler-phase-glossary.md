@@ -233,9 +233,9 @@ Reference: [glossary/compiler.md](glossary/compiler.md).
 `SimplifiedGrammar` carrying all three rule views. First
 `applyNormalizationPasses`: collapse degenerate wrappers, fan out
 `seq(a, choice(b, c), d)` into a choice of seqs, factor common
-prefix/suffix across choice branches, dedupe adjacent structurally-equal
-members, inline single-use hidden rules (fixpoint) — non-lossy on named
-content. Then `applyWrapperDeletion` pushes `optional` / `field` /
+prefix/suffix across choice branches, inline single-use hidden rules
+(fixpoint) — non-lossy on named content. A sequence keeps every member it
+names: two equal adjacent members are two children. Then `applyWrapperDeletion` pushes `optional` / `field` /
 `repeat` / `repeat1` / `alias` wrappers down to leaf `RuleBase` attributes
 ("outer wins", idempotent), producing the wrapper-free `RenderRule` view.
 Third, a fixed-point loop (up to 8 passes) of `inlineHiddenSeqRefs` splices

@@ -9,7 +9,7 @@
 		"expression_statement": {"definedBy":"override","childKind":{"expression_statement_with_semi":"with_semi"}},
 		"function_type": {"definedBy":"override","childKind":{"function_type_trait_form":"trait_form","function_type_fn_form":"fn_form"}},
 		"line_comment": {"definedBy":"override","childKind":{"line_comment_extra_slashes":"extra_slashes","line_comment_doc_outer":"doc_outer","line_comment_doc_inner":"doc_inner","line_comment_regular":"regular"}},
-		"non_special_token": {"definedBy":"override","childKind":{"_literal":"literal","identifier":"identifier","mutable_specifier":"mutable_specifier","self":"self","super":"super","crate":"crate","primitive_type":"primitive_type","token_tree_punctuation":"token_tree_punctuation","_token_keywords":"token_keywords"}},
+		"non_special_token": {"definedBy":"override","childKind":{"_literal":"literal","identifier":"identifier","mutable_specifier":"mutable_specifier","self":"self","super":"super","crate":"crate","primitive_type":"primitive_type","token_tree_punctuation":"tree_punctuation","_token_keywords":"keywords"}},
 		"range_pattern_with_left": {"definedBy":"override","childKind":{"range_pattern_with_left_with_right":"with_right","range_pattern_with_left_bare":"bare"}},
 		"type_argument": {"definedBy":"enrich","childKind":{"_type":"type","type_binding":"type_binding","lifetime":"lifetime","_literal":"literal","block":"block"}},
 		"visibility_modifier": {"definedBy":"override","childKind":{"crate_visibility_modifier":"crate","visibility_modifier_pub":"pub"}},
@@ -55,6 +55,27 @@
 		"type_parameter.default_type": {"type_identifier":"identifier"},
 		"types.item": {"type_identifier":"identifier"},
 		"while_expression.condition": {"let_chain":"_let_chain"}
+	},
+	"displayUnions": {
+		"crate_visibility_modifier": [
+			{"storage":"crate","literal":false}
+		],
+		"field_identifier": [
+			{"storage":"identifier","literal":false}
+		],
+		"let_chain": [
+			{"storage":"_let_chain","literal":false}
+		],
+		"shorthand_field_identifier": [
+			{"storage":"identifier","literal":false}
+		],
+		"string_content": [
+			{"storage":"raw_string_literal_content","literal":false},
+			{"storage":"string_content","literal":false}
+		],
+		"type_identifier": [
+			{"storage":"identifier","literal":false}
+		]
 	},
 	"spelledTrivia": {
 		"forms": [

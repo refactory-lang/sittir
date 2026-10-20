@@ -47,3 +47,22 @@ describe('a kind with a second slot, and a polymorph parent', () => {
 		expect(ir.lineComment(' x').$render()).toBe('// x\n');
 	});
 });
+
+describe('an own-text builder with affix false refuses a non-string as a type, not as unaffixed', () => {
+	it('refuses undefined with the slot label', () => {
+		expect(() => ir.escapeSequence.simple(undefined as never, false)).toThrow(
+			'escape_sequence_simple.content: text must be a string: undefined'
+		);
+	});
+
+	it('refuses an object with the slot label, showing what it was given', () => {
+		expect(() => ir.escapeSequence.simple({ a: 1 } as never, false)).toThrow(
+			'escape_sequence_simple.content: text must be a string: {"a":1}'
+		);
+	});
+
+	it('still gives a string missing its affix the affix message', () => {
+		expect(() => ir.escapeSequence.simple('n' as never, false)).toThrow(/escape_sequence_simple: text given with its affixes must be/);
+	});
+});
+
