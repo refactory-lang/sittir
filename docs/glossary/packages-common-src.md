@@ -804,7 +804,7 @@ A language's view of the portable guards: `portableTrees` over the same `vocabul
 
 ### `packages/common/src/portable/index.ts::languageGuardOf`
 
-The guard of a vocabulary path in one language's view. A bare kind id reads through the rows recorded for the language's `load` (`rowsByLoad`) by `readsAs`. If no engine of the language, or of a copy sharing its `load`, has loaded them yet, it throws, naming the language and asking for an engine first: answering false there would read as a classification. A node must carry a kind and have been stamped by an engine of this very language object (`engineOf(value)?.language === language`) that carries portable rows; it then reads by those rows. A node of another language, or one no engine stamped, answers false.
+The guard of a vocabulary path in one language's view. A bare kind id reads through the rows recorded for the language's `load` (`rowsByLoad`) by `readsAs`. If no engine of the language, or of a copy sharing its `load`, has loaded them yet, it throws, naming the language and asking for an engine first: answering false there would read as a classification. A node must carry a kind and pass the language check (`ofLanguage`, the `inLanguage` check `portableGuardsOf` builds once per view, the same one the language's kind test makes), and its engine must carry portable rows; it then reads by those rows. A node of another language, or one no engine stamped, answers false.
 
 ### `packages/common/src/identity.ts::Role`
 

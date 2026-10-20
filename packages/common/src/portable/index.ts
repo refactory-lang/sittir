@@ -1,4 +1,5 @@
 import { engineOf } from '../engine-scope.ts';
+import { inLanguage } from '../language.ts';
 import { hasKind, readsAs } from './classify.ts';
 import type { PortableRows } from '@sittir/types';
 import { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree } from './tree.ts';
@@ -80,12 +81,15 @@ export const portable = portableTrees(vocabularyPaths, guardOf);
  */
 export function portableGuardsOf(language: PortableLanguage): PortableGuardTree<VocabularyPath, LanguageGuard> {
 	let view = views.get(language);
-	if (view === undefined) views.set(language, (view = portableTrees(vocabularyPaths, (path) => languageGuardOf(language, path)).is));
+	if (view === undefined) {
+		const ofLanguage = inLanguage(language);
+		views.set(language, (view = portableTrees(vocabularyPaths, (path) => languageGuardOf(language, ofLanguage, path)).is));
+	}
 	return view;
 }
 
 const languageGuardOf =
-	(language: PortableLanguage, path: string): LanguageGuard =>
+	(language: PortableLanguage, ofLanguage: (value: unknown) => boolean, path: string): LanguageGuard =>
 	(value): value is Node | number => {
 		if (typeof value === 'number') {
 			const rows = rowsByLoad.get(language.load);
@@ -93,7 +97,7 @@ const languageGuardOf =
 				throw new Error(`${language.name}: a portable guard given a kind id reads the language's rows; create an engine for ${language.name} first`);
 			return readsAs(rows, path, value);
 		}
-		if (!hasKind(value)) return false;
-		const engine = engineOf(value);
-		return engine?.language === language && engine.portable !== undefined && readsAs(engine.portable, path, value);
+		if (!hasKind(value) || !ofLanguage(value)) return false;
+		const rows = engineOf(value)?.portable;
+		return rows !== undefined && readsAs(rows, path, value);
 	};
