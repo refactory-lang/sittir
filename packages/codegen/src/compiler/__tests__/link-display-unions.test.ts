@@ -24,6 +24,58 @@ function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<Ra
 }
 
 describe('link builds one display union per alias target', () => {
+	it('keeps a catalog default alias beside the other storage of the same display', () => {
+		const raw = makeRaw({
+			source: {
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'first' },
+					{ type: 'ALIAS', named: true, value: 'shown', content: { type: 'SYMBOL', name: 'second' } }
+				]
+			} as Rule<'evaluate'>,
+			first: {
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: 'a' },
+					{ type: 'SYMBOL', name: 'identifier' }
+				]
+			} as Rule<'evaluate'>,
+			second: {
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: 'b' },
+					{ type: 'SYMBOL', name: 'identifier' }
+				]
+			} as Rule<'evaluate'>,
+			identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
+		});
+		const parser = (kind: string, symbolName = kind) => ({
+			cSymbol: `sym_${kind}`,
+			parserName: kind,
+			symbolName,
+			anon: false,
+			aux: false,
+			alias: false,
+			hidden: false
+		});
+		const linked = link(raw, {
+			generatedIdTables: {
+				sourceArtifact: 'fixture',
+				kindIds: {
+					source: { id: 1, parser: parser('source') },
+					identifier: { id: 2, parser: parser('identifier') },
+					first: { id: 3, parser: parser('first', 'shown') },
+					second: { id: 4, parser: parser('second', 'shown') },
+					_shown: { id: 5, parser: { ...parser('shown'), cSymbol: 'alias_sym_shown', alias: true } }
+				}
+			}
+		});
+		expect([...(linked.displayUnions?.get('shown') ?? [])].sort((a, b) => a.storage.localeCompare(b.storage))).toEqual([
+			{ storage: 'first', literal: false },
+			{ storage: 'second', literal: false }
+		]);
+	});
+
 	it('collects every storage kind that displays under a name', () => {
 		const linked = link(
 			makeRaw({
@@ -56,9 +108,17 @@ describe('link builds one display union per alias target', () => {
 				generic_type: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'identifier' }] } as Rule<'evaluate'>,
 				generic_type_with_turbofish: {
 					type: 'SEQ',
-					members: [{ type: 'SYMBOL', name: 'identifier' }, { type: 'STRING', value: '::' }]
+					members: [
+						{ type: 'SYMBOL', name: 'identifier' },
+						{ type: 'STRING', value: '::' }
+					]
 				} as Rule<'evaluate'>,
-				use: { type: 'ALIAS', named: true, value: 'generic_type', content: { type: 'SYMBOL', name: 'generic_type_with_turbofish' } } as Rule<'evaluate'>,
+				use: {
+					type: 'ALIAS',
+					named: true,
+					value: 'generic_type',
+					content: { type: 'SYMBOL', name: 'generic_type_with_turbofish' }
+				} as Rule<'evaluate'>,
 				identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
 			})
 		);
@@ -67,5 +127,33 @@ describe('link builds one display union per alias target', () => {
 			{ storage: 'generic_type', literal: false },
 			{ storage: 'generic_type_with_turbofish', literal: false }
 		]);
+	});
+});
+
+describe('a display family keeps a member that the compile boundary folds under OPTIONAL', () => {
+	const familyOf = (aliased: Rule<'evaluate'>) => {
+		const linked = link(
+			makeRaw({
+				source: {
+					type: 'SEQ',
+					members: [
+						{ type: 'ALIAS', named: true, value: 'shown', content: aliased },
+						{ type: 'ALIAS', named: true, value: 'shown', content: { type: 'SYMBOL', name: 'second' } },
+						{ type: 'SYMBOL', name: 'first' }
+					]
+				} as Rule<'evaluate'>,
+				first: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>,
+				second: { type: 'PATTERN', value: '[0-9]+' } as Rule<'evaluate'>
+			})
+		);
+		return [...(linked.displayUnions?.get('shown') ?? [])].map((member) => member.storage).sort();
+	};
+
+	it('keeps first in the shown family when the blank-armed choice(first, blank()) is folded to OPTIONAL', () => {
+		expect(familyOf({ type: 'OPTIONAL', content: { type: 'SYMBOL', name: 'first' } } as Rule<'evaluate'>)).toEqual(['first', 'second']);
+	});
+
+	it('keeps first in the shown family when the member is optional($.first)', () => {
+		expect(familyOf({ type: 'OPTIONAL', content: { type: 'SYMBOL', name: 'first' } } as Rule<'evaluate'>)).toEqual(['first', 'second']);
 	});
 });

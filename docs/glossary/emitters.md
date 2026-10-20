@@ -13918,8 +13918,10 @@ gap a site may take.
 
 The site each of a leaf's `canonical` entries names, looked up in the
 `SiteIndex` by its canonical address. Exactly one site must answer each
-entry: none, or more than one at the same address, fails at codegen rather
-than silently taking the first. One entry for an ordinary site, every bound
+entry, unless the sites at that address are one alias-site family
+(`isAliasSiteFamily`), which the address reaches whole: none, or several
+that are not one family, fails at codegen rather than silently taking the
+first. One entry for an ordinary site, every bound
 site for a declaration reached through bindings. A leaf whose entries mix
 spacing and delimiter sites (its trie node would have to be two variants)
 also fails.
@@ -15138,6 +15140,12 @@ The text of `node-model.json5`, one node per line (`printRecordLines`). `generat
 ### `packages/codegen/src/emitters/node-model.ts::enumMembersOf`
 
 An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::isAliasSiteFamily`
+
+Recognizes distinct parser identities merged under one explicit display alias, either at their own edge or as seated children of the same owner slot, with the same admitted/default spacing. Their common option address reaches every physical site. Unrelated duplicate canonical paths remain errors.
+
+`emitOptionsHints` accepts multiple non-owning carriers only when the canonical `NodeMap.displayUnions` explicitly lists them under the option root. Every such type gets the root hint; its map entry names their hint union. Coincidental display collisions retain the refusal. `RenderOptionsPlan` retains that same canonical display-union map for physical site address projection.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamOf`
 
