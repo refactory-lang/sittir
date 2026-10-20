@@ -750,11 +750,11 @@ A keyword-presence slot's loose input as what the slot stores: `true` for any pr
 
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
-A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry as it is.
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry with its text as the method `$text()` (`asTextNode`).
 
 ### `packages/common/src/utils.ts::hydratedEntries`
 
-A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the same array when none is a coordinate.
+A trivia side as its reader gets it, each entry through `hydrateTriviaEntry`. The array is a new one only when an entry is a coordinate. Otherwise it is the same array, its entries given the method `$text()` in place, so a side read back is the one stored.
 
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
@@ -859,6 +859,10 @@ The `KindView` of data with no wrapper or list kinds: no for every kind.
 ### `packages/common/src/node-data.ts::nodeText`
 
 The text a leaf holds, from either form a value takes: a node's `$text()` method, which makes the string when called, or the `$text` string native node data carries across the boundary. `undefined` for a value with neither. Code that may hold either form, such as the crossing (`toNodeValue`), builder input checks (`rejectKeywordText`, `rejectReservedText`), the delimited check, `isNode`, the portable classifier and the validators, reads text here and nowhere else. Typed code holds nodes only and calls `$text()`.
+
+### `packages/common/src/node-data.ts::asTextNode`
+
+A read value given a node's text member: an object whose `$text` is a string gets the method `$text()` under that key, on the same object, so the tree it holds and its read identity stay with it, and every node a user reaches reads its text one way. Native returns the string, because what it returns is data, and data serializes (a `$snapshot()` result, a render input, a fixture). JavaScript turns it into a node here, at the two places a read value becomes one without a kind's wrap: a trivia entry (`hydrateTriviaEntry`), such as a detached comment or an ERROR region read as trivia, and a value of a kind with no wrap in the generated table (`wrapNode`), such as an ERROR region in a slot or at the root. Any other value, including a node that already has the method, is returned as it is.
 
 ### `packages/common/src/interior.ts::interiorPattern`
 

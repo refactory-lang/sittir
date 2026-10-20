@@ -31,7 +31,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VerbatimNode {
             return Ok(Self { text: unsafe { String::from_napi_value(env, napi_val)? } });
         }
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        let text = unsafe { crate::boundary::property::<crate::boundary::NodeText>(env, napi_val, c"$text")? }.map(|text| text.0)
+        let text = unsafe { crate::boundary::property::<String>(env, napi_val, c"$text")? }
             .ok_or_else(|| ::napi::Error::from_reason("verbatim text arrives as a string, or as an object carrying $text"))?;
         Ok(Self { text })
     }

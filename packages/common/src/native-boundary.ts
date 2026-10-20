@@ -94,7 +94,7 @@ function assertNativeUntypedNodeInternal(value: unknown, path: string): asserts 
 		if (value[key] === undefined) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
 	}
-	if (value.$text !== undefined && typeof value.$text !== 'function') assertString(value.$text, `${path}.$text`);
+	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
 	if (value.$treeHandle !== undefined) {
 		assertFiniteNumber(value.$treeHandle, `${path}.$treeHandle`);
 		assertNativeSpan(value.$span, `${path}.$span`);

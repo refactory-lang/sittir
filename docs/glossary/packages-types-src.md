@@ -82,7 +82,7 @@ The in-line adjacency of a trivia item the source fixes in place, as a read find
 
 ### `packages/types/src/core-types.ts::ErrorNode`
 
-An ERROR region read as a value. `$text()` returns the region's own bytes, a method as every node's text is: the native read emits it as a function that makes one new string per call. As a trivia item it also carries its in-line adjacency (`TriviaFlanks`). Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`.
+An ERROR region read as a value. `$text()` returns the region's own bytes, a method as every node's text is (`asTextNode`); the native read's data carries them as a string. As a trivia item it also carries its in-line adjacency (`TriviaFlanks`). Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`.
 
 ### `packages/types/src/core-types.ts::TriviaSetter`
 

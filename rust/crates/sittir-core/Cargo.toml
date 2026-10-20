@@ -28,7 +28,7 @@ tree-sitter = { workspace = true }
 # Node.js is required at compile time, so sittir-core builds without
 # Node.js/npm. The actual .node artifact is linked by the sittir-*
 # grammar binding crates; these deps only buy us the boundary attribute.
-napi = { version = "3", default-features = false, features = ["napi5"], optional = true }
+napi = { version = "3", default-features = false, features = ["napi4"], optional = true }
 napi-derive = { version = "3", optional = true }
 # ast-grep-core is named in spec 012 T003 but deferred from Phase 1;
 # the version conflict that previously blocked it (grammar crates

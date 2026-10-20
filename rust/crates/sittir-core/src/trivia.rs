@@ -575,7 +575,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             kind: unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? },
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-            text: unsafe { crate::boundary::required::<crate::boundary::NodeText>(env, obj, c"$text", "TriviaText")? }.0,
+            text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
             span: unsafe { crate::boundary::property(env, obj, c"span")? },
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
@@ -586,8 +586,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
     }
 }
 
-/// `{ $type, $text, span?, $before?, $after? }`, `$text` a method as every
-/// node's is (`boundary::text_method`).
+/// `{ $type, $text, span?, $before?, $after? }`.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
@@ -596,7 +595,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
         unsafe {
             object_with_present(env, &[
                 present(env, c"$type", Some(val.kind.0))?,
-                Some((c"$text", crate::boundary::text_method(env, val.text)?)),
+                present(env, c"$text", Some(val.text))?,
                 present(env, c"span", val.span)?,
                 present(env, c"$before", val.before)?,
                 present(env, c"$after", val.after)?,

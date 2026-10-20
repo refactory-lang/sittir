@@ -3,6 +3,7 @@
 import {
 	restItems,
 	markEdited as $edited,
+	asTextNode,
 	carryRead,
 	treeHandleOf,
 	hydrateWith,
@@ -820,7 +821,7 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown;
 export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	const fn = _wrapTable[data.$type as unknown as number];
 	return fn === undefined
-		? data
+		? asTextNode(data)
 		: carryRead(
 				data,
 				inTreeEngine(tree, () => fn(data, tree))

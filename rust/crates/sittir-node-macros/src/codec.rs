@@ -206,7 +206,7 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
                     #napi::ValueType::Object => {
                         let obj = unsafe { ::sittir_core::boundary::object(env, napi_val)? };
                         ::core::result::Result::Ok(Self {
-                            text: unsafe { ::sittir_core::boundary::optional::<::sittir_core::boundary::NodeText>(env, obj, #text_key, #owner)? }.map(|text| text.0)
+                            text: unsafe { ::sittir_core::boundary::optional::<::std::string::String>(env, obj, #text_key, #owner)? }
                                 #text_of_object,
                             #(#reads)*
                         })
@@ -264,7 +264,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             let value = decoded(name, ty);
             text_arm = quote! {
                 if [#(#ids),*].contains(&id)
-                    && unsafe { ::sittir_core::boundary::property::<::sittir_core::boundary::NodeText>(env, napi_val, c"$text")? }.is_some()
+                    && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()
                 {
                     return ::core::result::Result::Ok(#value);
                 }
@@ -396,7 +396,7 @@ mod tests {
             }
         });
         assert!(has(&out, r#"::sittir_core::__napi::ValueType::Number => ::core::result::Result::Ok(Self { text: ::std::string::ToString::to_string("self"), layout: ::core::default::Default::default(), }),"#));
-        assert!(has(&out, r#"::sittir_core::boundary::optional::<::sittir_core::boundary::NodeText>(env, obj, c"$text", "SelfNode")"#));
+        assert!(has(&out, r#"::sittir_core::boundary::optional::<::std::string::String>(env, obj, c"$text", "SelfNode")"#));
         assert!(has(&out, r#".unwrap_or_else(|| ::std::string::ToString::to_string("self"))"#));
     }
 
@@ -501,7 +501,7 @@ mod tests {
         });
         assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(TriviaNode::Verbatim("));
         assert!(has(&out, "::sittir_core::__napi::ValueType::String => ::core::result::Result::Ok(TriviaNode::Verbatim("));
-        assert!(has(&out, r#"if [kind::LINE_COMMENT].contains(&id) && unsafe { ::sittir_core::boundary::property::<::sittir_core::boundary::NodeText>(env, napi_val, c"$text")? }.is_some()"#));
+        assert!(has(&out, r#"if [kind::LINE_COMMENT].contains(&id) && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()"#));
         assert!(!has(&out, "::core::option::Option::Some(2u16)"));
         assert!(!out.contains("ReadNode"));
     }
