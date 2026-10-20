@@ -28,6 +28,7 @@ import {
 	findFirst,
 	findWrappedNode,
 	loadSlotReaders,
+	materialize,
 	readNodeOf,
 	collectKinds,
 	emitValidatorMetrics,
@@ -381,11 +382,9 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				// factory that must dispatch as `factory()` with no args).
 				const shape = factoryShapes[readKind] ?? 'config';
 				const factory = factoryMap[readKind]!;
-				if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-					// ReadNode emits `_<name>` top-level keys, not
-					// `$fields`. Use `nodeToConfig` which handles both shapes
-					// and recursively resolves children through factories.
-					const config = nodeToConfig(readData, {
+				const readStorage = materialize(readData, readers);
+				const configOf = (): Record<string, unknown> =>
+					nodeToConfig(readStorage, {
 						shownKind: readKind,
 						interiorOf,
 						factoryMap,
@@ -395,6 +394,11 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						fieldAliasMap,
 						kindNameFromId
 					});
+				if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
+					// ReadNode emits `_<name>` top-level keys, not
+					// `$fields`. Use `nodeToConfig` which handles both shapes
+					// and recursively resolves children through factories.
+					const config = configOf();
 					if (shape === 'direct' || shape === 'forwarded') {
 						// Direct-call shape: use the sole field when metadata
 						// names one, otherwise treat it as a single child call.
@@ -411,7 +415,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						// options)` — factories without options ignore the extra argument.
 						factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
 							config,
-							separatedListFactoryOptions(readData)
+							separatedListFactoryOptions(readStorage)
 						);
 					}
 				} else if (shape === 'constant') {
@@ -428,31 +432,13 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					// leading?, trailing?}, ...elements)` — distinct calling
 					// convention from 'spread's plain rest-param factories (see
 					// classifyFactoryShape's separatedList case).
-					const config = nodeToConfig(readData, {
-						shownKind: readKind,
-						interiorOf,
-						factoryMap,
-						factoryShapes,
-						factoryFields,
-						factorySlots,
-						fieldAliasMap,
-						kindNameFromId
-					});
+					const config = configOf();
 					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-					const options = separatedListFactoryOptions(readData);
+					const options = separatedListFactoryOptions(readStorage);
 					const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
 					factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 				} else {
-					const config = nodeToConfig(readData, {
-						shownKind: readKind,
-						interiorOf,
-						factoryMap,
-						factoryShapes,
-						factoryFields,
-						factorySlots,
-						fieldAliasMap,
-						kindNameFromId
-					});
+					const config = configOf();
 					const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 					factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...childArgs);
 				}
@@ -483,8 +469,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				return undefined;
 			}
 
-			// Check for undefined nodes in from() output
-			const undefinedNodes = findUndefined(fromResult);
+			const fromStorage = materialize(fromResult, readers);
+			const undefinedNodes = findUndefined(fromStorage);
 			if (undefinedNodes.length > 0) {
 				undefinedCount++;
 				errors.push({
@@ -495,8 +481,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				return undefined;
 			}
 
-			// Structural comparison
-			const diffs = structuralDiff(fromResult, factoryResult);
+			const diffs = structuralDiff(fromStorage, materialize(factoryResult, readers));
 			if (diffs.length > 0) {
 				divergentCount++;
 				errors.push({
