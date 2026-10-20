@@ -4194,7 +4194,11 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
 export function buildComment(text: `#${string}`, affix: false): T.Comment.Bound;
 export function buildComment(input: string, affix: boolean = true): T.Comment.Bound {
-	const value = affix ? input : unaffixed(input, '#', '', 'comment');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string') throw new Error(`comment.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '#', '', 'comment');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`comment.content: text must be a string: ${describeValue(_content)}`);
@@ -5985,7 +5989,12 @@ export function buildEscapeSequenceUnicodeFixed(
 	input: string,
 	affix: boolean = true
 ): T.EscapeSequenceUnicodeFixed.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_fixed');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_unicode_fixed.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_unicode_fixed');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence_unicode_fixed.content: text must be a string: ${describeValue(_content)}`);
@@ -6018,7 +6027,12 @@ export function buildEscapeSequenceUnicodeWide(
 	input: string,
 	affix: boolean = true
 ): T.EscapeSequenceUnicodeWide.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_wide');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_unicode_wide.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_unicode_wide');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence_unicode_wide.content: text must be a string: ${describeValue(_content)}`);
@@ -6048,7 +6062,12 @@ export function buildEscapeSequenceUnicodeWide(
 export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
 export function buildEscapeSequenceHex(text: `\\${string}`, affix: false): T.EscapeSequenceHex.Bound;
 export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.EscapeSequenceHex.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_hex');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_hex.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_hex');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence_hex.content: text must be a string: ${describeValue(_content)}`);
@@ -6084,7 +6103,12 @@ export function buildEscapeSequenceOctal(
 	input: string | number | bigint,
 	affix: boolean = true
 ): T.EscapeSequenceOctal.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_octal');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_octal.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_octal');
+	}
 	const _content = numberText(10, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence_octal.content: text must be a string: ${describeValue(_content)}`);
@@ -6114,7 +6138,12 @@ export function buildEscapeSequenceOctal(
 export function buildEscapeSequenceLineBreak(content: string, affix?: true): T.EscapeSequenceLineBreak.Bound;
 export function buildEscapeSequenceLineBreak(text: `\\${string}`, affix: false): T.EscapeSequenceLineBreak.Bound;
 export function buildEscapeSequenceLineBreak(input: string, affix: boolean = true): T.EscapeSequenceLineBreak.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_line_break');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_line_break.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_line_break');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence_line_break.content: text must be a string: ${describeValue(_content)}`);
@@ -6144,7 +6173,12 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
 export function buildEscapeSequenceSimple(text: `\\${string}`, affix: false): T.EscapeSequenceSimple.Bound;
 export function buildEscapeSequenceSimple(input: string, affix: boolean = true): T.EscapeSequenceSimple.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_simple');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_simple.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_simple');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence_simple.content: text must be a string: ${describeValue(_content)}`);
@@ -6174,7 +6208,12 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 export function buildEscapeSequenceNamed(content: string, affix?: true): T.EscapeSequenceNamed.Bound;
 export function buildEscapeSequenceNamed(text: `\\${string}`, affix: false): T.EscapeSequenceNamed.Bound;
 export function buildEscapeSequenceNamed(input: string, affix: boolean = true): T.EscapeSequenceNamed.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_named');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_named.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_named');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence_named.content: text must be a string: ${describeValue(_content)}`);

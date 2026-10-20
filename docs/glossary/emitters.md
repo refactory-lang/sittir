@@ -11553,7 +11553,7 @@ Such a kind is a leaf. Its builder takes text only and has one surface. It never
 
 ### `packages/codegen/src/emitters/factories.ts::ownTextArgs`
 
-The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs`: `[content: T, affix?: true] | [text: <spelled type>, affix: false]`. `T` is `ownTextContentType`, the content slot's storage type widened by what its storage coercion accepts (a numeric content also takes `number | bigint`). With `affix` true or absent the first argument is the content, and the builder adds the affixes; with `affix: false` it is the token spelled in full, typed by the kind's affixes, and the builder removes them (`unaffixed`), refusing text that lacks either. Text that carries the affixes passed without `affix: false` is content like any other: it is refused when the content pattern excludes it, and renders with the affixes doubled when the pattern admits it.
+The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs`: `[content: T, affix?: true] | [text: <spelled type>, affix: false]`. `T` is `ownTextContentType`, the content slot's storage type widened by what its storage coercion accepts (a numeric content also takes `number | bigint`). With `affix` true or absent the first argument is the content, and the builder adds the affixes; with `affix: false` it is the token spelled in full, typed by the kind's affixes, and the builder refuses a non-string with its slot's type refusal (`textTypeMismatchThrow`, labelled `<kind>.<slot>` as the slot guard is), then removes the affixes (`unaffixed`), refusing text that lacks either. A non-string so gets the one refusal in both modes. Text that carries the affixes passed without `affix: false` is content like any other: it is refused when the content pattern excludes it, and renders with the affixes doubled when the pattern admits it.
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
@@ -15119,7 +15119,7 @@ The `checkDelimited(handle, node, spec, [content slots], open, close)` call emit
 
 ### `packages/codegen/src/emitters/factories.ts::textTypeMismatchThrow`
 
-The one place a text guard's type refusal is worded: `<label>: text must be a string: <value>`, with the value written through `describeValue` so the refusal shows what was passed. The leaf guard (`buildLeafGuards`) and the per-slot interior guard (`emitFieldCarryingFactory`) both emit it ahead of any pattern test, so a non-string is refused with this one message wherever it is passed, and the pattern message is left to a string the pattern rejects.
+The one place a text guard's type refusal is worded: `<label>: text must be a string: <value>`, with the value written through `describeValue` so the refusal shows what was passed. The leaf guard (`buildLeafGuards`) and the per-slot interior guard (`emitFieldCarryingFactory`) both emit it ahead of any pattern test, and an own-text builder emits it ahead of removing the affixes of text given with `affix: false` (`ownTextArgs`), so a non-string is refused with this one message wherever it is passed, and the pattern message is left to a string the pattern rejects.
 
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 

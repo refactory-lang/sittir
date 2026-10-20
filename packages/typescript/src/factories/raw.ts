@@ -175,7 +175,12 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 export function buildHashBangLine(content: string, affix?: true): T.HashBangLine.Bound;
 export function buildHashBangLine(text: `#!${string}`, affix: false): T.HashBangLine.Bound;
 export function buildHashBangLine(input: string, affix: boolean = true): T.HashBangLine.Bound {
-	const value = affix ? input : unaffixed(input, '#!', '', 'hash_bang_line');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`hash_bang_line.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '#!', '', 'hash_bang_line');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`hash_bang_line.content: text must be a string: ${describeValue(_content)}`);
@@ -2677,7 +2682,12 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
 export function buildEscapeSequence(text: `\\${string}`, affix: false): T.EscapeSequence.Bound;
 export function buildEscapeSequence(input: string, affix: boolean = true): T.EscapeSequence.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`escape_sequence.content: text must be a string: ${describeValue(_content)}`);
@@ -2880,7 +2890,12 @@ export function buildPrivatePropertyIdentifier(
 	input: string,
 	affix: boolean = true
 ): T.PrivatePropertyIdentifier.Bound {
-	const value = affix ? input : unaffixed(input, '#', '', 'private_property_identifier');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`private_property_identifier.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '#', '', 'private_property_identifier');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`private_property_identifier.content: text must be a string: ${describeValue(_content)}`);
@@ -7460,7 +7475,12 @@ export function buildExportStatementEqualsExport(
 export function buildCommentLine(content: string, affix?: true): T.CommentLine.Bound;
 export function buildCommentLine(text: `//${string}`, affix: false): T.CommentLine.Bound;
 export function buildCommentLine(input: string, affix: boolean = true): T.CommentLine.Bound {
-	const value = affix ? input : unaffixed(input, '//', '', 'comment_line');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`comment_line.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '//', '', 'comment_line');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`comment_line.content: text must be a string: ${describeValue(_content)}`);
@@ -7490,7 +7510,12 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 export function buildCommentBlock(content: string, affix?: true): T.CommentBlock.Bound;
 export function buildCommentBlock(text: `/*${string}*/`, affix: false): T.CommentBlock.Bound;
 export function buildCommentBlock(input: string, affix: boolean = true): T.CommentBlock.Bound {
-	const value = affix ? input : unaffixed(input, '/*', '*/', 'comment_block');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`comment_block.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '/*', '*/', 'comment_block');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`comment_block.content: text must be a string: ${describeValue(_content)}`);
@@ -7932,7 +7957,12 @@ export function buildNumberBigintHex<const N extends string | number | bigint>(
 ): T.NumberBigintHex.Bound;
 export function buildNumberBigintHex(text: `${string}n`, affix: false): T.NumberBigintHex.Bound;
 export function buildNumberBigintHex(input: string | number | bigint, affix: boolean = true): T.NumberBigintHex.Bound {
-	const value = affix ? input : unaffixed(input, '', 'n', 'number_bigint_hex');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`number_bigint_hex.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'n', 'number_bigint_hex');
+	}
 	const _content = numberText(16, '0x', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_bigint_hex.content: text must be a string: ${describeValue(_content)}`);
@@ -7968,7 +7998,12 @@ export function buildNumberBigintBinary(
 	input: string | number | bigint,
 	affix: boolean = true
 ): T.NumberBigintBinary.Bound {
-	const value = affix ? input : unaffixed(input, '', 'n', 'number_bigint_binary');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`number_bigint_binary.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'n', 'number_bigint_binary');
+	}
 	const _content = numberText(2, '0b', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_bigint_binary.content: text must be a string: ${describeValue(_content)}`);
@@ -8004,7 +8039,12 @@ export function buildNumberBigintOctal(
 	input: string | number | bigint,
 	affix: boolean = true
 ): T.NumberBigintOctal.Bound {
-	const value = affix ? input : unaffixed(input, '', 'n', 'number_bigint_octal');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`number_bigint_octal.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'n', 'number_bigint_octal');
+	}
 	const _content = numberText(8, '0o', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_bigint_octal.content: text must be a string: ${describeValue(_content)}`);
@@ -8040,7 +8080,12 @@ export function buildNumberBigintDecimal(
 	input: string | number | bigint,
 	affix: boolean = true
 ): T.NumberBigintDecimal.Bound {
-	const value = affix ? input : unaffixed(input, '', 'n', 'number_bigint_decimal');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`number_bigint_decimal.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '', 'n', 'number_bigint_decimal');
+	}
 	const _content = numberText(10, '', value);
 	if (typeof _content !== 'string')
 		throw new Error(`number_bigint_decimal.content: text must be a string: ${describeValue(_content)}`);

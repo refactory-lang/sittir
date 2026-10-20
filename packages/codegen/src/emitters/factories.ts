@@ -1653,7 +1653,11 @@ function emitFieldCarryingFactory(
 						: numericLiteralSignature(fn, numericSlotShape(ownText.slot)!, 'content', builtName).replace(/\): /, ', affix?: true): '),
 					`${exportKw}function ${fn}(text: ${ownText.spelledType}, affix: false): ${builtName};`,
 					`${exportKw}function ${fn}(input: ${ownTextContentType(ownText)}, affix: boolean = true): ${builtName} {`,
-					`  const value = affix ? input : unaffixed(input, ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`
+					'  let value = input;',
+					'  if (!affix) {',
+					`    if (typeof input !== 'string') ${textTypeMismatchThrow(`${node.kind}.${ownText.slot.name}`, 'input')}`,
+					`    value = unaffixed(input, ${JSON.stringify(ownText.open)}, ${JSON.stringify(ownText.close)}, ${JSON.stringify(node.kind)});`,
+					'  }'
 				];
 	if (leadingOptions !== undefined) {
 		lines.push(...leadingOptionsSplit(leadingOptions, 'children', strictParamType(surface.param)));

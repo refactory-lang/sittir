@@ -832,7 +832,12 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 export function buildIdentityEscape(content: string, affix?: true): T.IdentityEscape.Bound;
 export function buildIdentityEscape(text: `\\${string}`, affix: false): T.IdentityEscape.Bound;
 export function buildIdentityEscape(input: string, affix: boolean = true): T.IdentityEscape.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'identity_escape');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`identity_escape.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'identity_escape');
+	}
 	const _content = value;
 	if (typeof _content !== 'string')
 		throw new Error(`identity_escape.content: text must be a string: ${describeValue(_content)}`);
