@@ -1850,3 +1850,7 @@ The kind a node counts as: `storage` when it is one of the storage kinds sharing
 ### `packages/tools/src/validate/display-families.ts::sharedDisplayEntries`
 
 Node-types entries with each shared display's entry repeated once per storage kind (`sharedDisplayStorageKinds`), named for that kind. Template coverage walks these, so each storage kind's own template is checked against the display's node-types entry.
+
+### `packages/tools/src/validate/parity-fixtures.ts::keysInOrder`
+
+The `JSON.stringify` replacer behind the fixture files (`serializeFixtures`, `serializeLeftOut`): every object is written with its keys sorted, and arrays keep their order. A fixture's input is materialized read data whose key order follows how the walk visited the node, so without sorting a change to the walk would rewrite every fixture file without changing any fixture.
