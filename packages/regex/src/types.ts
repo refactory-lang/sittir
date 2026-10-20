@@ -32,6 +32,8 @@ import type {
 import { TSKindId } from './kinds.js';
 export { TSKindId } from './kinds.js';
 import type * as T from './types.js';
+import type { KindMembers } from './is.js';
+import type { PortableQueryIds } from '@sittir/common/portable';
 
 export type LeafScalarMap = {
 	[TSKindId.DecimalDigits]: number | bigint;
@@ -2030,6 +2032,8 @@ export interface ParsedByKindId {
 	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Parsed;
 }
 
+export interface PortableReads {}
+
 export type FixedTextKindId =
 	| TSKindId.AnyCharacter
 	| TSKindId.StartAssertion
@@ -2142,7 +2146,13 @@ export namespace Pattern {
 	export interface Parsed extends ParsedOf<T.Pattern, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Pattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.Pattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Pattern>;
@@ -2160,7 +2170,13 @@ export namespace Alternation {
 	export interface Parsed extends ParsedOf<T.Alternation, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Alternation['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.Alternation['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Alternation>;
@@ -2187,7 +2203,13 @@ export namespace Term {
 	export interface Parsed extends ParsedOf<T.Term, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Term['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.Term['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Term>;
@@ -2218,7 +2240,13 @@ export namespace LookaroundAssertion {
 	export interface Parsed extends ParsedOf<T.LookaroundAssertion, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LookaroundAssertion['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.LookaroundAssertion['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.LookaroundAssertion>;
@@ -2236,7 +2264,13 @@ export namespace LookaheadAssertion {
 	export interface Parsed extends ParsedOf<T.LookaheadAssertion, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LookaheadAssertion['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.LookaheadAssertion['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.LookaheadAssertion>;
@@ -2254,7 +2288,13 @@ export namespace LookbehindAssertion {
 	export interface Parsed extends ParsedOf<T.LookbehindAssertion, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.LookbehindAssertion['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.LookbehindAssertion['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.LookbehindAssertion>;
@@ -2272,7 +2312,13 @@ export namespace CharacterClass {
 	export interface Parsed extends ParsedOf<T.CharacterClass, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharacterClass['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.CharacterClass['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClass>;
@@ -2290,7 +2336,13 @@ export namespace PosixCharacterClass {
 	export interface Parsed extends ParsedOf<T.PosixCharacterClass, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.PosixCharacterClass['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.PosixCharacterClass['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.PosixCharacterClass>;
@@ -2308,7 +2360,13 @@ export namespace ClassRange {
 	export interface Parsed extends ParsedOf<T.ClassRange, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ClassRange['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.ClassRange['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassRange>;
@@ -2326,7 +2384,13 @@ export namespace AnonymousCapturingGroup {
 	export interface Parsed extends ParsedOf<T.AnonymousCapturingGroup, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.AnonymousCapturingGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.AnonymousCapturingGroup['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AnonymousCapturingGroup>;
@@ -2344,7 +2408,13 @@ export namespace NamedCapturingGroup {
 	export interface Parsed extends ParsedOf<T.NamedCapturingGroup, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.NamedCapturingGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.NamedCapturingGroup['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedCapturingGroup>;
@@ -2362,7 +2432,13 @@ export namespace NonCapturingGroup {
 	export interface Parsed extends ParsedOf<T.NonCapturingGroup, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.NonCapturingGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.NonCapturingGroup['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.NonCapturingGroup>;
@@ -2380,7 +2456,13 @@ export namespace ZeroOrMore {
 	export interface Parsed extends ParsedOf<T.ZeroOrMore, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.ZeroOrMore['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.ZeroOrMore['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ZeroOrMore>;
@@ -2398,7 +2480,13 @@ export namespace OneOrMore {
 	export interface Parsed extends ParsedOf<T.OneOrMore, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.OneOrMore['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.OneOrMore['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.OneOrMore>;
@@ -2416,7 +2504,13 @@ export namespace Optional {
 	export interface Parsed extends ParsedOf<T.Optional, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Optional['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.Optional['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Optional>;
@@ -2434,7 +2528,13 @@ export namespace CountQuantifier {
 	export interface Parsed extends ParsedOf<T.CountQuantifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CountQuantifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.CountQuantifier['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifier>;
@@ -2452,7 +2552,13 @@ export namespace BackreferenceEscape {
 	export interface Parsed extends ParsedOf<T.BackreferenceEscape, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.BackreferenceEscape['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.BackreferenceEscape['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.BackreferenceEscape>;
@@ -2470,7 +2576,13 @@ export namespace NamedGroupBackreference {
 	export interface Parsed extends ParsedOf<T.NamedGroupBackreference, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.NamedGroupBackreference['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.NamedGroupBackreference['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedGroupBackreference>;
@@ -2488,7 +2600,13 @@ export namespace CharacterClassEscape {
 	export interface Parsed extends ParsedOf<T.CharacterClassEscape, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharacterClassEscape['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.CharacterClassEscape['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClassEscape>;
@@ -2508,7 +2626,13 @@ export namespace UnicodePropertyValueExpression {
 	export interface Parsed extends ParsedOf<T.UnicodePropertyValueExpression, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UnicodePropertyValueExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.UnicodePropertyValueExpression['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpression>;
@@ -2526,7 +2650,13 @@ export namespace IdentityEscape {
 	export interface Parsed extends ParsedOf<T.IdentityEscape, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.IdentityEscape['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.IdentityEscape['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.IdentityEscape>;
@@ -2544,7 +2674,13 @@ export namespace TermGroup {
 	export interface Parsed extends ParsedOf<T.TermGroup, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.TermGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.TermGroup['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.TermGroup>;
@@ -2562,7 +2698,13 @@ export namespace CountQuantifierGroup {
 	export interface Parsed extends ParsedOf<T.CountQuantifierGroup, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CountQuantifierGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.CountQuantifierGroup['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifierGroup>;
@@ -2580,7 +2722,13 @@ export namespace CountQuantifierArm {
 	export interface Parsed extends ParsedOf<T.CountQuantifierArm, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CountQuantifierArm['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.CountQuantifierArm['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifierArm>;
@@ -2598,7 +2746,13 @@ export namespace CharacterClassEscapeArm {
 	export interface Parsed extends ParsedOf<T.CharacterClassEscapeArm, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.CharacterClassEscapeArm['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.CharacterClassEscapeArm['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClassEscapeArm>;
@@ -2617,7 +2771,13 @@ export namespace UnicodePropertyValueExpressionGroup {
 		extends ParsedOf<T.UnicodePropertyValueExpressionGroup, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UnicodePropertyValueExpressionGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.UnicodePropertyValueExpressionGroup['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpressionGroup>;
@@ -2637,7 +2797,13 @@ export namespace InlineFlagsGroupEnable {
 	export interface Parsed extends ParsedOf<T.InlineFlagsGroupEnable, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.InlineFlagsGroupEnable['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.InlineFlagsGroupEnable['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupEnable>;
@@ -2655,7 +2821,13 @@ export namespace InlineFlagsGroupToggle {
 	export interface Parsed extends ParsedOf<T.InlineFlagsGroupToggle, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.InlineFlagsGroupToggle['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.InlineFlagsGroupToggle['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupToggle>;
@@ -2673,7 +2845,13 @@ export namespace InlineFlagsGroupDisable {
 	export interface Parsed extends ParsedOf<T.InlineFlagsGroupDisable, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.InlineFlagsGroupDisable['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.InlineFlagsGroupDisable['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupDisable>;
@@ -2692,7 +2870,13 @@ export namespace Lazy {
 	export interface Parsed extends ParsedOf<T.Lazy, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.Lazy['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.Lazy['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Lazy>;
@@ -2711,7 +2895,13 @@ export namespace UnicodePropertyName {
 	export interface Parsed extends ParsedOf<T.UnicodePropertyName, ParsedByKindId>, NodeMethodsOf, HoldsTree {
 		readonly $type: T.UnicodePropertyName['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
 		readonly $snapshot: () => Snapshot<T.UnicodePropertyName['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyName>;
@@ -2826,13 +3016,13 @@ export namespace PatternCharacter {
 		readonly $type: TSKindId.PatternCharacter;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.PatternCharacter;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = PatternCharacterNs['Loose'];
 	export type LooseConfig = PatternCharacterNs['LooseConfig'];
@@ -2846,13 +3036,13 @@ export namespace PosixClassName {
 		readonly $type: TSKindId.PosixClassName;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.PosixClassName;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = PosixClassNameNs['Loose'];
 	export type LooseConfig = PosixClassNameNs['LooseConfig'];
@@ -2866,13 +3056,13 @@ export namespace ClassCharacter {
 		readonly $type: TSKindId.ClassCharacter;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ClassCharacter;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = ClassCharacterNs['Loose'];
 	export type LooseConfig = ClassCharacterNs['LooseConfig'];
@@ -2886,13 +3076,13 @@ export namespace Flags {
 		readonly $type: TSKindId.Flags;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Flags;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = FlagsNs['Loose'];
 	export type LooseConfig = FlagsNs['LooseConfig'];
@@ -2906,13 +3096,13 @@ export namespace DecimalEscape {
 		readonly $type: TSKindId.DecimalEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.DecimalEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = DecimalEscapeNs['Loose'];
 	export type LooseConfig = DecimalEscapeNs['LooseConfig'];
@@ -2926,13 +3116,13 @@ export namespace UnicodeCharacterEscape {
 		readonly $type: TSKindId.UnicodeCharacterEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnicodeCharacterEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = UnicodeCharacterEscapeNs['Loose'];
 	export type LooseConfig = UnicodeCharacterEscapeNs['LooseConfig'];
@@ -2946,13 +3136,13 @@ export namespace UnicodePropertyValue {
 		readonly $type: TSKindId.UnicodePropertyValue;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnicodePropertyValue;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = UnicodePropertyValueNs['Loose'];
 	export type LooseConfig = UnicodePropertyValueNs['LooseConfig'];
@@ -2966,13 +3156,13 @@ export namespace ControlEscape {
 		readonly $type: TSKindId.ControlEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ControlEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = ControlEscapeNs['Loose'];
 	export type LooseConfig = ControlEscapeNs['LooseConfig'];
@@ -2986,13 +3176,13 @@ export namespace ControlLetterEscape {
 		readonly $type: TSKindId.ControlLetterEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ControlLetterEscape;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = ControlLetterEscapeNs['Loose'];
 	export type LooseConfig = ControlLetterEscapeNs['LooseConfig'];
@@ -3006,13 +3196,13 @@ export namespace GroupName {
 		readonly $type: TSKindId.GroupName;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.GroupName;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = GroupNameNs['Loose'];
 	export type LooseConfig = GroupNameNs['LooseConfig'];
@@ -3026,13 +3216,13 @@ export namespace DecimalDigits {
 		readonly $type: TSKindId.DecimalDigits;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.DecimalDigits;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = DecimalDigitsNs['Loose'];
 	export type LooseConfig = DecimalDigitsNs['LooseConfig'];
@@ -3046,13 +3236,13 @@ export namespace CharacterClassEscapeText1 {
 		readonly $type: TSKindId.CharacterClassEscapeText1;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.CharacterClassEscapeText1;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = CharacterClassEscapeText1Ns['Loose'];
 	export type LooseConfig = CharacterClassEscapeText1Ns['LooseConfig'];
@@ -3066,13 +3256,13 @@ export namespace CharacterClassEscapeText2 {
 		readonly $type: TSKindId.CharacterClassEscapeText2;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.CharacterClassEscapeText2;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = CharacterClassEscapeText2Ns['Loose'];
 	export type LooseConfig = CharacterClassEscapeText2Ns['LooseConfig'];

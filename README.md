@@ -246,7 +246,7 @@ There's no JavaScript renderer to fall back to.
 #### Nodes
 
 A node is frozen data. `$type` is its numeric kind id, a branch holds its
-slots, and a leaf holds `$text`. Its accessors (`fn.name()`) are typed by
+slots, and a leaf's text is `$text()`. Its accessors (`fn.name()`) are typed by
 kind. A node built with `rs.build`, read from a parse, or edited with
 `$with` has the same shape, so the same guards and accessors serve all three.
 `$trivia` reads and attaches the comments around a node.

@@ -49,7 +49,7 @@ describe('namespace_export sub-factories', () => {
 		const node = ir.namespaceExport.default();
 		expect(node.$type).toBe(TSKindId.NamespaceExport);
 		const seated = (node as any).moduleExportName();
-		expect(seated?.$text ?? seated).toBe(TSKindId.DefaultKeyword);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DefaultKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -502,7 +502,7 @@ describe('using_declaration sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.UsingDeclaration);
 		const seated = (node as any).automaticSemicolon();
-		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.AutomaticSemicolon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
@@ -520,7 +520,7 @@ describe('using_declaration sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.UsingDeclaration);
 		const seated = (node as any).automaticSemicolon();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Semi);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1852,7 +1852,7 @@ describe('unescaped_double_string_fragment', () => {
 		const node = ir.unescapedDoubleStringFragment('test');
 		expect(node.$type).toBe(TSKindId.UnescapedDoubleStringFragment);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -1861,7 +1861,7 @@ describe('unescaped_single_string_fragment', () => {
 		const node = ir.unescapedSingleStringFragment('test');
 		expect(node.$type).toBe(TSKindId.UnescapedSingleStringFragment);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -1936,7 +1936,7 @@ describe('regex_pattern', () => {
 		const node = ir.regexPattern('test');
 		expect(node.$type).toBe(TSKindId.RegexPattern);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -1945,7 +1945,7 @@ describe('regex_flags', () => {
 		const node = ir.regexFlags('test');
 		expect(node.$type).toBe(TSKindId.RegexFlags);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -1954,7 +1954,7 @@ describe('identifier', () => {
 		const node = ir.identifier('test');
 		expect(node.$type).toBe(TSKindId.Identifier);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -3749,7 +3749,7 @@ describe('type_query_member_expression sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.TypeQueryMemberExpression);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Dot);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Dot);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('qmarkDot builds the parent', () => {
@@ -3765,7 +3765,7 @@ describe('type_query_member_expression sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.TypeQueryMemberExpression);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.QmarkDot);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.QmarkDot);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4023,28 +4023,28 @@ describe('literal_type sub-factories', () => {
 		const node = ir.literalType.true();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.True);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.True);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('false builds the parent', () => {
 		const node = ir.literalType.false();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.False);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.False);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('null builds the parent', () => {
 		const node = ir.literalType.null();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Null);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Null);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('undefined builds the parent', () => {
 		const node = ir.literalType.undefined();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Undefined);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Undefined);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4279,7 +4279,7 @@ describe('constraint sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.Constraint);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.ExtendsKeyword);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.ExtendsKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('colon builds the parent', () => {
@@ -4288,7 +4288,7 @@ describe('constraint sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.Constraint);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Colon);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Colon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -5262,7 +5262,7 @@ describe('import_specifier_as sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ImportSpecifierAs);
 		const seated = (node as any).name();
-		expect(seated?.$text ?? seated).toBe(TSKindId.DefaultKeyword);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DefaultKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -7245,7 +7245,7 @@ describe('html_comment', () => {
 		const node = ir.htmlComment('<!-- ?-->');
 		expect(node.$type).toBe(TSKindId.HtmlComment);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('<!-- ?-->');
+		expect(node.$text()).toBe('<!-- ?-->');
 	});
 });
 
@@ -7254,7 +7254,7 @@ describe('jsx_text', () => {
 		const node = ir.jsxText('test');
 		expect(node.$type).toBe(TSKindId.JsxText);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -7263,7 +7263,7 @@ describe('_template_chars', () => {
 		const node = ir.templateChars('test');
 		expect(node.$type).toBe(TSKindId.TemplateChars);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 

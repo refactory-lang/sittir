@@ -1,5 +1,4 @@
-/** A portable kind: one vocabulary path, the same object for every language. */
-export type PortableKind<Path extends string = string> = { readonly $path: Path };
+import type { PortableKind } from '@sittir/types';
 
 /** A portable guard: whether a value is a node that reads as the guard's vocabulary path or one under it. */
 export type PortableGuard = (node: unknown) => node is { readonly $type: number };

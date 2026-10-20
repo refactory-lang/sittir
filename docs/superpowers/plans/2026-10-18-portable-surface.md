@@ -252,22 +252,49 @@ Ruled (2026-10-19): two parts. **3b-1**, from master: the `crate` alias, the clo
 Ran ahead of 3b-2, by the user's ruling (2026-10-19). Until 3b-2 lands, `ofType` reads placed classifications the way `portable.is` does: an impl or class-body method reads as a function, not a method.
 
 **Files:**
-- Modify: `packages/common/src/query.ts` (`ofTypeStep`, the declarative compile at :349/:482/:544/:599), `packages/types/src/query.ts:168` (overload `ofType<P extends PortableKind>(kind: P): View<…>`)
-- Test: `packages/common/tests/query-portable.test.ts`
+- Modify: `packages/common/src/query.ts` (`ofTypeSteps`, the `ofKinds` step, `QueryHooks.portable`), `packages/common/src/create-engine.ts` (the hooks carry the rows), `packages/common/src/portable/classify.ts` (`readsAs` moved here, `portablePathOf`), `packages/common/src/portable/index.ts` (`VocabularyPath`, `PortableQueryIds`), `packages/types/src/query.ts` (`View<T, Ids>`, `QueryFacet<N, ByParsed, Ids>`, the portable overload), `packages/types/src/portable.ts` (`PortableKind`, moved from common), `packages/codegen/src/emitters/types.ts` (empty `PortableReads`, the `$query` line), `packages/codegen/src/emitters/overlays/portable/surface.ts` (fills `PortableReads`)
+- Create: `packages/codegen/src/emitters/membership.ts` (`membershipKindsOf`)
+- Modify, for keyword leaves: `packages/codegen/src/emitters/is.ts` (supertype and enum rows in `_members`), `packages/codegen/src/emitters/overlays/portable/index.ts` (`typesOf`, `kindsOf`), `packages/codegen/src/emitters/native-crate.ts` (`unit_id`), `rust/crates/sittir-core/src/engine.rs` (`EngineGrammar::unit_id`, the walk), `rust/crates/sittir-core/src/query.rs` (`QueryItem`, the batch's `items`)
+- Modify, for the one kind test: `packages/common/src/language.ts` (`KindTest`, `kindOf`, `holdsKinds`, `kindTestOf`; `languageGuards` takes the builder), `packages/codegen/src/emitters/is.ts` (`guardsWith`, `KindMembers`), `packages/codegen/src/emitters/index-file.ts` (the descriptor passes `guardsWith`), `packages/codegen/src/emitters/types.ts` (`$query` passes `KindMembers`)
+- Test: `packages/common/tests/query-portable.test.ts`, `tests/types/portable-oftype.test-d.ts`, `packages/codegen/src/emitters/overlays/portable/__tests__/surface.test.ts`, the engine tests in `rust/crates/sittir-core/src/engine.rs`
 
 **Interfaces:**
 - Consumes: `PortableKind` (Task 2), `EngineIdentity.portable` and `classifierOf` (Tasks 3–4).
 
-- [ ] **Step 1:** Write the failing tests.
+Ruled (2026-10-19):
+- **Narrowing:** `ofType` by a portable kind narrows as the guards do (Q2): `View<NarrowTo<T, Ids[P['$path']]>, Ids, Members>`. For a path its kinds do not decide, the type is an upper bound.
+- **The ids:** `Ids` is `PortableQueryIds<PortableReads>`, every vocabulary path mapped to the ids the grammar reads there, or `never`. So a path the language does not read gives `View<never>`, and a value that names no vocabulary path is refused.
+- **Where the ids come from:** `vocabularyPaths` stays the path set's one source. `types.ts` declares an empty `PortableReads`, which a bound grammar's `portable.ts` fills by declaration merging, so a grammar without bindings reads no path.
+
+Ruled after the Codex review (2026-10-20), so that `ofType` agrees with the guards on keyword leaves:
+- **An element's kind is what it reads as.** A slot read stores a keyword leaf as its own kind id (`true`), not the parse node's stamp (`boolean_literal`). The native walk matches the id the read stores (`EngineGrammar::unit_id`, else the stamp), as `is()` does. It yields a node it stores as a unit as that bare id, as a slot read stores it. A coordinate keeps the shared grammar-id stamp on every route; none carries a member id. JS reads a bare id as its own kind in slot entries and in later steps.
+- **One membership.** `membershipKindsOf` derives each supertype's and each enum kind's members once, with an enum kind replaced by its member ids. The `is` guards' `_members` rows and the portable rows both read it. So `ofType(BooleanLiteral)` selects the keyword ids, as `is.booleanLiteral(true)` already held. An enum kind's own id stays out of its row, since no element carries it.
+- **Walk views include the bare ids.** `QueryFacet`'s `Units` parameter adds the grammar's `FixedTextKindId` to `$children` and `$descendants`, and `ofType` keeps number elements.
+
+Ruled after the second Codex review (2026-10-20), so that `ofType` is the guards' test at run time and in types:
+- **One kind test.** The language check, then membership, is one function (`kindTestOf` in `packages/common/src/language.ts`). The generated guards are built with it (`guardsWith(test)`, which `languageGuards` calls), and an engine's `ofType` runs it, from `QueryHooks.kindTest`, over elements after an opaque step. The native walk keeps its fast path, since its elements are the tree's own.
+- **`KindMembers`.** One per-grammar type map, each supertype and enum kind id mapped to its member ids, emitted from `membershipKindsOf` with the `_members` rows, replaces the inline per-guard unions. The guards and `ofType` both narrow through `NarrowTo<T, KindMembers[K]>`; `View` and `QueryFacet` carry it as `Members`, beside `Ids`. `ofType` admits supertype and enum ids, as the runtime selects their members.
+
+- [x] **Step 1:** Write the failing tests.
   - `rs.parse('fn f() {} struct S;').$query().$descendants.ofType(portable.kinds.declaration.function)` yields exactly the `function_item`.
   - The same call on a python root with `def f(): pass` yields the `function_definition`.
-  - A non-exact path filters by the classifier.
-  - `ofType({ $path: 'nope' })` yields nothing.
+  - A non-exact path filters by the classifier: `statement.import.public` over `use a; pub use b;` yields only `pub use b;`.
+  - `ofType({ $path: 'nope' })` yields nothing at run time and does not type-check.
   - `ofType('x')` still refuses.
-- [ ] **Step 2:** Run the test. Expected: FAIL.
-- [ ] **Step 3:** `ofTypeStep` accepts a `PortableKind`. The step resolves `rows.table.paths[$path]` through the root's engine to a kind-id set. A path that isn't `exact` adds a per-node classifier filter. The plan form gains `{ op: 'ofKinds'; kinds: readonly number[]; path?: string }`.
-- [ ] **Step 4:** Run the tests and the suite. Expected: PASS.
-- [ ] **Step 5:** Pathspec commit.
+  - A keyword leaf is selected by its kind id, in a walk and in a slot: rust `TrueKeyword` gives the `true` id, `literal.boolean` the `true` and `false` ids, and a `const` item's `type` slot answers both `BoolKeyword` and `type.primitive.boolean`.
+  - An enum kind and a supertype select their keyword members: `BooleanLiteral` and `Literal` give the `true` and `false` ids, and `is.literal(true)` holds.
+  - Over the rust, python and typescript corpora, `ofType` agrees with the language's guard for every portable path and with `isMember` for every kind id.
+  - A python node mapped into a rust view, its kind id equal to `FunctionItem`'s, is not selected by `ofType(FunctionItem)` or `ofType(declaration.function)`, as the rust guards reject it.
+  - Through the public signatures, `ofType` of `BooleanLiteral`, `PrimitiveType`, `Literal` and `Expression` type-checks and narrows to their members.
+- [x] **Step 2:** Run the test. Expected: FAIL.
+- [x] **Step 3:** `ofType` adds one `ofKinds` step for both arguments.
+  - A kind id resolves to `membership.membersOf(kind)` when the step is added.
+  - A portable kind resolves to its path's ids in the language's rows (`portablePathOf`).
+  - A path that isn't `exact` adds a `filter` step reading each node through `readsAs`, the guards' own test.
+  - A path the rows do not hold gives an empty step.
+  - The walk matches, and yields, by the id the read stores; `membershipKindsOf` is the one membership.
+- [x] **Step 4:** Run the tests and the suite. Expected: PASS.
+- [x] **Step 5:** Pathspec commit.
 
 ## Not in this stack
 

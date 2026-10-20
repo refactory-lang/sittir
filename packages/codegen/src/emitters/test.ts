@@ -496,7 +496,7 @@ function emitSubFactoryTests(
 		if (sub.arm.via === 'value') {
 			const val = valueStorageExpr(sub.arm.storage, slotStorageInfo, kindEntries);
 			cases.push(`    const seated = (node as any).${slotProp}();`);
-			cases.push(`    expect(seated?.$text ?? seated).toBe(${val});`);
+			cases.push(`    expect(seated?.$text?.() ?? seated).toBe(${val});`);
 		} else if (!slotIsKindEnum) {
 			cases.push(
 				`    expect((node as any).${slotProp}()?.$type).toBe(${testTypeDiscriminant(sub.arm.child.kind, kindEntries, nodeMap)});`
@@ -614,7 +614,7 @@ function emitLeafTest(
 	lines.push(`    const node = ir.${key}(${JSON.stringify(sample)});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
-	lines.push(`    expect(node.$text).toBe(${JSON.stringify(sample)});`);
+	lines.push(`    expect(node.$text()).toBe(${JSON.stringify(sample)});`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');

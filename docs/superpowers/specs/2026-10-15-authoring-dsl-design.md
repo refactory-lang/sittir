@@ -444,9 +444,11 @@ No layer uses it yet. The derived kind renames stay data (§2.4), and the genera
 
 ### 3.4 Declarations that are not edits
 
-- **`reauthored` and `vocabulary`.** `reauthored(cause, body)`, `reauthored(cause, witnesses, body)` and `vocabulary(body)` declare why a `rules:` entry replaces or adds a rule.
+- **`reauthored` and `vocabulary`.** `reauthored(cause, body)`, `reauthored(cause, witnesses, body)`, `reauthored([[cause, witnesses], …], body)` and `vocabulary(body)` declare why a `rules:` entry replaces or adds a rule.
   - They tag the callback and change nothing in it. Rule causes are judged against the enriched stage.
-  - The acceptance plan's first stage changes the witnessed overloads to witness arrays and adds `accepts-invalid-syntax`.
+  - A rule with two or more causes lists each with its own witnesses, and each cause is judged on its own. A rule is witness-verified when every one of its causes is a witnessed cause.
+  - The witnessed causes take witness arrays. `accepts-invalid-syntax` and `ruled-narrowing` make the same claim: upstream derives each witness form and the authored rule does not. An `accepts-invalid-syntax` witness cites the production that excludes the form. A `ruled-narrowing` witness states, in words, the maintainer ruling's constraint that excludes it, never a PR, spec or task number.
+  - A `vocabulary` entry is verified when every authored or upstream rule that reaches it is a witness-verified `reauthored` rule. The hand-written rule ratchet counts every other entry and every undeclared rule.
   - They are layer-1 only, since a generated layer has no `rules:`.
 - **`role(symbol, 'indent' | 'dedent' | 'newline')`,** in the `externals` callback, is unchanged. The pass calls that callback, so it records the roles in the layer record.
 - **`preference(arm)`,** in `options:`, is unchanged. `options:` stays its own key:

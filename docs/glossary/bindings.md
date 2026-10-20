@@ -1505,6 +1505,10 @@ The refusal a predicate on a node of a match tree gives: `match` states kinds as
 
 Reads a node's pattern as a `match` tree: its kind, and the one restriction its tests state, a field (or no field) and the kinds it admits, each read in turn. An alternation (of options with nothing below them, as `childFacts` requires) gives one restriction admitting each option; any other child is a restriction of its own. A kind narrowed two ways is written as one claim per way, which the derivation unions (`leads.ts::unionMatch`). It refuses what `match` cannot say: a predicate on any node of the tree (`predicateReason`), a quantified child, a negated field, a token (a text test), a wildcard, a grouping, a second restriction on one kind, and an alternation whose options sit under different fields. The one reading of a pattern as a match tree, for a member's lead match and a claim's own.
 
+### `packages/codegen/src/bindings/pinned-reader.ts::leafText`
+
+The text of a leaf the bindings reader meets, in either form a leaf takes: the method `$text()`, or the `$text` string of a pinned build that predates the method. The reader runs on the pinned build and loads no current source, so it cannot use `nodeText` and reads the two forms itself. A leaf with no text is refused rather than read as empty.
+
 ### `packages/codegen/src/bindings/leads.ts::LeadDerivation`
 
 What the lead derivation gives: the leads, sorted by list, and the `lead-refused` records for every claim it could not turn into one.

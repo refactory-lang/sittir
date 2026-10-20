@@ -279,7 +279,7 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 		$type: TSKindId.ImportPrefix as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -4125,7 +4125,7 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 		$type: TSKindId.TypeConversion as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -4150,7 +4150,7 @@ export function buildIdentifier<const W extends string>(
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -4875,7 +4875,7 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 		$type: TSKindId.FormatSpecifierText as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -5648,7 +5648,7 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 		$type: TSKindId.IntegerDecimalLong as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -5671,7 +5671,7 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 		$type: TSKindId.IntegerDecimalImaginary as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -5697,7 +5697,7 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 		$type: TSKindId.IntegerDecimalPlain as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -6212,7 +6212,7 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 		$type: TSKindId.LineContinuationNewline as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -6866,7 +6866,7 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 		$type: TSKindId.StringStart as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -6888,7 +6888,7 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 		$type: TSKindId.StringFragment as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -6910,7 +6910,7 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 		$type: TSKindId.EscapeInterpolation as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -6932,7 +6932,7 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 		$type: TSKindId.StringEnd as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {

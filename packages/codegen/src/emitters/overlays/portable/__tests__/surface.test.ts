@@ -152,8 +152,13 @@ describe('emitPortableSurface', () => {
 			slotFlags: [],
 			slotFlagTypes: []
 		});
-		expect(text).toContain(["declare module './types.js' {", '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
+		expect(text).toContain(["declare module './types.js' {", '\tinterface PortableReads extends PortableIds {}', '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
 		const none = emitPortableSurface({ nodeType: 'TestNode', routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
-		expect(none).not.toContain('declare module');
+		expect(none).not.toContain('__flags__');
+	});
+
+	it('fills the grammar\'s portable reads in its types, so a query narrows a portable kind by the paths it reads', async () => {
+		const text = await emit(SCM);
+		expect(text).toContain(["declare module './types.js' {", '\tinterface PortableReads extends PortableIds {}', '}'].join('\n'));
 	});
 });

@@ -30,6 +30,7 @@ export type {
 export type {
 	PortableCondition,
 	PortableGuard,
+	PortableKind,
 	PortablePath,
 	PortableReadEntry,
 	PortableRows,
@@ -179,7 +180,8 @@ type AdmitSlotInput<S> = S extends readonly unknown[]
  */
 export interface Terminal<ID extends number = number, V extends string = string> {
 	readonly $type: ID;
-	readonly $text: V;
+	/** The leaf's text: one string of its characters, made by this call. */
+	$text(): V;
 }
 
 /**
@@ -953,7 +955,7 @@ type WidenArrayMembers<
  *  to itself, its narrowed string and its scalar. */
 type WidenLeafMembers<T, Scalars, Strings> = T extends {
 	readonly $type: infer K extends number;
-	readonly $text: string;
+	$text(): string;
 }
 	? Admit<T> | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
 	: never;
@@ -962,7 +964,7 @@ type WidenLeafMembers<T, Scalars, Strings> = T extends {
  *  objects that are not leaves. Kind ids stored bare are numbers, not
  *  objects, and are widened by `WidenKindId`. */
 type BranchMembers<T> = T extends { readonly $type: number }
-	? T extends { readonly $text: string }
+	? T extends { $text(): string }
 		? never
 		: T
 	: never;
@@ -1247,7 +1249,7 @@ export interface KeywordNs<Id extends number, Text extends string, Kind extends 
  * namespace lookup index all three uniformly.
  */
 export interface LeafNs<
-	Node extends { readonly $type: number; readonly $text: string },
+	Node extends { readonly $type: number; $text(): string },
 	Text extends string | number | bigint,
 	Bound = Node,
 	Kind extends number = number

@@ -93,7 +93,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -115,7 +115,7 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 		$type: TSKindId.ImmediateIdentifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -654,7 +654,7 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 		$type: TSKindId.StringContentText as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {

@@ -96,6 +96,10 @@ impl EngineGrammar for ScmGrammar {
     fn router(self, grammar: sittir_core::types::KindId, display: sittir_core::types::KindId) -> Option<sittir_core::read::Router> {
         <AnyNode as sittir_core::read::ReadNode>::router(grammar, display)
     }
+
+    fn unit_id(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::types::KindId> {
+        <AnyNode as sittir_core::read::ReadNode>::unit_id(cursor)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

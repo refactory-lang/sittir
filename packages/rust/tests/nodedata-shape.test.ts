@@ -63,7 +63,7 @@ describe('Factory shape — branch node', () => {
 		const rec = node as unknown as Record<string, unknown>;
 		expect(rec['_name']).toBeDefined();
 		expect(typeof rec['_name']).toBe('object');
-		expect((rec['_name'] as { $text?: string }).$text).toBe('my_fn');
+		expect((rec['_name'] as { $text(): string }).$text()).toBe('my_fn');
 	});
 
 	it('FR-002: accessor function is an enumerable own member of the node', () => {
@@ -76,8 +76,8 @@ describe('Factory shape — branch node', () => {
 		const rec = node as unknown as Record<string, unknown>;
 		const accessor = rec['name'] as () => unknown;
 		expect(typeof accessor).toBe('function');
-		const value = accessor.call(node) as { $text?: string };
-		expect(value.$text).toBe('my_fn');
+		const value = accessor.call(node) as { $text(): string };
+		expect(value.$text()).toBe('my_fn');
 	});
 
 	it('SC-004: Object.keys() lists the $-metadata, the _-storage and the readers of the node', () => {
@@ -117,7 +117,7 @@ describe('Factory shape — leaf node', () => {
 	const leaf = rs.build.identifier('x42');
 
 	it('leaf: $text is present and equals the input', () => {
-		expect((leaf as unknown as Record<string, unknown>)['$text']).toBe('x42');
+		expect(leaf.$text()).toBe('x42');
 	});
 
 	it('leaf: no _<name> keys (no fields)', () => {
@@ -191,7 +191,7 @@ describe('JSON serialization', () => {
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
 		expect(parsed['$type']).toBe(rs.kinds.FunctionItem);
 		expect(parsed['$source']).toBe(2);
-		expect(parsed['_name']).toMatchObject({ $text: 'serialize_me' });
+		expect(parsed['_name']).toMatchObject({ $type: rs.kinds.Identifier });
 	});
 
 	it('SC-007: JSON.stringify does NOT include $fields', () => {

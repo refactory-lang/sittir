@@ -81,7 +81,7 @@ describe('a coordinate stamps the grammar id, or the display id at an alias enve
 		const tree = treeOf(parsed);
 		const handle = (parsed as unknown as Read).$_layout?.at?.$treeHandle;
 		if (tree?.query === undefined || handle === undefined) throw new Error('expected a live tree');
-		const kinds = tree.query.descendants({ from: { handle }, limit: 100 }).coordinates.map((coordinate) => coordinate.$type);
+		const kinds = tree.query.descendants({ from: { handle }, limit: 100 }).items.flatMap((item) => (typeof item === 'number' ? [] : [item.$type]));
 		expect(kinds).toContain(engine.kinds.FieldIdentifier);
 		expect(kinds).toContain(engine.kinds.FieldExpression);
 	});
