@@ -8077,6 +8077,10 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
 // Extract factored branches (the parts that differ)
 ```
 
+### `packages/codegen/src/compiler/normalize.ts::supertypeKindsOf`
+
+Every supertype the model has, the one place the two link facts that name them are joined: the grammar's declared supertypes, under the names link gives them (`supertypes`), and every rule link stamps `SUPERTYPE`, declared or a hidden choice that is a supertype by shape. They differ because link builds a declared supertype that is the parent of a wire variant split as a visible polymorph, with no stamp: python's `match_block`, which the grammar declares as `_match_block`. assemble reads its supertype arms from this set (`dsl/symbol-table.ts::supertypeArmsOf`).
+
 ### `packages/codegen/src/compiler/fixpoint.ts::runToFixpoint`
 
 The one iterate-to-a-fixed-point helper for the compiler passes (`simplify.simplifyToFixpoint`,

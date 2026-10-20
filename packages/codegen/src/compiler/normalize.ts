@@ -242,6 +242,10 @@ function applyNormalizationPasses(
 	return rules;
 }
 
+export function supertypeKindsOf(grammar: Pick<SimplifiedGrammar, 'supertypes' | 'rules'>): ReadonlySet<string> {
+	return new Set([...grammar.supertypes, ...Object.keys(grammar.rules).filter((kind) => grammar.rules[kind]?.type === SUPERTYPE)]);
+}
+
 export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): SimplifiedGrammar {
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
 

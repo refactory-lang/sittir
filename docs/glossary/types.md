@@ -1451,7 +1451,10 @@ narrowing guard.
 `true` when the grammar's `supertypes` names this kind: upstream,
 enrich-minted, or added in `grammar.sittir.ts`. Link stamps it where it
 builds the rule (`classifyHiddenChoiceRule`); a hidden choice that is a
-supertype only by shape has none.
+supertype only by shape has none. A declared supertype that is the parent of
+a wire variant split is built as a visible polymorph instead, so it has no
+`SUPERTYPE` rule to carry the stamp (python's `match_block`);
+`compiler/normalize.ts::supertypeKindsOf` still counts it.
 
 ### `packages/codegen/src/types/rule.ts::SupertypeRule.subtypes`
 
