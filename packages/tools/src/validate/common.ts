@@ -17,7 +17,7 @@ import { hydrateTriviaEntry } from '@sittir/common/utils';
 import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
-	carrySource,
+	carryPlace,
 	carrySourceStamp,
 	holdTree,
 	sideOf,
@@ -851,7 +851,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 		}
 		materialized[key] = materializeValue(raw, onAccessorThrow);
 	}
-	carrySource(value, materialized);
+	carryPlace(value, materialized);
 	carrySourceStamp(value, materialized);
 	return carryRead(value, materialized);
 }

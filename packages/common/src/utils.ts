@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carrySource, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -67,7 +67,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	if (!isNode(result)) return result;
 	markRebuilt(result);
 	carryRead(node, result);
-	carrySource(node, result);
+	carryPlace(node, result);
 	const facts = handle?.current.trivia;
 	if (facts !== undefined) {
 		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
@@ -169,9 +169,9 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		const freshNode = fresh as Record<string, unknown>;
 		const heldNode = held as Record<string, unknown>;
 		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !stands(freshNode.$type)) continue;
-		if (sourceOf(freshNode) !== undefined || sourceOf(heldNode) === undefined) continue;
+		if (placeOf(freshNode) !== undefined || placeOf(heldNode) === undefined) continue;
 		carryRead(heldNode, freshNode);
-		carrySource(heldNode, freshNode);
+		carryPlace(heldNode, freshNode);
 	}
 }
 
@@ -674,7 +674,7 @@ export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './eng
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, placeOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { stampBuilt, sourceStampOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, carrySource, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
+import { markEdited, detachCoordinates, carryPlace, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
 import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
 import type { Siblings } from '../src/read.ts';
 
@@ -207,7 +207,7 @@ describe('sideOf', () => {
 		const read = { $type: 5, $_layout: { at: at(5, 4, 5) } };
 		holdTree(read, token);
 		const draft = markEdited({ ...read, $_layout: { ...read.$_layout, trivia: { trailing: [8] } } });
-		carrySource(read, draft);
+		carryPlace(read, draft);
 		expect(sideOf(draft, 'trailing')).toEqual([8]);
 		expect(sideOf(draft, 'leading')).toEqual(['4:leading']);
 		expect(sideOf({ $type: 5 }, 'leading')).toEqual([]);
@@ -243,7 +243,7 @@ describe('a built node rebuilt from a parsed one', () => {
 		const read = { $type: 5, $_layout: { at: at(5, 6, 7) } };
 		holdTree(read, token);
 		const draft = markEdited({ ...read, _a: 1 });
-		carrySource(read, draft);
+		carryPlace(read, draft);
 		const out = toNodeData(draft as never, PLAIN_KINDS) as unknown as { $_layout: Record<string, unknown> };
 		expect(out.$_layout.sides).toEqual(at(5, 6, 7));
 	});

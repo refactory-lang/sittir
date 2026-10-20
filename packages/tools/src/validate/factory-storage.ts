@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { sourceOf, spanOf } from '@sittir/common/utils';
+import { placeOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -345,7 +345,7 @@ function rebuildChildren(
 function carriesSource(value: unknown): boolean {
 	if (Array.isArray(value)) return value.some(carriesSource);
 	if (typeof value !== 'object' || value === null) return false;
-	if (sourceOf(value) !== undefined) return true;
+	if (placeOf(value) !== undefined) return true;
 	return Object.values(value).some(carriesSource);
 }
 
