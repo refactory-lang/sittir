@@ -540,8 +540,7 @@ function textTypeMismatchThrow(label: string, valueExpr: string): string {
 
 function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReConsts: Map<string, string>): string[] {
 	const reConst = leafReConsts.get(node.kind);
-	const typeMismatch = reConst ? patternMismatchThrow(node.kind, 'text') : textTypeMismatchThrow(node.kind, 'text');
-	const guards = [`if (typeof text !== 'string') ${typeMismatch}`];
+	const guards = [`if (typeof text !== 'string') ${textTypeMismatchThrow(node.kind, 'text')}`];
 	if (!anchoredLeafRegex(node.kind, node.textPattern)?.test('')) {
 		guards.push(`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`);
 	}
@@ -1674,8 +1673,11 @@ function emitFieldCarryingFactory(
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
 		const requiredUnfilled = isRequired(f) && !registeredSet.has(f) && !slotFilledWhenOmitted(f, nodeMap);
 		if (guard !== undefined) {
+			const present = requiredUnfilled ? '' : `${f.storageKey} !== undefined && `;
+			const label = `${node.kind}.${f.name}`;
 			lines.push(
-				`  if (${requiredUnfilled ? '' : `${f.storageKey} !== undefined && `}(typeof ${f.storageKey} !== 'string' || !${guard}.test(${f.storageKey}))) ${patternMismatchThrow(`${node.kind}.${f.name}`, f.storageKey)}`
+				`  if (${present}typeof ${f.storageKey} !== 'string') ${textTypeMismatchThrow(label, f.storageKey)}`,
+				`  if (${present}!${guard}.test(${f.storageKey})) ${patternMismatchThrow(label, f.storageKey)}`
 			);
 		}
 	}

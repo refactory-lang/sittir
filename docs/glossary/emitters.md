@@ -202,7 +202,7 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
 
 The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. Each distinct literal is written once per module: a later constant whose literal is already declared (a shared sub-rule such as a digit run, or two kinds with one pattern) is declared as the first constant (`export const _leafRe_b = _leafRe_a;`). The constants are exported, and the coercer's leaf registry reads them, so the factories hold one literal per leaf pattern; a test ratchets that at no copies. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
 
-The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
+The guards themselves are `buildLeafGuards`'s, and they always run: the guard is the factory's contract, never conditional on a debug flag. Whether a leaf gets the non-empty guard is its pattern's call alone (an empty doc comment is valid text for a `.*` leaf).
 
 The grammar's word kind also gets the `reserved.global` words (`reservedWordset`), when the grammar declares any, as one `as const` list `_reservedWordList_<factory>`. Both its readers derive from that list: the runtime set `_reservedWords_<factory>` (map key `reservedGuardKey(kind)`) and the type `_ReservedWord_<factory>`, the list's element union (map key `reservedTypeKey(kind)`). Neither key can equal a slot guard key, because a slot name never contains `\0`.
 
@@ -553,9 +553,9 @@ Whether a kind gets a top-level factory, and the skip reason when it does not. A
 
 The runtime guard statements of a text-leaf factory, each a complete `if (…) throw` statement. Four guards, in run order, none conditional on a debug flag:
 
-1. **Type**, on every leaf: `typeof text !== 'string'` throws before any other guard reads the argument. A leaf builder takes a string only, and a node writes its text, so a later `length` read or `test` call would otherwise act on a node or on `undefined`; a missing argument gets the builder's own message, not a property-read `TypeError`. A leaf with a hoisted pattern refuses with `patternMismatchThrow`'s message, so every bad argument to it is worded alike; a leaf without one refuses with `textTypeMismatchThrow`'s.
+1. **Type**, on every leaf: `typeof text !== 'string'` throws `textTypeMismatchThrow`'s message before any other guard reads the argument. A leaf builder takes a string only, and a node writes its text, so a later `length` read or `test` call would otherwise act on a node or on `undefined`; a missing argument gets the builder's own message, not a property-read `TypeError`.
 2. **Non-empty**, on every leaf whose pattern does not accept the empty string.
-3. **Pattern**, where `buildLeafReConsts` hoisted a `_leafRe_<factory>` constant: text the constant does not match throws `patternMismatchThrow`'s message.
+3. **Pattern**, where `buildLeafReConsts` hoisted a `_leafRe_<factory>` constant: a string the constant does not match throws `patternMismatchThrow`'s message.
 4. **Reserved word**, on the grammar's word kind only, where `buildLeafReConsts` hoisted a `_reservedWords_<factory>` set: text in the grammar's declared `reserved.global` wordset throws `<kind>: '<text>' is a reserved word`. The set is the grammar's own declaration read through `reservedWordset`, never a collected keyword list: a contextual keyword the grammar admits as an identifier (python `print`, `match`, `exec`) is not in it, and a grammar that declares no wordset (typescript and rust today) gets no guard. The builder has no slot context, so its message cannot name a keyword arm; the slot-side check is `keywordTextRejection`.
 
 ### `packages/codegen/src/emitters/factories.ts::childElementType`
@@ -851,11 +851,7 @@ config form. Group seating is emitted in one place.
 
 #### token interior
 
-```text
-Every text slot of a lexed kind is guarded by its own anchored pattern before the node is built; the message
-names the kind and the slot. The guards are the interior's slot patterns, so the whole-token regex is never
-tested against a slot value.
-```
+Every text slot of a lexed kind with an anchored slot pattern is guarded before the node is built, by two statements: a value that is not a string is refused with `textTypeMismatchThrow`'s message, then a string the slot's pattern rejects with `patternMismatchThrow`'s. Both name the kind and the slot (`<kind>.<slot>`). A slot that may be left `undefined` (optional, registered, or filled when omitted) skips both while it is; a required slot the caller must fill does not, so a missing value is refused as a non-string. The guards are the interior's slot patterns, so the whole-token regex is never tested against a slot value.
 
 #### body
 
@@ -14857,7 +14853,7 @@ The text nodes of a template body, descending into the arms of its conditionals.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 
-The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them. A patterned leaf's type guard emits it too, so a non-string argument and a misspelled one are refused alike.
+The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue`. It refuses a string the pattern rejects; a non-string has already been refused by the type guard (`textTypeMismatchThrow`). The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
 
 ### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
 
@@ -15125,7 +15121,7 @@ The `checkDelimited(handle, node, spec, [content slots], open, close)` call emit
 
 ### `packages/codegen/src/emitters/factories.ts::textTypeMismatchThrow`
 
-The type refusal of a text leaf with no hoisted pattern: `<label>: text must be a string: <value>`, with the value written through `describeValue`. `buildLeafGuards` emits it as such a leaf's first guard. A leaf with a hoisted pattern refuses a non-string with `patternMismatchThrow`'s message instead.
+The one place a text guard's type refusal is worded: `<label>: text must be a string: <value>`, with the value written through `describeValue` so the refusal shows what was passed. The leaf guard (`buildLeafGuards`) and the per-slot interior guard (`emitFieldCarryingFactory`) both emit it ahead of any pattern test, so a non-string is refused with this one message wherever it is passed, and the pattern message is left to a string the pattern rejects.
 
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 

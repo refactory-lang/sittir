@@ -270,7 +270,7 @@ function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportS
 }
 
 export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
-	if (typeof text !== 'string') throw new Error(`import_prefix: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`import_prefix: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
 	if (!_leafRe_buildImportPrefix.test(text))
 		throw new Error(`import_prefix: text does not match pattern: ${describeValue(text)}`);
@@ -4116,7 +4116,7 @@ export function buildFormatSpecifier(
 }
 
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
-	if (typeof text !== 'string') throw new Error(`type_conversion: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`type_conversion: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`);
 	if (!_leafRe_buildTypeConversion.test(text))
 		throw new Error(`type_conversion: text does not match pattern: ${describeValue(text)}`);
@@ -4140,7 +4140,7 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 export function buildIdentifier<const W extends string>(
 	text: W extends _ReservedWord_buildIdentifier ? never : W
 ): T.Identifier.Bound {
-	if (typeof text !== 'string') throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`identifier: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
@@ -4196,7 +4196,9 @@ export function buildComment(text: `#${string}`, affix: false): T.Comment.Bound;
 export function buildComment(input: string, affix: boolean = true): T.Comment.Bound {
 	const value = affix ? input : unaffixed(input, '#', '', 'comment');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildComment_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`comment.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -4864,8 +4866,7 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 }
 
 export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`format_specifier_text: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
 	if (!_leafRe_buildFormatSpecifierText.test(text))
 		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
@@ -5515,10 +5516,14 @@ export function buildIntegerHex(
 	options?: T.IntegerHex.Options
 ): T.IntegerHex.Bound {
 	const _prefix = options?.prefix ?? '0x';
-	if (_prefix !== undefined && (typeof _prefix !== 'string' || !_slotRe_buildIntegerHex_prefix.test(_prefix)))
+	if (_prefix !== undefined && typeof _prefix !== 'string')
+		throw new Error(`integer_hex.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(16, '', value);
-	if (typeof _content !== 'string' || !_slotRe_buildIntegerHex_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`integer_hex.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5554,10 +5559,14 @@ export function buildIntegerOctal(
 	options?: T.IntegerOctal.Options
 ): T.IntegerOctal.Bound {
 	const _prefix = options?.prefix ?? '0o';
-	if (_prefix !== undefined && (typeof _prefix !== 'string' || !_slotRe_buildIntegerOctal_prefix.test(_prefix)))
+	if (_prefix !== undefined && typeof _prefix !== 'string')
+		throw new Error(`integer_octal.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(8, '', value);
-	if (typeof _content !== 'string' || !_slotRe_buildIntegerOctal_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`integer_octal.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5594,10 +5603,14 @@ export function buildIntegerBinary(
 	options?: T.IntegerBinary.Options
 ): T.IntegerBinary.Bound {
 	const _prefix = options?.prefix ?? '0b';
-	if (_prefix !== undefined && (typeof _prefix !== 'string' || !_slotRe_buildIntegerBinary_prefix.test(_prefix)))
+	if (_prefix !== undefined && typeof _prefix !== 'string')
+		throw new Error(`integer_binary.prefix: text must be a string: ${describeValue(_prefix)}`);
+	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(2, '', value);
-	if (typeof _content !== 'string' || !_slotRe_buildIntegerBinary_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`integer_binary.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5626,8 +5639,7 @@ export function buildIntegerBinary(
 }
 
 export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`integer_decimal_long: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`integer_decimal_long: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`integer_decimal_long: text must be non-empty`);
 	if (!_leafRe_buildIntegerDecimalLong.test(text))
 		throw new Error(`integer_decimal_long: text does not match pattern: ${describeValue(text)}`);
@@ -5650,7 +5662,7 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 
 export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Bound {
 	if (typeof text !== 'string')
-		throw new Error(`integer_decimal_imaginary: text does not match pattern: ${describeValue(text)}`);
+		throw new Error(`integer_decimal_imaginary: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`integer_decimal_imaginary: text must be non-empty`);
 	if (!_leafRe_buildIntegerDecimalImaginary.test(text))
 		throw new Error(`integer_decimal_imaginary: text does not match pattern: ${describeValue(text)}`);
@@ -5676,8 +5688,7 @@ export function buildIntegerDecimalPlain<const N extends string | number | bigin
 ): T.IntegerDecimalPlain.Bound;
 export function buildIntegerDecimalPlain(text: string | number | bigint): T.IntegerDecimalPlain.Bound {
 	text = numberText(10, '', text);
-	if (typeof text !== 'string')
-		throw new Error(`integer_decimal_plain: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`integer_decimal_plain: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`integer_decimal_plain: text must be non-empty`);
 	if (!_leafRe_buildIntegerDecimalPlain.test(text))
 		throw new Error(`integer_decimal_plain: text does not match pattern: ${describeValue(text)}`);
@@ -5723,25 +5734,34 @@ export function buildFloatPoint(
 	options?: T.FloatPoint.Options
 ): T.FloatPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (typeof _integer !== 'string' || !_slotRe_buildFloatPoint_integer.test(_integer))
+	if (typeof _integer !== 'string')
+		throw new Error(`float_point.integer: text must be a string: ${describeValue(_integer)}`);
+	if (!_slotRe_buildFloatPoint_integer.test(_integer))
 		throw new Error(`float_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
-	if (_fraction !== undefined && (typeof _fraction !== 'string' || !_slotRe_buildFloatPoint_fraction.test(_fraction)))
+	if (_fraction !== undefined && typeof _fraction !== 'string')
+		throw new Error(`float_point.fraction: text must be a string: ${describeValue(_fraction)}`);
+	if (_fraction !== undefined && !_slotRe_buildFloatPoint_fraction.test(_fraction))
 		throw new Error(`float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
-	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatPoint_marker.test(_marker)))
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`float_point.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildFloatPoint_marker.test(_marker))
 		throw new Error(`float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _sign = config.sign;
-	if (_sign !== undefined && (typeof _sign !== 'string' || !_slotRe_buildFloatPoint_sign.test(_sign)))
+	if (_sign !== undefined && typeof _sign !== 'string')
+		throw new Error(`float_point.sign: text must be a string: ${describeValue(_sign)}`);
+	if (_sign !== undefined && !_slotRe_buildFloatPoint_sign.test(_sign))
 		throw new Error(`float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (_exponent !== undefined && (typeof _exponent !== 'string' || !_slotRe_buildFloatPoint_exponent.test(_exponent)))
+	if (_exponent !== undefined && typeof _exponent !== 'string')
+		throw new Error(`float_point.exponent: text must be a string: ${describeValue(_exponent)}`);
+	if (_exponent !== undefined && !_slotRe_buildFloatPoint_exponent.test(_exponent))
 		throw new Error(`float_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	const _imaginary = config.imaginary;
-	if (
-		_imaginary !== undefined &&
-		(typeof _imaginary !== 'string' || !_slotRe_buildFloatPoint_imaginary.test(_imaginary))
-	)
+	if (_imaginary !== undefined && typeof _imaginary !== 'string')
+		throw new Error(`float_point.imaginary: text must be a string: ${describeValue(_imaginary)}`);
+	if (_imaginary !== undefined && !_slotRe_buildFloatPoint_imaginary.test(_imaginary))
 		throw new Error(`float_point.imaginary: text does not match pattern: ${describeValue(_imaginary)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5810,31 +5830,34 @@ export function buildFloatLeadingPoint(
 	options?: T.FloatLeadingPoint.Options
 ): T.FloatLeadingPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (
-		_integer !== undefined &&
-		(typeof _integer !== 'string' || !_slotRe_buildFloatLeadingPoint_integer.test(_integer))
-	)
+	if (_integer !== undefined && typeof _integer !== 'string')
+		throw new Error(`float_leading_point.integer: text must be a string: ${describeValue(_integer)}`);
+	if (_integer !== undefined && !_slotRe_buildFloatLeadingPoint_integer.test(_integer))
 		throw new Error(`float_leading_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
-	if (typeof _fraction !== 'string' || !_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
+	if (typeof _fraction !== 'string')
+		throw new Error(`float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
+	if (!_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
-	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatLeadingPoint_marker.test(_marker)))
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`float_leading_point.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _sign = config.sign;
-	if (_sign !== undefined && (typeof _sign !== 'string' || !_slotRe_buildFloatLeadingPoint_sign.test(_sign)))
+	if (_sign !== undefined && typeof _sign !== 'string')
+		throw new Error(`float_leading_point.sign: text must be a string: ${describeValue(_sign)}`);
+	if (_sign !== undefined && !_slotRe_buildFloatLeadingPoint_sign.test(_sign))
 		throw new Error(`float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (
-		_exponent !== undefined &&
-		(typeof _exponent !== 'string' || !_slotRe_buildFloatLeadingPoint_exponent.test(_exponent))
-	)
+	if (_exponent !== undefined && typeof _exponent !== 'string')
+		throw new Error(`float_leading_point.exponent: text must be a string: ${describeValue(_exponent)}`);
+	if (_exponent !== undefined && !_slotRe_buildFloatLeadingPoint_exponent.test(_exponent))
 		throw new Error(`float_leading_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	const _imaginary = config.imaginary;
-	if (
-		_imaginary !== undefined &&
-		(typeof _imaginary !== 'string' || !_slotRe_buildFloatLeadingPoint_imaginary.test(_imaginary))
-	)
+	if (_imaginary !== undefined && typeof _imaginary !== 'string')
+		throw new Error(`float_leading_point.imaginary: text must be a string: ${describeValue(_imaginary)}`);
+	if (_imaginary !== undefined && !_slotRe_buildFloatLeadingPoint_imaginary.test(_imaginary))
 		throw new Error(`float_leading_point.imaginary: text does not match pattern: ${describeValue(_imaginary)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5894,22 +5917,29 @@ export function buildFloatScientific(
 	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (typeof _integer !== 'string' || !_slotRe_buildFloatScientific_integer.test(_integer))
+	if (typeof _integer !== 'string')
+		throw new Error(`float_scientific.integer: text must be a string: ${describeValue(_integer)}`);
+	if (!_slotRe_buildFloatScientific_integer.test(_integer))
 		throw new Error(`float_scientific.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _marker = options?.marker ?? 'e';
-	if (_marker !== undefined && (typeof _marker !== 'string' || !_slotRe_buildFloatScientific_marker.test(_marker)))
+	if (_marker !== undefined && typeof _marker !== 'string')
+		throw new Error(`float_scientific.marker: text must be a string: ${describeValue(_marker)}`);
+	if (_marker !== undefined && !_slotRe_buildFloatScientific_marker.test(_marker))
 		throw new Error(`float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _sign = config.sign;
-	if (_sign !== undefined && (typeof _sign !== 'string' || !_slotRe_buildFloatScientific_sign.test(_sign)))
+	if (_sign !== undefined && typeof _sign !== 'string')
+		throw new Error(`float_scientific.sign: text must be a string: ${describeValue(_sign)}`);
+	if (_sign !== undefined && !_slotRe_buildFloatScientific_sign.test(_sign))
 		throw new Error(`float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (typeof _exponent !== 'string' || !_slotRe_buildFloatScientific_exponent.test(_exponent))
+	if (typeof _exponent !== 'string')
+		throw new Error(`float_scientific.exponent: text must be a string: ${describeValue(_exponent)}`);
+	if (!_slotRe_buildFloatScientific_exponent.test(_exponent))
 		throw new Error(`float_scientific.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	const _imaginary = config.imaginary;
-	if (
-		_imaginary !== undefined &&
-		(typeof _imaginary !== 'string' || !_slotRe_buildFloatScientific_imaginary.test(_imaginary))
-	)
+	if (_imaginary !== undefined && typeof _imaginary !== 'string')
+		throw new Error(`float_scientific.imaginary: text must be a string: ${describeValue(_imaginary)}`);
+	if (_imaginary !== undefined && !_slotRe_buildFloatScientific_imaginary.test(_imaginary))
 		throw new Error(`float_scientific.imaginary: text does not match pattern: ${describeValue(_imaginary)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5957,7 +5987,9 @@ export function buildEscapeSequenceUnicodeFixed(
 ): T.EscapeSequenceUnicodeFixed.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_fixed');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_unicode_fixed.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5988,7 +6020,9 @@ export function buildEscapeSequenceUnicodeWide(
 ): T.EscapeSequenceUnicodeWide.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_wide');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeWide_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_unicode_wide.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceUnicodeWide_content.test(_content))
 		throw new Error(`escape_sequence_unicode_wide.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6016,7 +6050,9 @@ export function buildEscapeSequenceHex(text: `\\${string}`, affix: false): T.Esc
 export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.EscapeSequenceHex.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_hex');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceHex_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_hex.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6050,7 +6086,9 @@ export function buildEscapeSequenceOctal(
 ): T.EscapeSequenceOctal.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_octal');
 	const _content = numberText(10, '', value);
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceOctal_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_octal.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceOctal_content.test(_content))
 		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6078,7 +6116,9 @@ export function buildEscapeSequenceLineBreak(text: `\\${string}`, affix: false):
 export function buildEscapeSequenceLineBreak(input: string, affix: boolean = true): T.EscapeSequenceLineBreak.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_line_break');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceLineBreak_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_line_break.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceLineBreak_content.test(_content))
 		throw new Error(`escape_sequence_line_break.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6106,7 +6146,9 @@ export function buildEscapeSequenceSimple(text: `\\${string}`, affix: false): T.
 export function buildEscapeSequenceSimple(input: string, affix: boolean = true): T.EscapeSequenceSimple.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_simple');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceSimple_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_simple.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6134,7 +6176,9 @@ export function buildEscapeSequenceNamed(text: `\\${string}`, affix: false): T.E
 export function buildEscapeSequenceNamed(input: string, affix: boolean = true): T.EscapeSequenceNamed.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_named');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceNamed_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_named.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceNamed_content.test(_content))
 		throw new Error(`escape_sequence_named.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6159,7 +6203,7 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 
 export function buildLineContinuationNewline(text: string): T.LineContinuationNewline.Bound {
 	if (typeof text !== 'string')
-		throw new Error(`line_continuation_newline: text does not match pattern: ${describeValue(text)}`);
+		throw new Error(`line_continuation_newline: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`line_continuation_newline: text must be non-empty`);
 	if (!_leafRe_buildLineContinuationNewline.test(text))
 		throw new Error(`line_continuation_newline: text does not match pattern: ${describeValue(text)}`);
@@ -6813,7 +6857,7 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 }
 
 export function buildStringStart(text: string): T.StringStart.Bound {
-	if (typeof text !== 'string') throw new Error(`string_start: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`string_start: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
 	if (!_leafRe_buildStringStart.test(text))
 		throw new Error(`string_start: text does not match pattern: ${describeValue(text)}`);
@@ -6835,7 +6879,7 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 }
 
 export function buildStringFragment(text: string): T.StringFragment.Bound {
-	if (typeof text !== 'string') throw new Error(`string_fragment: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`string_fragment: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`);
 	if (!_leafRe_buildStringFragment.test(text))
 		throw new Error(`string_fragment: text does not match pattern: ${describeValue(text)}`);
@@ -6857,8 +6901,7 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 }
 
 export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`escape_interpolation: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`escape_interpolation: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
 	if (!_leafRe_buildEscapeInterpolation.test(text))
 		throw new Error(`escape_interpolation: text does not match pattern: ${describeValue(text)}`);
@@ -6880,7 +6923,7 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 }
 
 export function buildStringEnd(text: string): T.StringEnd.Bound {
-	if (typeof text !== 'string') throw new Error(`string_end: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`string_end: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
 	if (!_leafRe_buildStringEnd.test(text))
 		throw new Error(`string_end: text does not match pattern: ${describeValue(text)}`);

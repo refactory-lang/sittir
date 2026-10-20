@@ -210,8 +210,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 }
 
 export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`pattern_character: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`pattern_character: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`pattern_character: text must be non-empty`);
 	if (!_leafRe_buildPatternCharacter.test(text))
 		throw new Error(`pattern_character: text does not match pattern: ${describeValue(text)}`);
@@ -301,8 +300,7 @@ export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.Posi
 }
 
 export function buildPosixClassName(text: string): T.PosixClassName.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`posix_class_name: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`posix_class_name: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`posix_class_name: text must be non-empty`);
 	if (!_leafRe_buildPosixClassName.test(text))
 		throw new Error(`posix_class_name: text does not match pattern: ${describeValue(text)}`);
@@ -353,7 +351,7 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 }
 
 export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
-	if (typeof text !== 'string') throw new Error(`class_character: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`class_character: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`class_character: text must be non-empty`);
 	if (!_leafRe_buildClassCharacter.test(text))
 		throw new Error(`class_character: text does not match pattern: ${describeValue(text)}`);
@@ -493,7 +491,7 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 }
 
 export function buildFlags(text: string): T.Flags.Bound {
-	if (typeof text !== 'string') throw new Error(`flags: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`flags: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`flags: text must be non-empty`);
 	if (!_leafRe_buildFlags.test(text)) throw new Error(`flags: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
@@ -661,7 +659,7 @@ export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.Named
 }
 
 export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
-	if (typeof text !== 'string') throw new Error(`decimal_escape: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`decimal_escape: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`decimal_escape: text must be non-empty`);
 	if (!_leafRe_buildDecimalEscape.test(text))
 		throw new Error(`decimal_escape: text does not match pattern: ${describeValue(text)}`);
@@ -710,7 +708,7 @@ export function buildCharacterClassEscape(
 
 export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEscape.Bound {
 	if (typeof text !== 'string')
-		throw new Error(`unicode_character_escape: text does not match pattern: ${describeValue(text)}`);
+		throw new Error(`unicode_character_escape: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`unicode_character_escape: text must be non-empty`);
 	if (!_leafRe_buildUnicodeCharacterEscape.test(text))
 		throw new Error(`unicode_character_escape: text does not match pattern: ${describeValue(text)}`);
@@ -766,7 +764,7 @@ export function buildUnicodePropertyValueExpression(
 
 export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.Bound {
 	if (typeof text !== 'string')
-		throw new Error(`unicode_property_value: text does not match pattern: ${describeValue(text)}`);
+		throw new Error(`unicode_property_value: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`unicode_property_value: text must be non-empty`);
 	if (!_leafRe_buildUnicodePropertyValue.test(text))
 		throw new Error(`unicode_property_value: text does not match pattern: ${describeValue(text)}`);
@@ -788,7 +786,7 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 }
 
 export function buildControlEscape(text: string): T.ControlEscape.Bound {
-	if (typeof text !== 'string') throw new Error(`control_escape: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`control_escape: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`control_escape: text must be non-empty`);
 	if (!_leafRe_buildControlEscape.test(text))
 		throw new Error(`control_escape: text does not match pattern: ${describeValue(text)}`);
@@ -810,8 +808,7 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 }
 
 export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`control_letter_escape: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`control_letter_escape: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`control_letter_escape: text must be non-empty`);
 	if (!_leafRe_buildControlLetterEscape.test(text))
 		throw new Error(`control_letter_escape: text does not match pattern: ${describeValue(text)}`);
@@ -837,7 +834,9 @@ export function buildIdentityEscape(text: `\\${string}`, affix: false): T.Identi
 export function buildIdentityEscape(input: string, affix: boolean = true): T.IdentityEscape.Bound {
 	const value = affix ? input : unaffixed(input, '\\', '', 'identity_escape');
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildIdentityEscape_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`identity_escape.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIdentityEscape_content.test(_content))
 		throw new Error(`identity_escape.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -861,7 +860,7 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 }
 
 export function buildGroupName(text: string): T.GroupName.Bound {
-	if (typeof text !== 'string') throw new Error(`group_name: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`group_name: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`group_name: text must be non-empty`);
 	if (!_leafRe_buildGroupName.test(text))
 		throw new Error(`group_name: text does not match pattern: ${describeValue(text)}`);
@@ -887,7 +886,7 @@ export function buildDecimalDigits<const N extends string | number | bigint>(
 ): T.DecimalDigits.Bound;
 export function buildDecimalDigits(text: string | number | bigint): T.DecimalDigits.Bound {
 	text = numberText(10, '', text);
-	if (typeof text !== 'string') throw new Error(`decimal_digits: text does not match pattern: ${describeValue(text)}`);
+	if (typeof text !== 'string') throw new Error(`decimal_digits: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`decimal_digits: text must be non-empty`);
 	if (!_leafRe_buildDecimalDigits.test(text))
 		throw new Error(`decimal_digits: text does not match pattern: ${describeValue(text)}`);
@@ -1077,7 +1076,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 
 export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
 	if (typeof text !== 'string')
-		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
+		throw new Error(`character_class_escape_text1: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`character_class_escape_text1: text must be non-empty`);
 	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
 		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
@@ -1100,7 +1099,7 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 
 export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
 	if (typeof text !== 'string')
-		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);
+		throw new Error(`character_class_escape_text2: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`character_class_escape_text2: text must be non-empty`);
 	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
 		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);

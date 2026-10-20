@@ -3,7 +3,7 @@ import { requireGrammarModule } from '../src/grammar-internals.ts';
 
 const rawOf = (grammar: string) => requireGrammarModule(grammar, 'factories/raw.ts');
 
-describe('an untyped undefined on a required guarded text slot fails the pattern guard', () => {
+describe('an untyped undefined on a required guarded text slot fails the type guard', () => {
 	it.each([
 		['regex', 'buildIdentityEscape', 'identity_escape.content'],
 		['rust', 'buildEscapeSequenceSimple', 'escape_sequence_simple.content'],
@@ -14,7 +14,7 @@ describe('an untyped undefined on a required guarded text slot fails the pattern
 		const raw = await rawOf(grammar);
 		const build = raw[builder];
 		if (typeof build !== 'function') throw new Error(`Missing raw factory ${builder}`);
-		expect(() => build(undefined)).toThrow(`${label}: text does not match pattern: undefined`);
+		expect(() => build(undefined)).toThrow(`${label}: text must be a string: undefined`);
 	});
 });
 

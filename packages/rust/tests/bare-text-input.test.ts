@@ -30,8 +30,8 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 });
 
 describe('a leaf guard checks the type before the empty check', () => {
-	it('throws the pattern refusal, not a TypeError, when a no-argument leaf is called', () => {
+	it('throws the type refusal, not a TypeError, when a no-argument leaf is called', () => {
 		// @ts-expect-error a leaf takes its text
-		expect(() => rs.build.charLiteral.empty()).toThrow(/^char_literal_empty: text does not match pattern/);
+		expect(() => rs.build.charLiteral.empty()).toThrow(/^char_literal_empty: text must be a string/);
 	});
 });
