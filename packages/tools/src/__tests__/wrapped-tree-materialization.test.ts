@@ -2,15 +2,26 @@ import { describe, expect, it } from 'vitest';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
 import {
 	buildReadHandle,
+	loadSlotReaders,
 	materialize,
 	readNodeOf,
 	walkWrappedTree,
+	type AccessorThrowRecord,
+	type SlotReaders,
 	type TypedNode
 } from '../validate/common.ts';
 
 function leaf(type: number, text: string): TypedNode {
 	return { $type: type, $source: 0, $named: true, $text: text };
 }
+
+const readers: SlotReaders = (typeId) =>
+	typeId === 1
+		? [
+				{ storageKey: '_value', accessor: 'value' },
+				{ storageKey: '_items', accessor: 'items' }
+			]
+		: [];
 
 const typescriptGeneratedClean = verifyManifestForGrammar('typescript').ok;
 
@@ -45,14 +56,14 @@ describe('wrapped tree materialization', () => {
 		} satisfies TypedNode;
 
 		const visited: number[] = [];
-		walkWrappedTree(root, (node) => {
+		walkWrappedTree(root, readers, (node) => {
 			visited.push(node.$type);
 		});
 
 		expect(visited).toEqual([1, 11, 21]);
 	});
 
-	it('falls back to raw storage when an accessor throws during traversal', () => {
+	it('reports a throwing accessor and never falls back to raw storage', () => {
 		const rawFieldChild = leaf(10, 'raw-field');
 		const rawChildrenChild = leaf(20, 'raw-child');
 		const root = {
@@ -70,11 +81,21 @@ describe('wrapped tree materialization', () => {
 		} satisfies TypedNode;
 
 		const visited: number[] = [];
-		walkWrappedTree(root, (node) => {
-			visited.push(node.$type);
-		});
+		const thrown: AccessorThrowRecord[] = [];
+		walkWrappedTree(
+			root,
+			readers,
+			(node) => {
+				visited.push(node.$type);
+			},
+			(rec) => thrown.push(rec)
+		);
 
-		expect(visited).toEqual([1, 10, 20]);
+		expect(visited).toEqual([1]);
+		expect(thrown.map(({ key, accessor }) => [key, accessor])).toEqual([
+			['_value', 'value'],
+			['_items', 'items']
+		]);
 	});
 
 	it('projects wrapped nodes into plain native-render data', () => {
@@ -112,7 +133,7 @@ describe('wrapped tree materialization', () => {
 			}
 		} satisfies TypedNode;
 
-		const materialized = asRecord(materialize(root));
+		const materialized = asRecord(materialize(root, readers));
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
@@ -149,7 +170,7 @@ describe('wrapped tree materialization', () => {
 
 			// A read leaf materializes as itself — its text and the coordinate
 			// it was read at — not as bare text.
-			const declaration = asRecord(materialize(declarationArm.content()));
+			const declaration = asRecord(materialize(declarationArm.content(), await loadSlotReaders('typescript')));
 			expect(asRecord(declaration._name).$text).toBe('readFile');
 		}
 	);

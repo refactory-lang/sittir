@@ -5,6 +5,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -65,8 +66,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nasync fn abc() {}\n\nasync fn main() {\n    let x = futures.await?;\n}\n",
     "options": {
@@ -473,6 +473,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -563,8 +564,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfutures.await;\nfutures.await?;\nfutures.await?.await?;\nfutures.await?.function().await?;\n",
     "options": {
@@ -1466,6 +1466,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -1523,8 +1524,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nasync {}\nasync { let x = 10; }\nasync move {}\n",
     "options": {
@@ -1946,6 +1946,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -1963,8 +1964,7 @@
             "_body": 281
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet _ = async || ();\n",
     "options": {
@@ -2087,6 +2087,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -2114,8 +2115,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet a = async move || async move {};\n",
     "options": {
@@ -2311,6 +2311,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -2322,8 +2323,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntry {}\n",
     "options": {
@@ -2436,6 +2436,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -2525,8 +2526,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ngen {}\ngen { let x = 10; }\ngen { yield (); }\ngen move {}\n",
     "options": {
@@ -3187,6 +3187,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 384,
@@ -3260,8 +3261,7 @@
             "$text": "english"
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmod english;\n\nmod english {}\n\nmod english {\n    mod greetings {}\n    mod farewells {}\n}\n\npub mod english;\n",
     "options": {
@@ -3686,6 +3686,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -3718,8 +3719,7 @@
             "$text": "futures"
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nextern crate std;\nextern crate std as ruststd;\npub extern crate futures;\n",
     "options": {
@@ -3895,6 +3895,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -4538,8 +4539,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "options": {
@@ -10813,6 +10813,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -10834,8 +10835,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst fn main() {}\n",
     "options": {
@@ -10982,6 +10982,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -11090,8 +11091,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn triples(a: impl B) -> impl Iterator<Item=(usize)> {\n}\n",
     "options": {
@@ -12065,6 +12065,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -12140,8 +12141,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn foo<'a>(x: impl 'a + Clone) {}\n",
     "options": {
@@ -12836,6 +12836,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -12957,8 +12958,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn capture<T>(&self) -> impl Iterator<Item = usize> + use<'_, T> {\n}\n",
     "options": {
@@ -14035,6 +14035,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -14113,8 +14114,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn capture(&self) -> impl Iterator<Item = usize> + use<> {\n}\n",
     "options": {
@@ -14824,6 +14824,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -14840,8 +14841,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn aborts() -> ! {}\n",
     "options": {
@@ -14955,6 +14955,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -15217,8 +15218,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nextern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "options": {
@@ -17082,6 +17082,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 224,
@@ -17440,8 +17441,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nuse abc;\nuse phrases::japanese;\nuse sayings::english::greetings;\nuse sayings::english::greetings as en_greetings ;\nuse phrases::english::{greetings,farewells};\nuse sayings::japanese::farewells::*;\npub use self::greetings::hello;\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\nuse three::{ dot::{one, four} };\nuse my::{ some::* };\nuse my::{*};\nuse ::*;\n",
     "options": {
@@ -19779,6 +19779,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -19878,8 +19879,7 @@
             "_elements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet x;\nlet x = 42;\nlet x: i32;\nlet x: i8 = 42;\nlet mut x = 5;\nlet y: bool = false;\nlet bool: bool = false;\nlet u32: str = \"\";\n",
     "options": {
@@ -20294,6 +20294,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -20515,8 +20516,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet Foo::Bar {\n    texts,\n    values,\n} = foo().bar().await? else {\n    return Err(index)\n};\n\nlet Some(x) = y else {\n    let None = z else {\n        foo();\n        break;\n    };\n    continue;\n};\n",
     "options": {
@@ -22259,6 +22259,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -22294,8 +22295,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet a = if b {\n    c\n} else {\n    d\n};\n",
     "options": {
@@ -22518,6 +22518,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -22543,8 +22544,7 @@
             "_content": "2"
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet default = 1;\nlet union = 2;\n",
     "options": {
@@ -22690,6 +22690,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 425,
@@ -22987,8 +22988,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nstruct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
     "options": {
@@ -25333,6 +25333,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 197,
@@ -25487,8 +25488,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}\n",
     "options": {
@@ -27114,6 +27114,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 423,
@@ -27346,8 +27347,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nstruct A<B> {}\nstruct C<'a, 'b> {}\nstruct C<'a,> {}\nstruct D<const SIZE: usize> {}\nstruct E<#[attr] T> {}\n",
     "options": {
@@ -29058,6 +29058,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 198,
@@ -29378,8 +29379,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub enum Option<T> {\n    None,\n    Some(T),\n}\n\npub enum Node<T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}\n",
     "options": {
@@ -33027,6 +33027,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 198,
@@ -33083,8 +33084,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}\n",
     "options": {
@@ -33580,6 +33580,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -33793,8 +33794,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {\n}\npub fn uninit_array<const LEN: usize>() -> [Self; LEN] {}\n",
     "options": {
@@ -35689,6 +35689,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -35736,8 +35737,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn foo(mut x : u32) {\n}\n",
     "options": {
@@ -36044,6 +36044,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -36224,8 +36225,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn f1([x, y]: [u32; 2]) {}\nfn f2(&x: &Y) {}\nfn f3((x, y): (T, U)) {}\n",
     "options": {
@@ -37723,6 +37723,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -37793,8 +37794,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntrait Callback {\n    fn call(self: Box<Self>);\n}\n",
     "options": {
@@ -38563,6 +38563,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -38607,8 +38608,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst N: i32 = 5;\n\ntrait Foo {\n    const X: u8;\n}\n",
     "options": {
@@ -38834,6 +38834,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -38878,8 +38879,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nstatic N: i32 = 5;\nstatic mut __progname: *mut ::c_char;\n",
     "options": {
@@ -39121,6 +39121,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -39136,8 +39137,7 @@
             "_content": "0"
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nstatic ref ONE: usize = 0;\n",
     "options": {
@@ -39225,6 +39225,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -39374,8 +39375,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype Inch = u64;\ntype Name<T> = Vec<T>;\ntype LazyResolve = impl (FnOnce() -> Capture) + Send + Sync + UnwindSafe;\n",
     "options": {
@@ -40746,6 +40746,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -40857,8 +40858,7 @@
             "$type": 211
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype Foo<T> where T: Copy = Box<T>;\ntype Assoc3 where = () where;\n",
     "options": {
@@ -41789,6 +41789,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -41806,8 +41807,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn main() {\n    ;\n}\n",
     "options": {
@@ -41924,6 +41924,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 190,
@@ -42180,8 +42181,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n#[test]\nfn test_foo() {}\n\n#[derive(Debug)]\nstruct Baz;\n\n#[derive(Debug, Eq,)]\nstruct Foo;\n\n#[cfg(target_os = \"macos\")]\nmod macos_only {}\n\n#![allow(clippy::useless_transmute)]\n\n#[clippy::cyclomatic_complexity = \"100\"]\n",
     "options": {
@@ -43932,6 +43932,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 385,
@@ -44169,8 +44170,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmod macos_only {\n    #![cfg(target_os = \"macos\")]\n}\n\nmatch ty {\n    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),\n}\n",
     "options": {
@@ -46891,6 +46891,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 190,
@@ -46999,8 +47000,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n#[doc = include_str!(\"foo-doc.md\")]\nfn foo() {}\n\n#[namespace = foo::bar]\nfn baz() {}\n",
     "options": {
@@ -47728,6 +47728,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -47971,8 +47972,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfoo(#[attr(=> arbitrary tokens <=)] x, y);\n\nfoo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n",
     "options": {
@@ -50905,6 +50905,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 224,
@@ -51279,8 +51280,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\n\nuse thiserror::Error;\n\n#[derive(Error, Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}\n",
     "options": {
@@ -55053,6 +55053,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -55272,8 +55273,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn foo() {\n    bar(x,\n        #[cfg(foo = \"bar\")]\n        y);\n    let z = [#[hello] 2, 7, 8];\n    let t = (#[hello] 2, 7, 8);\n}\n",
     "options": {
@@ -57614,6 +57614,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 377,
@@ -57831,8 +57832,7 @@
             "_declarations": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "options": {
@@ -59771,6 +59771,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 377,
@@ -59947,8 +59948,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimpl<'a> iter::Iterator for Self::Iter<'a> {\n}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 { *self as i64 }\n}\n",
     "options": {
@@ -61376,6 +61376,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 377,
@@ -61399,8 +61400,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nunsafe impl Foo {\n}\n",
     "options": {
@@ -61536,6 +61536,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 377,
@@ -61562,8 +61563,7 @@
             "_declarations": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimpl !Send for Foo {}\n",
     "options": {
@@ -61752,6 +61752,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -61845,8 +61846,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub unsafe trait Trait {}\n\nunsafe impl Trait for dyn (::std::any::Any) + Send { }\n",
     "options": {
@@ -62616,6 +62616,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 378,
@@ -62787,8 +62788,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimpl<K: Debug + Ord> Debug for OccupiedError<K>;\nimpl<K: Debug + Ord> Display for OccupiedError<K>;\n",
     "options": {
@@ -64308,6 +64308,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 377,
@@ -64384,8 +64385,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimpl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}\n",
     "options": {
@@ -65088,6 +65088,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -65204,8 +65205,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub trait Item: Clone + Eq + fmt::Debug {\n    fn summarize(&self) -> Self::Summary;\n}\n\nunsafe trait Foo { }\n",
     "options": {
@@ -66038,6 +66038,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -66165,8 +66166,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntrait Add<RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}\n",
     "options": {
@@ -67259,6 +67259,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -67415,8 +67416,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntrait Foo<T: ?Sized> {\n}\n\nfn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}\n",
     "options": {
@@ -68981,6 +68981,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 377,
@@ -69076,8 +69077,7 @@
             "_declarations": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimpl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}\n",
     "options": {
@@ -70102,6 +70102,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -70186,8 +70187,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n\npub trait A: B + C + D {\n    private_decl!{}\n    fn f(&self);\n}\n",
     "options": {
@@ -70834,6 +70834,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -70896,8 +70897,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub trait Graph {\n    type N: fmt::Display;\n    type E;\n}\n",
     "options": {
@@ -71401,6 +71401,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 377,
@@ -71476,8 +71477,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimpl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n",
     "options": {
@@ -72131,6 +72131,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -72632,8 +72633,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}\n\nimpl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}\n\nfn use_database1<D: Database<F<'a, TD> = F>>() {}\n\nfn use_database2<D>()\nwhere\n    D: Database<F<'a, TD> = F>,\n{}\n",
     "options": {
@@ -78023,6 +78023,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 214,
@@ -78232,8 +78233,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;\n",
     "options": {
@@ -80356,6 +80356,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -80511,8 +80512,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub fn a() {}\npub(super) fn b() {}\npub(self) fn c() {}\npub(crate) fn c() {}\npub(in crate::d) fn e() {}\n",
     "options": {
@@ -81523,6 +81523,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -81604,8 +81605,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn foo(str: *const c_char) {}\nfn bar(bool: bool) {}\n",
     "options": {
@@ -82193,6 +82193,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -83465,8 +83466,7 @@
             "_declarations": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn walk<F>(&self, it: &mut F) -> bool\n    where F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {\n}\n\nimpl<T> A for B<T>\n    where C<T>: D,\n        T: 'c,\n        'c: 'b,\n{\n}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{\n}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\n    where for<'a> D<T>: E<'a>,\n{\n}\n\npub trait A<B> where B: C,\n{\n}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where *mut A: C + D {}\n",
     "options": {
@@ -94537,6 +94537,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 396,
@@ -94662,8 +94663,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nextern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n\nunsafe extern \"C\" {}\n",
     "options": {
@@ -95644,6 +95644,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 384,
@@ -95761,8 +95762,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ncrate mod foo;\ncrate struct Foo(crate crate::Bar);\ncrate fn foo() { }\ncrate const X: u32 = 0;\n",
     "options": {
@@ -96586,6 +96586,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 423,
@@ -96662,8 +96663,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nstruct A {\n  a: default::B,\n  b: union::C,\n}\n",
     "options": {
@@ -97411,6 +97411,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -97556,8 +97557,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn foo<D>(val: D)\nwhere\n    [u8; 32]: From<D>,\n\n{}\n",
     "options": {
@@ -98730,6 +98730,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 424,
@@ -98825,8 +98826,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\npub struct Loaf<T: Sized, const N: usize = 1>([T; N]);\n",
     "options": {
@@ -99675,6 +99675,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -99701,8 +99702,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn main() {\n  abc;\n}\n",
     "options": {
@@ -99916,6 +99916,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -99965,8 +99966,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn main() {\n  (r#abc as r#Def).r#ghi;\n}\n",
     "options": {
@@ -100469,6 +100469,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -100512,8 +100513,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n-num;\n!bits;\n*boxed_thing;\n",
     "options": {
@@ -100836,6 +100836,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -100903,8 +100904,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n&a;\n&mut self.name;\n&raw const b;\n&raw mut self.age;\n",
     "options": {
@@ -101480,6 +101480,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -101526,8 +101527,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na.unwrap()?;\n&a?;\n",
     "options": {
@@ -101963,6 +101963,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -102144,8 +102145,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na * b;\na / b;\na % b;\na + b;\na - b;\na >> b;\na << b;\na == b;\na && b;\na || b;\n",
     "options": {
@@ -103281,6 +103281,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -103327,8 +103328,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n(0);\n(2 * (3 + 4));\n",
     "options": {
@@ -103823,6 +103823,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -104040,8 +104041,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{1};\nfor i in 1.. {\n}\n",
     "options": {
@@ -105884,6 +105884,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -105902,8 +105903,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nx = y;\n",
     "options": {
@@ -106037,6 +106037,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -106074,8 +106075,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nx += 1;\nx += y;\n",
     "options": {
@@ -106349,6 +106349,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -106437,8 +106438,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n1000 as u8;\nlet character = integer as char;\nlet size: f64 = 1.0 + -len(values) as f64 + 1.0;\n",
     "options": {
@@ -107123,6 +107123,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -107238,8 +107239,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfoo();\nadd(1i32, 2i32);\nadd(\n    1i32,\n    2i32,\n);\n",
     "options": {
@@ -108251,6 +108251,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -108521,8 +108522,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n[];\n[1, 2, 3];\n[\"a\", \"b\", \"c\"];\n[0; 128];\n[\n    #[cfg(foo)]\n    \"foo\",\n    #[cfg(bar)]\n    \"bar\",\n];\n",
     "options": {
@@ -110879,6 +110879,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -110954,8 +110955,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n();\n(0,);\nlet (x, y, z) = (1, 2, 3);\n",
     "options": {
@@ -111525,6 +111525,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -111832,8 +111833,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nNothingInMe {};\nPoint {x: 10.0, y: 20.0};\nlet a = SomeStruct { field1, field2: expression, field3, };\nlet u = game::User {name: \"Joe\", age: 35, score: 100_000};\nlet i = Instant { 0: Duration::from_millis(0) };\n",
     "options": {
@@ -114403,6 +114403,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -114469,8 +114470,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet u = User{name, ..current_user()};\n",
     "options": {
@@ -114924,6 +114924,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -115140,8 +115141,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn main() {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}\n\nlet y = if x == 5 { 10 } else { 15 };\n\nif foo && bar {}\n\nif foo && bar || baz {}\n",
     "options": {
@@ -116824,6 +116824,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -116929,8 +116930,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nif let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}\n",
     "options": {
@@ -117582,6 +117582,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -117841,8 +117842,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nif let (\"Bacon\", b) = dish {\n}\n\nif let Some(\"chained\") = a && b && let (C, D) = e {\n}\n\nif foo && let bar = || baz && quux {}\n\nif a && let b = || c || d && e {}\n",
     "options": {
@@ -119699,6 +119699,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -119750,8 +119751,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nwhile let (\"Bacon\", b) = dish {\n}\n",
     "options": {
@@ -120138,6 +120138,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -120640,8 +120641,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmatch x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
     "options": {
@@ -125421,6 +125421,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -125455,8 +125456,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nwhile !done {\n  done = true;\n}\n",
     "options": {
@@ -125783,6 +125783,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -125846,8 +125847,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n'outer: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}\n",
     "options": {
@@ -126618,6 +126618,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -126921,8 +126922,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfor e in v {\n    bar(e);\n}\n\nfor i in 0..256 {\n    bar(i);\n}\n\n'outer: for x in 0..10 {\n    'inner: for y in 0..10 {\n        if x % 2 == 0 { continue 'outer; }\n        if y % 2 == 0 { continue 'inner; }\n    }\n}\n",
     "options": {
@@ -130174,6 +130174,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -130301,8 +130302,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmystruct.myfield;\nfoo().x;\nvalue.0.1.iter();\n1.max(2);\n",
     "options": {
@@ -131500,6 +131500,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -131527,8 +131528,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmystruct.foo();\n",
     "options": {
@@ -131779,6 +131779,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -131872,8 +131873,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n([1, 2, 3, 4])[0];\narr[10];\narr[n];\n",
     "options": {
@@ -132813,6 +132813,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -132930,8 +132931,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na::b();\nC::<D>::e();\n::f();\n::g::h();\n",
     "options": {
@@ -134038,6 +134038,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -134092,8 +134093,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n<Dog as Animal>::eat(d);\n",
     "options": {
@@ -134628,6 +134628,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -134662,8 +134663,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n<Token![]>::foo();\n",
     "options": {
@@ -135008,6 +135008,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -135033,8 +135034,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nsuper::super::foo();\n",
     "options": {
@@ -135275,6 +135275,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -135350,8 +135351,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nstd::sizeof::<u32>();\nfoo::<8>();\n",
     "options": {
@@ -136111,6 +136111,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -136384,8 +136385,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na.map(|(b, c)| b.push(c));\nd.map(move |mut e| {\n    f(e);\n    g(e)\n});\nh(|| -> i { j });\n",
     "options": {
@@ -139556,6 +139556,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -139647,8 +139648,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na.map(|b: usize| b.push(c));\n",
     "options": {
@@ -140690,6 +140690,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -140775,8 +140776,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmove || {\n    while i <= n {\n        yield i;\n        i += 1;\n    }\n    return;\n};\n",
     "options": {
@@ -141785,6 +141785,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -141834,8 +141835,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst a : A = unsafe { foo() };\n",
     "options": {
@@ -142112,6 +142112,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -142327,7 +142328,6 @@
           }
         }
       ],
-      "$errors": [],
       "$_layout": {
         "units": [
           {
@@ -144324,6 +144324,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -144373,8 +144374,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "some_call(&raw);\nlet a = &raw const b;",
     "options": {
@@ -144765,6 +144765,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -144884,8 +144885,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n0;\n0___0;\n123;\n0usize;\n123i32;\n123u32;\n123_u32;\n0xff_u8;\n0o70_i16;\n0b1111_1111_1001_0000_i32;\n1u128;\n",
     "options": {
@@ -145892,6 +145892,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -145953,8 +145954,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n123.123;\n2.;\n123.0f64;\n0.1f64;\n0.1f32;\n12E+99_f64;\n",
     "options": {
@@ -146346,6 +146346,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -146586,8 +146587,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n\"\";\n\"abc\";\nc\"foo\";\nb\"foo\\nbar\";\n\"foo\\\n    bar\";\n\"\\\"foo\\\"\";\n\"/* foo bar */ foo bar\";\n\"foo\\x42\\x43bar\";\n\"foo \\x42  \\x43 bar\";\n",
     "options": {
@@ -148051,6 +148051,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -148164,8 +148165,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nr#\"abc\"#; r##\"ok\"##;\nr##\"foo #\"# bar\"##;\nr###\"foo ##\"## bar\"###;\nr######\"foo ##### bar\"######;\n",
     "options": {
@@ -148791,6 +148791,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -148834,8 +148835,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nbr#\"abc\"#;\nbr##\"abc\"##;\n",
     "options": {
@@ -149101,6 +149101,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -149144,8 +149145,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ncr#\"abc\"#;\ncr##\"abc\"##;\n",
     "options": {
@@ -149411,6 +149411,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -149489,8 +149490,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n'a';\n'\\'';\n'\\0';\nb'x';\n'\\t';\n'\\xff';\n'\\\\';\n",
     "options": {
@@ -150146,6 +150146,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -150161,8 +150162,7 @@
             "_expression": 118
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntrue;\nfalse;\n",
     "options": {
@@ -150298,6 +150298,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -150405,8 +150406,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na!();\nb![];\nc!{};\nd::e!();\nf::g::h!{};\n",
     "options": {
@@ -151271,6 +151271,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -151801,8 +151802,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na!(* a *);\na!(& a &);\na!(- a -);\na!(b + c + +);\na!('a'..='z');\na!('\\u{0}'..='\\u{2}');\na!('lifetime)\ndefault!(a);\nunion!(a);\na!($);\na!($());\na!($ a $);\na!(${$([ a ])});\na!($a $a:ident $($a);*);\n",
     "options": {
@@ -156033,6 +156033,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 259,
@@ -156066,8 +156067,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nok! {\n  // one\n  /* two */\n}\n",
     "options": {
@@ -156204,6 +156204,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 418,
@@ -156888,8 +156889,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmacro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}\n\nmacro_rules! four {\n    () => {1 + 3};\n}\n\nmacro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}\n\nmacro_rules! o_O {\n    (\n    $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n    $($($x + $e),*),*\n    }\n}\n\nmacro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}\n\nmacro_rules! empty [\n    () => {};\n];\n",
     "options": {
@@ -161479,6 +161479,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -161570,8 +161571,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmatch x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}\n",
     "options": {
@@ -162471,6 +162471,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -162569,8 +162570,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmatch x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}\n",
     "options": {
@@ -163617,6 +163617,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -163961,8 +163962,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmatch x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
     "options": {
@@ -167790,6 +167790,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -167942,8 +167943,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmatch x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}\n",
     "options": {
@@ -169491,6 +169491,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -169909,8 +169910,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
     "options": {
@@ -174416,6 +174416,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -175064,8 +175065,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nif let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nwhile let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\n\nlet Ok(index) | Err(index) = slice.binary_search(&x);\n\nfor ref a | b in c {}\n\nlet Ok(x) | Err(x) = binary_search(x);\n\nfor A | B | C in c {}\n\n|(Ok(x) | Err(x))| expr();\n\nlet ref mut x @ (A | B | C);\n\nfn foo((1 | 2 | 3): u8) {}\n\nif let x!() | y!() = () {}\n",
     "options": {
@@ -180193,6 +180193,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -180489,8 +180490,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn foo(x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n\nfn foo(x: i32) {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n",
     "options": {
@@ -183849,6 +183849,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -183918,8 +183919,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmatch y {\n    None::<T> => 17,\n    _ => 42,\n}\n",
     "options": {
@@ -184690,8 +184690,8 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
-      "_statements": [],
       "$errors": [],
+      "_statements": [],
       "$_layout": {
         "trivia": {
           "inner": [
@@ -184749,8 +184749,8 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
-      "_statements": [],
       "$errors": [],
+      "_statements": [],
       "$_layout": {
         "trivia": {
           "inner": [
@@ -184814,8 +184814,8 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
-      "_statements": [],
       "$errors": [],
+      "_statements": [],
       "$_layout": {
         "trivia": {
           "inner": [
@@ -184861,8 +184861,8 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
-      "_statements": [],
       "$errors": [],
+      "_statements": [],
       "$_layout": {
         "trivia": {
           "inner": [
@@ -184914,8 +184914,8 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
-      "_statements": [],
       "$errors": [],
+      "_statements": [],
       "$_layout": {
         "trivia": {
           "inner": [
@@ -184968,8 +184968,8 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
-      "_statements": [],
       "$errors": [],
+      "_statements": [],
       "$_layout": {
         "trivia": {
           "inner": [
@@ -185013,6 +185013,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 223,
@@ -185063,8 +185064,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n//!\n\n/*!*/\n\n//\n\n///\nlet x; // <- immediate item after an empty line doc comment\n\n/**/\n\n/***/\n",
     "options": {
@@ -185120,8 +185120,8 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
-      "_statements": [],
       "$errors": [],
+      "_statements": [],
       "$_layout": {
         "trivia": {
           "inner": [
@@ -185158,6 +185158,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -185209,8 +185210,7 @@
             "_content": "1"
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst σ1 : Σ = 0;\nconst ψ_2 : Ψ = 1;\n",
     "options": {
@@ -185440,12 +185440,12 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_shebang": {
         "$type": 124,
         "_content": "/usr/bin/env -S cargo +nightly -Zscript"
       },
-      "_statements": [],
-      "$errors": []
+      "_statements": []
     },
     "expectedOutput": "\n#!/usr/bin/env -S cargo +nightly -Zscript\n",
     "options": {
@@ -185497,6 +185497,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_shebang": {
         "$type": 124,
         "_content": ""
@@ -185516,8 +185517,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n#!\nfn main() {}\n",
     "options": {
@@ -185656,6 +185656,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 191,
@@ -185696,8 +185697,7 @@
             "_statements": []
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n#![feature(thing)]\nfn main() {}\n",
     "options": {
@@ -186001,6 +186001,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -186013,8 +186014,7 @@
           },
           "_type": 244
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A = ();\n",
     "options": {
@@ -186102,6 +186102,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -186138,8 +186139,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A = (i32, String);\n",
     "options": {
@@ -186371,6 +186371,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -186437,8 +186438,7 @@
             "_type": 74
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A = &B;\ntype C = &'a str;\ntype D = &'a mut str;\n",
     "options": {
@@ -186870,6 +186870,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -186912,8 +186913,7 @@
             "_type": 74
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A = *mut B;\ntype C = *const str;\n",
     "options": {
@@ -187187,6 +187187,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -187382,8 +187383,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A = B<C>;\ntype D = E<F, str>;\ntype G = H<'a, I>;\ntype J = H<K=L>;\n",
     "options": {
@@ -189016,6 +189016,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -189167,8 +189168,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A = B::C;\ntype D = E::F::G;\ntype H = I::J<K>;\ntype L = M<N>::O;\n",
     "options": {
@@ -190291,6 +190291,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -190340,8 +190341,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A = [B; 4];\ntype C = &[D];\n",
     "options": {
@@ -190705,6 +190705,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -191101,8 +191102,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfn high_order1(value: i32, f: fn(i32)) -> i32 {}\n\nfn high_order2(value: i32, f: fn(i32) -> i32) -> i32 {\n    f(value)\n}\n\nfn high_order3(value: i32, f: &FnOnce(i32) -> i32) -> i32 {\n    f(value)\n}\n\ntype F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;\n",
     "options": {
@@ -194989,6 +194989,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -195114,8 +195115,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype a = extern \"C\" fn(*mut c_void);\ntype b = unsafe extern \"C\" fn() -> *mut c_void;\n",
     "options": {
@@ -196165,6 +196165,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 207,
@@ -196339,8 +196340,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype a = Box<Something + 'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
     "options": {
@@ -198127,6 +198127,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 179,
@@ -198238,8 +198239,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na as B<C>;\nd as *mut E<<F as E>::G>;\n",
     "options": {
@@ -199509,6 +199509,7 @@
     "pattern": "source_file",
     "input": {
       "$type": 176,
+      "$errors": [],
       "_statements": [
         {
           "$type": 208,
@@ -199535,8 +199536,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n/* plain block comment */\nfn main() {}\n",
     "options": {

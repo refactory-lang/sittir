@@ -1,5 +1,5 @@
 import { spanOf } from '@sittir/common/utils';
-import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
+import type { FactoryEntry, ReadNodeLike, SlotReaders } from '../validate/common.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -22,28 +22,7 @@ interface ExerciseEngine {
 	render(node: unknown): { toString(): string };
 }
 
-interface CommonModule {
-	loadNativeEngine(grammar: string): Promise<ExerciseEngine>;
-	loadCorpusEntries(grammar: string): readonly { name: string; source: string }[];
-	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
-	walkWrappedTree(root: unknown, visit: (node: ParsedNode) => void): void;
-	loadScopedFactoryMap<T extends Record<string, unknown>>(grammar: string, map: T): Promise<T>;
-	loadNodeModel(grammar: string): Promise<{
-		factoryShapes: Record<string, FactoryShape>;
-		factoryFields: Record<string, readonly string[]>;
-		factorySlots: Record<string, Record<string, FactorySlotMeta>>;
-		fieldAliasMap: Record<string, Record<string, string>>;
-		polymorphVariants: Record<string, unknown>;
-	}>;
-	buildFactoryNodeFromReference(
-		referenceData: ReadNodeLike,
-		kind: string,
-		artifacts: FactoryArtifacts,
-		opts?: {
-			kindNameFromId?: (id: number) => string | undefined;
-		}
-	): unknown | null;
-}
+type CommonModule = typeof import('../validate/common.ts');
 
 interface FactoryArtifacts {
 	readonly factoryMap: Record<string, FactoryEntry>;
@@ -124,10 +103,11 @@ function findFirstOfKind(
 	root: unknown,
 	kind: string,
 	common: CommonModule,
+	readers: SlotReaders,
 	kindNameFromId: KindNameFromId
 ): ParsedNode | undefined {
 	let found: ParsedNode | undefined;
-	common.walkWrappedTree(root, (node) => {
+	common.walkWrappedTree(root, readers, (node) => {
 		if (found !== undefined || node.$named === false) return;
 		if (typeof node.$type === 'number' && kindNameFromId?.(node.$type) === kind) found = node;
 	});
@@ -174,11 +154,12 @@ function resolveCorpusCase(
 	grammar: GrammarName,
 	kind: string,
 	common: CommonModule,
+	readers: SlotReaders,
 	engine: ExerciseEngine,
 	kindNameFromId: KindNameFromId
 ): ExerciseCase | null {
 	for (const entry of common.loadCorpusEntries(grammar)) {
-		if (findFirstOfKind(engine.parse(entry.source), kind, common, kindNameFromId) !== undefined) {
+		if (findFirstOfKind(engine.parse(entry.source), kind, common, readers, kindNameFromId) !== undefined) {
 			return { kind, find: kind, source: entry.source, label: entry.name };
 		}
 	}
@@ -189,6 +170,7 @@ function resolveCases(
 	grammar: GrammarName,
 	kinds: readonly string[],
 	common: CommonModule,
+	readers: SlotReaders,
 	engine: ExerciseEngine,
 	kindNameFromId: KindNameFromId
 ): readonly ExerciseCase[] {
@@ -200,7 +182,7 @@ function resolveCases(
 			selected.push(...builtinMatches);
 			continue;
 		}
-		const corpusCase = resolveCorpusCase(grammar, kind, common, engine, kindNameFromId);
+		const corpusCase = resolveCorpusCase(grammar, kind, common, readers, engine, kindNameFromId);
 		selected.push(corpusCase ?? { kind, find: kind, source: '', label: 'no matching built-in or corpus case' });
 	}
 	return selected;
@@ -213,8 +195,9 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 	const common = await loadCommon();
 	const artifacts = await loadFactoryArtifacts(grammar);
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
-	const engine = await common.loadNativeEngine(grammar);
-	const cases = resolveCases(grammar, kinds, common, engine, kindNameFromId);
+	const engine: ExerciseEngine = await common.loadNativeEngine(grammar);
+	const readers = await common.loadSlotReaders(grammar);
+	const cases = resolveCases(grammar, kinds, common, readers, engine, kindNameFromId);
 	if (cases.length === 0) {
 		process.stderr.write(`exercise: no cases available for grammar '${grammar}'\n`);
 		return 1;
@@ -232,7 +215,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 		let input: string;
 		let rendered: string;
 		try {
-			const node = findFirstOfKind(engine.parse(exercise.source), exercise.find, common, kindNameFromId);
+			const node = findFirstOfKind(engine.parse(exercise.source), exercise.find, common, readers, kindNameFromId);
 			if (node === undefined) {
 				skip += 1;
 				process.stdout.write(

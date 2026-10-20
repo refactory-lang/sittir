@@ -8,8 +8,8 @@ vi.mock('../common.ts', async (importOriginal) => {
 	return {
 		...actual,
 		loadCorpusEntries: (grammar: string) => actual.loadCorpusEntries(grammar).slice(0, 3),
-		walkWrappedTree: (...[root, visit, onAccessorThrow]: Parameters<typeof actual.walkWrappedTree>) => {
-			if (!walk.hideEveryCandidate) actual.walkWrappedTree(root, visit, onAccessorThrow);
+		walkWrappedTree: (...[root, readers, visit, onAccessorThrow]: Parameters<typeof actual.walkWrappedTree>) => {
+			if (!walk.hideEveryCandidate) actual.walkWrappedTree(root, readers, visit, onAccessorThrow);
 			onAccessorThrow?.({ key: '_injected', accessor: 'injected', type: 0, message: REFUSED });
 		}
 	};

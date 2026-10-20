@@ -84,6 +84,8 @@ import {
 	detachedHoldingTree,
 	holdingTreeOf,
 	materializeDetached,
+	loadSlotReaders,
+	type SlotReaders,
 	readNodeOf,
 	walkNativeForKind,
 	buildKindToSupertypes,
@@ -787,11 +789,12 @@ function dumpCst(node: TSNode, fieldName: string | null): CstNode {
 export function resolveNativeTraceUntypedNode(
 	typed: unknown | undefined,
 	deepUntypedNode: unknown,
+	readers: SlotReaders,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
 	return typed === undefined
 		? deepUntypedNode
-		: materializeDetached(typed, onAccessorThrow);
+		: materializeDetached(typed, readers, onAccessorThrow);
 }
 
 async function readProbeLanes(
@@ -817,7 +820,7 @@ async function readProbeLanes(
 	const shallow = stripBigInts(read());
 	const deepUntypedNode = detachedHoldingTree(read(Infinity));
 	const deepTyped = readNode ? readNode(handle, coordinate) : undefined;
-	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, onAccessorThrow);
+	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, await loadSlotReaders(grammar), onAccessorThrow);
 	return { shallow, deep, deepTyped, deepUntypedNode };
 }
 
@@ -947,7 +950,7 @@ function parseRange(spec: string): { start: number; end: number } {
  *  no other renderer. `materializeDetached` resolves the lazy
  *  wrap getters the native node cannot read. */
 async function renderUntypedNode(grammar: string, untypedNode: unknown): Promise<string> {
-	return renderUntypedNodeNative(grammar, materializeDetached(untypedNode));
+	return renderUntypedNodeNative(grammar, materializeDetached(untypedNode, await loadSlotReaders(grammar)));
 }
 
 /** @internal — the node data the engine renders for `untypedNode`: the

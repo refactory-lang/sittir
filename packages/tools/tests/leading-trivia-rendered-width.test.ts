@@ -4,7 +4,7 @@ import { sidesOf } from '@sittir/common/utils';
 import type { AnyUntypedNode } from '@sittir/types';
 import python from '../../python/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
-import { loadNativeEngine, materializeDetached } from '../src/validate/common.ts';
+import { loadNativeEngine, loadSlotReaders, materializeDetached } from '../src/validate/common.ts';
 import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts';
 
 /**
@@ -15,6 +15,7 @@ import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts
  */
 const ts = await createEngine(typescript);
 const native = await loadNativeEngine('typescript');
+const readers = await loadSlotReaders('typescript');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();
 const triviaOf = (node: object) => sidesOf(node);
 
@@ -25,7 +26,7 @@ function secondTypeArgument(source: string): AnyUntypedNode {
 	if (!ts.is.genericType(value)) throw new Error('expected a generic type');
 	const second = value.typeArguments().types().items()[1];
 	if (second === undefined) throw new Error('expected a second type argument');
-	return materializeDetached(second);
+	return materializeDetached(second, readers);
 }
 
 describe('leadingTriviaRenderedWidth on a detached alias envelope', () => {
@@ -57,7 +58,7 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
 		const suite = statement.consequence();
 		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
-		const block = materializeDetached(suite.block());
+		const block = materializeDetached(suite.block(), await loadSlotReaders('python'));
 		expect(renderPy(block).startsWith('# one\n# two\n  # three\nb')).toBe(true);
 		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy)).toBe('# one\n# two\n  # three\n'.length);
 	});

@@ -1,24 +1,9 @@
-import type { AnyUntypedNode } from '@sittir/types';
-import { isCoordinate, type TreeHandle } from '@sittir/common/utils';
+import { isCoordinate } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
-import { accessorCandidatesForStorageKey } from '../validate/common.ts';
+import { slotValuesOf, type AccessorThrowRecord, type SlotReaders } from '../validate/common.ts';
 
-interface CommonModule {
-	buildReadHandle(grammar: string, source: string): Promise<TreeHandle>;
-	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
-	readNodeOf(grammar: string): Promise<((tree: TreeHandle) => unknown) | null>;
-	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
-	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
-}
-
-interface AccessorThrowRecord {
-	readonly key: string;
-	readonly accessor: string;
-	readonly type: unknown;
-	readonly message: string;
-}
+type CommonModule = typeof import('../validate/common.ts');
 
 interface WalkNode {
 	readonly $type: number;
@@ -56,23 +41,11 @@ function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string
 	return kindNameFromId?.(node.$type) ?? String(node.$type);
 }
 
-export function collectChildren(node: WalkNode): unknown[] {
-	const children: unknown[] = [];
-	const members = node as unknown as Record<string, unknown>;
-	const readers = new Set(Object.keys(members).flatMap((key) => accessorCandidatesForStorageKey(key)));
-	for (const name of readers) {
-		const reader = members[name];
-		if (typeof reader !== 'function' || reader.length !== 0) continue;
-		try {
-			children.push(reader.call(node));
-		} catch {
-			// Ignore hydration failures; traversal is best-effort diagnostic output.
-		}
-	}
-	return children;
+export function collectChildren(node: WalkNode, readers: SlotReaders): unknown[] {
+	return slotValuesOf(node, readers).map(([, value]) => value);
 }
 
-function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
+function walkTree(root: unknown, readers: SlotReaders, visit: (node: WalkNode) => void): void {
 	const seenCoords = new Set<number>();
 	const seenRefs = new WeakSet<object>();
 
@@ -89,7 +62,7 @@ function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
 		seenRefs.add(ref);
 		if (coordKey !== undefined) seenCoords.add(coordKey);
 		visit(value);
-		for (const child of collectChildren(value)) {
+		for (const child of collectChildren(value, readers)) {
 			visitValue(child);
 		}
 	};
@@ -110,6 +83,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 	}
 
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
+	const readers = await common.loadSlotReaders(grammar);
 	// Native engine render — same engine the validators use; the
 	// removed legacy-core renderer had no SpacingWriter, so its output was
 	// seam-less garbage for any grammar with word-word seams.
@@ -124,13 +98,13 @@ export async function run(opts: WalkOptions): Promise<number> {
 		accessorThrows.push(rec);
 	};
 
-	walkTree(root, (node) => {
+	walkTree(root, readers, (node) => {
 		const kind = resolveKindName(node, kindNameFromId);
 		counts.set(kind, (counts.get(kind) ?? 0) + 1);
 		total += 1;
 		if (!render) return;
 		try {
-			const renderable = common.materialize(node, onAccessorThrow);
+			const renderable = common.materialize(node, readers, onAccessorThrow);
 			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {

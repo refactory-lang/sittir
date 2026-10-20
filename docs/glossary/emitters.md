@@ -6922,11 +6922,10 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 ```text
 // Match `fieldAccessorLines`' convention (`f.propertyName`, camelCase):
 // `canonical.name` is the raw storage-level slot name (snake_case for
-// kind-derived slots, e.g. `attributed_parameter`). An accessor emitted
-// under that raw name is invisible to consumers that derive the
-// expected accessor name via camelCase projection (e.g. the validator's
-// `accessorCandidatesForStorageKey`), which then silently falls back to
-// the raw, unhydrated storage value instead of calling this method.
+// kind-derived slots, e.g. `attributed_parameter`). The node model stamps
+// each slot's accessor from its `propertyName`, and consumers call that
+// stamped name (the validators' slot readers), so an accessor emitted
+// under the raw name is one nobody calls.
 ```
 
 

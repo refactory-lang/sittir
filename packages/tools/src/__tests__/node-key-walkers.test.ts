@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { materialize } from '../validate/common.ts';
+import { materialize, type SlotReaders } from '../validate/common.ts';
 import { collectChildren } from '../exercise/walk.ts';
 
 const LIST_ITEMS = Symbol('items');
@@ -33,9 +33,11 @@ const owner = (child: ReturnType<typeof leaf>) => ({
 	$engine: undefined
 });
 
-describe('the tools walkers select a node by key', () => {
-	it('materialize copies storage and $ metadata only', () => {
-		expect(materialize(owner(leaf('a')))).toEqual({
+const readers: SlotReaders = (typeId) => (typeId === 7 ? [{ storageKey: '_body', accessor: 'body' }] : []);
+
+describe('the tools walkers read a node through its model slots\' accessors', () => {
+	it('materialize copies $ metadata and each model slot as its accessor reads it', () => {
+		expect(materialize(owner(leaf('a')), readers)).toEqual({
 			$type: 7,
 			$source: 0,
 			$named: true,
@@ -43,8 +45,8 @@ describe('the tools walkers select a node by key', () => {
 		});
 	});
 
-	it('collectChildren calls the readers of the node and no other member', () => {
+	it('collectChildren calls the model slots\' accessors and no other member', () => {
 		const child = leaf('a');
-		expect(collectChildren(owner(child) as never)).toEqual([child]);
+		expect(collectChildren(owner(child) as never, readers)).toEqual([child]);
 	});
 });

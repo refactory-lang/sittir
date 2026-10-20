@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { carryTree, isCoordinate, sidesOf } from '@sittir/common/utils';
-import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree, nativeLanguageEngineOf } from '../common.ts';
+import { loadNativeEngine, loadSlotReaders, readNodeOf, materializeDetached, readNativeTree, nativeLanguageEngineOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
@@ -46,7 +46,7 @@ describe('read trivia layout, rendered detached', () => {
 		const engine = await loadNativeEngine('rust');
 		const readNode = (await readNodeOf('rust'))!;
 		const source = 'fn f() { x = a + /* x */ b; }';
-		const data = materializeDetached(readNode(readNativeTree(engine, source).tree)) as never as {
+		const data = materializeDetached(readNode(readNativeTree(engine, source).tree), await loadSlotReaders('rust')) as never as {
 			_statements: [{ _body: { _statements: [{ _content: { _expression: { _right: Record<string, any> } } }] } }];
 		};
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;
@@ -106,7 +106,7 @@ describe('in-line spacing the options do not write is a deviation, rendered deta
 		const native = await nativeLanguageEngineOf('rust');
 		const source = "foo!($/';()*()+.);\n";
 		const { tree } = readNativeTree(engine, source);
-		expect(native.render(materializeDetached(readNode(tree)) as AnyUntypedNode, tree.options).toString()).toBe(source);
+		expect(native.render(materializeDetached(readNode(tree), await loadSlotReaders('rust')) as AnyUntypedNode, tree.options).toString()).toBe(source);
 	});
 
 	it('keeps a rust token tree tight where its source is', async () => {
@@ -152,7 +152,7 @@ describe('a list, rendered detached', () => {
 });
 
 describe('a detached copy of a read node', () => {
-	const renderCopy = async (node: unknown): Promise<string> => (await loadNativeEngine('rust')).render(materializeDetached(node)).toString();
+	const renderCopy = async (node: unknown): Promise<string> => (await loadNativeEngine('rust')).render(materializeDetached(node, await loadSlotReaders('rust'))).toString();
 
 	it('renders a copied multi-line parameter list with its source breaks and depth', async () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i32\n) {}\n').statements()[0];
@@ -166,7 +166,7 @@ describe('a detached copy of a read node', () => {
 });
 
 describe('depth is one fact per position', () => {
-	const copy = async (grammar: string, node: unknown): Promise<string> => (await loadNativeEngine(grammar)).render(materializeDetached(node)).toString();
+	const copy = async (grammar: string, node: unknown): Promise<string> => (await loadNativeEngine(grammar)).render(materializeDetached(node, await loadSlotReaders(grammar))).toString();
 	const struct = 'struct Point {\n    x: i32,\n    y: i32,\n}';
 	const enumeration = 'enum E {\n    A,\n    B,\n}';
 	const union = 'union U {\n    a: u8,\n    b: u16,\n}';

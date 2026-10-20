@@ -808,6 +808,7 @@ import {
 	readNodeOf,
 	hydrateOf,
 	materialize,
+	loadSlotReaders,
 	type ModelFullForm
 } from '../validate/common.ts';
 import { Delimiter } from '@sittir/common/utils';
@@ -1051,7 +1052,7 @@ export async function emitFactorySourceText(
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
-	const root = materialize(readNode(handle)) as ReadNodeLike;
+	const root = materialize(readNode(handle), await loadSlotReaders(grammar)) as ReadNodeLike;
 	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
 	seatTableSides(root, triviaFacts?.layout ?? new Set());
 	seatFormTree(root, { kindNameFromId, seats: model.seats });

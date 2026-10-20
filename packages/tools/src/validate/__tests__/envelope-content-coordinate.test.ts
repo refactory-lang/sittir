@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
-import { loadCanonicalKindNameFromId, walkWrappedTree } from '../common.ts';
+import { loadCanonicalKindNameFromId, loadSlotReaders, walkWrappedTree } from '../common.ts';
 
 type Coordinate = { readonly $treeHandle: number; readonly $span: { start: number; end: number }; readonly $type: number };
 type Envelope = { readonly $type: number; readonly $_layout?: { readonly at?: Coordinate }; content(): Envelope };
@@ -40,7 +40,7 @@ describe('an alias envelope and its content, read', () => {
 			if (kindName === undefined) throw new Error(`no kind names for ${grammar}`);
 			const root = engine.parse(source, { depth: Infinity });
 			const found: Envelope[] = [];
-			walkWrappedTree(root, (node) => {
+			walkWrappedTree(root, await loadSlotReaders(grammar), (node) => {
 				if (kindName(node.$type) === envelope) found.push(node as unknown as Envelope);
 			});
 			expect(found).toHaveLength(1);

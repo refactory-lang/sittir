@@ -720,7 +720,7 @@ The shape of a parsed `node-model.json5`, only the fields the validators read. E
 
 ### `packages/tools/src/validate/common.ts::parseNodeModel`
 
-Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape. `displayUnions` comes through as stored.
+Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape. `displayUnions` comes through as stored. `slotReaders` gives each kind's slot accessors as the model stamps them, plus a delimiter reader for a kind that declares a default delimiter (`SlotReader`).
 
 ### `packages/tools/src/validate/common.ts::loadBoundNameOf`
 
@@ -742,41 +742,11 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 
 ### `packages/tools/src/validate/common.ts::walkWrappedTree`
 
-```text
-/**
- * Walk a wrapped tree via declared getters, calling `visit` on each
- * encountered wrapped node. Enumeration uses `Object.keys` + accessor
- * invocation — accessors defined via `{get foo() {}}` appear as
- * enumerable keys and fire on read, so each child materializes through
- * the wrap layer's hydration ($type on every node is the grammar-symbol
- * wire identity stamped by the read).
- *
- * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
- * and get skipped. Leaves short-circuit when accessing a getter that
- * doesn't return a wrapped-shape value.
- */
-```
-
-#### body
-
-```text
-// $parentHandle + $childIndex form the composite dedup key: a handle can
-// repeat across child positions, so neither part suffices alone.
-```
+Walks a wrapped tree and calls `visit` on each node: the root, then each node its stored values hold (`slotValuesOf`), depth first. A node's children come from its readers (`SlotReaders`) through its public surface, never from its `_` storage, so the walk reads object nodes and record views alike. A coordinate is visited once, keyed by its tree handle. An accessor that throws is reported through `onAccessorThrow`, and the walk does not go into that slot.
 
 ### `packages/tools/src/validate/common.ts::AccessorThrowRecord`
 
-```text
-/**
- * One accessor-throw occurrence — a slot's declared getter threw instead of
- * returning a value, so `resolveWrappedStorageValue` fell back to the raw,
- * unwrapped stub for that slot (see its doc comment for what that masks).
- * Callers that care about these beyond the unconditional stderr line pass an
- * `onAccessorThrow` collector through to receive one record per occurrence,
- * in addition to — not instead of — the stderr line. `validateReadRenderParse`
- * fails the entry on any.
- */
-```
+One accessor that threw instead of returning its slot's value, with the slot's storage key, the accessor, the node's kind id and the message. The slot then has no value in the walk or the materialized data (`slotValuesOf`). The throw always goes to stderr. A caller that collects throws passes `onAccessorThrow` and gets one record per throw as well; `validateReadRenderParse` fails the entry on any.
 
 ### `packages/tools/src/validate/common.ts::ValidatorSkip`
 
@@ -805,20 +775,6 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
  * skip, and one `<stage>-excluded` entry per (reason, kind) carrying the
  * candidate `count` and the sorted corpus `entries` it came from.
  */
-```
-
-### `packages/tools/src/validate/common.ts::resolveWrappedStorageValue`
-
-#### body
-
-```text
-// Unconditional (not env-gated): a thrown accessor here means this
-// ENTIRE slot falls back to raw, unwrapped stubs below — including
-// any sibling elements in an array-valued slot that wrapped fine on
-// their own. Without SITTIR_VALIDATOR_DUMP_ACCESSOR_THROW, the only
-// visible symptom is a downstream render/FromNapiValue error on an
-// innocent sibling element, which misdirects investigation toward
-// that sibling instead of the actual failing accessor.
 ```
 
 ### `packages/tools/src/validate/common.ts::IrEntry`
@@ -1804,6 +1760,40 @@ Sets the run's node storage (`validationNodeStorage`), which `createNativeEngine
 ### `packages/tools/src/validate/common.ts::validationStorage`
 
 The run's node storage. `runCountsCli` records validation history only for object storage: the history compares runs of one wire, and a record-view run is checked against it through its report.
+
+### `packages/tools/src/validate/common.ts::slotValuesOf`
+
+A wrapped node's stored values, one `[storageKey, value]` pair per reader its kind id has (`SlotReaders`), read through the node's public surface and never from its `_` storage. A slot reader calls the node's stamped accessor when the node has one (`storedSlotReader`); a list's delimiter reader takes its public `delimiter` value when it is a number. The same call reads a node on either wire, since an object node and a record view expose the same members.
+
+An accessor that throws yields no pair for its slot, rather than a fall back to raw storage. The throw goes to stderr and to `onAccessorThrow` (`AccessorThrowRecord`), and `validateReadRenderParse` fails the entry on it.
+
+### `packages/tools/src/validate/common.ts::SlotReader`
+
+How a validator reads one stored value of a node through its public surface, and the storage key the value goes under in materialized data. A slot's reader names the slot's accessor as the node model stamps it (`NodeModelSlot.accessor`). A separated list's delimiter reader names its `delimiter` option: the model gives one to every kind that declares a default delimiter, the kinds that store `_delimiter`. A list's owner passes the same `delimiter` value through but stores none, so it gets no delimiter reader.
+
+### `packages/tools/src/validate/common.ts::SlotReaders`
+
+A grammar's readers by kind id (`loadSlotReaders`). A wrapped node carries its kind id as `$type`, so a walk finds a node's readers without naming its kind. Ids the model has no node for have no readers.
+
+### `packages/tools/src/validate/common.ts::slotStorageKey`
+
+The key a slot or list option is stored under in node data: its name with a leading `_`. The validators' slot models and readers both take their storage keys from here.
+
+### `packages/tools/src/validate/common.ts::loadSlotReaders`
+
+A grammar's `SlotReaders`, cached per grammar. The node model gives each kind's readers by name (`parseNodeModel`'s `slotReaders`); each name resolves to its kind id through the grammar's id table (`kindIdOf`). Kinds that share an id (a kind and its display alias) have their readers merged, one per storage key with the first kept, and the walk calls only the accessors a node has. A kind the id table does not know is left out.
+
+### `packages/tools/src/validate/common.ts::kindIdOf`
+
+A kind name's id through the grammar's lookup, or `undefined` when there is no lookup or it refuses the name. The node model holds compile-side kinds the parser never issues, and those have no id.
+
+### `packages/tools/src/validate/common.ts::materialize`
+
+A wrapped tree as plain node data (`materializeValue`): each node's stored values, read through its readers, under their storage keys. It reads the same on either wire. A validator's reference data, its factory configs and its render input all start from here.
+
+### `packages/tools/src/validate/common.ts::materializeValue`
+
+One value of `materialize`. An array maps entry by entry, and anything without a numeric `$type` passes through. A node keeps its non-`_` data keys: `$text` as `nodeText` gives it, and `$_layout` with its trivia entries materialized too. It drops its methods and its `_` keys, and its stored values come from `slotValuesOf` instead. The copy keeps the node's source identity (`carrySource`) and its read (`carryRead`).
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

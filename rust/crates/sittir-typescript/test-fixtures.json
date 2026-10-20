@@ -5,6 +5,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -813,7 +814,6 @@
           }
         }
       ],
-      "$errors": [],
       "$_layout": {
         "units": [
           {
@@ -7487,6 +7487,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 218,
@@ -7523,8 +7524,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntry {}\ncatch (e: unknown) {}\nfinally {}\n",
     "options": {
@@ -7818,6 +7818,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -7989,8 +7990,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}\n\ndeclare class Foo {\n  bar(): number,\n  baz(): Baz,\n}\n",
     "options": {
@@ -9518,6 +9518,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -9562,8 +9563,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare module.exports: {\n  foo: string;\n}\n",
     "options": {
@@ -9937,6 +9937,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -10128,8 +10129,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport default function point(x: number, y: number) {\n    return { x, y };\n}\n\n// a comment\n\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
     "options": {
@@ -11861,6 +11861,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -11920,8 +11921,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare class Linter {\n    static findConfiguration: typeof findConfiguration;\n}\n",
     "options": {
@@ -12445,6 +12445,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 400,
@@ -12462,8 +12463,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport = Linter;\nexport = {};\n",
     "options": {
@@ -12575,6 +12575,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 316,
@@ -12598,8 +12599,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimport r = X.N;\n",
     "options": {
@@ -12734,6 +12734,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 313,
@@ -12770,8 +12771,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmodule C {\n  import r = X.N;\n}\n",
     "options": {
@@ -13013,6 +13013,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 313,
@@ -13066,8 +13067,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmodule M {\n    export module N {\n    }\n    export import X = N;\n}\n",
     "options": {
@@ -13454,6 +13454,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -13585,8 +13586,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}\n\nexport class CloningRepository {\n  public readonly id = CloningRepositoryID++\n}\n\n",
     "options": {
@@ -14835,6 +14835,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -14902,8 +14903,7 @@
             "_terminator": 22
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare type IndexableType = string | number | Date | Array<string | number | Date>;\n",
     "options": {
@@ -15565,6 +15565,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 313,
@@ -15769,8 +15770,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nmodule Promise {\n    var on: {}\n    export function resolve<R>(value?: Thenable<R>): Promise<R>;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" { }\n",
     "options": {
@@ -17743,6 +17743,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -17792,8 +17793,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nx = { name, description, private: private_ }\n",
     "options": {
@@ -18162,6 +18162,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -18230,8 +18231,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfoo as any as Array<number>\nbar satisfies number[]\n\"foobar\" as const\n",
     "options": {
@@ -18730,6 +18730,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -18904,8 +18905,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}\n",
     "options": {
@@ -21337,6 +21337,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -21520,8 +21521,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "options": {
@@ -23248,6 +23248,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -23301,8 +23302,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare namespace Foo {\n  export interface Bar {}\n}\n",
     "options": {
@@ -23764,6 +23764,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -23825,8 +23826,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nnamespace Foo {\n}\n\nnamespace Bar {\n  var x;\n}\n",
     "options": {
@@ -24181,6 +24181,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -24314,8 +24315,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass Foo {\n  private async() {};\n  get(): Result {};\n  private set(plugin) {};\n}\n",
     "options": {
@@ -25441,6 +25441,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -25824,8 +25825,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;\n\n  public readonly async bar?<T>();\n  private static bar();\n  private static async bar(): T;\n}\n",
     "options": {
@@ -30277,6 +30277,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -30514,8 +30515,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass Foo {\n  static 2: string;\n  public static 2: string = 'string';\n  public static readonly 'hello'?: int = 'string';\n  static readonly 'hello'?: int = 'string';\n  readonly 'hello'?: int = 'string';\n}\n",
     "options": {
@@ -32164,6 +32164,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -32248,8 +32249,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass Foo {\n  @bar<T>()\n  method() {\n  }\n}\n",
     "options": {
@@ -32963,6 +32963,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -33301,8 +33302,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}\n",
     "options": {
@@ -35806,6 +35806,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -36116,8 +36117,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass Foo<Bar> extends Baz { bar = 5; static one(a) { return a; }; two(b) { return b; } three(c) { return c; } }\n",
     "options": {
@@ -38461,6 +38461,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -38546,8 +38547,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass Foo {\n  static {\n    this.#bar = '';\n  }\n  static {\n    this.baz();\n  }\n}\n",
     "options": {
@@ -39396,6 +39396,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -39415,8 +39416,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare global {\n}\n",
     "options": {
@@ -39557,6 +39557,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 312,
@@ -39838,8 +39839,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nabstract class Foo {\n}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {\n}\n",
     "options": {
@@ -42213,6 +42213,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -42284,8 +42285,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass C {\n    @(super.decorate)\n    method2() { }\n}\n",
     "options": {
@@ -42907,6 +42907,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -42964,8 +42965,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport type Extracted = keyof Pick<Base, \"id\">\n",
     "options": {
@@ -43515,6 +43515,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -43577,8 +43578,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nvar a!: b;\nlet a!: b;\n",
     "options": {
@@ -43923,6 +43923,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -44113,8 +44114,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport default abstract class C { }\nexport default class C { }\nexport class C { }\nexport default interface I {}\nexport interface I {}\n",
     "options": {
@@ -45233,6 +45233,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -45374,8 +45375,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass A<\n  B,\n  C,\n> {}\n\nclass D extends A<\n  X,\n  Y,\n> {}\n",
     "options": {
@@ -46423,6 +46423,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -46847,8 +46848,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass A extends B<C>(D) implements C {}\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n",
     "options": {
@@ -50867,6 +50867,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -50924,8 +50925,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass Foo {\n  public bar()\n  {\n  }\n}\n",
     "options": {
@@ -51333,6 +51333,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 312,
@@ -51436,8 +51437,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nabstract class Foo {\n  abstract baz(): void;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n",
     "options": {
@@ -52254,6 +52254,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -52454,8 +52455,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nh as `hello`\nT as {} & { [t: T]: T }\nT as {} & { [t: T]: T } & { [g: G]: G }\n",
     "options": {
@@ -54135,6 +54135,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -54335,8 +54336,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nh satisfies `hello`\nT satisfies {} & { [t: T]: T }\nT satisfies {} & { [t: T]: T } & { [g: G]: G }\n",
     "options": {
@@ -56016,6 +56016,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -56114,8 +56115,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntypeof class {} === \"function\";\n\ntypeof module === \"object\" && typeof module.exports === \"object\"\n",
     "options": {
@@ -56818,6 +56818,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -56848,8 +56849,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n[, a,, b,,,, s,,,]\n",
     "options": {
@@ -56973,6 +56973,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -56995,8 +56996,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nvar module;\nmodule;\n",
     "options": {
@@ -57116,6 +57116,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -57178,8 +57179,7 @@
             ]
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nvar a = b\n  , c = d\n  , e = f\n",
     "options": {
@@ -57387,6 +57387,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -57469,8 +57470,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ni < foo.length;\ni < type.length;\ni < string.length;\n",
     "options": {
@@ -57976,6 +57976,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 211,
@@ -58047,8 +58048,7 @@
             "_terminator": 173
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nif ( foo ) {\n\tset[ 1 ].apply()\n}\n",
     "options": {
@@ -58589,6 +58589,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -58738,8 +58739,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n{\n  public: true,\n  private: true,\n  readonly: true\n};\n\n{\n  readonly: 1,\n  abstract: 1,\n  static: 1\n};\n",
     "options": {
@@ -59508,6 +59508,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -59625,8 +59626,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfoo! = bar;\nfoo! += bar;\n(foo)! = bar;\n(foo)! += bar;\n",
     "options": {
@@ -60333,6 +60333,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -60370,8 +60371,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nf<T>(x)\n",
     "options": {
@@ -60642,6 +60642,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -60757,8 +60758,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst makeHammerBox = makeBox<Hammer>;\nconst makeStringBox = makeBox<string>;\nconst ErrorMap = Map<string, Error>;\n",
     "options": {
@@ -61544,6 +61544,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -61643,8 +61644,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n<A>b;\n<C<D>>e.f;\n",
     "options": {
@@ -62404,6 +62404,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -62462,8 +62463,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na ? function(){ return true } : b;\n",
     "options": {
@@ -62802,6 +62802,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 247,
@@ -63314,8 +63315,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfunction greeter(person: string) {\n  return \"Hello, \" + person;\n}\n\nfunction foo<T>(x: T): T {\n\n}\n\nfunction foo<T, U>(a: T[], f: (x: T) => U): U[] {\n\n}\n\nfunction foo<T, U>(this: T[]): U[] {\n  return []\n}\n\nfunction foo<const T, const U extends string>(x: T, y: U) {\n\n}\n",
     "options": {
@@ -67443,6 +67443,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -67485,8 +67486,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst lines = new Array<DiffLine>()\n",
     "options": {
@@ -67808,6 +67808,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -67901,8 +67902,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\na.b<[C]>();\na<C.D[]>();\n",
     "options": {
@@ -68700,6 +68700,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -68732,8 +68733,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nA?.<B>();\n",
     "options": {
@@ -68989,6 +68989,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 204,
@@ -69258,8 +69259,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n<A>(amount, interestRate, duration): number => 2\n\nfunction* foo<A>(amount, interestRate, duration): number {\n\tyield amount * interestRate * duration / 12\n}\n\n(module: any): number => 2\n",
     "options": {
@@ -71571,6 +71571,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -71601,8 +71602,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst x = async => async;\n",
     "options": {
@@ -71789,6 +71789,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -71993,8 +71994,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
     "options": {
@@ -74187,6 +74187,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -74217,8 +74218,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport default function foo(): bar\n",
     "options": {
@@ -74472,6 +74472,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 247,
@@ -74746,8 +74747,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfunction foo()\n{}\n\nfunction foo(bar)\nfunction foo(bar): baz;\nfunction foo(bar)\n\nfunction foo(): () => { [key: foo]: bar }\nfunction foo(): () => { [key: foo]: bar } {}\n",
     "options": {
@@ -76676,6 +76676,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 301,
@@ -76780,8 +76781,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfunction foo()\n  // above is a signature\nfoo();\n\nfunction bar()\n  // above is a function declaration\n{}\n\nfunction foo()\n  : number;\n",
     "options": {
@@ -77166,6 +77166,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -77210,8 +77211,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nvar x: string = 'hi';\nvar y: number;\n",
     "options": {
@@ -77482,6 +77482,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 205,
@@ -77561,8 +77562,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nvar x: (string);\nvar x: ({a: any});\n",
     "options": {
@@ -78208,6 +78208,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -78536,8 +78537,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet person: {name: string, age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T]-?: any }\ntype T = { [K in keyof T]?: any }\ntype T = { -readonly [K in keyof T]: any }\n",
     "options": {
@@ -80954,6 +80954,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -81038,8 +81039,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet MyFunction: {\n  (string): string,\n  length: number\n};\n",
     "options": {
@@ -81851,6 +81851,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -81900,8 +81901,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n",
     "options": {
@@ -82261,6 +82261,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 247,
@@ -82410,8 +82411,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfunction f(): any {\n 'a';\n 'b';\n}\n\nfunction\nf\n()\n :\n any {\n 'a'\n 'b'\n }\n",
     "options": {
@@ -83179,6 +83179,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -83207,8 +83208,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet x: X[];\n",
     "options": {
@@ -83421,6 +83421,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -83533,8 +83534,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet x: (result: string) => any;\nconst foo: (this: Readable, size?: number) => any;\n\n",
     "options": {
@@ -84634,6 +84634,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -84706,8 +84707,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet foo: ({a}: Foo) => number\n",
     "options": {
@@ -85466,6 +85466,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -85588,8 +85589,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet x: new < T1, T2 > ( p1, p2 ) => R;\n",
     "options": {
@@ -86664,6 +86664,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -86765,8 +86766,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst symFoo: unique symbol = Symbol(\"foo\");\nconst symBar: symbol = Symbol.for(\"bar\");\n",
     "options": {
@@ -87426,6 +87426,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -87481,8 +87482,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst range = (document: any).selection.createRange()\n",
     "options": {
@@ -87957,6 +87957,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -88029,8 +88030,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst editor: ?CodeEditor\nconst miscArray: ?T[]\n",
     "options": {
@@ -88541,6 +88541,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 196,
@@ -89160,8 +89161,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimport type {UserID, User} from \"./User.js\";\nimport {type UserID, type User} from \"./User.js\";\nimport typeof {jimiguitar as GuitarT} from \"./User.js\";\nimport type UserID, {addUser, removeUser} from './User.js';\n\nimport type from './User.js';\nimport type, {addUser} from './User.js';\nimport {type} from './User.js';\nimport {addUser as type} from './User.js';\nimport {type as addUser} from './User.js';\nimport {type, addUser} from './User.js';\nimport {addUser, type} from './User.js';\nimport type, {addUser, type User} from './User.js';\n",
     "options": {
@@ -93859,6 +93859,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 427,
@@ -93968,8 +93969,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport type { UserType }\nexport type { UserType } from \"./User.js\";\nexport type { A, B, C as D } from 'mymodule';\n",
     "options": {
@@ -94794,6 +94794,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -94844,8 +94845,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport type UserType = {};\nexport interface UserInterface {}\n",
     "options": {
@@ -95177,6 +95177,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -95416,8 +95417,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]\n}\n\ntype ConflictInfo = {\n  start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle\n}\n",
     "options": {
@@ -97262,6 +97262,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 320,
@@ -97508,8 +97509,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nenum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}\n",
     "options": {
@@ -99714,6 +99714,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -99994,8 +99995,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass A<\n  B,\n  C,\n> {}\n\nclass D extends A<\n  X,\n  Y,\n> {}\n\nclass E extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}\n\nclass F extends G, H<T> {}\n",
     "options": {
@@ -102254,6 +102254,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -102292,8 +102293,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet x: Array<*>\n",
     "options": {
@@ -102607,6 +102607,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -102691,8 +102692,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype U = number | string;\ntype Z = | \"foo\" | \"bar\";\ntype Z = | \"foo\";\n",
     "options": {
@@ -103302,6 +103302,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -103319,8 +103320,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype BrowserStats$ResourceTiming = number & string;\n",
     "options": {
@@ -103440,6 +103440,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -103507,8 +103508,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype BrowserStats = {|\n  url: string,\n  ms: number\n|}\n",
     "options": {
@@ -103990,6 +103990,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -104034,8 +104035,7 @@
           "_value": 77,
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype HandlerFunction<T: Element> = void\n",
     "options": {
@@ -104393,6 +104393,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 318,
@@ -104606,8 +104607,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ninterface X {\n  x(): Promise<Array<Foo>>;\n}\n\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n",
     "options": {
@@ -107283,6 +107283,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -107348,8 +107349,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet score: (string: string, query: string) => number\n",
     "options": {
@@ -107996,6 +107996,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -108022,8 +108023,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst repository = foo++!\n",
     "options": {
@@ -108199,6 +108199,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -108519,8 +108520,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype T = keyof Person;\ntype T = keyof Person.P;\ntype T = keyof Person<P>;\ntype T = keyof (Person);\n\ntype T = typeof Person;\ntype T = typeof Person.P;\ntype T = typeof import('person');\n\ntype T = keyof typeof Person;\n\ntype T = keyof U[number];\ntype T = keyof U & V;\n\ntype T = typeof array[number];\n",
     "options": {
@@ -110527,6 +110527,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -110604,8 +110605,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype K1 = Foo[bar]\ntype K1 = Foo['bar' | 'baz']\n",
     "options": {
@@ -111173,6 +111173,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 428,
@@ -111284,8 +111285,7 @@
             "_terminator": 22
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport type NoInfer<T> = T & { [K in keyof T]: T[K] };\n",
     "options": {
@@ -112365,6 +112365,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 247,
@@ -112423,8 +112424,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfunction f(x: any): asserts x {\n}\n",
     "options": {
@@ -112815,6 +112815,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 247,
@@ -113025,8 +113026,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfunction f(x: any): asserts x is number {\n}\n\nclass Foo<T> {\n  test(): this is T {}\n}\n\nfunction isT(t: T): t is T {\n  return true\n}\n",
     "options": {
@@ -114598,6 +114598,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -114715,8 +114716,7 @@
             "_terminator": 22
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ndeclare const f: (x: any) => asserts x;\ndeclare const g: (x: any) => asserts x is number;\n",
     "options": {
@@ -115908,6 +115908,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 247,
@@ -116046,8 +116047,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nfunction isFish(pet: Fish): pet is Fish {\n}\n\nfunction isFish(object: Fish): object is Fish {\n}\n",
     "options": {
@@ -117012,6 +117012,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -117155,8 +117156,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype t = a[]\ntype t = readonly a[]\ntype t = readonly a[][]\ntype t = (readonly a[])[]\ntype t = readonly (readonly a[]) []\n",
     "options": {
@@ -118278,6 +118278,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -118576,8 +118577,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "options": {
@@ -120670,6 +120670,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -121540,8 +121541,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype T = X extends Y ? Z : Y\ntype T = X extends ?Y ? ?X : Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\ntype T<X, Y> = T extends X<infer Y> ? Y : X\ntype T<X> = X extends (infer X)[] ? X : never;\ntype T<X> = T extends { x: infer X } ? X : never;\ntype T<X> = T extends { x: infer X extends number } ? X : never;\n",
     "options": {
@@ -128847,6 +128847,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -129458,8 +129459,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "options": {
@@ -134363,6 +134363,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -134649,8 +134650,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype A<B> = { [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] };\ntype A<B> = { [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }\n",
     "options": {
@@ -137412,6 +137412,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -137607,8 +137608,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype T = Foo<Bar<typeof bar>>\ntype T = Foo<Bar<typeof bar.baz>>\ntype T = Foo<Bar<typeof bar[\"baz\"]>>\n",
     "options": {
@@ -139481,6 +139481,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -139560,8 +139561,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype T = Foo<any, unknown, number, string, void, true, false, null, undefined, 0, \"foo\">\n",
     "options": {
@@ -140187,6 +140187,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -140334,8 +140335,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype Foo<T extends abstract new (...args: any) => any> = T;\ntype Foo<T extends new (...args: any) => any> = T;\n",
     "options": {
@@ -141757,6 +141757,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -141803,8 +141804,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype Foo<T> = abstract new () => T;\n",
     "options": {
@@ -142159,6 +142159,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -142235,8 +142236,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n// These should generate the same AST aside from the parenthesized_type node\ntype X1 = typeof Y[keyof typeof Z];\ntype X2 = (typeof Y)[keyof typeof Z];\n",
     "options": {
@@ -142728,6 +142728,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -142780,8 +142781,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\n// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T = typeof f<T>;\n",
     "options": {
@@ -143090,6 +143090,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 244,
@@ -143303,8 +143304,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nclass A {\n  colors: [ { color: \"green\", code: \"#E5F8F2\" } ]\n  color: (typeof this.colors)[number] = this.colors[0]\n}\n",
     "options": {
@@ -145617,6 +145617,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 323,
@@ -145689,8 +145690,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\ntype Foo = import('node:fs').ReadStream & {\n  bar();\n};\n",
     "options": {
@@ -146297,6 +146297,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 196,
@@ -146352,8 +146353,7 @@
           },
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nimport something from 'foo.css' assert { type: 'css' }\n",
     "options": {
@@ -146788,6 +146788,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 320,
@@ -146842,8 +146843,7 @@
             }
           }
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nenum T { A, B, }\n",
     "options": {
@@ -147189,6 +147189,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -147268,8 +147269,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst x = \"a\\nb\\tc\";\nconst y = 'It\\'s\\ttabbed';\n",
     "options": {
@@ -147723,6 +147723,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -147773,8 +147774,7 @@
           ],
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nconst z = `pre${x}mid\\n${y}post`;\n",
     "options": {
@@ -148076,6 +148076,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 311,
@@ -148937,7 +148938,6 @@
           }
         }
       ],
-      "$errors": [],
       "$_layout": {
         "units": [
           {
@@ -156020,6 +156020,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 206,
@@ -156145,8 +156146,7 @@
           ],
           "_terminator": 173
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nlet x: 2\nlet x: 2 | -3 | -4\nlet x: \"string\"\nlet x: false\n",
     "options": {
@@ -157092,6 +157092,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 427,
@@ -157110,8 +157111,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport type * from './x.ts';\n",
     "options": {
@@ -157241,6 +157241,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 427,
@@ -157266,8 +157267,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport type * as ns from './y.ts';\n",
     "options": {
@@ -157440,6 +157440,7 @@
     "pattern": "program",
     "input": {
       "$type": 188,
+      "$errors": [],
       "_statements": [
         {
           "$type": 427,
@@ -157474,8 +157475,7 @@
           },
           "_terminator": 22
         }
-      ],
-      "$errors": []
+      ]
     },
     "expectedOutput": "\nexport type { A } from './z.ts';\n",
     "options": {
