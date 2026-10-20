@@ -22,23 +22,59 @@ const ENGINES = {
 // supertype, and no named alias in a parent rule uses it as content, so no alias site gives it a CST
 // node. A builder for such a kind is a builder for nothing the parser produces, so there must be none.
 // Builders at alias sites stay, since their kinds are real nodes.
-async function neverNodeBuilders(grammar: keyof typeof ENGINES): Promise<string[]> {
-	const engine = await ENGINES[grammar]();
-	const { builderPaths } = await loadNodeModel(grammar);
-	const compilation = await compileGrammar({
+type Compilation = Awaited<ReturnType<typeof compileGrammar>>;
+
+async function compileOf(grammar: keyof typeof ENGINES): Promise<Compilation> {
+	return compileGrammar({
 		package: grammarPackage(grammar as GrammarName),
 		generatedIdTables: await loadGeneratedIdTables(grammar)
 	});
-	const neverNode = (kind: string): boolean => {
-		const node = compilation.nodeMap.nodes.get(kind);
-		return node !== undefined && node.surfaceHidden === true && node.modelType !== 'supertype' && !compilation.linked.parentAliasedKinds?.has(kind);
-	};
+}
+
+const neverNodeOf = (compilation: Compilation) => (kind: string): boolean => {
+	const node = compilation.nodeMap.nodes.get(kind);
+	return node !== undefined && node.surfaceHidden === true && node.modelType !== 'supertype' && !compilation.linked.parentAliasedKinds?.has(kind);
+};
+
+async function neverNodeBuilders(grammar: keyof typeof ENGINES): Promise<string[]> {
+	const engine = await ENGINES[grammar]();
+	const { builderPaths } = await loadNodeModel(grammar);
+	const neverNode = neverNodeOf(await compileOf(grammar));
 	const offending: string[] = [];
 	for (const [kind, path] of Object.entries(builderPaths)) {
 		const builder = path.reduce<unknown>((at, segment) => (at as Record<string, unknown> | undefined)?.[segment], engine.build);
 		if (typeof builder === 'function' && neverNode(kind)) offending.push(`${path.join('.')} (kind ${kind})`);
 	}
 	return offending;
+}
+
+// Every planned route the emitters build from must build a kind the parser shows as a node.
+function routeOffences(compilation: Compilation): string[] {
+	const surface = compilation.nodeMap.irSurface;
+	if (surface === undefined) throw new Error('the node map carries no IR surface');
+	const neverNode = neverNodeOf(compilation);
+	const offences: string[] = [];
+	const see = (route: string, node: { readonly kind: string } | undefined): void => {
+		if (node !== undefined && neverNode(node.kind)) offences.push(`${route} -> ${node.kind}`);
+	};
+	for (const set of surface.armRoutes.byKind.values()) {
+		for (const sub of set.subs) {
+			if (sub.arm.via !== 'node') continue;
+			see(`${set.parentKey}.${sub.name} (arm child)`, sub.arm.child);
+			see(`${set.parentKey}.${sub.name} (arm leaf)`, sub.arm.leaf);
+		}
+	}
+	for (const parent of surface.flattened) {
+		for (const variant of parent.variants) see(`${parent.key}.${variant.name} (variant)`, variant.child);
+	}
+	for (const group of surface.plan.groups) {
+		for (const member of group.members) see(`${group.key}.${member.key} (group member)`, member.node);
+	}
+	for (const list of [surface.plan.bundles, surface.plan.keywords, surface.plan.ownText, surface.plan.patterns]) {
+		for (const member of list) see(`${member.key} (plan member)`, member.node);
+	}
+	for (const parent of surface.plan.variantParents) see(`${parent.key} (variant parent)`, parent.node);
+	return offences;
 }
 
 // Every callable reachable from a build table: a path for each function, recursing into namespace objects
@@ -58,8 +94,8 @@ function callablePaths(root: unknown): string[][] {
 	return found;
 }
 
-// A recorded path accounts for a callable at or under it. A strict or coerce member belongs to its bundle, and
-// a route under a kind's path builds that kind with an arm filled (expressionStatement.comparison).
+// A recorded path accounts for a callable at or under it. A strict or coerce member belongs to its bundle. The
+// routes under a path are the planned routes, which routeOffences holds to kinds the parser shows as nodes.
 const accountedFor = (path: readonly string[], recorded: readonly (readonly string[])[]): boolean =>
 	recorded.some((r) => r.length <= path.length && r.every((segment, i) => path[i] === segment));
 
@@ -77,6 +113,15 @@ describe('hidden-kind builders', () => {
 		it(`${grammar}: no builder exists for a kind the parser never shows as a node`, async () => {
 			const offending = await neverNodeBuilders(grammar);
 			expect(offending, `${grammar} builders for never-node kinds:\n${offending.join('\n')}`).toEqual([]);
+		}, 240_000);
+	}
+});
+
+describe('every planned route builds a kind the parser shows as a node', () => {
+	for (const grammar of Object.keys(ENGINES) as (keyof typeof ENGINES)[]) {
+		it(`${grammar}: no route builds a never-node kind`, async () => {
+			const offences = routeOffences(await compileOf(grammar));
+			expect(offences, `${grammar} routes that build a never-node kind:\n${offences.join('\n')}`).toEqual([]);
 		}, 240_000);
 	}
 });
