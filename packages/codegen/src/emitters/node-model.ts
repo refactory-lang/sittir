@@ -3,7 +3,7 @@ import { spelledTriviaTable, type SpelledTriviaTable } from '../compiler/model/t
 import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import type { NodeMap } from '../compiler/types.ts';
+import type { DisplayUnionMember, NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,
@@ -131,6 +131,7 @@ export interface SerializedNodeModel {
 	root: string | null;
 	polymorphVariants: PolymorphVariantMap;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
+	displayUnions: Readonly<Record<string, readonly DisplayUnionMember[]>>;
 	spelledTrivia: SpelledTriviaTable | null;
 	relaxes: RelaxationTable | null;
 	nodes: SerializedNode[];
@@ -181,6 +182,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		root: nodeMap.root ?? null,
 		polymorphVariants: factoryData.polymorphVariants,
 		fieldAliasMap: factoryData.fieldAliasMap,
+		displayUnions: Object.fromEntries(nodeMap.displayUnions ?? []),
 		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
 		relaxes: kindEntries === undefined ? null : relaxationTable(nodeMap, kindEntries),
 		nodes

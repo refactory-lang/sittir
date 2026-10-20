@@ -200,6 +200,7 @@ export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-var
 export type PolymorphVariantMap = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantMap;
 export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').FactoryShape;
 export type FactorySlotMeta = import('../../codegen/src/emitters/factory-map.ts').FactorySlotMeta;
+export type SerializedNodeModel = import('../../codegen/src/emitters/node-model.ts').SerializedNodeModel;
 export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.ts').RawNodeEntry;
 export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
 export type SpelledTriviaForm = import('../../codegen/src/compiler/model/trivia.ts').SpelledTriviaForm;

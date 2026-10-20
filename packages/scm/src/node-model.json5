@@ -9,6 +9,12 @@
 		"named_node_supertyped.name": {"identifier":"_immediate_identifier"},
 		"predicate.name": {"identifier":"_immediate_identifier"}
 	},
+	"displayUnions": {
+		"identifier": [
+			{"storage":"_immediate_identifier","literal":false},
+			{"storage":"identifier","literal":false}
+		]
+	},
 	"spelledTrivia": {
 		"reason": "ir.comment is one kind, 'comment'"
 	},

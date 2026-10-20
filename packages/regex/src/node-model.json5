@@ -10,6 +10,22 @@
 		"term_group": {"definedBy":"enrich","childKind":{"start_assertion":"start_assertion","end_assertion":"end_assertion","boundary_assertion":"boundary_assertion","non_boundary_assertion":"non_boundary_assertion","lookaround_assertion":"lookaround_assertion","pattern_character":"pattern_character","character_class":"character_class","posix_character_class":"posix_character_class","any_character":"any_character","decimal_escape":"decimal_escape","character_class_escape":"character_class_escape","backreference_escape":"backreference_escape","named_group_backreference":"named_group_backreference","anonymous_capturing_group":"anonymous_capturing_group","named_capturing_group":"named_capturing_group","non_capturing_group":"non_capturing_group","inline_flags_group":"inline_flags_group"}}
 	},
 	"fieldAliasMap": {},
+	"displayUnions": {
+		"class_character": [
+			{"storage":"-","literal":true},
+			{"storage":"class_character","literal":false}
+		],
+		"identity_escape": [
+			{"storage":"\\-","literal":true},
+			{"storage":"identity_escape","literal":false}
+		],
+		"lazy": [
+			{"storage":"?","literal":true}
+		],
+		"unicode_property_name": [
+			{"storage":"unicode_property_value","literal":false}
+		]
+	},
 	"spelledTrivia": null,
 	"relaxes": {
 		"displays": []

@@ -16,6 +16,7 @@ import { spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { importGrammarModule, requireGrammarModule, type GrammarModules } from '../grammar-internals.ts';
+import { physicalDisplayKind, type DisplayFamilies } from './display-families.ts';
 import {
 	loadStorageKindNameFromId,
 	separatedListFactoryOptions,
@@ -195,6 +196,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
+	let displayUnions: DisplayFamilies = {};
 	let wrapNode: GrammarModules['wrap.ts']['wrapNode'] | undefined;
 	const errors: FromValidationError[] = [];
 	try {
@@ -218,6 +220,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		factoryFields = model.factoryFields;
 		factorySlots = model.factorySlots;
 		fieldAliasMap = model.fieldAliasMap;
+		displayUnions = model.displayUnions;
 	} catch (e) {
 		errors.push({
 			kind: '(factory-module-load)',
@@ -263,6 +266,12 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	const orphanedExtras = new Map<string, ValidatorSkip>();
 	const unreadKinds = new Map<string, CorpusEntry>();
 	const storageKindOf = (kindId: number): string => storageKindNameFromId?.(kindId) ?? '';
+	const occurrenceKind = (node: TSNode): string =>
+		physicalDisplayKind(node.type, storageKindNameFromId?.(node.grammarId), displayUnions);
+	const nativeKindName = (id: number): string | undefined => {
+		const display = kindNameFromId?.(id);
+		return display === undefined ? undefined : physicalDisplayKind(display, storageKindNameFromId?.(id), displayUnions);
+	};
 	const unreadReason = (node: TSNode): string | undefined => {
 		if (insideExtra(node)) return 'native-read-dropped-extra';
 		if (node.parent !== null && factoryShapes[storageKindOf(node.parent.typeId)] === 'text')
@@ -315,7 +324,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			const nativeCoords = findNativeNodeId(
 				handle,
 				kind,
-				kindNameFromId,
+				nativeKindName,
 				node.parent === null ? undefined : sourceSpans(entry.source).toSpan({ start: node.startIndex, end: node.endIndex })
 			);
 			if (nativeCoords === null && handle.read) {
@@ -536,7 +545,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			continue;
 		}
 
-		for (const kind of collectKinds(tree1.rootNode)) {
+		for (const kind of collectKinds(tree1.rootNode, occurrenceKind)) {
 			if (!(kind in fromMap) || !(kind in factoryMap)) {
 				if (!excludedKinds.has(kind)) {
 					excludedKinds.add(kind);
@@ -552,7 +561,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			testedKinds.add(kind);
 			total++;
 
-			const node1 = findFirst(tree1.rootNode, kind);
+			const node1 = findFirst(tree1.rootNode, kind, occurrenceKind);
 			if (!node1) {
 				errors.push({ kind, severity: 'error', message: `no node of kind '${kind}' found in entry '${entry.name}'` });
 				continue;
@@ -574,9 +583,9 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		testedKinds.add(kind);
 		total++;
 		const tree = parser.parse(entry.source) as TSTree;
-		let ancestor = findFirst(tree.rootNode, kind)?.parent ?? null;
+		let ancestor = findFirst(tree.rootNode, kind, occurrenceKind)?.parent ?? null;
 		while (ancestor !== null) {
-			const type = ancestor.type;
+			const type = occurrenceKind(ancestor);
 			if (type in fromMap && type in factoryMap && (await validateAt(entry, ancestor, type, kind)) === undefined) break;
 			ancestor = ancestor.parent;
 		}

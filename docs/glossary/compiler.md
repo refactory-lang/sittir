@@ -8229,8 +8229,8 @@ the same display name would fight that member resolution.
 ### `packages/codegen/src/compiler/types.ts::DisplayUnionMember`
 
 One storage under a display: the storage's name or literal text, and whether
-it is a literal. Stamped by `collectDisplayUnions`, read by the minter and the
-`display-union-mixed` guard.
+it is a literal. Stamped by `collectDisplayUnions`, read by the minter, the
+`display-union-mixed` guard and the serialized node model (`emitters/node-model.ts::buildNodeModel`).
 
 ### `packages/codegen/src/compiler/types.ts::DisplayUnions`
 

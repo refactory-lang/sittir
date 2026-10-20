@@ -10269,6 +10269,8 @@ Each kind's factory-map slots go to `serializeNode`, and a kind with factory slo
 
 Each kind that takes a bare input on the loose surface also carries `bareAccepts`: the kind names its bare input admits, transitively, read from the same `bareAcceptClosure` the from emitter turns into `_BARE_ACCEPTS`. A tool that has to predict what the coercer wraps (the loose rebuild printer) reads the stamp rather than re-walking wrappers and lists. The kind entries come from the same `collectKindEntries` call the from emitter makes, so the two closures cannot differ.
 
+`displayUnions` is `NodeMap.displayUnions` as a record: each display name with the storage rules tree-sitter shows under it. Validators read it to tell apart the storage kinds behind a shared display (`packages/tools/src/validate/display-families.ts`).
+
 ### `packages/codegen/src/emitters/node-model.ts::serializeValue`
 
 A node reference writes its grammar kind as `name` only where it differs from the kind the parser shows (`parseKind`); a reader recovers it with `valueNameOf`. A slot value declared with `arm.default` serializes `default: true`, the one fact the loose surface's bare-value hoist reads; every other value omits the key.

@@ -281,18 +281,7 @@ Reads the whole tree once (`handle.read(0, Infinity)`) and visits every native n
 
 ### `packages/tools/src/validate/common.ts::findFirst`
 
-#### body
-
-```text
-// Cluster H (016): match only named nodes — the kind set comes from
-// `collectKinds` which is named-only, but tree-sitter exposes both
-// named and anonymous nodes that can share a `type` string (ts has a
-// named `string` kind for `'…'`/`"…"` literals AND an anonymous
-// `string` keyword inside `predefined_type` choice). Without the
-// named filter, `findFirst` resolves to the anonymous keyword node
-// when scanning a class with `: string` annotations and the rt
-// probe tries to round-trip the bare keyword.
-```
+The first named node under `node`, `node` included, whose kind is `kind`, depth first; `kindOf` names a node's kind as in `collectKinds`. Only named nodes match, because tree-sitter can give a named and an anonymous node the same `type` (typescript's named `string` literal and the anonymous `string` keyword in `predefined_type`), and the named kind is the one validated.
 
 ### `packages/tools/src/validate/common.ts::buildKindToSupertypes`
 
@@ -731,7 +720,7 @@ The shape of a parsed `node-model.json5`, only the fields the validators read. E
 
 ### `packages/tools/src/validate/common.ts::parseNodeModel`
 
-Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape.
+Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape. `displayUnions` comes through as stored.
 
 ### `packages/tools/src/validate/common.ts::loadBoundNameOf`
 
@@ -1706,6 +1695,8 @@ An occurrence the read holds no node for is not a failure. The walk finds the fi
 
 Each occurrence is compared by `validateAt`, which looks the node up by the kind it is read as and credits the pass or error to the kind being tested; the two differ only when an ancestor stands in.
 
+A display several storage kinds share is validated per storage kind (`occurrenceKind`, through `display-families.ts::physicalDisplayKind`): the corpus's kind set, the first occurrence and the ancestor walk name a node by its storage kind, and the native coordinate lookup names a native node the same way (`nativeKindName`). So each storage kind behind typescript's `string_fragment` or rust's `string_content` is checked against its own factory instead of the display's.
+
 ### `packages/tools/src/validate/common.ts::nodeToConfig`
 
 #### interior projection
@@ -1785,6 +1776,10 @@ The id a parsed node reads as: its display id where the model's relaxation table
 
 The generated reader's relaxation predicate over the node model's `relaxes` table.
 
+### `packages/tools/src/validate/common.ts::collectKinds`
+
+Every named node's kind under `node`, `node` included, as `kindOf` names it (by default the node's `type`).
+
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
 The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. The candidate is an edit of its node (`markEdited`) holding its sides with both outer ones empty, so a parsed candidate renders from its storage rather than as its coordinate, which the render would frame with the sides its tree's table gives it, and a filled side (`$_layout.sides`) never restores them. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
@@ -1824,3 +1819,19 @@ One phrase counting diagnostics by severity, most severe first (`SEVERITY_ORDER`
 ### `packages/tools/src/validate/grammar-diagnostics-file.ts::SEVERITY_ORDER`
 
 Severities from most to least severe: `fail`, `error`, `warning`, `info`. The order `severitySummary` lists counts in.
+
+### `packages/tools/src/validate/display-families.ts::DisplayFamilies`
+
+The serialized node model's `displayUnions`: each display name with the storage rules tree-sitter shows under it (`DisplayUnionMember`).
+
+### `packages/tools/src/validate/display-families.ts::sharedDisplayStorageKinds`
+
+The storage kinds that share `display`: the non-literal members of its family when there are two or more, else `display` alone. Rust's `string_content` is shared by `raw_string_literal_content` and `string_content`; a family with one storage rule, or whose other members are literal tokens, keeps its display identity.
+
+### `packages/tools/src/validate/display-families.ts::physicalDisplayKind`
+
+The kind a node counts as: `storage` when it is one of the storage kinds sharing `display` (`sharedDisplayStorageKinds`), else `display`. A storage name outside the family keeps the display rather than crediting a member.
+
+### `packages/tools/src/validate/display-families.ts::sharedDisplayEntries`
+
+Node-types entries with each shared display's entry repeated once per storage kind (`sharedDisplayStorageKinds`), named for that kind. Template coverage walks these, so each storage kind's own template is checked against the display's node-types entry.
