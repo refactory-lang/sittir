@@ -416,6 +416,9 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	if (/\bPortableQueryIds\b/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type { PortableQueryIds } from '@sittir/common/portable';`);
 	}
+	if (/\bKindMembers\b/.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { KindMembers } from './is.js';`);
+	}
 	if (/\bERROR_KIND_ID\b/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type { ERROR_KIND_ID } from '@sittir/common/error-kind';`);
 	}
@@ -939,7 +942,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
 		if (withNode && name.startsWith('Parsed')) {
-			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId, PortableQueryIds<PortableReads>, FixedTextKindId>;`);
+			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId, PortableQueryIds<PortableReads>, KindMembers, FixedTextKindId>;`);
 			lines.push(`${indent}  readonly $snapshot: () => Snapshot<${surface.mainType}['$type']>;`);
 		}
 		for (const member of surface.members) lines.push(`${indent}${member}`);

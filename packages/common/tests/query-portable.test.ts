@@ -11,6 +11,7 @@ type Item = Node | number;
 type View = Iterable<Item> & {
 	ofType(kind: unknown): View;
 	filter(predicate: (item: Item) => unknown): View;
+	map(fn: (item: Item) => unknown): View;
 	where(condition: (slots: Record<string, { eq(text: string): unknown }>) => unknown): View;
 };
 type Parser = { parse(source: string): unknown };
@@ -91,6 +92,21 @@ describe('ofType selects an element by the kind it reads as', async () => {
 		const late = () => descendants(rs, SOURCE).filter(() => true);
 		expect([...late().ofType(rs.kinds.TrueKeyword)]).toEqual([rs.kinds.TrueKeyword]);
 		expect([...late().ofType(kinds.literal.boolean)]).toEqual([rs.kinds.TrueKeyword, rs.kinds.FalseKeyword]);
+	});
+});
+
+describe('ofType holds only for an element of the view\'s language, as the guards do', async () => {
+	const rs = await createEngine(rust);
+	const py = await createEngine(python);
+	const foreign = [...descendants(py, source('docs/superpowers/probes/2026-10-13-node-flags/census.py'))].find((item) => kindOf(item) === rs.kinds.FunctionItem);
+	const mapped = (): View => descendants(rs, 'fn f() {}').map(() => foreign);
+
+	it('rejects a node of another language whose kind id the view\'s kind would accept', () => {
+		expect(foreign).toBeTypeOf('object');
+		const is = rust.is as unknown as Record<string, Guard> & { portable: { declaration: { function: Guard } } };
+		expect([is.functionItem!(foreign), is.portable.declaration.function(foreign)]).toEqual([false, false]);
+		expect([...mapped().ofType(rs.kinds.FunctionItem)]).toEqual([]);
+		expect([...mapped().ofType(kinds.declaration.function)]).toEqual([]);
 	});
 });
 

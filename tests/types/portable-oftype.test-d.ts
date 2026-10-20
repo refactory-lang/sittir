@@ -50,5 +50,28 @@ export type ConstBool = Expect<Equals<Item<typeof constBool>, typeof rs.kinds.Bo
 const constPrimitive = constItem.$query().type.ofType(portable.kinds.type.primitive.boolean);
 export type ConstPrimitive = Expect<Equals<Item<typeof constPrimitive>, typeof rs.kinds.BoolKeyword>>;
 
+type Has<U, X> = [Extract<U, X>] extends [never] ? false : true;
+
+const rustBooleanLiterals = rustNodes.ofType(rs.kinds.BooleanLiteral);
+export type RustBooleanLiterals = Expect<Equals<Item<typeof rustBooleanLiterals>, typeof rs.kinds.TrueKeyword | typeof rs.kinds.FalseKeyword>>;
+
+const rustPrimitives = rustNodes.ofType(rs.kinds.PrimitiveType);
+export type RustPrimitivesAreIds = Expect<Equals<Extract<Item<typeof rustPrimitives>, object>, never>>;
+export type RustPrimitivesHoldBool = Expect<Has<Item<typeof rustPrimitives>, typeof rs.kinds.BoolKeyword>>;
+export type RustPrimitivesNotTrue = Expect<Equals<Has<Item<typeof rustPrimitives>, typeof rs.kinds.TrueKeyword>, false>>;
+
+const constPrimitives = constItem.$query().type.ofType(rs.kinds.PrimitiveType);
+export type ConstPrimitivesAreIds = Expect<Equals<Extract<Item<typeof constPrimitives>, object>, never>>;
+export type ConstPrimitivesHoldBool = Expect<Has<Item<typeof constPrimitives>, typeof rs.kinds.BoolKeyword>>;
+
+const rustLiterals = rustNodes.ofType(rs.kinds.Literal);
+export type RustLiteralIds = Expect<Equals<Extract<Item<typeof rustLiterals>, number>, typeof rs.kinds.TrueKeyword | typeof rs.kinds.FalseKeyword>>;
+export type RustLiteralStrings = Expect<Has<Item<typeof rustLiterals>, { readonly $type: typeof rs.kinds.StringLiteral }>>;
+export type RustLiteralNoCalls = Expect<Equals<Has<Item<typeof rustLiterals>, { readonly $type: typeof rs.kinds.CallExpression }>, false>>;
+
+const rustExpressions = rustNodes.ofType(rs.kinds.Expression);
+export type RustExpressionCalls = Expect<Has<Item<typeof rustExpressions>, { readonly $type: typeof rs.kinds.CallExpression }>>;
+export type RustExpressionNoItems = Expect<Equals<Has<Item<typeof rustExpressions>, { readonly $type: typeof rs.kinds.FunctionItem }>, false>>;
+
 // @ts-expect-error a value that names no vocabulary path
 rustNodes.ofType({ $path: 'nope' });

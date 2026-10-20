@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { Cond, QuerySlots, SlotRef } from '@sittir/types';
 import { queryFacet, type DescendantWalk, type QueryHooks } from '../src/query.ts';
 import { holdTreeOn, mintTreeToken, registerTree } from '../src/tree-token.ts';
+import { holdsKinds } from '../src/language.ts';
 
 interface NameRecorder {
 	readonly name: SlotRef;
@@ -33,6 +34,7 @@ function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 		queryFlags: {},
 		querySlotFlags: {},
 		membership,
+		kindTest: holdsKinds,
 		portable: undefined,
 		kindName: (kind) => `kind_${kind}`,
 		wrap: (data) => data

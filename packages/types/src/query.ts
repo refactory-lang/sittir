@@ -1,5 +1,5 @@
 import type { IsBooleanKeyword } from './keyword-presence.ts';
-import type { FlagsHintOf, SlotFlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
+import type { FlagsHintOf, NarrowTo, SlotFlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
 import type { PortableKind } from './portable.ts';
 
 /**
@@ -149,6 +149,7 @@ export type Recorder<N> = { readonly [S in SlotNameOf<N>]: SlotRefOf<N, S> } & {
 };
 
 type KindOf<T> = T extends number ? T : T extends { readonly $type: infer K extends number } ? K : never;
+type MembersOf<K, Members> = Extract<K extends keyof Members ? Members[K] : K, number>;
 
 /**
  * A lazy sequence of nodes. Operators return a new view and run nothing; terminals and iteration run
@@ -157,24 +158,26 @@ type KindOf<T> = T extends number ? T : T extends { readonly $type: infer K exte
  * @typeParam T - The elements.
  * @typeParam Ids - Each vocabulary path, mapped to the kind ids the elements' language reads at or under it (`never` where it
  * reads none), which a portable kind narrows by; `{}` takes no portable kind.
+ * @typeParam Members - Each supertype and enum kind id of the elements' language, mapped to the kind ids it holds for, as its
+ * `is` guards narrow; `{}` takes only the kinds the elements carry.
  */
-export interface View<T, Ids = {}> extends Iterable<T> {
+export interface View<T, Ids = {}, Members = {}> extends Iterable<T> {
 	/** The elements `guard` admits, narrowed to its type. */
-	filter<S extends T>(guard: (node: T, index: number) => node is S): View<S, Ids>;
+	filter<S extends T>(guard: (node: T, index: number) => node is S): View<S, Ids, Members>;
 	/** The elements `predicate` admits. */
-	filter(predicate: (node: T, index: number) => unknown): View<T, Ids>;
+	filter(predicate: (node: T, index: number) => unknown): View<T, Ids, Members>;
 	/** Each element mapped by `fn`. */
-	map<U>(fn: (node: T, index: number) => U): View<U, Ids>;
+	map<U>(fn: (node: T, index: number) => U): View<U, Ids, Members>;
 	/** Each element mapped by `fn`, an array result spread in place. */
-	flatMap<U>(fn: (node: T, index: number) => U | readonly U[]): View<U, Ids>;
+	flatMap<U>(fn: (node: T, index: number) => U | readonly U[]): View<U, Ids, Members>;
 	/** The elements from `start` up to, not including, `end`, counted as an array's `slice` counts them. */
-	slice(start?: number, end?: number): View<T, Ids>;
+	slice(start?: number, end?: number): View<T, Ids, Members>;
 	/**
-	 * The elements of kind `kind`, narrowed to it. An element's kind is what it reads as: a node's `$type`, or a keyword
-	 * leaf's kind id itself. At run time a supertype or an enum kind selects its members, as the language's `is` guards
-	 * hold for them, so an enum kind selects the keyword ids its nodes read as.
+	 * The elements of kind `kind`, narrowed as the language's `is` guard for it narrows. An element's kind is what it reads as:
+	 * a node's `$type`, or a keyword leaf's kind id itself. A supertype or an enum kind selects its members, so an enum kind
+	 * selects the keyword ids its nodes read as. An element of another language is not of the kind, as for the guards.
 	 */
-	ofType<K extends KindOf<T>>(kind: K): View<Extract<T, { readonly $type: K }> | Extract<T, K>, Ids>;
+	ofType<K extends KindOf<T> | (keyof Members & number)>(kind: K): View<NarrowTo<T, MembersOf<K, Members>>, Ids, Members>;
 	/**
 	 * The elements that read as the vocabulary path `kind` names or a path under it, as the portable guards read them, narrowed
 	 * to the kinds the language reads there. A path the language does not read yields nothing.
@@ -185,13 +188,13 @@ export interface View<T, Ids = {}> extends Iterable<T> {
 	 *
 	 * @param kind - A portable kind (`portable.kinds.…`).
 	 */
-	ofType<P extends PortableKind<keyof Ids & string>>(kind: P): View<Extract<T, { readonly $type: Ids[P['$path']] }> | Extract<T, Ids[P['$path']]>, Ids>;
+	ofType<P extends PortableKind<keyof Ids & string>>(kind: P): View<NarrowTo<T, Extract<Ids[P['$path']], number>>, Ids, Members>;
 	/**
 	 * The elements whose slots satisfy the condition `condition` records, evaluated natively.
 	 *
 	 * @throws When the callback returns anything but a recorded condition, or reads a slot the element type does not have.
 	 */
-	where(condition: (slots: Recorder<T>) => Cond): View<T, Ids>;
+	where(condition: (slots: Recorder<T>) => Cond): View<T, Ids, Members>;
 	/** The first element `predicate` admits, or the first element when it is absent. */
 	find<S extends T>(predicate: (node: T, index: number) => node is S): S | undefined;
 	find(predicate?: (node: T, index: number) => unknown): T | undefined;
@@ -219,12 +222,13 @@ type SlotItem<N, K> = N[K & keyof N] extends () => infer R ? ItemsOf<Exclude<R, 
 /**
  * A parsed node's query facet: a lazy view per slot, over the items the slot's accessor returns,
  * and the views of the node's structural children and descendants. `ByParsed` maps each kind id of
- * the grammar to its parsed node type, `Ids` each vocabulary path to the kind ids the grammar reads there (see {@link View}),
- * and `Units` names the kind ids a keyword leaf reads as, which a walk yields as bare numbers.
+ * the grammar to its parsed node type, `Ids` each vocabulary path to the kind ids the grammar reads there and `Members` each
+ * supertype and enum kind id to its members (see {@link View}), and `Units` names the kind ids a keyword leaf reads as, which a
+ * walk yields as bare numbers.
  */
-export type QueryFacet<N, ByParsed, Ids = {}, Units = never> = { readonly [K in SlotNameOf<N>]: View<SlotItem<N, K>, Ids> } & {
+export type QueryFacet<N, ByParsed, Ids = {}, Members = {}, Units = never> = { readonly [K in SlotNameOf<N>]: View<SlotItem<N, K>, Ids, Members> } & {
 	/** The node's direct structural children in source order: named, across its slots, without anonymous tokens or trivia; a keyword leaf as its kind id. */
-	readonly $children: View<ByParsed[keyof ByParsed] | Units, Ids>;
+	readonly $children: View<ByParsed[keyof ByParsed] | Units, Ids, Members>;
 	/** The node's structural descendants in depth-first pre-order, the node itself excluded; a keyword leaf as its kind id. Comments and other extras are trivia, never descendants. */
-	readonly $descendants: View<ByParsed[keyof ByParsed] | Units, Ids>;
+	readonly $descendants: View<ByParsed[keyof ByParsed] | Units, Ids, Members>;
 };

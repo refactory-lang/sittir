@@ -18,7 +18,7 @@ export function emitDescriptor(config: EmitIndexConfig): string {
 		"import { languageGuards } from '@sittir/common/language';",
 		`import * as ${self} from './descriptor.js';`,
 		"import { TSKindId } from './kinds.js';",
-		"import { is as guards } from './is.js';",
+		"import { guardsWith } from './is.js';",
 		...(config.portable === true
 			? [
 					"import { portable, portableGuardsOf } from '@sittir/common/portable';",
@@ -38,9 +38,9 @@ export function emitDescriptor(config: EmitIndexConfig): string {
 		...(config.portable === true
 			? [
 					'export const kinds: typeof TSKindId & { readonly portable: PortableKinds } = Object.freeze({ ...TSKindId, portable: portable.kinds as PortableKinds });',
-					`export const is = languageGuards(guards, ${self}, (language) => ({ portable: portableGuardsOf(language) as PortableIs }));`
+					`export const is = languageGuards(guardsWith, ${self}, (language) => ({ portable: portableGuardsOf(language) as PortableIs }));`
 				]
-			: ['export const kinds = TSKindId;', `export const is = languageGuards(guards, ${self});`]),
+			: ['export const kinds = TSKindId;', `export const is = languageGuards(guardsWith, ${self});`]),
 		`export const load: Language<${api}>['load'] = () => import('./api.js').then((m) => m.hooks);`,
 		`export const createEngine: Language<${api}>['createEngine'] = (options) => import('@sittir/common').then((m) => m.createEngine(${self}, options));`,
 		'',

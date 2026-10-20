@@ -22,7 +22,7 @@ import type {
 	StructureTable
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
-import { guardsOf, inLanguage as inLanguageOf } from './language.ts';
+import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
@@ -210,6 +210,7 @@ function assembleEngine<API extends LanguageAPI>(
 		queryFlags: hooks.queryFlags ?? {},
 		querySlotFlags: hooks.querySlotFlags ?? {},
 		membership: hooks.membership,
+		kindTest: kindTestOf(language),
 		portable: hooks.portable,
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
