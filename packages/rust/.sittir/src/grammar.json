@@ -838,7 +838,7 @@
               "type": "SYMBOL",
               "name": "_token_tree_punctuation",
               "annotations": {
-                "variant": "token_tree_punctuation",
+                "variant": "tree_punctuation",
                 "variantOf": "_non_special_token"
               }
             },
@@ -850,7 +850,7 @@
           "type": "SYMBOL",
           "name": "_token_keywords",
           "annotations": {
-            "variant": "token_keywords",
+            "variant": "keywords",
             "variantOf": "_non_special_token"
           }
         }
@@ -4119,7 +4119,7 @@
           "type": "SYMBOL",
           "name": "unary_expression",
           "annotations": {
-            "variant": "unary_expression",
+            "variant": "unary",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4127,7 +4127,7 @@
           "type": "SYMBOL",
           "name": "reference_expression",
           "annotations": {
-            "variant": "reference_expression",
+            "variant": "reference",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4135,7 +4135,7 @@
           "type": "SYMBOL",
           "name": "try_expression",
           "annotations": {
-            "variant": "try_expression",
+            "variant": "try",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4143,7 +4143,7 @@
           "type": "SYMBOL",
           "name": "binary_expression",
           "annotations": {
-            "variant": "binary_expression",
+            "variant": "binary",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4151,7 +4151,7 @@
           "type": "SYMBOL",
           "name": "assignment_expression",
           "annotations": {
-            "variant": "assignment_expression",
+            "variant": "assignment",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4159,7 +4159,7 @@
           "type": "SYMBOL",
           "name": "compound_assignment_expr",
           "annotations": {
-            "variant": "compound_assignment_expr",
+            "variant": "compound_assignment",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4167,7 +4167,7 @@
           "type": "SYMBOL",
           "name": "type_cast_expression",
           "annotations": {
-            "variant": "type_cast_expression",
+            "variant": "type_cast",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4175,7 +4175,7 @@
           "type": "SYMBOL",
           "name": "call_expression",
           "annotations": {
-            "variant": "call_expression",
+            "variant": "call",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4183,7 +4183,7 @@
           "type": "SYMBOL",
           "name": "return_expression",
           "annotations": {
-            "variant": "return_expression",
+            "variant": "return",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4191,7 +4191,7 @@
           "type": "SYMBOL",
           "name": "yield_expression",
           "annotations": {
-            "variant": "yield_expression",
+            "variant": "yield",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4441,7 +4441,7 @@
           "type": "SYMBOL",
           "name": "await_expression",
           "annotations": {
-            "variant": "await_expression",
+            "variant": "await",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4449,7 +4449,7 @@
           "type": "SYMBOL",
           "name": "field_expression",
           "annotations": {
-            "variant": "field_expression",
+            "variant": "field",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4457,7 +4457,7 @@
           "type": "SYMBOL",
           "name": "array_expression",
           "annotations": {
-            "variant": "array_expression",
+            "variant": "array",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4465,7 +4465,7 @@
           "type": "SYMBOL",
           "name": "tuple_expression",
           "annotations": {
-            "variant": "tuple_expression",
+            "variant": "tuple",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4485,7 +4485,7 @@
           "type": "SYMBOL",
           "name": "unit_expression",
           "annotations": {
-            "variant": "unit_expression",
+            "variant": "unit",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4493,7 +4493,7 @@
           "type": "SYMBOL",
           "name": "break_expression",
           "annotations": {
-            "variant": "break_expression",
+            "variant": "break",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4501,7 +4501,7 @@
           "type": "SYMBOL",
           "name": "continue_expression",
           "annotations": {
-            "variant": "continue_expression",
+            "variant": "continue",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4509,7 +4509,7 @@
           "type": "SYMBOL",
           "name": "index_expression",
           "annotations": {
-            "variant": "index_expression",
+            "variant": "index",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4525,7 +4525,7 @@
           "type": "SYMBOL",
           "name": "closure_expression",
           "annotations": {
-            "variant": "closure_expression",
+            "variant": "closure",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4533,7 +4533,7 @@
           "type": "SYMBOL",
           "name": "parenthesized_expression",
           "annotations": {
-            "variant": "parenthesized_expression",
+            "variant": "parenthesized",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4541,7 +4541,7 @@
           "type": "SYMBOL",
           "name": "struct_expression",
           "annotations": {
-            "variant": "struct_expression",
+            "variant": "struct",
             "variantOf": "_expression_except_range"
           }
         },
@@ -4549,7 +4549,7 @@
           "type": "SYMBOL",
           "name": "_expression_ending_with_block",
           "annotations": {
-            "variant": "expression_ending_with_block",
+            "variant": "ending_with_block",
             "variantOf": "_expression_except_range"
           }
         }
