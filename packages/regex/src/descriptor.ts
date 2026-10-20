@@ -5,7 +5,7 @@ import type { RegexAPI } from './api.js';
 import { languageGuards } from '@sittir/common/language';
 import * as regex from './descriptor.js';
 import { TSKindId } from './kinds.js';
-import { is as guards } from './is.js';
+import { guardsWith } from './is.js';
 
 export type * from './types.js';
 export type * from './options.js';
@@ -17,7 +17,7 @@ export type Engine<M extends ApiSurface = 'default'> = EngineOf<RegexAPI, M>;
 export const name = 'regex';
 export const fileTypes: readonly string[] = Object.freeze([]);
 export const kinds = TSKindId;
-export const is = languageGuards(guards, regex);
+export const is = languageGuards(guardsWith, regex);
 export const load: Language<RegexAPI>['load'] = () => import('./api.js').then((m) => m.hooks);
 export const createEngine: Language<RegexAPI>['createEngine'] = (options) =>
 	import('@sittir/common').then((m) => m.createEngine(regex, options));

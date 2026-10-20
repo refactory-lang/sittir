@@ -97,7 +97,7 @@ describe('traversal', () => {
 
 	it('never yields a comment', () => {
 		const source = '# lead\ndef f():\n    # inside\n    pass\n';
-		const kinds = [...py.parse(source).$query().$descendants].map((node) => node.$type);
+		const kinds = [...py.parse(source).$query().$descendants].map((node) => (typeof node === 'number' ? node : node.$type));
 		expect(kinds).not.toContain(K.Comment);
 		expect(kinds).toContain(K.FunctionDefinition);
 	});
@@ -224,7 +224,7 @@ describe('where', () => {
 		expect(after).toEqual(before);
 		const typedLate = [
 			...descendants()
-				.filter((node) => node.$type !== K.Block)
+				.filter((node) => typeof node === 'number' || node.$type !== K.Block)
 				.ofType(K.FunctionDefinition)
 		].map(occurrence);
 		expect(typedLate).toEqual([...descendants().ofType(K.FunctionDefinition)].map(occurrence));
