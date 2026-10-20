@@ -1,6 +1,7 @@
 import type { AnyUntypedNode, TriviaSetter } from './core-types.ts';
 import type { NodeMethods } from './engine-api.ts';
-import type { IsExactly, KeysOfAll } from './type-utils.ts';
+import type { KeysOfUnion } from 'type-fest';
+import type { IsExactly } from './type-utils.ts';
 
 /** The member a parsed object holds its `TreeToken` under. Type-only: no value of it is exported. */
 export declare const TreeMember: unique symbol;
@@ -160,36 +161,40 @@ export type Admit<V> = V extends unknown
 
 type IsOneOf<V, U> = true extends (U extends unknown ? IsExactly<V, U> : never) ? true : false;
 
-type Refusals<V, Declared, Seen extends readonly unknown[] = [], Path extends string = ''> = 0 extends 1 & V
+type Refusals<V, Declared, Depth extends readonly 0[] = [], Path extends string = ''> = 0 extends 1 & V
 	? never
 	: IsExactly<V, Declared> extends true
 		? never
 		: V extends unknown
-			? MemberRefusals<V, Declared, Seen, Path>
+			? MemberRefusals<V, Declared, Depth, Path>
 			: never;
 
-type MemberRefusals<V, Declared, Seen extends readonly unknown[], Path extends string> = V extends {
+type MemberRefusals<V, Declared, Depth extends readonly 0[], Path extends string> = V extends {
 	readonly $type: infer Id;
 }
 	? `${number}` extends `${Id & number}`
 		? 'an untyped node has no language'
 		: V extends { readonly $render: unknown } | HoldsTree
 			? never
-			: ConfigRefusals<V, Declared, Seen, Path>
-	: V extends readonly unknown[]
-		? IsOneOf<V, Declared | Seen[number]> extends true
-			? never
-			: ItemRefusals<V, Declared, [...Seen, V], Path>
-		: V extends (...args: never[]) => unknown
-			? never
-			: V extends object
-				? ConfigRefusals<V, Declared, Seen, Path>
-				: never;
-
-type ConfigRefusals<V, Declared, Seen extends readonly unknown[], Path extends string> =
-	IsOneOf<V, Declared | Seen[number]> extends true
+			: OpenedRefusals<V, Declared, Depth, Path>
+	: V extends (...args: never[]) => unknown
 		? never
-		: KeyRefusals<V, ConfigShapes<V, Declared>, Path> | FieldRefusals<V, ConfigShapes<V, Declared>, [...Seen, V], Path>;
+		: V extends object
+			? OpenedRefusals<V, Declared, Depth, Path>
+			: never;
+
+type OpenedRefusals<V, Declared, Depth extends readonly 0[], Path extends string> =
+	IsOneOf<V, Declared> extends true
+		? never
+		: Depth['length'] extends WalkDepth
+			? `an input nested too deep to check: ${Path}`
+			: V extends readonly unknown[]
+				? ItemRefusals<V, Declared, [...Depth, 0], Path>
+				: KeyRefusals<V, ConfigShapes<V, Declared>, Path> | FieldRefusals<V, ConfigShapes<V, Declared>, [...Depth, 0], Path>;
+
+type WalkDepth = 20;
+
+type Step<Path extends string, Key extends string> = Path extends '' ? Key : `${Path}.${Key}`;
 
 type ConfigShapes<V, Declared> = V extends { readonly $type: infer Id } ? Tagged<Configs<Declared>, Id> : Configs<Declared>;
 
@@ -203,18 +208,18 @@ type Tagged<C, Id> = C extends { readonly $type?: infer K } ? (Id extends K ? C 
 
 type KeyRefusals<V, Shapes, Path extends string> = [Shapes] extends [never]
 	? never
-	: `an unknown key: ${Path}${Exclude<keyof V, KeysOfAll<Shapes> | '$type'> & string}`;
+	: `an unknown key: ${Step<Path, Exclude<keyof V, KeysOfUnion<Shapes> | '$type'> & string>}`;
 
-type FieldRefusals<V, Shapes, Seen extends readonly unknown[], Path extends string> = {
-	[K in keyof V]-?: K extends '$type' ? never : Refusals<V[K], FieldOf<Shapes, K>, Seen, `${Path}${K & string}.`>;
+type FieldRefusals<V, Shapes, Depth extends readonly 0[], Path extends string> = {
+	[K in keyof V]-?: K extends '$type' ? never : Refusals<V[K], FieldOf<Shapes, K>, Depth, Step<Path, K & string>>;
 }[keyof V];
 
 type FieldOf<C, K> = C extends unknown ? (K extends keyof C ? Exclude<C[K], undefined> : never) : never;
 
-type ItemRefusals<V extends readonly unknown[], Declared, Seen extends readonly unknown[], Path extends string> =
+type ItemRefusals<V extends readonly unknown[], Declared, Depth extends readonly 0[], Path extends string> =
 	number extends V['length']
-		? Refusals<V[number], ItemOf<Declared, number>, Seen, Path>
-		: { [I in keyof V]-?: Refusals<V[I], ItemOf<Declared, I>, Seen, `${Path}${I & string}.`> }[number];
+		? Refusals<V[number], ItemOf<Declared, number>, Depth, Path>
+		: { [I in keyof V]-?: Refusals<V[I], ItemOf<Declared, I>, Depth, Step<Path, I & string>> }[number];
 
 type ItemOf<D, I> = D extends readonly unknown[] ? (I extends keyof D ? D[I] : D[number]) : never;
 
@@ -224,13 +229,15 @@ type ItemOf<D, I> = D extends readonly unknown[] ? (I extends keyof D ? D[I] : D
  * function that admits a node is generic over the value and takes `value: V & RefuseUndeclared<V>`. A node of the slot's
  * language keeps its kind, and a node of another language is refused by its own enum. Given the parameter's declared
  * input, a key that no declared config at that place names is refused too, at any depth: TypeScript's own
- * excess-property check does not reach a generic parameter. A value typed `any` proves nothing, so it is admitted.
+ * excess-property check does not reach a generic parameter. A value nested deeper than the check reads is refused as
+ * too deep to check rather than admitted unread. A value typed `any` proves nothing, so it is admitted.
  *
  * @typeParam V - the admitted value as inferred: a node, a list of them, or a config holding them.
  * @typeParam Declared - the parameter's declared input, whose shape the value's keys are checked against; omitted,
  *   only untyped nodes are refused.
  * @returns `unknown` when `V` holds no untyped node and no unknown key, otherwise `{ readonly refused: … }`, which no
- *   argument carries, naming each refusal: `an untyped node has no language`, or `an unknown key: <path>`.
+ *   argument carries, naming each refusal: `an untyped node has no language`, `an unknown key: <path>`, or
+ *   `an input nested too deep to check: <path>`.
  */
 export type RefuseUndeclared<V, Declared = never> = [Refusals<V, Declared>] extends [never]
 	? unknown

@@ -72,7 +72,8 @@ declare const recursiveUntyped: RecursiveUntyped;
 // @ts-expect-error an untyped node inside a recursive declared type refuses the call
 rs.build.block(recursiveUntyped);
 
-export const builtRecursive = rs.build.block(recursive);
+// @ts-expect-error a recursive declared input nests past the depth the check reads, so it is refused by name
+rs.build.block(recursive);
 // @ts-expect-error a polymorph form builder refuses an untyped node
 rs.build.expressionStatement.withSemi(untyped);
 // @ts-expect-error a strict polymorph form builder refuses an untyped node

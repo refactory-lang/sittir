@@ -178,11 +178,7 @@ When `R` is exactly the language's declared options type, the check is `unknown`
 
 ### `packages/types/src/type-utils.ts::IsExactly`
 
-Whether two types are identical, by comparing two generic signatures that differ only in `A` and `B`. The comparison is between function types, which are not generic objects, so it resolves even while `A` and `B` are still deferred type parameters. It is the one identity test of `@sittir/types`: `RenderOptionsCheck` skips its check on it, and the refusal walk stops on it (`Refusals`).
-
-### `packages/types/src/type-utils.ts::KeysOfAll`
-
-The keys of every member of a union. `keyof` of a union gives only the keys all its members share; distributing gives each member's own. `NumericConfig` reads it for the numeric slots a union config names, and the refusal walk for the keys a place's declared configs name (`KeyRefusals`). It and `IsExactly` live in a module the package does not re-export, so neither is public.
+Whether two types are identical, by comparing two generic signatures that differ only in `A` and `B`. The comparison is between function types, which are not generic objects, so it resolves even while `A` and `B` are still deferred type parameters. It is the one identity test of `@sittir/types`: `RenderOptionsCheck` skips its check on it, and the refusal walk stops on it (`Refusals`). It lives in a module the package does not re-export, so it is not public. type-fest's `IsEqual` is not used in its place: it first tests assignability both ways, which does not resolve while `A` and `B` are deferred type parameters, so a caller generic over the language could no longer forward options typed `API['options']`, and across the refusal walk it costs about nine percent more instantiations.
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
@@ -393,6 +389,8 @@ So the admitting function is generic over the value, and the check reads the typ
 
 The refusal is one fixed key, `refused`, whose value names the reasons. A key per reason fails both ways it can be written. Keyed by the walk directly, the mapped type makes TypeScript check at the declaration that the generic key is a property key, which chases the walk while its value is still a type parameter, where nothing ends it, until the instantiation depth overflows. Keyed by the walk through `infer`, the mapped type becomes a place TypeScript infers the value's type parameter from, and that pulls the parameter back to its constraint, the declared input, which the walk admits unwalked. A fixed key is neither. The alias stays a conditional on the walk, so while the value is a type parameter TypeScript keeps the name `RefuseUndeclared<…>` in hovers and declaration emit instead of expanding the walk, which the declaration of an exported setter could not serialize.
 
+From type-fest, the walk takes `KeysOfUnion` for a union's keys (`KeyRefusals`). The rest of what it offers here does not fit. `IsEqual` is not the identity test (`IsExactly`). `IsAny` wraps its argument in `NoInfer`, which costs about eleven percent more instantiations at every step of the walk, so the walk tests `any` inline. `Exact` refuses keys alone, so it would be a second walk beside the one that finds untyped nodes; it recurses along the declared shape, which the named loose configs make recursive; and it is written as an F-bounded constraint.
+
 ### `packages/types/src/node-surface.ts::AdmitsOne`
 
 A function that admits one value: generic over it, so `RefuseUndeclared` can read what the caller passed. Every single-value setter of the node surface (a slot, a flat key, a seat) is one; when its parameters are inferred from outside, as `FormsHolding` does, the value takes its constraint and the check is `unknown`.
@@ -407,17 +405,17 @@ The refusal sits on the config rather than on each field because of how TypeScri
 
 ### `packages/types/src/node-surface.ts::Refusals`
 
-What `RefuseUndeclared` refuses in a value, as a union of reasons: `an untyped node has no language`, or `an unknown key: <path>`, the path being the keys and tuple indices from the parameter down, dotted. It walks the value beside `Declared`, the declared shape at the same place, so a nested config's keys are checked against the configs its field declares; with no declared shape only untyped nodes are found. A value typed `any` proves nothing. A value identical to its declared shape holds nothing undeclared by construction, and a builder's type parameter read at its constraint (`ArgsOf`, `Parameters`) is exactly that value, so reading a signature from outside costs no walk. Otherwise it distributes over a union value.
+What `RefuseUndeclared` refuses in a value, as a union of reasons: `an untyped node has no language`, `an unknown key: <path>`, or `an input nested too deep to check: <path>`, the path being the keys and tuple indices from the parameter down, dotted (`Step`). It walks the value beside `Declared`, the declared shape at the same place, so a nested config's keys are checked against the configs its field declares; with no declared shape only untyped nodes are found. A value typed `any` proves nothing. A value identical to its declared shape, or to one of its members (`IsOneOf`), holds nothing undeclared by construction, and a builder's type parameter read at its constraint (`ArgsOf`, `Parameters`) is exactly that value, so reading a signature from outside costs no walk; a nested value typed by a generated loose config stops there too, one level below where it enters. Otherwise it distributes over a union value.
 
-The walk has no depth bound. Loose configs nest without one, since a kind's named loose config restarts the widening's own depth, so a bound would admit whatever lies below it. It ends where walking further could find nothing new: at a node, at a value identical to its declared shape or to one of its members, and at a type already opened on the same path (`Seen`), whose first visit walked everything beneath it. A literal is finite and ends by its own depth; only a declared recursive type comes back to a type it opened, and it stops there.
+The walk has one termination rule: it opens at most `WalkDepth` lists and configs on a path (`Depth`), and refuses what lies deeper by name rather than admitting it unread. Loose configs nest without a bound, since a kind's named loose config restarts the widening's own depth, so a cut-off that admitted would admit an untyped node or a misspelled key below it. The walk does not stop at a type it has already opened. That test would rest on TypeScript's identity relation, which stops comparing after about three nested levels of one tuple or array target and calls the two types identical, so a literal would match one of its own ancestors and leave its subtree unread; a finite literal never contains itself, so any such match is false. A user-declared recursive type, and a type that expands as it recurses, are refused at the bound instead.
 
 ### `packages/types/src/node-surface.ts::MemberRefusals`
 
-One member of a union value. A `$type` that is a plain `number` is an untyped node: `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself, the template of an enum member or a numeric literal being one numeral, while a conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. A node (`$render`, or a held tree) ends the walk, since its fields are typed storage. A list walks its items (`ItemRefusals`) and a config its keys and fields (`ConfigRefusals`), a config tagged with a kind included; anything else (leaf text, a kind id, a function, `undefined`) holds nothing.
+One member of a union value. A `$type` that is a plain `number` is an untyped node: `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself, the template of an enum member or a numeric literal being one numeral, while a conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. A node (`$render`, or a held tree) ends the walk, since its fields are typed storage. A list or a config, a config tagged with a kind included, is opened (`OpenedRefusals`); anything else (leaf text, a kind id, a function, `undefined`) holds nothing.
 
-### `packages/types/src/node-surface.ts::ConfigRefusals`
+### `packages/types/src/node-surface.ts::OpenedRefusals`
 
-A config's refusals: the keys none of its declared configs names (`KeyRefusals`), and each field's refusals beside the same field of those configs (`FieldRefusals`). It stops at a config identical to a member of its declared shape, or to a type already opened on the path, which it adds itself to before walking its fields.
+A list's or a config's refusals. It stops at a value identical to a member of its declared shape, and refuses one with `WalkDepth` values already opened above it on its path as too deep to check. Otherwise a list walks its items (`ItemRefusals`), and a config refuses the keys none of its declared configs names (`KeyRefusals`) and walks each field beside the same field of those configs (`FieldRefusals`), each one level deeper.
 
 ### `packages/types/src/node-surface.ts::ConfigShapes`
 
@@ -433,7 +431,7 @@ The declared configs whose `$type` admits a tag. A config that declares no `$typ
 
 ### `packages/types/src/node-surface.ts::KeyRefusals`
 
-The keys of a config that none of its declared configs names, each as `an unknown key: <path><key>`. `$type` is the tag, which the declared configs narrow by, not a key to check. A config with no declared config at its place, as on a strict builder's value, has no key check. With several declared configs a key is checked against the keys of all of them together (`KeysOfAll`), as TypeScript's own excess-property check does against a union: an untagged config whose place declares both the kind's own config and its bare slot's config can name a key of either.
+The keys of a config that none of its declared configs names, each as `an unknown key: <path><key>`. `$type` is the tag, which the declared configs narrow by, not a key to check. A config with no declared config at its place, as on a strict builder's value, has no key check. With several declared configs a key is checked against the keys of all of them together (type-fest's `KeysOfUnion`), as TypeScript's own excess-property check does against a union: an untagged config whose place declares both the kind's own config and its bare slot's config can name a key of either.
 
 ### `packages/types/src/node-surface.ts::FieldRefusals`
 
@@ -454,6 +452,14 @@ The declared item at an index: a declared tuple's element there, or a declared l
 ### `packages/types/src/node-surface.ts::IsOneOf`
 
 Whether a type is identical to some member of a union (`IsExactly`), not merely assignable to it: an untyped node is assignable to a declared shape, which is why the walk exists.
+
+### `packages/types/src/node-surface.ts::WalkDepth`
+
+How many lists and configs the refusal walk opens on one path before it refuses the next as too deep to check. Twenty is set by probe, with margin below where the checker itself gives up, so every input ends in a named refusal, never in the checker's own depth error: a type that expands as it recurses exhausts the checker's instantiation depth at a bound of 24, and a chain of tagged block configs at 30 configs deep. At twenty, a chain of block configs nineteen levels below the input is read whole, one value opened per level, and a statements → expression statement → block chain six levels below, three values opened per level. A statements chain fifteen or more levels deep fails in the checker regardless: comparing a generic input that deep against its declared loose shape exceeds the checker's stack, with or without the refusal.
+
+### `packages/types/src/node-surface.ts::Step`
+
+A refusal's path one key or tuple index deeper, dotted, with no leading dot at the top.
 
 ### `packages/types/src/query.ts::SlotFlagOf`
 

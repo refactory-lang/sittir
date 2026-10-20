@@ -3,7 +3,7 @@
  * language engine. Pure type-level module — zero runtime code.
  */
 
-import type { CamelCase } from 'type-fest';
+import type { CamelCase, KeysOfUnion } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
 export type {
 	Cond,
@@ -39,7 +39,6 @@ export type {
 	PortableTable
 } from './portable.ts';
 import type { Admit } from './node-surface.ts';
-import type { KeysOfAll } from './type-utils.ts';
 import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';
 export type { BooleanKeyword } from './keyword-presence.ts';
 
@@ -1349,7 +1348,7 @@ type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
  * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses. A union `C` is judged slot by slot across all its members. A key the builder does not declare is refused by `RefuseUndeclared`.
  */
 export type NumericConfig<C, W extends Readonly<Record<string, boolean>>> = {
-	readonly [K in KeysOfAll<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
+	readonly [K in KeysOfUnion<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
 };
 
 /**

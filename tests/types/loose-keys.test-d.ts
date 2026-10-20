@@ -48,18 +48,10 @@ export const numericKeys = rs.build.integerLiteralDecimal({ content: 1 });
 export const strictNumericKeys = rs.build.integerLiteralDecimal.strict({ content: 1 });
 export const pythonKeys = py.build.ifStatement({ condition: 'x', consequence: py.build.block(), alternative: [] });
 
-// The shapes whose keys stay unchecked, each admitted:
+// The two shapes whose keys stay unchecked, each admitted:
 // an untagged config where the place declares several untagged configs (a kind's own and its bare slot's) is checked
 // against the keys of all of them together, so `left`, a where predicate's key, passes in a where clause's config;
 export const uncheckedSeveralConfigs = rs.build.whereClause({ wherePredicates: [], left: 'T' });
-// a type met again on the same path is not walked again, so its keys are checked at its first place only: `body` is a
-// loop's key but not a block's, where the loop's own type recurs;
-interface Loop {
-	readonly label?: string;
-	readonly body: Loop;
-}
-declare const loop: Loop;
-export const uncheckedRevisit = rs.build.loopExpression(loop);
 // and a value typed `any` proves nothing.
 declare const anything: any;
 export const uncheckedAny = rs.build.block({ trailingExpression: anything });
