@@ -121,20 +121,23 @@ type TakesFirst<Lists, Value> = Lists extends unknown ? ([Value] extends Lists ?
  * A union's `$with.<slot>` is the intersection of its forms' setters, so a value only some forms accept is refused
  * by the union (`never`). Narrow with this helper, or with the form's `is` guard, and set on the result. A form
  * admits the value when one of its setter's overloads takes it as a first argument; the clearing overload of an
- * optional slot takes no argument and admits nothing.
+ * optional slot takes no argument and admits nothing. No form admits an untyped node, alone or in a union with typed
+ * ones, as no setter does.
  *
  * @typeParam Union - a supertype's `Parsed` or `Bound` union.
  * @typeParam Slot - a slot name settable through `$with`.
  * @typeParam Value - the value the setter must admit.
  * @example `FormsHolding<CallExpression.Parsed, 'arguments', Arguments.Parsed>` is the call and member forms.
  */
-export type FormsHolding<Union, Slot extends string, Value> = Union extends {
-	readonly $with: { readonly [K in Slot]: infer Setter };
-}
-	? [TakesFirst<SetterParameters<Setter>, Value>] extends [never]
-		? never
-		: Union
-	: never;
+export type FormsHolding<Union, Slot extends string, Value> = true extends UntypedKind<Value>
+	? never
+	: Union extends {
+				readonly $with: { readonly [K in Slot]: infer Setter };
+		  }
+		? [TakesFirst<SetterParameters<Setter>, Value>] extends [never]
+			? never
+			: Union
+		: never;
 
 export type ListView<E, O> = ReadonlyArray<E> & Readonly<O>;
 
