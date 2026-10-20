@@ -152,6 +152,7 @@ declare function buildFunctionDeclaration<B extends Admit<T.StatementBlock>>(
 - **A providing slot** returns `Exclude<NeedsOf<B>, Provided>`.
 - **A bounding slot** intersects its parameter with `Bounded<B, Provided>`. Each kind's provided set is fixed, because every entry is a kind. The refusal reads as the unmet context at the end of the message: `'"Break"' is not assignable to '"Unproven" | FunctionBody'`.
 - **`Unproven`** is the name for needs the types do not track: parsed nodes, loose-built nodes, and wide annotations of them. A bound's type admits it, and the runtime check decides (§7).
+- **Untyped nodes.** An untyped node has no language, so no typed slot admits it. A `$type` of plain `number` is refused by the generic check, since TypeScript admits `number` into any numeric enum. The check, `RefuseUntyped<V>` in `@sittir/types`, covers every node-valued slot, not only the slots a requiring kind is reachable from. Every node-valued builder parameter and every `$with` setter is generic over its value, and contexts layer their bounds onto the same type parameter (`B & RefuseUntyped<B> & Bounded<B, …>`). The per-language enums refuse a node of another language, and a node of the slot's language keeps its kind.
 
 **Cost** (tsc 7.0.2, from the probe's workloads over the real TypeScript node types):
 - Loading the types is unchanged, at about 1.4 s.
