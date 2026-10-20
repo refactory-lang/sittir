@@ -24,10 +24,8 @@ import {
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
-import { ALIAS, EOF, SEQ, SYMBOL } from '../../types/rule-types.ts';
-import { isLexedBoundary, RuleWalker } from '../../dsl/rule-walker.ts';
-import { isEnrichGroupLiftSymbol } from '../../dsl/transform/transform-path.ts';
-import { isRepeatType } from '../../types/runtime-shapes.ts';
+import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
+import { eofPlacements } from '../../dsl/eof-placement.ts';
 import { rootRuleName } from '../../util/reachable-rules.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
@@ -512,76 +510,24 @@ export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds
 	}));
 }
 
-function eofPlacements(
-	rules: RawGrammar['rules'],
-	textTokens: readonly string[]
-): { readonly inToken: ReadonlySet<string>; readonly notLast: ReadonlySet<string> } {
-	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
-	const minted = new Set(textTokens);
-	const mintRef = (rule: Rule<'evaluate'>): boolean =>
-		isEnrichGroupLiftSymbol(rule) || (rule.type === SYMBOL && minted.has((rule as { name: string }).name));
-	for (const rule of Object.values(rules)) {
-		walker.find(rule, (inner) => {
-			if (isEnrichGroupLiftSymbol(inner)) minted.add((inner as { name: string }).name);
-			return false;
-		});
-	}
-	const inToken = new Set<string>();
-	const notLast = new Set<string>();
-	const visit = (owner: string, rule: Rule<'evaluate'>, last: boolean, token: boolean, seen: ReadonlySet<string>): void => {
-		if (rule.type === EOF) {
-			if (token) inToken.add(owner);
-			else if (!last) notLast.add(owner);
-			return;
-		}
-		const target = mintRef(rule) ? walker.deref(rule) : undefined;
-		if (target !== undefined) {
-			const name = (rule as { name: string }).name;
-			if (!seen.has(name)) visit(owner, target, last, token, new Set([...seen, name]));
-			return;
-		}
-		const edges = walker.childEdgesOf(rule);
-		edges.forEach(({ child }, index) =>
-			visit(
-				owner,
-				child,
-				last && !isRepeatType(rule.type) && (rule.type !== SEQ || index === edges.length - 1),
-				token || isLexedBoundary(rule),
-				seen
-			)
-		);
-	};
-	const start = rootRuleName(rules);
-	for (const [name, rule] of Object.entries(rules)) if (!minted.has(name)) visit(name, rule, name === start, false, new Set([name]));
-	return { inToken, notLast };
-}
-
 export function eofDiagnostics(grammar: Pick<RawGrammar, 'name' | 'rules' | 'textTokens'>): GrammarDiagnostic[] {
-	const { inToken, notLast } = eofPlacements(grammar.rules, grammar.textTokens ?? []);
 	const start = rootRuleName(grammar.rules);
-	return [
-		...[...inToken].map((ownerKind) => ({
-			scope: 'grammar' as const,
-			code: 'eof-in-token',
-			severity: 'fail' as const,
-			grammar: grammar.name,
-			ownerKind,
-			message: `kind '${ownerKind}' puts eof() inside a token; a lexical token cannot match the end of input.`,
-			proposal: `Move eof() out of the token, to the end of the start rule '${start}'.`,
-			canProceed: false
-		})),
-		...[...notLast].map((ownerKind) => ({
-			scope: 'grammar' as const,
-			code: 'eof-not-last',
-			severity: 'fail' as const,
-			grammar: grammar.name,
-			ownerKind,
-			message: `eof() in '${ownerKind}' is not the last step of the start rule '${start}'; eof() is legal only there, outside any repetition.`,
-			proposal: `Move eof() to the end of '${start}', or take it out of '${ownerKind}'.`,
-			canProceed: false,
-			details: { kind: ownerKind, start }
-		}))
-	];
+	return [...eofPlacements(grammar.rules, grammar.textTokens ?? [])].map(([ownerKind, placement]) => {
+		const shared = { scope: 'grammar' as const, severity: 'fail' as const, grammar: grammar.name, ownerKind, canProceed: false, details: { kind: ownerKind, start, ...placement } };
+		return placement.inToken
+			? {
+					...shared,
+					code: 'eof-in-token',
+					message: `kind '${ownerKind}' puts eof() inside a token; a lexical token cannot match the end of input.`,
+					proposal: `Move eof() out of the token, to the end of the start rule '${start}'.`
+				}
+			: {
+					...shared,
+					code: 'eof-not-last',
+					message: `eof() in '${ownerKind}' is not the last step of the start rule '${start}'; eof() is legal only there, outside any repetition.`,
+					proposal: `Move eof() to the end of '${start}', or take it out of '${ownerKind}'.`
+				};
+	});
 }
 
 export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {

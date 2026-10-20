@@ -104,3 +104,43 @@ describe('neither eof code can be expected', () => {
 		]);
 	}, 60_000);
 });
+
+describe('a blank after eof() adds no step', () => {
+	it('accepts a field-wrapped blank after eof() as no step', async () => {
+		expect(await eofRecords("source: ($) => seq('x', eof(), field('empty', blank()))")).toEqual([]);
+	}, 60_000);
+
+	it('accepts an optional blank after eof() as no step', async () => {
+		expect(await eofRecords("source: ($) => seq('x', eof(), optional(blank()))")).toEqual([]);
+	}, 60_000);
+
+	it('refuses an optional step after eof(), so the blank cases are not vacuous', async () => {
+		const records = await eofRecords("source: ($) => seq('x', eof(), optional('y'))");
+		expect(records).toEqual([refusedOn('source')]);
+	}, 60_000);
+});
+
+describe('one record per rule, with the eof flags in details', () => {
+	it('gives one eof-in-token record on the start rule, flagged inToken and notLast', async () => {
+		const records = await eofRecords("source: ($) => choice(seq('x', eof(), 'z'), token(seq('a', eof())))");
+		expect(records).toEqual([
+			expect.objectContaining({
+				code: 'eof-in-token',
+				ownerKind: 'source',
+				details: expect.objectContaining({ inToken: true, notLast: true })
+			})
+		]);
+	}, 60_000);
+});
+
+describe('a refusal inside a mint an authored layer references names the mint', () => {
+	it('names source_arm when the layer repeats the enrich-minted arm rule', async () => {
+		const raw = await evaluateTempGrammar(
+			{ extras: '', rules: "source: ($) => choice(seq($.x, eof()), seq('b', eof())), x: () => 'a'" },
+			'rules: { source: ($) => repeat($.source_arm) }'
+		);
+		const records = evaluateRecords(raw).filter((record) => record.code === 'eof-not-last');
+		expect(records).toEqual([refusedOn('source_arm')]);
+	}, 60_000);
+});
+

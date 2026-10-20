@@ -9249,3 +9249,13 @@ What a code in `ENRICH_SHAPES` records: the enrich pass that rewrites the shape 
 ### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES`
 
 The input shapes enrich rewrites, one code each, with the pass that rewrites it and the shape in words. A shape enrich rewrites never reaches the model as written, so no `expectDiagnostics` entry may name one of these codes (`compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`).
+
+### `packages/codegen/src/dsl/eof-placement.ts::eofPlacements`
+
+Each authored rule that holds a refused `eof()`, with where: `inToken` when one sits under a `token()` or `token.immediate()`, `notLast` when one sits anywhere but last in the start rule. The walk keeps the start rule's position through its choices and wrappers, and through the last step of each sequence, where a later member that derives only the empty string (`rule-patterns.ts::isBlank`, through wrappers, choices and sequences of blanks) adds no step; a symbol or a token always does. It never keeps the position inside a repetition.
+
+Enrich's mints are judged where the author wrote them. A group-lift reference (`transform/transform-path.ts::isEnrichGroupLiftSymbol`) and a reference to a text token (`textTokens`) are walked into, as part of the rule that holds the reference, so a hoisted arm of the start rule keeps the start rule's position and a refusal names the authored rule. A group-lift mint is also walked on its own when an ordinary reference names it, since an authored layer that names a mint composes with it as a rule. A text token never is, because enrich itself references it by an ordinary symbol. A mint that reaches itself again is walked once on each path.
+
+### `packages/codegen/src/dsl/eof-placement.ts::EofPlacement`
+
+Where an authored rule holds a refused `eof()`: under a token (`inToken`), anywhere but last in the start rule (`notLast`), or both.
