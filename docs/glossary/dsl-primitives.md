@@ -729,7 +729,7 @@ One cause of a `reauthored` declaration as recorded: the cause, and its witnesse
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::RuleCauseDeclaration`
 
-What `reauthored` or `vocabulary` tags a rule function with (`ruleCauseOf`): a re-authoring with its causes (`DeclaredCause`), or a vocabulary rule. The cause list is typed as it can arrive: a grammar file's types do not gate it, so the list may be empty, and the rule-cause gate refuses an empty one (`rule-cause-missing`).
+What `reauthored` or `vocabulary` tags a rule function with (`ruleCauseOf`): a re-authoring with its causes (`DeclaredCause`), or a vocabulary rule. The cause list is typed as it can arrive: a grammar file's types do not gate it, so the list may be empty, and the rule-cause gate refuses an empty one (`rule-cause-missing`). `reauthored` records the list dense: a hole in the declared list declares nothing and is skipped, so a list of holes records as empty.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::declaredCause`
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { blockedRecords } from '../grammar-diagnostics.ts';
 import { diagnoseRuleCauses, isWitnessVerified, unverifiedRuleNames } from '../rule-causes.ts';
+import { reauthored, ruleCauseOf } from '../../../dsl/primitives/rule-cause.ts';
 import type { StageDiagnosis } from '../../stage.ts';
 import type { GrammarDiagnostic } from '../../../types/diagnostics.ts';
 import type { RuleCauseDeclaration } from '../../../dsl/primitives/rule-cause.ts';
@@ -523,6 +524,18 @@ describe('a reauthored declaration with an empty cause list', () => {
 		expect(isWitnessVerified({ kind: 'reauthored', causes: [] } as never)).toBe(false);
 	});
 
+	it('a sparse one-hole declaration is a blocking rule-cause-missing, unverified', () => {
+		const declaration = ruleCauseOf(reauthored(Array(1) as never, () => 1))!;
+		const ds = diagnose({
+			ruleCauses: { getter: declaration },
+			enriched: enriched({ ruleNames: new Set(Object.keys(upstreamRules)) }),
+			upstreamRules,
+			authoredRules
+		});
+		expect(ds).toEqual([expect.objectContaining({ code: 'rule-cause-missing', canProceed: false })]);
+		expect(isWitnessVerified(declaration)).toBe(false);
+	});
+
 	it('is counted as unverified', () => {
 		const raw = {
 			ruleCauses: { getter: { kind: 'reauthored', causes: [] } },
@@ -556,8 +569,24 @@ describe('a ruled-narrowing ruling is stated in words', () => {
 		});
 	const reason = 'its ruling cites a PR, spec or task number or holds no word, where it must state the constraint in words';
 
-	it.each(['PR-137', 'ADR-0009', 'spec 026', 'R11', 'task 8', '#916', '42', 'plan 3'])('refuses a ruling that is only %s', (ruling) => {
+	it.each(['PR-137', 'ADR-0009', 'spec 026', 'R11', 'task 8', '#916', '42', 'plan 3', 'PR: 916', 'spec: 026', 'task: 8'])('refuses a ruling that is only %s', (ruling) => {
 		const ds = judge(ruling);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain(reason);
+	});
+
+	it('refuses a bare requirement id in prose', () => {
+		const ds = judge('the identifier R11 is reserved');
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain(reason);
+	});
+
+	it('accepts a requirement id quoted as code in backticks', () => {
+		expect(judge('the identifier `R11` is reserved')).toEqual([]);
+	});
+
+	it('refuses a ruling that is only code', () => {
+		const ds = judge('`R11`');
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
 		expect(ds[0]!.message).toContain(reason);
 	});

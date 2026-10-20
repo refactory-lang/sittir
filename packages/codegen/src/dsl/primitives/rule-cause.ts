@@ -69,7 +69,7 @@ export function reauthored<F extends (...args: never[]) => unknown>(
 ): F {
 	const pairs = (typeof first === 'string' ? [rest.length === 1 ? [first] : [first, rest[0]]] : first) as readonly [CausePair, ...CausePair[]];
 	const body = rest[rest.length - 1] as F;
-	return tag(body, { kind: 'reauthored', causes: pairs.map(declaredCause) });
+	return tag(body, { kind: 'reauthored', causes: pairs.flatMap((pair) => [declaredCause(pair)]) });
 }
 
 export function vocabulary<F extends (...args: never[]) => unknown>(body: F): F {

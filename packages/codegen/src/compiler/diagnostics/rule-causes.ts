@@ -338,14 +338,17 @@ const NARROWING_JUSTIFICATIONS = {
 	'ruled-narrowing': { key: 'ruling', missing: 'it states no ruling', inWords: true }
 } as const;
 
-const PLANNING_REFERENCE = /#\d+|\b(?:PR|ADR|spec|plan|task)[\s#-]*\d+/i;
+const PLANNING_REFERENCE = /#\d+|\b(?:PR|ADR|spec|plan|task)[\s#:-]*\d+/i;
 
 const REQUIREMENT_ID = /\bR\d+\b/;
 
 const WORD = /\p{L}{2,}/u;
 
+const CODE_SPAN = /`[^`]*`/g;
+
 function statesInWords(text: string): boolean {
-	return WORD.test(text) && !PLANNING_REFERENCE.test(text) && !REQUIREMENT_ID.test(text);
+	const prose = text.replace(CODE_SPAN, ' ');
+	return WORD.test(prose) && !PLANNING_REFERENCE.test(prose) && !REQUIREMENT_ID.test(prose);
 }
 
 type NarrowingCause = keyof typeof NARROWING_JUSTIFICATIONS;
@@ -369,7 +372,7 @@ function judgeNarrowingWitnesses(
 			const justification: unknown = Reflect.get(witness, key);
 			if (typeof justification !== 'string' || justification.trim().length === 0) return missing;
 			if (inWords && !statesInWords(justification))
-				return `its ${key} cites a PR, spec or task number or holds no word, where it must state the constraint in words`;
+				return `its ${key} cites a PR, spec or task number or holds no word, where it must state the constraint in words (quote syntax in backticks)`;
 			const upstream = upstreamRules[witness.kind];
 			if (upstream === undefined) return `upstream declares no rule '${witness.kind}'`;
 			if (!derivesForm(upstreamRules, upstream, witness.form)) return `upstream '${witness.kind}' does not derive the witness form`;

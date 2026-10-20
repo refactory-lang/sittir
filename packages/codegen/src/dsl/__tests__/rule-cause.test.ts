@@ -49,6 +49,17 @@ describe('rule-cause declarations', () => {
 		expect(ruleCauseOf(reauthored([] as never, () => 1))).toEqual({ kind: 'reauthored', causes: [] });
 	});
 
+	it('reauthored with a sparse cause list of one hole records no causes', () => {
+		expect(ruleCauseOf(reauthored(Array(1) as never, () => 1))).toEqual({ kind: 'reauthored', causes: [] });
+	});
+
+	it('reauthored drops a hole in its cause list and keeps the real cause', () => {
+		expect(ruleCauseOf(reauthored([['ambiguity'], , ] as never, () => 1))).toEqual({
+			kind: 'reauthored',
+			causes: [{ cause: 'ambiguity' }]
+		});
+	});
+
 	it('vocabulary tags without a cause', () => {
 		expect(ruleCauseOf(vocabulary(() => 1))).toEqual({ kind: 'vocabulary' });
 	});
