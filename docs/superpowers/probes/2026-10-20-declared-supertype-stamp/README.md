@@ -23,9 +23,16 @@ parent can be a supertype, and today it does not.
   utils, records, render bodies, `node-model.json5` and its portable copy, `nodes.test.ts`, and the
   crate's `render/node.rs`, `render/options.rs` and render hash. No other grammar moves.
 
-So the stamp waits for the forms-under-kind redesign, in which every variant parent becomes a
-supertype over its forms (python 10, rust 8 and typescript 9 today) and the read resolves a parsed
-parent node to the form it holds. Until then the compiler's supertype set joins the declared
+So the stamp waits on the polymorph-flattening design
+(`docs/superpowers/specs/2026-09-14-polymorph-flattening-design.md`). The `match_block` node is the
+parser's own. Enrich renames upstream's `alias($._match_block, $.block)` to the free name
+`match_block` (`dsl/rule-transforms.ts::unaliasOverloadedDisplays`), so tree-sitter default-aliases
+`_match_block` into a visible node (`.visible = true` in `parser.c`, no alias symbol). That node's
+one child is the form, `match_block_block` or `match_block_empty`, and never the default form in
+its place. Wire still lists `_match_block` under `supertypes:`, because it compares the rule's own
+name with alias values. The design either keeps the wrapper, since a parent the parser shows as a
+node does not flatten ("Which parents flatten"), or removes the node so the slot holds the form
+directly ("End state"). Until one of those holds, the compiler's supertype set joins the declared
 supertypes with the stamped ones (`compiler/normalize.ts::supertypeKindsOf`), which counts
 `match_block` without changing how it reads.
 
