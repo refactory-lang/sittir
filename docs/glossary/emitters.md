@@ -3093,7 +3093,9 @@ sidecar are both read from — the assembled node map, and the parser's
 kind-id tables. The tables are required: every node decodes by kind id,
 so the parser is generated before the render module is emitted.
 `node.rs` imports `sittir_core::VerbatimNode`, so every verbatim
-variant the module names holds the core's type.
+variant the module names holds the core's type. Its node support is
+printed twice: once boxing no payload, which `boxedPayloadsOf` sizes
+to answer the payloads every choice boxes, and again boxing those.
 
 
 #### body
@@ -5077,11 +5079,53 @@ takes leading options is one fact.
 
 ### `packages/codegen/src/emitters/boxed-payloads.ts::PAYLOAD_CEILING_BYTES`
 
-The payload ceiling: a choice the reader reads holds every payload larger than this boxed (`BOXED_PAYLOADS`), so a choice is no larger than the ceiling plus its tag. It is the largest of 512, 256 and 128 bytes at which, in both profiles, the typed read needs no more stack than today's read at 200 nested levels and per level (`typed_read_nesting.rs`); it is 256. The typed read's fixed root cost stays above today's at every ceiling, so a shallow source needs more stack than today's; that cost is reported, not gated.
+The payload ceiling: a choice the reader reads holds every payload larger than this boxed (`boxedPayloadsOf`), so a choice is no larger than the ceiling plus its tag. It is the largest of 512, 256 and 128 bytes at which, in both profiles, the typed read needs no more stack than today's read at 200 nested levels and per level (`typed_read_nesting.rs`); it is 256. The typed read's fixed root cost stays above today's at every ceiling, so a shallow source needs more stack than today's; that cost is reported, not gated.
 
-### `packages/codegen/src/emitters/boxed-payloads.ts::BOXED_PAYLOADS`
+### `packages/codegen/src/emitters/boxed-payloads.ts::boxedPayloadsOf`
 
-Per grammar, the node types a choice holds boxed: every payload type over `PAYLOAD_CEILING_BYTES`. The lists are measured, not chosen, and read once, by `grammarRenderInputs`: `size-census.py --pins <ceiling>` (in the shared-arena stack probes) prints them and says whether this file holds them. The build refuses a list that is wrong either way: the generated assertions (`payloadCeilingAssertions`) fail on an unpinned payload over the ceiling and a pinned one within it, and the printer refuses a pin no choice holds. A payload's size depends only on what it holds by value, and a cycle through a choice is already boxed at the field that closes it, so pinning settles from the leaves up in a few rounds.
+The node types a choice holds boxed: each of `payloads` (the types the choices of a `node.rs` hold, `ReadPrint.choicePayloads`) whose Rust size is over `PAYLOAD_CEILING_BYTES`, or that is unbounded (`unboundedPayloads`). Sizes come from the declarations `nodeRs` prints with no payload boxed (`declarationsOf`), so they are the types `render-module.ts` emits, never a list kept beside them. `emitRenderModule` prints `node.rs`'s support once with none boxed, hands it here, and prints it again with the answer.
+
+Each type is sized from the leaves up: a declared struct or enum from its fields or variants by rustc's layout rule (`structLayout`, `enumLayout`), a core type from its fixed layout (`LEAVES`), and `Option` and `SlotValue` as the enums they are. A payload's size depends only on what it holds by value, and a choice it holds already boxes its own payloads by the same rule, so one pass settles every size. The generated assertions (`payloadCeilingAssertions`) check every answer against rustc both ways, so a layout the rule gets wrong fails the Rust build naming the payload. A type the rule has no layout for is refused, naming it.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::LEAVES`
+
+The layouts of the types a `node.rs` names but does not declare: size, alignment, and the largest niche (the offset and width of the field holding the values its type never takes, and how many there are). `Box`, `Vec`, `NonEmptyVec` and `String` hold what they name behind a pointer, so their layout is the same whatever they hold: a pointer's niche is its null value; a buffer's is its capacity's top bit (`CAPACITY`). The `sittir_core` types (`NodeCoordinate`, `Edges`, `TriviaText`, `VerbatimNode`, `KindId`, `Delimiter`) are rustc's layouts of their definitions. A change to one of those types that moves a payload across the ceiling fails the generated ceiling assertions; the fix is its entry here.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::placeFields`
+
+Lays out one struct's fields as rustc does, and answers the layout and each field's offset. A struct (no `prefix`) orders its fields: one-byte zero-sized fields first, then by alignment group, largest first, then the field with the most niche values first (`start` bias) or last (`end` bias), then by where the niche sits in the field. A field's alignment group is the trailing zeros of the larger of its alignment and size, capped at the largest field alignment when any field has a niche under `start` bias, and its own alignment for the field with the largest niche under `end` bias. A tagged enum's variant (`prefix`, the tag's size) starts after the tag and orders its fields by ascending group, the largest niche last within one. Fields are placed at their aligned offsets; the size rounds up to the largest alignment. The layout's niche is its fields' largest, the first of equals under `start` bias and the last under `end`.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::structLayout`
+
+A struct's layout, or an enum variant's where the enum fills a niche: its fields placed with the niche biased to the start (`placeFields`), or to the end when that leaves more room before the niche than the start layout leaves on either side of it. The room around a niche is where an enum's other variants fit (`nicheFilled`).
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::enumLayout`
+
+An enum's layout from its variants' fields: a single variant's struct layout, else the smaller of its niche-filled layout (`nicheFilled`) and its tagged one (`taggedLayout`). On equal sizes, the niche-filled layout wins only when it keeps more niche values; otherwise the tagged one does.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::nicheFilled`
+
+An enum laid out in its largest variant's niche, or `undefined` where it cannot be: the largest variant (the last of equals) keeps its layout, and the others are told apart by values its niche never takes, as many as the span of their variant indices. Each other variant must fit before the niche or after it within the largest's size. The enum's niche is what is left of the largest's.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::taggedLayout`
+
+An enum laid out with a tag before every variant: the tag is the smallest integer that counts the variants, widened to the smallest alignment of the variants' first placed fields when that is larger, and each variant's fields follow it (`placeFields` with the tag as prefix). The size is the largest variant's, rounded to the largest alignment; the niche is the tag values no variant takes.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::unboundedPayloads`
+
+The payloads a choice reaches again through what it holds by value: each payload a choice holds within one strongly connected component of the by-value graph (the types each declaration holds by value, `heldByValue`, with a choice's payloads marked). Held by value, such a payload has no size, so it is over any ceiling and boxed, which breaks every cycle through a choice. An emission whose back edges are boxed at the field that closes them (the grammar's real pipeline) has none; a fixture node map with no strongly connected components can. A cycle through no payload stays unbroken and is refused when its first member is sized.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::heldByValue`
+
+The declared types a field of `type` holds by value: the type itself when declared, else those its arguments hold, none behind a `Box`, `Vec`, `NonEmptyVec` or `String` (`BY_REFERENCE`).
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::declarationsOf`
+
+The structs and enums a `node.rs` declares, by name: a struct's field types, an enum's variants' payload types, a unit variant `undefined`. It reads the shapes the render module prints, one field or variant per line.
+
+### `packages/codegen/src/emitters/boxed-payloads.ts::parseType`
+
+A Rust type as written in a declaration: its last path segment and its generic arguments, a const argument (`true`) among them.
 
 ### `packages/codegen/src/emitters/bundle-hash.ts::computeBundleHash`
 
@@ -12561,7 +12605,7 @@ filtered once here.
 
 ### `packages/codegen/src/emitters/render-module.ts::boxedInEnum`
 
-Whether a choice holds a payload boxed: when the payload's node type is among the pins the emission was given (`RenderOptionsInputs.boxedPayloads`, the grammar's `BOXED_PAYLOADS` through `grammarRenderInputs`). The pins hold every payload type over `PAYLOAD_CEILING_BYTES`, and the generated assertions (`payloadCeilingAssertions`) keep them exact, so a choice is no larger than the ceiling plus its tag. Every choice the reader reads boxes the same types, so a payload passes between choices, a supertype's bridge to `AnyNode` included, as it is.
+Whether a choice holds a payload boxed: when the payload's node type is among the payloads the emission boxes (`ReadPrint.boxedPayloads`, which `emitRenderModule` derives with `boxedPayloadsOf`). Those hold every payload type over `PAYLOAD_CEILING_BYTES`, and the generated assertions (`payloadCeilingAssertions`) check each against rustc, so a choice is no larger than the ceiling plus its tag. Every choice the reader reads boxes the same types, so a payload passes between choices, a supertype's bridge to `AnyNode` included, as it is.
 
 ### `packages/codegen/src/emitters/render-module.ts::choicePayloadType`
 
@@ -12569,7 +12613,7 @@ The type a choice variant holds its payload as: the payload's node type, boxed w
 
 ### `packages/codegen/src/emitters/render-module.ts::payloadCeilingAssertions`
 
-One `const` assertion per payload any choice holds, each one way: a pinned payload must be over `PAYLOAD_CEILING_BYTES`, an unpinned one at most that. A payload that grows past the ceiling fails the build asking to be pinned; a pinned one that shrinks under it fails asking to be unpinned. Each assertion is its own item, so one build reports every payload on the wrong side. A pin no choice holds is refused while printing, asking to be removed. The checks are for the pins the emission was given: the `<= N` assertion on every unpinned payload is what makes an emission that forgets the pins fail the Rust build, naming each payload over the ceiling. `renderNodeSupport` prints them after every choice.
+One `const` assertion per payload any choice holds, each one way: a boxed payload must be over `PAYLOAD_CEILING_BYTES`, any other at most that. The boxed payloads are what the byte rule (`boxedPayloadsOf`) sized over the ceiling, so an assertion that fails names a payload whose layout the rule got wrong. Each assertion is its own item, so one build reports every payload on the wrong side. A boxed payload no choice holds is refused while printing. `renderNodeSupport` prints them after every choice.
 
 ### `packages/codegen/src/emitters/render-module.ts::emitSupertypeNodeEnum`
 
@@ -14026,11 +14070,9 @@ site), empty when the side has one site for every token.
  *  in hand would (tests on fixture node maps). */
 ```
 
-`boxedPayloads` is the grammar's payload pins (`BOXED_PAYLOADS`), a fact beside the node map like the render rules. The real pipeline fills it through `grammarRenderInputs`; a fixture emission that passes none boxes nothing and refuses nothing.
-
 ### `packages/codegen/src/emitters/render-module.ts::grammarRenderInputs`
 
-The render inputs a grammar's real emission passes: the caller's facts plus the grammar's payload pins. It is the one read of `BOXED_PAYLOADS`; `emit.ts` and the render-module test's real-model helper both call it.
+The render inputs a grammar's real emission passes: the caller's facts plus the grammar's envelope pins. `emit.ts` and the render-module test's real-model helper both call it.
 
 ### `packages/codegen/src/emitters/render-module.ts::PlannedRenderOptions`
 
