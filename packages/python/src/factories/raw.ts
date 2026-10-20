@@ -270,8 +270,9 @@ function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportS
 }
 
 export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
+	if (typeof text !== 'string') throw new Error(`import_prefix: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildImportPrefix.test(text))
+	if (!_leafRe_buildImportPrefix.test(text))
 		throw new Error(`import_prefix: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -4115,8 +4116,9 @@ export function buildFormatSpecifier(
 }
 
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
+	if (typeof text !== 'string') throw new Error(`type_conversion: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildTypeConversion.test(text))
+	if (!_leafRe_buildTypeConversion.test(text))
 		throw new Error(`type_conversion: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -4138,8 +4140,9 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 export function buildIdentifier<const W extends string>(
 	text: W extends _ReservedWord_buildIdentifier ? never : W
 ): T.Identifier.Bound {
+	if (typeof text !== 'string') throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
+	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	if (_reservedWords_buildIdentifier.has(text)) throw new Error(`identifier: '${text}' is a reserved word`);
 	const handle = currentHandle();
@@ -4861,8 +4864,10 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 }
 
 export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildFormatSpecifierText.test(text))
+	if (!_leafRe_buildFormatSpecifierText.test(text))
 		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5621,8 +5626,10 @@ export function buildIntegerBinary(
 }
 
 export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`integer_decimal_long: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`integer_decimal_long: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIntegerDecimalLong.test(text))
+	if (!_leafRe_buildIntegerDecimalLong.test(text))
 		throw new Error(`integer_decimal_long: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5642,8 +5649,10 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 }
 
 export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`integer_decimal_imaginary: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`integer_decimal_imaginary: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIntegerDecimalImaginary.test(text))
+	if (!_leafRe_buildIntegerDecimalImaginary.test(text))
 		throw new Error(`integer_decimal_imaginary: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -5667,8 +5676,10 @@ export function buildIntegerDecimalPlain<const N extends string | number | bigin
 ): T.IntegerDecimalPlain.Bound;
 export function buildIntegerDecimalPlain(text: string | number | bigint): T.IntegerDecimalPlain.Bound {
 	text = numberText(10, '', text);
+	if (typeof text !== 'string')
+		throw new Error(`integer_decimal_plain: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`integer_decimal_plain: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIntegerDecimalPlain.test(text))
+	if (!_leafRe_buildIntegerDecimalPlain.test(text))
 		throw new Error(`integer_decimal_plain: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6147,8 +6158,10 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 }
 
 export function buildLineContinuationNewline(text: string): T.LineContinuationNewline.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`line_continuation_newline: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`line_continuation_newline: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildLineContinuationNewline.test(text))
+	if (!_leafRe_buildLineContinuationNewline.test(text))
 		throw new Error(`line_continuation_newline: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6800,8 +6813,9 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 }
 
 export function buildStringStart(text: string): T.StringStart.Bound {
+	if (typeof text !== 'string') throw new Error(`string_start: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringStart.test(text))
+	if (!_leafRe_buildStringStart.test(text))
 		throw new Error(`string_start: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6821,8 +6835,9 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 }
 
 export function buildStringFragment(text: string): T.StringFragment.Bound {
+	if (typeof text !== 'string') throw new Error(`string_fragment: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringFragment.test(text))
+	if (!_leafRe_buildStringFragment.test(text))
 		throw new Error(`string_fragment: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6842,8 +6857,10 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 }
 
 export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`escape_interpolation: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildEscapeInterpolation.test(text))
+	if (!_leafRe_buildEscapeInterpolation.test(text))
 		throw new Error(`escape_interpolation: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6863,8 +6880,9 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 }
 
 export function buildStringEnd(text: string): T.StringEnd.Bound {
+	if (typeof text !== 'string') throw new Error(`string_end: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringEnd.test(text))
+	if (!_leafRe_buildStringEnd.test(text))
 		throw new Error(`string_end: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {

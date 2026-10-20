@@ -551,11 +551,12 @@ Whether a kind gets a top-level factory, and the skip reason when it does not. A
 
 ### `packages/codegen/src/emitters/factories.ts::buildLeafGuards`
 
-The runtime guard statements of a text-leaf factory, each a complete `if (…) throw` statement. Three guards, none conditional on a debug flag:
+The runtime guard statements of a text-leaf factory, each a complete `if (…) throw` statement. Four guards, in run order, none conditional on a debug flag:
 
-1. **Non-empty**, on every leaf whose pattern does not accept the empty string.
-2. **Pattern**, where `buildLeafReConsts` hoisted a `_leafRe_<factory>` constant: `typeof text !== 'string' || !_leafRe_<factory>.test(text)`. The type test comes first because a node now writes its text, so `test` would otherwise coerce a node argument to its text; a leaf builder takes a string only and refuses anything else with the same pattern message.
-3. **Reserved word**, on the grammar's word kind only, where `buildLeafReConsts` hoisted a `_reservedWords_<factory>` set: text in the grammar's declared `reserved.global` wordset throws `<kind>: '<text>' is a reserved word`. The set is the grammar's own declaration read through `reservedWordset`, never a collected keyword list: a contextual keyword the grammar admits as an identifier (python `print`, `match`, `exec`) is not in it, and a grammar that declares no wordset (typescript and rust today) gets no guard. The builder has no slot context, so its message cannot name a keyword arm; the slot-side check is `keywordTextRejection`.
+1. **Type**, on every leaf: `typeof text !== 'string'` throws before any other guard reads the argument. A leaf builder takes a string only, and a node writes its text, so a later `length` read or `test` call would otherwise act on a node or on `undefined`; a missing argument gets the builder's own message, not a property-read `TypeError`. A leaf with a hoisted pattern refuses with `patternMismatchThrow`'s message, so every bad argument to it is worded alike; a leaf without one refuses with `textTypeMismatchThrow`'s.
+2. **Non-empty**, on every leaf whose pattern does not accept the empty string.
+3. **Pattern**, where `buildLeafReConsts` hoisted a `_leafRe_<factory>` constant: text the constant does not match throws `patternMismatchThrow`'s message.
+4. **Reserved word**, on the grammar's word kind only, where `buildLeafReConsts` hoisted a `_reservedWords_<factory>` set: text in the grammar's declared `reserved.global` wordset throws `<kind>: '<text>' is a reserved word`. The set is the grammar's own declaration read through `reservedWordset`, never a collected keyword list: a contextual keyword the grammar admits as an identifier (python `print`, `match`, `exec`) is not in it, and a grammar that declares no wordset (typescript and rust today) gets no guard. The builder has no slot context, so its message cannot name a keyword arm; the slot-side check is `keywordTextRejection`.
 
 ### `packages/codegen/src/emitters/factories.ts::childElementType`
 
@@ -14856,7 +14857,7 @@ The text nodes of a template body, descending into the arms of its conditionals.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 
-The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
+The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them. A patterned leaf's type guard emits it too, so a non-string argument and a misspelled one are refused alike.
 
 ### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
 
@@ -15121,6 +15122,10 @@ Emits one `_delimited_<factory>` constant per delimited kind into the raw module
 ### `packages/codegen/src/emitters/factories.ts::delimitedCheckLine`
 
 The `checkDelimited(handle, node, spec, [content slots], open, close)` call emitted before a delimited builder returns. The delimiter slots come from the stamped fact; every other slot is content.
+
+### `packages/codegen/src/emitters/factories.ts::textTypeMismatchThrow`
+
+The type refusal of a text leaf with no hoisted pattern: `<label>: text must be a string: <value>`, with the value written through `describeValue`. `buildLeafGuards` emits it as such a leaf's first guard. A leaf with a hoisted pattern refuses a non-string with `patternMismatchThrow`'s message instead.
 
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 

@@ -28,3 +28,10 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 		expect(() => verifying.build.returnExpression.strict('x')).toThrow(/ReturnExpression\.expression: a strict factory takes a built node, not a string; expected a built /);
 	});
 });
+
+describe('a leaf guard checks the type before the empty check', () => {
+	it('throws the pattern refusal, not a TypeError, when a no-argument leaf is called', () => {
+		// @ts-expect-error a leaf takes its text
+		expect(() => rs.build.charLiteral.empty()).toThrow(/^char_literal_empty: text does not match pattern/);
+	});
+});

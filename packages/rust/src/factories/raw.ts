@@ -5593,8 +5593,9 @@ export function buildBlockComment(
 }
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
+	if (typeof text !== 'string') throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
+	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -7141,8 +7142,10 @@ export function buildUseWildcardGroup(
 }
 
 export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildTokenRepetitionPatternText.test(text))
+	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
 		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -7162,8 +7165,9 @@ export function buildTokenRepetitionPatternText(text: string): T.TokenRepetition
 }
 
 export function buildStringOpen(text: string): T.StringOpen.Bound {
+	if (typeof text !== 'string') throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringOpen.test(text))
+	if (!_leafRe_buildStringOpen.test(text))
 		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -7445,8 +7449,10 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 }
 
 export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`char_literal_empty: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`char_literal_empty: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildCharLiteralEmpty.test(text))
+	if (!_leafRe_buildCharLiteralEmpty.test(text))
 		throw new Error(`char_literal_empty: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8932,8 +8938,10 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 }
 
 export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`line_comment_extra_slashes: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildLineCommentExtraSlashes.test(text))
+	if (!_leafRe_buildLineCommentExtraSlashes.test(text))
 		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8999,7 +9007,9 @@ export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineComm
 }
 
 export function buildLineCommentRegular(text: string): T.LineCommentRegular.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildLineCommentRegular.test(text))
+	if (typeof text !== 'string')
+		throw new Error(`line_comment_regular: text does not match pattern: ${describeValue(text)}`);
+	if (!_leafRe_buildLineCommentRegular.test(text))
 		throw new Error(`line_comment_regular: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -9065,7 +9075,9 @@ export function buildBlockCommentDocInner(value?: Admit<T.BlockCommentContent>):
 }
 
 export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildBlockCommentRegular.test(text))
+	if (typeof text !== 'string')
+		throw new Error(`block_comment_regular: text does not match pattern: ${describeValue(text)}`);
+	if (!_leafRe_buildBlockCommentRegular.test(text))
 		throw new Error(`block_comment_regular: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10142,8 +10154,9 @@ export function buildFloatLiteral<const N extends string | number>(
 ): T.FloatLiteral.Bound;
 export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 	text = numberText('float', '.0', text);
+	if (typeof text !== 'string') throw new Error(`float_literal: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildFloatLiteral.test(text))
+	if (!_leafRe_buildFloatLiteral.test(text))
 		throw new Error(`float_literal: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10163,8 +10176,9 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 }
 
 export function buildStringContent(text: string): T.StringContent.Bound {
+	if (typeof text !== 'string') throw new Error(`string_content: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringContent.test(text))
+	if (!_leafRe_buildStringContent.test(text))
 		throw new Error(`string_content: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10184,7 +10198,9 @@ export function buildStringContent(text: string): T.StringContent.Bound {
 }
 
 export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildRawStringLiteralContent.test(text))
+	if (typeof text !== 'string')
+		throw new Error(`raw_string_literal_content: text does not match pattern: ${describeValue(text)}`);
+	if (!_leafRe_buildRawStringLiteralContent.test(text))
 		throw new Error(`raw_string_literal_content: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10208,8 +10224,10 @@ export const buildOuterDocCommentMarker: TSKindId.OuterDocCommentMarker = TSKind
 export const buildInnerDocCommentMarker: TSKindId.InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
 
 export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildRawStringLiteralStart.test(text))
+	if (!_leafRe_buildRawStringLiteralStart.test(text))
 		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10229,8 +10247,10 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 }
 
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildRawStringLiteralEnd.test(text))
+	if (!_leafRe_buildRawStringLiteralEnd.test(text))
 		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10250,7 +10270,8 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 }
 
 export function buildDocComment(text: string): T.DocComment.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildDocComment.test(text))
+	if (typeof text !== 'string') throw new Error(`doc_comment: text does not match pattern: ${describeValue(text)}`);
+	if (!_leafRe_buildDocComment.test(text))
 		throw new Error(`doc_comment: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10270,7 +10291,9 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 }
 
 export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildBlockCommentContent.test(text))
+	if (typeof text !== 'string')
+		throw new Error(`_block_comment_content: text does not match pattern: ${describeValue(text)}`);
+	if (!_leafRe_buildBlockCommentContent.test(text))
 		throw new Error(`_block_comment_content: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10306,6 +10329,7 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
 export function buildStringClose(text: string): T.StringClose.Bound {
+	if (typeof text !== 'string') throw new Error(`string_close: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_close: text must be non-empty`);
 	const handle = currentHandle();
 	const node = {
@@ -10325,6 +10349,7 @@ export function buildStringClose(text: string): T.StringClose.Bound {
 }
 
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
+	if (typeof text !== 'string') throw new Error(`_error_sentinel: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
 	const handle = currentHandle();
 	const node = {

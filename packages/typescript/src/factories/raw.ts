@@ -2627,8 +2627,10 @@ export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expre
 }
 
 export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDoubleStringFragment.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildUnescapedDoubleStringFragment.test(text))
+	if (!_leafRe_buildUnescapedDoubleStringFragment.test(text))
 		throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -2648,8 +2650,10 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 }
 
 export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSingleStringFragment.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildUnescapedSingleStringFragment.test(text))
+	if (!_leafRe_buildUnescapedSingleStringFragment.test(text))
 		throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -2776,8 +2780,9 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
 }
 
 export function buildRegexPattern(text: string): T.RegexPattern.Bound {
+	if (typeof text !== 'string') throw new Error(`regex_pattern: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildRegexPattern.test(text))
+	if (!_leafRe_buildRegexPattern.test(text))
 		throw new Error(`regex_pattern: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -2797,8 +2802,9 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 }
 
 export function buildRegexFlags(text: string): T.RegexFlags.Bound {
+	if (typeof text !== 'string') throw new Error(`regex_flags: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildRegexFlags.test(text))
+	if (!_leafRe_buildRegexFlags.test(text))
 		throw new Error(`regex_flags: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -2820,8 +2826,9 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 export function buildIdentifier<const W extends string>(
 	text: W extends _ReservedWord_buildIdentifier ? never : W
 ): T.Identifier.Bound {
+	if (typeof text !== 'string') throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
+	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	if (_reservedWords_buildIdentifier.has(text)) throw new Error(`identifier: '${text}' is a reserved word`);
 	const handle = currentHandle();
@@ -2842,8 +2849,9 @@ export function buildIdentifier<const W extends string>(
 }
 
 export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
+	if (typeof text !== 'string') throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
+	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -7784,8 +7792,9 @@ export function buildNumberDecimal<const N extends string | number | bigint>(
 ): T.NumberDecimal.Bound;
 export function buildNumberDecimal(text: string | number | bigint): T.NumberDecimal.Bound {
 	text = numberText(10, '', text);
+	if (typeof text !== 'string') throw new Error(`number_decimal: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`number_decimal: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildNumberDecimal.test(text))
+	if (!_leafRe_buildNumberDecimal.test(text))
 		throw new Error(`number_decimal: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -9237,8 +9246,9 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 }
 
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
+	if (typeof text !== 'string') throw new Error(`html_comment: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildHtmlComment.test(text))
+	if (!_leafRe_buildHtmlComment.test(text))
 		throw new Error(`html_comment: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -9258,8 +9268,9 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 }
 
 export function buildJsxText(text: string): T.JsxText.Bound {
+	if (typeof text !== 'string') throw new Error(`jsx_text: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildJsxText.test(text))
+	if (!_leafRe_buildJsxText.test(text))
 		throw new Error(`jsx_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -9279,8 +9290,9 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 }
 
 export function buildTemplateChars(text: string): T.TemplateChars.Bound {
+	if (typeof text !== 'string') throw new Error(`_template_chars: text does not match pattern: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildTemplateChars.test(text))
+	if (!_leafRe_buildTemplateChars.test(text))
 		throw new Error(`_template_chars: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -9321,6 +9333,7 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
 export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
+	if (typeof text !== 'string') throw new Error(`_ternary_qmark: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
 	const handle = currentHandle();
 	const node = {
@@ -9340,6 +9353,7 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 }
 
 export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
+	if (typeof text !== 'string') throw new Error(`__error_recovery: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
 	const handle = currentHandle();
 	const node = {

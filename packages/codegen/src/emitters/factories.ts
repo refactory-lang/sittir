@@ -534,20 +534,21 @@ function patternMismatchThrow(label: string, valueExpr: string): string {
 	return `throw new Error(\`${label}: text does not match pattern: \${describeValue(${valueExpr})}\`);`;
 }
 
+function textTypeMismatchThrow(label: string, valueExpr: string): string {
+	return `throw new Error(\`${label}: text must be a string: \${describeValue(${valueExpr})}\`);`;
+}
+
 function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReConsts: Map<string, string>): string[] {
-	const guards: string[] = [];
 	const reConst = leafReConsts.get(node.kind);
-	if (reConst) {
-		guards.push(
-			`if (typeof text !== 'string' || !${reConst}.test(text)) ${patternMismatchThrow(node.kind, 'text')}`
-		);
+	const typeMismatch = reConst ? patternMismatchThrow(node.kind, 'text') : textTypeMismatchThrow(node.kind, 'text');
+	const guards = [`if (typeof text !== 'string') ${typeMismatch}`];
+	if (!anchoredLeafRegex(node.kind, node.textPattern)?.test('')) {
+		guards.push(`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`);
 	}
+	if (reConst) guards.push(`if (!${reConst}.test(text)) ${patternMismatchThrow(node.kind, 'text')}`);
 	const reservedConst = leafReConsts.get(reservedGuardKey(node.kind));
 	if (reservedConst) {
 		guards.push(`if (${reservedConst}.has(text)) throw new Error(\`${node.kind}: '\${text}' is a reserved word\`);`);
-	}
-	if (!anchoredLeafRegex(node.kind, node.textPattern)?.test('')) {
-		guards.unshift(`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`);
 	}
 	return guards;
 }
