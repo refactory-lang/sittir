@@ -1,6 +1,6 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
-//! `at`, `edges`, `span`, `sides`, `separator`, `delimiter`,
+//! `at` (index, end, byte start, byte end), `edges`, `span`, `sides`, `separator`, `delimiter`,
 //! `separator_kind`, `flanks`, `slots`. `changed` is two bits of the mask. It holds no trivia and no unit sides: a written side is
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
@@ -11,6 +11,25 @@ use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
 use crate::spacing::SeamStrength;
 use crate::types::{Delimiter, KindId, NodeIndex, Span, TreeId};
+
+/// The fields a reader of a record finds before a list's delimiters
+/// setting, in the order the side record holds them after its mask word:
+/// each one's mask bit and the words it takes. The addon exports them, and
+/// JavaScript reads a parsed record's row and a list's delimiters setting
+/// through them.
+pub mod field {
+    pub const AT: u32 = super::mask::AT;
+    pub const AT_WORDS: u32 = 4;
+    pub const EDGES: u32 = super::mask::EDGES;
+    pub const EDGES_WORDS: u32 = 2;
+    pub const SPAN: u32 = super::mask::SPAN;
+    pub const SPAN_WORDS: u32 = 4;
+    pub const SIDES: u32 = super::mask::SIDES;
+    pub const SIDES_WORDS: u32 = 5;
+    pub const SEPARATOR: u32 = super::mask::SEPARATOR;
+    pub const SEPARATOR_WORDS: u32 = 1;
+    pub const DELIMITER: u32 = super::mask::DELIMITER;
+}
 
 mod mask {
     pub const AT: u32 = 1;
@@ -25,6 +44,16 @@ mod mask {
     pub const SEPARATOR_KIND: u32 = 1 << 9;
     pub const FLANKS: u32 = 1 << 10;
     pub const ALL: u32 = (1 << 11) - 1;
+}
+
+/// A parsed node's place in the tree its arena is: its subtree's rows,
+/// `[index, end)`, and its byte span, as its read stamped them, so a view
+/// of the record has its whole coordinate from the record alone.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Row {
+    pub index: NodeIndex,
+    pub end: NodeIndex,
+    pub span: Span,
 }
 
 /// The node a built node was rebuilt from: its tree, its subtree's rows and
@@ -63,8 +92,8 @@ pub struct SideSlot {
 /// What a side record holds.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SideRecord {
-    /// A parsed node's rows, `[index, end)`; the tree is the arena's.
-    pub at: Option<(NodeIndex, NodeIndex)>,
+    /// A parsed node's rows and byte span; the tree is the arena's.
+    pub at: Option<Row>,
     pub edges: Option<Edges>,
     pub span: Option<PointSpan>,
     pub sides: Option<Sides>,
@@ -164,9 +193,9 @@ impl SideRecord {
         }
         let mut flags = 0;
         let mut words = vec![0];
-        if let Some((index, end)) = self.at {
+        if let Some(Row { index, end, span }) = self.at {
             flags |= mask::AT;
-            words.extend([index.0, end.0]);
+            words.extend([index.0, end.0, span.start, span.end]);
         }
         if let Some(edges) = self.edges {
             flags |= mask::EDGES;
@@ -237,26 +266,29 @@ impl SideRecord {
         let has = |bit: u32| flags & bit != 0;
         let mut record = SideRecord { changed: ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) }, ..SideRecord::default() };
         if has(mask::AT) {
-            let [index, end] = fields.array()?;
-            record.at = Some((NodeIndex(index), NodeIndex(end)));
+            let [index, end, start, end_byte]: [u32; field::AT_WORDS as usize] = fields.array()?;
+            if start > end_byte {
+                return Err(malformed("side record span end", end_byte));
+            }
+            record.at = Some(Row { index: NodeIndex(index), end: NodeIndex(end), span: Span { start, end: end_byte } });
         }
         if has(mask::EDGES) {
-            let [before, after] = fields.array()?;
+            let [before, after]: [u32; field::EDGES_WORDS as usize] = fields.array()?;
             record.edges = Some(Edges { before: read_edge(before)?, after: read_edge(after)? });
         }
         if has(mask::SPAN) {
-            let [start_row, start_column, end_row, end_column] = fields.array()?;
+            let [start_row, start_column, end_row, end_column]: [u32; field::SPAN_WORDS as usize] = fields.array()?;
             record.span = Some(PointSpan { start: Point { row: start_row, column: start_column }, end: Point { row: end_row, column: end_column } });
         }
         if has(mask::SIDES) {
-            let [tree, index, end, start, stop] = fields.array()?;
+            let [tree, index, end, start, stop]: [u32; field::SIDES_WORDS as usize] = fields.array()?;
             if start > stop {
                 return Err(malformed("side record span end", stop));
             }
             record.sides = Some(Sides { tree: TreeId(tree), index: NodeIndex(index), end: NodeIndex(end), span: Span { start, end: stop } });
         }
         if has(mask::SEPARATOR) {
-            let [separator] = fields.array()?;
+            let [separator]: [u32; field::SEPARATOR_WORDS as usize] = fields.array()?;
             record.separator = Some(read_kind(separator)?);
         }
         if has(mask::DELIMITER) {
@@ -305,7 +337,7 @@ mod tests {
 
     fn full() -> SideRecord {
         SideRecord {
-            at: Some((NodeIndex(4), NodeIndex(9))),
+            at: Some(Row { index: NodeIndex(4), end: NodeIndex(9), span: Span { start: 3, end: 8 } }),
             edges: Some(Edges {
                 before: Some(EdgeArm { arm: KindId::BLANK, strength: None }),
                 after: Some(EdgeArm { arm: KindId(31), strength: Some(SeamStrength::Trivia) }),
@@ -366,6 +398,34 @@ mod tests {
         }
     }
 
+    /// The side records `cell-forms.json` pins the TypeScript side reader
+    /// to: each one's words as the codec writes them.
+    #[test]
+    fn the_shared_fixture_s_side_records_are_written_as_it_holds_them() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!("cell-forms.json")).expect("the fixture parses");
+        let words_of = |n: usize| -> Vec<u32> {
+            fixture["sides"][n]["words"].as_array().expect("words").iter().map(|word| u32::try_from(word.as_u64().expect("a word")).expect("a word")).collect()
+        };
+        let every = SideRecord {
+            at: Some(Row { index: NodeIndex(4), end: NodeIndex(9), span: Span { start: 3, end: 8 } }),
+            edges: Some(Edges { before: None, after: Some(EdgeArm { arm: KindId(31), strength: None }) }),
+            span: Some(PointSpan { start: Point { row: 1, column: 2 }, end: Point { row: 3, column: 0 } }),
+            sides: Some(Sides { tree: TreeId(2), index: NodeIndex(5), end: NodeIndex(6), span: Span { start: 10, end: 14 } }),
+            separator: Some(KindId(7)),
+            delimiter: Some(Delimiter::TRAILING),
+            ..SideRecord::default()
+        };
+        let row = every.at;
+        for (n, record) in [every, SideRecord { delimiter: Some(Delimiter::NONE), ..SideRecord::default() }, SideRecord { at: row, ..SideRecord::default() }].into_iter().enumerate() {
+            let mut arena = Arena::new();
+            let at = record.write(&mut arena).expect("room");
+            let expected = words_of(n);
+            let len = u32::try_from(expected.len()).expect("a length");
+            assert_eq!(arena.words(at, len).expect("its words"), expected.as_slice(), "side {n}");
+            assert_eq!(SideRecord::read(&arena, at), Ok(record), "side {n}");
+        }
+    }
+
     #[test]
     fn an_empty_side_record_is_no_record() {
         let mut arena = Arena::new();
@@ -383,6 +443,8 @@ mod tests {
             vec![mask::FLANKS, 3],
             vec![mask::FLANKS, 1 << 16],
             vec![mask::AT],
+            vec![mask::AT, 1, 2, 3],
+            vec![mask::AT, 1, 2, 9, 4],
             vec![mask::EDGES, 5, 0],
             vec![mask::EDGES, EDGE_SET | 9 << 16, 0],
             vec![mask::SIDES, 1, 2, 3, 9, 4],
@@ -411,3 +473,4 @@ mod tests {
         assert_eq!(SeamStrength::from_code(5), None);
     }
 }
+

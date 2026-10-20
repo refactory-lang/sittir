@@ -13,11 +13,13 @@ import type {
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
-import { mintTreeToken, registerTree } from './tree-token.ts';
+import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
+import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
+import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
+import { recordOf, recordStub } from './record-view.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -180,6 +182,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the tree is not live, or `span` is not a span of its source: past its end, reversed, or splitting a character.
 	 */
 	text(treeId: number, span: ByteSpan): string;
+	/** The address of the record of the node at `index`, read `depth` levels down, `null` for a node with none. Present when the addon carries the record codec. */
+	readRecord?(treeId: number, index: number, depth?: number): number | null;
+	/** The words records fill in chunk `n` of the tree's arena, copied. Present when the addon carries the record codec. */
+	chunk?(treeId: number, n: number): Uint32Array;
+	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
+	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
 	/**
 	 * The siblings that hold sides beside the node at descendant `index` of tree `treeId`, as JSON
 	 * `Siblings`.
@@ -344,6 +352,35 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 }>(({ release, treeId }) => release(treeId));
 
 /**
+ * A tree's record reader over `engine`'s record entry points. Each chunk's copy is kept, and fetched again when a record
+ * sought lies past it: a read that appends to a chunk leaves the copy JavaScript holds as it was.
+ */
+function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
+	const { readRecord, chunk, renderRecord } = engine;
+	if (readRecord === undefined || chunk === undefined || renderRecord === undefined) {
+		throw new Error('arena node storage needs an addon built with the `arena` feature');
+	}
+	const copies = new Map<number, Uint32Array>();
+	return {
+		format,
+		record: (index, depth) => readRecord.call(engine, treeId, index, depth) ?? undefined,
+		object: (index, depth = 1) => readObjectAt(index, depth),
+		words(address, length) {
+			const n = chunkOf(address, format);
+			const end = wordOf(address, format) + length;
+			let copy = copies.get(n);
+			if (copy === undefined || copy.length < end) {
+				copy = chunk.call(engine, treeId, n);
+				copies.set(n, copy);
+			}
+			if (copy.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${copy.length} words, short of a record that ends at word ${end}`);
+			return copy;
+		},
+		render: (address, changed, options) => renderRecord.call(engine, treeId, address, changed.leading, changed.trailing, options)
+	};
+}
+
+/**
  * Tagged-union result for `createNativeEngine` — mirrors the
  * `loadNativeEngineForGrammar` pattern in
  * `packages/tools/src/validate/common.ts`: `engine: null` always carries a
@@ -372,6 +409,11 @@ export function createNativeEngine<
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
 	}
 
+	const cellFormat = options?.nodeStorage === 'arena' ? cellFormatOf(status.native) : undefined;
+	if (options?.nodeStorage === 'arena' && cellFormat === undefined) {
+		return { engine: null, reason: 'arena node storage needs an addon built with the `arena` feature' };
+	}
+
 	try {
 		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
@@ -380,6 +422,15 @@ export function createNativeEngine<
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
+			// A view is never edited (a write goes through its row and returns
+			// an object node), so it renders as the record it reads.
+			const record = typeof node === 'number' ? undefined : recordOf(node);
+			if (record !== undefined) {
+				const records = treeOf(node as object)?.records;
+				if (records === undefined) throw new Error('a record view renders through the tree it was read from, which is gone');
+				const changed = rootEdges(node as object);
+				return createRenderHandle(() => records.render(record, changed, perCall));
+			}
 			// The projection is the one place a node's storage wins over the
 			// coordinate it read in with: it crosses here, on every render
 			// path, so a caller handing over raw read data cannot slice a
@@ -433,19 +484,29 @@ export function createNativeEngine<
 							release: status.native.disposeTree,
 							treeId: parsed.treeId
 						});
-						const readAt = (index: number, depth: number): TNode => {
+						const readObjectAt = (index: number, depth: number): TNode => {
 							const node = engine.read(parsed.treeId, index, depth);
 							holdReadTree(node, liveToken);
 							return node;
 						};
-						// The parse's error regions ride beside the root and are stamped here.
-						const root = Object.assign(readObject(readAt(0, depthOf(parseOptions)), 'the root'), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
+						const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
+						// Under arena storage a node with a record reads as its
+						// record's stub, which the wrap table makes a view; a
+						// leaf or an ERROR node has none and reads as an object.
+						const readAt = (index: number, depth: number): TNode => {
+							const at = records?.record(index, depth);
+							if (at === undefined) return readObjectAt(index, depth);
+							const stub = recordStub(tree, at);
+							holdReadTree(stub, liveToken);
+							return stub as TNode;
+						};
 						// One root per depth: the parse's own read seeds it, and a
 						// root asked for at another depth is read once.
-						const roots = new Map<number, unknown>([[depthOf(parseOptions), root]]);
+						const roots = new Map<number, unknown>();
 						const tree: TreeHandle = {
 							id: parsed.treeId,
 							text: (span) => engine.text(parsed.treeId, span),
+							...(records === undefined ? {} : { records }),
 							read: (index, depth = 1) => {
 								if (index !== 0) return readAt(index, depth);
 								let cached = roots.get(depth);
@@ -489,6 +550,9 @@ export function createNativeEngine<
 								planHolds: (addresses, plan) => engine.planHolds(JSON.stringify(addresses), JSON.stringify(plan))
 							}
 						};
+						// The parse's error regions ride beside the root and are stamped here.
+						const root = Object.assign(readObject(readAt(0, depthOf(parseOptions)), 'the root'), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
+						roots.set(depthOf(parseOptions), root);
 						registerTree(liveToken, tree);
 						return { root, tree };
 					}

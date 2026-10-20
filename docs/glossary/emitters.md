@@ -6918,7 +6918,7 @@ Exported for factories.ts, which needs the same synthetic slot to resolve the `e
 
 ### `packages/codegen/src/emitters/wrap.ts::emitSeparatedListWrap`
 
-Emits the wrap function for a `'list'`-classified kind. The list's own view (`listSelfViewParts`, over the elements stored under the list's canonical slot key, `canonicalSeparatedListField`) makes the node an array-like list; a single-slot list's elements accessor hydrates through `hydrateSlots`, and a list whose elements route to more than one model slot gets one accessor per slot (`fieldAccessorLines`), as a field-carrying kind does. The separator kind, the delimiter flags and the elements all arrive in the read native node as the Rust reader stamped them, so the wrap reads no token and stamps no default of its own.
+Emits the wrap function for a `'list'`-classified kind. The list's own view (`listSelfViewParts`, over the elements stored under the list's canonical slot key, `canonicalSeparatedListField`) makes the node an array-like list; a single-slot list's elements accessor hydrates through `hydrateSlots`, and a list whose elements route to more than one model slot gets one accessor per slot (`fieldAccessorLines`), as a field-carrying kind does. The separator kind, the delimiter flags and the elements all arrive in the read native node as the Rust reader stamped them, so the wrap reads no token and stamps no default of its own. Under record storage (`WrapStorage`) it emits the kind's view: the list counts the items its list cell holds (`recordLength`), and reads its delimiters setting from its side record.
 
 #### body
 
@@ -11271,7 +11271,7 @@ The `separator` option is typed by the kind ids of the choice's literal
 tokens (`TSKindId.Comma | TSKindId.Semi`), the same tier as every other
 preference; the literal texts are not part of the surface.
 
-`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`. When the element is a transparent wrapper, `wrapper` also names the wrapper's content accessor (`contentProperty`) and the storage keys of every other slot it has (`decorationKeys`): an element is undecorated exactly when none of those keys holds a value, which is when a list owner's accessor reads it as its content.
+`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`. When the element is a transparent wrapper, `wrapper` also names the wrapper's content accessor (`contentProperty`) and the accessors of every other slot it has (`decorationAccessors`): an element is undecorated exactly when none of those accessors returns a value (an empty list is none), which is when a list owner's accessor reads it as its content. Naming accessors rather than storage keys lets a record view, which has no storage keys, answer the same way.
 
 ### `packages/codegen/src/emitters/factories.ts::listOptionParts`
 
@@ -12258,6 +12258,8 @@ What `slotAccessorBody` needs to know about a slot beyond its model: the element
 
 The body of one slot accessor. A scalar slot (one whose storage holds no node, `storesNodes`: a flag, a set of flags, a kind id) returns its storage as it is; a node slot hydrates through `hydrateSlots` (`many`) or `hydrateSlot`, typed by the slot's element type. An alias envelope's content slot (`aliasContent`) passes the role `contentRole` gives its stored content, so a content that shares the envelope's parser node is registered apart from the envelope.
 
+A record view's accessor reads the slot's cell at its place instead (`WrapStorage`): a scalar slot through `recordValue`, a node slot through `viewSlots` or `viewSlot`, and an alias envelope's content with the role `contentRole` gives the cell's value (`recordSlot`).
+
 
 ### `packages/codegen/src/emitters/wrap.ts::fieldAccessorLines`
 
@@ -12419,7 +12421,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter::finalize`
 
-Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfData` (a node's `$type` mapped to its wrapped surface through `T.ParsedByKindId`, the data type itself for a grammar with no kind catalog), the hydrate helpers, every per-kind wrap function, the `_wrapTable` dispatch table and `wrapNode`.
+Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfData` (a node's `$type` mapped to its wrapped surface through `T.ParsedByKindId`, the data type itself for a grammar with no kind catalog), the hydrate helpers, every per-kind wrap function, the `_wrapTable` dispatch table and `wrapNode`. With a kind catalog it also writes every kind's record view, `viewSlot` and `viewSlots` (`hydrateWith` over a cell's value, the items of a list cell kept frozen by `recordItems`), and `_viewTable`, keyed as `_wrapTable` and naming the view of the kind each wrap row names. `wrapNode` sends a record stub (`recordOf`) to its kind's view. A stub of a kind with no view (`recordStorageOf`) is read as its row's object node (`rowData`) and wrapped.
 
 `hydrate`, `hydrateSlot` and `hydrateSlots` bind `@sittir/common`'s `hydrateWith`, `hydrateSlotWith` and `hydrateSlotsWith` to this module's `wrapNode` (`hydrateSlot` also passes the route's registry role): a stored coordinate is read through `readNode` on the holder's tree and wrapped, a native node is wrapped, anything else (a kind id) is returned as it is. A slot accessor writes what it hydrated back into the slot and adopts it, so the next read returns the same node, and a list is stored once as a frozen array. `hydrate` is exported, so a tool that hydrates read data takes the same path as the accessors.
 
@@ -12458,6 +12460,30 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
 ### `packages/codegen/src/emitters/wrap.ts::admittedSlot`
 
 The value a parsed node's `$with` setter writes into its slot, through `admitSlot` under the wrap's engine handle, by the node's kind and the setter's name. The wrap's setters (`inlineSetters`) write every new value through it, so an edit of a parsed node refuses a child of another language as a builder does.
+
+### `packages/codegen/src/emitters/wrap.ts::WrapStorage`
+
+What a wrap reads a node's slots from: the read object node's storage keys (`object`, `OBJECT`), or a record, whose `places` map each slot's storage key to its stamped place in the generated `records` table (`R.<Struct>.<field>`). One emitter writes both forms (`emitFieldCarryingWrap`, `emitSeparatedListWrap`); only the slot reads, the header and the members that need the node's data differ.
+
+### `packages/codegen/src/emitters/wrap.ts::OBJECT`
+
+The object form of `WrapStorage`: the wrap that reads a read object node's storage keys.
+
+### `packages/codegen/src/emitters/wrap.ts::recordStorageOf`
+
+The record form of a kind's wrap: each model slot's place, from the layout its native struct stamps (`nodeRecordLayout`) by its Rust field name (`rustFieldIdent` of its storage name). `undefined` when the kind has a group seat, whose readers read the group's stored data, when it has no record layout, or when a slot has no place there. Such a kind has no view: its stub reads as its row's object node (`WrapEmitter::finalize`).
+
+### `packages/codegen/src/emitters/wrap.ts::placeOf`
+
+The place expression of the slot stored under `storageKey` in a record wrap. `recordStorageOf` gives every model slot a place, so a missing one is a codegen fault and is refused.
+
+### `packages/codegen/src/emitters/wrap.ts::wrapHeader`
+
+A wrap function's first line: the exported `wrap<Type>(data: T.<Type>, tree)` over read object data, or the module-private `view<Type>(data: RecordStub, tree)` over a record stub, which only `wrapNode` reaches, through `_viewTable`.
+
+### `packages/codegen/src/emitters/wrap.ts::view#1`
+
+Emits a kind's record view, when it has one (`recordStorageOf`), through the same emitter as its wrap. Returns whether it did, so the dispatch table names only kinds with a view.
 
 ### `packages/codegen/src/emitters/render-module.ts::module`
 
@@ -15018,6 +15044,8 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, `toString` (the same text, so a node interpolates into a template string and a pattern test of a node renders it), the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
 
+A record view passes `row`: it holds no storage keys to rebuild from, so its writes and reads that need the node's data go through the object node of its row, read once (`rowOf`). Each `$with` setter forwards its arguments by name (`rowWith`), each `$trivia` position forwards to the row's (`rowTrivia`), and `$query` and `$snapshot` take the row. A write therefore returns an object node, and the view itself is never edited.
+
 ### `packages/codegen/src/emitters/node-members.ts::StoredAccessor`
 
 One slot reader of a node literal: its name, the storage key it reads, and, for a built node's slot whose storage holds nodes, whether it hydrates one value or a list (`hydrates`). The factory emitter sets `hydrates` (`storedAccessor`); the wraps never do, since their accessors are written by `slotAccessorBody`.
@@ -15060,11 +15088,27 @@ The lines a group seat adds to a node's builder: a reader of the seated group, h
 
 ### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
 
-The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options (a wrapped owner's `separator` is defined after the literal by `defineListSeparator`, naming its list accessor); after the literal, the index positions. Built and wrapped owners hold no items until first use (`LIST_READ`), read them through the owner's own list accessor (so `at`, an index and iteration return what the accessors return, hydrated), and take the shared index getters; only the view before the literal differs. A wrapped owner hands `ownerView` its own `hydrate`, so a list stored as a stub is read wrapped; a raw factory has already resolved its list through `hydrateStored`, and refuses a list that is still a read stub (`refuseReadStub`) before the literal.
+The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options (a wrapped owner's `separator` is defined after the literal by `defineListSeparator`, naming its list accessor); after the literal, the index positions. Built and wrapped owners hold no items until first use (`LIST_READ`), read them through the owner's own list accessor (so `at`, an index and iteration return what the accessors return, hydrated), and take the shared index getters; only the view before the literal differs. A wrapped owner and a record view (`view`, whose storage is its list cell's value, `recordSlot`) hand `ownerView` their own `hydrate`, so a list stored as a stub or a record is read wrapped; a raw factory has already resolved its list through `hydrateStored`, and refuses a list that is still a read stub (`refuseReadStub`) before the literal.
 
 ### `packages/codegen/src/emitters/node-members.ts::listSelfViewParts`
 
-The same lines for a separated list node that is the list itself: its own stored elements instead of an owner's view, and its options read from its own storage keys, hoisted before the literal in a wrap. A wrapped list's `separator` is not a member of its literal: `defineListSeparator` defines it after the literal as a shared getter, because the tree's answer measures the list on first use; a built list keeps the value its builder was given or the kind's declared default. A built list and a wrapped list read their items the same way, on first use and through the list's own items accessor (`ownerElements(node, reader)`), so `at`, an index and iteration return what the accessor returns: a built list's accessor hydrates a stored coordinate (`hydrateStoredSlots`), a wrapped list's reads its storage (`hydrateSlots`).
+The same lines for a separated list node that is the list itself. Its length comes from what it stores (`ListStored`): the elements under its storage key for a built or wrapped list, or the length its list cell holds for a record view. Its options come from its environment (`selfListOption`) and are hoisted before the literal in a wrap. A wrapped list's `separator` and a record view's are not members of its literal: `defineListSeparator` defines it after the literal as a shared getter, because the tree's answer measures the list on first use. A built list keeps the value its builder was given or the kind's declared default. Built lists, wrapped lists and record views all read their items the same way, on first use and through the list's own items accessor (`ownerElements(node, reader)`), so `at`, an index and iteration return what the accessor returns. A built list's accessor hydrates a stored coordinate (`hydrateStoredSlots`), a wrapped list's reads its storage (`hydrateSlots`), and a view's reads its list cell (`viewSlots`).
+
+### `packages/codegen/src/emitters/node-members.ts::ListStored`
+
+Where a self list's length is counted from (`listSelfViewParts`): the expression for the elements it stores, which `storedElements` counts, or, for a record view, an expression for the length its list cell holds (`recordLength`).
+
+### `packages/codegen/src/emitters/node-members.ts::selfListOption`
+
+A self list's option `key` as its environment reads it: a factory's local `_key`, a wrap's read data under its storage key, or a record view's side record. A record holds only a list's delimiters setting (`recordDelimiter`), so a view's option other than `delimiter` is refused at codegen. Its `separator` is the tree's answer, which `defineListSeparator` defines after the literal, so no environment but the factory's reads it here.
+
+### `packages/codegen/src/emitters/node-members.ts::rowWithEntry`
+
+A record view's `$with` setter line: its arguments forwarded by the setter's name to its row's setter (`rowWith`), so a view writes as its object node writes and holds no setter body of its own.
+
+### `packages/codegen/src/emitters/node-members.ts::triviaMember`
+
+One `$trivia` position's line: a node's own side (`triviaSide`) or inner position (`triviaInner`), or, for a record view (`row`), its row's (`rowTrivia`).
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstName`
 
@@ -15386,6 +15430,14 @@ kind's prepare function by.
 The name of a kind's prepare function, `prepare_<kind>`, generic over its
 prepare trait (`prepareStructImpl`), as `rustTypedRenderFnName` names its
 render function.
+
+### `packages/codegen/src/emitters/render-module.ts::nodeRecordLayout`
+
+A node's record layout, the one the native node struct stamps (`renderNodeDataStruct`): `undefined` for an enum or a kind with no compound record. The wrap emitter reads its places from here (`recordStorageOf`), so a record view and the Rust view read the same words.
+
+### `packages/codegen/src/emitters/render-module.ts::recordLayoutOfSlots`
+
+The record layout of a struct's printed slots: each slot's field (`rustFieldIdent` of its storage name) and the record form its shape and arity need (`slotRecordForm`), placed by `recordLayoutOf`.
 
 ### `packages/codegen/src/emitters/record-layout.ts::RECORD_HEADER_WORDS`
 

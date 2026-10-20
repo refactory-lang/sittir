@@ -1,3 +1,4 @@
+import type { CellFormat } from './record-cell.ts';
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 
@@ -35,6 +36,21 @@ export interface TreeHandle {
 	isEmpty?(index: number): boolean;
 	/** The siblings that hold sides beside the node at descendant `index` (`Siblings`). */
 	siblings?(index: number): Siblings;
+	/** The tree's records, when its engine reads nodes as records (`nodeStorage: 'arena'`). */
+	records?: RecordReader;
+}
+
+/** What a record view reads its tree's records through. */
+export interface RecordReader {
+	readonly format: CellFormat;
+	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
+	record(index: number, depth?: number): number | undefined;
+	/** The node at descendant `index` read as an object, `depth` levels down (one when absent): the row a view's writes, queries and snapshots read once. */
+	object(index: number, depth?: number): unknown;
+	/** The words of the chunk `address` lies in, holding at least `length` words from it: a copy JavaScript owns, fetched again when the words sought lie past the copy held. */
+	words(address: number, length: number): Uint32Array;
+	/** The record at `address` rendered as the native render renders the node read into it, a render root whose `changed` edges have no neighbour. */
+	render(address: number, changed: { readonly leading: boolean; readonly trailing: boolean }, options?: object): string;
 }
 
 /**
@@ -53,6 +69,11 @@ const INDEX_RANGE = 2 ** 32;
 /** The descendant index a handle packs: the inverse of the native `encode_handle`, which puts the tree id above 32 bits of index, inside a double's exact range. */
 export function decodeIndex(handle: number): number {
 	return handle % INDEX_RANGE;
+}
+
+/** The handle of descendant `index` of tree `tree`, as the native `encode_handle` packs it. */
+export function encodeHandle(tree: number, index: number): number {
+	return tree * INDEX_RANGE + index;
 }
 
 /** The tree id a handle packs, as `decodeIndex` reads its index. */

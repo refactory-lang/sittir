@@ -105,12 +105,12 @@ describe('list members', () => {
 
 	it('listItems freezes the elements and reads a content-only wrapper as its content', () => {
 		const content = { $type: 5 };
-		const wrapped = { $type: 8, _attr: undefined, expression: () => content };
-		const items = listItems([wrapped, 'x'], { kind: 8, content: 'expression', decorations: ['_attr'] });
+		const wrapped = { $type: 8, attr: () => undefined, expression: () => content };
+		const items = listItems([wrapped, 'x'], { kind: 8, content: 'expression', decorations: ['attr'] });
 		expect(items).toEqual([content, 'x']);
 		expect(Object.isFrozen(items)).toBe(true);
-		const decorated = { ...wrapped, _attr: 'a' };
-		expect(listItems([decorated], { kind: 8, content: 'expression', decorations: ['_attr'] })[0]).toBe(decorated);
+		const decorated = { ...wrapped, attr: () => 'a' };
+		expect(listItems([decorated], { kind: 8, content: 'expression', decorations: ['attr'] })[0]).toBe(decorated);
 	});
 });
 

@@ -210,7 +210,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -226,7 +226,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.SimpleStatements.Bound;
 }
 
@@ -410,7 +410,7 @@ function _buildImportList(
 ): T.ImportList.Bound {
 	const _name = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_name);
+	const listedLength = storedElements(_name).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'import_list', { names: _name });
 	const node = {
@@ -426,7 +426,7 @@ function _buildImportList(
 				rebuilt(node, handle, () => buildImportList({ ...options, delimiter: v }, ...elements))
 		},
 		names: () => hydrateStoredSlots(node, '_name'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'names'), undefined),
 		...LIST_METHODS,
@@ -442,7 +442,7 @@ function _buildImportList(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ImportList.Bound;
 }
 
@@ -1283,7 +1283,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -1300,7 +1300,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.Parameters.Bound;
 }
 
@@ -1351,7 +1351,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 				)
 		},
 		parametersElements: () => hydrateStoredSlot(node, '_parameters_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.parametersElements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -1367,7 +1367,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.LambdaParameters.Bound;
 }
 
@@ -1627,7 +1627,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 				)
 		},
 		types: () => hydrateStoredSlot(node, '_types'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.types(), 'items'), undefined),
 		...LIST_METHODS,
@@ -1643,7 +1643,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.TypeParameter.Bound;
 }
 
@@ -1724,7 +1724,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 				)
 		},
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.arguments(), 'items'), undefined),
 		...LIST_METHODS,
@@ -1741,7 +1741,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.ArgumentList.Bound;
 }
 
@@ -1853,7 +1853,7 @@ function _buildExpressionList(
 ): T.ExpressionList.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expression_list', { items: _item });
 	const node = {
@@ -1869,7 +1869,7 @@ function _buildExpressionList(
 				rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -1885,7 +1885,7 @@ function _buildExpressionList(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ExpressionList.Bound;
 }
 
@@ -2151,7 +2151,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -2168,7 +2168,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.DictPattern.Bound;
 }
 
@@ -2369,7 +2369,7 @@ function _buildParametersElements(
 ): T.ParametersElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'parameters_elements', { items: _item });
 	const node = {
@@ -2385,7 +2385,7 @@ function _buildParametersElements(
 				rebuilt(node, handle, () => buildParametersElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -2401,7 +2401,7 @@ function _buildParametersElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ParametersElements.Bound;
 }
 
@@ -2427,7 +2427,7 @@ function _buildPatterns(
 ): T.Patterns.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'patterns', { items: _item });
 	const node = {
@@ -2442,7 +2442,7 @@ function _buildPatterns(
 				rebuilt(node, handle, () => buildPatterns({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -2458,7 +2458,7 @@ function _buildPatterns(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.Patterns.Bound;
 }
 
@@ -2506,7 +2506,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -2523,7 +2523,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.TuplePattern.Bound;
 }
 
@@ -2571,7 +2571,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 				)
 		},
 		patterns: () => hydrateStoredSlot(node, '_patterns'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.patterns(), 'items'), undefined),
 		...LIST_METHODS,
@@ -2588,7 +2588,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.ListPattern.Bound;
 }
 
@@ -3046,7 +3046,7 @@ function _buildPatternList(
 ): T.PatternList.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'pattern_list', { items: _item });
 	const node = {
@@ -3061,7 +3061,7 @@ function _buildPatternList(
 				rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -3077,7 +3077,7 @@ function _buildPatternList(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.PatternList.Bound;
 }
 
@@ -3543,7 +3543,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 				)
 		},
 		collectionElements: () => hydrateStoredSlot(node, '_collection_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.collectionElements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -3560,7 +3560,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.List.Bound;
 }
 
@@ -3607,7 +3607,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 				)
 		},
 		collectionElements: () => hydrateStoredSlot(node, '_collection_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.collectionElements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -3623,7 +3623,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.Set.Bound;
 }
 
@@ -3671,7 +3671,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -3688,7 +3688,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.Tuple.Bound;
 }
 
@@ -3738,7 +3738,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -3755,7 +3755,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.Dictionary.Bound;
 }
 
@@ -3967,7 +3967,7 @@ function _buildCollectionElements(
 ): T.CollectionElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'collection_elements', { items: _item });
 	const node = {
@@ -3983,7 +3983,7 @@ function _buildCollectionElements(
 				rebuilt(node, handle, () => buildCollectionElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -3999,7 +3999,7 @@ function _buildCollectionElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.CollectionElements.Bound;
 }
 
@@ -4417,7 +4417,7 @@ function _buildSimpleStatementsElements(
 ): T.SimpleStatementsElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'simple_statements_elements', { items: _item });
 	const node = {
@@ -4433,7 +4433,7 @@ function _buildSimpleStatementsElements(
 				rebuilt(node, handle, () => buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -4449,7 +4449,7 @@ function _buildSimpleStatementsElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.SimpleStatementsElements.Bound;
 }
 
@@ -4475,7 +4475,7 @@ function _buildSubjects(
 ): T.Subjects.Bound {
 	const _subject = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_subject);
+	const listedLength = storedElements(_subject).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'subjects', { subjects: _subject });
 	const node = {
@@ -4491,7 +4491,7 @@ function _buildSubjects(
 				rebuilt(node, handle, () => buildSubjects({ ...options, delimiter: v }, ...elements))
 		},
 		subjects: () => hydrateStoredSlots(node, '_subject'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'subjects'), undefined),
 		...LIST_METHODS,
@@ -4507,7 +4507,7 @@ function _buildSubjects(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.Subjects.Bound;
 }
 
@@ -4537,7 +4537,7 @@ function _buildCasePatterns(
 ): T.CasePatterns.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'case_patterns', { items: _item });
 	const node = {
@@ -4553,7 +4553,7 @@ function _buildCasePatterns(
 				rebuilt(node, handle, () => buildCasePatterns({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -4569,7 +4569,7 @@ function _buildCasePatterns(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.CasePatterns.Bound;
 }
 
@@ -4599,7 +4599,7 @@ function _buildWithClauseWithItems(
 ): T.WithClauseWithItems.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'with_clause_with_items', { items: _item });
 	const node = {
@@ -4615,7 +4615,7 @@ function _buildWithClauseWithItems(
 				rebuilt(node, handle, () => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -4631,7 +4631,7 @@ function _buildWithClauseWithItems(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.WithClauseWithItems.Bound;
 }
 
@@ -4657,7 +4657,7 @@ function _buildTypes(
 ): T.Types.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'types', { items: _item });
 	const node = {
@@ -4672,7 +4672,7 @@ function _buildTypes(
 				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -4688,7 +4688,7 @@ function _buildTypes(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.Types.Bound;
 }
 
@@ -4729,7 +4729,7 @@ function _buildArgumentListElements(
 ): T.ArgumentListElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'argument_list_elements', { items: _item });
 	const node = {
@@ -4748,7 +4748,7 @@ function _buildArgumentListElements(
 				rebuilt(node, handle, () => buildArgumentListElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -4764,7 +4764,7 @@ function _buildArgumentListElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ArgumentListElements.Bound;
 }
 
@@ -4794,7 +4794,7 @@ function _buildListPatternCasePatterns(
 ): T.ListPatternCasePatterns.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'list_pattern_case_patterns', { items: _item });
 	const node = {
@@ -4810,7 +4810,7 @@ function _buildListPatternCasePatterns(
 				rebuilt(node, handle, () => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -4826,7 +4826,7 @@ function _buildListPatternCasePatterns(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ListPatternCasePatterns.Bound;
 }
 
@@ -4858,7 +4858,7 @@ function _buildDictPatternElements(
 ): T.DictPatternElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'dict_pattern_elements', { items: _item });
 	const node = {
@@ -4874,7 +4874,7 @@ function _buildDictPatternElements(
 				rebuilt(node, handle, () => buildDictPatternElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -4890,7 +4890,7 @@ function _buildDictPatternElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.DictPatternElements.Bound;
 }
 
@@ -4920,7 +4920,7 @@ function _buildSubscripts(
 ): T.Subscripts.Bound {
 	const _subscript = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_subscript);
+	const listedLength = storedElements(_subscript).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'subscripts', { subscripts: _subscript });
 	const node = {
@@ -4936,7 +4936,7 @@ function _buildSubscripts(
 				rebuilt(node, handle, () => buildSubscripts({ ...options, delimiter: v }, ...elements))
 		},
 		subscripts: () => hydrateStoredSlots(node, '_subscript'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'subscripts'), undefined),
 		...LIST_METHODS,
@@ -4952,7 +4952,7 @@ function _buildSubscripts(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.Subscripts.Bound;
 }
 
@@ -4982,7 +4982,7 @@ function _buildDictionaryElements(
 ): T.DictionaryElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'dictionary_elements', { items: _item });
 	const node = {
@@ -4998,7 +4998,7 @@ function _buildDictionaryElements(
 				rebuilt(node, handle, () => buildDictionaryElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -5014,7 +5014,7 @@ function _buildDictionaryElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.DictionaryElements.Bound;
 }
 
@@ -5089,7 +5089,7 @@ function _buildTuplePatternElements(
 ): T.TuplePatternElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_pattern_elements', { items: _item });
 	const node = {
@@ -5105,7 +5105,7 @@ function _buildTuplePatternElements(
 				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -5121,7 +5121,7 @@ function _buildTuplePatternElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.TuplePatternElements.Bound;
 }
 
@@ -5156,7 +5156,7 @@ function _buildTupleElements(
 ): T.TupleElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_elements', { items: _item });
 	const node = {
@@ -5172,7 +5172,7 @@ function _buildTupleElements(
 				rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -5188,7 +5188,7 @@ function _buildTupleElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.TupleElements.Bound;
 }
 
@@ -5274,7 +5274,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -5291,7 +5291,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.CaseTuplePattern.Bound;
 }
 
@@ -5345,7 +5345,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -5362,7 +5362,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.CaseListPattern.Bound;
 }
 
@@ -5392,7 +5392,7 @@ function _buildPrintArguments(
 ): T.PrintArguments.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'print_arguments', { items: _item });
 	const node = {
@@ -5408,7 +5408,7 @@ function _buildPrintArguments(
 				rebuilt(node, handle, () => buildPrintArguments({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -5424,7 +5424,7 @@ function _buildPrintArguments(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.PrintArguments.Bound;
 }
 
@@ -5454,7 +5454,7 @@ function _buildPrintChevronArguments(
 ): T.PrintChevronArguments.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'print_chevron_arguments', { items: _item });
 	const node = {
@@ -5470,7 +5470,7 @@ function _buildPrintChevronArguments(
 				rebuilt(node, handle, () => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -5486,7 +5486,7 @@ function _buildPrintChevronArguments(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.PrintChevronArguments.Bound;
 }
 
@@ -5580,7 +5580,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 				)
 		},
 		printArguments: () => hydrateStoredSlot(node, '_print_arguments'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
 		...LIST_METHODS,
@@ -5596,7 +5596,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.PrintStatementPlain.Bound;
 }
 
@@ -5651,7 +5651,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 				)
 		},
 		importList: () => hydrateStoredSlot(node, '_import_list'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.importList(), 'names'), undefined),
 		...LIST_METHODS,
@@ -5667,7 +5667,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.ParenthesizedImportList.Bound;
 }
 
@@ -6605,7 +6605,7 @@ function _buildExpressionStatementTuple(
 ): T.ExpressionStatementTuple.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'expression_statement_tuple', { items: _item });
 	const node = {
@@ -6621,7 +6621,7 @@ function _buildExpressionStatementTuple(
 				rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -6637,7 +6637,7 @@ function _buildExpressionStatementTuple(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ExpressionStatementTuple.Bound;
 }
 
@@ -6667,7 +6667,7 @@ function _buildWithClauseBare(
 ): T.WithClauseBare.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'with_clause_bare', { items: _item });
 	const node = {
@@ -6683,7 +6683,7 @@ function _buildWithClauseBare(
 				rebuilt(node, handle, () => buildWithClauseBare({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -6699,7 +6699,7 @@ function _buildWithClauseBare(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.WithClauseBare.Bound;
 }
 
@@ -6750,7 +6750,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 				)
 		},
 		withItems: () => hydrateStoredSlot(node, '_with_items'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.withItems(), 'items'), undefined),
 		...LIST_METHODS,
@@ -6766,7 +6766,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.WithClauseParen.Bound;
 }
 
@@ -6887,7 +6887,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInl
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -6903,7 +6903,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInl
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.SuiteInline.Bound;
 }
 

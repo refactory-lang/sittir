@@ -18,7 +18,8 @@ use crate::view::{KindOf, KindTest, Slot};
 /// The coordinate a render's root record renders as: its row's, for a
 /// parsed record its source renders (`SourceTable::renders_as_source`), as
 /// a native read of that row renders; none for a built record, or a parsed
-/// one a write lies in, which render through their views.
+/// one a write lies in, which render through their views. An envelope's
+/// content renders as the row it shares with its envelope: the same bytes.
 ///
 /// # Errors
 ///
@@ -27,7 +28,7 @@ use crate::view::{KindOf, KindTest, Slot};
 pub fn source_root<T>(root: super::CellAt, built: &Arena, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable) -> Result<Option<NodeCoordinate>, ArenaError> {
     let prepared = Prepared::new();
     let ctx = RecordCtx::of(root.tree, built, arenas, sources, store, &prepared)?;
-    let Some(row) = ctx.parsed_row(root.cell)? else { return Ok(None) };
+    let Some(row) = ctx.stamped_row(root.cell)? else { return Ok(None) };
     let coord = ctx.row_coordinate(row)?;
     Ok(sources.renders_as_source(&coord).then_some(coord))
 }
@@ -204,14 +205,7 @@ impl<'a, T> RecordCtx<'a, T> {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
             Cell::Child { kind, at, link, changed } => {
-                let ctx = match link {
-                    Some(tree) => self.linked(tree)?,
-                    None => self,
-                };
-                if ctx.tree.is_none() {
-                    return Ok(None);
-                }
-                let (_, side) = record_of(ctx, at, crate::record::HEADER_WORDS, kind)?;
+                let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
                 match row_of(ctx, at, &side)? {
                     Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
                     _ => None,
@@ -219,6 +213,37 @@ impl<'a, T> RecordCtx<'a, T> {
             }
             _ => None,
         })
+    }
+
+    /// The row a cell's parsed node is read at: `parsed_row`'s, and for an
+    /// envelope's content, the row it shares with its envelope, which its
+    /// side record stamps; `None` for a built value.
+    ///
+    /// # Errors
+    ///
+    /// What reading a child's record or reaching a linked arena refuses, and
+    /// `ArenaError::Malformed` for a parsed record whose side record names no
+    /// row.
+    pub fn stamped_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
+        let Cell::Child { kind, at, link, changed } = cell else { return self.parsed_row(cell) };
+        let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
+        let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
+        Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind, changed }))
+    }
+
+    /// The context a child cell's record is read in, its own arena or the
+    /// tree its link names, and the record's side record; `None` for a built
+    /// record.
+    fn child_side(self, at: Address, kind: KindId, link: Option<TreeId>) -> Result<Option<(Self, super::SideRecord)>, ArenaError> {
+        let ctx = match link {
+            Some(tree) => self.linked(tree)?,
+            None => self,
+        };
+        if ctx.tree.is_none() {
+            return Ok(None);
+        }
+        let (_, side) = record_of(ctx, at, crate::record::HEADER_WORDS, kind)?;
+        Ok(Some((ctx, side)))
     }
 
     /// The coordinate of the parsed node `row` names, as a read of its tree
@@ -397,7 +422,7 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
 /// `ArenaError::Malformed` for a parsed record whose side record names no row.
 pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Option<Place>, ArenaError> {
     let Some(tree) = ctx.tree else { return Ok(None) };
-    let (row, _) = side.at.ok_or(malformed("parsed record row", at.0))?;
+    let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
     Ok((ctx.row_record(row) == Some(at)).then_some(Place::Row { tree, row }))
 }
 

@@ -279,6 +279,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	await writeFile(join(outDir, 'options.ts'), result.options);
 	await writeFile(join(outDir, 'is.ts'), result.is);
 	await writeFile(join(outDir, 'descriptor.ts'), result.descriptor);
+	await writeFile(join(outDir, 'arena.ts'), result.arenaDescriptor);
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
 	writeFileSync(

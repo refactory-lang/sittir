@@ -16,6 +16,7 @@ use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
 use sittir_core::read::{read_at, Depth, ReadNode};
 use sittir_core::render::RenderError;
+use sittir_core::slot::ChangedEdges;
 use sittir_core::trivia_store::TriviaStore;
 use sittir_core::types::NodeIndex;
 use sittir_core::SlotValue;
@@ -76,7 +77,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
     /// The record at `at` of `tree`'s arena rendered twice by its entry point
     /// (`ParsedTree::render_record`): both renders, which must agree.
     fn parsed(tree: &ParsedTree<G>, at: Address, options: &ResolvedOptions) -> Result<String, String> {
-        twice(|| tree.render_record(at, options).map_err(|e| format!("record: {e}")))
+        twice(|| tree.render_record(at, ChangedEdges::default(), options).map_err(|e| format!("record: {e}")))
     }
 
     /// The record of `tree`'s root, its first read `depth` levels down
@@ -476,6 +477,34 @@ fn an_envelope_and_its_content_a_write_lies_in_prepare_apart_and_render_from_the
     }
 }
 
+/// The row of `tree`'s `_interface_body`, the envelope's record there and
+/// the record of the object type it holds, which shares its row.
+fn envelope_and_content(tree: &ParsedTree<sittir_typescript::TypeScriptGrammar>) -> (NodeIndex, Address, Address) {
+    use sittir_typescript::render::kind_ids as ts;
+    let row = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+        .map(NodeIndex::new)
+        .find(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| sittir_core::read::display_id(&node) == ts::_INTERFACE_BODY))
+        .expect("an interface body");
+    let arena = tree.tree_arena();
+    let envelope = arena.record(row).expect("the envelope's record");
+    let words = arena.arena().words(envelope, 7).expect("its words");
+    let Ok(Cell::Child { at, .. }) = Cell::decode(&words[2..7]) else { panic!("its content is a record") };
+    (row, envelope, at)
+}
+
+#[test]
+fn an_untouched_envelope_s_content_renders_as_the_row_it_shares_with_its_envelope() {
+    let renders = typescript();
+    let mut engine = renders.engine();
+    let options = engine.options().clone();
+    let tree = TypeScriptRenders::parse(&mut engine, ENVELOPED);
+    TypeScriptRenders::first_read(&tree, Depth::All).expect("every record written");
+    let (_, envelope, content) = envelope_and_content(&tree);
+    let shared = TypeScriptRenders::parsed(&tree, envelope, &options).expect("the envelope's render");
+    assert!(shared.contains("a: string;"), "{shared:?}");
+    assert_eq!(TypeScriptRenders::parsed(&tree, content, &options), Ok(shared));
+}
+
 /// The envelope `_interface_body` of `tree` and the object type it holds,
 /// which share one row, each prepare at a place of its own with its own
 /// kind's edges.
@@ -483,17 +512,7 @@ fn assert_apart(tree: &ParsedTree<sittir_typescript::TypeScriptGrammar>, options
     use sittir_core::arena::{PrepPlace, Prepared};
     use sittir_core::trivia_store::{Place, Site};
     use sittir_typescript::render::kind_ids as ts;
-    let row = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
-        .map(NodeIndex::new)
-        .find(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| sittir_core::read::display_id(&node) == ts::_INTERFACE_BODY))
-        .expect("an interface body");
-    let (envelope, content) = {
-        let arena = tree.tree_arena();
-        let envelope = arena.record(row).expect("the edited envelope's record");
-        let words = arena.arena().words(envelope, 7).expect("its words");
-        let Ok(Cell::Child { at, .. }) = Cell::decode(&words[2..7]) else { panic!("its content is a record") };
-        (envelope, at)
-    };
+    let (row, envelope, content) = envelope_and_content(tree);
     let ctx = RenderContext { options, sources: tree };
     let root = CellAt { cell: Cell::Child { kind: ts::PROGRAM, at: tree.tree_arena().record(NodeIndex::ROOT).expect("the root's record"), link: None, changed: sittir_core::slot::ChangedEdges::default() }, tree: Some(tree.tree_id()), site: None };
     let prepared: Prepared<_> = {
@@ -548,13 +567,13 @@ fn an_address_that_names_no_record_of_the_arena_is_refused() {
     let options = engine.options().clone();
     let tree = RustRenders::parse(&mut engine, &EDITED.repeat(40));
     RustRenders::first_read(&tree, Depth::All).expect("every record written");
-    assert!(matches!(tree.render_record(Address::NONE, &options), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
+    assert!(matches!(tree.render_record(Address::NONE, ChangedEdges::default(), &options), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
     let past = Address::new(sittir_core::arena::MAX_CHUNKS - 1, 0).expect("an address");
-    assert!(matches!(tree.render_record(past, &options), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
+    assert!(matches!(tree.render_record(past, ChangedEdges::default(), &options), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
     let chunk = tree.record_chunk(1).expect("a source this long fills a second chunk");
     let word = chunk.iter().take(chunk.len() - 1).position(|&word| word > u32::from(u16::MAX)).expect("a word past every kind id");
     let at = Address::new(1, u32::try_from(word).expect("a chunk's word")).expect("an address");
-    assert!(matches!(tree.render_record(at, &options), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
+    assert!(matches!(tree.render_record(at, ChangedEdges::default(), &options), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
 }
 
 #[test]
@@ -571,3 +590,17 @@ fn a_chunk_is_copied_out_as_its_records_fill_it() {
     assert_eq!(tree.record_chunk(sittir_core::arena::MAX_CHUNKS), None);
 }
 
+
+#[test]
+fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
+    let mut engine = rust().engine();
+    let options = engine.options().clone();
+    let tree = RustRenders::parse(&mut engine, "fn a() {}\n\nfn b() { Ok(None) }\n");
+    RustRenders::first_read(&tree, Depth::All).expect("every record written");
+    let both = ChangedEdges { leading: true, trailing: true };
+    let record = |kind, nth| tree.tree_arena().record(index_of(&tree, kind, nth)).expect("its record");
+    let call = record(rust_kinds::CALL_EXPRESSION, 0);
+    assert_eq!(tree.render_record(call, both, &options).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
+    assert_eq!(tree.render_record(call, ChangedEdges::default(), &options).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
+    assert_eq!(tree.render_record(record(rust_kinds::FUNCTION_ITEM, 1), both, &options).expect("a render"), "fn b() { Ok(None) }");
+}

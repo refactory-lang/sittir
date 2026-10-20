@@ -10,6 +10,7 @@ import { register, registered, type Role } from './identity.ts';
 import { treeOf } from './tree-token.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
+import { recordOf } from './record-view.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -295,11 +296,13 @@ void readonlyArrayCovered;
 
 export const LIST_VIEW_MEMBERS: readonly string[] = [...READONLY_ARRAY_METHODS, 'length'];
 
+const holdsDecoration = (value: unknown): boolean => value !== undefined && !(Array.isArray(value) && value.length === 0);
+
 const collapseWrapper = (item: unknown, wrapper: ListViewWrapper | undefined): unknown => {
 	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
 	const node = item as Members & Record<string, unknown>;
 	if ((node as { $type?: unknown }).$type !== wrapper.kind) return item;
-	if (wrapper.decorations.some((key) => node[key] !== undefined)) return item;
+	if (wrapper.decorations.some((accessor) => holdsDecoration(node[accessor]!.call(node)))) return item;
 	return node[wrapper.content]!.call(node);
 };
 
@@ -337,18 +340,18 @@ export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
 export interface OwnerView {
 	readonly list: Record<string, unknown> | undefined;
 	readonly stored: readonly unknown[] | undefined;
+	readonly length: number | undefined;
 }
 
 export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
-	if (list == null) return { list: undefined, stored: [] };
-	const source = count in list || !isCoordinate(list) ? list : hydrate?.(list);
-	if (source === undefined) return { list: undefined, stored: undefined };
+	if (list == null) return { list: undefined, stored: [], length: 0 };
+	const source = count in list || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
+	if (source === undefined) return { list: undefined, stored: undefined, length: undefined };
+	if (recordOf(source) !== undefined) return { list: source as Record<string, unknown>, stored: undefined, length: (source as { readonly length: number }).length };
 	const elements = (source as Record<string, unknown>)[count];
-	return {
-		list: source as Record<string, unknown>,
-		stored: Array.isArray(elements) ? elements : elements == null ? [] : [elements]
-	};
+	const items = Array.isArray(elements) ? elements : elements == null ? [] : [elements];
+	return { list: source as Record<string, unknown>, stored: items, length: items.length };
 }
 
 /** The elements a list stores: its array, or the one element it holds, or none. */
@@ -365,7 +368,8 @@ export function ownerElements(list: unknown, reader: string): readonly unknown[]
 
 /** A list option the owner reads from its list, or the option's default. */
 export function listOption(list: unknown, key: string, fallback: unknown): unknown {
-	return (list as Record<string, unknown> | null | undefined)?.[`_${key}`] ?? fallback;
+	const held = list as Record<string, unknown> | null | undefined;
+	return (recordOf(held) === undefined ? held?.[`_${key}`] : held?.[key]) ?? fallback;
 }
 
 const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
@@ -681,7 +685,7 @@ export { admitChildren, admitSlot, currentHandle, inEngine, hydrateStored, type 
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, spannedTextOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, spannedTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
@@ -698,3 +702,18 @@ export {
 } from './interior.ts';
 export { mapTriviaEntries };
 export * from './runtime.ts';
+export {
+	RECORD,
+	recordDelimiter,
+	recordItems,
+	recordLength,
+	recordOf,
+	recordSlot,
+	recordValue,
+	rowData,
+	rowOf,
+	rowTrivia,
+	rowWith,
+	type RecordPlace,
+	type RecordStub
+} from './record-view.ts';

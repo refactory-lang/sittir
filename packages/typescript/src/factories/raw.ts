@@ -282,13 +282,13 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 				)
 		},
 		exportSpecifiers: () => hydrateStoredSlot(node, '_export_specifiers'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
 			listItems(ownerElements(node.exportSpecifiers(), 'items'), {
 				kind: TSKindId.ExportSpecifier,
 				content: 'name',
-				decorations: ['_export_kind', '_alias']
+				decorations: ['exportKind', 'alias']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -304,7 +304,7 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.ExportClause.Bound;
 }
 
@@ -505,7 +505,7 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 				)
 		},
 		importSpecifiers: () => hydrateStoredSlot(node, '_import_specifiers'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.importSpecifiers(), 'items'), undefined),
 		...LIST_METHODS,
@@ -522,7 +522,7 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.NamedImports.Bound;
 }
 
@@ -3309,7 +3309,7 @@ function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.Fo
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -3326,7 +3326,7 @@ function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.Fo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.FormalParameters.Bound;
 }
 
@@ -4777,7 +4777,7 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
@@ -4794,7 +4794,7 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.EnumBody.Bound;
 }
 
@@ -6241,7 +6241,7 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 				)
 		},
 		types: () => hydrateStoredSlot(node, '_types'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.types(), 'items'), undefined),
 		...LIST_METHODS,
@@ -6257,7 +6257,7 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.TypeArguments.Bound;
 }
 
@@ -6543,13 +6543,13 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
 			listItems(ownerElements(node.elements(), 'items'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
-				decorations: ['_const', '_constraint', '_value']
+				decorations: ['const', 'constraint', 'value']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -6564,7 +6564,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.TypeParameters.Bound;
 }
 
@@ -6808,7 +6808,7 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 				)
 		},
 		tupleTypeMembers: () => hydrateStoredSlot(node, '_tuple_type_members'),
-		length: listView.stored?.length,
+		length: listView.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node.tupleTypeMembers(), 'items'), undefined),
 		...LIST_METHODS,
@@ -6825,7 +6825,7 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
+	defineListIndices(node, listView.length ?? 0);
 	return node as unknown as T.TupleType.Bound;
 }
 
@@ -7021,7 +7021,7 @@ function _buildExportSpecifiers(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'export_specifiers', { items: _item });
 	const node = {
@@ -7037,13 +7037,13 @@ function _buildExportSpecifiers(
 				rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
 			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.ExportSpecifier,
 				content: 'name',
-				decorations: ['_export_kind', '_alias']
+				decorations: ['exportKind', 'alias']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -7058,7 +7058,7 @@ function _buildExportSpecifiers(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ExportSpecifiers.Bound;
 }
 
@@ -7088,7 +7088,7 @@ function _buildImportSpecifiers(
 ): T.ImportSpecifiers.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'import_specifiers', { items: _item });
 	const node = {
@@ -7104,7 +7104,7 @@ function _buildImportSpecifiers(
 				rebuilt(node, handle, () => buildImportSpecifiers({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -7120,7 +7120,7 @@ function _buildImportSpecifiers(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ImportSpecifiers.Bound;
 }
 
@@ -7152,7 +7152,7 @@ function _buildFormalParametersElements(
 ): T.FormalParametersElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'formal_parameters_elements', { items: _item });
 	const node = {
@@ -7168,7 +7168,7 @@ function _buildFormalParametersElements(
 				rebuilt(node, handle, () => buildFormalParametersElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -7184,7 +7184,7 @@ function _buildFormalParametersElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.FormalParametersElements.Bound;
 }
 
@@ -7251,7 +7251,7 @@ function _buildEnumBodyElements(
 ): T.EnumBodyElements.Bound {
 	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'enum_body_elements', { items: _item });
 	const node = {
@@ -7267,7 +7267,7 @@ function _buildEnumBodyElements(
 				rebuilt(node, handle, () => buildEnumBodyElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -7283,7 +7283,7 @@ function _buildEnumBodyElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.EnumBodyElements.Bound;
 }
 
@@ -7317,7 +7317,7 @@ function _buildTypes(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'types', { items: _item });
 	const node = {
@@ -7333,7 +7333,7 @@ function _buildTypes(
 				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -7349,7 +7349,7 @@ function _buildTypes(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.Types.Bound;
 }
 
@@ -7390,7 +7390,7 @@ function _buildTypeParametersElements(
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'type_parameters_elements', { items: _item });
 	const node = {
@@ -7406,13 +7406,13 @@ function _buildTypeParametersElements(
 				rebuilt(node, handle, () => buildTypeParametersElements({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
 			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
-				decorations: ['_const', '_constraint', '_value']
+				decorations: ['const', 'constraint', 'value']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -7427,7 +7427,7 @@ function _buildTypeParametersElements(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.TypeParametersElements.Bound;
 }
 
@@ -7470,7 +7470,7 @@ function _buildTupleTypeMembers(
 		NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 	>(elements, [[[1], (v: unknown) => buildTypeIdentifier(v as never)]]);
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'tuple_type_members', { items: _item });
 	const node = {
@@ -7491,7 +7491,7 @@ function _buildTupleTypeMembers(
 				rebuilt(node, handle, () => buildTupleTypeMembers({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -7507,7 +7507,7 @@ function _buildTupleTypeMembers(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.TupleTypeMembers.Bound;
 }
 
@@ -7762,7 +7762,7 @@ function _buildObjectTypeContent(
 	const _item = elements;
 	const _separator = options.separator;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedLength = storedElements(_item).length;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'object_type_content', { items: _item });
 	const node = {
@@ -7791,7 +7791,7 @@ function _buildObjectTypeContent(
 				rebuilt(node, handle, () => buildObjectTypeContent({ ...options, delimiter: v }, ...elements))
 		},
 		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
+		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
@@ -7808,7 +7808,7 @@ function _buildObjectTypeContent(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listedStored.length);
+	defineListIndices(node, listedLength);
 	return node as unknown as T.ObjectTypeContent.Bound;
 }
 

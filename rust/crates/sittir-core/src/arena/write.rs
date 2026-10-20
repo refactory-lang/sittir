@@ -5,7 +5,7 @@
 //! The derive writes each node type's `WriteCell` through these helpers, so a
 //! parsed and a built write differ only in the sink they write to.
 
-use super::{Address, Arena, ArenaError, Cell, ListCell, SideRecord, SideSlot, Sides, TreeArena};
+use super::{Address, Arena, ArenaError, Cell, ListCell, Row, SideRecord, SideSlot, Sides, TreeArena};
 use crate::layout::{NodeLayout, UnitSides};
 use crate::record::HEADER_WORDS;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
@@ -447,7 +447,7 @@ impl SideRecord {
             })
             .collect::<Result<_, ArenaError>>()?;
         Ok(SideRecord {
-            at: layout.at.as_ref().map(|at| (at.index, at.end)),
+            at: layout.at.as_ref().map(|at| Row { index: at.index, end: at.end, span: at.span }),
             edges: layout.edges,
             span: layout.span,
             sides: layout.sides.as_ref().map(|from| Sides { tree: from.tree, index: from.index, end: from.end, span: from.span }),
@@ -498,7 +498,7 @@ mod tests {
     #[test]
     fn a_layout_s_facts_land_in_its_side_record_by_stamped_word() {
         let record = SideRecord::of(Some(&layout()), |key| (key == "_items").then_some(4)).expect("every slot is stamped");
-        assert_eq!(record.at, Some((NodeIndex(6), NodeIndex(11))));
+        assert_eq!(record.at, Some(Row { index: NodeIndex(6), end: NodeIndex(11), span: Span { start: 4, end: 9 } }));
         assert_eq!(record.edges, layout().edges);
         assert_eq!(record.sides, Some(Sides { tree: TreeId(3), index: NodeIndex(1), end: NodeIndex(2), span: Span { start: 4, end: 9 } }));
         assert_eq!(record.changed, ChangedEdges { leading: false, trailing: true });
@@ -615,7 +615,7 @@ mod tests {
         assert_eq!(tree.record(NodeIndex(1)), Some(record), "the row's first read indexed its record");
         let (kind, side, presence, left, items) = pair_record(tree.arena(), cell);
         assert_eq!((kind, presence), (PAIR, 1));
-        assert_eq!(side.at, Some((NodeIndex(1), NodeIndex(6))));
+        assert_eq!(side.at, Some(Row { index: NodeIndex(1), end: NodeIndex(6), span: Span { start: 10, end: 13 } }));
         assert_eq!(left, Cell::ParsedLeaf { kind: NAME, span: Span { start: 20, end: 23 }, row: NodeIndex(2) });
         assert_eq!(
             items,
@@ -665,7 +665,7 @@ mod tests {
         assert_eq!(tree.record(NodeIndex(1)), Some(at), "the row's record is the outermost");
         let inner = Cell::decode(&tree.arena().words(at, 7).expect("its words")[2..7]).expect("its content's cell");
         let (kind, side, ..) = pair_record(tree.arena(), inner);
-        assert_eq!((kind, side.at), (PAIR, Some((NodeIndex(1), NodeIndex(3)))));
+        assert_eq!((kind, side.at), (PAIR, Some(Row { index: NodeIndex(1), end: NodeIndex(3), span: Span { start: 10, end: 13 } })));
         let again = envelope.write_cell(&mut RecordSink::parsed(TREE, &mut tree)).expect("the first record");
         assert_eq!(again, cell);
     }

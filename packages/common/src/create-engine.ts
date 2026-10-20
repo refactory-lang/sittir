@@ -74,7 +74,10 @@ function refuseUnimplemented(options: EngineOptions<LanguageAPI, ApiSurface> | u
 function nativeEngineOptions<API extends LanguageAPI>(
 	options: EngineOptions<API, ApiSurface> | undefined
 ): NativeEngineOptions<API['options']> {
-	return options?.render === undefined ? {} : { options: options.render };
+	return {
+		...(options?.render === undefined ? {} : { options: options.render }),
+		...(options?.nodeStorage === undefined ? {} : { nodeStorage: options.nodeStorage })
+	};
 }
 
 function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {

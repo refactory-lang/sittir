@@ -62,15 +62,16 @@ impl<G: EngineGrammar> ParsedTree<G> {
 }
 
 impl<G: RecordGrammar> ParsedTree<G> {
-    /// The record at `at` of the tree's arena, rendered under `options`, its
-    /// line endings unspelled.
+    /// The record at `at` of the tree's arena, rendered as a render root
+    /// whose `changed` edges have no neighbour (the edges a node crossing as
+    /// its coordinate marks), under `options`, its line endings unspelled.
     ///
     /// # Errors
     ///
     /// `RenderError::Record` for an address that names no record of the
     /// arena: none, past what it wrote, or a header naming no kind the
     /// grammar writes a record of; else what the record's render refuses.
-    pub fn render_record(&self, at: Address, options: &ResolvedOptions) -> Result<String, RenderError> {
+    pub fn render_record(&self, at: Address, changed: ChangedEdges, options: &ResolvedOptions) -> Result<String, RenderError> {
         let refused = |what| RenderError::Record(super::ArenaError::Malformed { what, word: at.0 });
         if at == Address::NONE {
             return Err(refused("record address"));
@@ -80,7 +81,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
             let header = arena.arena().words(at, HEADER_WORDS).map_err(RenderError::Record)?;
             u16::try_from(header[0]).map(KindId).map_err(|_| refused("record kind"))?
         };
-        let root = CellAt { cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() }, tree: Some(self.tree_id()), site: None };
+        let root = CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: Some(self.tree_id()), site: None };
         let ctx = RenderContext { options, sources: self };
         let mut arenas = HeldArenas::of([(self.tree_id(), self.tree_arena())]);
         self.grammar().render_record(root, &mut arenas, &Arena::new(), self.written(), &ctx)

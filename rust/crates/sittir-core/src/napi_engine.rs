@@ -595,6 +595,30 @@ macro_rules! napi_engine {
             /// chunk (`arena::CHUNK_SHIFT`).
             #[::napi_derive::napi]
             pub const ARENA_CHUNK_SHIFT: u32 = $crate::arena::CHUNK_SHIFT;
+            /// A side record's fields before a list's delimiters setting, each
+            /// one's mask bit and its words (`arena::side::field`).
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_AT: u32 = $crate::arena::side::field::AT;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_AT: u32 = $crate::arena::side::field::AT_WORDS;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_EDGES: u32 = $crate::arena::side::field::EDGES;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_EDGES: u32 = $crate::arena::side::field::EDGES_WORDS;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_SPAN: u32 = $crate::arena::side::field::SPAN;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_SPAN: u32 = $crate::arena::side::field::SPAN_WORDS;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_SIDES: u32 = $crate::arena::side::field::SIDES;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_SIDES: u32 = $crate::arena::side::field::SIDES_WORDS;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR_WORDS;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_DELIMITER: u32 = $crate::arena::side::field::DELIMITER;
 
             /// The address of the record of the node at `index` of `parsed`
             /// (`ParsedTree::read_record`), `None` for a node with no record.
@@ -661,18 +685,20 @@ macro_rules! napi_engine {
                 }
 
                 /// The record at `address` of the live tree `treeId` rendered, as
-                /// `render` renders a node read from the tree: under `options`
-                /// over the tree's layer over the engine's. Refuses a tree that
-                /// is not live, an address naming no record of its arena, and a
-                /// record whose render refuses.
-                #[::napi_derive::napi(ts_args_type = "treeId: number, address: number, options?: object | undefined | null")]
-                pub fn render_record(&self, tree_id: $crate::types::TreeId, address: f64, options: Option<$options>) -> ::napi::Result<String> {
+                /// `render` renders a node read from the tree: a render root
+                /// whose `leading` and `trailing` edges have no neighbour, as
+                /// the node crossing as its coordinate marks them, under
+                /// `options` over the tree's layer over the engine's. Refuses a
+                /// tree that is not live, an address naming no record of its
+                /// arena, and a record whose render refuses.
+                #[::napi_derive::napi(ts_args_type = "treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+                pub fn render_record(&self, tree_id: $crate::types::TreeId, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                         let table = self.render_options(Some(parsed), options)?;
-                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, &table)))
+                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table)))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))

@@ -14,7 +14,7 @@ import {
 	refuseReadStub
 } from '../src/utils.ts';
 
-const wrapperSpec = { kind: 5, content: 'content', decorations: ['_attribute'] };
+const wrapperSpec = { kind: 5, content: 'content', decorations: ['attributes'] };
 
 const listNode = (elements: readonly unknown[], stored: Record<string, unknown> = {}) => ({
 	_element: elements,
@@ -85,10 +85,11 @@ describe('a list owner', () => {
 	});
 
 	it('reads an undecorated wrapper element as its content and keeps a decorated one', () => {
-		const plain = { $type: 5, _attribute: undefined, content: () => 'arm' };
-		const decorated = { $type: 5, _attribute: 'attr', content: () => 'arm' };
-		const node = wrappedOwner(listNode([plain, decorated]), wrapperSpec);
-		expect([...node]).toEqual(['arm', decorated]);
+		const plain = { $type: 5, attributes: () => undefined, content: () => 'arm' };
+		const empty = { $type: 5, attributes: () => [], content: () => 'bare' };
+		const decorated = { $type: 5, attributes: () => ['attr'], content: () => 'arm' };
+		const node = wrappedOwner(listNode([plain, empty, decorated]), wrapperSpec);
+		expect([...node]).toEqual(['arm', 'bare', decorated]);
 		expect(node[0]).toBe('arm');
 	});
 

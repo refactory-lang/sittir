@@ -2237,7 +2237,7 @@ function viewPlanOfTarget(
 		options: listOptionDefaults(target.list, nodeMap, kindEntries),
 		...(wrapper === undefined
 			? {}
-			: { wrapper: `{ kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }` })
+			: { wrapper: `{ kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationAccessors)} }` })
 	};
 }
 
@@ -2352,7 +2352,7 @@ export function separatedListSurface(
 		readonly factory: string;
 		readonly contentKey: string;
 		readonly contentProperty: string;
-		readonly decorationKeys: readonly string[];
+		readonly decorationAccessors: readonly string[];
 		readonly typeName: string;
 	};
 	readonly storageElementsType: string;
@@ -2375,7 +2375,7 @@ export function separatedListSurface(
 				factory: factoryName,
 				contentKey: content.configKey,
 				contentProperty: content.propertyName,
-				decorationKeys: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.storageKey),
+				decorationAccessors: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.propertyName),
 				typeName: nodeMap.nodes.get(wKind)!.typeName
 			};
 			elemType = `${elemType} | ${withAliasContentTypes(fieldElementType(content, nodeMap, kindEntries), content, nodeMap)}`;
@@ -2509,7 +2509,7 @@ function emitSeparatedListFactory(
 
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	{
-		const view = listSelfViewParts(plan.viewPlan!, contentStorageKey, contentAccessorName, 'factory');
+		const view = listSelfViewParts(plan.viewPlan!, { elements: contentStorageKey }, contentAccessorName, 'factory');
 		const optionsArg = hasOptions ? 'options, ' : '';
 		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${optionsArg}...vs)` }];
 		if (hasSeparatorKindOption) {

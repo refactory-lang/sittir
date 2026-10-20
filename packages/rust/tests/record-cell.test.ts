@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { addressOf, cellFormatOf, chunkOf, decodeCell, decodeListCell, wordOf, type RecordCell } from '@sittir/common/engine';
+import { addressOf, cellFormatOf, chunkOf, decodeCell, decodeListCell, decodeSideDelimiter, decodeSideRow, wordOf, type RecordCell } from '@sittir/common/engine';
 import { getActiveBackend } from '../src/backend.ts';
 
 type Entry = Record<string, unknown> & { readonly form: RecordCell['form']; readonly words: readonly number[] };
@@ -8,6 +8,7 @@ type Entry = Record<string, unknown> & { readonly form: RecordCell['form']; read
 const fixture = JSON.parse(readFileSync(new URL('../../../rust/crates/sittir-core/src/arena/cell-forms.json', import.meta.url), 'utf8')) as {
 	readonly cells: readonly Entry[];
 	readonly lists: readonly { readonly run: number; readonly len: number; readonly words: readonly number[] }[];
+	readonly sides: readonly { readonly row: { readonly index: number; readonly end: number; readonly start: number; readonly endByte: number } | null; readonly delimiter: number | null; readonly words: readonly number[] }[];
 	readonly addresses: readonly { readonly chunk: number; readonly word: number; readonly address: number }[];
 };
 
@@ -61,6 +62,14 @@ describe('the record cell decoder reads what the native codec writes', () => {
 		for (const { chunk, word, address } of fixture.addresses) {
 			expect(addressOf(chunk, word, format!)).toBe(address);
 			expect([chunkOf(address, format!), wordOf(address, format!)]).toEqual([chunk, word]);
+		}
+	});
+
+	it('reads each side record\'s row and delimiters setting past the fields before it', () => {
+		for (const side of fixture.sides) {
+			const row = side.row === null ? undefined : { index: side.row.index, end: side.row.end, span: { start: side.row.start, end: side.row.endByte } };
+			expect(decodeSideRow(side.words, 0, format!)).toEqual(row);
+			expect(decodeSideDelimiter(side.words, 0, format!)).toBe(side.delimiter ?? undefined);
 		}
 	});
 

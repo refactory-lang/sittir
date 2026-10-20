@@ -32,7 +32,7 @@ pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
 pub use rows::TreeArena;
-pub use side::{SideRecord, SideSlot, Sides};
+pub use side::{Row, SideRecord, SideSlot, Sides};
 
 /// A native node type's view over its records: a struct's is its
 /// `…Record<'a>`, a choice's an enum over its variants' views, chosen by the

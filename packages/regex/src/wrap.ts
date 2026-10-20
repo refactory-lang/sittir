@@ -19,14 +19,24 @@ import {
 	queryOf,
 	snapshotOf,
 	triviaSide,
-	triviaInner
+	triviaInner,
+	textOf,
+	recordOf,
+	recordSlot,
+	recordItems,
+	recordValue,
+	rowData,
+	rowOf,
+	rowWith,
+	rowTrivia
 } from '@sittir/common/utils';
-import type { Role, TreeHandle } from '@sittir/common/utils';
+import type { RecordPlace, RecordStub, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
+import { records as R } from './records.js';
 
 export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	? Id extends keyof T.ParsedByKindId
@@ -43,6 +53,12 @@ function hydrateSlot<T>(node: object, key: string, tree: TreeHandle, role?: Role
 }
 function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
 	return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];
+}
+function viewSlot<T>(view: object, place: RecordPlace, tree: TreeHandle, role?: Role): ParsedOfData<T> {
+	return hydrateWith(recordSlot(view, tree, place), tree, _wrap, undefined, role) as ParsedOfData<T>;
+}
+function viewSlots<T>(view: object, place: RecordPlace, tree: TreeHandle): readonly ParsedOfData<T>[] {
+	return recordItems(view, tree, place, (data) => hydrateWith(data, tree, _wrap)) as readonly ParsedOfData<T>[];
 }
 
 export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed {
@@ -1231,11 +1247,899 @@ export function wrapUnicodePropertyName(data: T.UnicodePropertyName, tree: TreeH
 	return node as unknown as T.UnicodePropertyName.Parsed;
 }
 
+function viewPattern(data: RecordStub, tree: TreeHandle): T.Pattern.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Pattern as const,
+		content() {
+			return viewSlot<T.Alternation | T.Term>(this, R.PatternNode.content, tree);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Pattern.Parsed;
+}
+
+function viewAlternation(data: RecordStub, tree: TreeHandle): T.Alternation.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Alternation as const,
+		terms() {
+			return viewSlots<T.Term>(this, R.AlternationNode.terms, tree);
+		},
+		$with: {
+			terms: (...args: unknown[]) => rowWith(node, tree, _wrap, 'terms', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Alternation.Parsed;
+}
+
+function viewTerm(data: RecordStub, tree: TreeHandle): T.Term.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Term as const,
+		termGroups() {
+			return viewSlots<T.TermGroup>(this, R.TermNode.term_group, tree);
+		},
+		$with: {
+			termGroups: (...args: unknown[]) => rowWith(node, tree, _wrap, 'termGroups', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Term.Parsed;
+}
+
+function viewLookaroundAssertion(data: RecordStub, tree: TreeHandle): T.LookaroundAssertion.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.LookaroundAssertion as const,
+		content() {
+			return viewSlot<T.LookaheadAssertion | T.LookbehindAssertion>(this, R.LookaroundAssertionNode.content, tree);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LookaroundAssertion.Parsed;
+}
+
+function viewLookaheadAssertion(data: RecordStub, tree: TreeHandle): T.LookaheadAssertion.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.LookaheadAssertion as const,
+		content() {
+			return recordValue(this, tree, R.LookaheadAssertionNode.content);
+		},
+		pattern() {
+			return viewSlot<T.Pattern>(this, R.LookaheadAssertionNode.pattern, tree);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LookaheadAssertion.Parsed;
+}
+
+function viewLookbehindAssertion(data: RecordStub, tree: TreeHandle): T.LookbehindAssertion.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.LookbehindAssertion as const,
+		content() {
+			return recordValue(this, tree, R.LookbehindAssertionNode.content);
+		},
+		pattern() {
+			return viewSlot<T.Pattern>(this, R.LookbehindAssertionNode.pattern, tree);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LookbehindAssertion.Parsed;
+}
+
+function viewCharacterClass(data: RecordStub, tree: TreeHandle): T.CharacterClass.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.CharacterClass as const,
+		negation() {
+			return recordValue(this, tree, R.CharacterClassNode.negation);
+		},
+		leading() {
+			return recordValue(this, tree, R.CharacterClassNode.leading);
+		},
+		classAtoms() {
+			return viewSlots<
+				| T.ClassCharacter
+				| TSKindId.BslashDash
+				| T.CharacterClassEscape
+				| T.ControlEscape
+				| T.ControlLetterEscape
+				| T.IdentityEscape
+				| T.PosixCharacterClass
+				| T.ClassRange
+			>(this, R.CharacterClassNode.class_atoms, tree);
+		},
+		trailing() {
+			return recordValue(this, tree, R.CharacterClassNode.trailing);
+		},
+		$with: {
+			negation: (...args: unknown[]) => rowWith(node, tree, _wrap, 'negation', args),
+			leading: (...args: unknown[]) => rowWith(node, tree, _wrap, 'leading', args),
+			classAtoms: (...args: unknown[]) => rowWith(node, tree, _wrap, 'classAtoms', args),
+			trailing: (...args: unknown[]) => rowWith(node, tree, _wrap, 'trailing', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
+			inner: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'inner', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharacterClass.Parsed;
+}
+
+function viewPosixCharacterClass(data: RecordStub, tree: TreeHandle): T.PosixCharacterClass.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.PosixCharacterClass as const,
+		posixClassName() {
+			return viewSlot<T.PosixClassName>(this, R.PosixCharacterClassNode.posix_class_name, tree);
+		},
+		$with: {
+			posixClassName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'posixClassName', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.PosixCharacterClass.Parsed;
+}
+
+function viewClassRange(data: RecordStub, tree: TreeHandle): T.ClassRange.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ClassRange as const,
+		start() {
+			return viewSlot<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(
+				this,
+				R.ClassRangeNode.start,
+				tree
+			);
+		},
+		end() {
+			return viewSlot<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(
+				this,
+				R.ClassRangeNode.end,
+				tree
+			);
+		},
+		$with: {
+			start: (...args: unknown[]) => rowWith(node, tree, _wrap, 'start', args),
+			end: (...args: unknown[]) => rowWith(node, tree, _wrap, 'end', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClassRange.Parsed;
+}
+
+function viewAnonymousCapturingGroup(data: RecordStub, tree: TreeHandle): T.AnonymousCapturingGroup.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.AnonymousCapturingGroup as const,
+		pattern() {
+			return viewSlot<T.Pattern>(this, R.AnonymousCapturingGroupNode.pattern, tree);
+		},
+		$with: {
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AnonymousCapturingGroup.Parsed;
+}
+
+function viewNamedCapturingGroup(data: RecordStub, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.NamedCapturingGroup as const,
+		content() {
+			return recordValue(this, tree, R.NamedCapturingGroupNode.content);
+		},
+		groupName() {
+			return viewSlot<T.GroupName>(this, R.NamedCapturingGroupNode.group_name, tree);
+		},
+		pattern() {
+			return viewSlot<T.Pattern>(this, R.NamedCapturingGroupNode.pattern, tree);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args),
+			groupName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'groupName', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NamedCapturingGroup.Parsed;
+}
+
+function viewNonCapturingGroup(data: RecordStub, tree: TreeHandle): T.NonCapturingGroup.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.NonCapturingGroup as const,
+		pattern() {
+			return viewSlot<T.Pattern>(this, R.NonCapturingGroupNode.pattern, tree);
+		},
+		$with: {
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NonCapturingGroup.Parsed;
+}
+
+function viewZeroOrMore(data: RecordStub, tree: TreeHandle): T.ZeroOrMore.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ZeroOrMore as const,
+		lazy() {
+			return recordValue(this, tree, R.ZeroOrMoreNode.lazy);
+		},
+		$with: {
+			lazy: (...args: unknown[]) => rowWith(node, tree, _wrap, 'lazy', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ZeroOrMore.Parsed;
+}
+
+function viewOneOrMore(data: RecordStub, tree: TreeHandle): T.OneOrMore.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.OneOrMore as const,
+		lazy() {
+			return recordValue(this, tree, R.OneOrMoreNode.lazy);
+		},
+		$with: {
+			lazy: (...args: unknown[]) => rowWith(node, tree, _wrap, 'lazy', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.OneOrMore.Parsed;
+}
+
+function viewOptional(data: RecordStub, tree: TreeHandle): T.Optional.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Optional as const,
+		lazy() {
+			return recordValue(this, tree, R.OptionalNode.lazy);
+		},
+		$with: {
+			lazy: (...args: unknown[]) => rowWith(node, tree, _wrap, 'lazy', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Optional.Parsed;
+}
+
+function viewCountQuantifier(data: RecordStub, tree: TreeHandle): T.CountQuantifier.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.CountQuantifier as const,
+		content() {
+			return viewSlot<T.CountQuantifierArm | T.DecimalDigits>(this, R.CountQuantifierNode.content, tree);
+		},
+		lazy() {
+			return recordValue(this, tree, R.CountQuantifierNode.lazy);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args),
+			lazy: (...args: unknown[]) => rowWith(node, tree, _wrap, 'lazy', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CountQuantifier.Parsed;
+}
+
+function viewBackreferenceEscape(data: RecordStub, tree: TreeHandle): T.BackreferenceEscape.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.BackreferenceEscape as const,
+		groupName() {
+			return viewSlot<T.GroupName>(this, R.BackreferenceEscapeNode.group_name, tree);
+		},
+		$with: {
+			groupName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'groupName', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.BackreferenceEscape.Parsed;
+}
+
+function viewNamedGroupBackreference(data: RecordStub, tree: TreeHandle): T.NamedGroupBackreference.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.NamedGroupBackreference as const,
+		groupName() {
+			return viewSlot<T.GroupName>(this, R.NamedGroupBackreferenceNode.group_name, tree);
+		},
+		$with: {
+			groupName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'groupName', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NamedGroupBackreference.Parsed;
+}
+
+function viewCharacterClassEscape(data: RecordStub, tree: TreeHandle): T.CharacterClassEscape.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.CharacterClassEscape as const,
+		content() {
+			return viewSlot<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
+				this,
+				R.CharacterClassEscapeNode.content,
+				tree
+			);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharacterClassEscape.Parsed;
+}
+
+function viewUnicodePropertyValueExpression(
+	data: RecordStub,
+	tree: TreeHandle
+): T.UnicodePropertyValueExpression.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.UnicodePropertyValueExpression as const,
+		unicodePropertyValueExpressionGroup() {
+			return viewSlot<T.UnicodePropertyValueExpressionGroup | undefined>(
+				this,
+				R.UnicodePropertyValueExpressionNode.unicode_property_value_expression_group,
+				tree
+			);
+		},
+		unicodePropertyValue() {
+			return viewSlot<T.UnicodePropertyValue>(this, R.UnicodePropertyValueExpressionNode.unicode_property_value, tree);
+		},
+		$with: {
+			unicodePropertyValueExpressionGroup: (...args: unknown[]) =>
+				rowWith(node, tree, _wrap, 'unicodePropertyValueExpressionGroup', args),
+			unicodePropertyValue: (...args: unknown[]) => rowWith(node, tree, _wrap, 'unicodePropertyValue', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnicodePropertyValueExpression.Parsed;
+}
+
+function viewIdentityEscape(data: RecordStub, tree: TreeHandle): T.IdentityEscape.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.IdentityEscape as const,
+		content() {
+			return viewSlot<string>(this, R.IdentityEscapeNode.content, tree);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.IdentityEscape.Parsed;
+}
+
+function viewTermGroup(data: RecordStub, tree: TreeHandle): T.TermGroup.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.TermGroup as const,
+		content() {
+			return viewSlot<
+				| TSKindId.StartAssertion
+				| TSKindId.EndAssertion
+				| TSKindId.BoundaryAssertion
+				| TSKindId.NonBoundaryAssertion
+				| T.LookaroundAssertion
+				| T.PatternCharacter
+				| T.CharacterClass
+				| T.PosixCharacterClass
+				| TSKindId.AnyCharacter
+				| T.DecimalEscape
+				| T.CharacterClassEscape
+				| T.ControlEscape
+				| T.ControlLetterEscape
+				| T.IdentityEscape
+				| T.BackreferenceEscape
+				| T.NamedGroupBackreference
+				| T.AnonymousCapturingGroup
+				| T.NamedCapturingGroup
+				| T.NonCapturingGroup
+				| T.InlineFlagsGroup
+			>(this, R.TermGroupNode.content, tree);
+		},
+		quantifier() {
+			return viewSlot<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier | undefined>(
+				this,
+				R.TermGroupNode.quantifier,
+				tree
+			);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args),
+			quantifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'quantifier', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TermGroup.Parsed;
+}
+
+function viewCountQuantifierGroup(data: RecordStub, tree: TreeHandle): T.CountQuantifierGroup.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.CountQuantifierGroup as const,
+		decimalDigits() {
+			return viewSlot<T.DecimalDigits | undefined>(this, R.CountQuantifierGroupNode.decimal_digits, tree);
+		},
+		$with: {
+			decimalDigits: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decimalDigits', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CountQuantifierGroup.Parsed;
+}
+
+function viewCountQuantifierArm(data: RecordStub, tree: TreeHandle): T.CountQuantifierArm.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.CountQuantifierArm as const,
+		decimalDigits() {
+			return viewSlot<T.DecimalDigits>(this, R.CountQuantifierArmNode.decimal_digits, tree);
+		},
+		countQuantifierGroup() {
+			return viewSlot<T.CountQuantifierGroup | undefined>(this, R.CountQuantifierArmNode.count_quantifier_group, tree);
+		},
+		$with: {
+			decimalDigits: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decimalDigits', args),
+			countQuantifierGroup: (...args: unknown[]) => rowWith(node, tree, _wrap, 'countQuantifierGroup', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CountQuantifierArm.Parsed;
+}
+
+function viewCharacterClassEscapeArm(data: RecordStub, tree: TreeHandle): T.CharacterClassEscapeArm.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.CharacterClassEscapeArm as const,
+		characterClassEscapeText2() {
+			return viewSlot<T.CharacterClassEscapeText2>(
+				this,
+				R.CharacterClassEscapeArmNode.character_class_escape_text2,
+				tree
+			);
+		},
+		unicodePropertyValueExpression() {
+			return viewSlot<T.UnicodePropertyValueExpression>(
+				this,
+				R.CharacterClassEscapeArmNode.unicode_property_value_expression,
+				tree
+			);
+		},
+		$with: {
+			characterClassEscapeText2: (...args: unknown[]) => rowWith(node, tree, _wrap, 'characterClassEscapeText2', args),
+			unicodePropertyValueExpression: (...args: unknown[]) =>
+				rowWith(node, tree, _wrap, 'unicodePropertyValueExpression', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CharacterClassEscapeArm.Parsed;
+}
+
+function viewUnicodePropertyValueExpressionGroup(
+	data: RecordStub,
+	tree: TreeHandle
+): T.UnicodePropertyValueExpressionGroup.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.UnicodePropertyValueExpressionGroup as const,
+		unicodePropertyName() {
+			return viewSlot<T.UnicodePropertyName>(
+				this,
+				R.UnicodePropertyValueExpressionGroupNode.unicode_property_name,
+				tree
+			);
+		},
+		$with: {
+			unicodePropertyName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'unicodePropertyName', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnicodePropertyValueExpressionGroup.Parsed;
+}
+
+function viewInlineFlagsGroupEnable(data: RecordStub, tree: TreeHandle): T.InlineFlagsGroupEnable.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.InlineFlagsGroupEnable as const,
+		enabled() {
+			return viewSlot<T.Flags>(this, R.InlineFlagsGroupEnableNode.enabled, tree);
+		},
+		pattern() {
+			return viewSlot<T.Pattern | undefined>(this, R.InlineFlagsGroupEnableNode.pattern, tree);
+		},
+		$with: {
+			enabled: (...args: unknown[]) => rowWith(node, tree, _wrap, 'enabled', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.InlineFlagsGroupEnable.Parsed;
+}
+
+function viewInlineFlagsGroupToggle(data: RecordStub, tree: TreeHandle): T.InlineFlagsGroupToggle.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.InlineFlagsGroupToggle as const,
+		enabled() {
+			return viewSlot<T.Flags>(this, R.InlineFlagsGroupToggleNode.enabled, tree);
+		},
+		disabled() {
+			return viewSlot<T.Flags>(this, R.InlineFlagsGroupToggleNode.disabled, tree);
+		},
+		pattern() {
+			return viewSlot<T.Pattern | undefined>(this, R.InlineFlagsGroupToggleNode.pattern, tree);
+		},
+		$with: {
+			enabled: (...args: unknown[]) => rowWith(node, tree, _wrap, 'enabled', args),
+			disabled: (...args: unknown[]) => rowWith(node, tree, _wrap, 'disabled', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.InlineFlagsGroupToggle.Parsed;
+}
+
+function viewInlineFlagsGroupDisable(data: RecordStub, tree: TreeHandle): T.InlineFlagsGroupDisable.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.InlineFlagsGroupDisable as const,
+		disabled() {
+			return viewSlot<T.Flags>(this, R.InlineFlagsGroupDisableNode.disabled, tree);
+		},
+		pattern() {
+			return viewSlot<T.Pattern | undefined>(this, R.InlineFlagsGroupDisableNode.pattern, tree);
+		},
+		$with: {
+			disabled: (...args: unknown[]) => rowWith(node, tree, _wrap, 'disabled', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.InlineFlagsGroupDisable.Parsed;
+}
+
+function viewLazy(data: RecordStub, tree: TreeHandle): T.Lazy.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Lazy as const,
+		content() {
+			return recordValue(this, tree, R.LazyNode.content);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Lazy.Parsed;
+}
+
+function viewUnicodePropertyName(data: RecordStub, tree: TreeHandle): T.UnicodePropertyName.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.UnicodePropertyName as const,
+		content() {
+			return viewSlot<T.UnicodePropertyValue>(
+				this,
+				R.UnicodePropertyNameNode.content,
+				tree,
+				contentRole(this, recordSlot(this, tree, R.UnicodePropertyNameNode.content))
+			);
+		},
+		$with: {
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UnicodePropertyName.Parsed;
+}
+
 function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$text: () => data.$text,
+		$text: () => textOf(data),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -1302,6 +2206,40 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t)
 };
 
+const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => unknown> = {
+	[TSKindId.Pattern]: viewPattern,
+	[TSKindId.Alternation]: viewAlternation,
+	[TSKindId.Term]: viewTerm,
+	[TSKindId.LookaroundAssertion]: viewLookaroundAssertion,
+	[TSKindId.LookaheadAssertion]: viewLookaheadAssertion,
+	[TSKindId.LookbehindAssertion]: viewLookbehindAssertion,
+	[TSKindId.CharacterClass]: viewCharacterClass,
+	[TSKindId.PosixCharacterClass]: viewPosixCharacterClass,
+	[TSKindId.ClassRange]: viewClassRange,
+	[TSKindId.AnonymousCapturingGroup]: viewAnonymousCapturingGroup,
+	[TSKindId.NamedCapturingGroup]: viewNamedCapturingGroup,
+	[TSKindId.NonCapturingGroup]: viewNonCapturingGroup,
+	[TSKindId.ZeroOrMore]: viewZeroOrMore,
+	[TSKindId.OneOrMore]: viewOneOrMore,
+	[TSKindId.Optional]: viewOptional,
+	[TSKindId.CountQuantifier]: viewCountQuantifier,
+	[TSKindId.BackreferenceEscape]: viewBackreferenceEscape,
+	[TSKindId.NamedGroupBackreference]: viewNamedGroupBackreference,
+	[TSKindId.CharacterClassEscape]: viewCharacterClassEscape,
+	[TSKindId.UnicodePropertyValueExpression]: viewUnicodePropertyValueExpression,
+	[TSKindId.IdentityEscape]: viewIdentityEscape,
+	[TSKindId.TermGroup]: viewTermGroup,
+	[TSKindId.CountQuantifierGroup]: viewCountQuantifierGroup,
+	[TSKindId.CountQuantifierArm]: viewCountQuantifierArm,
+	[TSKindId.CharacterClassEscapeArm]: viewCharacterClassEscapeArm,
+	[TSKindId.UnicodePropertyValueExpressionGroup]: viewUnicodePropertyValueExpressionGroup,
+	[TSKindId.InlineFlagsGroupEnable]: viewInlineFlagsGroupEnable,
+	[TSKindId.InlineFlagsGroupToggle]: viewInlineFlagsGroupToggle,
+	[TSKindId.InlineFlagsGroupDisable]: viewInlineFlagsGroupDisable,
+	[TSKindId.Lazy]: viewLazy,
+	[TSKindId.UnicodePropertyName]: viewUnicodePropertyName
+};
+
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type PatternTree = T.ParsedByKindId[TSKindId.Pattern] & ParsedRoot;
 
@@ -1316,6 +2254,14 @@ export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.Pars
 ): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;
 export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown;
 export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
+	if (recordOf(data) !== undefined) {
+		const view = _viewTable[data.$type as unknown as number];
+		if (view === undefined) return wrapNode(rowData(data, tree) as _UntypedNode, tree);
+		return carryRead(
+			data,
+			inTreeEngine(tree, () => view(data as unknown as RecordStub, tree))
+		);
+	}
 	const fn = _wrapTable[data.$type as unknown as number];
 	return fn === undefined
 		? asTextNode(data)

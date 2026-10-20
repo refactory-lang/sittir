@@ -208,12 +208,14 @@ readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null):
 readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
 /**
  * r" The record at `address` of the live tree `treeId` rendered, as
- * r" `render` renders a node read from the tree: under `options`
- * r" over the tree's layer over the engine's. Refuses a tree that
- * r" is not live, an address naming no record of its arena, and a
- * r" record whose render refuses.
+ * r" `render` renders a node read from the tree: a render root
+ * r" whose `leading` and `trailing` edges have no neighbour, as
+ * r" the node crossing as its coordinate marks them, under
+ * r" `options` over the tree's layer over the engine's. Refuses a
+ * r" tree that is not live, an address naming no record of its
+ * r" arena, and a record whose render refuses.
  */
-renderRecord(treeId: number, address: number, options?: object | undefined | null): string
+renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 /**
  * r" The words records fill in chunk `n` of the live tree
  * r" `treeId`'s arena, copied into a buffer JavaScript owns: a
@@ -280,6 +282,32 @@ export declare function liveTreeCount(): number
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex =
   number
+
+/**
+ * r" A side record's fields before a list's delimiters setting, each
+ * r" one's mask bit and its words (`arena::side::field`).
+ */
+export const SIDE_FIELD_AT: number
+
+export const SIDE_FIELD_DELIMITER: number
+
+export const SIDE_FIELD_EDGES: number
+
+export const SIDE_FIELD_SEPARATOR: number
+
+export const SIDE_FIELD_SIDES: number
+
+export const SIDE_FIELD_SPAN: number
+
+export const SIDE_WORDS_AT: number
+
+export const SIDE_WORDS_EDGES: number
+
+export const SIDE_WORDS_SEPARATOR: number
+
+export const SIDE_WORDS_SIDES: number
+
+export const SIDE_WORDS_SPAN: number
 
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId =

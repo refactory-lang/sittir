@@ -55,6 +55,17 @@ function entriesData<S extends TriviaSides<unknown>>(sides: S): S {
 }
 
 /**
+ * A leaf's text, from either form `nodeText` reads, for a value that must have one.
+ *
+ * @throws When the value holds no text.
+ */
+export function textOf(value: object): string {
+	const text = nodeText(value);
+	if (text === undefined) throw new Error('a leaf holds no text');
+	return text;
+}
+
+/**
  * Whether a value has a text member, a node's `$text()` or the string `$text` of native node data, decided without calling the method.
  */
 export function hasNodeText(value: object): boolean {
@@ -510,7 +521,7 @@ const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
  * The edges of a render root: it renders with no neighbour, so both changed,
  * unless it is its tree's root, whose edges are the document's.
  */
-function rootEdges(node: object): ChangedEdges {
+export function rootEdges(node: object): ChangedEdges {
 	const source = sourceOf(node);
 	return source !== undefined && decodeIndex(source.treeHandle) === 0 ? NO_EDGES : BOTH_EDGES;
 }

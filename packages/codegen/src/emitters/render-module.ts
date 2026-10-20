@@ -3262,6 +3262,15 @@ function isCompoundOf(node: AssembledNode): boolean {
 	);
 }
 
+function recordLayoutOfSlots(printedSlots: readonly StructSlot[], nodeMap: NodeMap): RecordLayout {
+	return recordLayoutOf(printedSlots.map(({ slot }) => ({ field: rustFieldIdent(slot.storageName), form: slotRecordForm(nodeSlotShapeOf(slot, nodeMap), isMultiple(slot)) })));
+}
+
+export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordLayout | undefined {
+	if (node instanceof AssembledEnum || !isCompoundOf(node)) return undefined;
+	return recordLayoutOfSlots(structSlotsOf(node, renderSlotModelOf(node), nodeMap), nodeMap);
+}
+
 function renderNodeDataStruct(
 	structName: string,
 	node: AssembledNode,
@@ -3279,11 +3288,7 @@ function renderNodeDataStruct(
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId]);
-	const layout = recordLayoutOf(
-		isCompoundOf(node)
-			? printedSlots.map(({ slot }) => ({ field: rustFieldIdent(slot.storageName), form: slotRecordForm(nodeSlotShapeOf(slot, nodeMap), isMultiple(slot)) }))
-			: []
-	);
+	const layout = recordLayoutOfSlots(printedSlots, nodeMap);
 	read.records.set(structName, layout);
 	const placeOf = new Map(layout.places.map((place) => [place.field, place]));
 	const seated = isCompoundOf(node) ? seatedSlots(plan, node, nodeMap) : [];
