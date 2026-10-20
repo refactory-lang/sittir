@@ -398,18 +398,6 @@ The external roles that mark a zero-width layout sentinel (`indent`, `dedent`), 
 
 One blocking `hidden-terminal-nonliteral` record per `hiddenTerminalNonliteralSites` site, naming the owner and the hidden terminal (`details.target`). It runs on every stage's grammar. The override layer claims each enriched-stage record: a `visibleExternals:` entry that gives the external a visible node (rust `_block_comment_content`, typescript `_automatic_semicolon`), a rewrite that removes the bare reference, or a layout role. The final grammar must have none.
 
-### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics`
-
-One blocking `eof-in-token` record per rule that holds `eof()` anywhere under a `token()` or `token.immediate()`, naming the rule as `ownerKind`. A lexical token cannot match the end of input. tree-sitter's DSL forbids the shape, and the record refuses it at evaluate (`evaluateRecords`) instead of leaving it to the parser generator.
-
-### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastDiagnostics`
-
-One blocking `eof-not-last` record per site the prediction stamps (`dsl/symbol-table.ts::EofNotLast`), naming the authored rule as `ownerKind`. A production that continues past the end of the input is one tree-sitter drops, while the model, which reads `eof()` as blank, would still build it, so its nodes would never reparse. The details are the site itself: its `kind`, its `reason`, and `ending` for an `after-ending` site.
-
-### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastMessage`
-
-The message of an `eof-not-last` record, one per reason: the followed rule that always ends input, the repetition whose item ends at `eof()`, the rule whose `eof()` can never match because it is never followed by the end of input, or the production that continues after `eof()`.
-
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
 
 One blocking `field-optional-delimiter` record per authored-compound slot
@@ -462,7 +450,7 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), a receiver claim the lead derivation refuses (`lead-refused`), and a shape enrich rewrites that reaches the model as written (every code in `dsl/enrich-shapes.ts::ENRICH_SHAPES`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), a receiver claim the lead derivation refuses (`lead-refused`), an `eof()` anywhere but last in the start rule or inside a token (`eof-not-last`, `eof-in-token`), and a shape enrich rewrites that reaches the model as written (every code in `dsl/enrich-shapes.ts::ENRICH_SHAPES`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
@@ -856,6 +844,10 @@ The grammar's `expectDiagnostics` with each kind listed under both its base name
 
 Prints diagnostics by severity: info goes to stdout, and warning, error and fail go to stderr, each side formatted once with the given formatter. A side with nothing to print writes nothing. A quiet regen keeps a successful child's stdout to itself, so this is the line between what it hides and what it shows.
 
-### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastProposal`
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofPlacements`
 
-The proposal of an `eof-not-last` record: let the always-ending rule end without `eof()` where something follows it; use a `never-at-end` rule where it can end the input, or take `eof()` out of it; otherwise end the production at `eof()`.
+The authored rules that hold a refused `eof()`, by code. `inToken` holds one under a `token()` or `token.immediate()`. `notLast` holds one anywhere but last in the start rule: the walk keeps the start rule's position through its choices and wrappers and the last member of each sequence, and never inside a repetition. A rule enrich mints from an authored one, reached through a group-lift reference (`dsl/transform/transform-path.ts::isEnrichGroupLiftSymbol`) or named in `textTokens`, is walked at each reference as part of the rule that holds it. So a hoisted arm of the start rule keeps the start rule's position, and a refusal names the authored rule, never the mint. A mint that reaches itself again is walked once on each path.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofDiagnostics`
+
+One blocking record per rule `eofPlacements` refuses, naming the rule as `ownerKind`. `eof-in-token`: a lexical token cannot match the end of input. tree-sitter's DSL forbids the shape, and the record refuses it at evaluate (`evaluateRecords`) rather than leaving it to the parser generator. `eof-not-last`: an `eof()` is legal only last in the start rule, where it changes nothing because the start rule always runs to the end of the input; `details` names the rule (`kind`) and the start rule (`start`). Neither code can be expected (`UNEXPECTABLE_CODES`).

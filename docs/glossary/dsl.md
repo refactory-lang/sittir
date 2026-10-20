@@ -7066,7 +7066,7 @@ A symbol's kind in tree-sitter's variable tables: `named`, `hidden` (underscore-
 
 ### `packages/codegen/src/dsl/symbol-table.ts::Variable`
 
-One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place. A `_repeatN` that repeat expansion mints carries its `owner`, the rule it was expanded from, so a fact about it is reported on that rule (`eofNotLastSites`).
+One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::ProductionStep`
 
@@ -7108,23 +7108,6 @@ Flattens an interned rule into its productions: a `CHOICE` contributes each memb
 
 A variable's productions as tree-sitter keeps them after `eof()`: a production with an end step anywhere but last is dropped, since it can never complete, and a trailing end step is removed (the production then needs end-of-input lookahead). It runs once per variable, on the whole rule, so an `EOF` that a later `SEQ` member follows is caught.
 
-### `packages/codegen/src/dsl/symbol-table.ts::alwaysEndingInput`
-
-The nonterminals every derivation of which ends the input: each of whose productions ends in an end step or in such a nonterminal. It is the greatest fixpoint, so a repetition of an input-ending item counts, while `choice('\n', eof())`, which can end without the input ending, does not.
-
-### `packages/codegen/src/dsl/symbol-table.ts::EofNotLast`
-
-A rule with an `eof()` that can never match, for one of four reasons. `kind` is the authored rule that holds the production; a repeat helper reports its owner.
-
-- `after-eof`: something follows an `eof()` in the production.
-- `after-ending`: a rule every derivation of which ends the input (`alwaysEndingInput`) is followed by more content; `ending` names that rule.
-- `repetition`: a repetition in `kind` whose item always ends at `eof()`, so it can never repeat.
-- `never-at-end`: an `eof()` ends the production of a rule that may end the input but need not, and the rule is never followed by end-of-input (`followedByEnd`).
-
-### `packages/codegen/src/dsl/symbol-table.ts::eofNotLastSites`
-
-Every `EofNotLast` of a grammar's flattened productions, before `completedProductions` drops any. A step that is an end step anywhere but last is `after-eof`. A nonterminal in `alwaysEndingInput` anywhere but last is `after-ending` or `repetition`: a helper that ends input is explained by the authored rule its productions end in, or as a repetition ending at `eof()` when they end in the end step itself. A production that ends in an end step is `never-at-end` when its rule is not in `followedByEnd` and is not itself in `alwaysEndingInput`; a rule that always ends input is refused where it is followed, so each mistake is one site. A repeat helper is reported on its owner. `roots` are the start rule and the extras; `zeroWidth` holds the external tokens.
-
 ### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
 
 The words tree-sitter spells punctuation with in a C symbol name.
@@ -7163,11 +7146,11 @@ Predicts the parser's symbol table from the evaluated grammar by porting tree-si
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
-A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported. `eofNotLast` lists the rules with a production that continues past the end of the input (`eofNotLastSites`).
+A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions and `eofNotLast` sites, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
 
@@ -7187,7 +7170,7 @@ Compares the predicted kind catalog with the parser's row by row on `PREDICTED_K
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
-The rows `predictKindCatalog` predicts, with the grammar's undefined names, key collisions and `eofNotLast` sites beside them.
+The rows `predictKindCatalog` predicts, with the grammar's undefined names and key collisions beside them.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
 
@@ -7424,14 +7407,6 @@ The precedence wrapper types, which carry no slot topology.
 ### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
-
-### `packages/codegen/src/dsl/symbol-table.ts::followedByEnd`
-
-The rules end-of-input can follow: the FOLLOW-set fact the `eof()` check reads, over the live productions (those whose end step, if any, is last). The roots (the start rule and the extras) are followed by end-of-input. A rule is followed by it when it is followed in some production only by steps that can consume nothing, and either that production's rule is followed by end-of-input or one of those steps is an end step. A step can consume nothing when it is an end step, an external token (`zeroWidth`: a scanner may produce one with zero width at the end of the input), or a rule some production of which consists of such steps. Both sets are least fixpoints.
-
-### `packages/codegen/src/dsl/symbol-table.ts::EndingReason`
-
-Why an always-ending rule cannot be followed: `after-ending` names the authored rule that always ends the input; `repetition` is a repeat helper whose item ends at `eof()` itself.
 
 ### `packages/codegen/src/dsl/bind.ts::isRecord`
 
@@ -9265,7 +9240,7 @@ Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) 
 
 ### `packages/codegen/src/dsl/evaluate.ts::eof`
 
-tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`compiler/normalize.ts::blanksDropped`).
+tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `compiler/diagnostics/grammar-diagnostics.ts::eofDiagnostics` refuses it anywhere but last in the start rule, and inside a token, and normalize lowers it to blank (`compiler/normalize.ts::blanksDropped`).
 
 ### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeInfo`
 
