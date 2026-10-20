@@ -882,14 +882,8 @@ const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
 function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
-	const text = readFileSync(path, 'utf8');
-	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes } = parseNodeModel(text);
-	const { nodes } = JSON.parse(text) as { nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }> };
-	const modelFieldsByKind = new Map<string, Set<string>>();
-	for (const node of nodes ?? []) {
-		if (node.slots === undefined) continue;
-		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.slots.map((f) => f.name)));
-	}
+	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, slotNames } = parseNodeModel(readFileSync(path, 'utf8'));
+	const modelFieldsByKind = new Map(Object.entries(slotNames).map(([kind, names]) => [kind.replace(/^_+/, ''), new Set(names)]));
 	return { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, modelFieldsByKind };
 }
 
