@@ -343,7 +343,7 @@ function judgeNarrowingWitnesses(
 		witnesses,
 		'The witness must be a form upstream derives and the authored rule does not',
 		(witness) => {
-			const justification = (witness as unknown as Readonly<Record<string, unknown>>)[key];
+			const justification: unknown = Reflect.get(witness, key);
 			if (typeof justification !== 'string' || justification.trim().length === 0) return missing;
 			const upstream = upstreamRules[witness.kind];
 			if (upstream === undefined) return `upstream declares no rule '${witness.kind}'`;
