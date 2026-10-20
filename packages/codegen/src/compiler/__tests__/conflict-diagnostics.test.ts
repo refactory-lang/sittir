@@ -8,7 +8,7 @@ import { conflictRecords, conflictStaleRecord, conflictUnresolvableRecord } from
 import { blockedRecords, unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
 import { evaluateSittirGrammar } from './_sittir-grammar.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 
 const require = createRequire(import.meta.url);
 

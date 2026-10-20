@@ -1,4 +1,4 @@
-import { evaluatePackage } from './evaluate-package.ts';
+import { evaluatePackage } from '../dsl/evaluate-package.ts';
 import { bindingsPathIn } from '../bindings/facts.ts';
 import { assertBindingsFresh } from '../bindings/hash.ts';
 import { loadBindingsModule } from '../bindings/module.ts';

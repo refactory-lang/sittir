@@ -24,7 +24,7 @@
 import { beforeAll, describe, it, expect } from 'vitest';
 import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 const KNOWN_RULE_TYPES = new Set([

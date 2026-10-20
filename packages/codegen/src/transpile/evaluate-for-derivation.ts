@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { packageEntryPath } from '../compiler/resolve-grammar.ts';
+import { packageEntryPath } from '../dsl/resolve-grammar.ts';
 import type { EvaluatedGrammar } from '../compiler/types.ts';
 import { baseNamesOf } from '../dsl/bind.ts';
 import type { GrammarPackage } from '../grammars.ts';

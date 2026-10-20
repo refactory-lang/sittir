@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
+import { evaluate } from '../../codegen/src/dsl/evaluate.ts';
 import { NO_FILE_TYPES } from '../../codegen/src/compiler/upstream-file-types.ts';
 import { diagnoseEvaluated, run } from '../src/inspect/grammar-diagnostics.ts';
 

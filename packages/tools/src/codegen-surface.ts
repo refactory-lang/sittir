@@ -34,13 +34,13 @@
 import { fileURLToPath } from 'node:url';
 
 const MODULES = {
-	evaluate: '../../codegen/src/compiler/evaluate.ts',
-	evaluatePackage: '../../codegen/src/compiler/evaluate-package.ts',
+	evaluate: '../../codegen/src/dsl/evaluate.ts',
+	evaluatePackage: '../../codegen/src/dsl/evaluate-package.ts',
 	grammars: '../../codegen/src/grammars.ts',
 	link: '../../codegen/src/compiler/link.ts',
 	normalize: '../../codegen/src/compiler/normalize.ts',
 	assemble: '../../codegen/src/compiler/assemble.ts',
-	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
+	resolveGrammar: '../../codegen/src/dsl/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts',
 	stage: '../../codegen/src/compiler/stage.ts',
 	ruleCatalog: '../../codegen/src/compiler/rule-catalog.ts',
@@ -84,13 +84,13 @@ const MODULES = {
 // signatures. Runtime-erased. The import() path literals MUST match `MODULES`.
 // ---------------------------------------------------------------------------
 export interface CodegenSurface {
-	evaluate: typeof import('../../codegen/src/compiler/evaluate.ts');
-	evaluatePackage: typeof import('../../codegen/src/compiler/evaluate-package.ts');
+	evaluate: typeof import('../../codegen/src/dsl/evaluate.ts');
+	evaluatePackage: typeof import('../../codegen/src/dsl/evaluate-package.ts');
 	grammars: typeof import('../../codegen/src/grammars.ts');
 	link: typeof import('../../codegen/src/compiler/link.ts');
 	normalize: typeof import('../../codegen/src/compiler/normalize.ts');
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
-	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
+	resolveGrammar: typeof import('../../codegen/src/dsl/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts');
 	stage: typeof import('../../codegen/src/compiler/stage.ts');
 	ruleCatalog: typeof import('../../codegen/src/compiler/rule-catalog.ts');

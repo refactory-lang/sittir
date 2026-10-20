@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 type Node = { readonly type: string; readonly name?: string; readonly immediate?: boolean; readonly annotations?: unknown; readonly content?: Node; readonly members?: readonly Node[] };

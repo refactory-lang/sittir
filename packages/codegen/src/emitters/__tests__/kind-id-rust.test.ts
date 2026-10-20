@@ -6,7 +6,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import type { GrammarName } from '../../grammars.ts';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 

@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { evaluate } from '../evaluate.ts';
+import { evaluate } from '../../dsl/evaluate.ts';
 import { diagnoseEvaluationStage } from '../stage.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));

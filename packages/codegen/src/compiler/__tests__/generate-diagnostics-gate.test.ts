@@ -5,7 +5,7 @@ import { grammarPackage } from '../../grammars.ts';
 
 const evaluated = vi.hoisted(() => ({ current: undefined as unknown }));
 
-vi.mock('../evaluate.ts', () => ({ evaluate: vi.fn(async () => evaluated.current) }));
+vi.mock('../../dsl/evaluate.ts', () => ({ evaluate: vi.fn(async () => evaluated.current) }));
 vi.mock('../link.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../link.ts')>();
 	return { ...actual, link: vi.fn(actual.link) };

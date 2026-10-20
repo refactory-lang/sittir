@@ -5,11 +5,12 @@ import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/utils';
 import { AssembledLeaf } from '../compiler/model/node-map.ts';
 import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
-import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
+import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
 import { admitsDepth, type DepthAnchor, type DepthRegion, type EdgeArm } from '../compiler/model/render-rules.ts';
-import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel, seamLabel } from '../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, siteKey } from '../dsl/primitives/spacing.ts';
+import type { SeamAddress, SeparatorSide, SpacingAddress } from '../types/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
@@ -53,10 +54,10 @@ export interface SpacingSite {
 	readonly defaultId: number;
 	readonly allowedIds: readonly number[];
 	readonly strength: SeamStrength;
-	readonly side?: SpacingSide;
+	readonly spacing?: SpacingAddress;
 	readonly role?: 'separator';
 	readonly defaultText?: string;
-	readonly seat?: { readonly kind: string; readonly display: string; readonly field: string; readonly kindId?: number };
+	readonly seat?: { readonly kind: string; readonly display: string; readonly kindId?: number };
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeArm?: EdgeArm;
 	readonly kindEdge?: true;
@@ -226,13 +227,13 @@ export function planRenderOptions(
 		const allowedIds = site.arms.map((arm) => armIdOf(kindEntries, arm, at));
 		const defaultArm = site.arms.find((arm) => arm.value === site.defaultArm);
 		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
-		const isFlank = site.side === 'start' || site.side === 'end';
-		const seatEdge = site.seat === undefined ? undefined : parseSeamLabel(site.seat.field);
-		const field = isFlank
-			? `${site.slot}_${site.side}`
-			: site.seat !== undefined && seatEdge !== undefined
-				? `${site.slot}_${seamLabel(site.seat.kind, seatEdge.side)}`
-				: site.address;
+		const place = site.spacing;
+		const field =
+			place?.at === 'flank'
+				? `${site.slot}_${place.side}`
+				: site.seat !== undefined && place?.at === 'seam'
+					? siteKey(site.slot, { ...place, token: site.seat.kind })
+					: site.address;
 		pushSpacing({
 			display,
 			source,
@@ -246,7 +247,7 @@ export function planRenderOptions(
 			defaultId: armIdOf(kindEntries, defaultArm, at),
 			allowedIds,
 			strength: seamStrength(site.origin),
-			...(site.side === undefined ? {} : { side: site.side }),
+			...(place === undefined ? {} : { spacing: place }),
 			...(site.seat === undefined ? {} : { seat: { ...site.seat, ...stampOf(nodeMap, site.seat.kind) } }),
 			...(site.path === undefined ? {} : { path: site.path }),
 			...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm }),
@@ -484,13 +485,12 @@ export function seatTableName(kind: string, slot: string): string {
 	return `SEATS_${screaming(kind)}_${screaming(slot)}`;
 }
 
-export function seatEdgeSide(site: SpacingSite): 'before' | 'after' {
-	const seat = site.seat;
-	const edge = seat === undefined ? undefined : parseSeamLabel(seat.field);
-	if (seat === undefined || edge === undefined || edge.token !== seat.display) {
-		throw new Error(`seated site '${site.address}' writes '${seat?.field}', which is not the seated kind's edge`);
+export function seatEdgeSide(site: SpacingSite): SeparatorSide {
+	const { seat, spacing } = site;
+	if (seat === undefined || spacing?.at !== 'seam' || spacing.token !== seat.display) {
+		throw new Error(`seated site '${site.address}' writes '${site.label}', which is not the seated kind's edge`);
 	}
-	return edge.side;
+	return spacing.side;
 }
 
 export function seatedTableNames(plan: RenderOptionsPlan): ReadonlySet<string> {
@@ -530,7 +530,12 @@ function separatorSitesOf(plan: RenderOptionsPlan): Map<number, number> {
 }
 
 export function carriesPerNodeValue(site: SpacingSite): boolean {
-	return site.role === 'separator' || site.side === 'before' || site.side === 'after' || site.side === 'gap';
+	return site.role === 'separator' || site.spacing?.at === 'separator';
+}
+
+function seamOf(site: SpacingSite): SeamAddress {
+	if (site.spacing?.at !== 'seam') throw new Error(`options.rs: site '${site.address}' of '${site.source}' is not a seam`);
+	return site.spacing;
 }
 
 export function isKindEdge(site: SpacingSite): boolean {
@@ -552,7 +557,7 @@ export function edgeSitesOf(plan: RenderOptionsPlan): EdgeSiteRow[] {
 	};
 	plan.spacingSites.forEach((row, site) => {
 		if (!isKindEdge(row)) return;
-		const seam = parseSeamLabel(row.address)!;
+		const seam = seamOf(row);
 		const id = row.kindId;
 		if (id === undefined) return;
 		const edges = rowOf(id);
@@ -563,11 +568,11 @@ export function edgeSitesOf(plan: RenderOptionsPlan): EdgeSiteRow[] {
 		if (row.edgeArm === undefined) return;
 		const id = row.kindId;
 		const arm = row.edgeArm.kindId;
+		const seam = seamOf(row);
 		if (id === undefined || arm === undefined) {
-			throw new Error(`options.rs: edge arm site '${row.address}' of '${row.source}' names '${row.edgeArm.token}', which has no kind id`);
+			throw new Error(`options.rs: edge arm site '${row.address}' of '${row.source}' names '${seam.token}', which has no kind id`);
 		}
-		const side = parseSeamLabel(row.edgeArm.parent)!.side;
-		rowOf(id)[side === 'before' ? 'beforeArms' : 'afterArms'].push({ arm, site });
+		rowOf(id)[seam.side === 'before' ? 'beforeArms' : 'afterArms'].push({ arm, site });
 	});
 	return [...byKind.entries()]
 		.filter(([id]) => !ambiguous.has(id))

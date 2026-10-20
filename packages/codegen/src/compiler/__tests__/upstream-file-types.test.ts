@@ -3,8 +3,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { grammarPackage, grammarPackages, sittirDirOf } from '../../grammars.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
-import { packageEntryPath, packageGrammarJsPath, packageSourceEntry } from '../resolve-grammar.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
+import { packageEntryPath, packageGrammarJsPath, packageSourceEntry } from '../../dsl/resolve-grammar.ts';
 import { upstreamFileTypes } from '../upstream-file-types.ts';
 
 const CENSUS: Readonly<Record<string, readonly string[]>> = {

@@ -9,9 +9,9 @@ import { blankDeadEnrichMints, DEAD_ENRICH_MINTS_KEY, getDeadEnrichMints } from 
 import { isBlank } from '../rule-patterns.ts';
 import type { WiredOpts } from '../wire/wire.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { packageEntryPath } from '../resolve-grammar.ts';
+import { evaluateDsl } from '../evaluate.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 
 const symbol = (name: string): Rule => ({ type: SYMBOL, name }) as Rule;
 const literal = (value: string): Rule => ({ type: STRING, value }) as Rule;

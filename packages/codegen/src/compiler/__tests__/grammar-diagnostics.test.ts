@@ -14,6 +14,7 @@ import type { RawGrammar } from '../types.ts';
 import { predictedKindsOf, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { AssembledEnum } from '../model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts';
+import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 
 function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], supertypes: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
@@ -558,5 +559,27 @@ describe('the grammar root must be a non-terminal', () => {
 				word: { type: 'PATTERN', value: '[a-z]+' }
 			})
 		).toEqual([]);
+	});
+});
+
+describe('evaluateRecords carries the layer diagnostics and refuses enrich codes as expectations', () => {
+	it('passes raw.layerDiagnostics through unchanged', () => {
+		const layer = {
+			scope: 'grammar' as const,
+			code: 'layer-test-diagnostic',
+			severity: 'error' as const,
+			grammar: 'synth',
+			message: 'a layer diagnostic handed in by the layer',
+			canProceed: false
+		};
+		expect(evaluateRecords({ ...collisionGrammar(), layerDiagnostics: [layer] })).toContainEqual(layer);
+	});
+
+	it('refuses an expectDiagnostics entry that names an ENRICH_SHAPES code as unexpectable', () => {
+		const [code] = Object.keys(ENRICH_SHAPES);
+		const rawGrammar = { ...collisionGrammar(), expectDiagnostics: { [code!]: ['host'] } };
+		expect(evaluateRecords(rawGrammar)).toContainEqual(
+			expect.objectContaining({ code: 'expect-diagnostics-invalid', canProceed: false, details: { code } })
+		);
 	});
 });

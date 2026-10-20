@@ -14,7 +14,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
-import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
+import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
@@ -25,7 +25,7 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
@@ -835,27 +835,27 @@ describe('the envelope pin gate is wired to the real pipeline', () => {
 });
 
 describe('the payload ceiling', () => {
-	it('boxes each pinned payload in every choice the reader reads, and nowhere unboxed', async () => {
-		const src = await getRustTemplatesRs();
-		expect(BOXED_PAYLOADS.rust!.length).toBeGreaterThan(0);
-		for (const name of BOXED_PAYLOADS.rust!) {
-			expect(src).toMatch(new RegExp(`\\n    \\w+\\(Box<${name}>\\),`));
-			expect(src.replace(/\npub enum TriviaNode \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
-		}
-	});
+	const boxedIn = (src: string): string[] =>
+		[...new Set([...src.replace(/\npub enum TriviaNode \{[^}]*\}/, '').matchAll(/\n {4}\w+\(Box<(\w+)>\),/g)].map((m) => m[1]!))].sort();
 
-	it('asserts every payload against the ceiling, each one way', async () => {
+	it('asserts every payload against the ceiling once, the boxed ones over it and the rest within', async () => {
 		const src = await getRustTemplatesRs();
 		const assertions = [...src.matchAll(/^const _: \(\) = assert!\(::core::mem::size_of::<(\w+)>\(\) (<=|>) (\d+), "/gm)];
-		const over = assertions.filter((m) => m[2] === '>').map((m) => m[1]).sort();
-		expect(over).toEqual([...BOXED_PAYLOADS.rust!].sort());
+		const over = assertions.filter((m) => m[2] === '>').map((m) => m[1]!).sort();
+		expect(over.length).toBeGreaterThan(0);
+		expect(boxedIn(src)).toEqual(expect.arrayContaining(over));
 		expect(assertions.every((m) => Number(m[3]) === PAYLOAD_CEILING_BYTES)).toBe(true);
 		expect(new Set(assertions.map((m) => m[1])).size).toBe(assertions.length);
 	});
 
-	it('refuses a pin no choice holds', () => {
-		const [stale] = BOXED_PAYLOADS.rust!;
-		expect(() => payloadCeilingAssertions(BOXED_PAYLOADS.rust!, new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
+	it('holds each payload over the ceiling boxed in every choice', async () => {
+		const src = await getRustTemplatesRs();
+		const over = [...src.matchAll(/^const _: \(\) = assert!\(::core::mem::size_of::<(\w+)>\(\) > /gm)].map((m) => m[1]!);
+		for (const name of over) expect(src.replace(/\npub enum TriviaNode \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n {4}\\w+\\(${name}\\),`));
+	});
+
+	it('refuses a boxed payload no choice holds', () => {
+		expect(() => payloadCeilingAssertions(['UnheldNode'], new Set())).toThrow('UnheldNode is boxed but no choice holds it');
 	});
 });
 

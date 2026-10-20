@@ -3,8 +3,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { installFakeDsl, restoreFakeDsl } from '../../dsl/__tests__/_test-helpers.ts';
 import { structuralBuilder } from '../../dsl/builders.ts';
-import { evaluateDsl } from '../evaluate.ts';
-import { evaluate } from '../evaluate.ts';
+import { evaluateDsl } from '../../dsl/evaluate.ts';
+import { evaluate } from '../../dsl/evaluate.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 import { predictKindCatalog } from '../../dsl/symbol-table.ts';
 

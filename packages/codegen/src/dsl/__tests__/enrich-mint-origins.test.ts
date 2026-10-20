@@ -4,7 +4,7 @@ import { grammarPackage } from '../../grammars.ts';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { baseRulesOf } from '../shared.ts';
 import { getEnrichMints } from '../enrich.ts';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 
 const enrichCalls = vi.hoisted(() => [] as { readonly base: unknown; readonly enriched: unknown }[]);
 

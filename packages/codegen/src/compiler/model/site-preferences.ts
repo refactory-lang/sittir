@@ -15,13 +15,12 @@ import {
 	storageKindOfRef,
 	type NodeOrTerminal
 } from './node-map.ts';
-import { spacingSitesOf, type EdgeArm, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
+import { spacingSitesOf, type EdgeArm, type RenderRules, type SeatedChild } from './render-rules.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import { addressSegments, addressSites, matchAddress, resolveLabels } from './site-addresses.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
-
-export { type SpacingSide } from './render-rules.ts';
+import type { SpacingAddress } from '../../types/spacing.ts';
 import { displayNameOf, displayNameOfEntry, displayOfParserName, displayedKinds } from './display-name.ts';
 
 const UNDECLARED_ARM = '';
@@ -52,7 +51,7 @@ export interface SitePreference {
 	readonly defaultArm: string;
 	readonly source: PreferenceSource;
 	readonly origin?: SeamOrigin;
-	readonly side?: SpacingSide;
+	readonly spacing?: SpacingAddress;
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
@@ -118,7 +117,7 @@ function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boole
 				arms: arms.map((arm) => ({ value: arm, kind: arm })),
 				defaultArm: site.defaultArm,
 				source: 'spacing',
-				side: site.side,
+				spacing: site.spacing,
 				...(site.origin === undefined ? {} : { origin: site.origin }),
 				...(site.seat === undefined ? {} : { seat: site.seat }),
 				...(site.path === undefined ? {} : { path: site.path }),

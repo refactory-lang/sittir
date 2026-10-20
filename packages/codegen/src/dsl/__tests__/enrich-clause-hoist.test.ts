@@ -574,7 +574,7 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 // stamps (`id`/`_ref`, plus the belt-and-braces `metadata`/`hidden`/`inline`)
 // so `visibleGroupSynthName`'s cross-parent dedupe (`groupDedupeMap`) treats
 // two STRUCTURALLY identical clause bodies as the same group even when the
-// sittir runtime's `createProxy` (compiler/evaluate.ts) has stamped each
+// sittir runtime's `createProxy` (dsl/evaluate.ts) has stamped each
 // `$.foo` reference with a PARENT-specific `_ref: { from: currentRule, ... }`
 // (tree-sitter's own dsl.js runtime never stamps this, so the two runtimes
 // would otherwise compute different dedupe hashes for the identical body —
