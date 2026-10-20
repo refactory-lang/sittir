@@ -550,7 +550,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[466, '_let_chain'],
+	[467, '_let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -726,9 +726,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[462, 'struct_pattern_elements_repeat1'],
 	[463, 'delim_token_tree_paren_repeat1'],
 	[464, '_match_block_arms_repeat1'],
-	[465, 'field_identifier'],
-	[467, 'shorthand_field_identifier'],
-	[468, 'type_identifier'],
+	[465, 'crate_visibility_modifier'],
+	[466, 'field_identifier'],
+	[468, 'shorthand_field_identifier'],
+	[469, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1023,7 +1024,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[466, 'let_chain'],
+	[467, 'let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1199,9 +1200,10 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[462, 'struct_pattern_elements_repeat1'],
 	[463, 'delim_token_tree_paren_repeat1'],
 	[464, '_match_block_arms_repeat1'],
-	[465, 'field_identifier'],
-	[467, 'shorthand_field_identifier'],
-	[468, 'type_identifier'],
+	[465, 'crate_visibility_modifier'],
+	[466, 'field_identifier'],
+	[468, 'shorthand_field_identifier'],
+	[469, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2138,6 +2140,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DelimTokenTreeParenRepeat1;
 		case '_match_block_arms_repeat1':
 			return TSKindId._MatchBlockArmsRepeat1;
+		case 'crate_visibility_modifier':
+			return TSKindId.CrateVisibilityModifier;
 		case 'field_identifier':
 			return TSKindId.FieldIdentifier;
 		case 'shorthand_field_identifier':
@@ -3551,7 +3555,11 @@ export interface UnionItem {
 	readonly _where_clause?: WhereClause;
 	readonly _body: FieldDeclarationList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -3592,7 +3600,11 @@ export interface EnumItem {
 	readonly _where_clause?: WhereClause;
 	readonly _body: EnumVariantList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -3660,7 +3672,11 @@ export interface EnumVariant {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -3745,7 +3761,11 @@ export interface FieldDeclaration {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
@@ -3787,7 +3807,11 @@ export interface ExternCrateDeclaration {
 	readonly _name: Identifier;
 	readonly _alias?: Identifier;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -3851,7 +3875,11 @@ export interface ConstItem {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -3921,7 +3949,11 @@ export interface StaticItem {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
@@ -3991,7 +4023,11 @@ export interface TypeItem {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -4075,7 +4111,11 @@ export interface FunctionItem {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly parameters: readonly AttributedParameter[];
@@ -4172,7 +4212,11 @@ export interface FunctionSignatureItem {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly parameters: readonly AttributedParameter[];
@@ -4391,7 +4435,11 @@ export interface TraitItem {
 		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
@@ -4893,7 +4941,11 @@ export interface UseDeclaration {
 			| UseWildcard;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -5221,14 +5273,11 @@ export interface ExternModifier {
 
 export interface VisibilityModifier {
 	readonly $type: TSKindId.VisibilityModifier;
-	readonly _content: TSKindId.Crate | VisibilityModifierPub;
-	readonly __inputHints__?: {
-		readonly content: KindEnum<'crate', TSKindId.Crate> | VisibilityModifierPub;
-	};
+	readonly _content: CrateVisibilityModifier | VisibilityModifierPub;
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<TSKindId.Crate | T.VisibilityModifierPub>>;
+		readonly content: SlotHint<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>;
 	};
-	readonly content: () => TSKindId.Crate | VisibilityModifierPub;
+	readonly content: () => CrateVisibilityModifier | VisibilityModifierPub;
 }
 
 export interface BracketedType {
@@ -8450,7 +8499,11 @@ export interface ModItemExternal {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _name: Identifier;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -8466,7 +8519,11 @@ export interface ModItemInline {
 	readonly _name: Identifier;
 	readonly _body: DeclarationList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly body: readonly DeclarationStatement[];
 	};
 	readonly __slotHints__?: {
@@ -9232,7 +9289,11 @@ export interface StructItemBrace {
 	readonly _where_clause?: WhereClause;
 	readonly _body: FieldDeclarationList;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -9273,7 +9334,11 @@ export interface StructItemTuple {
 	readonly _body: OrderedFieldDeclarationList;
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly body: readonly AttributedOrderedField[];
@@ -9312,7 +9377,11 @@ export interface StructItemUnit {
 	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 	};
@@ -9496,7 +9565,11 @@ export interface AttributedOrderedField {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly visibility_modifier?:
+			| VisibilityModifier
+			| 'crate'
+			| 'pub'
+			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly attributeItems: SlotHint<T.AttributeItem[], true, true>;
@@ -9603,6 +9676,22 @@ export interface FieldIdentifier {
 	};
 	readonly __aliasContent__?: FieldIdentifier.Types;
 	readonly content: () => Identifier;
+}
+
+export interface CrateVisibilityModifier {
+	readonly $type: TSKindId.CrateVisibilityModifier;
+	readonly _content: number;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'crate', TSKindId.Crate>;
+	};
+	readonly __looseHints__?: {
+		readonly content: 'crate' | 'crate';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<TSKindId.Crate>>;
+	};
+	readonly __aliasContent__?: CrateVisibilityModifier.Types;
+	readonly content: () => number;
 }
 
 export interface ShorthandFieldIdentifier {
@@ -16435,6 +16524,20 @@ export interface FieldIdentifierNs extends NodeNs<
 	readonly BuildArgs: FieldIdentifier.BuildArgs;
 	readonly LooseArgs: FieldIdentifier.LooseArgs;
 }
+export interface CrateVisibilityModifierNs extends NodeNs<
+	CrateVisibilityModifier,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CrateVisibilityModifier.Bound,
+	'content',
+	TSKindId.CrateVisibilityModifier,
+	CrateVisibilityModifier.Parsed,
+	never
+> {
+	readonly BuildArgs: CrateVisibilityModifier.BuildArgs;
+	readonly LooseArgs: CrateVisibilityModifier.LooseArgs;
+}
 export interface ShorthandFieldIdentifierNs extends NodeNs<
 	ShorthandFieldIdentifier,
 	LeafScalarMap,
@@ -16794,6 +16897,7 @@ export interface NamespaceMap {
 	[TSKindId.MatchBlockArms]: MatchBlockArmsNs;
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
+	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifierNs;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifierNs;
 	[TSKindId.EmptyStatement]: EmptyStatementNs;
 	[TSKindId.UnitType]: UnitTypeNs;
@@ -17063,6 +17167,7 @@ export interface BoundByKindId {
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Bound;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Bound;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Bound;
+	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifier.Bound;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Bound;
@@ -17308,6 +17413,7 @@ export interface ParsedByKindId {
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Parsed;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Parsed;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Parsed;
+	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifier.Parsed;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Parsed;
@@ -17706,6 +17812,7 @@ export interface TypeKeyOf {
 	[TSKindId.MatchBlockArms]: 'matchBlockArms';
 	[TSKindId.TypeIdentifier]: 'typeIdentifier';
 	[TSKindId.FieldIdentifier]: 'fieldIdentifier';
+	[TSKindId.CrateVisibilityModifier]: 'crateVisibilityModifier';
 	[TSKindId.ShorthandFieldIdentifier]: 'shorthandFieldIdentifier';
 	[TSKindId.EmptyStatement]: 'emptyStatement';
 	[TSKindId.UnitType]: 'unitType';
@@ -19128,7 +19235,9 @@ export namespace VisibilityModifier {
 	}
 	export type Loose = LooseFor<TSKindId.VisibilityModifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifier>;
-	export type BuildArgs = [value: Admit<TSKindId.Crate | T.VisibilityModifierPub>];
+	export type BuildArgs = [
+		value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
+	];
 	export type LooseArgs = [value: T.VisibilityModifier.Loose];
 	export type Kind = TSKindId.VisibilityModifier;
 }
@@ -24710,6 +24819,31 @@ export namespace FieldIdentifier {
 	export type BuildArgs = [value: Admit<T.Identifier>];
 	export type LooseArgs = [value: T.FieldIdentifier.Loose];
 	export type Kind = TSKindId.FieldIdentifier;
+}
+export namespace CrateVisibilityModifier {
+	export type Config = ConfigFor<TSKindId.CrateVisibilityModifier>;
+	export type Types = SupertypeSurface<TSKindId.Crate, BoundByKindId>;
+	export interface Bound extends BoundOf<T.CrateVisibilityModifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CrateVisibilityModifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CrateVisibilityModifier, ParsedByKindId>, NodeMethodsOf, HoldsTree {
+		readonly $type: T.CrateVisibilityModifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.CrateVisibilityModifier['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.CrateVisibilityModifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CrateVisibilityModifier>;
+	export type BuildArgs = [value?: Admit<TSKindId.Crate>];
+	export type LooseArgs = [value?: T.CrateVisibilityModifier.Loose];
+	export type Kind = TSKindId.CrateVisibilityModifier;
 }
 export namespace ShorthandFieldIdentifier {
 	export type Config = ConfigFor<TSKindId.ShorthandFieldIdentifier>;
