@@ -54,8 +54,7 @@ Carried forward unchanged:
 - Pipeline functions take `(target, ctx)`.
 
 Maintainer, 2026-10-19:
-- **`eof()`** is legal only last in its production, with end-of-input in its rule's FOLLOW set, so extracting a choice into a rule does not hide an `eof()` that can never match. The terminator pattern stays legal (§13).
-- **`eof()` refusals** are fixed at their cause, never expected. A step that can consume nothing is not content after a rule that always ends the input. Each authored repetition is checked on its own (§13).
+- **`eof()`** is legal only as the last step of the start rule, outside any repetition. Last in the root it changes nothing, so the rule keeps `eof()` inert until a grammar needs more, and the terminator pattern is refused until then. Neither eof code can be expected (§13).
 
 ## 1. Layers
 
@@ -721,17 +720,9 @@ The rulings left these to the design. Each is stated in its section; this list i
 
 `eof()` is an authoring global, beside `blank()`. It builds `{ type: 'EOF' }`, which matches the end of the input and consumes nothing. Tree-sitter keeps a production that holds an `eof()` only when the `eof()` ends it: that production then needs end-of-input lookahead, and any other is dropped.
 
-- **Where it is legal.** The check runs over the grammar's flattened productions. A repeat helper's productions count as its owner's, and each authored repetition counts on its own, with its own FOLLOW set and its own report, although the parser shares one helper between identical repetitions. An `eof()` is legal when both hold:
-  - it is the last step of its production;
-  - end-of-input is in its rule's FOLLOW set, so some derivation from the start rule places the rule last in the input. The start rule and the extras are followed by end-of-input. A rule that ends a production is followed by whatever follows that production's rule. So is a rule followed in it only by steps that can consume nothing: a rule that derives the empty string, an `eof()`, or an external token, which a scanner may produce with zero width at the end of the input. A rule followed by an `eof()` is followed by end-of-input.
-- **What is refused.** Each refusal is a blocking diagnostic, reported on the authored rule that holds the production. Neither code can be expected: `expectDiagnostics` may not name `eof-not-last` or `eof-in-token`. The compiler lowers `eof()` to blank, so an accepted refusal would assemble a production that tree-sitter drops or that can never match.
-  - `eof-not-last`, for one of four reasons:
-    - something follows an `eof()` in its production;
-    - a rule every derivation of which ends the input is followed by more content (the diagnostic names that rule). Content is a step that must consume input. A step the FOLLOW rule says can consume nothing (an `eof()`, an external token, a rule that derives the empty string) is not content, so `seq($.r, eof())` is legal when every derivation of `r` ends the input;
-    - a repetition's item always ends at `eof()`, so the repetition can never repeat. This holds whatever follows the item, so `repeat1(eof())` is refused;
-    - an `eof()` ends its production in a rule that may end the input but need not, and that rule is never followed by end-of-input, so the `eof()` can never match. Extracting a choice into a rule does not hide this: `r = choice($.x, eof())`, used only as `seq($.r, 'z')`, is refused just as `seq(choice($.x, eof()), 'z')` is.
-  - Each mistake is one diagnostic. A rule every derivation of which ends the input is refused where content follows it (the second reason) or where it repeats (the third), not a second time for its own `eof()`.
+- **Where it is legal.** Only as the last step of one of the start rule's own productions, over the grammar's flattened productions. A repetition's productions are its repeat helper's, not the start rule's, so an `eof()` inside a repetition is refused even when the start rule holds the repetition.
+- **Why so narrow.** The start rule always runs to the end of the input, so an `eof()` last in it changes nothing. The rule keeps `eof()` inert until a grammar has a use for it, and it widens when one does. The first candidate is the terminator pattern, `choice(';', '\n', eof())` ending each statement of a repetition, which is refused until then.
+- **What is refused.** Each refusal is a blocking diagnostic, one per authored rule that holds a refused `eof()`. A repetition's refusal is reported on the rule that holds the repetition. Neither code can be expected: `expectDiagnostics` may not name `eof-not-last` or `eof-in-token`, since the fix is always to move the `eof()` or remove it.
+  - `eof-not-last`: an `eof()` anywhere else: in a rule other than the start rule, inside a repetition, or followed by more steps in its production.
   - `eof-in-token`: an `eof()` inside `token` or `token.immediate`, since a token cannot match the end of input.
-- **The terminator pattern stays legal.** Take `choice(';', '\n', eof())` ending a statement in a repetition of statements. It may end the input, after the last statement, and it may be followed by more content, before the next. Only an `eof()` that can never end the input is refused. A rule that can end it somewhere is legal everywhere it is used.
-- **The compiler.** Normalize lowers `EOF` to blank, so `seq($.x, eof())` assembles as `seq($.x)` does, and a rule whose body is `eof()` assembles as one whose body is `blank()`.
-- **Builders.** A built tree can still place an input-ending arm before more content, such as the terminator on a statement that is not last. Keeping that arm last is a builder placement constraint, not a grammar diagnostic.
+- **The compiler.** Normalize lowers `EOF` to blank, so `seq($.x, eof())` assembles as `seq($.x)` does.
