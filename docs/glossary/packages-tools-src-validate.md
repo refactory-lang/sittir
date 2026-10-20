@@ -232,7 +232,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ### `packages/tools/src/validate/common.ts::isUnitModelType`
 
-Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test (`loadIsLeafKind`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
+Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
 
 
 ### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
@@ -780,13 +780,7 @@ One accessor that threw instead of returning its slot's value, with the slot's s
 
 ### `packages/tools/src/validate/common.ts::loadIsLeafKind`
 
-```text
-/**
- * The model's own classification of a kind as a leaf — a `pattern`, `token`,
- * `keyword` or `enum` kind carries text, not storage — keyed by kind id.
- * Unknown ids (and a grammar with no node model) are not leaves.
- */
-```
+The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by kind id. Unknown ids, and a grammar with no node model, are not leaves.
 
 ### `packages/tools/src/validate/common.ts::loadKindNameFromId`
 
@@ -1749,6 +1743,10 @@ A wrapped node a search found, with its byte span, or `undefined` for a node wit
 ### `packages/tools/src/validate/common.ts::materializeShallow`
 
 A wrapped node one level down: its own data as `materialize` gives it, with each node its slots hold as that node's coordinate (`coordinateOf`), holding its tree, so the render reads the child from the tree. This is the input read-render-parse's shallow lane renders: data whose children are coordinates, the shape a lazy caller sends. A child with no coordinate of its own (a built child, or an alias envelope's content, which shares its envelope's row) is materialized whole instead, since that coordinate would name its holder. The copy holds the root's tree (`holdingTreeOf`). It reads through the slot readers, so it gives the same data on either wire.
+
+### `packages/tools/src/validate/common.ts::isLeafModelType`
+
+Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

@@ -459,6 +459,7 @@ export interface LoadedNodeModel {
 	readonly oneSurfaceKinds: ReadonlySet<string>;
 	readonly seats: SeatTable;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
+	readonly slotNames: Record<string, readonly string[]>;
 	readonly slotStorage: Record<string, Record<string, string>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
@@ -570,6 +571,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	oneSurfaceKinds: new Set(),
 	seats: {},
 	slotKinds: {},
+	slotNames: {},
 	slotStorage: {},
 	factoryShapes: {},
 	factoryFields: {},
@@ -634,6 +636,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		((seats[kind] ??= {})[slot] ??= {})[seat.kind] = seat;
 	};
 	const slotKinds: Record<string, Record<string, readonly string[]>> = {};
+	const slotNames: Record<string, readonly string[]> = {};
 	const slotStorage: Record<string, Record<string, string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
@@ -673,6 +676,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 				}
 			}
 			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [snakeToCamel(slot.name), slotKindsOf(slot)]));
+			slotNames[node.kind] = node.slots.map((slot) => slot.name);
 			slotReaders[node.kind] = node.slots.map((slot) => ({ storageKey: slotStorageKey(slot.name), accessor: slot.accessor }));
 			if (node.factoryShape !== undefined) {
 				factorySlots[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.name, factorySlotMetaOf(slot)]));
@@ -714,6 +718,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		oneSurfaceKinds,
 		seats,
 		slotKinds,
+		slotNames,
 		slotStorage,
 		factoryShapes,
 		factoryFields,
@@ -952,9 +957,12 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 	const { modelTypes } = await loadNodeModel(grammar);
 	return (kindId) => {
 		const name = kindNameFromId?.(kindId);
-		const modelType = name === undefined ? undefined : modelTypes[name];
-		return modelType === 'pattern' || modelType === 'enum' || isUnitModelType(modelType);
+		return isLeafModelType(name === undefined ? undefined : modelTypes[name]);
 	};
+}
+
+export function isLeafModelType(modelType: string | undefined): boolean {
+	return modelType === 'pattern' || modelType === 'enum' || isUnitModelType(modelType);
 }
 
 export function isUnitModelType(modelType: string | undefined): boolean {
