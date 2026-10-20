@@ -6,7 +6,7 @@ describe('rule-cause declarations', () => {
 		const body = ($: unknown) => $;
 		const tagged = reauthored('ambiguity', body);
 		expect(tagged).toBe(body);
-		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', cause: 'ambiguity' });
+		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', causes: [{ cause: 'ambiguity' }] });
 	});
 
 	it('reauthored records every witness it is given', () => {
@@ -15,7 +15,34 @@ describe('rule-cause declarations', () => {
 			{ text: 'set x()', form: ['set', { symbol: 'name' }, '(', ')'], kind: 'getter', production: 'q' }
 		] as const;
 		const tagged = reauthored('accepts-invalid-syntax', witnesses, () => 1);
-		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses });
+		expect(ruleCauseOf(tagged)).toEqual({ kind: 'reauthored', causes: [{ cause: 'accepts-invalid-syntax', witnesses }] });
+	});
+
+	it('reauthored takes two cause pairs and records each cause with its own witnesses', () => {
+		const accepts = [{ text: 'get x(a)', form: ['get', { symbol: 'name' }, '(', ')'], kind: 'getter', production: 'p' }] as const;
+		const narrowed = [{ text: 'get x()', form: ['get', { symbol: 'name' }, '(', ')'], kind: 'getter', ruling: 'the parameter is excluded' }] as const;
+		const tagged = reauthored(
+			[
+				['accepts-invalid-syntax', accepts],
+				['ruled-narrowing', narrowed]
+			],
+			() => 1
+		);
+		expect(ruleCauseOf(tagged)).toEqual({
+			kind: 'reauthored',
+			causes: [
+				{ cause: 'accepts-invalid-syntax', witnesses: accepts },
+				{ cause: 'ruled-narrowing', witnesses: narrowed }
+			]
+		});
+	});
+
+	it('a ruled-narrowing cause records the ruling its witnesses state', () => {
+		const narrowed = [{ text: 'get x()', form: ['get', { symbol: 'name' }, '(', ')'], kind: 'getter', ruling: 'the parameter is excluded' }] as const;
+		expect(ruleCauseOf(reauthored('ruled-narrowing', narrowed, () => 1))).toEqual({
+			kind: 'reauthored',
+			causes: [{ cause: 'ruled-narrowing', witnesses: narrowed }]
+		});
 	});
 
 	it('vocabulary tags without a cause', () => {

@@ -1,5 +1,5 @@
 {
-	"grammarHash": "44b5475a5550eaf14c84a9b2862c4f6b44476322761f565b4e9ae41170ad3973",
+	"grammarHash": "4e1a5eef8869579c9f4701b1b5f9b8dd0e0bbd5ade4a0881466c63eb66ece9bc",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_call_signature","constructor_type"]},"step":"upstream-declared","sourceChains":[["_call_signature"],["constructor_type"]],"conflict":{"symbolSequence":["'<'","'('","'new'","formal_parameters"],"lookahead":"'=>'","interpretations":["_call_signature","constructor_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_call_signature","function_type"]},"step":"upstream-declared","sourceChains":[["_call_signature"],["function_type"]],"conflict":{"symbolSequence":["'<'","'('","formal_parameters"],"lookahead":"'=>'","interpretations":["_call_signature","function_type","function_type","function_type"]}},
@@ -70,7 +70,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["variable_declarator_plain","for_header_let_const_kind"]},"step":"upstream-declared","sourceChains":[["variable_declarator_plain","variable_declarator"],["for_header_let_const_kind","_for_header"]],"conflict":{"symbolSequence":["'for'","'('","'let'","identifier"],"lookahead":"_automatic_semicolon","interpretations":["variable_declarator_plain","for_header_let_const_kind"]}}
 	],
 	"bound": {
-		"grammarHash": "44b5475a5550eaf14c84a9b2862c4f6b44476322761f565b4e9ae41170ad3973",
+		"grammarHash": "4e1a5eef8869579c9f4701b1b5f9b8dd0e0bbd5ade4a0881466c63eb66ece9bc",
 		"resolutions": []
 	}
 }

@@ -1,7 +1,7 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import {
 	WITNESSED_CAUSES,
-	type InvalidSyntaxWitness,
+	type DeclaredCause,
 	type OtherKindWitness,
 	type RuleCause,
 	type RuleCauseDeclaration,
@@ -49,7 +49,8 @@ export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 	'accepts-other-kind': [],
 	'semantic-gap': [],
 	'rejects-valid-syntax': [],
-	'accepts-invalid-syntax': []
+	'accepts-invalid-syntax': [],
+	'ruled-narrowing': []
 };
 
 type GrammarRules = Readonly<Record<string, Rule<'evaluate'>>>;
@@ -72,11 +73,44 @@ export interface RuleCausesInput {
 }
 
 export function isWitnessVerified(declaration: RuleCauseDeclaration): boolean {
-	return declaration.kind === 'reauthored' && (WITNESSED_CAUSES as readonly RuleCause[]).includes(declaration.cause);
+	return declaration.kind === 'reauthored' && declaration.causes.every(({ cause }) => (WITNESSED_CAUSES as readonly RuleCause[]).includes(cause));
 }
 
 export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules'>): string[] {
 	return [...Object.keys(raw.ruleCauses ?? {}), ...(raw.undeclaredRules ?? [])];
+}
+
+export function unverifiedRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'references' | 'stages'>): string[] {
+	const causes = raw.ruleCauses ?? {};
+	const authored = new Set(authoredRuleNames(raw));
+	const upstream = new Set(Object.keys(raw.stages?.raw.grammar.rules ?? {}));
+	const referrers = new Map<string, string[]>();
+	for (const { from, to } of raw.references) referrers.set(to, [...(referrers.get(to) ?? []), from]);
+	const reachers = (name: string): string[] => {
+		const found: string[] = [];
+		const seen = new Set([name]);
+		const pending = [name];
+		for (let next = pending.pop(); next !== undefined; next = pending.pop()) {
+			for (const from of referrers.get(next) ?? []) {
+				if (seen.has(from)) continue;
+				seen.add(from);
+				if (authored.has(from) || upstream.has(from)) found.push(from);
+				else pending.push(from);
+			}
+		}
+		return found;
+	};
+	const isVerifiedReacher = (name: string): boolean => {
+		const declaration = causes[name];
+		return declaration !== undefined && isWitnessVerified(declaration);
+	};
+	const isVerified = (name: string, declaration: RuleCauseDeclaration): boolean => {
+		if (declaration.kind === 'reauthored') return isWitnessVerified(declaration);
+		const reached = reachers(name);
+		return reached.length > 0 && reached.every(isVerifiedReacher);
+	};
+	const unverified = Object.entries(causes).filter(([name, declaration]) => !isVerified(name, declaration));
+	return [...unverified.map(([name]) => name), ...(raw.undeclaredRules ?? [])].sort();
 }
 
 export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] {
@@ -108,11 +142,11 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 		);
 	}
 	for (const [name, declaration] of Object.entries(raw.ruleCauses ?? {})) {
-		const diagnostic =
+		const diagnostics =
 			declaration.kind === 'vocabulary'
-				? judgeVocabulary(grammar, name, enriched)
-				: judgeReauthored(grammar, enriched, name, declaration, upstreamRules, authoredRules);
-		if (diagnostic !== undefined) out.push(diagnostic);
+				? [judgeVocabulary(grammar, name, enriched)]
+				: declaration.causes.map((declared) => judgeReauthored(grammar, enriched, name, declared, upstreamRules, authoredRules));
+		for (const diagnostic of diagnostics) if (diagnostic !== undefined) out.push(diagnostic);
 	}
 	return out;
 }
@@ -286,22 +320,31 @@ function judgeRejectedWitnesses(
 	);
 }
 
-function judgeInvalidWitnesses(
+const NARROWING_JUSTIFICATIONS = {
+	'accepts-invalid-syntax': { key: 'production', missing: 'it cites no excluding production' },
+	'ruled-narrowing': { key: 'ruling', missing: 'it states no ruling' }
+} as const;
+
+type NarrowingCause = keyof typeof NARROWING_JUSTIFICATIONS;
+
+function judgeNarrowingWitnesses(
 	grammar: string,
 	name: string,
+	cause: NarrowingCause,
 	witnesses: Witnesses<OtherKindWitness> | undefined,
 	upstreamRules: GrammarRules,
 	authoredRules: GrammarRules
 ): GrammarDiagnostic | undefined {
+	const { key, missing } = NARROWING_JUSTIFICATIONS[cause];
 	return judgeWitnesses(
 		grammar,
 		name,
-		'accepts-invalid-syntax',
+		cause,
 		witnesses,
 		'The witness must be a form upstream derives and the authored rule does not',
 		(witness) => {
-			const { production } = witness as Partial<InvalidSyntaxWitness>;
-			if (typeof production !== 'string' || production.trim().length === 0) return 'it cites no excluding production';
+			const justification = (witness as unknown as Readonly<Record<string, unknown>>)[key];
+			if (typeof justification !== 'string' || justification.trim().length === 0) return missing;
 			const upstream = upstreamRules[witness.kind];
 			if (upstream === undefined) return `upstream declares no rule '${witness.kind}'`;
 			if (!derivesForm(upstreamRules, upstream, witness.form)) return `upstream '${witness.kind}' does not derive the witness form`;
@@ -319,11 +362,11 @@ function judgeReauthored(
 	grammar: string,
 	enriched: StageDiagnosis,
 	name: string,
-	declaration: Extract<RuleCauseDeclaration, { kind: 'reauthored' }>,
+	declared: DeclaredCause,
 	upstreamRules: GrammarRules,
 	authoredRules: GrammarRules
 ): GrammarDiagnostic | undefined {
-	const { cause } = declaration;
+	const { cause, witnesses } = declared;
 	if (!Object.hasOwn(PROVOKING_CODES, cause)) {
 		return blocking(
 			grammar,
@@ -346,11 +389,11 @@ function judgeReauthored(
 			{ cause }
 		);
 	}
-	if (cause === 'rejects-valid-syntax') return judgeRejectedWitnesses(grammar, name, declaration.witnesses, upstreamRules);
-	if (cause === 'accepts-invalid-syntax')
-		return judgeInvalidWitnesses(grammar, name, declaration.witnesses, upstreamRules, authoredRules);
+	if (cause === 'rejects-valid-syntax') return judgeRejectedWitnesses(grammar, name, witnesses, upstreamRules);
+	if (cause === 'accepts-invalid-syntax' || cause === 'ruled-narrowing')
+		return judgeNarrowingWitnesses(grammar, name, cause, witnesses, upstreamRules, authoredRules);
 	if (cause === 'accepts-other-kind' || cause === 'semantic-gap')
-		return judgeOtherKindWitnesses(grammar, name, declaration.witnesses, upstreamRules, cause);
+		return judgeOtherKindWitnesses(grammar, name, witnesses, upstreamRules, cause);
 	const provoking = [
 		...new Set(enriched.diagnostics.filter((d) => d.ownerKind === name && ANY_PROVOKING.has(d.code)).map((d) => d.code))
 	].sort();
