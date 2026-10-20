@@ -71,7 +71,7 @@ The cost of keeping bare ids on grammar guards: a bare id carries no language, s
 | rust | `crate` within `visibility_modifier` reads as `modifier.visibility.public.internal` | 1 | an alias, `internal_public_visibility_modifier` (2026-10-10, P2) |
 | python | `function_definition` in a class body, directly or decorated, reads as `declaration.method` | 2 | the method alias, five clones (2026-10-10, P1) |
 | python | `staticmethod` read through the enclosing `decorated_definition` (within it, and the `up: 1` condition) | 1 | the envelope sets its element's flag (2026-10-10, P4) |
-| python | an `identifier` within `parameters` / `lambda_parameters` reads as `declaration.parameter` | 2 | the claims are deleted: an identifier is slotless and reads through its parent's member |
+| python | an `identifier` within `parameters` / `lambda_parameters` reads as `declaration.parameter` | 2 | the claims are deleted: a leaf has no slots, an identifier is a leaf, and it reads through its parent's member |
 | python | an `identifier` within `type` reads as `identifier.type` | 1 | deleted, as above |
 
 `grammar.bindings.ts` is generated from `bindings.scm` (`bindings-inventory --write`), so the restatement goes in `bindings.scm`, with the aliases in `grammar.sittir.ts`.
