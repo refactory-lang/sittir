@@ -534,33 +534,35 @@ Each record prototype and measuring tool the arena steps already hold, with its 
 - **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `NodeLayout::trivia` (`NodeTrivia`, `TriviaEntry`). 3b-ii moves it into the built nodes' native trivia table.
 - **The shared-arena spec's § What the JavaScript wrap keeps** now defines eager immutable built records after cutover. Fields encoded at render are strictly transitional object-wire behavior, not a pending option.
 
-### Rulings (the maintainer, 2026-10-12; ruling 1.1 revised the same day)
+### Rulings (the maintainer, 2026-10-12; ruling 1.1 revised the same day and again on 2026-10-20)
 
 1. **String storage.** A record stays fixed-size, so text lives outside it.
-   1. **Parsed leaf text: decoded from the tree's one copy of the source** (revised from UTF-16 offsets, which relied on a second copy of the source in JavaScript).
-      - There is one copy of the source: the tree's native UTF-8 bytes. They cross to JavaScript as an external `ArrayBuffer` over native memory, finalized with the tree, so no copy is made.
-      - The buffer is created lazily, on the first `$text` or source-bytes access, never at parse. A caller who reads only structure (kinds, slots, queries, edits, render) never makes it.
-      - The record stores the leaf's byte span only: no UTF-16 words and no non-ASCII index. The native render slices the span as it does today, and `$text` decodes it with `TextDecoder` on access.
-      - Whether a wrapper caches the decoded string is a Task 10 row (decode time against retained heap), not a default.
+   1. **Parsed leaf text: the source stays native; JavaScript gets a node's text by a native call, never the source bytes** (the user, 2026-10-20: "The trees' bytes and strings should never have to cross the boundary"; it replaces an external `ArrayBuffer` over the source, which JavaScript could write into).
+      - There is one copy of the source: the tree's native UTF-8 bytes. They never cross to JavaScript, as a buffer or as a string, so native code's `&str` over them stays valid by construction.
+      - The record stores the leaf's byte span only: no UTF-16 words and no non-ASCII index. The native render slices the span as it does today, and `$text` asks the tree for that span's text (`TreeHandle.text(span)`): one native call, which returns one string of that span's characters.
+      - A caller who reads only structure (kinds, slots, queries, edits, render) makes no string.
+      - Whether a wrapper caches the string is a Task 10 row (call time against retained heap), not a default.
       - `TreeHandle.source`, the JavaScript copy, goes (§ The source copy, below). A kept `$text` then holds only its own characters, never the whole file behind a sliced string.
    2. **Built and edited leaf text: a per-arena string table.** UTF-8 is written once into the arena's byte buffer (`TextEncoder.encodeInto`), deduplicated by a `Map` from string to offset. Records reference it by offset and length, and the native render reads it in place. A built node's `$text` stays the builder's string.
-   3. **No JavaScript-side interning of `$text`.** Ruling 1.1 creates no napi strings, so there is nothing to intern unless Task 10's numbers show otherwise.
+   3. **No JavaScript-side interning of `$text`.** A `$text` access creates one string of that node's text (ruling 1.1), and none is interned unless Task 10's numbers show otherwise.
 
-   Task 10 still times the alternatives as reference rows: for parsed text, UTF-16 offsets slicing a JavaScript copy of the source, and a native call on first access cached on the wrapper; for built text, a JavaScript array of strings that records index, crossing at each render. The designs are the ones above.
+   Task 10 still times the alternatives as reference rows: for parsed text, UTF-16 offsets slicing a JavaScript copy of the source; for built text, a JavaScript array of strings that records index, crossing at each render. The designs are the ones above.
 2. **The match-all row: both wires get a batch read** (`read_many(tree, indexes, depth, wire)`). The object wire returns an array of nodes, and the record wire one buffer range. The measurement row compares those, as the probe did, and today's path (coordinates, then a read each) is timed beside them.
 3. **Built-node storage: both implementations are benchmarked, one is the destination.** A generated eager immutable record builder for rust `function_item` and its slot kinds is compared with today's transitional built objects encoded at render by the 2026-10-01 encoder (prior art 1). Compare build cost, retained memory, native render and sharing; benchmark failure drives optimization, not continued object storage.
 4. **A failed performance row is documented and optimized,** not treated as an adoption veto. Correctness, lifetime and memory-safety failures block the affected implementation/cutover until resolved. Keep the record of all measurements.
 
 ### The source copy
 
-Ruling 1.1 removes the tree handle's JavaScript copy of the source. A census on master (the property renamed and the workspace type-checked, then a text search for untyped reads) finds one writer and one reader:
+Ruling 1.1 removes the tree handle's JavaScript copy of the source. A census on `feat/records` (the property removed and the workspace type-checked, then a text search for untyped reads) finds one writer, two readers and one test:
 
 | site | use | where it moves |
 | --- | --- | --- |
-| `packages/common/src/engine.ts`, `parseAndRead`'s tree handle | writes `source` | drops it, and adds `bytes()` and `text(span)` over the tree's native bytes (Interfaces) |
-| `packages/tools/src/validate/common.ts`, `readNodeText` | slices `tree.source` by a node's span when the node has no `$text` | reads `tree.text(span)` |
+| `packages/common/src/engine.ts`, `parseAndRead`'s tree handle | writes `source` | drops it, and adds `text(span)`, the native call (Interfaces) |
+| `packages/tools/src/validate/common.ts`, `readNodeText` | slices `tree.source` by a node's span when the node has no `$text` | reads the span's text (`spannedTextOf`) |
+| `packages/common/src/portable/classify.ts`, the classifier's text of an item | slices `tree.source` by a node's span when the node has no `$text` | reads the span's text (`spannedTextOf`) |
+| `packages/rust/tests/tree-identity-and-verbatim.test.ts` | pins `tree.source` equal to the parsed source | pins the text of the root's span equal to it |
 
-Nothing else reads it. The span helpers (`sourceSpans`, `spanSlicer`, `sliceSpan` in `packages/common/src/span.ts`) and their callers slice a string the caller holds itself: a corpus entry's source in the validators (`from.ts`, `factory-storage.ts`, `read-render-parse.ts`, `gap-census.ts`), an inventory file (`inventory/bindings.ts`) or a probe's input (`probe/kind.ts`). The same goes for the host-template reparse (`reparse.ts`), which reparses rendered text. None of these is the tree's copy, so they stay. The removal is small enough for Task 9.
+Each reader wants one node's text, so none needs the source in bulk. Nothing else reads it. The span helpers (`sourceSpans`, `spanSlicer`, `sliceSpan` in `packages/common/src/span.ts`) and their callers slice a string the caller holds itself: a corpus entry's source in the validators (`from.ts`, `factory-storage.ts`, `read-render-parse.ts`, `gap-census.ts`), an inventory file (`inventory/bindings.ts`) or a probe's input (`probe/kind.ts`). The same goes for the host-template reparse (`reparse.ts`), which reparses rendered text. None of these is the tree's copy, so they stay. The removal is small enough for Task 9.
 
 ### Interfaces
 
@@ -568,9 +570,10 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
 
 - **The arena.** One per tree, for parsed records, plus one per engine, for built records (ruling 3).
   - An arena is a list of fixed-size chunks of `u32` words. No record straddles a chunk, and a chunk never moves, so a view held across a later read still reads its record.
-  - Each chunk crosses to JavaScript once, as an external `ArrayBuffer` over native memory, finalized with its arena.
+  - A parsed tree's chunk crosses to JavaScript as a copy JavaScript owns (`chunk(tree, n)`): the words its records fill when it is asked for. A later read that appends to the chunk leaves the copy as it was, so a reader asks again for an address past it. No JavaScript write reaches the native arena.
+  - The built nodes' arena is buffers JavaScript owns: builders write their records into them, and native code reads them per call, borrowed (napi-rs's `BufferSlice`), never holding them across calls, and refuses malformed words (Review Focus 1).
   - A record's address is (chunk, word): one `f64`-safe number, `chunk * 2^20 + word`.
-- **The source bytes** (ruling 1.1). A tree's UTF-8 source, held natively, crosses to JavaScript as one external `ArrayBuffer` over that memory, finalized with the tree. It is made on the first `$text` or source-bytes access (`TreeHandle.bytes()`), never at parse, and never copied. `TreeHandle.text(span)` decodes a byte span from it.
+- **The source text** (ruling 1.1). A tree's UTF-8 source stays native and never crosses. `TreeHandle.text(span)` is a native call that returns the text of one byte span, and refuses a span that is not one of the source's (past its end, reversed, or splitting a character).
 - **A record.** Word 0 is the kind's grammar id and word 1 the side record's address (0 for none). Next come the kind's presence words, if it has presence slots, and then each other slot's cell at its stamped `word`.
   - A parsed record's side record carries `at` (tree, index, end) and the layout facts the reader stamps. A built record's carries `edges`, `gap`, `flank`, `sides`, `changed` and `units`. A built node's trivia is not in its records: from 3b-ii it is in the built nodes' native trivia table.
   - The record names its tree once, on the arena, so a parsed cell names no tree.
@@ -590,7 +593,8 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
   - `read_record(tree, index, depth) -> address`;
   - `read_many(tree, indexes, depth, wire)` (ruling 2);
   - `render_record(address, tree, options) -> string`;
-  - `chunk(arena, n) -> ArrayBuffer`.
+  - `chunk(tree, n) -> Uint32Array`, a copy JavaScript owns;
+  - `text(tree, span) -> string` (ruling 1.1).
 
   The existing `read` and `render` are unchanged.
 
@@ -665,7 +669,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
 - Test: macro tests, `rust/crates/sittir-core/tests/`, and `sittir-parity-tests`.
 
 **Steps.**
-1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, the string table of ruling 1.2, and the tree's lazily made source buffer of ruling 1.1.
+1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, and the string table of ruling 1.2.
 2. The derive expands, per declaration:
    - a record writer (node → records, children before parents);
    - a record reader (records → node), which bounds-checks every word it reads and refuses any malformed cell;
@@ -681,14 +685,14 @@ raw-string routing metadata where the type alone cannot express its parser behav
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/wrap.ts`, which emits a record-backed wrap per kind beside today's, in Task 6's form, V2 (accessors as methods over the record's address).
-- Modify: `packages/common/src/engine.ts`: an internal switch, never part of the public API, that picks the wire for the measurement scripts; and the tree handle's source bytes (`bytes()`, `text(span)`) in place of `source`.
+- Modify: `packages/common/src/engine.ts`: an internal switch, never part of the public API, that picks the wire for the measurement scripts; and the tree handle's `text(span)` in place of `source`.
 - Modify: `packages/common/src/read.ts` (`TreeHandle`) and `packages/tools/src/validate/common.ts` (`readNodeText`).
 - Generated: `packages/<lang>/src/wrap.ts`.
 
 **Steps.**
 1. Each accessor reads its cell through the stamped offsets in `records.ts` and hydrates a coordinate cell as today's accessor does.
-2. `$text` decodes the record's byte span from the tree's source bytes (ruling 1.1). A built leaf keeps the builder's string.
-3. The source copy goes (§ The source copy): `TreeHandle.source` is removed, `bytes()` and `text(span)` are added, and its one reader moves to them.
+2. `$text` asks the tree for the text of the record's byte span (`TreeHandle.text`, ruling 1.1). A built leaf keeps the builder's string.
+3. The source copy goes (§ The source copy): `TreeHandle.source` is removed, the native `text(span)` is added, and its readers move to it.
 4. The record-backed wraps are tested against today's: every corpus node's accessors, kinds and `$text` are equal on both wires (Review Focus 3). A view held across arena growth (Review Focus 2) and a disposed tree's view (Review Focus 4) are pinned.
 5. For ruling 3, a generated eager builder for rust `function_item` and its slot kinds writes records as it builds. It is measurement code, in the probe folder, not in the grammar package.
 
@@ -702,8 +706,8 @@ raw-string routing metadata where the type alone cannot express its parser behav
 - **retained heap per node,** members attached (`function-item-heap.mts`'s population, both wires);
 - **render decode per node:** native decode of a native node from napi objects (`FromNapiValue`) against from records, timed natively in a measure-only build feature that the published build never enables;
 - **the rebuilt render's native call per slot value** over the parity fixtures (`measure-rebuilt.mts`, `layout-rounds.sh`);
-- **`$text` by the ruled design, with the alternatives as reference rows** (ruling 1): time per access, and heap per leaf over a whole-tree walk, with and without a decoded string cached on the wrapper;
-- **heap per tree with and without a text access:** a parse read for structure only (no `$text`, so no source buffer) against the same parse after one `$text`, beside today's tree with its JavaScript source copy;
+- **`$text` by the ruled design, with the alternatives as reference rows** (ruling 1): time per access, and heap per leaf over a whole-tree walk, with and without the string cached on the wrapper;
+- **heap per tree with and without a text access:** a parse read for structure only (no `$text`, so no string) against the same parse after one `$text`, beside today's tree with its JavaScript source copy;
 - **built nodes, eager immutable records against transitional encode-at-render objects** (ruling 3): build time and full retained memory per node, decode, chunk growth over 10 000 builds, and an immutable `$with` of a child two parents share: verify that neither parent changes when the child is updated through the other.
 
 **The evidence.** Report each object/record comparison, absolute values and deltas. Separate performance misses (optimize and retest) from source-fidelity, correctness, ownership and memory-safety failures (block cutover). Include allocation counts, record capacity/slack, native/external memory and RSS. The PR records findings without reopening the packed-format decision.
@@ -722,4 +726,4 @@ Detail against the measured implementation after Task 10 and the resulting optim
 - **Built nodes' trivia in their own native table** (the trivia-table spec's § 7.1).
   - A built node's sides move from the node into the built nodes' trivia table, keyed by record address and side, and travel with it. Writing a side updates the table; the node's record stays immutable, and no record that shares it changes. A built holder keeps nothing for its children. A parsed node placed in a built holder keeps its sides in its tree's table. The render reads trivia from native storage only.
   - **Retires:** `$_layout.trivia`, `setTriviaData` and the trivia writer's client store; `NodeLayout::trivia`, `NodeTrivia` and `TriviaEntry` with their napi decode.
-- **A native file-based parse** (the maintainer, 2026-10-12). `parseFile(path)`, only for grammars that declare file types: native code reads the file, JavaScript gets records, and text decodes lazily from the shared source bytes, so the source never exists as a JavaScript string. Its API shape (the name, options, errors for an unreadable file, and encoding and BOM handling) is designed here and goes to the maintainer before code.
+- **A native file-based parse** (the maintainer, 2026-10-12). `parseFile(path)`, only for grammars that declare file types: native code reads the file, JavaScript gets records, and a node's text comes by the native text call (ruling 1.1), so the source never exists in JavaScript. Its API shape (the name, options, errors for an unreadable file, and encoding and BOM handling) is designed here and goes to the maintainer before code.
