@@ -2677,9 +2677,11 @@ function _buildExternModifier(value?: Admit<T.StringLiteral>): T.ExternModifier.
 }
 
 export function buildVisibilityModifier(
-	value: Admit<TSKindId.Crate | T.VisibilityModifierPub>
+	value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
 ): T.VisibilityModifier.Bound {
-	const _content = kindIdStorage<NonNullable<T.VisibilityModifier['_content']>>(value);
+	const _content = admitAliasContent<NonNullable<T.VisibilityModifier['_content']>>(value, [
+		[[127], (v: unknown) => buildCrateVisibilityModifier(v as never)]
+	]);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.VisibilityModifier as const,
@@ -2687,8 +2689,9 @@ export function buildVisibilityModifier(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: Admit<NonNullable<TSKindId.Crate | T.VisibilityModifierPub>>) =>
-				rebuilt(node, handle, () => buildVisibilityModifier(value))
+			content: (
+				value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
+			) => rebuilt(node, handle, () => buildVisibilityModifier(value))
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
@@ -10473,6 +10476,32 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 	return node as unknown as T.FieldIdentifier.Bound;
 }
 
+export function buildCrateVisibilityModifier(value?: Admit<TSKindId.Crate>): T.CrateVisibilityModifier.Bound {
+	const _content = kindIdStorage<NonNullable<T.CrateVisibilityModifier['_content']>>(
+		orDefault(value, () => TSKindId.Crate as const)
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CrateVisibilityModifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: Admit<NonNullable<TSKindId.Crate>>) =>
+				rebuilt(node, handle, () => buildCrateVisibilityModifier(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CrateVisibilityModifier.Bound;
+}
+
 export function buildShorthandFieldIdentifier(value: Admit<T.Identifier>): T.ShorthandFieldIdentifier.Bound {
 	const _content = value;
 	const handle = currentHandle();
@@ -10761,6 +10790,7 @@ export type FluentKindMap = {
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
+	crate_visibility_modifier: T.CrateVisibilityModifier.Bound;
 	shorthand_field_identifier: T.ShorthandFieldIdentifier.Bound;
 };
 
@@ -11029,6 +11059,7 @@ export const _factoryMap = {
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
+	crate_visibility_modifier: buildCrateVisibilityModifier,
 	shorthand_field_identifier: buildShorthandFieldIdentifier
 } as const;
 export type _FactoryMap = typeof _factoryMap;

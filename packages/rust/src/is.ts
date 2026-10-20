@@ -955,6 +955,9 @@ export interface IsGuards {
 	fieldIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldIdentifier };
+	crateVisibilityModifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CrateVisibilityModifier };
 	shorthandFieldIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ShorthandFieldIdentifier };
@@ -1425,7 +1428,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	468, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	469, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
@@ -1860,6 +1863,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		structItemUnit: _g(TSKindId.StructItemUnit),
 		typeIdentifier: _g(TSKindId.TypeIdentifier),
 		fieldIdentifier: _g(TSKindId.FieldIdentifier),
+		crateVisibilityModifier: _g(TSKindId.CrateVisibilityModifier),
 		shorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
 		statement: _mg(177),

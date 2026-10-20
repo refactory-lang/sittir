@@ -8160,6 +8160,10 @@ route those literals by kind ids the parser never issues there.
 // STRING — only a WORD keyword claims a bare-string route.
 ```
 
+### `packages/codegen/src/emitters/shared.ts::keywordAliasContent`
+
+The keyword an alias envelope displays, as its content reference and text: the alias has exactly one slot, holding exactly one reference to a fixed-text keyword leaf. `wordConstructibleText` falls back to it, so a leaf alias over a keyword (rust's `crate_visibility_modifier` over `crate`) claims the keyword's bare-string route in `_KEYWORD_BRANCH_BY_TEXT` the way an authored compound that opens with the keyword does. `emitResolverHelpers` builds that alias from the keyword's kind id (`fixedTextEntryOf` on the content reference) and registers the same id in `_KEYWORD_BRANCH_BY_KIND_ID`, so a bare keyword kind id picks the alias arm that displays it directly over an arm that only reaches the keyword through nested structure (`pub(crate)`).
+
 ### `packages/codegen/src/emitters/shared.ts::transparentWrapperContentSlot`
 
 ```text
@@ -10499,7 +10503,7 @@ The text → discriminant rows behind `kindEnumTextMapExpr`, each flagged `keywo
 
 ### `packages/codegen/src/emitters/shared.ts::fixedTextEntryOf`
 
-The text → discriminant row for one fixed-text value — a reference to a fixed-text leaf, or a literal terminal — or `undefined` for any other value or one with no catalog kind. A leaf reference resolves its wire identity through `keywordRefWireIdentity`; a literal resolves through its stamped `resolvedKindId`, falling back to the catalog row for its text.
+Exported so an alias over a keyword resolves its content the same way. The text → discriminant row for one fixed-text value — a reference to a fixed-text leaf, or a literal terminal — or `undefined` for any other value or one with no catalog kind. A leaf reference resolves its wire identity through `keywordRefWireIdentity`; a literal resolves through its stamped `resolvedKindId`, falling back to the catalog row for its text.
 
 ### `packages/codegen/src/emitters/shared.ts::isKeywordKindIn`
 

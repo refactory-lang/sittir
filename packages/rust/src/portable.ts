@@ -664,12 +664,12 @@ export interface PortableIds {
 		| TSKindId.EscapeSequenceUnicodeFixed;
 	'literal.string.raw': TSKindId.RawStringLiteral;
 	'literal.string.text': TSKindId.RawStringLiteralContent | TSKindId.StringContent;
-	modifier: TSKindId.Crate | TSKindId.ExternModifier | TSKindId.VisibilityModifierPub;
+	modifier: TSKindId.CrateVisibilityModifier | TSKindId.ExternModifier | TSKindId.VisibilityModifierPub;
 	'modifier.extern': TSKindId.ExternModifier;
-	'modifier.visibility': TSKindId.Crate | TSKindId.VisibilityModifierPub;
+	'modifier.visibility': TSKindId.CrateVisibilityModifier | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.private': TSKindId.VisibilityModifierPub;
-	'modifier.visibility.public': TSKindId.Crate | TSKindId.VisibilityModifierPub;
-	'modifier.visibility.public.internal': TSKindId.Crate | TSKindId.VisibilityModifierPub;
+	'modifier.visibility.public': TSKindId.CrateVisibilityModifier | TSKindId.VisibilityModifierPub;
+	'modifier.visibility.public.internal': TSKindId.CrateVisibilityModifier | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.restricted': TSKindId.VisibilityModifierPub;
 	pattern:
 		| TSKindId.CapturedPattern
@@ -3533,7 +3533,7 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'identifier.crate': { ids: [TSKindId.Crate], exact: false },
+		'identifier.crate': { ids: [TSKindId.Crate], exact: true },
 		'identifier.field': { ids: [TSKindId.FieldIdentifier], exact: true },
 		'identifier.label': { ids: [TSKindId.Label], exact: true },
 		'identifier.lifetime': { ids: [TSKindId.Lifetime], exact: true },
@@ -3642,12 +3642,21 @@ const table: PortableTable = {
 		},
 		'literal.string.raw': { ids: [TSKindId.RawStringLiteral], exact: false },
 		'literal.string.text': { ids: [TSKindId.RawStringLiteralContent, TSKindId.StringContent], exact: true },
-		modifier: { ids: [TSKindId.Crate, TSKindId.ExternModifier, TSKindId.VisibilityModifierPub], exact: false },
+		modifier: {
+			ids: [TSKindId.CrateVisibilityModifier, TSKindId.ExternModifier, TSKindId.VisibilityModifierPub],
+			exact: true
+		},
 		'modifier.extern': { ids: [TSKindId.ExternModifier], exact: true },
-		'modifier.visibility': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
+		'modifier.visibility': { ids: [TSKindId.CrateVisibilityModifier, TSKindId.VisibilityModifierPub], exact: true },
 		'modifier.visibility.private': { ids: [TSKindId.VisibilityModifierPub], exact: false },
-		'modifier.visibility.public': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
-		'modifier.visibility.public.internal': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
+		'modifier.visibility.public': {
+			ids: [TSKindId.CrateVisibilityModifier, TSKindId.VisibilityModifierPub],
+			exact: false
+		},
+		'modifier.visibility.public.internal': {
+			ids: [TSKindId.CrateVisibilityModifier, TSKindId.VisibilityModifierPub],
+			exact: false
+		},
 		'modifier.visibility.public.restricted': { ids: [TSKindId.VisibilityModifierPub], exact: false },
 		pattern: {
 			ids: [
@@ -3947,7 +3956,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
-					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -4240,17 +4249,15 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
-					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.constant', within: [], test: [] }
 		],
 		[TSKindId.ConstParameter]: [{ path: 'declaration.type_parameter.value', within: [], test: [] }],
 		[TSKindId.ContinueExpression]: [{ path: 'statement.continue', within: [], test: [] }],
-		[TSKindId.Crate]: [
-			{ path: 'modifier.visibility.public.internal', within: [TSKindId.VisibilityModifier], test: [] },
-			{ path: 'identifier.crate', within: [], test: [] }
-		],
+		[TSKindId.Crate]: [{ path: 'identifier.crate', within: [], test: [] }],
+		[TSKindId.CrateVisibilityModifier]: [{ path: 'modifier.visibility.public.internal', within: [], test: [] }],
 		[TSKindId.DelimTokenTree]: [{ path: 'element.macro.token_tree.delimited', within: [], test: [] }],
 		[TSKindId.DelimTokenTreeBrace]: [{ path: 'element.macro.token_tree.delimited', within: [], test: [] }],
 		[TSKindId.DelimTokenTreeBracket]: [{ path: 'element.macro.token_tree.delimited', within: [], test: [] }],
@@ -4322,7 +4329,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
-					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.enum', within: [], test: [] }
@@ -4495,7 +4502,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } },
 					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
@@ -4513,7 +4520,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } },
 					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
@@ -4530,7 +4537,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{
@@ -4616,7 +4623,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
-					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import.package', within: [], test: [] }
@@ -4698,7 +4705,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
-					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -4853,7 +4860,7 @@ const table: PortableTable = {
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{
@@ -4869,7 +4876,7 @@ const table: PortableTable = {
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.method', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
@@ -4935,7 +4942,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function', within: [], test: [] }
@@ -5003,7 +5010,7 @@ const table: PortableTable = {
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.method.signature', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
@@ -5069,7 +5076,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function.signature', within: [], test: [] }
@@ -5246,7 +5253,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
-					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -5314,7 +5321,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
-					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -5529,7 +5536,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
-					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -5614,7 +5621,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
-					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct', within: [], test: [] }
@@ -5682,7 +5689,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
-					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.tuple', within: [], test: [] },
@@ -5751,7 +5758,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
-					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.unit', within: [], test: [] },
@@ -5837,7 +5844,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
-					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.interface.trait', within: [], test: [] }
@@ -5871,7 +5878,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '468': 0 } }],
+						via: [{ slots: { '469': 0 } }],
 						plan: { op: 'match', pattern: '^(Option|Result|String|Vec|Box)$', self: true }
 					}
 				]
@@ -5941,7 +5948,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
-					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.type_alias', within: [], test: [] }
@@ -6048,7 +6055,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
-					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.union', within: [], test: [] }
@@ -6121,7 +6128,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
-					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [465], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import', within: [], test: [] }

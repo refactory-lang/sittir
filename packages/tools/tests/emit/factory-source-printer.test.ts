@@ -65,6 +65,13 @@ describe('printValue', () => {
 		const printed = map.function_item!({ name: map.identifier!('main'), body: undefined });
 		expect(expectPrinted(printed).source).toBe('ir.functionItem.strict({\n\tname: ir.identifier("main"),\n})');
 	});
+	it('prints an alias envelope over a kind id as that kind id, not as text', () => {
+		const aliasCtx: PrintContext = { ...ctx, aliasKinds: new Set(['wrapper']) };
+		const map = printingFactoryMap({ wrapper: 'direct', bag: 'spread' }, (k) => ({ wrapper: 9, bag: 10 })[k], aliasCtx);
+		const content = map.wrapper!(4);
+		expect(expectPrinted(content).source).toBe('rs.kinds.Comma');
+		expect(expectPrinted(map.bag!(content)).source).toBe('ir.bag.strict(rs.kinds.Comma)');
+	});
 	it('prints direct, spread and elements shapes', () => {
 		const map = printingFactoryMap(
 			{ wrapper: 'direct', bag: 'spread', arguments: 'elements', identifier: 'text' },
