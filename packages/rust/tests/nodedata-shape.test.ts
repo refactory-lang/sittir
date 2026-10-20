@@ -95,6 +95,22 @@ describe('Factory shape — branch node', () => {
 		expect(keys).not.toContain('$fields');
 	});
 
+	it('SC-004: a read node, and a $with rebuild of it, read $source as ts without listing it', () => {
+		const file = rs.parse('fn f() {}\n');
+		const rebuilt = file.$with.statements(...file.statements());
+		for (const read of [file, file.statements()[0], rebuilt, rebuilt.statements()[0]]) {
+			if (typeof read !== 'object') throw new Error('`fn f() {}` reads a function item');
+			expect(read.$source).toBe(0);
+			expect(Object.keys(read)).not.toContain('$source');
+		}
+	});
+
+	it('SC-004: a $with rebuild of a built node reads $source as factory without listing it', () => {
+		const rebuilt = rs.build.block({ statements: [] }).$with.statements(rs.build.expressionStatement('a'));
+		expect(rebuilt.$source).toBe(2);
+		expect(Object.keys(rebuilt)).not.toContain('$source');
+	});
+
 	// CONFIRMED DEFERRED (not a stale assertion or regression): the freeze
 	// contract is not yet wired into generated factory output, and no shared
 	// freeze helper exists any more (deleted as dead scaffolding). Left

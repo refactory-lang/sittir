@@ -12196,9 +12196,9 @@ One `name() { … }` accessor line per model slot of a field-carrying kind, minu
 
 The declared return type of a kind's wrap: `T.<Kind>.Parsed` when the kind has a catalog entry (a kind id and a namespace), nothing when it has none. The parsed-by-kind-id map holds the same declared types, and it is the one map the wrapped root (`<Root>Tree`), `wrapNode`'s return and every accessor's child type read, so no wrap's type is inferred from its body and no second mapping exists.
 
-### `packages/codegen/src/emitters/wrap.ts::castToParsed`
+### `packages/codegen/src/emitters/wrap.ts::wrapReturn`
 
-The one cast a wrap makes at each return: the object literal it builds carries the storage keys, the accessors and `$with`, and is not related to `T.<Kind>.Parsed` structurally. Relating them walks every accessor of both interfaces and exceeds the checker's relation depth on deep grammars, so the literal is cast through `unknown` once, at the return, and the declared `Parsed` is what callers see.
+The return line of every wrap, a kind's and `wrapLeaf` alike. The literal is built by spreading `data`, which copies the source stamp (an enumerable symbol member) but not the non-enumerable `$source` getter over it, so the wrap returns `carrySourceStamp(data, node)`: the stamp again, with its getter. Where the kind has a declared `Parsed` type, the line is also the one cast the wrap makes: the object literal carries the storage keys, the accessors and `$with`, and is not related to `T.<Kind>.Parsed` structurally. Relating them walks every accessor of both interfaces and exceeds the checker's relation depth on deep grammars, so the literal is cast through `unknown` once, at the return, and the declared `Parsed` is what callers see.
 
 ### `packages/codegen/src/emitters/wrap.ts::returnAnnotation`
 

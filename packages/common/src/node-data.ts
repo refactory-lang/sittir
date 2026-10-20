@@ -2,7 +2,7 @@ import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, 
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
-import { stampSource } from './source-stamp.ts';
+import { carrySourceStamp, stampSource } from './source-stamp.ts';
 import { Source } from './source.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -193,14 +193,15 @@ function withoutAt(layout: NodeLayout | undefined): NodeLayout | undefined {
  * the same shape afterwards and only the first is dirty.
  *
  * The rest-spread copies the tree token with the other members, so the token
- * is removed from the copy: a rebuilt node names no tree.
+ * is removed from the copy: a rebuilt node names no tree. It copies the source
+ * stamp but not its `$source` getter, so the stamp is carried onto the copy.
  */
 export function markEdited<T extends object>(data: T): T {
 	const { $_layout, ...rest } = data as T & { readonly $_layout?: NodeLayout };
 	const layout = withoutAt($_layout);
 	const out = (layout === undefined ? rest : { ...rest, $_layout: layout }) as T;
 	releaseTreeOn(out);
-	return out;
+	return carrySourceStamp(data, out);
 }
 
 /**
