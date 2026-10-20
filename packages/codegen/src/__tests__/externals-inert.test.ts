@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { enrichWhitespace } from '../dsl/whitespace.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { Rule } from '../types/rule.ts';
-import { evaluatePackage } from '../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../dsl/evaluate-package.ts';
 import { grammarPackage } from '../grammars.ts';
 
 const SCANNED_CONTROL: Record<string, string> = {

@@ -2,7 +2,8 @@ import { relaxedDisplayIds, relaxedKeywordIds } from './kind-id-rust.ts';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
-import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+import type { SpacingAddress } from '../types/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
 import { CONTINUATION_KINDS, NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
@@ -964,7 +965,7 @@ function buildTypedTemplateBody(
 	}
 
 	const seamFieldNames = new Set(
-		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.side === 'seam')).map((site) =>
+		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.spacing.at === 'seam')).map((site) =>
 			rustFieldIdent(site.fieldIdent)
 		)
 	);
@@ -2094,9 +2095,9 @@ function literalSeamsOf(
 	const sites: { before?: string; after?: string } = {};
 	const token = tokenNameOfText(literal.text, kindEntries);
 	for (const site of plan.spacingSites) {
-		if (site.source !== owner || site.side !== 'seam' || site.seat !== undefined) continue;
-		const seam = parseSeamLabel(site.address);
-		if (token !== undefined && seam?.token === token) sites[seam.side] = site.constName;
+		const seam = site.spacing;
+		if (site.source !== owner || seam?.at !== 'seam' || site.seat !== undefined) continue;
+		if (token !== undefined && seam.token === token) sites[seam.side] = site.constName;
 	}
 	return sites.before !== undefined || sites.after !== undefined ? sites : undefined;
 }
@@ -2609,15 +2610,18 @@ function inertPrepareImpl(typeName: string): string[] {
 	];
 }
 
-function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
-	return plan.spacingSites.filter((site) => site.source === node.kind && site.side !== undefined && site.seat === undefined);
+function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly (SpacingSite & { readonly spacing: SpacingAddress })[] {
+	return plan.spacingSites.filter(
+		(site): site is SpacingSite & { readonly spacing: SpacingAddress } => site.source === node.kind && site.spacing !== undefined && site.seat === undefined
+	);
 }
 
 function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<string, 'before' | 'after'> {
 	const out = new Map<string, 'before' | 'after'>();
 	for (const site of synthesizedSpacingSites(plan, node)) {
-		if (site.side !== 'seam' || !isKindEdge(site)) continue;
-		out.set(rustFieldIdent(site.fieldIdent), parseSeamLabel(site.address)!.side);
+		const seam = site.spacing;
+		if (seam.at !== 'seam' || !isKindEdge(site)) continue;
+		out.set(rustFieldIdent(site.fieldIdent), seam.side);
 	}
 	return out;
 }
@@ -2755,16 +2759,16 @@ function spacingFieldExprs(
 	fieldName: string
 ): { readonly before?: string; readonly after?: string; readonly head?: string; readonly tail?: string } {
 	if (node === undefined) return {};
-	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
+	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
 	const flank = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `Some(options::${site.constName})`;
 	return {
-		before: expr(sites.find((site) => site.side === 'before')),
-		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap')),
-		head: flank(sites.find((site) => site.side === 'start')),
-		tail: flank(sites.find((site) => site.side === 'end'))
+		before: expr(sites.find(({ spacing }) => spacing.at === 'separator' && spacing.side === 'before')),
+		after: expr(sites.find(({ spacing }) => spacing.at === 'separator' && spacing.side !== 'before')),
+		head: flank(sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'start')),
+		tail: flank(sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'end'))
 	};
 }
 
@@ -2999,7 +3003,7 @@ function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: Choi
 				(candidate) =>
 					candidate.source === node.kind &&
 					candidate.slot === slot.name &&
-					candidate.side === undefined &&
+					candidate.spacing === undefined &&
 					candidate.seat === undefined
 			);
 			if (site === undefined) {
@@ -3017,7 +3021,8 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	if (!node.grammarRoot || fillFields.length === 0) return [];
 	const sites = new Map<'before' | 'after', SpacingSite>();
 	for (const site of synthesizedSpacingSites(plan, node)) {
-		if (site.side === 'seam' && isKindEdge(site)) sites.set(parseSeamLabel(site.address)!.side, site);
+		const seam = site.spacing;
+		if (seam.at === 'seam' && isKindEdge(site)) sites.set(seam.side, site);
 	}
 	const allowedOf = (side: 'before' | 'after'): string => {
 		const site = sites.get(side);
@@ -3920,9 +3925,8 @@ function armSeamPairsOf(
 ): Map<string, { before: string; after: string }> {
 	const bySlot = new Map<string, { before?: string; after?: string }>();
 	for (const site of plan.spacingSites) {
-		if (site.source !== node.kind || site.side !== 'seam' || site.seat !== undefined) continue;
-		const seam = parseSeamLabel(site.address);
-		if (seam === undefined) continue;
+		const seam = site.spacing;
+		if (site.source !== node.kind || seam?.at !== 'seam' || site.seat !== undefined) continue;
 		const entry = bySlot.get(site.slot) ?? {};
 		bySlot.set(site.slot, { ...entry, [seam.side]: site.constName });
 	}

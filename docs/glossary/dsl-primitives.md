@@ -621,21 +621,28 @@ identifier — so it never rejects what `parsePreferencePath` accepts.
 `Segments` (`grammar-shapes/path-type.ts`), the type-level `splitSegments`,
 so a quoted literal may hold a slash. What `OptionsCheck` consults per key.
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::spacingLabel`
+### `packages/codegen/src/dsl/primitives/spacing.ts::spacingLabelOf`
 
-```text
-/** The preference label of a separator gap: `<token>_separator_space_<side>`
- *  for a token, `empty_separator_space` for an unseparated repeat. It is a
- *  top-level key of the grammar's `Options` type and of its `defaults`. */
-```
+The label of a spacing site, spelled from its address (`SpacingAddress`):
+`<token>_separator_space_<side>` for a separator token, `empty_separator_space`
+for the single gap of an unseparated repeat, `<token>_<before|after>` for a
+token seam, the token being its catalog kind name (`lparen_before`), and
+`<kind>_<start|end>` for an array flank. A seam's label is also its field on
+the owning node and its address under the kind; every label is a top-level key
+of the grammar's `Options` type and of its `defaults`. It is the one
+formatter: a site's label is spelled here, once, from the address it was
+minted with.
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingLabel`
+### `packages/codegen/src/dsl/primitives/spacing.ts::parseSpacingAddress`
 
-```text
-/** Recognises a spacing label — a token with a side, or the empty gap
- *  without one — so wire reads a `patches:` key of that name as a
- *  separator spacing default rather than a rule to patch. */
-```
+Reads a spacing label back into its address, `spacingLabelOf`'s inverse. The
+separator pattern is tried first, because a separator label also spells a seam
+on a token named `<token>_separator_space`; a separator label needs a side
+unless its token is `empty`, and the empty gap takes none. Then the seam
+pattern, then the flank pattern. Wire's `isRetiredAddressKey` is its one
+caller, recognising a `patches:` key spelled like a site. Nothing in the
+compiler reads an address back out of a label, since every site carries its
+own.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::DELIMITER_ARMS`
 
@@ -660,13 +667,6 @@ The address segment and label of a supertype's variant-choice options site.
 
 Whether a site address is a list's separator default (`<slot>_separator`).
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::seamLabel`
-
-The preference label of a token seam, `<token>_<before|after>`, the token
-being its catalog kind name (`lparen_before`). It is the site's field on
-the owning node, its address under the kind, and a top-level key of
-the grammar's `Options` type and of its `defaults`.
-
 ### `packages/codegen/src/dsl/primitives/spacing.ts::LABEL_TOKEN`
 
 The token part every spacing, seam and flank label shares, one pattern for all
@@ -674,31 +674,14 @@ three: a letter of either case, then letters, digits and underscores. A label
 names its token by the kind key, which keeps a keyword's case
 (`MISSING_keyword_before`).
 
-### `packages/codegen/src/dsl/primitives/spacing.ts::parseSeamLabel`
-
-Recognises a token seam label and never a separator spacing label, so the
-two vocabularies stay disjoint where a name is read back: wire's `patches:`
-keys, the render-rules seam detection, and the site collection.
-
 ### `packages/codegen/src/dsl/primitives/spacing.ts::siteKey`
 
-```text
-/** The kind × slot option key of one site, the same string on the Options
- *  type, the grammar's defaults, the node field and the wire:
- *  `<slot>_<label>` for a declared preference; for separator spacing the
- *  token is the slot's own and is dropped, `<slot>_separator_space` for the
- *  empty gap and `<slot>_separator_space_before` / `_after` for a token. */
-```
-
-### `packages/codegen/src/dsl/primitives/spacing.ts::flankAddress`
-
-```text
-/** The kind-level address of an array flank, `<kind>_start` / `<kind>_end`:
- *  the key it is declared under in `patches:`, the key it takes in `Options`
- *  and the key the native resolver matches. `parseFlankAddress` reads one
- *  back; wire treats such a key as a flank default only when no rule is
- *  spelled that way. */
-```
+The kind × slot option key of a site, the same string on the Options type,
+the grammar's defaults, the node field and the wire. For separator spacing the
+token is the slot's own and is dropped: `<slot>_separator_space` for the empty
+gap, `<slot>_separator_space_before` / `_after` for a token. Any other address
+is its label under the slot, `<slot>_<label>`, which is how a seated site is
+keyed (`<slot>_<child>_after`).
 
 ### `packages/codegen/src/dsl/primitives/flatten.ts::flatten`
 

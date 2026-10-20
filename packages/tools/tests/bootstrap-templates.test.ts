@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { allGrammars, grammarPackageDir, grammarRequire } from '@sittir/codegen/grammars';
-import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
+import { evaluate } from '../../codegen/src/dsl/evaluate.ts';
 import { NO_FILE_TYPES } from '../../codegen/src/compiler/upstream-file-types.ts';
 import { grammarPackageFiles } from '../src/bootstrap/templates.ts';
 import { ensureConflictResolutions } from '../../codegen/src/transpile/conflict-resolutions-file.ts';

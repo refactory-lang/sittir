@@ -43,7 +43,7 @@ describe('propose-14 signature classification', () => {
 	});
 
 	it('classifies a zero-param fn as zero-param (outside the ratchet)', () => {
-		const recs = classifySource('compiler/evaluate.ts', 'function freshScope() { return {}; }');
+		const recs = classifySource('dsl/evaluate.ts', 'function freshScope() { return {}; }');
 		expect(recs[0]?.bucket).toBe('zero-param');
 	});
 
@@ -116,7 +116,7 @@ describe('propose-14 dead flagging', () => {
 
 	const corpus = new Map<string, string>([
 		['packages/codegen/src/compiler/link.ts', moduleSource],
-		['packages/codegen/src/compiler/evaluate.ts', 'import { aliveHelper } from "./link.ts"; aliveHelper(r, rules);'],
+		['packages/codegen/src/dsl/evaluate.ts', 'import { aliveHelper } from "../compiler/link.ts"; aliveHelper(r, rules);'],
 		[
 			'packages/codegen/src/compiler/__tests__/link.test.ts',
 			'import { testOnlyHelper } from "../link.ts"; testOnlyHelper(r);'
@@ -182,15 +182,15 @@ describe('propose-14 module aggregation + self-test', () => {
 	});
 
 	it('self-test: classifies the real pipeline modules and finds known debt', () => {
-		expect(PIPELINE_MODULES).toContain('compiler/evaluate.ts');
+		expect(PIPELINE_MODULES).toContain('dsl/evaluate.ts');
 		// evaluate.ts at the R0 baseline has dozens of non-conforming fns (task-#8: 36).
 		// The self-test only asserts the classifier finds SOME — exact counts live in the baseline.
 		const { readFileSync } = require('node:fs') as typeof import('node:fs');
-		const src = readFileSync(new URL('../../codegen/src/compiler/evaluate.ts', import.meta.url), 'utf8');
-		const recs = classifySource('compiler/evaluate.ts', src);
+		const src = readFileSync(new URL('../../codegen/src/dsl/evaluate.ts', import.meta.url), 'utf8');
+		const recs = classifySource('dsl/evaluate.ts', src);
 		const counts = countByModule(recs);
-		expect(counts['compiler/evaluate.ts']?.total).toBeGreaterThan(30);
-		expect(counts['compiler/evaluate.ts']?.nonConforming).toBeGreaterThan(0);
+		expect(counts['dsl/evaluate.ts']?.total).toBeGreaterThan(30);
+		expect(counts['dsl/evaluate.ts']?.nonConforming).toBeGreaterThan(0);
 	});
 });
 

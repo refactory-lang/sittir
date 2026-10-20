@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { collectGrammarDiagnosticsForGrammar } from '../diagnostics/grammar-diagnostics.ts';
 import { AssembledPattern, AssembledPunctuation } from '../model/node-map.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 describe('the enriched stage sees the whitespace bodies enrich mints', () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { evaluate } from '../evaluate.ts';
+import { evaluate } from '../../dsl/evaluate.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
