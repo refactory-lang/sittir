@@ -144,3 +144,20 @@ describe('a refusal inside a mint an authored layer references names the mint', 
 	}, 60_000);
 });
 
+describe('a repetition after eof() is a step, even when its body is blank', () => {
+	it('refuses repeat1(blank()) after eof(), on the start rule', async () => {
+		const records = await eofRecords("source: ($) => seq('x', eof(), repeat1(blank()))");
+		expect(records).toEqual([refusedOn('source')]);
+	}, 60_000);
+
+	it('refuses repeat(blank()) after eof(), on the start rule', async () => {
+		const records = await eofRecords("source: ($) => seq('x', eof(), repeat(blank()))");
+		expect(records).toEqual([refusedOn('source')]);
+	}, 60_000);
+
+	it('refuses a wrapped repeat1(blank()) after eof(), on the start rule', async () => {
+		const records = await eofRecords("source: ($) => seq('x', eof(), field('f', repeat1(blank())))");
+		expect(records).toEqual([refusedOn('source')]);
+	}, 60_000);
+});
+

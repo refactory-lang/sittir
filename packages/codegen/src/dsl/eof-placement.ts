@@ -19,6 +19,7 @@ export function eofPlacements(
 	const syntactic = new SyntacticRuleWalker<Rule<'evaluate'>>();
 	const empty = (rule: Rule<'evaluate'>): boolean => {
 		if (isBlank(rule)) return true;
+		if (isRepeatType(rule.type)) return false;
 		const children = syntactic.childrenOf(rule);
 		return children.length > 0 && children.every(empty);
 	};
