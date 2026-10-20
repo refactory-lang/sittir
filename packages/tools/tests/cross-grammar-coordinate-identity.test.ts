@@ -22,7 +22,7 @@ describe('a coordinate names its tree across grammars', () => {
 	it('refuses a parsed node of another grammar as a builder child, naming both languages, the kind and the slot', async () => {
 		const typescript = await createEngine(await languageByName('typescript'));
 		const rust = await createEngine(await languageByName('rust'));
-		const item = (rust.parse('fn real() {}\n') as unknown as { statements(): AnyUntypedNode[] }).statements()[0]!;
+		const item = rust.parse('fn real() {}\n').statements()[0]!;
 		const refusal = 'cannot build a typescript program with a rust node in its statements';
 		// @ts-expect-error a rust node is not a typescript statement; the builder refuses it at runtime as well
 		expect(() => typescript.build.program({ statements: [item] })).toThrow(refusal);

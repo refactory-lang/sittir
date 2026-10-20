@@ -219,10 +219,9 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             quote! {
                 match cell {
                     ::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if kind == #kind => {
-                        let tree = ctx.tree().ok_or(#refused)?;
                         ::core::result::Result::Ok(Self {
                             __ctx: ctx,
-                            __place: ::sittir_core::arena::PrepPlace::Stored(::sittir_core::trivia_store::Place::Row { tree, row }),
+                            __place: ::sittir_core::arena::leaf_place(ctx, row, site)?,
                             __site: site,
                             __edges: ::sittir_core::options::Edges::default(),
                             __changed: ::sittir_core::slot::ChangedEdges::default(),
@@ -549,7 +548,7 @@ mod tests {
         })
         .expect("expands");
         assert!(has(&out, "::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if kind == kind::IDENTIFIER =>"));
-        assert!(has(&out, "__place: ::sittir_core::arena::PrepPlace::Stored(::sittir_core::trivia_store::Place::Row { tree, row }),"));
+        assert!(has(&out, "__place: ::sittir_core::arena::leaf_place(ctx, row, site)?,"));
         assert!(has(&out, "text: ctx.source_text(span)?,"));
         assert!(has(&out, "let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind::IDENTIFIER)?;"));
         assert!(has(&out, "text: ctx.string(text)?,"));

@@ -78,3 +78,11 @@ pub fn load_fixtures(grammar: &str) -> Vec<ParityFixture> {
     serde_json::from_str(&json)
         .unwrap_or_else(|e| panic!("failed to parse fixtures for {grammar}: {e}"))
 }
+
+/// Writes the node at `index` its own inner side back, unchanged: a write in
+/// its range, so its render is its template's, with no text changed. A test
+/// harness only; no engine path writes a side to force a template.
+pub fn edit_in_place<G: sittir_core::engine::EngineGrammar>(tree: &sittir_core::engine::ParsedTree<G>, index: sittir_core::types::NodeIndex) {
+    let inner = sittir_core::trivia_table::TriviaSide::Inner;
+    tree.write_trivia_side(index, inner, tree.trivia_side(index, inner));
+}

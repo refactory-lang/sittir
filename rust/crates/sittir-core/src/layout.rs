@@ -349,6 +349,8 @@ pub trait Layout {
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>>;
     /// A snapshot root's stamped flanks (`NodeLayout::flanks`).
     fn flanks(&self) -> crate::layout_kinds::Flanks;
+    /// The coordinate a read node came from (`NodeLayout::at`).
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate>;
 }
 
 impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
@@ -389,6 +391,10 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
 
     fn flanks(&self) -> crate::layout_kinds::Flanks {
         self.as_ref().map_or_else(crate::layout_kinds::Flanks::default, |layout| layout.flanks)
+    }
+
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate> {
+        self.as_ref()?.at.as_ref()
     }
 }
 
@@ -467,6 +473,10 @@ impl<L: Layout + ?Sized> Layout for &mut L {
 
     fn flanks(&self) -> crate::layout_kinds::Flanks {
         (**self).flanks()
+    }
+
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate> {
+        (**self).source_coordinate()
     }
 }
 

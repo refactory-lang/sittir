@@ -477,6 +477,12 @@ pub trait Prepare {
         None
     }
 
+    /// The coordinate a read node came from (`NodeLayout::at`); none for a
+    /// built, detached or snapshot node.
+    fn source_coordinate(&self) -> Option<&NodeCoordinate> {
+        None
+    }
+
     /// The base edges a list gap beside this value is written on: its own.
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         None
@@ -511,8 +517,16 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// node (`read_coordinate`), which renders from its template, and
     /// prepared as one. Otherwise it takes its kind's edges: its stamped
     /// kind's, or, for a display kind with no edge row of its own, its
-    /// grammar kind's, the kind its node renders by.
+    /// grammar kind's, the kind its node renders by. A read node whose
+    /// source renders it (`SourceTable::renders_as_source`) is its
+    /// coordinate: it prepares as one, the seams its holder gave it seated.
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+        if let SlotValue::Node(node) = self {
+            if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source(at)).cloned() {
+                let seated = node.gap_edges().and_then(|edges| seated_edges(*edges));
+                *self = SlotValue::Coord(NodeCoordinate { edges: seated, ..at });
+            }
+        }
         match self {
             SlotValue::Coord(coord) => {
                 coord.resolve(ctx.sources)?;
@@ -565,6 +579,17 @@ pub fn coordinate_edges(coord: &NodeCoordinate, seated: Option<CoordinateEdges>,
         }
     }
     edges
+}
+
+/// The seams a read node's base edges hold, as a coordinate holds them, when
+/// the node renders as its coordinate: each side a holder's fill or seat
+/// set, which carries its strength; none when neither side holds one. The
+/// inverse of `seat_read_node`.
+#[must_use]
+pub fn seated_edges(edges: Edges) -> Option<CoordinateEdges> {
+    let seam = |edge: Option<EdgeArm>| edge.and_then(|edge| edge.strength.map(|strength| SeamArm { arm: edge.arm, strength }));
+    let seated = CoordinateEdges { before: seam(edges.before), after: seam(edges.after) };
+    (seated.before.is_some() || seated.after.is_some()).then_some(seated)
 }
 
 /// The base edges of the node an edited coordinate was read into take each
@@ -630,6 +655,10 @@ impl<T: Prepare> Prepare for Option<T> {
         self.as_ref()?.snapshot_edge()
     }
 
+    fn source_coordinate(&self) -> Option<&NodeCoordinate> {
+        self.as_ref()?.source_coordinate()
+    }
+
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         self.as_mut()?.gap_edges()
     }
@@ -650,6 +679,10 @@ impl<T: Prepare> Prepare for Box<T> {
 
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
         (**self).snapshot_edge()
+    }
+
+    fn source_coordinate(&self) -> Option<&NodeCoordinate> {
+        (**self).source_coordinate()
     }
 
     fn gap_edges(&mut self) -> Option<&mut Edges> {

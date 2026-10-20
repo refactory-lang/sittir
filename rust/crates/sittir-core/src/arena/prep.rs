@@ -236,8 +236,8 @@ impl RecordKey {
                 Ok(Self { tree: None, at: Some(record), place: Place::Record(record).into(), changed: side.changed })
             }
             Cell::ParsedLeaf { kind: named, row: leaf, .. } if named == kind => {
-                let tree = view.tree().ok_or(malformed("parsed leaf in a built record", leaf.0))?;
-                Ok(Self { tree: Some(tree), at: None, place: Place::Row { tree, row: leaf }.into(), changed: ChangedEdges::default() })
+                let place = super::leaf_place(view, leaf, at.site)?;
+                Ok(Self { tree: view.tree(), at: None, place, changed: ChangedEdges::default() })
             }
             _ => Err(malformed("prepared cell", u32::from(kind.0))),
         }

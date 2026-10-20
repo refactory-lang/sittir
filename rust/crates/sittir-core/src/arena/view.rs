@@ -15,6 +15,23 @@ use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::types::{ItemIndex, KindId, NodeIndex, Span, TreeId};
 use crate::view::{KindOf, KindTest, Slot};
 
+/// The coordinate a render's root record renders as: its row's, for a
+/// parsed record its source renders (`SourceTable::renders_as_source`), as
+/// a native read of that row renders; none for a built record, or a parsed
+/// one a write lies in, which render through their views.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for a root naming no arena of the render, or a
+/// parsed record whose side record names no row.
+pub fn source_root<T>(root: super::CellAt, built: &Arena, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable) -> Result<Option<NodeCoordinate>, ArenaError> {
+    let prepared = Prepared::new();
+    let ctx = RecordCtx::of(root.tree, built, arenas, sources, store, &prepared)?;
+    let Some(row) = ctx.parsed_row(root.cell)? else { return Ok(None) };
+    let coord = ctx.row_coordinate(row)?;
+    Ok(sources.renders_as_source(&coord).then_some(coord))
+}
+
 /// The parsed trees' arenas a render reaches: the arena and row index of each
 /// tree a record names.
 pub trait RecordArenas {
@@ -402,6 +419,23 @@ pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord,
     match site {
         Some(Site { holder: PrepPlace::Stored(holder), word, item }) => Ok(PrepPlace::Content(Site { holder, word, item })),
         _ => Err(malformed("enveloped content with no envelope", at.0)),
+    }
+}
+
+/// The place of the parsed leaf at `row` of `ctx`'s tree, held at `site`:
+/// its row, unless a record names that row. Envelope and content share one
+/// row, and the row's record is the outermost, so such a leaf is the content
+/// of the envelope that record is, and its place is its cell's site in its
+/// envelope, as `place_of` places a record's content.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for a parsed leaf in a built record.
+pub fn leaf_place<T>(ctx: RecordCtx<'_, T>, row: NodeIndex, site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
+    let tree = ctx.tree.ok_or(malformed("parsed leaf in a built record", row.0))?;
+    match site {
+        Some(Site { holder: PrepPlace::Stored(holder), word, item }) if ctx.row_record(row).is_some() => Ok(PrepPlace::Content(Site { holder, word, item })),
+        _ => Ok(Place::Row { tree, row }.into()),
     }
 }
 

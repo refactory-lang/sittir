@@ -1697,6 +1697,10 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         self.own(coord.tree).is_some_and(|tree| tree.edited_within(coord.index, false))
     }
 
+    fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
+        self.own(coord.tree).is_some_and(|tree| !tree.edited_within(coord.index, false))
+    }
+
     fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         let mut node = node_at_index(&self.own(coord.tree)?.tree, coord.index)?;
         loop {
@@ -1813,6 +1817,10 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
 
     fn edited_within(&self, coord: &NodeCoordinate) -> bool {
         self.get(&coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
+    }
+
+    fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
+        self.get(&coord.tree).is_some_and(|tree| SourceTable::renders_as_source(tree, coord))
     }
 
     fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {

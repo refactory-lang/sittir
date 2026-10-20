@@ -2908,12 +2908,16 @@ view's `KindOf`.
 ### `packages/codegen/src/emitters/render-module.ts::renderRecordFn`
 
 The generated `render_record`, under `records_codec!`: renders the record
-a root cell names (`CellAt`) by preparing it into a fresh overlay
-(`sittir_core::arena::prepare_root`, as the grammar's `AnyNode`), reading
-it through `AnyNode`'s record view over that overlay, and writing the view
-through `render_root`. A parsed node it holds renders as its row's source
-unless a write lies in its rows, so a record renders as its node read one
-level down does, however deep the read that wrote it.
+a root cell names (`CellAt`). A parsed root with no write in its range
+(`sittir_core::arena::source_root`) renders as its row's coordinate, through
+`render_node_parts` as a native coordinate root does, so an untouched parsed
+node renders as its source bytes on both sides (shared-arena design
+§ Render; trivia-table design § 4). Any other root is prepared into a fresh
+overlay (`sittir_core::arena::prepare_root`, as the grammar's `AnyNode`),
+read through `AnyNode`'s record view over that overlay, and written through
+`render_root`. A parsed node it holds renders as its row's source unless a
+write lies in its rows, so a record renders as its node read one level down
+does, however deep the read that wrote it.
 
 ### `packages/codegen/src/emitters/render-module.ts::TRIVIA_NODE`
 
@@ -14211,7 +14215,7 @@ A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
 with payloads or edged units (`PrepareArm.edged`) also delegates
-`gap_edges`, `snapshot_edge` and `source_separator`, an edged unit
+`gap_edges`, `snapshot_edge`, `source_coordinate` and `source_separator`, an edged unit
 answering `gap_edges` with the edges it holds and nothing else,
 so a list's gap fill reaches the edges and the geometry of
 whichever kind the item is. An enum the reader reads into also reads a
@@ -14280,8 +14284,11 @@ in place and its callers are unchanged.
 Every struct also answers `gap_edges` with its own base edges, made when the
 layout holds none, `source_separator` from its layout
 (`layout::source_separator`: the one it carries, else its source's while its
-neighbour before is unchanged), and `snapshot_edge` from its layout's span
-and trivia, so a snapshot root's edges read geometry.
+neighbour before is unchanged), `snapshot_edge` from its layout's span
+and trivia, so a snapshot root's edges read geometry, and
+`source_coordinate` from its layout's `at`, the coordinate a read node came
+from, by which a read node with no write in its range prepares and renders
+as that coordinate (`SlotValue::prepare`).
 
 The body prepares the layout first, leaves included: a trivia entry that is a
 source coordinate takes its kind's edges there, as a coordinate in a slot

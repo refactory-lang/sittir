@@ -193,6 +193,15 @@ pub trait SourceTable {
         false
     }
 
+    /// Whether a read node from the node a coordinate names renders as that
+    /// coordinate, its source bytes: a parsed node with no write in its range
+    /// (`edited_within`). A table that holds no tree, or one a render reads
+    /// templates through on purpose, answers no.
+    fn renders_as_source(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        let _ = coord;
+        false
+    }
+
     /// The seat of the node a coordinate names, through the wrappers it is
     /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
     /// before it, from the coordinate's own, the first that `seat` gives a

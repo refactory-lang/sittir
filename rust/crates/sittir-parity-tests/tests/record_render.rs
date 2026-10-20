@@ -1,11 +1,13 @@
 //! A record renders as the native node written into it. For every round-trip
 //! source of each grammar, the root read one level down and rendered
 //! natively renders the same from the record its first read wrote, from the
-//! record a read at every depth wrote, and twice over: a parsed node is its
-//! row's source whatever cell names it, as a native read one level down
-//! holds each child as its coordinate. A parsed node a write lies in renders
-//! from its record, and an untouched one a built record links renders as its
-//! source.
+//! record a read at every depth wrote, and twice over. A parsed node with no
+//! write in its range renders as its coordinate, whatever cell names it and
+//! however it was read (shared-arena design § Render; trivia-table design
+//! § 4, copying source text); one a write lies in renders from its record
+//! through its template (trivia-table design § 4, edited ranges). Every node
+//! of every source renders alike both ways: untouched, and with its own
+//! inner side written back, a test-only write that changes no text.
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::{Address, Arena, Cell, CellAt, HeldArenas, Linked, RecordGrammar, RecordSink, RecordTrees, WriteCell};
@@ -17,7 +19,7 @@ use sittir_core::render::RenderError;
 use sittir_core::trivia_store::TriviaStore;
 use sittir_core::types::NodeIndex;
 use sittir_core::SlotValue;
-use sittir_parity_tests::{load_fixtures, ParityFixture};
+use sittir_parity_tests::{edit_in_place, load_fixtures, ParityFixture};
 
 /// How a source's records render alike.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -112,6 +114,65 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
     }
 }
 
+/// How one node renders alike from its record.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum NodeAlike {
+    /// The model reads no node there, or writes it no record.
+    Unread,
+    Rendered,
+    /// The native render panics, and the record's does too.
+    Panicking,
+}
+
+impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
+    /// Whether the node at `index` of `tree`, read one level down, renders
+    /// from its record as natively, or panics there as natively.
+    fn node_alike(&self, tree: &ParsedTree<G>, index: NodeIndex, options: &ResolvedOptions) -> Result<NodeAlike, String> {
+        let node = sittir_core::engine::node_at_index(tree.tree(), index).expect("a node at every index");
+        let at = format!("node {index} ({} {:?})", node.kind(), &tree.source()[sittir_core::types::Span::of(&node).range()]);
+        let native = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.native(tree, index, options)));
+        if matches!(native, Ok(None)) {
+            return Ok(NodeAlike::Unread);
+        }
+        let record = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.read_record::<N>(index, Depth::ONE).and_then(|at| at.map(|at| Self::parsed(tree, at, options)).transpose())));
+        match (native, record) {
+            (_, Ok(Ok(None))) => Ok(NodeAlike::Unread),
+            (Err(_), Err(_)) => Ok(NodeAlike::Panicking),
+            (Err(_), Ok(_)) => Err(format!("{at}: the native render panics and the record's does not")),
+            (Ok(_), Err(_)) => Err(format!("{at}: the record render panics and the native one does not")),
+            (Ok(native), Ok(record)) => {
+                let (native, record) = (native.expect("a native read").map_err(|e| format!("{at}: {e}"))?, record.map_err(|e| format!("{at}: {e}"))?.expect("a record"));
+                if record == native { Ok(NodeAlike::Rendered) } else { Err(format!("{at}:\n native {native:?}\n record {record:?}")) }
+            }
+        }
+    }
+
+    /// Every node of `source` renders alike from its record, untouched and
+    /// edited: the nodes alike each way, and those that panic alike.
+    fn nodes_alike(&self, source: &str) -> Result<[usize; 3], String> {
+        let mut engine = self.engine();
+        let options = engine.options().clone();
+        let mut counts = [0; 3];
+        let untouched = Self::parse(&mut engine, source);
+        let nodes = sittir_core::read::descendant_count(&untouched.tree().root_node());
+        for index in (0..nodes).map(NodeIndex::new) {
+            match self.node_alike(&untouched, index, &options)? {
+                NodeAlike::Rendered => counts[0] += 1,
+                NodeAlike::Panicking => counts[2] += 1,
+                NodeAlike::Unread => {}
+            }
+            let edited = Self::parse(&mut engine, source);
+            edit_in_place(&edited, index);
+            match self.node_alike(&edited, index, &options).map_err(|e| format!("edited {e}"))? {
+                NodeAlike::Rendered => counts[1] += 1,
+                NodeAlike::Panicking => counts[2] += 1,
+                NodeAlike::Unread => {}
+            }
+        }
+        Ok(counts)
+    }
+}
+
 /// What `render` answers, twice: the text, when both answers agree.
 fn twice(render: impl Fn() -> Result<String, String>) -> Result<String, String> {
     let first = render()?;
@@ -133,7 +194,7 @@ fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>>(grammar: &str, r
     let sources = sources(grammar);
     assert!(!sources.is_empty(), "{grammar} has round-trip fixtures");
     let mut differ = Vec::new();
-    let mut rendered = 0;
+    let (mut rendered, mut nodes) = (0, [0; 3]);
     for (i, source) in sources.iter().enumerate() {
         match renders.renders_alike(source) {
             Ok(Alike::Rendered) => rendered += 1,
@@ -141,8 +202,12 @@ fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>>(grammar: &str, r
             Ok(Alike::Unread) => eprintln!("{grammar} source {i}: no root read"),
             Err(e) => differ.push(format!("{grammar} source {i}: {e}")),
         }
+        match renders.nodes_alike(source) {
+            Ok(counts) => nodes = [nodes[0] + counts[0], nodes[1] + counts[1], nodes[2] + counts[2]],
+            Err(e) => differ.push(format!("{grammar} source {i}: {e}")),
+        }
     }
-    eprintln!("{grammar}: {rendered} of {} sources render alike", sources.len());
+    eprintln!("{grammar}: {rendered} of {} sources render alike; nodes alike {} untouched, {} edited, {} panic alike", sources.len(), nodes[0], nodes[1], nodes[2]);
     assert!(differ.is_empty(), "{} of {} sources render apart from their records:\n{}", differ.len(), sources.len(), differ.join("\n"));
 }
 
@@ -178,18 +243,67 @@ fn every_scm_source_renders_alike_from_its_records() {
 }
 
 /// The node of kind `kind` spanning `text` in `source`, read one level
-/// down, renders as `text` natively and from its record.
+/// down, renders as `text` natively and from its record, untouched and
+/// with a write in its range (`edit_in_place`), through its template.
 fn renders_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>>(renders: &Renders<G, N>, source: &str, kind: &str, text: &str) {
     let mut engine = renders.engine();
     let options = engine.options().clone();
-    let tree = Renders::<G, N>::parse(&mut engine, source);
-    let index = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+    for edited in [false, true] {
+        let tree = Renders::<G, N>::parse(&mut engine, source);
+        let index = node_spanning(&tree, source, kind, text);
+        if edited {
+            edit_in_place(&tree, index);
+        }
+        let native = renders.native(&tree, index, &options).expect("a native read").expect("a native render");
+        let record = Renders::<G, N>::parsed(&tree, tree.read_record::<N>(index, Depth::ONE).expect("a record write").expect("a record"), &options).expect("a record render");
+        assert_eq!((native.as_str(), record.as_str()), (text, text), "{source:?}, edited: {edited}");
+    }
+}
+
+/// The index of the node of kind `kind` spanning `text` in `tree`'s source.
+fn node_spanning<G: EngineGrammar>(tree: &ParsedTree<G>, source: &str, kind: &str, text: &str) -> NodeIndex {
+    (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
         .map(NodeIndex::new)
         .find(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| node.kind() == kind && &source[sittir_core::types::Span::of(&node).range()] == text))
-        .unwrap_or_else(|| panic!("{source:?} has a {kind} node spanning {text:?}"));
-    let native = renders.native(&tree, index, &options).expect("a native read").expect("a native render");
-    let record = Renders::<G, N>::parsed(&tree, tree.read_record::<N>(index, Depth::ONE).expect("a record write").expect("a record"), &options).expect("a record render");
-    assert_eq!((native.as_str(), record.as_str()), (text, text), "{source:?}");
+        .unwrap_or_else(|| panic!("{source:?} has a {kind} node spanning {text:?}"))
+}
+
+#[test]
+fn where_a_parsed_record_renders_never_depends_on_what_was_read() {
+    let renders = python();
+    let source = "def h():\n    t = (f(x), b,\n         g(y))\n";
+    let tuple_text = "(f(x), b,\n         g(y))";
+    let mut engine = renders.engine();
+    let options = engine.options().clone();
+    for edited in [false, true] {
+        let render = |tree: &ParsedTree<sittir_python::PythonGrammar>| {
+            let tuple = node_spanning(tree, source, "tuple", tuple_text);
+            let at = tree.read_record::<sittir_python::render::AnyNode>(tuple, Depth::ONE).expect("a record write").expect("a record");
+            Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parsed(tree, at, &options).expect("a record render")
+        };
+        let tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
+        let tuple = node_spanning(&tree, source, "tuple", tuple_text);
+        if edited {
+            edit_in_place(&tree, tuple);
+        }
+        let first = render(&tree);
+        tree.read_record::<sittir_python::render::AnyNode>(node_spanning(&tree, source, "call", "g(y)"), Depth::ONE).expect("a record write").expect("a record");
+        let after_child = render(&tree);
+        tree.read_record::<sittir_python::render::AnyNode>(NodeIndex::ROOT, Depth::All).expect("a record write").expect("a record");
+        let after_all = render(&tree);
+        let whole = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
+        whole.read_record::<sittir_python::render::AnyNode>(NodeIndex::ROOT, Depth::All).expect("a record write").expect("a record");
+        if edited {
+            edit_in_place(&whole, node_spanning(&whole, source, "tuple", tuple_text));
+        }
+        let from_whole = render(&whole);
+        let native = renders.native(&tree, tuple, &options).expect("a native read").expect("a native render");
+        assert_eq!(first, native, "edited: {edited}");
+        if !edited {
+            assert_eq!(first, "(f(x), b,\n     g(y))", "an untouched node renders as its source, a copied line shifted by the writer's column less the node's");
+        }
+        assert_eq!((after_child.as_str(), after_all.as_str(), from_whole.as_str()), (first.as_str(), first.as_str(), first.as_str()), "edited: {edited}");
+    }
 }
 
 fn python() -> Renders<sittir_python::PythonGrammar, sittir_python::render::AnyNode> {
@@ -456,3 +570,4 @@ fn a_chunk_is_copied_out_as_its_records_fill_it() {
     assert!(after.len() > before.len() && after.starts_with(&before), "a later read appends; the words before it stay");
     assert_eq!(tree.record_chunk(sittir_core::arena::MAX_CHUNKS), None);
 }
+
