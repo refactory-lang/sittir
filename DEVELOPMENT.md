@@ -253,13 +253,22 @@ published with:
 
 ```bash
 pnpm run build
-pnpm run check:published                 # pack, install outside the workspace, createEngine + parse + render
+pnpm run check:published                 # pack, install outside the workspace, type-check @sittir/types, createEngine + parse + render
 pnpm run check:published --release       # also require a binary for every declared target
 ```
 
 The default run accepts a pack holding only the host's binary; `--release`
 fails unless every target in `NATIVE_TARGETS`
 (`packages/codegen/src/grammars.ts`) has one.
+
+`@sittir/types` publishes one declaration file, bundled by tsdown
+(`packages/types/tsdown.config.ts`), with the `type-fest` types it uses
+inlined, so `type-fest` stays a devDependency. The bundle may take nothing
+else from `node_modules` and may import no package. The package's own
+`tsc` build writes to `build/` for the workspace's project references, and
+in the workspace its `exports` keep pointing at `src`; `publishConfig`
+points them at `dist`. The check type-checks the installed package in a
+consumer that has no `type-fest`.
 
 ## Diagnostic tooling
 

@@ -101,7 +101,15 @@ import {
 	slotAliases,
 	placedAlias,
 	type UnreservedWordFactory,
-	type LeadingOptions
+	type LeadingOptions,
+	declaredOverload,
+	optionalRefusing,
+	plainParams,
+	quoteKey,
+	refuseUndeclared,
+	refusingParam,
+	withTrailingParam,
+	type RefusingParams
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -564,6 +572,7 @@ function emitPlacedAliasFactory(
 	if (arms.length > 0) lines.push(`const ${armConst} = new Map<string, number>(${textMapExpr(arms)});`);
 	const placed = arms.length > 0 ? `${armConst}.get(value) ?? ${unreserved.name}(value)` : `${unreserved.name}(value)`;
 	lines.push(
+		declaredOverload(`export function ${alias.rawFactoryName}`, refusingParam('value', `string | Parameters<typeof ${core}>[0]`), `T.${alias.typeName}.Bound`),
 		`export function ${alias.rawFactoryName}(value: string | Parameters<typeof ${core}>[0]): T.${alias.typeName}.Bound {`,
 		`  return ${core}((typeof value === 'string' ? ${placed} : value) as never);`,
 		'}'
@@ -1118,8 +1127,9 @@ interface FactoryParam {
 	readonly rowLooseOptional?: boolean;
 	readonly defaultValue?: string;
 	readonly admitsNodes?: true;
-	readonly numeric?: { readonly typeParams: string; readonly strictType: string };
+	readonly generic?: RefusingParams;
 }
+
 
 interface FactorySurface {
 	readonly spreadFacts: ReturnType<typeof soleSlotFacts> | null;
@@ -1129,8 +1139,7 @@ interface FactorySurface {
 	readonly looseParams: string;
 	readonly rowParams: string;
 	readonly rowLooseParams: string;
-	readonly numericParams?: string;
-	readonly numericTypeParams?: string;
+	readonly generic?: RefusingParams;
 	readonly arity: number | undefined;
 	readonly args: string;
 	readonly elementType?: string;
@@ -1158,13 +1167,12 @@ function renderSurfaceParams(param: FactoryParam): {
 	looseParams: string;
 	rowParams: string;
 	rowLooseParams: string;
-	numericParams?: string;
-	numericTypeParams?: string;
+	generic?: RefusingParams;
 	arity: number | undefined;
 } {
 	const strict = (type: string): string => (param.admitsNodes ? admitNodes(type) : type);
 	return {
-		...(param.numeric === undefined ? {} : { numericParams: paramText(param, strict(param.numeric.strictType)), numericTypeParams: param.numeric.typeParams }),
+		...(param.generic === undefined ? {} : { generic: param.generic }),
 		arity: param.rest ? undefined : 1,
 		params: paramText(param, strictParamType(param)),
 		looseParams: paramText(param, param.looseType),
@@ -1179,6 +1187,38 @@ function renderSurfaceParams(param: FactoryParam): {
 function strictParamType(param: FactoryParam): string {
 	return param.admitsNodes ? admitNodes(param.strictType) : param.strictType;
 }
+
+function refusingWhole(param: FactoryParam): FactoryParam {
+	return { ...param, generic: refusingParam(param.label, strictParamType(param), { optional: param.optional, rest: param.rest }) };
+}
+
+function refusingSlots(
+	param: FactoryParam,
+	configType: string,
+	numeric: { readonly typeParam: string; readonly type: string } | undefined,
+	slots: readonly AssembledNonterminal[]
+): RefusingParams | undefined {
+	if (slots.length === 0 && numeric === undefined) return undefined;
+	const slotParams = slots.map((slot) => ({ key: slot.configKey, name: `${slot.configKey.charAt(0).toUpperCase()}${slot.configKey.slice(1)}Slot` }));
+	const refusing = `RefusingConfig<${param.strictType}, { ${slotParams.map(({ key, name }) => `${quoteKey(key)}: ${name}`).join('; ')} }>`;
+	return {
+		typeParams: `<${[...(numeric === undefined ? [] : [numeric.typeParam]), ...slotParams.map(({ key, name }) => `${name} extends ${configType}[${JSON.stringify(key)}]`)].join(', ')}>`,
+		params: paramText(param, numeric === undefined ? refusing : slotParams.length === 0 ? numeric.type : `${numeric.type} & ${refusing}`)
+	};
+}
+
+function publicParams(surface: { readonly params: string; readonly generic?: RefusingParams }): RefusingParams {
+	return surface.generic ?? plainParams(surface.params);
+}
+
+function declarationOf(declared: RefusingParams): RefusingParams {
+	return { ...declared, params: declarationParams(declared.params) };
+}
+
+function ledByOptions(optionsType: string, declared: RefusingParams): RefusingParams {
+	return { ...declared, params: withLeadingOptions(optionsType, declared.params) };
+}
+
 
 function coercedChildElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
 	const elementType = childElementType({ children: [slot] }, nodeMap);
@@ -1241,7 +1281,7 @@ function resolveFactorySurface(
 	return {
 		...surface,
 		params: `${surface.params}, ${trailing}`,
-		...(surface.numericParams === undefined ? {} : { numericParams: `${surface.numericParams}, ${trailing}` }),
+		...(surface.generic === undefined ? {} : { generic: withTrailingParam(surface.generic, trailing) }),
 		looseParams: `${surface.looseParams}, ${trailing}`,
 		rowParams: `${surface.rowParams}, ${trailing}`,
 		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
@@ -1264,15 +1304,17 @@ function resolveConfigFactorySurface(
 		if (spreadFacts.multiple) {
 			const looseElement = [...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
 			const { nonEmpty } = spreadFacts;
-			const param: FactoryParam = {
-				label: 'children',
-				optional: false,
-				rest: true,
-				strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
-				looseType: elementsTypeOf(nonEmpty, looseElement),
-				rowLooseType: elementsTypeOf(nonEmpty, `T.${node.typeName}.Loose | ${looseElement}`),
-				...(nonEmpty ? {} : { admitsNodes: true as const })
-			};
+			const param = refusingWhole(
+				{
+					label: 'children',
+					optional: false,
+					rest: true,
+					strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
+					looseType: elementsTypeOf(nonEmpty, looseElement),
+					rowLooseType: elementsTypeOf(nonEmpty, `T.${node.typeName}.Loose | ${looseElement}`),
+					...(nonEmpty ? {} : { admitsNodes: true as const })
+				}
+			);
 			return {
 				spreadFacts,
 				singleField,
@@ -1284,16 +1326,18 @@ function resolveConfigFactorySurface(
 				opt: ''
 			};
 		}
-		const param: FactoryParam = {
-			label: 'child',
-			optional: !spreadFacts.required,
-			rest: false,
-			strictType: elementType,
-			looseType: looseValueOf(elementType),
-			rowLooseType: `T.${node.typeName}.Loose`,
-			rowLooseOptional: !spreadFacts.required || node.argumentOptional(nodeMap),
-			admitsNodes: true
-		};
+		const param = refusingWhole(
+			{
+				label: 'child',
+				optional: !spreadFacts.required,
+				rest: false,
+				strictType: elementType,
+				looseType: looseValueOf(elementType),
+				rowLooseType: `T.${node.typeName}.Loose`,
+				rowLooseOptional: !spreadFacts.required || node.argumentOptional(nodeMap),
+				admitsNodes: true
+			}
+		);
 		return {
 			spreadFacts,
 			singleField,
@@ -1311,7 +1355,7 @@ function resolveConfigFactorySurface(
 		const singleShape = numericSlotShape(singleField);
 		const elemType = singleShape === undefined ? baseType : `${baseType} | ${numberInputType(singleShape)}`;
 		const optional = !isRequired(singleField) || holdsFixedText(singleField);
-		const param: FactoryParam = {
+		const valueParam: FactoryParam = {
 			label: 'value',
 			optional,
 			rest: false,
@@ -1319,16 +1363,18 @@ function resolveConfigFactorySurface(
 			looseType: looseValueOf(elemType),
 			rowLooseType: `T.${node.typeName}.Loose`,
 			rowLooseOptional: optional || node.argumentOptional(nodeMap),
-			admitsNodes: true,
-			...(singleShape === undefined
-				? {}
-				: {
-						numeric: {
-							typeParams: `<const N extends string | ${numberInputType(singleShape)}>`,
-							strictType: `${baseType} | (N & NumericLiteral<N, ${singleShape.base === 'float' ? 'false' : 'true'}>)`
-						}
-					})
+			admitsNodes: true
 		};
+		const param: FactoryParam =
+			singleShape === undefined
+				? refusingWhole(valueParam)
+				: {
+						...valueParam,
+						generic: {
+							typeParams: `<const N extends string | ${numberInputType(singleShape)}>`,
+							params: paramText(valueParam, admitNodes(`${baseType} | (N & NumericLiteral<N, ${singleShape.base === 'float' ? 'false' : 'true'}>)`))
+						}
+					};
 		return {
 			spreadFacts,
 			singleField,
@@ -1346,23 +1392,24 @@ function resolveConfigFactorySurface(
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
 	const widen = (type: string): string => widenNumericSlots(type, node);
-	const param: FactoryParam = {
+	const strictType = allOptional ? `Partial<${widen(configType)}>` : widen(configType);
+	const numericSlots = numericConfigSlots(node);
+	const configParam: FactoryParam = {
 		label: 'config',
 		optional: opt === '?',
 		rest: false,
-		strictType: allOptional ? `Partial<${widen(configType)}>` : widen(configType),
+		strictType,
 		looseType: `T.${node.typeName}.Loose`,
 		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node)),
-		...(allOptional ? { defaultValue: '{}' } : {}),
-		...(numericConfigSlots(node) === undefined
-			? {}
-			: {
-					numeric: {
-						typeParams: `<const C extends ${allOptional ? `Partial<${widen(configType)}>` : widen(configType)}>`,
-						strictType: `C & NumericConfig<C, ${numericConfigSlots(node)}, ${allOptional ? `Partial<${widen(configType)}>` : widen(configType)}>`
-					}
-				})
+		...(allOptional ? { defaultValue: '{}' } : {})
 	};
+	const generic = refusingSlots(
+		configParam,
+		configType,
+		numericSlots === undefined ? undefined : { typeParam: `const C extends ${strictType}`, type: `C & NumericConfig<C, ${numericSlots}> & ${refuseUndeclared('C', strictType)}` },
+		node.configSlots.filter((slot) => storesNodes(resolveFieldStorageInfo(slot, nodeMap, kindEntries)))
+	);
+	const param: FactoryParam = generic === undefined ? configParam : { ...configParam, generic };
 	return {
 		spreadFacts,
 		singleField,
@@ -1396,7 +1443,7 @@ export function forwardedConstructorTarget(
 interface ForwardedConstruction {
 	readonly target: string;
 	readonly targetParams: string | undefined;
-	readonly overloads: readonly string[];
+	readonly overloads: readonly RefusingParams[];
 	readonly rows: readonly string[];
 }
 
@@ -1413,12 +1460,19 @@ function forwardedConstruction(
 	const targetSurface = constructorSurface(target, nodeMap, kindEntries);
 	const targetParams = targetSurface?.params;
 	const targetOverloads = withheld ? [] : (targetSurface?.paramsOverloads ?? (targetParams === undefined ? undefined : [targetParams]));
-	const ordered = (all: readonly string[]): string[] => [...all.filter((params) => params === ''), ...all.filter((params) => params !== '')];
+	const targetDeclarations = withheld ? [] : targetSurface?.declarations;
+	const ordered = <E>(all: readonly E[], paramsOf: (entry: E) => string): E[] => [
+		...all.filter((entry) => paramsOf(entry) === ''),
+		...all.filter((entry) => paramsOf(entry) !== '')
+	];
 	return {
 		target,
 		targetParams,
-		overloads: ordered([surface.params, ...(targetOverloads ?? [`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`])].map(declarationParams)),
-		rows: ordered([surface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams)).map(
+		overloads: ordered(
+			[publicParams(surface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
+			(declared) => declared.params
+		),
+		rows: ordered([surface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params).map(
 			(params) => `[${params}]`
 		)
 	};
@@ -1470,6 +1524,7 @@ export function constructorSurface(
 	| {
 			params: string;
 			paramsOverloads?: readonly string[];
+			declarations: readonly RefusingParams[];
 			looseParams?: string;
 			args: string;
 			argOptional?: boolean;
@@ -1477,14 +1532,17 @@ export function constructorSurface(
 	| undefined {
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap, kindEntries));
 	if (target === undefined) return undefined;
+	const plain = (params: string): readonly RefusingParams[] => [plainParams(params)];
 	switch (target.modelType) {
 		case 'list': {
 			const list = separatedListSurface(target, nodeMap, kindEntries);
+			const elements = refusingParam('elements', list.elementsType, { rest: true });
 			return list.optionsType === undefined
-				? { params: `...elements: ${list.elementsType}`, args: '...elements' }
+				? { params: `...elements: ${list.elementsType}`, declarations: [elements], args: '...elements' }
 				: {
 						params: `...elements: ${list.elementsType}`,
 						paramsOverloads: [withLeadingOptions(list.optionsType, `...elements: ${list.elementsType}`), `...elements: ${list.elementsType}`],
+						declarations: [{ ...elements, params: withLeadingOptions(list.optionsType, elements.params) }, elements],
 						args: '...args'
 					};
 		}
@@ -1496,11 +1554,15 @@ export function constructorSurface(
 			const surface = resolveFactorySurface(target, nodeMap, kindEntries);
 			const optionalized = chainParamOptional(kind, nodeMap, kindEntries) && /^\w+: /.test(surface.params);
 			const relax = (text: string): string => (optionalized ? text.replace(/^(\w+): /, '$1?: ') : text);
+			const declared = publicParams(surface);
 			return {
 				params: relax(surface.params),
 				...(surface.leadingOptions === undefined
-					? {}
-					: { paramsOverloads: [withLeadingOptions(surface.leadingOptions.type, surface.params), surface.params] }),
+					? { declarations: [optionalized ? optionalRefusing(declared) : declared] }
+					: {
+							paramsOverloads: [withLeadingOptions(surface.leadingOptions.type, surface.params), surface.params],
+							declarations: [ledByOptions(surface.leadingOptions.type, declared), declared]
+						}),
 				looseParams: relax(surface.looseParams),
 				args: surface.args,
 				argOptional: optionalized
@@ -1509,11 +1571,11 @@ export function constructorSurface(
 		case 'keyword':
 		case 'punctuation':
 			if (!isBuilderTextLeaf(target)) return undefined;
-			return { params: '', args: '' };
+			return { params: '', declarations: plain(''), args: '' };
 		case 'pattern':
-			return { params: leafTextParams(target), args: 'text' };
+			return { params: leafTextParams(target), declarations: plain(leafTextParams(target)), args: 'text' };
 		case 'enum':
-			return { params: `value: ${enumMemberDiscriminant(target, kindEntries)}`, args: 'value' };
+			return { params: `value: ${enumMemberDiscriminant(target, kindEntries)}`, declarations: plain(`value: ${enumMemberDiscriminant(target, kindEntries)}`), args: 'value' };
 		default:
 			return undefined;
 	}
@@ -1731,7 +1793,7 @@ function emitFieldCarryingFactory(
 		const targetTakesNoArgs =
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
 		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
-			...forwarded.overloads.map((params) => `${exportKw}function ${fn}(${params}): ReturnType<typeof _${fn}>;`),
+			...forwarded.overloads.map((declared) => declaredOverload(`${exportKw}function ${fn}`, declared, `ReturnType<typeof _${fn}>`)),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
 		if (registered.length > 0) {
@@ -1775,26 +1837,23 @@ function emitFieldCarryingFactory(
 		return renameUnusedConfigParam(lines);
 	}
 	if (ownText !== undefined) return lines.join('\n');
+	const declared = declarationOf(publicParams(surface));
 	if (leadingOptions !== undefined) {
 		return renameUnusedConfigParam(
 			withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
-				`${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};`,
-				`${exportKw}function ${fn}(${declarationParams(withLeadingOptions(leadingOptions.type, surface.params))}): ${builtName};`,
+				declaredOverload(`${exportKw}function ${fn}`, declared, builtName),
+				declaredOverload(`${exportKw}function ${fn}`, ledByOptions(leadingOptions.type, declared), builtName),
 				...lines
 			])
 		);
 	}
-	const numericSignature =
-		surface.numericParams === undefined
-			? undefined
-			: `${exportKw}function ${fn}${surface.numericTypeParams}(${surface.numericParams}): ${builtName};`;
 	return renameUnusedConfigParam(
 		withEmptyOverload(
 			nodeMap,
 			node.kind,
 			`${exportKw}function ${fn}`,
-			numericSignature === undefined ? lines : [numericSignature, ...lines],
-			numericSignature === undefined ? `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};` : undefined
+			surface.generic === undefined ? lines : [declaredOverload(`${exportKw}function ${fn}`, declared, builtName), ...lines],
+			surface.generic === undefined ? `${exportKw}function ${fn}(${declarationParams(surface.params)}): ${builtName};` : undefined
 		)
 	);
 }
@@ -1832,8 +1891,7 @@ export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEnt
 function renameUnusedConfigParam(lines: string[]): string {
 	const idx = lines.findIndex((l) => /^(?:export )?function \w+\(config\??:/.test(l));
 	if (idx === -1) return lines.join('\n');
-	const rest = [...lines.slice(0, idx), ...lines.slice(idx + 1)].join('\n');
-	if (!/\bconfig\b/.test(rest)) {
+	if (!/\bconfig\b/.test(lines.slice(idx + 1).join('\n'))) {
 		lines[idx] = lines[idx]!.replace(/\bconfig(\??:)/, '_config$1');
 	}
 	return lines.join('\n');
@@ -1863,6 +1921,13 @@ function emitRefineFormFactory(
 	const formBuiltName = `T.${info.typeName}.${formShortName}.Bound`;
 	const optionsParam = registered.length === 0 ? '' : `, options?: T.${info.typeName}.${formShortName}.Options`;
 	const optionsArg = registered.length === 0 ? '' : ', options';
+	const formGeneric = refusingSlots(
+		{ label: 'config', optional: opt === '?', rest: false, strictType: formConfigType, looseType: formConfigType },
+		formConfigType,
+		undefined,
+		slots.filter((slot) => !narrowed.has(slot.name) && storesNodes(resolveFieldStorageInfo(slot, nodeMap, kindEntries)))
+	);
+	if (formGeneric !== undefined) lines.push(`export function ${formFn}${formGeneric.typeParams}(${formGeneric.params}${optionsParam}): ${formBuiltName};`);
 	lines.push(`export function ${formFn}(config${opt}: ${formConfigType}${optionsParam}): ${formBuiltName} {`);
 	for (const f of allSlots) {
 		const narrowedLit = narrowed.get(f.name);
@@ -2484,15 +2549,17 @@ function emitSeparatedListFactory(
 
 	const lines: string[] = [];
 	const listBuiltName = `T.${node.typeName}.Bound`;
+	const elements = refusingParam('elements', elementsType, { rest: true });
 	if (hasOptions) {
-		if (!surface.separatorRequired) lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
-		lines.push(`export function ${fn}(${withLeadingOptions(optionsType, `...elements: ${elementsType}`)}): ReturnType<typeof _${fn}>;`);
+		if (!surface.separatorRequired) lines.push(`export function ${fn}${elements.typeParams}(${elements.params}): ReturnType<typeof _${fn}>;`);
+		lines.push(declaredOverload(`export function ${fn}`, ledByOptions(optionsType, elements), `ReturnType<typeof _${fn}>`));
 		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
 		lines.push(...leadingOptionsSplit({ type: optionsType, keys: listOptionKeys(surface) }, 'elements', elementsType));
 		lines.push(`  return _${fn}(elements, options);`);
 		lines.push('}');
 		lines.push(`function _${fn}(elements: ${elementsType}, options: ${optionsType}): ${listBuiltName} {`);
 	} else {
+		lines.push(`export function ${fn}${elements.typeParams}(${elements.params}): ${listBuiltName};`);
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ${listBuiltName} {`);
 	}
 	const w = surface.wrapper;
@@ -2764,4 +2831,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 }
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'WidenNumeric'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenNumeric'];

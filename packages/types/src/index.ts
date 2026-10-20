@@ -3,7 +3,7 @@
  * language engine. Pure type-level module — zero runtime code.
  */
 
-import type { CamelCase } from 'type-fest';
+import type { CamelCase, KeysOfUnion } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
 export type {
 	Cond,
@@ -217,6 +217,22 @@ export type MaxArity<F> = number extends ArgsOf<F>['length'] ? number : MaxOf<Ar
 type MaxOf<U, Seen extends unknown[] = []> = [Exclude<U, Seen['length']>] extends [never]
 	? Seen['length']
 	: MaxOf<Exclude<U, Seen['length']>, [...Seen, unknown]>;
+
+/**
+ * A module of builders as their internal callers see them, with every type parameter at its constraint: each builder
+ * takes the arguments of any overload it declares ({@link ArgsOf}), then, as its last signature, its own last
+ * overload's, so `Parameters` reads what it reads on the builder. A coercer has refused an untyped node at its own
+ * signature before it calls a strict builder, so it calls through this view, where a builder's parameters type its
+ * arguments contextually.
+ *
+ * @typeParam M - the builder module's type (`typeof import('./raw.js')`).
+ * @returns the module with every function member replaced by its plain signatures.
+ */
+export type PlainBuilders<M> = {
+	readonly [K in keyof M]: M[K] extends AnyFlavorFn
+		? ((...args: ArgsOf<M[K]>) => ReturnType<M[K]>) & ((...args: Parameters<M[K]>) => ReturnType<M[K]>)
+		: M[K];
+};
 
 /** A bare `readonly E[]` rest array as `E[]`; a tuple, however it ends, as it is. */
 type MutableRest<A extends readonly unknown[]> = A extends readonly (infer E)[]
@@ -1323,29 +1339,24 @@ export type {
 
 type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
 
-type KeysOfAll<K> = K extends unknown ? keyof K : never;
-
 type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
 	? K extends keyof C
 		? RefusedValue<C[K], Integer>
 		: never
 	: never;
 
-type NoExtraKeys<C, Known> = { readonly [P in Exclude<KeysOfAll<C>, KeysOfAll<Known>>]?: never };
-
 /**
- * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W, Known>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses, or `C` names a key `Known` (the config type the builder accepts) does not. A union `C` is judged slot by slot across all its members, and a key one member lacks is not refused for that member.
+ * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses. A union `C` is judged slot by slot across all its members. A key the builder does not declare is refused by `RefuseUndeclared`.
  */
-export type NumericConfig<C, W extends Readonly<Record<string, boolean>>, Known = C> = {
-	readonly [K in KeysOfAll<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
-} & NoExtraKeys<C, Known>;
+export type NumericConfig<C, W extends Readonly<Record<string, boolean>>> = {
+	readonly [K in KeysOfUnion<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
+};
 
 /**
- * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does, with `Known` the loose type the entry accepts.
+ * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does.
  */
 export type NumericInput<
 	I,
 	Bare extends boolean | undefined,
-	W extends Readonly<Record<string, boolean>> = {},
-	Known = I
-> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W, Known>;
+	W extends Readonly<Record<string, boolean>> = {}
+> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W>;

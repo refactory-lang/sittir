@@ -28,6 +28,9 @@ import {
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
 	withEmptyOverload,
+	declaredOverload,
+	refuseUndeclared,
+	refusingParam,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -148,8 +151,10 @@ function buildKindInterner(
 	};
 }
 
+const RAW_IMPORT = `import * as RawBuilders from './raw.js';`;
+
 function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined): void {
-	lines.push(`import * as F from './raw.js';`);
+	lines.push(RAW_IMPORT);
 	lines.push(`import type * as T from '../types-internal.js';`);
 	if (kindEntries) {
 		lines.push(`import { TSKindId } from '../kinds.js';`);
@@ -158,6 +163,8 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue, listStorage, withOptions } from '@sittir/common/utils';");
+	lines.push('');
+	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
 }
 
@@ -172,7 +179,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
-const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
+const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -406,7 +413,7 @@ function emitBranchFrom(
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
-	const numericRefusal = numericInputRefusal(node, bareShape, inputType);
+	const numericRefusal = numericInputRefusal(node, bareShape);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
 	const signature =
 		spelledType !== undefined
@@ -414,20 +421,16 @@ function emitBranchFrom(
 			: refusal !== undefined
 				? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(refusal, numericRefusal)}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
-	const numericOverload =
-		spelledType === undefined && refusal === undefined && numericRefusal !== undefined
-			? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(numericRefusal)}${optionsParam}): ${returnType};`
-			: undefined;
+	const inputParams = (input: string, options: string): string =>
+		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUndeclared('I', inputType)}` : `input: ${input} & ${refuseUndeclared('I', inputType)}${options}`;
+	const publicOverloads =
+		spelledType !== undefined
+			? [`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(${inputParams(refused(numericRefusal), ', options?: O')}): ${spelledType};`]
+			: [`export function ${fn}<const I extends ${inputType}>(${inputParams(refused(refusal, numericRefusal), optionsParam)}): ${returnType};`];
 	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
 	if (spreadTarget === null) {
 		lines.push(
-			...withEmptyOverload(
-				nodeMap,
-				node.kind,
-				`export function ${fn}`,
-				numericOverload === undefined ? [signature] : [numericOverload, signature],
-				numericOverload === undefined ? signature.replace(/ \{$/, ";") : undefined
-			)
+			...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [...publicOverloads, signature])
 		);
 	} else {
 		if (spelledType !== undefined || refusal !== undefined) {
@@ -436,8 +439,8 @@ function emitBranchFrom(
 		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
 		lines.push(
 			...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [
-				`export function ${fn}(...input: T.${spreadNode.typeName}.LooseArgs): ${returnType};`,
-				signature.replace(/ \{$/, ';'),
+				declaredOverload(`export function ${fn}`, refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose: true }), returnType),
+				...publicOverloads,
 				`export function ${fn}(...args: unknown[]): ${returnType} {`,
 				`  if (args.length > 1) return ${factory}(${spreadNode.fromFunctionName!}(...(args as Parameters<typeof ${spreadNode.fromFunctionName!}>)));`,
 				`  const input = args[0] as ${inputType}${inputOptional ? ' | undefined' : ''};`
@@ -585,7 +588,7 @@ function emitRestParamFromResolver(
 	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
 	const signature = `export function ${fn}(...input: ${inputType}): ${returnType} {`;
-	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';'));
+	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [declaredOverload(`export function ${fn}`, refusingParam('input', inputType, { rest: true, loose: true }), returnType), signature]);
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
 		return [
 			...head,
@@ -653,13 +656,16 @@ function emitSingularChildrenFrom(
 	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
 	if (!hasNumericDiscriminant) {
 		return [
+			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
 			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 			'}'
 		].join('\n');
 	}
+	const inputType = `${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}`;
 	return [
-		`export function ${fn}(input?: ${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
+		declaredOverload(`export function ${fn}`, refusingParam('input', inputType, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
+		`export function ${fn}(input?: ${inputType}): ${factoryReturnTypeExpr(factory)} {`,
 		...(holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)
 			? []
 			: [
@@ -697,6 +703,7 @@ function emitChildrenFrom(
 	}
 	if (facts === null) {
 		return [
+			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
 			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 			'}'
@@ -799,6 +806,7 @@ function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined):
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
+		declaredOverload(`export function ${fn}`, refusingParam('input', `T.${node.typeName}.Loose`, { loose: true }), factoryReturnTypeExpr(factory)),
 		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (typeof input !== 'string'${shape === undefined ? '' : ` && !${numberInputTest(shape, 'input')}`}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
 		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
@@ -1864,7 +1872,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {
 			if (!usesArgs && l === ARGS_HELPER) return [];
-			if (l === `import * as F from './raw.js';`) {
+			if (l === RAW_IMPORT) {
 				const usesInterior = /\bTOKEN_INTERIORS\b/.test(body);
 				const usesInteriorPattern = /\binteriorPattern\(/.test(body);
 				const usesLexedConfig = /\blexedConfig\(/.test(body);

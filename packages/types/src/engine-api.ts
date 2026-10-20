@@ -1,6 +1,7 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
+import type { IsExactly } from './type-utils.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
 import type { PortableRows, PortableSurface } from './portable.ts';
 
@@ -342,8 +343,6 @@ type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly
 type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?: infer L extends object }
 	? { readonly layout?: { readonly [K in Exclude<keyof L, keyof DeclaredLayout<API>>]: never } }
 	: unknown;
-
-type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
 /** A language whose grammar has bindings, so it has a portable surface. */
 export type PortableLanguageAPI = LanguageAPI & { readonly portable: PortableSurface };
