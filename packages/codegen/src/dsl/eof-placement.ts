@@ -23,7 +23,7 @@ export function eofPlacements(
 		const children = syntactic.childrenOf(rule);
 		return children.length > 0 && children.every(empty);
 	};
-	const texts = new Set(textTokens);
+	const texts = new Set(textTokens.filter((name) => rules[name] !== undefined && isLexedBoundary(rules[name])));
 	const lifted = new Set<string>();
 	const named = new Set<string>();
 	for (const rule of Object.values(rules)) {

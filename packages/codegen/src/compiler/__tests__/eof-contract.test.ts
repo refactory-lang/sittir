@@ -161,3 +161,18 @@ describe('a repetition after eof() is a step, even when its body is blank', () =
 	}, 60_000);
 });
 
+describe('a layer that redefines enrich-minted text tokens', () => {
+	it('refuses eof() in a layer rule that redefines the enrich-minted source_text, on source_text', async () => {
+		const raw = await evaluateTempGrammar(
+			{ extras: '', rules: "source: ($) => seq('a', /[a-z]/)" },
+			'rules: { source_text: ($) => eof() }'
+		);
+		const records = evaluateRecords(raw).filter((record) => record.code === 'eof-not-last' || record.code === 'eof-in-token');
+		expect(records).toEqual([refusedOn('source_text')]);
+	}, 60_000);
+
+	it('gives no eof records for the same upstream with no layer', async () => {
+		expect(await eofRecords("source: ($) => seq('a', /[a-z]/)")).toEqual([]);
+	}, 60_000);
+});
+
