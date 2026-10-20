@@ -1,7 +1,7 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
 //! `at`, `edges`, `span`, `sides`, `separator`, `delimiter`,
-//! `separator_kind`, `slots`. `changed` is two bits of the mask. It holds no trivia and no unit sides: a written side is
+//! `separator_kind`, `flanks`, `slots`. `changed` is two bits of the mask. It holds no trivia and no unit sides: a written side is
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
 
@@ -23,7 +23,8 @@ mod mask {
     pub const SLOTS: u32 = 1 << 7;
     pub const DELIMITER: u32 = 1 << 8;
     pub const SEPARATOR_KIND: u32 = 1 << 9;
-    pub const ALL: u32 = (1 << 10) - 1;
+    pub const FLANKS: u32 = 1 << 10;
+    pub const ALL: u32 = (1 << 11) - 1;
 }
 
 /// The node a built node was rebuilt from: its tree, its subtree's rows and
@@ -73,6 +74,8 @@ pub struct SideRecord {
     pub delimiter: Option<Delimiter>,
     /// A list's chosen separator setting, a builder's preference.
     pub separator_kind: Option<KindId>,
+    /// A snapshot root's stamped flanks (`NodeLayout::flanks`).
+    pub flanks: crate::layout_kinds::Flanks,
     pub slots: Vec<SideSlot>,
 }
 
@@ -195,6 +198,10 @@ impl SideRecord {
             flags |= mask::SEPARATOR_KIND;
             words.push(u32::from(kind.0));
         }
+        if !self.flanks.is_none() {
+            flags |= mask::FLANKS;
+            words.push(self.flanks.word());
+        }
         if !self.slots.is_empty() {
             flags |= mask::SLOTS;
             words.push(u32::try_from(self.slots.len()).map_err(|_| ArenaError::Full)?);
@@ -260,6 +267,10 @@ impl SideRecord {
             let [kind] = fields.array()?;
             record.separator_kind = Some(read_kind(kind)?);
         }
+        if has(mask::FLANKS) {
+            let [word] = fields.array()?;
+            record.flanks = crate::layout_kinds::Flanks::of_word(word).filter(|flanks| !flanks.is_none()).ok_or(malformed("side record flanks", word))?;
+        }
         if has(mask::SLOTS) {
             let [count] = fields.array()?;
             let entries = fields.take(count.checked_mul(SLOT_WORDS).ok_or(malformed("side record slot count", count))?)?;
@@ -305,6 +316,7 @@ mod tests {
             separator: Some(KindId(7)),
             delimiter: Some(Delimiter::TRAILING),
             separator_kind: Some(KindId(12)),
+            flanks: crate::layout_kinds::Flanks { before: crate::layout_kinds::LayoutKinds::NEWLINE, after: crate::layout_kinds::LayoutKinds::NONE },
             slots: vec![
                 SideSlot {
                     word: 2,
@@ -343,6 +355,7 @@ mod tests {
             SideRecord { delimiter: whole.delimiter, ..SideRecord::default() },
             SideRecord { delimiter: Some(Delimiter::NONE), ..SideRecord::default() },
             SideRecord { separator_kind: whole.separator_kind, ..SideRecord::default() },
+            SideRecord { flanks: whole.flanks, ..SideRecord::default() },
             SideRecord { slots: whole.slots, ..SideRecord::default() },
         ];
         let mut arena = Arena::new();
@@ -365,7 +378,10 @@ mod tests {
         let mut arena = Arena::new();
         for words in [
             vec![0],
-            vec![1 << 10],
+            vec![1 << 11],
+            vec![mask::FLANKS, 0],
+            vec![mask::FLANKS, 3],
+            vec![mask::FLANKS, 1 << 16],
             vec![mask::AT],
             vec![mask::EDGES, 5, 0],
             vec![mask::EDGES, EDGE_SET | 9 << 16, 0],

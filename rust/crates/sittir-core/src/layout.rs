@@ -30,6 +30,12 @@ pub struct NodeLayout<T> {
     /// native node that holds it. A snapshot node has no `at`; a read or built
     /// node has no span.
     pub span: Option<crate::points::PointSpan>,
+    /// A snapshot root's flanks, the gap kinds before its first item and
+    /// after its last as its read classified them from geometry
+    /// (`$_layout.flanks`, `layout_kinds::Flanks`). A root's prepare
+    /// resolves them to its edges while its end items are still the
+    /// snapshot's. Every other node stamps none.
+    pub flanks: crate::layout_kinds::Flanks,
     /// The node a built node was rebuilt from (`$_layout.sides`): each side
     /// the built node does not hold is that node's, as its tree's trivia table
     /// gives it, filled in at prepare. It names the built node's frame as
@@ -301,6 +307,7 @@ impl<T> Default for NodeLayout<T> {
             edges: None,
             at: None,
             span: None,
+            flanks: crate::layout_kinds::Flanks::default(),
             sides: None,
             changed: crate::slot::ChangedEdges { leading: false, trailing: false },
             units: Vec::new(),
@@ -340,6 +347,8 @@ pub trait Layout {
     /// coordinate into one tree, a snapshot's geometry when each carries one,
     /// `None` with no inner trivia, and `Rebuilt` otherwise.
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>>;
+    /// A snapshot root's stamped flanks (`NodeLayout::flanks`).
+    fn flanks(&self) -> crate::layout_kinds::Flanks;
 }
 
 impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
@@ -376,6 +385,10 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
 
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>> {
         inner_item(self.as_ref()?.trivia.as_ref())
+    }
+
+    fn flanks(&self) -> crate::layout_kinds::Flanks {
+        self.as_ref().map_or_else(crate::layout_kinds::Flanks::default, |layout| layout.flanks)
     }
 }
 
@@ -450,6 +463,10 @@ impl<L: Layout + ?Sized> Layout for &mut L {
 
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>> {
         (**self).inner_item()
+    }
+
+    fn flanks(&self) -> crate::layout_kinds::Flanks {
+        (**self).flanks()
     }
 }
 
@@ -598,6 +615,10 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                     None => None,
                 },
                 span: property(env, napi_val, c"span")?,
+                flanks: match property::<u32>(env, napi_val, c"flanks")? {
+                    Some(word) => crate::layout_kinds::Flanks::of_word(word).ok_or_else(|| ::napi::Error::from_reason(format!("$_layout.flanks {word} names no two gap kinds")))?,
+                    None => crate::layout_kinds::Flanks::default(),
+                },
                 changed: property(env, napi_val, c"changed")?.unwrap_or_default(),
                 sides: match property::<::napi::bindgen_prelude::Object>(env, napi_val, c"sides")? {
                     Some(sides) => Some(
@@ -718,7 +739,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for StoredLayout {
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for NodeLayout<T> {
-    /// `{ trivia?, at?, span?, units?, slots?, separator? }`, each only when present: what a read writes.
+    /// `{ trivia?, at?, span?, flanks?, units?, slots?, separator? }`, each only when present: what a read writes.
     /// The edges never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
@@ -728,6 +749,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
                 present(env, c"trivia", val.trivia)?,
                 present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, &at))?,
                 present(env, c"span", val.span)?,
+                present(env, c"flanks", (!val.flanks.is_none()).then(|| val.flanks.word()))?,
                 present(env, c"units", (!val.units.is_empty()).then_some(val.units))?,
                 present(env, c"slots", (!val.slots.is_empty()).then_some(val.slots))?,
                 present(env, c"separator", val.separator)?,

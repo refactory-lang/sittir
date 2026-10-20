@@ -604,7 +604,7 @@ The native node for data leaving the tree it was read from, such as a render fix
 
 ### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. Every other key a node's `$_layout` holds crosses as it is (`DECIDED_LAYOUT_KEYS` names the ones the walk decides), so a fact the native read writes, such as a snapshot's `span` and `flanks`, crosses back without the walk naming it; a fold crosses the `slots` and `separator` it already holds: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's.
 
 ### `packages/common/src/node-data.ts::evidenceOf`
 
@@ -867,6 +867,10 @@ A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an ed
 ### `packages/common/src/node-data.ts::PLAIN_KINDS`
 
 The `KindView` of data with no wrapper or list kinds: no for every kind.
+
+### `packages/common/src/node-data.ts::DECIDED_LAYOUT_KEYS`
+
+The `$_layout` keys `toNodeValue` decides for itself: `at`, which a crossing never carries (an untouched node crosses as its coordinate, an edited one without it); `trivia`, `units`, `slots`, `separator` and `sides`, which it derives from the node; and `changed`, which its holder judges. Every other key crosses as the node holds it, so the walk names no copy of `NodeLayout`'s shape and a key the native side adds crosses without a change here. Pinned by a test that walks a snapshot through `toNodeData` and refuses any `$_layout` key it drops.
 
 ### `packages/common/src/interior.ts::interiorPattern`
 

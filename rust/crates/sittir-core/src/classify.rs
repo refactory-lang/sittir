@@ -3,6 +3,7 @@
 //! so the value is exactly what an options address could have named.
 
 use crate::render::WhitespaceTable;
+use crate::layout_kinds::LayoutKinds;
 use crate::types::KindId;
 use crate::spacing::{seam_rank, SeamRank};
 
@@ -16,26 +17,31 @@ pub fn classify_whitespace(ws: &str, allowed: &[KindId], table: &WhitespaceTable
     if !ws.chars().all(char::is_whitespace) {
         return None;
     }
-    classify(seam_rank(ws), |text| text == ws, allowed, table)
+    classify(seam_rank(ws), |arm| (table.text_of)(arm) == ws, allowed, table)
 }
 
-/// `classify_whitespace` of the text `gap` implies, read from its counts:
-/// no text is made, so a gap of any size classifies in constant space.
+/// The admitted arm that is the gap kind `kind` (`WhitespaceTable::gap_of`),
+/// else the one of its seam rank, else the widest admitted arm below it, as
+/// `classify_whitespace` classifies the kind's text: a stamped kind needs no
+/// text to resolve. `NONE` and sets of kinds classify to nothing.
 #[must_use]
-pub fn classify_gap(gap: GeometryGap, allowed: &[KindId], table: &WhitespaceTable) -> Option<KindId> {
-    classify(gap.rank(), |text| gap.spelled_by(text), allowed, table)
+pub fn classify_kind(kind: LayoutKinds, allowed: &[KindId], table: &WhitespaceTable) -> Option<KindId> {
+    if !kind.is_single() {
+        return None;
+    }
+    classify(kind.rank(), |arm| table.gap_of(arm) == Some(kind), allowed, table)
 }
 
-/// The admitted arm `spells` names, else the one of seam rank `want`, else
+/// The admitted arm `spells` holds, else the one of seam rank `want`, else
 /// the widest admitted arm below it; depth arms never classify.
-fn classify(want: SeamRank, spells: impl Fn(&str) -> bool, allowed: &[KindId], table: &WhitespaceTable) -> Option<KindId> {
+fn classify(want: SeamRank, spells: impl Fn(KindId) -> bool, allowed: &[KindId], table: &WhitespaceTable) -> Option<KindId> {
     let ranked: Vec<(KindId, usize)> = allowed
         .iter()
         .copied()
         .filter(|&arm| arm != table.indent && arm != table.dedent)
         .map(|arm| (arm, seam_rank((table.text_of)(arm))))
         .collect();
-    if let Some(&(arm, _)) = ranked.iter().find(|&&(arm, _)| spells((table.text_of)(arm))) {
+    if let Some(&(arm, _)) = ranked.iter().find(|&&(arm, _)| spells(arm)) {
         return Some(arm);
     }
     if let Some(&(arm, _)) = ranked.iter().find(|(_, rank)| *rank == want) {
@@ -72,20 +78,18 @@ pub struct GeometryGap {
 }
 
 impl GeometryGap {
-    /// The gap's seam rank (`seam_rank` of its text).
+    /// The one gap kind the gap is: no whitespace, a run of spaces, or a run
+    /// by how many lines it breaks, its indentation the writer's. A kind
+    /// classifies to the arm the gap itself does (`classify_kind`).
     #[must_use]
-    pub fn rank(self) -> SeamRank {
+    pub fn kind(self) -> LayoutKinds {
         match (self.breaks, self.spaces) {
-            (0, 0) => 2,
-            (0, _) => 1,
-            (breaks, _) => 2 + breaks as SeamRank,
+            (0, 0) => LayoutKinds::TIGHT,
+            (0, _) => LayoutKinds::SPACE,
+            (1, _) => LayoutKinds::NEWLINE,
+            (2, _) => LayoutKinds::BLANKLINE,
+            _ => LayoutKinds::DOUBLE_BLANKLINE,
         }
     }
 
-    /// Whether `text` is the gap's text: its breaks as `\n`, then its spaces.
-    #[must_use]
-    pub fn spelled_by(self, text: &str) -> bool {
-        let (breaks, spaces) = (self.breaks as usize, self.spaces as usize);
-        text.len() == breaks.saturating_add(spaces) && text.bytes().enumerate().all(|(at, byte)| byte == if at < breaks { b'\n' } else { b' ' })
-    }
 }

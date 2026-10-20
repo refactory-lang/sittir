@@ -3077,8 +3077,8 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 		`    let inner = ${PREPARE_MOD}::LayoutTarget::inner_item(&parts.layout, overlay);`,
 		`    let first = ::sittir_core::prepare::outermost(${items('first')}, inner.clone(), ::sittir_core::options::Side::Before);`,
 		`    let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
-		`    let root = ${PREPARE_MOD}::LayoutTarget::snapshot_edge(&parts.layout, overlay).map(|edge| edge.span);`,
-		`    let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
+		`    let stamped = ${PREPARE_MOD}::LayoutTarget::flanks(&parts.layout, overlay);`,
+		`    let flanks = ::sittir_core::prepare::root_flanks(first, last, stamped, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
 		`    ::sittir_core::prepare::fill_edges(${PREPARE_MOD}::LayoutTarget::edges_mut(&mut parts.layout, overlay), flanks);`
 	];
 }

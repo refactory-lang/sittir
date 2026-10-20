@@ -445,6 +445,13 @@ impl<'r, T: Prepare + TriviaSeam + Clone + 'static> LayoutTarget<RecordPrep<'r, 
     fn inner_item(&self, prep: &RecordPrep<'r, T>) -> Option<EdgeItem<'_>> {
         crate::layout::inner_item(self.prepared(prep))
     }
+
+    fn flanks(&self, prep: &RecordPrep<'r, T>) -> crate::layout_kinds::Flanks {
+        if self.enveloped() {
+            return crate::layout_kinds::Flanks::default();
+        }
+        self.key.side(prep).map_or_else(|_| crate::layout_kinds::Flanks::default(), |side| side.flanks)
+    }
 }
 
 

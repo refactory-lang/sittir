@@ -455,6 +455,7 @@ impl SideRecord {
             separator: layout.separator,
             delimiter: None,
             separator_kind: None,
+            flanks: layout.flanks,
             slots,
         })
     }
@@ -483,6 +484,7 @@ mod tests {
             edges: Some(Edges { before: Some(EdgeArm { arm: KindId(2), strength: None }), after: None }),
             at: Some(coordinate(6, 11)),
             span: None,
+            flanks: crate::layout_kinds::Flanks::default(),
             sides: Some(coordinate(1, 2)),
             changed: ChangedEdges { leading: false, trailing: true },
             units: Vec::new(),

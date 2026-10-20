@@ -191,6 +191,13 @@ pub trait SideLookup {
         let _ = index;
         Vec::new()
     }
+    /// The first and last child of the node at `index` as a survey finds
+    /// them, extras and `ERROR`s included; none for a node with no children
+    /// or a lookup that measures none.
+    fn end_children(&self, index: NodeIndex) -> Option<[Child; 2]> {
+        let _ = index;
+        None
+    }
     /// The separator before the node at `index` as an item of its parent's
     /// list slot, where it is not the one the slot renders.
     fn separator(&self, index: NodeIndex) -> Option<KindId> {
@@ -339,12 +346,36 @@ impl<'s> ReadCtx<'s> {
         let leading = self.side(index, TriviaSide::Leading);
         let trailing = self.side(index, TriviaSide::Trailing);
         let seated = leading.is_some() || trailing.is_some() || inner.is_some();
+        let flanks = self.snapshot_flanks(index, &at);
         Box::new(NodeLayout {
             trivia: seated.then_some(NodeTrivia { leading, trailing, inner }),
+            flanks,
             slots: self.sides.map_or_else(Vec::new, |lookup| lookup.slots(index)),
             separator: self.sides.and_then(|lookup| lookup.separator(index)),
             ..placed_at(at)
         })
+    }
+
+    /// A snapshot root's flanks (`NodeLayout::flanks`), from its own span
+    /// `at` measured from its holder: the gap kind from its start to where
+    /// its first child's render begins, and from where its last child's ends
+    /// to its end, its children measured from the same holder. A list passes
+    /// its edge extras to its edge item, so its first child is where its
+    /// first item's render begins, leading trivia included; a trailing extra
+    /// reaches to its end point, and a bare item ends where its span does.
+    /// No other node, and no root without children, is stamped.
+    fn snapshot_flanks(&self, index: NodeIndex, at: &Origin) -> crate::layout_kinds::Flanks {
+        let (Some(snapshot), Some(lookup), Origin::Snapshot(own)) = (&self.snapshot, self.sides, at) else { return crate::layout_kinds::Flanks::default() };
+        if index != snapshot.root {
+            return crate::layout_kinds::Flanks::default();
+        }
+        let Some([first, last]) = lookup.end_children(index) else { return crate::layout_kinds::Flanks::default() };
+        let span = |child: Child| snapshot.span_of(Span { start: child.start, end: child.end });
+        let last = if last.trivia { crate::points::PointSpan::at(span(last).end) } else { span(last) };
+        crate::layout_kinds::Flanks {
+            before: crate::classify::geometry_gap(&crate::points::PointSpan::at(own.start), &span(first)).kind(),
+            after: crate::classify::geometry_gap(&last, &crate::points::PointSpan::at(own.end)).kind(),
+        }
     }
 
     /// `layout`, holding the rows of the node's unit children and the sides

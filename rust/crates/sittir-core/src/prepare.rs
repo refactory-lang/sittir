@@ -196,17 +196,17 @@ pub fn outermost<'a>(item: Option<EdgeItem<'a>>, inner: Option<EdgeItem<'a>>, si
 /// before its first item and after its last, when that item is still a
 /// coordinate (framed by its sides) or its inner entries' source bytes,
 /// classified into the arm the edge site admits exactly as a
-/// list gap is. A snapshot root reads the same gaps from geometry: from its
-/// own start (`root`) to where its first item's render begins, leading trivia
-/// included, and from where its last item's render ends to the root's end.
-/// An edge item that was rebuilt, bytes that are not whitespace, or unplaced
-/// trivia on that side leave that side unset for the options and the grammar
-/// default.
+/// list gap is. A snapshot root's are the gap kinds its read stamped
+/// (`flanks`, `NodeLayout::flanks`), resolved to the arm the site admits,
+/// while that end item is still a placed snapshot item.
+/// An edge item that was rebuilt, bytes that are not whitespace, unplaced
+/// trivia on that side, or no stamp leave that side unset for the options
+/// and the grammar default.
 #[must_use]
 pub fn root_flanks(
     first: Option<EdgeItem<'_>>,
     last: Option<EdgeItem<'_>>,
-    root: Option<crate::points::PointSpan>,
+    flanks: crate::layout_kinds::Flanks,
     allowed_before: &[KindId],
     allowed_after: &[KindId],
     table: &crate::render::WhitespaceTable,
@@ -224,13 +224,12 @@ pub fn root_flanks(
             EdgeItem::Coord(coord) => crate::classify::classify_whitespace(source_bytes(coord.tree, ctx.sources.framed_span(&coord))?, allowed, table),
             EdgeItem::Bytes { tree, span } => crate::classify::classify_whitespace(source_bytes(tree, span)?, allowed, table),
             EdgeItem::Snapshot(edge) => {
-                let root = root?;
-                let outer = edge.outer(side)?;
-                let gap = match side {
-                    Side::Before => crate::classify::geometry_gap(&crate::points::PointSpan::at(root.start), &outer),
-                    Side::After => crate::classify::geometry_gap(&outer, &crate::points::PointSpan::at(root.end)),
+                edge.outer(side)?;
+                let stamped = match side {
+                    Side::Before => flanks.before,
+                    Side::After => flanks.after,
                 };
-                crate::classify::classify_gap(gap, allowed, table)
+                crate::classify::classify_kind(stamped, allowed, table)
             }
             EdgeItem::Rebuilt => return None,
         };
@@ -715,7 +714,7 @@ mod tests {
         let sources = Sources(HashMap::from([(crate::types::TreeId(3), Arc::from(source))]));
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources };
-        root_flanks(Some(super::EdgeItem::Coord(std::borrow::Cow::Borrowed(first))), None, None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
+        root_flanks(Some(super::EdgeItem::Coord(std::borrow::Cow::Borrowed(first))), None, crate::layout_kinds::Flanks::default(), &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
             .before
             .map(|edge| edge.arm)
     }

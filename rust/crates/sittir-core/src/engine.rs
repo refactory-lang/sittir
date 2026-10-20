@@ -1339,6 +1339,12 @@ impl<G: EngineGrammar> crate::read::SideLookup for ParsedTree<G> {
         self.slot_layouts(index)
     }
 
+    fn end_children(&self, index: crate::types::NodeIndex) -> Option<[crate::read::Child; 2]> {
+        let node = node_at_index(&self.tree, index)?;
+        let children = crate::read::survey(&mut node.walk());
+        Some([*children.first()?, *children.last()?])
+    }
+
     fn separator(&self, index: crate::types::NodeIndex) -> Option<KindId> {
         self.separator_before(index)
     }

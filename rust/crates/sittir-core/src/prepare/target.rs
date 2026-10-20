@@ -42,6 +42,8 @@ pub trait LayoutTarget<O> {
     fn snapshot_edge(&self, overlay: &O) -> Option<SnapshotEdge>;
     /// `Layout::inner_item`.
     fn inner_item(&self, overlay: &O) -> Option<EdgeItem<'_>>;
+    /// `Layout::flanks`.
+    fn flanks(&self, overlay: &O) -> crate::layout_kinds::Flanks;
 }
 
 impl<T: Prepare + TriviaSeam + 'static> LayoutTarget<()> for Option<Box<NodeLayout<T>>> {
@@ -72,6 +74,10 @@ impl<T: Prepare + TriviaSeam + 'static> LayoutTarget<()> for Option<Box<NodeLayo
     fn inner_item(&self, (): &()) -> Option<EdgeItem<'_>> {
         Layout::inner_item(self)
     }
+
+    fn flanks(&self, (): &()) -> crate::layout_kinds::Flanks {
+        Layout::flanks(self)
+    }
 }
 
 impl<O, L: LayoutTarget<O> + ?Sized> LayoutTarget<O> for &mut L {
@@ -101,6 +107,10 @@ impl<O, L: LayoutTarget<O> + ?Sized> LayoutTarget<O> for &mut L {
 
     fn inner_item(&self, overlay: &O) -> Option<EdgeItem<'_>> {
         (**self).inner_item(overlay)
+    }
+
+    fn flanks(&self, overlay: &O) -> crate::layout_kinds::Flanks {
+        (**self).flanks(overlay)
     }
 }
 

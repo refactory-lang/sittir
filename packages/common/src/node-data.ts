@@ -539,7 +539,8 @@ export interface PointSpanData {
  * A node's layout as the native node sends it (`$_layout`): the trivia that
  * crosses with it, its list slots' stored layout (`slots`, as a read gives
  * it), the separator its source spells before it as a list item where it is
- * not its slot's (`separator`), a snapshot node's span, the node a built node takes its missing sides
+ * not its slot's (`separator`), a snapshot node's span, a snapshot root's
+ * flanks as its read stamped them (`flanks`, opaque here), the node a built node takes its missing sides
  * and slots from (`sides`, a coordinate), and the edges whose neighbour
  * changed (`changed`), where its sides drop their layout runs. Absent when
  * the node has none of these.
@@ -550,9 +551,12 @@ export interface NodeDataLayout {
 	slots?: readonly unknown[];
 	separator?: number;
 	span?: PointSpanData;
+	flanks?: number;
 	sides?: Record<string, unknown>;
 	changed?: ChangedEdges;
 }
+
+const DECIDED_LAYOUT_KEYS: ReadonlySet<string> = new Set(['at', 'trivia', 'units', 'slots', 'separator', 'sides', 'changed']);
 
 function setLayout<K extends keyof NodeDataLayout>(out: Record<string, unknown>, key: K, value: NodeDataLayout[K]): void {
 	const layout = (out.$_layout ??= {}) as NodeDataLayout;
@@ -594,11 +598,13 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
 	}
 	const given = (value as { readonly $_layout?: NodeDataLayout }).$_layout;
+	for (const [key, held] of Object.entries(given ?? {})) {
+		if (!DECIDED_LAYOUT_KEYS.has(key)) ((out.$_layout ??= {}) as Record<string, unknown>)[key] = held;
+	}
 	const slots = fold ? given?.slots : slotsOf(value);
 	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
 	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
 	if (separator !== undefined) setLayout(out, 'separator', separator);
-	if (given?.span !== undefined) setLayout(out, 'span', given.span);
 	const content = fold ? undefined : Object.keys(value).flatMap((key) => (isStorageKey(key) && isAliasContent(value, value[key]) ? [value[key] as object] : []))[0];
 	const trivia = fold ? triviaOf(value) : sided ? (sidesOf(value) ?? (content === undefined ? undefined : sidesOf(content))) : undefined;
 	if (trivia != null) {

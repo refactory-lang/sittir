@@ -75,7 +75,7 @@ fn a_carriage_return_is_a_line_break_whatever_its_spelling() {
     assert_eq!(classify_whitespace("\r\n    ", ALL, &TABLE), Some(NEWLINE));
 }
 
-use sittir_core::classify::{classify_gap, geometry_gap, GeometryGap};
+use sittir_core::classify::{classify_kind, geometry_gap, GeometryGap};
 use sittir_core::points::{Point, PointSpan};
 
 const fn s(r0: u32, c0: u32, r1: u32, c1: u32) -> PointSpan {
@@ -116,13 +116,33 @@ fn a_geometry_gap_classifies_as_its_text_does() {
     for (breaks, spaces) in gaps {
         let gap = GeometryGap { breaks, spaces };
         let text = "\n".repeat(breaks as usize) + &" ".repeat(spaces as usize);
-        assert_eq!(classify_gap(gap, ALL, &TABLE), classify_whitespace(&text, ALL, &TABLE), "{gap:?}");
+        assert_eq!(classify_kind(gap.kind(), ALL, &TABLE), classify_whitespace(&text, ALL, &TABLE), "{gap:?}");
     }
 }
 
 #[test]
 fn a_gap_of_any_size_classifies_from_its_counts() {
     let widest = GeometryGap { breaks: u32::MAX, spaces: u32::MAX };
-    assert_eq!(classify_gap(widest, ALL, &TABLE), classify_whitespace("\n\n\n\n", ALL, &TABLE), "the widest admitted arm below it");
-    assert_eq!(classify_gap(GeometryGap { breaks: 0, spaces: u32::MAX }, ALL, &TABLE), classify_whitespace("  ", ALL, &TABLE));
+    assert_eq!(classify_kind(widest.kind(), ALL, &TABLE), classify_whitespace("\n\n\n\n", ALL, &TABLE), "the widest admitted arm below it");
+    assert_eq!(classify_kind(GeometryGap { breaks: 0, spaces: u32::MAX }.kind(), ALL, &TABLE), classify_whitespace("  ", ALL, &TABLE));
+}
+
+#[test]
+fn a_gap_s_kind_classifies_as_its_text_does_whatever_the_site_admits() {
+    let gaps = [(0, 0), (0, 1), (0, 4), (1, 0), (1, 4), (2, 0), (2, 8), (3, 0), (9, 2)];
+    let admitted: [&[KindId]; 7] = [ALL, &[TIGHT, NEWLINE], &[SPACE], &[NEWLINE, BLANKLINE], &[TIGHT], &[BLANKLINE], &[]];
+    for (breaks, spaces) in gaps {
+        let gap = GeometryGap { breaks, spaces };
+        let text = "\n".repeat(breaks as usize) + &" ".repeat(spaces as usize);
+        for allowed in admitted {
+            assert_eq!(classify_kind(gap.kind(), allowed, &TABLE), classify_whitespace(&text, allowed, &TABLE), "{gap:?} among {allowed:?}");
+        }
+    }
+}
+
+#[test]
+fn no_kind_or_a_set_of_kinds_has_no_class() {
+    use sittir_core::layout_kinds::LayoutKinds;
+    assert_eq!(classify_kind(LayoutKinds::NONE, ALL, &TABLE), None);
+    assert_eq!(classify_kind(LayoutKinds::SEPARATING, ALL, &TABLE), None);
 }
