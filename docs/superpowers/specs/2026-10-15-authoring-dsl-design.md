@@ -722,7 +722,7 @@ The rulings left these to the design. Each is stated in its section; this list i
 
 - **Where it is legal.** Over the grammar's flattened productions, where a repeat helper's productions count as its owner's, an `eof()` is legal when both hold:
   - it is the last step of its production;
-  - end-of-input is in its rule's FOLLOW set, so some derivation from the start rule places the rule last in the input. The start rule is followed by end-of-input. A rule that ends a production, or is followed in it only by steps that consume nothing, is followed by whatever follows that production's rule. A rule followed by an `eof()` is followed by end-of-input.
+  - end-of-input is in its rule's FOLLOW set, so some derivation from the start rule places the rule last in the input. The start rule and the extras are followed by end-of-input. A rule that ends a production is followed by whatever follows that production's rule. So is a rule followed in it only by steps that can consume nothing: a rule that derives the empty string, an `eof()`, or an external token, which a scanner may produce with zero width at the end of the input. A rule followed by an `eof()` is followed by end-of-input.
 - **What is refused.** Each refusal is a blocking diagnostic, reported on the authored rule that holds the production.
   - `eof-not-last`, for one of four reasons:
     - something follows an `eof()` in its production;
