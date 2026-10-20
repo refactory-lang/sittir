@@ -1778,7 +1778,11 @@ The generated reader's relaxation predicate over the node model's `relaxes` tabl
 
 ### `packages/tools/src/validate/common.ts::collectKinds`
 
-Every named node's kind under `node`, `node` included, as `kindOf` names it (by default the node's `type`).
+Every named node's kind under `node`, `node` included, as `kindOf` names it (by default `nodeType`).
+
+### `packages/tools/src/validate/common.ts::nodeType`
+
+A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `collectKinds` use unless given another.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

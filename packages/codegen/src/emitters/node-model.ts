@@ -182,7 +182,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		root: nodeMap.root ?? null,
 		polymorphVariants: factoryData.polymorphVariants,
 		fieldAliasMap: factoryData.fieldAliasMap,
-		displayUnions: Object.fromEntries(nodeMap.displayUnions ?? []),
+		displayUnions: Object.fromEntries([...(nodeMap.displayUnions ?? [])].sort(([a], [b]) => compareOrdinal(a, b))),
 		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
 		relaxes: kindEntries === undefined ? null : relaxationTable(nodeMap, kindEntries),
 		nodes

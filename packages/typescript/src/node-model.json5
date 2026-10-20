@@ -38,7 +38,16 @@
 		"automatic_semicolon": [
 			{"storage":"_automatic_semicolon","literal":false}
 		],
-		"statement_identifier": [
+		"function_signature_automatic_semicolon": [
+			{"storage":"_function_signature_automatic_semicolon","literal":false}
+		],
+		"interface_body": [
+			{"storage":"object_type","literal":false}
+		],
+		"lhs_expression": [
+			{"storage":"_lhs_expression","literal":false}
+		],
+		"property_identifier": [
 			{"storage":"identifier","literal":false}
 		],
 		"shorthand_property_identifier": [
@@ -47,25 +56,16 @@
 		"shorthand_property_identifier_pattern": [
 			{"storage":"identifier","literal":false}
 		],
-		"property_identifier": [
+		"statement_identifier": [
 			{"storage":"identifier","literal":false}
-		],
-		"type_identifier": [
-			{"storage":"identifier","literal":false}
-		],
-		"lhs_expression": [
-			{"storage":"_lhs_expression","literal":false}
 		],
 		"string_fragment": [
 			{"storage":"_template_chars","literal":false},
 			{"storage":"unescaped_double_string_fragment","literal":false},
 			{"storage":"unescaped_single_string_fragment","literal":false}
 		],
-		"function_signature_automatic_semicolon": [
-			{"storage":"_function_signature_automatic_semicolon","literal":false}
-		],
-		"interface_body": [
-			{"storage":"object_type","literal":false}
+		"type_identifier": [
+			{"storage":"identifier","literal":false}
 		]
 	},
 	"spelledTrivia": {

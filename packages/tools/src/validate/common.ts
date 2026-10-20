@@ -322,10 +322,14 @@ export interface NativeCandidateCoords {
 	span: { start: number; end: number } | undefined;
 }
 
+function nodeType(node: TS.Node): string {
+	return node.type;
+}
+
 export function findFirst(
 	node: TS.Node,
 	kind: string,
-	kindOf: (node: TS.Node) => string = (node) => node.type
+	kindOf: (node: TS.Node) => string = nodeType
 ): TS.Node | null {
 	if (kindOf(node) === kind && node.isNamed) return node;
 	for (const child of node.children) {
@@ -335,7 +339,7 @@ export function findFirst(
 	return null;
 }
 
-export function collectKinds(node: TS.Node, kindOf: (node: TS.Node) => string = (node) => node.type): Set<string> {
+export function collectKinds(node: TS.Node, kindOf: (node: TS.Node) => string = nodeType): Set<string> {
 	const kinds = new Set<string>();
 
 	function walk(n: TS.Node) {

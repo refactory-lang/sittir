@@ -57,20 +57,20 @@
 		"while_expression.condition": {"let_chain":"_let_chain"}
 	},
 	"displayUnions": {
-		"type_identifier": [
-			{"storage":"identifier","literal":false}
-		],
 		"field_identifier": [
 			{"storage":"identifier","literal":false}
 		],
 		"let_chain": [
 			{"storage":"_let_chain","literal":false}
 		],
+		"shorthand_field_identifier": [
+			{"storage":"identifier","literal":false}
+		],
 		"string_content": [
 			{"storage":"raw_string_literal_content","literal":false},
 			{"storage":"string_content","literal":false}
 		],
-		"shorthand_field_identifier": [
+		"type_identifier": [
 			{"storage":"identifier","literal":false}
 		]
 	},

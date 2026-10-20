@@ -21,26 +21,26 @@
 		"module.statements": {"simple_statements":"_simple_statements"}
 	},
 	"displayUnions": {
-		"newline": [
-			{"storage":"_newline","literal":false}
-		],
-		"names": [
-			{"storage":"import_list","literal":false}
+		"as_pattern_target": [
+			{"storage":"expression","literal":false}
 		],
 		"dedent": [
 			{"storage":"_dedent","literal":false}
-		],
-		"simple_pattern": [
-			{"storage":"_simple_pattern","literal":false}
-		],
-		"as_pattern_target": [
-			{"storage":"expression","literal":false}
 		],
 		"format_expression": [
 			{"storage":"interpolation","literal":false}
 		],
 		"indent": [
 			{"storage":"_indent","literal":false}
+		],
+		"names": [
+			{"storage":"import_list","literal":false}
+		],
+		"newline": [
+			{"storage":"_newline","literal":false}
+		],
+		"simple_pattern": [
+			{"storage":"_simple_pattern","literal":false}
 		]
 	},
 	"spelledTrivia": {
