@@ -404,11 +404,11 @@ One blocking `eof-in-token` record per rule that holds `eof()` anywhere under a 
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastDiagnostics`
 
-One blocking `eof-not-last` record per site the prediction stamps (`dsl/symbol-table.ts::EofNotLast`), naming the authored rule as `ownerKind`. A production that continues past the end of the input is one tree-sitter drops, while the model, which reads `eof()` as blank, would still build it, so its nodes would never reparse. The details carry the site's `kind`, `ending` and `repetition`.
+One blocking `eof-not-last` record per site the prediction stamps (`dsl/symbol-table.ts::EofNotLast`), naming the authored rule as `ownerKind`. A production that continues past the end of the input is one tree-sitter drops, while the model, which reads `eof()` as blank, would still build it, so its nodes would never reparse. The details are the site itself: its `kind`, its `reason`, and `ending` for an `after-ending` site.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastMessage`
 
-The message of an `eof-not-last` record: the followed rule that always ends input, the repetition whose item ends at `eof()`, or the production that continues after `eof()`.
+The message of an `eof-not-last` record, one per reason: the followed rule that always ends input, the repetition whose item ends at `eof()`, the rule whose `eof()` can never match because it is never followed by the end of input, or the production that continues after `eof()`.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
 
@@ -855,3 +855,7 @@ The grammar's `expectDiagnostics` with each kind listed under both its base name
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::writeDiagnostics`
 
 Prints diagnostics by severity: info goes to stdout, and warning, error and fail go to stderr, each side formatted once with the given formatter. A side with nothing to print writes nothing. A quiet regen keeps a successful child's stdout to itself, so this is the line between what it hides and what it shows.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastProposal`
+
+The proposal of an `eof-not-last` record: let the always-ending rule end without `eof()` where something follows it; use a `never-at-end` rule where it can end the input, or take `eof()` out of it; otherwise end the production at `eof()`.

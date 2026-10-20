@@ -525,28 +525,44 @@ export function eofInTokenDiagnostics(grammar: Pick<RawGrammar, 'name' | 'rules'
 		}));
 }
 
-function eofNotLastMessage({ kind, ending, repetition }: EofNotLast): string {
-	if (ending !== undefined) return `'${ending}' always ends input, so nothing can follow it in '${kind}'; the parser can never produce what follows.`;
-	if (repetition) return `the repetition in '${kind}' ends at eof(), so it can never repeat; the parser can never produce a second item.`;
-	return `kind '${kind}' has a production that continues after eof(); the parser can never produce it.`;
+function eofNotLastMessage(site: EofNotLast): string {
+	switch (site.reason) {
+		case 'after-ending':
+			return `'${site.ending}' always ends input, so nothing can follow it in '${site.kind}'; the parser can never produce what follows.`;
+		case 'repetition':
+			return `the repetition in '${site.kind}' ends at eof(), so it can never repeat; the parser can never produce a second item.`;
+		case 'never-at-end':
+			return `eof() in '${site.kind}' can never match: '${site.kind}' is never followed by the end of input.`;
+		case 'after-eof':
+			return `kind '${site.kind}' has a production that continues after eof(); the parser can never produce it.`;
+	}
+}
+
+function eofNotLastProposal(site: EofNotLast): string {
+	switch (site.reason) {
+		case 'after-ending':
+			return `Let '${site.ending}' end without eof() where something follows it, or make it the last thing '${site.kind}' matches.`;
+		case 'never-at-end':
+			return `Use '${site.kind}' where it can end the input, or take eof() out of it.`;
+		case 'repetition':
+		case 'after-eof':
+			return `End the production at eof(), or move what follows eof() before it.`;
+	}
 }
 
 export function eofNotLastDiagnostics(raw: Pick<RawGrammar, 'name' | 'predictedKinds'>): GrammarDiagnostic[] {
 	const kinds = raw.predictedKinds;
 	if (kinds === undefined || !('entries' in kinds)) return [];
-	return kinds.eofNotLast.map(({ kind, ending, repetition }) => ({
+	return kinds.eofNotLast.map((site) => ({
 		scope: 'grammar' as const,
 		code: 'eof-not-last',
 		severity: 'fail' as const,
 		grammar: raw.name,
-		ownerKind: kind,
-		message: eofNotLastMessage({ kind, ending, repetition }),
-		proposal:
-			ending === undefined
-				? `End the production at eof(), or move what follows eof() before it.`
-				: `Let '${ending}' end without eof() where something follows it, or make it the last thing '${kind}' matches.`,
+		ownerKind: site.kind,
+		message: eofNotLastMessage(site),
+		proposal: eofNotLastProposal(site),
 		canProceed: false,
-		details: { kind, ending, repetition }
+		details: site
 	}));
 }
 

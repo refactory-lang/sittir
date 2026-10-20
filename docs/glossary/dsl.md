@@ -7114,11 +7114,16 @@ The nonterminals every derivation of which ends the input: each of whose product
 
 ### `packages/codegen/src/dsl/symbol-table.ts::EofNotLast`
 
-A rule with a production the parser can never produce, because something follows the end of the input in it: `kind` is the authored rule holding the production. `ending` is the rule that always ends input and is followed, or none when an `eof()` itself is. `repetition` marks a repetition in `kind` whose item ends at `eof()`, so it can never repeat.
+A rule with an `eof()` that can never match, for one of four reasons. `kind` is the authored rule that holds the production; a repeat helper reports its owner.
+
+- `after-eof`: something follows an `eof()` in the production.
+- `after-ending`: a rule every derivation of which ends the input (`alwaysEndingInput`) is followed by more content; `ending` names that rule.
+- `repetition`: a repetition in `kind` whose item always ends at `eof()`, so it can never repeat.
+- `never-at-end`: an `eof()` ends the production of a rule that may end the input but need not, and the rule is never followed by end-of-input (`followedByEnd`).
 
 ### `packages/codegen/src/dsl/symbol-table.ts::eofNotLastSites`
 
-Every `EofNotLast` of a grammar's flattened productions, before `completedProductions` drops any: a step that is an end step, or a nonterminal in `alwaysEndingInput`, anywhere but last. A repeat helper is reported on its owner. A helper that ends input is explained by the authored rule its productions end in, or as a repetition ending at `eof()` when they end in the end step itself.
+Every `EofNotLast` of a grammar's flattened productions, before `completedProductions` drops any. A step that is an end step anywhere but last is `after-eof`. A nonterminal in `alwaysEndingInput` anywhere but last is `after-ending` or `repetition`: a helper that ends input is explained by the authored rule its productions end in, or as a repetition ending at `eof()` when they end in the end step itself. A production that ends in an end step is `never-at-end` when its rule is not in `followedByEnd` and is not itself in `alwaysEndingInput`; a rule that always ends input is refused where it is followed, so each mistake is one site. A repeat helper is reported on its owner. `roots` are the start rule and the extras; `zeroWidth` holds the external tokens.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
 
@@ -7419,6 +7424,14 @@ The precedence wrapper types, which carry no slot topology.
 ### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
+
+### `packages/codegen/src/dsl/symbol-table.ts::followedByEnd`
+
+The rules end-of-input can follow: the FOLLOW-set fact the `eof()` check reads, over the live productions (those whose end step, if any, is last). The roots (the start rule and the extras) are followed by end-of-input. A rule is followed by it when it is followed in some production only by steps that can consume nothing, and either that production's rule is followed by end-of-input or one of those steps is an end step. A step can consume nothing when it is an end step, an external token (`zeroWidth`: a scanner may produce one with zero width at the end of the input), or a rule some production of which consists of such steps. Both sets are least fixpoints.
+
+### `packages/codegen/src/dsl/symbol-table.ts::EndingReason`
+
+Why an always-ending rule cannot be followed: `after-ending` names the authored rule that always ends the input; `repetition` is a repeat helper whose item ends at `eof()` itself.
 
 ### `packages/codegen/src/dsl/bind.ts::isRecord`
 
