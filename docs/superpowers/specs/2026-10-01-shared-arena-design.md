@@ -359,7 +359,7 @@ helpers, the enum projections, `readTerminalFromOther`, `_aliasEnvelope`, the sp
 
 A parsed node's literal holds a reference to its record, the buffer and offset, instead of copies
 of its slots (ruling 4); until the record step lands, it holds the node's fields as own keys.
-A built node is constructed directly into an immutable arena record (ruling 5); until the record cutover, it holds fields on its JavaScript object and crosses on the object wire.
+A built node is constructed directly into an immutable arena record (ruling 5); until the record cutover, it holds fields on its JavaScript object and crosses on the object wire. On either wire it holds the source stamp that makes it a node (the node fact, `2026-10-15-builder-contexts-design.md` § 5).
 
 A wrapped node's heap is mostly its wrapper, not its read data: the wrapped tree holds 7–8 times
 its read data today, 2.2–2.5 KB a wrapped node (§ Problem), and a `function_item`'s own wrapper is
