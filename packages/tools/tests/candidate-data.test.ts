@@ -23,7 +23,7 @@ function caseBlock(source: string): AnyUntypedNode {
 	const tree = treeOf(block);
 	if (tree === undefined) throw new Error('expected a parsed block');
 	const data = materializeDetached(block, readers) as AnyUntypedNode & { $_layout?: object };
-	return { ...data, $_layout: { ...data.$_layout, trivia: tableSides(block, tree, (read) => read) } } as AnyUntypedNode;
+	return { ...data, $_layout: { ...data.$_layout, trivia: tableSides(block, readers, (read) => read) } } as AnyUntypedNode;
 }
 
 describe('a candidate rendered alone is its own span', () => {

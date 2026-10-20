@@ -1052,7 +1052,8 @@ export async function emitFactorySourceText(
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
-	const root = materialize(readNode(handle), await loadSlotReaders(grammar)) as ReadNodeLike;
+	const readers = await loadSlotReaders(grammar);
+	const root = materialize(readNode(handle), readers) as ReadNodeLike;
 	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
 	seatTableSides(root, triviaFacts?.layout ?? new Set());
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
@@ -1125,7 +1126,7 @@ export async function emitFactorySourceText(
 	};
 	const rootKind = root.$type === undefined ? undefined : kindNameFromId(root.$type);
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
-	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle, hydrate }, ctx);
+	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, readers, tree: handle, hydrate }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);
 	const used = new RegExp(`(?<![\\w.$"'\`])${binding.engine}\\.`).test(body);
 	const engineStatement = `${used ? `const ${binding.engine} = ` : ''}await ${engineCall(binding.descriptor)};`;

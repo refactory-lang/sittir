@@ -141,13 +141,14 @@ export function buildFactoryNode(
 	readData: ReadNodeLike,
 	artifacts: FactoryArtifacts,
 	common: Pick<CommonModule, 'buildFactoryNodeFromReference'>,
+	readers: SlotReaders,
 	kindNameFromId: KindNameFromId
 ): unknown {
 	const { factory, resolvedKind } = resolveFactory(artifacts.factoryMap, kind);
 	if (factory === undefined) {
 		throw new Error(`no factory registered for '${kind}'`);
 	}
-	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, { kindNameFromId });
+	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, { kindNameFromId, readers });
 }
 
 function resolveCorpusCase(
@@ -224,7 +225,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 				continue;
 			}
 			input = sourceOf(node, exercise.source);
-			const factoryNode = buildFactoryNode(exercise.kind, node as ReadNodeLike, artifacts, common, kindNameFromId);
+			const factoryNode = buildFactoryNode(exercise.kind, node as ReadNodeLike, artifacts, common, readers, kindNameFromId);
 			if (factoryNode === null) throw new Error('the factory built nothing from the parsed node');
 			rendered = engine.render(factoryNode).toString();
 		} catch (error) {

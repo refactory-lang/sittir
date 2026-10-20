@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { nodeToConfig } from '../validate/common.ts';
+import { nodeToConfig, type SlotReaders } from '../validate/common.ts';
+
+const readers: SlotReaders = () => [];
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 
 function makeFactorySlots(
@@ -35,6 +37,7 @@ describe('nodeToConfig field promotion', () => {
 			} as never,
 			{
 				kindNameFromId,
+				readers,
 				factorySlots: makeFactorySlots('single_field_parent', {
 					value: {
 						unnamed: false,
@@ -56,6 +59,7 @@ describe('nodeToConfig field promotion', () => {
 			} as never,
 			{
 				kindNameFromId,
+				readers,
 				factorySlots: makeFactorySlots('repeat_field_parent', {
 					items: {
 						unnamed: false,

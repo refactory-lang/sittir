@@ -878,6 +878,8 @@ One accessor that threw instead of returning its slot's value, with the slot's s
 // without the recursion cost.
 ```
 
+`readers` is required: the grammar's slot readers (`SlotReaders`), through which the sides a node's trivia table gives it are materialized before they are built (`tableSides`), so a config is built from materialized data on either wire. A caller whose data holds no tree, such as a test's literal data, passes readers that read nothing. `FactoryDispatchOpts` carries the same readers to `buildFactoryNodeFromReference`.
+
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.factoryShapes`
 
 ```text
@@ -1315,7 +1317,7 @@ One entry of a factory map: the factory function of a kind, or, for a `constant`
 
 ### `packages/tools/src/validate/common.ts::tableSides`
 
-A read node's sides from its trivia table (`sideOf`), as trivia data a built value can carry. A comment is read whole through `tree` and built by the caller's builder, so it is built the way the caller builds every other node; an `ERROR` keeps its text, and a layout run keeps its whitespace member: a written entry with no whitespace renders on its owner's line, so the run is what keeps an own-line comment on its own line. `undefined` when every side is empty.
+A read node's sides from its trivia table (`sideOf`), as trivia data a built value can carry. A comment is hydrated (`hydrateTriviaEntry`), materialized through the slot readers, still holding its tree (`holdingTreeOf`) so a caller that keeps it as data can render its coordinate, and built by the caller's builder, so it is built from the same data, on either wire, as every other node the caller builds; an `ERROR` keeps its text, and a layout run keeps its whitespace member: a written entry with no whitespace renders on its owner's line, so the run is what keeps an own-line comment on its own line. `undefined` when every side is empty.
 
 ### `packages/tools/src/validate/common.ts::groupSides`
 

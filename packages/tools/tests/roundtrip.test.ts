@@ -50,6 +50,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('direct_child'), _children: leaf } as never,
 			artifacts,
 			common,
+			() => [],
 			kindNameFromId
 		);
 
@@ -83,6 +84,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('spread_child'), _children: [left, right] } as never,
 			artifacts,
 			common,
+			() => [],
 			kindNameFromId
 		);
 

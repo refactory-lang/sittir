@@ -150,7 +150,7 @@ describe('printFactorySource', () => {
 			{ $type: 3, $text: 'main' },
 			'identifier',
 			artifacts,
-			{ kindNameFromId: ctx.kindNameFromId },
+			{ kindNameFromId: ctx.kindNameFromId, readers: () => [] },
 			ctx
 		);
 		expect(source).toBe('ir.identifier("main")');

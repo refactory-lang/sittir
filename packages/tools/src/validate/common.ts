@@ -31,7 +31,6 @@ import {
 	treeOf,
 	type TriviaSideName,
 	isCoordinate,
-	readNode,
 	metricsEnabled,
 	mapTriviaEntries,
 	projectInterior,
@@ -1044,6 +1043,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 export type { FactoryEntry, Hydrate } from '../grammar-internals.ts';
 
 export interface NodeToConfigOpts {
+	readonly readers: SlotReaders;
 	readonly placeText?: boolean;
 	readonly shownKind?: string;
 	readonly interiorOf?: (kind: string) => TokenInterior | undefined;
@@ -1475,11 +1475,12 @@ function buildWithFactory(
 	return writeSides(referenceData, built, opts);
 }
 
-export function tableSides(source: ReadNodeLike, tree: TreeHandle, build: (read: unknown) => unknown): NodeTrivia | undefined {
+export function tableSides(source: ReadNodeLike, readers: SlotReaders, build: (read: unknown) => unknown): NodeTrivia | undefined {
 	const entries = (side: TriviaSideName): readonly TriviaEntry[] =>
 		sideOf(source as object, side).flatMap((entry): TriviaEntry[] => {
 			if (!isCoordinate(entry)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
-			const built = build(readNode(tree, entry, Infinity));
+			const comment = hydrateTriviaEntry(entry);
+			const built = build(holdingTreeOf(comment, materialize(comment, readers)));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
 			return [built];
 		});
@@ -1492,7 +1493,7 @@ export function tableSides(source: ReadNodeLike, tree: TreeHandle, build: (read:
 function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | undefined {
 	const tree = treeOf(source as object);
 	const carried = source.$_layout?.trivia;
-	if (tree !== undefined) return tableSides(source, tree, (read) => resolveChild(read, { ...childOpts(opts), tree }));
+	if (tree !== undefined) return tableSides(source, opts.readers, (read) => resolveChild(read, { ...childOpts(opts), tree }));
 	return carried && (mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
 }
 
@@ -1747,7 +1748,7 @@ function promoteAnonymousTokenFields(
 	}
 }
 
-export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
+export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	const rec = data as unknown as Record<string, unknown>;
 	const interior = opts.shownKind === undefined ? undefined : opts.interiorOf?.(opts.shownKind);
@@ -1837,7 +1838,8 @@ export interface FactoryDispatchOpts {
 	readonly firstNamedChildKindHint?: string;
 	readonly namedChildKindHints?: readonly string[];
 	readonly kindNameFromId?: (id: number) => string | undefined;
-	readonly tree?: unknown;
+	readonly readers: SlotReaders;
+	readonly tree?: TreeHandle;
 	readonly hydrate?: Hydrate;
 	readonly placeText?: boolean;
 }
@@ -1846,7 +1848,7 @@ export function buildFactoryNodeFromReference(
 	referenceData: ReadNodeLike,
 	kind: string,
 	artifacts: FactoryDispatchArtifacts,
-	opts: FactoryDispatchOpts = {}
+	opts: FactoryDispatchOpts
 ): unknown | null {
 	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface, omitOptionDefaults } =
 		artifacts;
@@ -1864,6 +1866,7 @@ export function buildFactoryNodeFromReference(
 		firstNamedChildKindHint: opts.firstNamedChildKindHint,
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
+		readers: opts.readers,
 		tree: opts.tree,
 		hydrate: opts.hydrate,
 		placeText: opts.placeText

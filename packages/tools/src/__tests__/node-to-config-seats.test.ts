@@ -4,8 +4,11 @@ import {
 	nodeToConfig,
 	type FactoryDispatchArtifacts,
 	type IrSurface,
-	type SeatTable
+	type SeatTable,
+	type SlotReaders
 } from '../validate/common.ts';
+
+const readers: SlotReaders = () => [];
 
 const KINDS = [
 	'clause',
@@ -74,7 +77,7 @@ function surfaceWith(entries: IrSurface['entries']): IrSurface {
 	return { entries, seats, modelTypes: { tok: 'keyword' } };
 }
 
-const opts = { factorySlots, factoryShapes, factoryFields, surface: surfaceWith({}), kindNameFromId };
+const opts = { factorySlots, factoryShapes, factoryFields, surface: surfaceWith({}), kindNameFromId, readers };
 
 describe('nodeToConfig projects a hoisted child by its seat on the ir surface', () => {
 	it('flattens a flattened seat child into the parent config', () => {
@@ -112,7 +115,7 @@ describe('nodeToConfig projects a hoisted child by its seat on the ir surface', 
 
 	it('does nothing without a surface', () => {
 		const data = { $type: id('clause'), _clause_group: { $type: id('_clause_group'), _parameter: 'e' }, _body: 'x' };
-		expect(nodeToConfig(data as never, { factorySlots, factoryShapes, kindNameFromId })).toMatchObject({
+		expect(nodeToConfig(data as never, { factorySlots, factoryShapes, kindNameFromId, readers })).toMatchObject({
 			clauseGroup: { $type: id('_clause_group') },
 			body: 'x'
 		});
@@ -139,7 +142,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'header',
 			artifacts({ header: { strict: raw, kind: { strict: kind } } }, { header: raw }),
-			{ kindNameFromId }
+			{ kindNameFromId, readers }
 		);
 		expect(built).toBe('built');
 		expect(kind).toHaveBeenCalledWith({ kind: 3, left: 'i', name: 'n' });
@@ -168,7 +171,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 				seats: nestedSeats,
 				modelTypes: {}
 			}
-		}, { kindNameFromId });
+		}, { kindNameFromId, readers });
 		expect(inner).toHaveBeenCalledWith({ kind: 3, x: 'v', name: 'n' });
 	});
 
@@ -179,7 +182,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'header',
 			artifacts({ header: { strict: vi.fn(), tok: { strict: tok } } }, { header: vi.fn() }),
-			{ kindNameFromId }
+			{ kindNameFromId, readers }
 		);
 		expect(tok).toHaveBeenCalledWith({ name: 'n' });
 	});
@@ -191,7 +194,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'tree',
 			artifacts({ tree: { strict: vi.fn(), paren: { strict: paren } } }, { tree: vi.fn() }),
-			{ kindNameFromId }
+			{ kindNameFromId, readers }
 		);
 		expect(paren).toHaveBeenCalledWith('a', 'b');
 	});
@@ -203,7 +206,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			data as never,
 			'header',
 			artifacts({ header: { strict: vi.fn(), tok: { strict: tok } } }, { header: vi.fn() }),
-			{ kindNameFromId }
+			{ kindNameFromId, readers }
 		);
 		expect(tok).toHaveBeenCalledWith({ name: 'n' });
 	});
@@ -211,21 +214,21 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 	it('calls the entry strict with the flattened config', () => {
 		const strict = vi.fn(() => 'built');
 		const data = { $type: id('clause'), _clause_group: { $type: id('_clause_group'), _parameter: 'e' }, _body: 'x' };
-		buildFactoryNodeFromReference(data as never, 'clause', artifacts({ clause: { strict } }, { clause: vi.fn() }), { kindNameFromId });
+		buildFactoryNodeFromReference(data as never, 'clause', artifacts({ clause: { strict } }, { clause: vi.fn() }), { kindNameFromId, readers });
 		expect(strict).toHaveBeenCalledWith({ parameter: 'e', body: 'x' });
 	});
 
 	it('hands a forwarded parent the flattened group config as its one value', () => {
 		const strict = vi.fn(() => 'built');
 		const data = { $type: id('block'), _arms: { $type: id('_block_arms'), _arm: [{ $type: id('arm') }], _last: 'z' } };
-		buildFactoryNodeFromReference(data as never, 'block', artifacts({ block: { strict } }, { block: vi.fn() }), { kindNameFromId });
+		buildFactoryNodeFromReference(data as never, 'block', artifacts({ block: { strict } }, { block: vi.fn() }), { kindNameFromId, readers });
 		expect(strict).toHaveBeenCalledWith({ arm: [{ $type: id('arm') }], last: 'z' });
 	});
 
 	it('builds a kind without an ir entry through its raw factory', () => {
 		const raw = vi.fn(() => 'raw-built');
 		const data = { $type: id('clause'), _body: 'x' };
-		expect(buildFactoryNodeFromReference(data as never, 'clause', artifacts({}, { clause: raw }), { kindNameFromId })).toBe('raw-built');
+		expect(buildFactoryNodeFromReference(data as never, 'clause', artifacts({}, { clause: raw }), { kindNameFromId, readers })).toBe('raw-built');
 		expect(raw).toHaveBeenCalledWith({ body: 'x' });
 	});
 
@@ -236,7 +239,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 				data as never,
 				'header',
 				artifacts({ header: { strict: vi.fn() } }, { header: vi.fn() }),
-				{ kindNameFromId }
+				{ kindNameFromId, readers }
 			)
 		).toThrow('ir surface: header.kind.strict is not a function');
 	});

@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { nodeToConfig, type Hydrate } from '../validate/common.ts';
+import { nodeToConfig, type Hydrate, type SlotReaders } from '../validate/common.ts';
+
+const readers: SlotReaders = () => [];
 
 const slot = { unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false };
 const KINDS = ['owner', 'clause', 'word'];
@@ -14,6 +16,7 @@ describe('nodeToConfig hydrates a coordinate through the wrap', () => {
 		const clause = vi.fn((config: unknown) => ({ $type: id('clause'), config }));
 		const config = nodeToConfig({ $type: id('owner'), _body: coordinate } as never, {
 			kindNameFromId,
+			readers,
 			tree: { source: 'x' } as never,
 			hydrate,
 			factoryMap: { clause } as never,

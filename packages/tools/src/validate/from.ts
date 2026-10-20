@@ -385,6 +385,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				const readStorage = materialize(readData, readers);
 				const configOf = (): Record<string, unknown> =>
 					nodeToConfig(readStorage, {
+						readers,
 						shownKind: readKind,
 						interiorOf,
 						factoryMap,

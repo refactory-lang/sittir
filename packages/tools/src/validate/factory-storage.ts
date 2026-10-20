@@ -36,6 +36,7 @@ import {
 	walkWrappedTree,
 	materialize,
 	loadSlotReaders,
+	type SlotReaders,
 	readNodeOf,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -500,6 +501,7 @@ function buildFactoryUntypedNode(
 		input?: string;
 		rendered?: string;
 	}[],
+	readers: SlotReaders,
 	kindNameFromId?: (id: number) => string | undefined,
 	tree?: TreeHandle
 ): AnyUntypedNode | null {
@@ -510,7 +512,7 @@ function buildFactoryUntypedNode(
 			referenceData,
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, tree, placeText: tree !== undefined }
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, readers, tree, placeText: tree !== undefined }
 		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
@@ -695,6 +697,7 @@ export async function validateFactoryStorage(
 					entry.name,
 					inputSource,
 					errors,
+					readers,
 					kindNameFromId
 				);
 				if (factoryData === null) {
@@ -720,7 +723,7 @@ export async function validateFactoryStorage(
 						node,
 						innerKind,
 						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
-						{ kindNameFromId, tree: handle, placeText: true }
+						{ kindNameFromId, readers, tree: handle, placeText: true }
 					);
 				};
 				const buildErrors: typeof errors = [];
@@ -734,7 +737,7 @@ export async function validateFactoryStorage(
 					builtTree = buildFactoryUntypedNode(
 						(takesText(root)
 							? root
-							: rebuildChildren(root, buildInner, (read, rebuild) => tableSides(read, handle, rebuild), takesText)) as unknown as AnyUntypedNode,
+							: rebuildChildren(root, buildInner, (read, rebuild) => tableSides(read, readers, rebuild), takesText)) as unknown as AnyUntypedNode,
 						kind,
 						node1?.type,
 						cstNamedChildKinds[0],
@@ -748,6 +751,7 @@ export async function validateFactoryStorage(
 						entry.name,
 						inputSource,
 						buildErrors,
+						readers,
 						kindNameFromId,
 						handle
 					);
