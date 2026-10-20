@@ -705,18 +705,20 @@ macro_rules! napi_engine {
                     })
                 }
 
-                /// The kind the read stamped on the coordinate of the node at
-                /// `index` of the live tree `treeId`, where the cell holding the
-                /// node names another kind: an alias envelope's content. Null
-                /// where the cell's own kind is the coordinate's. A record view
-                /// asks it of a row whose cell it read, which its holder's
-                /// record write stamped. Refuses a tree that is not live.
+                /// The coordinate a read of the live tree `treeId` names the node
+                /// at `index` by, as `[kind, end]`: the kind the read stamps on
+                /// it and the row after its subtree (`ParsedTree::row_coordinate`),
+                /// the one derivation a record view's coordinate takes. Refuses a
+                /// tree that is not live and an index past its last node.
                 #[::napi_derive::napi]
-                pub fn coordinate_kind(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Option<u32>> {
+                pub fn coordinate(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Vec<u32>> {
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                        Ok(parsed.stamped_coordinate_kind(index).map(|kind| u32::from(kind.0)))
+                        $crate::napi_engine::check_node(parsed, index)?;
+                        let at = parsed.row_coordinate(index).ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id} has no node {}", index.0)))?;
+                        let kind = at.kind.ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s node {} has no stamped kind", index.0)))?;
+                        Ok(vec![u32::from(kind.0), at.end.0])
                     })
                 }
 

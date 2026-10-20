@@ -109,6 +109,16 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<tree_
     Some(cursor.node())
 }
 
+/// The coordinate a read of `tree` names the node at descendant `index` by
+/// (`ReadCtx::coordinate`): its rows, its byte span and its stamped kind. It
+/// is the one derivation of a parsed row's coordinate: the read stamps it on
+/// the node, a record view's `row_node` takes it, and JavaScript's record view
+/// takes it through the addon's `coordinate`. `None` past the tree's last node.
+#[must_use]
+pub fn row_coordinate(tree: &tree_sitter::Tree, read: &crate::read::ReadCtx<'_>, index: NodeIndex) -> Option<crate::slot::NodeCoordinate> {
+    node_at_index(tree, index).map(|node| read.coordinate(&node, index))
+}
+
 /// The index of the outermost `ERROR` that is or holds the node at `index`,
 /// or `None` when none does.
 fn error_holding(tree: &tree_sitter::Tree, index: NodeIndex) -> Option<NodeIndex> {
@@ -631,6 +641,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
         crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes())
+    }
+
+    /// The coordinate a read of this tree names the node at `index` by
+    /// (`row_coordinate`); `None` past its last node.
+    #[must_use]
+    pub fn row_coordinate(&self, index: crate::types::NodeIndex) -> Option<crate::slot::NodeCoordinate> {
+        row_coordinate(&self.tree, &self.read_ctx(), index)
     }
 
     /// The context of a read that seats each node's sides from this tree's
@@ -2118,8 +2135,7 @@ mod tests {
         let (one, _) = parsed("fn f() {}");
         let (two, _) = parsed("fn g() {}");
         let row = NodeIndex::new(1);
-        let at = NodeCoordinate { kind: Some(KindId(3)), ..NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 }) };
-        let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(at), ..NodeLayout::default() };
+        let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 })), ..NodeLayout::default() };
         let cell = write_record(&mut RecordSink::parsed(one.tree_id(), &mut one.tree_arena()), KindId(3), 2, Some(&layout), |_| None, |_, _, _| Ok(())).expect("written");
         let crate::arena::Cell::Child { at, .. } = cell else { panic!("a record, not {cell:?}") };
         assert_eq!(one.tree_arena().record(row), Some(at), "a later read reaches the record");

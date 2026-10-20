@@ -171,31 +171,10 @@ impl<'a, T> RecordCtx<'a, T> {
         }
     }
 
-    /// The row after a parsed node's subtree, from its tree: its row plus its
-    /// descendant count.
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` when the render holds no tree of the arena or
-    /// the tree has no node at `row`.
-    pub fn row_end(self, row: NodeIndex) -> Result<NodeIndex, ArenaError> {
-        let tree = self.tree.ok_or(malformed("parsed row in a built record", row.0))?;
-        let (live, _) = self.sources.read_ctx(tree).ok_or(malformed("record tree", tree.0))?;
-        let node = crate::engine::node_at_index(live, row).ok_or(malformed("record row", row.0))?;
-        row.0.checked_add(crate::read::descendant_count(&node)).map(NodeIndex).ok_or(malformed("record row", row.0))
-    }
-
     /// The record of a parsed row its first read wrote.
     #[must_use]
     pub fn row_record(self, row: NodeIndex) -> Option<Address> {
         self.arenas.tree(self.tree?)?.record(row)
-    }
-
-    /// The kind the coordinate of the parsed node a cell of kind `kind`
-    /// names at `row` names (`TreeArena::coordinate_kind`).
-    #[must_use]
-    pub fn coordinate_kind(self, row: NodeIndex, kind: KindId) -> KindId {
-        self.tree.and_then(|tree| self.arenas.tree(tree)).map_or(kind, |arena| arena.coordinate_kind(row, kind))
     }
 
     /// The parsed node `cell` names, whatever cell names it: the row of a
@@ -207,14 +186,14 @@ impl<'a, T> RecordCtx<'a, T> {
     ///
     /// What reading a child's record or reaching a linked arena refuses.
     pub fn parsed_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
-        let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind: self.coordinate_kind(row, kind), changed: ChangedEdges::default() });
+        let here = |row, kind| self.tree.map(|tree| ParsedRow { tree, row, kind, changed: ChangedEdges::default() });
         Ok(match cell {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
             Cell::Child { kind, at, link, changed } => {
                 let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
                 match row_of(ctx, at, &side)? {
-                    Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind: ctx.coordinate_kind(row, kind), changed }),
+                    Some(Place::Row { tree, row }) => Some(ParsedRow { tree, row, kind, changed }),
                     _ => None,
                 }
             }
@@ -235,7 +214,7 @@ impl<'a, T> RecordCtx<'a, T> {
         let Cell::Child { kind, at, link, changed } = cell else { return self.parsed_row(cell) };
         let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
         let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
-        Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind: ctx.coordinate_kind(row, kind), changed }))
+        Ok(ctx.tree.map(|tree| ParsedRow { tree, row, kind, changed }))
     }
 
     /// The context a child cell's record is read in, its own arena or the
@@ -254,19 +233,18 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 
     /// The coordinate of the parsed node `row` names, as a read of its tree
-    /// names it (`row_node`), of the kind its coordinate names and with the
-    /// edges it marks changed.
+    /// names it (`row_node`), with the edges it marks changed.
     ///
     /// # Errors
     ///
     /// What `row_node` refuses.
     pub fn row_coordinate(self, row: ParsedRow) -> Result<NodeCoordinate, ArenaError> {
         let writes = (row.changed != ChangedEdges::default()).then(|| Box::new(crate::slot::CoordinateWrites { changed: row.changed }));
-        Ok(NodeCoordinate { kind: Some(row.kind), writes, ..self.row_node(row.tree, row.row)? })
+        Ok(NodeCoordinate { writes, ..self.row_node(row.tree, row.row)? })
     }
 
     /// The coordinate of the node at `row` of `tree` a read of it names
-    /// (`ReadCtx::coordinate`): a read node's own `at`.
+    /// (`engine::row_coordinate`): a read node's own `at`.
     ///
     /// # Errors
     ///
@@ -274,14 +252,12 @@ impl<'a, T> RecordCtx<'a, T> {
     /// tree has no node at `row`.
     pub fn row_node(self, tree: TreeId, row: NodeIndex) -> Result<NodeCoordinate, ArenaError> {
         let (live, read) = self.sources.read_ctx(tree).ok_or(malformed("record tree", tree.0))?;
-        let node = crate::engine::node_at_index(live, row).ok_or(malformed("record row", row.0))?;
-        Ok(read.coordinate(&node, row))
+        crate::engine::row_coordinate(live, &read, row).ok_or(malformed("record row", row.0))
     }
 }
 
-/// A parsed node as a cell names it: its tree, its row there, the kind its
-/// coordinate names (`RecordCtx::coordinate_kind`), and the edges whose
-/// neighbour its holder changed.
+/// A parsed node as a cell names it: its tree, its row there, the kind the
+/// cell names it as, and the edges whose neighbour its holder changed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ParsedRow {
     pub tree: TreeId,

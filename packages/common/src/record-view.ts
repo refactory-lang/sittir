@@ -53,13 +53,19 @@ function sideOf(records: RecordReader, at: number): number {
 	return words[start + 1]!;
 }
 
-/** The coordinate a parsed record's side record stamps: its row, its subtree's end and its byte span, naming the kind its row's coordinate names (`RecordReader.coordinateKind`). */
+/** The coordinate of the row the node at `index` is, spanning `span`: its kind and subtree end as a read names them (`RecordReader.coordinate`). */
+function coordinateAt(tree: TreeHandle, index: number, span: ByteSpan): NodeCoordinate {
+	const { kind, end } = recordsOf(tree).coordinate(index);
+	return { $treeHandle: encodeHandle(idOf(tree), index), $end: end, $span: span, $type: kind };
+}
+
+/** The coordinate of a parsed record: the row and byte span its side record stamps (`coordinateAt`). */
 function rowCoordinate(tree: TreeHandle, records: RecordReader, side: number, kind: number): NodeCoordinate {
 	if (side === 0) throw new Error(`a parsed record of kind ${kind} names no side record, so no row`);
 	const { words, start } = sideWordsAt(records, side);
 	const row = decodeSideRow(words, start, records.format);
 	if (row === undefined) throw new Error(`the side record of a parsed record of kind ${kind} holds no row`);
-	return { $treeHandle: encodeHandle(idOf(tree), row.index), $end: row.end, $span: row.span, $type: records.coordinateKind(row.index, kind) };
+	return coordinateAt(tree, row.index, row.span);
 }
 
 /** The record at `at` of `tree` as a stub: its kind and its coordinate, read from its own words. */
@@ -117,12 +123,11 @@ export function rowTrivia(node: object, tree: TreeHandle, wrap: (data: object, t
 	return (rowOf(node, tree, wrap).$trivia as Members)[side]!(...items);
 }
 
-/** A parsed leaf as read data: its kind, its coordinate, naming the kind its row's coordinate names (`RecordReader.coordinateKind`), and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
+/** A parsed leaf as read data: its kind, its coordinate (`coordinateAt`) and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
 function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): object {
 	const text = tree.text;
 	if (text === undefined) throw new Error('a record view needs a tree that answers its text');
-	const at = { $treeHandle: encodeHandle(idOf(tree), row), $end: row + 1, $span: span, $type: recordsOf(tree).coordinateKind(row, kind) };
-	return { $type: kind, $text: () => text(span), $_layout: { at } };
+	return { $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } };
 }
 
 /** The value a cell holds, as read data: what `hydrate` turns into the node an accessor returns. */
@@ -131,7 +136,7 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 		case 'absent':
 			return undefined;
 		case 'coordinate':
-			return { $treeHandle: encodeHandle(idOf(tree), cell.index), $end: cell.index + 1, $span: cell.span, $type: cell.kind };
+			return coordinateAt(tree, cell.index, cell.span);
 		case 'parsedLeaf':
 			return carryTree(holder, carryRead(holder, leafData(tree, cell.kind, cell.span, cell.row)));
 		case 'parsedText':
